@@ -1,0 +1,113 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Must cover the full clinical workflow (anamnesis → exam → diagnosis → treatment → follow-up) and the regulatory/practical reality of Brazilian medicine (SUS, CFM, prescription rules), not just textbook theory\n      - Must include substantive dedicated coverage of Brazilian medical regulation and professional/legal duties: SUS, CFM/CRM rules, medical responsibility, controlled-substance prescriptions, prescription types, telemedicine norms, certificates/atestados, death documentation, and notifiable/legal duties\n      - When a chapter is clearly about a standard medical pillar, specialty, workflow, or Brazilian regulatory duty, the title should include the canonical topic name or a close field-standard equivalent. Examples include \"Anatomia\", \"Fisiologia\", \"Bioquímica\", \"Biologia celular\", \"Genética\", \"Patologia\", \"Imunologia\", \"Microbiologia\", \"Farmacologia\", \"Semiologia\", \"Anamnese\", \"Exame físico\", \"Raciocínio clínico\", \"Epidemiologia\", \"Medicina baseada em evidências\", \"SUS\", \"Medicina de família\", \"Clínica médica\", \"Emergência\", \"Terapia intensiva\", \"Cirurgia\", \"Cardiologia\", \"Pneumologia\", \"Nefrologia\", \"Gastroenterologia\", \"Endocrinologia\", \"Neurologia\", \"Psiquiatria\", \"Reumatologia\", \"Dermatologia\", \"Hematologia\", \"Oncologia\", \"Ginecologia e obstetrícia\", \"Pediatria\", \"Geriatria\", \"Cuidados paliativos\", \"Ética médica\", \"CFM/CRM\", \"medicina legal\", and \"notificação compulsória\", but do not require every example to appear and do not require exact wording. Titles like \"O corpo visto por regiões\", \"Como a doença começa\", or \"Medicamentos dentro do corpo\" are not acceptable substitutes when they hide the canonical medical pillar\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the curriculum must be a serious arc from zero knowledge to mastery, not a shallow tour or a list of disconnected topics\n  - MAJOR ERROR: chapters must follow a logical learning progression. Each chapter should depend only on earlier chapters and ordinary life experience a true beginner can reasonably have\n  - MAJOR ERROR: the opening chapters must teach the natural foundations a true beginner needs first\n  - MAJOR ERROR: practical work must appear throughout the course once prerequisites support it. A curriculum that stays purely theoretical or avoids projects, tools, cases, techniques, artifacts, and workflows is incomplete\n  - MAJOR ERROR: opening with a showcase project, specialist case, lab technique, advanced tool, or dramatic scenario before the learner has the prerequisites is wrong even when the example is real and concrete\n  - For chronological subjects, the chapter order must follow the real chronology. For skill-based subjects, it must follow the real skill progression. For science and engineering, observable foundations should come before specialist techniques\n  - Foundational chapters are allowed and often necessary, but they must teach concrete concepts, vocabulary, chronology, notation, mental models, or simple skills the learner will use later — not just describe the field from the outside\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts when coverage is justified. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields, large platforms, and large fictional canons can legitimately need many chapters. Penalize duplicate, padded, or poorly sequenced chapters, not length by itself\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - MAJOR ERROR: for broad fields, professions, sciences, engineering subjects, and serious practices, missing a standalone history/evolution chapter is an academic-pillar gap unless the course itself is already chronological history or the subject is a narrow tool/hobby where history would be padding\n  - MAJOR ERROR: for fields, professions, and serious practices, missing a standalone end-to-end workflow chapter is a practical-pillar gap. The workflow should show real work from problem/request/question through decisions, execution, validation, delivery, operation, maintenance, or follow-up, depending on the field\n  - For regulated professions and fields with safety duties, local rules, required documents, reporting duties, professional responsibility, and safety practice are curriculum pillars. A generic ethics chapter is not enough when practitioners need separate procedures and judgment\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; CRISPR, sequencing, single-cell biology, spatial omics, synthetic biology for Biology; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: concise, specific, concrete, natural, learner-facing, and sentence case. Preserve normal capitalization for proper nouns, product names, acronyms, and language-specific conventions. Chapter titles should use the canonical names a serious learner would expect in a normal course outline, especially for searchable field pillars, methods, tools, eras, genres, regulations, standards, and named concepts. Canonical titles such as \"Algorithms\", \"Data structures\", \"Operating systems\", \"Cell biology\", \"Civil procedure\", \"Backpropagation\", \"Retrieval-augmented generation\", or their natural translated equivalents are good when those are the real chapter topics\n  - MAJOR STYLE ISSUE: hiding canonical terms behind practical paraphrases, metaphors, slogans, or \"what it does\" titles. If a learner scanning or searching for a standard topic would not recognize the chapter because the title avoids the expected term, the title is not good enough. For example, \"Informação guardada em bits\" is worse than a title that names \"Representação de dados\"; \"O que um computador faz de verdade\" is worse than a title that names the actual pillar such as \"Arquitetura de computadores\" or \"Organização de computadores\"; \"Catch bugs before users do\" is worse than \"Testing JavaScript code\"\n  - SCORE CAP: if 3 or more chapter titles hide important canonical/searchable terms that belong in those titles, the majorErrors score must be 7 or lower even when descriptions mention the terms and the underlying coverage is strong. If 1-2 important titles hide canonical/searchable terms, the majorErrors score must be 8 or lower. Descriptions recovering the term do not remove the title problem because users scan and search chapter titles first\n  - MAJOR STYLE ISSUE: titles that read like academic catalog entries only because they are bloated, comma-separated inventories, abstract noun stacks, or title-case headlines. Do not penalize a concise canonical course title as \"academic\" just because it uses the standard term for the topic. Avoid vague, cute, clickbait, or slogan-like titles such as \"X Without Fear\" unless that phrase is the natural name of the topic. Avoid \"I / II / Part 1\" — use descriptive subtitles instead\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables. Descriptions should explain the chapter's content clearly enough that a learner can tell which canonical topics, tools, cases, mechanisms, or skills belong inside it. A description that only says what the learner will feel or broadly do is too vague if it does not name the actual scope\n  - Description filler issue: descriptions should not rely on filler phrases like \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". Repeated filler phrasing, or descriptions that use these words instead of naming concrete scope, is a minor issue.\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
+  "judgedAt": "2026-07-24T21:22:02.870Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5",
+      "rankings": [
+        {
+          "anonymousId": "model_d",
+          "modelId": "model_d",
+          "reasoning": "Extremely thorough and well-sequenced: natural-science foundations first, canonical titles throughout, a standalone history chapter, dedicated Brazilian regulatory pillars (CFM/CRM, responsabilidade jurídica, prontuário/LGPD, atestados, declaração de óbito, controlados, notificação), multiple end-to-end workflow chapters, and each modern shift (EMR, telemedicine, wearables, AI, precision medicine, cell/gene therapy, robotics) as its own chapter plus a proper career-navigation closer. Minor weaknesses: splitting microbiology into four chapters and one vague-ish 'Modelos contemporâneos de cuidado' chapter.",
+          "score": 9
+        },
+        {
+          "anonymousId": "model_c",
+          "modelId": "model_c",
+          "reasoning": "Comprehensive, logically ordered, canonical titles (Anatomia, Fisiologia, Bioquímica, Genética, Patologia, Farmacologia, Semiologia, SUS, Ética médica/CFM, Medicina legal) with strong Brazilian regulatory coverage (receituários especiais, LGPD, atestados/óbito, notificação/SINAN) and separate modern-shift chapters plus three workflow chapters and a real navigation closer. Slight overlaps (Medicina musculoesquelética vs Ortopedia; dor vs paliativos) and repetitive one-sentence description verbs are the main nits.",
+          "score": 9
+        },
+        {
+          "anonymousId": "model_e",
+          "modelId": "model_e",
+          "reasoning": "Well-sequenced and canonically titled with good regulatory coverage (CRM/responsabilidade, controlados, notificação/óbito), a history chapter, an end-to-end workflow chapter, and separate telemedicine/AI/genomics chapters. However it drops canonical pillars: no bioquímica, no histologia/embriologia, no terapia intensiva, no clinical-procedures chapter, and it bundles point-of-care ultrasound with remote monitoring; the opening 'Fundamentos da medicina' chapter also leans meta.",
+          "score": 7
+        },
+        {
+          "anonymousId": "model_b",
+          "modelId": "model_b",
+          "reasoning": "Strong foundations-to-specialties arc with canonical titles, history chapter, regulatory chapters and a workflow/career close, but several canonical pillars are missing: terapia intensiva, anestesiologia, medicina de família/atenção primária, epidemiologia/bioestatística, medicina legal, and procedures/patient safety. It also bundles prontuário eletrônico + telemedicina + prescrição digital into one chapter (modern shifts should be separate) and has an English word slip ('telemedicine').",
+          "score": 6
+        },
+        {
+          "anonymousId": "model_a",
+          "modelId": "model_a",
+          "reasoning": "A single chapter with an empty description and a garbled, truncated title; no curriculum arc, no coverage of any pillar, no regulatory content. Completely unusable for the task.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This curriculum is exceptional. It thoughtfully starts from zero knowledge (including foundational chemistry for beginners) and builds a rigorous, highly logical path to clinical mastery. It provides incredibly thorough, dedicated chapters for Brazilian medical regulations (CFM, prescriptions, death documentation, LGPD) and perfectly meets all structural requirements, including an end-to-end workflow and a complete career navigation chapter.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "An outstanding and comprehensive curriculum that hits every requirement flawlessly. It uses warm, accessible language in its descriptions while maintaining canonical terminology in the titles, and it covers Brazilian regulatory duties, SUS, and clinical workflows with excellent granularity.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "A very strong submission that successfully integrates modern toolchains, Brazilian medical realities, and a clear clinical workflow. The sequencing is slightly less conventional than the top models (placing gross anatomy before cell biology), but it remains highly effective and explicitly addresses all required pillars and career navigation elements.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "A solid and well-rounded curriculum that covers the essential medical pillars, Brazilian regulations, and modern shifts. It has minor gaps compared to the top models, such as missing an explicit mention of the 'artifact' (e.g., clinical portfolio or hours) in the career navigation chapter, but it easily meets the vast majority of expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-5",
+          "reasoning": "The output is completely broken and unusable, returning only a single incomplete chapter that fails to meet any of the curriculum requirements.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Currículo excepcionalmente completo e bem sequenciado, com fundamentos naturais, prática simulada, especialidades, fluxos integrais e ampla cobertura do SUS, CFM/CRM, responsabilidade jurídica, documentos, óbito, notificação e telemedicina. Há pequena perda de precisão no título genérico “Documentos médicos obrigatórios”, mas o conteúdo correspondente é substantivo e claro.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Também oferece uma progressão sólida e cobertura quase total dos pilares acadêmicos, clínicos, regulatórios e tecnológicos, com títulos canônicos muito fáceis de localizar. Fica ligeiramente atrás por condensar ética, CFM e responsabilidade em um único capítulo e por ter algumas escolhas de ordem fundacional menos naturais, como Anatomia após Embriologia.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Tem bom arco clínico, fluxo completo, especialidades relevantes e cobertura prática adequada de SUS, prescrição, telemedicina, documentação e deveres legais. Contudo, omite pilares acadêmicos importantes como Bioquímica, Histologia e Embriologia e não oferece cobertura própria de Terapia Intensiva ou Medicina Legal, tornando o currículo incompleto.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Cobre muitos fundamentos e especialidades, inclui história, fluxo clínico final e alguns capítulos regulatórios brasileiros úteis. Ainda faltam pilares relevantes como Genética fundamental, Epidemiologia, Medicina de família, Terapia intensiva, Anestesiologia, segurança do paciente, biossegurança e Medicina legal; o fechamento profissional também não explicita bem os artefatos de competência e caminhos de entrada.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-5",
+          "reasoning": "Apresenta apenas um título truncado, com erro textual e descrição vazia. Não cobre qualquer progressão, fundamento médico, fluxo clínico, prática ou realidade regulatória brasileira exigida.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-medicina-1"
+}

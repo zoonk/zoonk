@@ -33,7 +33,7 @@ describe(buildProviderOptions, () => {
     expect(
       buildProviderOptions({
         fallbackModels: ["openai/gpt-5.4-mini"],
-        model: "anthropic/claude-opus-4.6",
+        model: "anthropic/claude-opus-5",
         useFallback: true,
       }),
     ).toStrictEqual({

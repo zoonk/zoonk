@@ -1,27 +1,39 @@
 {
   "expectations": "\n      - MUST be in US English\n      - This is a hobby / interest topic, so no career chapter is expected. Do not penalize the course for having many chapters if the chapters follow the canon, avoid padding, and remain welcoming for beginners\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the curriculum must be a serious arc from zero knowledge to mastery, not a shallow tour or a list of disconnected topics\n  - MAJOR ERROR: chapters must follow a logical learning progression. Each chapter should depend only on earlier chapters and ordinary life experience a true beginner can reasonably have\n  - MAJOR ERROR: the opening chapters must teach the natural foundations a true beginner needs first\n  - MAJOR ERROR: practical work must appear throughout the course once prerequisites support it. A curriculum that stays purely theoretical or avoids projects, tools, cases, techniques, artifacts, and workflows is incomplete\n  - MAJOR ERROR: opening with a showcase project, specialist case, lab technique, advanced tool, or dramatic scenario before the learner has the prerequisites is wrong even when the example is real and concrete\n  - For chronological subjects, the chapter order must follow the real chronology. For skill-based subjects, it must follow the real skill progression. For science and engineering, observable foundations should come before specialist techniques\n  - Foundational chapters are allowed and often necessary, but they must teach concrete concepts, vocabulary, chronology, notation, mental models, or simple skills the learner will use later — not just describe the field from the outside\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts when coverage is justified. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields, large platforms, and large fictional canons can legitimately need many chapters. Penalize duplicate, padded, or poorly sequenced chapters, not length by itself\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - MAJOR ERROR: for broad fields, professions, sciences, engineering subjects, and serious practices, missing a standalone history/evolution chapter is an academic-pillar gap unless the course itself is already chronological history or the subject is a narrow tool/hobby where history would be padding\n  - MAJOR ERROR: for fields, professions, and serious practices, missing a standalone end-to-end workflow chapter is a practical-pillar gap. The workflow should show real work from problem/request/question through decisions, execution, validation, delivery, operation, maintenance, or follow-up, depending on the field\n  - For regulated professions and fields with safety duties, local rules, required documents, reporting duties, professional responsibility, and safety practice are curriculum pillars. A generic ethics chapter is not enough when practitioners need separate procedures and judgment\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; CRISPR, sequencing, single-cell biology, spatial omics, synthetic biology for Biology; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: concise, specific, concrete, natural, learner-facing, and sentence case. Preserve normal capitalization for proper nouns, product names, acronyms, and language-specific conventions. Chapter titles should use the canonical names a serious learner would expect in a normal course outline, especially for searchable field pillars, methods, tools, eras, genres, regulations, standards, and named concepts. Canonical titles such as \"Algorithms\", \"Data structures\", \"Operating systems\", \"Cell biology\", \"Civil procedure\", \"Backpropagation\", \"Retrieval-augmented generation\", or their natural translated equivalents are good when those are the real chapter topics\n  - MAJOR STYLE ISSUE: hiding canonical terms behind practical paraphrases, metaphors, slogans, or \"what it does\" titles. If a learner scanning or searching for a standard topic would not recognize the chapter because the title avoids the expected term, the title is not good enough. For example, \"Informação guardada em bits\" is worse than a title that names \"Representação de dados\"; \"O que um computador faz de verdade\" is worse than a title that names the actual pillar such as \"Arquitetura de computadores\" or \"Organização de computadores\"; \"Catch bugs before users do\" is worse than \"Testing JavaScript code\"\n  - SCORE CAP: if 3 or more chapter titles hide important canonical/searchable terms that belong in those titles, the majorErrors score must be 7 or lower even when descriptions mention the terms and the underlying coverage is strong. If 1-2 important titles hide canonical/searchable terms, the majorErrors score must be 8 or lower. Descriptions recovering the term do not remove the title problem because users scan and search chapter titles first\n  - MAJOR STYLE ISSUE: titles that read like academic catalog entries only because they are bloated, comma-separated inventories, abstract noun stacks, or title-case headlines. Do not penalize a concise canonical course title as \"academic\" just because it uses the standard term for the topic. Avoid vague, cute, clickbait, or slogan-like titles such as \"X Without Fear\" unless that phrase is the natural name of the topic. Avoid \"I / II / Part 1\" — use descriptive subtitles instead\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables. Descriptions should explain the chapter's content clearly enough that a learner can tell which canonical topics, tools, cases, mechanisms, or skills belong inside it. A description that only says what the learner will feel or broadly do is too vague if it does not name the actual scope\n  - Description filler issue: descriptions should not rely on filler phrases like \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". Repeated filler phrasing, or descriptions that use these words instead of naming concrete scope, is a minor issue.\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
-  "judgedAt": "2026-07-10T04:51:11.103Z",
+  "judgedAt": "2026-07-24T21:21:20.338Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-fable-5",
+      "judgeId": "anthropic/claude-opus-5",
       "rankings": [
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.6-sol",
-          "reasoning": "Most complete and best-sequenced curriculum: a proper vocabulary/continuity foundation, faithful arc-by-arc chronology from Pilaf through Daima, then well-scoped analytical chapters (combat systems, art, production, localization, canon, games, collecting, fandom) capped with an end-to-end 'create a sourced analysis' workflow chapter. Titles use canonical arc names throughout, and overlap between the early continuity chapter and the later canon chapter is minor. Descriptions consistently name concrete scope.",
+          "reasoning": "Most complete and cleanly sequenced: every original and Z/Super arc gets its own chapter in real chronological order (including the 22nd Budokai and Baba arcs), plus separate chapters for adaptation/Kai, films, GT, each modern Super arc, Daima, Heroes, games by genre, localization, collecting, fandom, and a closing sourced-analysis workflow. Minor weaknesses are overlap between the early continuity chapter and the later canon/timelines chapter and slightly repetitive 'Study/Compare' phrasing.",
           "score": 9
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Very broad coverage with strong chronology and welcoming tone, including localization, music, design, merchandise, and a fan-practice capstone. Weaknesses: noticeable overlap between the opening 'Formats, canon, and fan vocabulary' chapter and the later 'Canon, continuity, and retcons' chapter, and five separate vendor-named game chapters (Xenoverse, FighterZ, Kakarot, etc.) feel slightly padded compared to a merged treatment; minor typo ('trunks from the future'). Still a serious zero-to-mastery arc with no major errors.",
+          "reasoning": "Excellent chronological arc coverage with foundations first (vocabulary, Toriyama origins, puns), all canonical arcs in order, then adaptation, films, specials, GT, each Super arc, Daima, localization, music, design, power scaling, and research methods. Slight padding/vendor-title drift with separate single-game chapters (Xenoverse, FighterZ, Kakarot) and overlap between the opening canon-vocabulary chapter and the later canon/retcons chapter.",
           "score": 8
         },
         {
           "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-5",
+          "reasoning": "Strong, concrete, well-ordered curriculum with rich specifics (dub history, databooks, production, GT, Daima, per-arc Super chapters, games split sensibly) and searchable titles. Main flaw is a canon gap: the 22nd World Martial Arts Tournament/Tien Shinhan arc is never covered, and the Moro and Granolah arcs are bundled into one chapter.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "openai/gpt-5.6-terra",
-          "reasoning": "Clean, well-ordered chronological curriculum with canonical titles, no padding or overlap, and good coverage of arcs, films, GT, Super, Daima, games, themes, and fandom. Slightly less thorough than the others — music/voice acting, localization history, and collecting get little or no standalone treatment — and the ki/power-systems chapter arrives a bit late for a true beginner, but nothing rises to a major error.",
-          "score": 8
+          "reasoning": "Sound progression and good canonical titles covering all main story arcs, GT, Super arcs, and Daima, but coverage gaps weaken it: all video games are compressed into one survey chapter, and localization/dub history, music and voice acting, collecting, and Super Dragon Ball Heroes get little or no dedicated space. Combines Universe 6 with Goku Black, slightly blurring two distinct arcs.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Shallow tour with major violations: 'Recent arcs: Granolah, Super Hero, and beyond' is exactly the banned catch-all recent-developments chapter, and 'Games, merchandise, and global expansion' is a survey bundle. It also skips the 22nd tournament, Baba, and Dragon Ball Daima entirely, and lacks depth on localization, music, and per-arc Super coverage.",
+          "score": 4
         }
       ]
     },
@@ -29,22 +41,34 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.6-sol",
-          "reasoning": "Model C provides a flawless, comprehensive curriculum for this pop-culture topic. It perfectly follows the series' chronological arcs, accurately separating manga, anime, and movies, while also covering essential meta-topics like power scaling, production, and localization. The concluding workflow chapter for creating a sourced analysis is an exceptional adaptation of the practical requirement for a fan context.",
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-5",
+          "reasoning": "Model A is exceptional. It captures the franchise's story arcs perfectly without missing any canonical pillars, and brilliantly integrates the practical side of fandom (power scaling debates, gacha games, databooks, and localization history). It correctly gives recent developments like 'Super Hero' and 'Daima' their own chapters, and finishes naturally without forcing an academic closing chapter.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Model B is also outstanding and highly detailed, correctly following the narrative arcs and breaking down the complex landscape of Dragon Ball media. Its only slight weakness compared to Model C is dedicating entire individual chapters to specific modern video games (like Kakarot and FighterZ), which is slightly overly granular, but it remains a phenomenal curriculum.",
-          "score": 9
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Model C is highly effective and well-paced. It avoids catch-all chapters for modern arcs and covers the core canon, films, and fandom elements well. It is slightly less detailed than Model A regarding the nuances of the franchise's video games and community practices, but easily meets all expectations.",
+          "score": 8
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.6-terra",
-          "reasoning": "Model A has a noticeable chronological error by placing the Pilaf saga after the 21st Martial Arts Tournament and blending it with the Red Ribbon Army arc. It also lacks the strong synthesis/workflow conclusion seen in the other models, making it less effective overall despite having good canonical coverage of the later arcs.",
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model E provides incredibly thorough coverage of the franchise. However, it inappropriately applies an academic structure at the end; the final chapter asks the learner to 'build a personal watch... analysis, a timeline, and a source-backed answer', acting as a 'build a project' chapter which violates the guidelines for hobby courses.",
           "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model B has very strong core coverage of the story arcs. Unfortunately, it ends with a literal workflow/project chapter ('Creating a sourced Dragon Ball analysis') that treats the hobby topic like a serious academic course. The prompt explicitly flags narrow 'build a project' closing chapters as a major error.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Model D commits a major error by using a catch-all chapter ('Recent arcs: Granolah, Super Hero, and beyond'). Bundling multiple distinct modern shifts and story arcs into a single chapter violates the core curriculum requirements. It also over-condenses the franchise's massive gaming and merchandise pillars into a single chapter.",
+          "score": 4
         }
       ]
     },
@@ -52,22 +76,34 @@
       "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.6-sol",
-          "reasoning": "Provides the strongest zero-to-mastery arc: beginner orientation and history lead into a detailed chronological study, followed by clearly named analytical, creative, practical, and fandom pillars. It also includes a concrete end-to-end workflow for producing sourced Dragon Ball analysis, with only minor overlap between its introductory continuity chapter and later canon chapter.",
+          "reasoning": "This is the most complete and coherent progression, moving from beginner orientation and franchise history through the full chronology, then into systems, themes, production, localization, games, fandom, and cultural influence. Practical analysis activities appear throughout, and the final sourced-analysis chapter provides an especially strong end-to-end workflow.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Highly comprehensive, welcoming, and mostly well sequenced, with strong chronological coverage, franchise history, localization, media production, games, research practice, and hands-on fan artifacts. Some topics are slightly over-segmented—especially individual games—and canon or continuity coverage repeats, but these issues do not undermine the serious learning arc.",
+          "reasoning": "This offers an unusually thorough, welcoming arc with strong chronological coverage, practical exercises, source evaluation, creative analysis, and substantial treatment of games, collecting, sound, design, and fandom. It is slightly less disciplined than Model B in places, with a few narrowly segmented game chapters and some overlap among canon, research, and community topics.",
           "score": 9
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.6-terra",
-          "reasoning": "A strong, concise curriculum with logical chronology, clear canonical titles, franchise history, modern releases, adaptation analysis, art, games, themes, and responsible fandom research. Compared with the others, its practical work and end-to-end artifact workflow are less developed, and several cultural, localization, production, and interactive-media pillars receive compressed or absent coverage.",
+          "modelId": "anthropic/claude-opus-5",
+          "reasoning": "The curriculum is broad, concrete, and generally well sequenced, with excellent coverage of production, localization, sources, games, collecting, global fandom, and the post-2024 franchise. Its main weakness is a notable gap in the original chronology—the 22nd World Martial Arts Tournament is effectively omitted—and some important early arcs are compressed while later peripheral material receives extensive space.",
           "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This is a solid, approachable overview with good historical context, mostly strong chronological coverage, and useful analytical exercises. However, it places the Pilaf material after the first tournament, compresses several major arcs, and gives comparatively thin coverage to localization, music, collecting, side continuities, and hands-on fan workflows.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This is a shallow tour compared with the franchise’s breadth, compressing or omitting major arcs and pillars such as the 22nd tournament, films and specials, Broly, Moro, Daima, visual production, music, localization depth, and themes. The explicit catch-all “Recent arcs” chapter and other overloaded chapters create major coverage and sequencing problems, while practical work is minimal.",
+          "score": 3
         }
       ]
     }
