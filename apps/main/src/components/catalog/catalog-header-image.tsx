@@ -10,7 +10,7 @@ export function CatalogHeaderImage({ alt, src }: { alt: string; src: ImageProps[
     <MediaCardImage>
       <Image
         alt={alt}
-        className="size-full rounded-xl object-cover outline -outline-offset-1 outline-black/10 dark:outline-white/10"
+        className="outline-foreground/10 size-full rounded-xl object-cover outline -outline-offset-1"
         fill
         loading="eager"
         sizes="(max-width: 640px) 80px, (max-width: 1024px) 128px, 352px"

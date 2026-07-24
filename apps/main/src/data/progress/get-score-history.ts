@@ -1,207 +1,124 @@
 import "server-only";
+import { getUserProgressCacheTag } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
-import { aggregateScoreByPeriod } from "@zoonk/utils/aggregation";
+import { prisma } from "@zoonk/db";
 import { formatLabel } from "@zoonk/utils/chart";
-import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
-import { getFullPeriodDateRanges } from "./_utils/history-date-ranges";
+import { cacheTag } from "next/cache";
+import { resolveScoreDateRange } from "./_utils/resolve-score-date-range";
+import { type ScoreRangeParams } from "./_utils/score-date-range";
 import {
-  type DailyProgressHistoryRow,
-  hasEarlierDailyProgress,
-  listDailyProgressRows,
-} from "./daily-progress-queries";
+  type DatedAnswerCounts,
+  type ScorePerformance,
+  getCombinedScorePerformance,
+  getWeeklyScorePerformance,
+} from "./_utils/score-performance";
 
-export type ScorePeriod = HistoryPeriod;
+type ScoreTrendDataPoint = ScorePerformance & { date: Date; label: string };
 
-export type ScoreDataPoint = { date: Date; score: number; label: string };
-
-type ScoreHistoryData = {
-  dataPoints: ScoreDataPoint[];
-  average: number;
-  previousAverage: number | null;
-  periodStart: Date;
+export type ScoreHistoryData = ScorePerformance & {
+  dataPoints: ScoreTrendDataPoint[];
   periodEnd: Date;
-  hasPreviousPeriod: boolean;
-  hasNextPeriod: boolean;
+  periodStart: Date;
 };
 
-type RawDataPoint = { date: Date; correct: number; incorrect: number };
-
-type ScoreHistoryParams = { period: ScorePeriod; offset?: number; locale?: string };
-
-type ScoreHistoryQueryData = {
-  currentData: RawDataPoint[];
-  hasEarlierData: boolean;
-  previousData: RawDataPoint[];
-};
-
-function calculateScore(correct: number, incorrect: number): number {
-  const total = correct + incorrect;
-
-  if (total === 0) {
-    return 0;
-  }
-
-  return (correct / total) * 100;
-}
-
-function calculateAverage(dataPoints: { score: number }[]): number {
-  if (dataPoints.length === 0) {
-    return 0;
-  }
-
-  const sum = dataPoints.reduce((acc, point) => acc + point.score, 0);
-  return sum / dataPoints.length;
-}
+type ScoreHistoryParams = ScoreRangeParams & { locale?: string };
 
 /**
- * Converts a canonical DailyProgress history row into the values needed by score
- * aggregation. This named transformation keeps query orchestration linear.
+ * Converts one DailyProgress row into the answer-count shape used by weighted
+ * Score aggregation without coupling the pure helper to Prisma models.
  */
-function toRawScoreDataPoint(row: DailyProgressHistoryRow): RawDataPoint {
-  return { correct: row.correctAnswers, date: row.date, incorrect: row.incorrectAnswers };
-}
-
-/**
- * Converts shared query results into the small Score input consumed by chart
- * aggregation, keeping database access separate from metric behavior.
- */
-function toScoreHistoryQueryData({
-  currentRows,
-  hasEarlierData,
-  previousRows,
-}: {
-  currentRows: DailyProgressHistoryRow[];
-  hasEarlierData: boolean;
-  previousRows: DailyProgressHistoryRow[];
-}): ScoreHistoryQueryData {
+function toDatedAnswerCounts(row: DatedAnswerCounts): DatedAnswerCounts {
   return {
-    currentData: currentRows.map((row) => toRawScoreDataPoint(row)),
-    hasEarlierData,
-    previousData: previousRows.map((row) => toRawScoreDataPoint(row)),
+    correctAnswers: row.correctAnswers,
+    date: row.date,
+    incorrectAnswers: row.incorrectAnswers,
   };
 }
 
-function processScoreData(
-  rawData: RawDataPoint[],
-  period: ScorePeriod,
-): { date: Date; score: number }[] {
-  if (period === "month") {
-    return rawData.map((point) => ({
-      date: point.date,
-      score: calculateScore(point.correct, point.incorrect),
-    }));
-  }
-
-  if (period === "6months") {
-    return aggregateScoreByPeriod(rawData, calculateScore, "week");
-  }
-
-  if (period === "all") {
-    return aggregateScoreByPeriod(rawData, calculateScore, "year");
-  }
-
-  return aggregateScoreByPeriod(rawData, calculateScore, "month");
-}
-
-function filterValidData(data: RawDataPoint[]): RawDataPoint[] {
-  return data.filter((point) => point.correct + point.incorrect > 0);
-}
-
-function getPreviousAverage(previousData: RawDataPoint[], period: ScorePeriod): number | null {
-  const valid = filterValidData(previousData);
-
-  if (valid.length === 0) {
-    return null;
-  }
-
-  const processed = processScoreData(valid, period);
-  return processed.length > 0 ? calculateAverage(processed) : null;
-}
-
 /**
- * Converts cached query primitives into the localized chart contract. Keeping
- * this transformation pure avoids separate cache entries for each locale.
+ * Builds one rolling Score result from the same rows used by its weekly trend,
+ * guaranteeing the headline and chart cannot drift to different denominators.
  */
 function buildScoreHistory({
-  currentEnd,
-  currentStart,
+  endDate,
   locale,
-  offset,
-  period,
-  queryData,
+  rows,
+  startDate,
 }: {
-  currentEnd: Date;
-  currentStart: Date;
+  endDate: Date;
   locale: string;
-  offset: number;
-  period: ScorePeriod;
-  queryData: ScoreHistoryQueryData;
+  rows: DatedAnswerCounts[];
+  startDate: Date;
 }): ScoreHistoryData | null {
-  const validData = filterValidData(queryData.currentData);
+  const performance = getCombinedScorePerformance(rows);
 
-  if (validData.length === 0) {
+  if (!performance) {
     return null;
   }
 
-  const currentData = processScoreData(validData, period);
-
-  const dataPoints: ScoreDataPoint[] = currentData.map((row) => ({
-    date: row.date,
-    label: formatLabel(row.date, period, locale),
-    score: row.score,
+  const dataPoints = getWeeklyScorePerformance(rows).map((point) => ({
+    ...point,
+    label: formatLabel(point.date, "month", locale),
   }));
 
-  return {
-    average: calculateAverage(currentData),
-    dataPoints,
-    hasNextPeriod: offset > 0,
-    hasPreviousPeriod: queryData.hasEarlierData,
-    periodEnd: currentEnd,
-    periodStart: currentStart,
-    previousAverage: getPreviousAverage(queryData.previousData, period),
-  };
+  return { ...performance, dataPoints, periodEnd: endDate, periodStart: startDate };
 }
 
 /**
- * Composes cached progress reads into the Score history view.
+ * Reads already-resolved date-only boundaries under one progress cache key.
+ * Resolving the request timezone before this leaf keeps request APIs out of the
+ * shared cache while every locale can reuse the same persistence rows.
  */
-async function loadScoreHistory({
+async function findScoreHistoryRows({
+  endDate,
+  startDate,
+  userId,
+}: {
+  endDate: Date;
+  startDate: Date;
+  userId: string;
+}): Promise<DatedAnswerCounts[]> {
+  "use cache";
+
+  cacheTag(getUserProgressCacheTag(userId));
+
+  const rows = await prisma.dailyProgress.findMany({
+    orderBy: { date: "asc" },
+    where: { date: { gte: startDate, lte: endDate }, userId },
+  });
+
+  return rows.map((row) => toDatedAnswerCounts(row));
+}
+
+/**
+ * Returns the learner's weighted rolling Score and weekly trend. Locale affects
+ * labels only; every locale reads the same fixed 90-day answer window.
+ */
+export async function getScoreHistory({
+  endDate,
   locale = "en",
-  offset = 0,
-  period,
-}: ScoreHistoryParams): Promise<ScoreHistoryData | null> {
-  const { current, previous } = await getFullPeriodDateRanges({ offset, period });
-
-  const [currentRows, previousRows, hasEarlierData] = await Promise.all([
-    listDailyProgressRows({ endDate: current.end, startDate: current.start }),
-    listDailyProgressRows({ endDate: previous.end, startDate: previous.start }),
-    hasEarlierDailyProgress({ answersOnly: true, beforeDate: current.start }),
-  ]);
-
-  const queryData = toScoreHistoryQueryData({ currentRows, hasEarlierData, previousRows });
-
-  return buildScoreHistory({
-    currentEnd: current.end,
-    currentStart: current.start,
-    locale,
-    offset,
-    period,
-    queryData,
-  });
-}
-
-/**
- * Optional history UI degrades transient data failures to null here, outside
- * the regular cache, so a later render can retry instead of reusing a fallback.
- */
-export async function getScoreHistory(
-  params: ScoreHistoryParams,
-): Promise<ScoreHistoryData | null> {
+  now,
+  startDate,
+  timeZone,
+}: ScoreHistoryParams = {}): Promise<ScoreHistoryData | null> {
   const { data } = await safeAsync(async () => {
-    const session = await getSession();
-    return session ? loadScoreHistory(params) : null;
+    const [dateRange, session] = await Promise.all([
+      resolveScoreDateRange({ endDate, now, startDate, timeZone }),
+      getSession(),
+    ]);
+
+    if (!session) {
+      return null;
+    }
+
+    const rows = await findScoreHistoryRows({
+      ...dateRange.dailyProgress,
+      userId: session.user.id,
+    });
+
+    return buildScoreHistory({ ...dateRange.dailyProgress, locale, rows });
   });
 
-  return data;
+  return data ?? null;
 }

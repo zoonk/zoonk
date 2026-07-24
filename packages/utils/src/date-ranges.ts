@@ -160,22 +160,6 @@ function getFullPeriodDateRanges({
 }
 
 /**
- * Returns complete calendar periods so an average can use the same previous
- * range that users see when they navigate back in a history chart.
- */
-export function calculateFullPeriodDateRanges({
-  now = new Date(),
-  offset,
-  period,
-}: {
-  now?: Date;
-  offset: number;
-  period: HistoryPeriod;
-}): DateRanges {
-  return getFullPeriodDateRanges({ now, offset, period });
-}
-
-/**
  * Keeps cumulative metric comparisons fair while a calendar period is still
  * in progress by limiting the previous range to the same elapsed duration.
  */
@@ -188,22 +172,6 @@ export function calculateDateRanges(period: HistoryPeriod, offset: number): Date
   }
 
   return clampPreviousEnd(ranges, now);
-}
-
-export function getDefaultStartDate(startDateIso?: string): Date {
-  if (startDateIso) {
-    return new Date(startDateIso);
-  }
-
-  const now = new Date();
-
-  return new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS,
-    ),
-  );
 }
 
 export function formatPeriodLabel(

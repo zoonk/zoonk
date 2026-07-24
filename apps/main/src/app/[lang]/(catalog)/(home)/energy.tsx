@@ -15,6 +15,8 @@ import { FeatureCardIndicator, FeatureCardLink } from "@zoonk/ui/components/feat
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { getExtracted, getFormatter } from "next-intl/server";
 
+const HOME_ENERGY_LABEL_ID = "home-energy-label";
+
 export async function Energy({ energy }: { energy: number }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -26,11 +28,11 @@ export async function Energy({ energy }: { energy: number }) {
 
   return (
     <FeatureCardLink render={<Link href={energyMenu.url} prefetch />}>
-      <ProgressMetricCard aria-labelledby="home-energy-label" className="text-energy">
+      <ProgressMetricCard aria-labelledby={HOME_ENERGY_LABEL_ID} className="text-energy">
         <ProgressMetricCardIcon>
           <energyMenu.icon />
         </ProgressMetricCardIcon>
-        <ProgressMetricCardLabel id="home-energy-label">{t("Energy")}</ProgressMetricCardLabel>
+        <ProgressMetricCardLabel id={HOME_ENERGY_LABEL_ID}>{t("Energy")}</ProgressMetricCardLabel>
         <ProgressMetricCardTrailing>
           <FeatureCardIndicator />
         </ProgressMetricCardTrailing>

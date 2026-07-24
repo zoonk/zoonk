@@ -13,30 +13,34 @@ import { ScoreContent, ScoreContentSkeleton } from "./score-content";
 
 export const prefetch = "allow-runtime";
 
+/** Describes the fixed Score window consistently in browser and social metadata. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
-    description: t("Track your score over time and see your best days and times."),
+    description: t("See your answer accuracy and weekly trend over the past 90 days."),
     title: t("Score"),
   };
 }
 
-export default async function ScorePage({ searchParams }: PageProps<"/[lang]/score">) {
+/** Presents the rolling Score view in the same quiet width as Activity and Energy. */
+export default async function ScorePage() {
   const t = await getExtracted();
 
   return (
-    <Container variant="narrow">
+    <Container className="max-w-2xl lg:max-w-2xl" variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Score")}</ContainerTitle>
-          <ContainerDescription>{t("Track your score and progress trends")}</ContainerDescription>
+          <ContainerDescription>
+            {t("See how accurately you answer questions")}
+          </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
         <Suspense fallback={<ScoreContentSkeleton />}>
-          <ScoreContent searchParams={searchParams} />
+          <ScoreContent />
         </Suspense>
       </ContainerBody>
     </Container>

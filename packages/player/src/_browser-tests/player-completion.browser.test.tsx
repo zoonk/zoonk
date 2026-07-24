@@ -305,7 +305,7 @@ describe("player browser integration: completion", () => {
       .toHaveAttribute("href", "/level");
   });
 
-  it("shows a best-day milestone with a Score page link", async () => {
+  it("shows a best-day milestone with a Patterns page link", async () => {
     globalThis.sessionStorage.clear();
 
     const todayDayOfWeek = getCurrentLocalDayOfWeek();
@@ -334,8 +334,8 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
 
     await expect
-      .element(milestoneScreen.getByRole("link", { name: /learn about score/iu }))
-      .toHaveAttribute("href", "/score");
+      .element(milestoneScreen.getByRole("link", { name: /see your patterns/iu }))
+      .toHaveAttribute("href", "/patterns");
   });
 
   it("omits next lesson and level progress when optional lesson links are missing", async () => {

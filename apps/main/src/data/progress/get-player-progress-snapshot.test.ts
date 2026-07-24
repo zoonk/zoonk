@@ -49,6 +49,65 @@ describe("authenticated users", () => {
     });
   });
 
+  it("uses the same 90 learner-local dates as Score ahead of UTC", async () => {
+    const now = new Date("2026-07-23T12:30:00.000Z");
+    const user = await userFixture();
+
+    const requestHeaders = await signInAsCurrentUser({
+      email: user.email,
+      password: user.password,
+    });
+
+    requestHeaders.set("x-vercel-ip-timezone", "Pacific/Kiritimati");
+
+    await prisma.dailyProgress.createMany({
+      data: [
+        {
+          correctAnswers: 10,
+          date: new Date("2026-04-25T00:00:00.000Z"),
+          dayOfWeek: 6,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 1,
+          date: new Date("2026-04-26T00:00:00.000Z"),
+          dayOfWeek: 0,
+          userId: user.id,
+        },
+        {
+          brainPowerEarned: 42,
+          correctAnswers: 2,
+          date: new Date("2026-07-24T00:00:00.000Z"),
+          dayOfWeek: 5,
+          energyAtEnd: 87,
+          interactiveCompleted: 1,
+          staticCompleted: 2,
+          userId: user.id,
+        },
+        {
+          date: new Date("2026-07-25T00:00:00.000Z"),
+          dayOfWeek: 6,
+          incorrectAnswers: 10,
+          userId: user.id,
+        },
+      ],
+    });
+
+    const result = await getPlayerProgressSnapshot({ now });
+
+    expect(result?.bestDayScores).toStrictEqual([
+      { correctAnswers: 1, dayOfWeek: 0, incorrectAnswers: 0 },
+      { correctAnswers: 2, dayOfWeek: 5, incorrectAnswers: 0 },
+    ]);
+
+    expect(result).toMatchObject({
+      todayBrainPower: 42,
+      todayCompletedLessons: 3,
+      todayEnergyAtEnd: 87,
+      todayInteractiveLessons: 1,
+    });
+  });
+
   it("returns decayed energy, today progress, previous daily BP record, and full-energy days", async () => {
     const user = await userFixture();
     await signInAsCurrentUser({ email: user.email, password: user.password });

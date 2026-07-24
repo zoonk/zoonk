@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  type ScoredRow,
-  aggregateByPeriod,
-  aggregateScoreByPeriod,
-  findBestByScore,
-} from "./aggregation";
+import { type ScoredRow, aggregateByPeriod, findBestByScore } from "./aggregation";
 
 describe("aggregateByPeriod - week", () => {
   const dataPoints = [
@@ -78,61 +73,6 @@ describe("aggregateByPeriod - year", () => {
     const result = aggregateByPeriod(reversed, (point) => point.value, "sum", "year");
     const times = result.map((row) => row.date.getTime());
     expect(times).toStrictEqual([...times].toSorted((left, right) => left - right));
-  });
-});
-
-function calcScore(correct: number, incorrect: number) {
-  return (correct / (correct + incorrect)) * 100;
-}
-
-describe("aggregateScoreByPeriod - year", () => {
-  it("aggregates correct/incorrect by year and calculates score", () => {
-    const dataPoints = [
-      { correct: 8, date: new Date(Date.UTC(2025, 3, 10)), incorrect: 2 },
-      { correct: 6, date: new Date(Date.UTC(2025, 8, 20)), incorrect: 4 },
-      { correct: 9, date: new Date(Date.UTC(2026, 1, 5)), incorrect: 1 },
-    ];
-
-    const result = aggregateScoreByPeriod(dataPoints, calcScore, "year");
-
-    expect(result.map((row) => row.score)).toStrictEqual([
-      calcScore(14, 6), // 2025: 8+6=14 correct, 2+4=6 incorrect
-      calcScore(9, 1), // 2026: 9 correct, 1 incorrect
-    ]);
-  });
-});
-
-describe("aggregateScoreByPeriod - week", () => {
-  it("aggregates correct/incorrect by week and calculates score", () => {
-    const dataPoints = [
-      { correct: 8, date: new Date(Date.UTC(2026, 2, 2)), incorrect: 2 }, // Monday
-      { correct: 6, date: new Date(Date.UTC(2026, 2, 3)), incorrect: 4 }, // Tuesday (same week)
-      { correct: 9, date: new Date(Date.UTC(2026, 2, 9)), incorrect: 1 }, // Next Monday
-    ];
-
-    const result = aggregateScoreByPeriod(dataPoints, calcScore, "week");
-
-    expect(result.map((row) => row.score)).toStrictEqual([
-      calcScore(14, 6), // Week 1: 8+6=14 correct, 2+4=6 incorrect
-      calcScore(9, 1), // Week 2: 9 correct, 1 incorrect
-    ]);
-  });
-});
-
-describe("aggregateScoreByPeriod - month", () => {
-  it("aggregates correct/incorrect by month and calculates score", () => {
-    const dataPoints = [
-      { correct: 8, date: new Date(Date.UTC(2026, 0, 5)), incorrect: 2 },
-      { correct: 6, date: new Date(Date.UTC(2026, 0, 20)), incorrect: 4 },
-      { correct: 9, date: new Date(Date.UTC(2026, 1, 10)), incorrect: 1 },
-    ];
-
-    const result = aggregateScoreByPeriod(dataPoints, calcScore, "month");
-
-    expect(result.map((row) => row.score)).toStrictEqual([
-      calcScore(14, 6), // Jan
-      calcScore(9, 1), // Feb
-    ]);
   });
 });
 

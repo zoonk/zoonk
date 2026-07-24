@@ -48,6 +48,7 @@ describe("authenticated users", () => {
     expect(result).not.toBeNull();
     expect(result?.dayOfWeek).toBe(0); // Sunday
     expect(result?.score).toBe(90);
+    expect(result).toMatchObject({ correctAnswers: 18, incorrectAnswers: 2, totalAnswers: 20 });
   });
 
   it("excludes records older than 90 days", async () => {

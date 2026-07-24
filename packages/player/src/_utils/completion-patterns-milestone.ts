@@ -6,9 +6,9 @@ import {
   hasCompletedNewLearningDay,
 } from "./completion-milestone-thresholds";
 
-export type ScoreCompletionMilestone = {
+export type PatternsCompletionMilestone = {
   dayOfWeek: number;
-  kind: "score";
+  kind: "patterns";
   score: number;
   status: "bestDay";
 };
@@ -18,7 +18,7 @@ const MIN_BEST_DAY_LEARNING_DAYS = 5;
 /**
  * The best-day insight needs enough calendar history to be useful. Counting the
  * just-finished lesson keeps the milestone aligned with the post-save progress
- * the learner will see on the score page.
+ * the learner will see on the Patterns page.
  */
 function getPostCompletionLearningDays({
   progressSnapshot,
@@ -46,7 +46,7 @@ function hasEnoughLearningDaysForBestDayMilestone({
 
 /**
  * Applies the just-finished lesson to the weekday totals before ranking them.
- * The milestone appears before persistence finishes, but the linked score page
+ * The milestone appears before persistence finishes, but the linked Patterns page
  * will rank the saved totals, so the preview must include the current result.
  */
 function getUpdatedBestDayScore({
@@ -88,7 +88,7 @@ function getTodayScore({
 }
 
 /**
- * Builds the same weekday totals the score page will see after this completion
+ * Builds the same weekday totals the Patterns page will see after this completion
  * is saved, without mutating the server snapshot used by other milestones.
  */
 function getPostCompletionBestDayScores({
@@ -124,7 +124,7 @@ export function getBestDayMilestone({
   completion: CompletionProgress;
   localDate: string;
   progressSnapshot: PlayerProgressSnapshot | null;
-}): ScoreCompletionMilestone | null {
+}): PatternsCompletionMilestone | null {
   const bestDayScores = progressSnapshot?.bestDayScores;
 
   if (
@@ -147,5 +147,5 @@ export function getBestDayMilestone({
     return null;
   }
 
-  return { dayOfWeek: todayDayOfWeek, kind: "score", score: bestDay.score, status: "bestDay" };
+  return { dayOfWeek: todayDayOfWeek, kind: "patterns", score: bestDay.score, status: "bestDay" };
 }

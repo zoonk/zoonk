@@ -199,15 +199,15 @@ export function getReachedLearningTimeThreshold({
 }
 
 /**
- * Converts the score-page weekday aggregate into the shared score-row shape so
- * the player and score page rank best weekdays with the same utility.
+ * Converts the Patterns-page weekday aggregate into the shared score-row shape so
+ * the player and Patterns page rank best weekdays with the same utility.
  */
 function getBestDayScoreRow(score: BestDayScore): ScoredRow {
   return { correct: score.correctAnswers, incorrect: score.incorrectAnswers, key: score.dayOfWeek };
 }
 
 /**
- * Ranks weekday scores with the same tie-breaking rules as the score page so
+ * Ranks weekday scores with the same tie-breaking rules as the Patterns page so
  * the milestone never disagrees with the page linked from the screen.
  */
 export function getBestDayScore(bestDayScores: BestDayScore[]) {

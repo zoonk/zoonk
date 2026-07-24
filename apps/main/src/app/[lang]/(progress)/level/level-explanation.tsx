@@ -4,48 +4,41 @@ import {
   ExplanationText,
   ExplanationTitle,
 } from "@zoonk/ui/components/explanation";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 import { BrainIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
+/** Explains only the action and durable outcome a learner needs to understand levels. */
 export async function LevelExplanation() {
   const t = await getExtracted();
 
   return (
-    <div className="flex flex-col gap-5 border-t pt-6">
-      <Explanation className="gap-1">
-        <ExplanationHeader className="text-score">
+    <div className="border-t pt-6">
+      <Explanation>
+        <ExplanationHeader>
           <BrainIcon aria-hidden />
-          <ExplanationTitle>{t("What is Brain Power?")}</ExplanationTitle>
+          <ExplanationTitle>{t("How levels work")}</ExplanationTitle>
         </ExplanationHeader>
 
         <ExplanationText>
           {t(
-            "Brain Power (BP) is the total learning credit you have earned. Each completed lesson adds {brainPower} BP.",
+            "Complete lessons to earn {brainPower} BP. Brain Power never goes down, so every lesson moves you closer to the next level.",
             { brainPower: String(BRAIN_POWER_PER_LESSON) },
           )}
         </ExplanationText>
       </Explanation>
+    </div>
+  );
+}
 
-      <Explanation className="gap-1">
-        <ExplanationTitle>{t("How do I increase Brain Power?")}</ExplanationTitle>
-
-        <ExplanationText>
-          {t(
-            "Complete lessons. Brain Power never goes down, even when your Energy drops or you take a break.",
-          )}
-        </ExplanationText>
-      </Explanation>
-
-      <Explanation className="gap-1">
-        <ExplanationTitle>{t("Why is Brain Power important?")}</ExplanationTitle>
-
-        <ExplanationText>
-          {t(
-            "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to advance from white belt to black belt.",
-          )}
-        </ExplanationText>
-      </Explanation>
+/** Preserves the explanation's final footprint while its copy is loading. */
+export function LevelExplanationSkeleton() {
+  return (
+    <div className="flex flex-col gap-2 border-t pt-6">
+      <Skeleton className="h-4 w-32" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-4/5" />
     </div>
   );
 }

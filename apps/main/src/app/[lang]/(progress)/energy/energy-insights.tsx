@@ -13,6 +13,9 @@ import { GaugeIcon, ZapIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressInsightGrid } from "../_components/progress-insight-grid";
 
+const AVERAGE_ENERGY_LABEL_ID = "energy-average-label";
+const FULL_ENERGY_LABEL_ID = "energy-full-energy-label";
+
 /**
  * Energy insights answer two stable lifetime questions without repeating the
  * live value or introducing a date-control hierarchy.
@@ -39,11 +42,11 @@ async function FullEnergyCard({ count }: { count: number }) {
   const countLabel = await getProgressDayCountLabel({ count });
 
   return (
-    <ProgressMetricCard aria-labelledby="energy-full-energy-label" className="text-energy">
+    <ProgressMetricCard aria-labelledby={FULL_ENERGY_LABEL_ID} className="text-energy">
       <ProgressMetricCardIcon>
         <ZapIcon />
       </ProgressMetricCardIcon>
-      <ProgressMetricCardLabel id="energy-full-energy-label">
+      <ProgressMetricCardLabel id={FULL_ENERGY_LABEL_ID}>
         {t("Full energy")}
       </ProgressMetricCardLabel>
       <ProgressMetricCardValue>{countLabel}</ProgressMetricCardValue>
@@ -58,11 +61,11 @@ async function AverageEnergyCard({ averageEnergy }: { averageEnergy: number }) {
   const formattedAverage = formatMetricPercent({ format, value: averageEnergy });
 
   return (
-    <ProgressMetricCard aria-labelledby="energy-average-label" className="text-energy">
+    <ProgressMetricCard aria-labelledby={AVERAGE_ENERGY_LABEL_ID} className="text-energy">
       <ProgressMetricCardIcon>
         <GaugeIcon />
       </ProgressMetricCardIcon>
-      <ProgressMetricCardLabel id="energy-average-label">
+      <ProgressMetricCardLabel id={AVERAGE_ENERGY_LABEL_ID}>
         {t("Average Energy")}
       </ProgressMetricCardLabel>
       <ProgressMetricCardValue>{formattedAverage}</ProgressMetricCardValue>

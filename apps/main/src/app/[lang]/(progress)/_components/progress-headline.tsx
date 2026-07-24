@@ -1,8 +1,8 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
- * Groups the primary progress metric with its contextual label and optional
- * comparison while keeping the headline hierarchy consistent across pages.
+ * Groups the primary progress metric with its contextual label and supporting
+ * detail while keeping the headline hierarchy consistent across pages.
  */
 export function ProgressHeadline({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -29,26 +29,6 @@ export function ProgressHeadlineLabel({
     >
       {children}
     </span>
-  );
-}
-
-/**
- * Aligns the primary value with optional units or period comparisons on their
- * text baseline while allowing callers to compose either element freely.
- */
-export function ProgressHeadlineRow({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("flex items-baseline gap-3", className)}
-      data-slot="progress-headline-row"
-      {...props}
-    >
-      {children}
-    </div>
   );
 }
 

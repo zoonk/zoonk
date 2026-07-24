@@ -105,6 +105,7 @@ describe("authenticated users", () => {
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning
     expect(result?.score).toBe(90);
+    expect(result).toMatchObject({ correctAnswers: 9, incorrectAnswers: 1, totalAnswers: 10 });
   });
 
   it("excludes records older than 90 days", async () => {

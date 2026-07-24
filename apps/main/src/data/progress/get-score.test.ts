@@ -50,7 +50,7 @@ describe("authenticated users", () => {
     const result = await getScore();
 
     // Total: 25 correct, 5 incorrect = 25/30 = 83.33...%
-    expect(result).not.toBeNull();
+    expect(result).toMatchObject({ correctAnswers: 25, incorrectAnswers: 5, totalAnswers: 30 });
     expect(result?.score).toBeCloseTo(83.33, 1);
   });
 
@@ -84,8 +84,12 @@ describe("authenticated users", () => {
     const result = await getScore();
 
     // Should only count today's data: 10/10 = 100%
-    expect(result).not.toBeNull();
-    expect(result?.score).toBe(100);
+    expect(result).toStrictEqual({
+      correctAnswers: 10,
+      incorrectAnswers: 0,
+      score: 100,
+      totalAnswers: 10,
+    });
   });
 
   it("filters by custom date range when startDate and endDate are provided", async () => {
@@ -128,7 +132,11 @@ describe("authenticated users", () => {
     const result = await getScore({ endDate: now, startDate: oneWeekAgo });
 
     // Should include: now (10/10) + oneWeekAgo (5/10) = 15/20 = 75%
-    expect(result).not.toBeNull();
-    expect(result?.score).toBe(75);
+    expect(result).toStrictEqual({
+      correctAnswers: 15,
+      incorrectAnswers: 5,
+      score: 75,
+      totalAnswers: 20,
+    });
   });
 });

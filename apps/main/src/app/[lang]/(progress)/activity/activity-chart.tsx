@@ -30,6 +30,8 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { getProgressInsightDateFormatter } from "../_components/progress-insight-date-label";
 import { getActivityCalendarIntensity } from "./_utils/activity-calendar-intensity";
 
+const ACTIVITY_CHART_TITLE_ID = "activity-chart-title";
+
 const INTENSITY_CLASSES = [
   "bg-muted",
   "bg-info/20",
@@ -164,9 +166,9 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
   );
 
   return (
-    <ContributionCalendar aria-labelledby="activity-chart-title">
+    <ContributionCalendar aria-labelledby={ACTIVITY_CHART_TITLE_ID}>
       <ContributionCalendarCaption>
-        <ContributionCalendarTitle id="activity-chart-title">
+        <ContributionCalendarTitle id={ACTIVITY_CHART_TITLE_ID}>
           {t("Learning activity")}
         </ContributionCalendarTitle>
         <ContributionCalendarDescription>{t("Past 12 months")}</ContributionCalendarDescription>

@@ -382,7 +382,7 @@ describe(getCompletionMilestones, () => {
 
     expect(milestones).toContainEqual({
       dayOfWeek: 1,
-      kind: "score",
+      kind: "patterns",
       score: 90,
       status: "bestDay",
     });
@@ -408,7 +408,7 @@ describe(getCompletionMilestones, () => {
 
     expect(milestones).toContainEqual({
       dayOfWeek: 1,
-      kind: "score",
+      kind: "patterns",
       score: 100,
       status: "bestDay",
     });
@@ -437,7 +437,7 @@ describe(getCompletionMilestones, () => {
 
     expect(milestones).not.toContainEqual({
       dayOfWeek: 1,
-      kind: "score",
+      kind: "patterns",
       score: 100,
       status: "bestDay",
     });
@@ -464,7 +464,7 @@ describe(getCompletionMilestones, () => {
 
     expect(milestones).not.toContainEqual({
       dayOfWeek: 1,
-      kind: "score",
+      kind: "patterns",
       score: 90,
       status: "bestDay",
     });
@@ -490,7 +490,7 @@ describe(getCompletionMilestones, () => {
 
     expect(milestones).not.toContainEqual({
       dayOfWeek: 1,
-      kind: "score",
+      kind: "patterns",
       score: 90,
       status: "bestDay",
     });
@@ -516,7 +516,7 @@ describe(getCompletionMilestones, () => {
 
     expect(milestones).not.toContainEqual({
       dayOfWeek: 1,
-      kind: "score",
+      kind: "patterns",
       score: 90,
       status: "bestDay",
     });
@@ -542,7 +542,7 @@ describe(getCompletionMilestones, () => {
 
     expect(milestones).toContainEqual({
       dayOfWeek: 1,
-      kind: "score",
+      kind: "patterns",
       score: 90,
       status: "bestDay",
     });

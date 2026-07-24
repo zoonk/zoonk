@@ -194,15 +194,25 @@ msgctxt "wm_M34"
 msgid "Review Chapter"
 msgstr "Repasar capítulo"
 
+#: src/components/completion-patterns-milestone.tsx
+msgctxt "e6_3Ke"
+msgid "{day} is your best day"
+msgstr "{day} es tu mejor día"
+
+#: src/components/completion-patterns-milestone.tsx
+msgctxt "PTQ0ah"
+msgid "You usually get {percentage} of answers right on {day}, your highest average of the week."
+msgstr "Sueles acertar el {percentage} de las respuestas los {day}, tu promedio más alto de la semana."
+
 #: src/components/completion-progress-milestone-screen.tsx
 msgctxt "iSioEh"
 msgid "Learn about Energy"
 msgstr "Aprende sobre Energía"
 
 #: src/components/completion-progress-milestone-screen.tsx
-msgctxt "DC0WoT"
-msgid "Learn about Score"
-msgstr "Aprende sobre la puntuación"
+msgctxt "DMgJa5"
+msgid "See your patterns"
+msgstr "Descubre tus patrones"
 
 #: src/components/completion-progress-milestone-screen.tsx
 msgctxt "Q0R3MU"
@@ -214,16 +224,6 @@ msgstr "Aprende sobre los niveles"
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
-
-#: src/components/completion-score-milestone.tsx
-msgctxt "e6_3Ke"
-msgid "{day} is your best day"
-msgstr "{day} es tu mejor día"
-
-#: src/components/completion-score-milestone.tsx
-msgctxt "PTQ0ah"
-msgid "You usually get {percentage} of answers right on {day}, your highest average of the week."
-msgstr "Sueles acertar el {percentage} de las respuestas los {day}, tu promedio más alto de la semana."
 
 #: src/components/completion-screen.tsx
 msgctxt "95stPq"

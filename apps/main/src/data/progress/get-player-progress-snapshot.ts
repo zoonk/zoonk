@@ -3,10 +3,11 @@ import { getUserProgressCacheTag } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
 import { hasUserLearningProgress } from "@zoonk/core/progress/user-progress";
 import { type UserProgress, prisma } from "@zoonk/db";
-import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/date-ranges";
-import { computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
+import { computeDecayedEnergy } from "@zoonk/utils/energy";
 import { safeAsync } from "@zoonk/utils/error";
 import { cacheTag } from "next/cache";
+import { resolveScoreDateRange } from "./_utils/resolve-score-date-range";
+import { type ScoreDateRange } from "./_utils/score-date-range";
 import { getTotalLearningDays } from "./get-total-learning-days";
 import { getTotalLearningTime } from "./get-total-learning-time";
 import { getUserProgress } from "./get-user-progress";
@@ -46,11 +47,19 @@ type PlayerProgressSnapshot = {
   totalLearningSeconds: number;
 };
 
-type PlayerProgressQueryInput = { bestDayStartDate: Date; today: Date; userId: string };
+type PlayerProgressQueryInput = {
+  bestDayRange: ScoreDateRange["dailyProgress"];
+  today: Date;
+  userId: string;
+};
 
 type PlayerProgressSnapshotParams = { now?: Date };
 
-type PlayerProgressDates = { bestDayStartDate: Date; now: Date; today: Date };
+type PlayerProgressDates = {
+  bestDayRange: ScoreDateRange["dailyProgress"];
+  now: Date;
+  today: Date;
+};
 
 type PlayerProgressQueryData = {
   bestDayScores: BestDayScore[];
@@ -73,37 +82,20 @@ function getCurrentEnergy({ now, progress }: { now: Date; progress: PlayerProgre
 }
 
 /**
- * The score page uses a rolling 90-day default for best-day insights. The
- * player receives the same window, based on the injected test clock, so a
- * milestone and the page it links to agree on the learner's strongest weekday.
+ * Reuses Score's request-timezone-aware date contract so the player milestone
+ * and the Patterns page consider the same 90 learner-local dates. The range's
+ * current instant also keeps Energy decay on the same captured clock.
  */
-function getBestDayStartDate(now: Date) {
-  return new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS,
-    ),
-  );
-}
+async function resolvePlayerProgressDates(
+  params: PlayerProgressSnapshotParams,
+): Promise<PlayerProgressDates> {
+  const range = await resolveScoreDateRange(params);
 
-/**
- * Derives every player calendar boundary from one timestamp so daily progress,
- * best-day insights, and Energy decay cannot disagree at a UTC day boundary.
- */
-function toPlayerProgressDates(now: Date): PlayerProgressDates {
-  return { bestDayStartDate: getBestDayStartDate(now), now, today: toUTCMidnight(now) };
-}
-
-/**
- * Captures the approximate player calendar once per default cache window.
- * Keeping this producer in the player domain makes its freshness semantics
- * explicit and prevents unrelated features from depending on a shared clock.
- */
-async function getPlayerProgressDates(): Promise<PlayerProgressDates> {
-  "use cache";
-
-  return toPlayerProgressDates(new Date());
+  return {
+    bestDayRange: range.dailyProgress,
+    now: range.stepAttempts.endDate,
+    today: range.dailyProgress.endDate,
+  };
 }
 
 /**
@@ -176,7 +168,7 @@ function buildPlayerProgressSnapshot({
  * request state and can be shared by prefetched and rendered routes.
  */
 async function queryPlayerProgressSnapshot({
-  bestDayStartDate,
+  bestDayRange,
   today,
   userId,
 }: PlayerProgressQueryInput): Promise<PlayerProgressQueryData> {
@@ -195,7 +187,7 @@ async function queryPlayerProgressSnapshot({
       _sum: { correctAnswers: true, incorrectAnswers: true },
       by: ["dayOfWeek"],
       orderBy: { dayOfWeek: "asc" },
-      where: { date: { gte: bestDayStartDate }, userId },
+      where: { date: { gte: bestDayRange.startDate, lte: bestDayRange.endDate }, userId },
     }),
   ]);
 
@@ -224,11 +216,7 @@ async function loadPlayerProgressSnapshot({
   userId: string;
 }): Promise<PlayerProgressSnapshot> {
   const [queryData, progress, learningDaysData, learningTimeData] = await Promise.all([
-    queryPlayerProgressSnapshot({
-      bestDayStartDate: dates.bestDayStartDate,
-      today: dates.today,
-      userId,
-    }),
+    queryPlayerProgressSnapshot({ bestDayRange: dates.bestDayRange, today: dates.today, userId }),
     getUserProgress(),
     getTotalLearningDays(),
     getTotalLearningTime(),
@@ -251,13 +239,12 @@ export async function getPlayerProgressSnapshot(
   params: PlayerProgressSnapshotParams = {},
 ): Promise<PlayerProgressSnapshot | null> {
   const { data } = await safeAsync(async () => {
-    const session = await getSession();
+    const [session, dates] = await Promise.all([getSession(), resolvePlayerProgressDates(params)]);
 
     if (!session) {
       return null;
     }
 
-    const dates = params.now ? toPlayerProgressDates(params.now) : await getPlayerProgressDates();
     return loadPlayerProgressSnapshot({ dates, userId: session.user.id });
   });
 

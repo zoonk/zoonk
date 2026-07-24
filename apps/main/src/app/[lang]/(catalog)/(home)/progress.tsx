@@ -16,6 +16,8 @@ import { LearningTime, LearningTimeSkeleton } from "./learning-time";
 import { Level, LevelSkeleton } from "./level";
 import { Score, ScoreSkeleton } from "./score";
 
+const PROGRESS_TITLE_ID = "progress-title";
+
 export async function Progress() {
   const t = await getExtracted();
 
@@ -30,8 +32,8 @@ export async function Progress() {
     ]);
 
   return (
-    <section aria-labelledby="progress-title" className="flex flex-col gap-3 py-4 md:py-6">
-      <FeatureCardSectionTitle className="px-4" id="progress-title">
+    <section aria-labelledby={PROGRESS_TITLE_ID} className="flex flex-col gap-3 py-4 md:py-6">
+      <FeatureCardSectionTitle className="px-4" id={PROGRESS_TITLE_ID}>
         {t("Progress")}
       </FeatureCardSectionTitle>
 

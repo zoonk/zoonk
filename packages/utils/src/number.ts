@@ -9,8 +9,6 @@ export function sumOf(values: number[]): number {
 
 type LocalizedNumberOptions = {
   maximumFractionDigits?: number;
-  notation?: "compact";
-  signDisplay?: "always";
   style?: "percent";
   trailingZeroDisplay?: "stripIfInteger";
 };
@@ -19,17 +17,10 @@ export type LocalizedNumberFormatter = {
   number: (value: number | bigint, options?: LocalizedNumberOptions) => string;
 };
 
-const COMPACT_NUMBER_OPTIONS = { notation: "compact" } satisfies LocalizedNumberOptions;
-
 const METRIC_PERCENT_OPTIONS = {
   maximumFractionDigits: 1,
   style: "percent",
   trailingZeroDisplay: "stripIfInteger",
-} satisfies LocalizedNumberOptions;
-
-const SIGNED_METRIC_PERCENT_OPTIONS = {
-  ...METRIC_PERCENT_OPTIONS,
-  signDisplay: "always",
 } satisfies LocalizedNumberOptions;
 
 /**
@@ -58,32 +49,4 @@ export function formatMetricPercent({
   value: number;
 }): string {
   return format.number(value / 100, METRIC_PERCENT_OPTIONS);
-}
-
-/**
- * Formats metric comparisons stored as percentage-point deltas while preserving
- * the explicit sign that makes gains and drops easy to scan.
- */
-export function formatSignedMetricPercent({
-  format,
-  value,
-}: {
-  format: LocalizedNumberFormatter;
-  value: number;
-}): string {
-  return format.number(value / 100, SIGNED_METRIC_PERCENT_OPTIONS);
-}
-
-/**
- * Formats large chart-axis values compactly through the active locale, so
- * thousands and millions fit in tight axes without hard-coding English suffixes.
- */
-export function formatCompactNumber({
-  format,
-  value,
-}: {
-  format: LocalizedNumberFormatter;
-  value: number;
-}): string {
-  return format.number(value, COMPACT_NUMBER_OPTIONS);
 }
