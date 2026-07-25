@@ -1,3 +1,4 @@
+import { MAX_ENERGY } from "@zoonk/core/progress/energy";
 import {
   ProgressIndicator,
   ProgressLabel,
@@ -9,8 +10,6 @@ import { formatMetricPercent } from "@zoonk/utils/number";
 import { BatteryChargingIcon, BatteryFullIcon } from "lucide-react";
 import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 
-const MAXIMUM_ENERGY = 100;
-
 /** Turns the live Energy value into a clear, accessible path toward the 100% goal. */
 export async function EnergyStats({ currentEnergy }: { currentEnergy: number }) {
   const t = await getExtracted();
@@ -18,7 +17,7 @@ export async function EnergyStats({ currentEnergy }: { currentEnergy: number }) 
   const locale = await getLocale();
 
   const formattedCurrentEnergy = formatMetricPercent({ format, value: currentEnergy });
-  const isFullEnergy = currentEnergy >= MAXIMUM_ENERGY;
+  const isFullEnergy = currentEnergy >= MAX_ENERGY;
   const EnergyStatusIcon = isFullEnergy ? BatteryFullIcon : BatteryChargingIcon;
 
   return (
@@ -26,7 +25,7 @@ export async function EnergyStats({ currentEnergy }: { currentEnergy: number }) 
       aria-valuetext={formattedCurrentEnergy}
       className="flex-col gap-4"
       locale={locale}
-      max={MAXIMUM_ENERGY}
+      max={MAX_ENERGY}
       value={currentEnergy}
     >
       <div className="flex w-full items-end justify-between gap-4">

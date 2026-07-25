@@ -2,13 +2,36 @@ import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { openDialog } from "@zoonk/e2e/fixtures/dialog";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { mockFeedbackSubmission } from "./feedback";
-import { expect, test } from "./fixtures";
+import { test as baseTest, expect } from "./fixtures";
+
+/**
+ * Completing the feedback lesson mutates learner progress, so every test owns
+ * its user instead of changing the worker-scoped user used by read-only tests.
+ */
+const test = baseTest.extend<{ feedbackPage: Page; feedbackUser: E2EUser }>({
+  feedbackPage: async ({ browser, feedbackUser }, use) => {
+    const context = await browser.newContext({ storageState: feedbackUser.storageState });
+    const page = await context.newPage();
+
+    try {
+      await use(page);
+    } finally {
+      await context.close();
+    }
+  },
+
+  feedbackUser: async ({ baseURL }, use) => {
+    const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
+    await use(user);
+  },
+});
 
 /**
  * Creates a one-step quiz because content feedback now appears on the lesson
@@ -106,13 +129,13 @@ async function openFeedbackDialog(page: Page) {
 }
 
 test.describe("Content Feedback", () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
-    await openCompletedLessonFeedback(authenticatedPage);
+  test.beforeEach(async ({ feedbackPage }) => {
+    await openCompletedLessonFeedback(feedbackPage);
   });
 
-  test("clicking feedback button marks it as pressed", async ({ authenticatedPage }) => {
-    const thumbsUp = authenticatedPage.getByRole("button", { name: /i liked it/iu });
-    const thumbsDown = authenticatedPage.getByRole("button", { name: /i didn't like it/iu });
+  test("clicking feedback button marks it as pressed", async ({ feedbackPage }) => {
+    const thumbsUp = feedbackPage.getByRole("button", { name: /i liked it/iu });
+    const thumbsDown = feedbackPage.getByRole("button", { name: /i didn't like it/iu });
 
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
     await expect(thumbsDown).toHaveAttribute("aria-pressed", "false");
@@ -126,9 +149,9 @@ test.describe("Content Feedback", () => {
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
   });
 
-  test("submit with valid data shows success message", async ({ authenticatedPage }) => {
-    const feedbackSubmission = await mockFeedbackSubmission(authenticatedPage);
-    const dialog = await openFeedbackDialog(authenticatedPage);
+  test("submit with valid data shows success message", async ({ feedbackPage }) => {
+    const feedbackSubmission = await mockFeedbackSubmission(feedbackPage);
+    const dialog = await openFeedbackDialog(feedbackPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
@@ -150,8 +173,8 @@ test.describe("Content Feedback", () => {
     });
   });
 
-  test("submit with invalid email shows validation error", async ({ authenticatedPage }) => {
-    const dialog = await openFeedbackDialog(authenticatedPage);
+  test("submit with invalid email shows validation error", async ({ feedbackPage }) => {
+    const dialog = await openFeedbackDialog(feedbackPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
@@ -169,8 +192,8 @@ test.describe("Content Feedback", () => {
     await expect(emailInput).toBeFocused();
   });
 
-  test("submit failure shows error message", async ({ authenticatedPage }) => {
-    const dialog = await openFeedbackDialog(authenticatedPage);
+  test("submit failure shows error message", async ({ feedbackPage }) => {
+    const dialog = await openFeedbackDialog(feedbackPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
@@ -189,19 +212,16 @@ test.describe("Content Feedback", () => {
 });
 
 test.describe("Content Feedback - Authenticated", () => {
-  test("email field shows authenticated user's email", async ({
-    authenticatedPage,
-    withProgressUser,
-  }) => {
-    await openCompletedLessonFeedback(authenticatedPage);
-    const dialog = await openFeedbackDialog(authenticatedPage);
+  test("email field shows authenticated user's email", async ({ feedbackPage, feedbackUser }) => {
+    await openCompletedLessonFeedback(feedbackPage);
+    const dialog = await openFeedbackDialog(feedbackPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
 
     await expect(emailInput).toBeEnabled();
 
     await expect(emailInput).toHaveValue(
-      new RegExp(withProgressUser.email.replaceAll(/[.]/gu, String.raw`\.`), "u"),
+      new RegExp(feedbackUser.email.replaceAll(/[.]/gu, String.raw`\.`), "u"),
     );
   });
 });

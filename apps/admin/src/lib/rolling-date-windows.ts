@@ -1,4 +1,4 @@
-import { toUTCMidnight } from "@zoonk/utils/energy";
+import { toUTCMidnight } from "@zoonk/utils/date";
 
 /**
  * Admin rolling metrics use date-only database rows, so their boundaries must

@@ -1,4 +1,4 @@
-import { type EnergyHistoryDay } from "@/data/progress/get-energy-history";
+import { type EnergyDay } from "@zoonk/core/progress/energy";
 import {
   ContributionCalendar,
   ContributionCalendarCaption,
@@ -42,7 +42,7 @@ const ENERGY_INTENSITY_CLASSES = [
   "bg-energy",
 ] as const;
 
-type EnergyCalendarDay = EnergyHistoryDay & {
+type EnergyCalendarDay = EnergyDay & {
   accessibleLabel: string;
   intensityClass: (typeof ENERGY_INTENSITY_CLASSES)[number];
   tabIndex: -1 | 0;
@@ -60,7 +60,7 @@ function getEnergyCalendarDay({
   keyboardStartDate,
 }: {
   accessibleLabel: string;
-  day: EnergyHistoryDay;
+  day: EnergyDay;
   keyboardStartDate: Date | null;
 }): EnergyCalendarDay {
   const intensityClass =
@@ -125,7 +125,7 @@ function EnergyCalendarWeekColumn({ week }: { week: EnergyCalendarWeek }) {
  * Energy dates use the same date-only UTC convention as DailyProgress, keeping
  * learner-local calendar dates stable while labels are localized.
  */
-export async function EnergyChart({ days }: { days: EnergyHistoryDay[] }) {
+export async function EnergyChart({ days }: { days: EnergyDay[] }) {
   const t = await getExtracted();
   const format = await getFormatter();
   const locale = await getLocale();

@@ -3,12 +3,27 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
+import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { parseLocalDate } from "@zoonk/utils/date";
-import { beforeAll, describe, expect, it } from "vitest";
-import { submitLessonCompletion } from "./submit-lesson-completion";
+import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { getPlayerProgressSnapshot } from "../queries/get-progress-snapshot";
+import { submitLessonCompletion as persistLessonCompletion } from "./submit-lesson-completion";
+
+type SubmitLessonCompletionInput = Parameters<typeof persistLessonCompletion>[0];
+
+type TestSubmitLessonCompletionInput = Omit<SubmitLessonCompletionInput, "timeZone"> & {
+  timeZone?: string;
+};
+
+/**
+ * Existing command tests use UTC unless they are proving a timezone boundary.
+ * Production always supplies the validated browser timezone explicitly.
+ */
+function submitLessonCompletion({ timeZone = "UTC", ...input }: TestSubmitLessonCompletionInput) {
+  return persistLessonCompletion({ ...input, timeZone });
+}
 
 function todayLocalDate(): string {
   const now = new Date();
@@ -63,6 +78,10 @@ describe(submitLessonCompletion, () => {
     });
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("creates StepAttempt records with correct fields", async () => {
     const user = await userFixture();
     const userId = user.id;
@@ -70,8 +89,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -94,8 +111,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 15,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
       stepResults: [stepResult(true)],
@@ -134,7 +149,6 @@ describe(submitLessonCompletion, () => {
       submitLessonCompletion({
         durationSeconds: 10,
         lessonId: draftLesson.id,
-        localDate: todayLocalDate(),
         score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
         startedAt: new Date(Date.now() - 10_000),
         stepResults: [],
@@ -196,7 +210,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 15,
       lessonId: secondLesson.id,
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
       stepResults: [stepResult(true)],
@@ -252,7 +265,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 15,
       lessonId: finalLesson.id,
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
       stepResults: [stepResult(true)],
@@ -322,7 +334,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 15,
       lessonId: finalChapterLesson.id,
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
       stepResults: [stepResult(true)],
@@ -362,8 +373,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -377,7 +386,7 @@ describe(submitLessonCompletion, () => {
     expect(userProgress?.currentEnergy).toBeCloseTo(0.2);
   });
 
-  it("does not fill decay gaps for a zeroed UserProgress placeholder", async () => {
+  it("creates the first Energy cursor without decaying a zeroed placeholder", async () => {
     const user = await userFixture();
     const userId = user.id;
     const localDate = todayLocalDate();
@@ -393,8 +402,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -411,6 +418,34 @@ describe(submitLessonCompletion, () => {
     expect(dailyRecords[0]?.energyAtEnd).toBeCloseTo(0.2);
   });
 
+  it("starts Energy at zero when an orphaned UserProgress has no daily cursor", async () => {
+    const user = await userFixture();
+
+    await userProgressFixture({
+      currentEnergy: 75,
+      lastActiveAt: new Date("2026-01-01T00:00:00Z"),
+      totalBrainPower: 100n,
+      userId: user.id,
+    });
+
+    await submitLessonCompletion({
+      durationSeconds: 10,
+      lessonId: lesson.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId: user.id,
+    });
+
+    const [dailyProgress, userProgress] = await Promise.all([
+      prisma.dailyProgress.findFirstOrThrow({ where: { userId: user.id } }),
+      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+    ]);
+
+    expect(dailyProgress.energyAtEnd).toBeCloseTo(0.2);
+    expect(userProgress.currentEnergy).toBeCloseTo(0.2);
+  });
+
   it("creates DailyProgress with correct counters", async () => {
     const user = await userFixture();
     const userId = user.id;
@@ -418,8 +453,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 3, energyDelta: 0.4, incorrectCount: 2 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -438,15 +471,27 @@ describe(submitLessonCompletion, () => {
   });
 
   it("energy clamps at 100", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-12T12:00:00Z"));
+
     const user = await userFixture();
     const userId = user.id;
-    await userProgressFixture({ currentEnergy: 99.5, lastActiveAt: new Date(), userId });
+
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 99.5, lastActiveAt: new Date(), userId }),
+      dailyProgressFixtureMany([
+        {
+          date: new Date("2026-07-12T00:00:00Z"),
+          energyAtEnd: 99.5,
+          interactiveCompleted: 1,
+          userId,
+        },
+      ]),
+    ]);
 
     const result = await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -459,15 +504,27 @@ describe(submitLessonCompletion, () => {
   });
 
   it("energy clamps at 0", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-12T12:00:00Z"));
+
     const user = await userFixture();
     const userId = user.id;
-    await userProgressFixture({ currentEnergy: 0.05, lastActiveAt: new Date(), userId });
+
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 0.05, lastActiveAt: new Date(), userId }),
+      dailyProgressFixtureMany([
+        {
+          date: new Date("2026-07-12T00:00:00Z"),
+          energyAtEnd: 0.05,
+          interactiveCompleted: 1,
+          userId,
+        },
+      ]),
+    ]);
 
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 0, energyDelta: -0.5, incorrectCount: 5 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(false)],
@@ -478,6 +535,50 @@ describe(submitLessonCompletion, () => {
     expect(userProgress?.currentEnergy).toBe(0);
   });
 
+  it("floors inactivity decay at zero before applying the completion score", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-12T12:00:00Z"));
+
+    const user = await userFixture();
+
+    await Promise.all([
+      userProgressFixture({
+        currentEnergy: 1,
+        lastActiveAt: new Date("2026-07-08T12:00:00Z"),
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([
+        {
+          date: new Date("2026-07-08T00:00:00Z"),
+          energyAtEnd: 1,
+          interactiveCompleted: 1,
+          userId: user.id,
+        },
+      ]),
+    ]);
+
+    await submitLessonCompletion({
+      durationSeconds: 10,
+      lessonId: lesson.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date("2026-07-12T11:59:50Z"),
+      stepResults: [stepResult(true)],
+      userId: user.id,
+    });
+
+    const [progress, rows] = await Promise.all([
+      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+      prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId: user.id } }),
+    ]);
+
+    expect(progress.currentEnergy).toBeCloseTo(0.2);
+
+    expect(rows.map(({ date, energyAtEnd }) => ({ date, energyAtEnd }))).toStrictEqual([
+      { date: new Date("2026-07-08T00:00:00Z"), energyAtEnd: 1 },
+      { date: new Date("2026-07-12T00:00:00Z"), energyAtEnd: 0.2 },
+    ]);
+  });
+
   it("re-completion: new StepAttempts, updated BP", async () => {
     const user = await userFixture();
     const userId = user.id;
@@ -485,8 +586,6 @@ describe(submitLessonCompletion, () => {
     const baseInput = {
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -510,8 +609,6 @@ describe(submitLessonCompletion, () => {
     const baseInput = {
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -549,8 +646,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 5,
       lessonId: staticLesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 5000),
       stepResults: [],
@@ -571,8 +666,6 @@ describe(submitLessonCompletion, () => {
     const result = await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -593,8 +686,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -611,7 +702,7 @@ describe(submitLessonCompletion, () => {
     expect(courseAfter.userCount).toBe(courseBefore.userCount);
   });
 
-  it("1-day gap: no decay, no gap records", async () => {
+  it("does not decay between consecutive activity dates", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -622,15 +713,18 @@ describe(submitLessonCompletion, () => {
       Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
     );
 
-    const yesterday = new Date(todayMidnight.getTime() - 86_400_000);
+    const yesterday = new Date(todayMidnight.getTime() - MS_PER_DAY);
 
-    await userProgressFixture({ currentEnergy: 50, lastActiveAt: yesterday, userId });
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 50, lastActiveAt: yesterday, userId }),
+      dailyProgressFixtureMany([
+        { date: yesterday, energyAtEnd: 50, interactiveCompleted: 1, userId },
+      ]),
+    ]);
 
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -645,9 +739,11 @@ describe(submitLessonCompletion, () => {
       where: { userId },
     });
 
-    expect(dailyRecords).toHaveLength(1);
-    expect(dailyRecords[0]?.date).toStrictEqual(parseLocalDate(todayLocalDate()));
-    expect(dailyRecords[0]?.energyAtEnd).toBeCloseTo(50.2);
+    expect(dailyRecords).toHaveLength(2);
+    expect(dailyRecords[0]?.date).toStrictEqual(yesterday);
+    expect(dailyRecords[0]?.energyAtEnd).toBe(50);
+    expect(dailyRecords[1]?.date).toStrictEqual(parseLocalDate(todayLocalDate()));
+    expect(dailyRecords[1]?.energyAtEnd).toBeCloseTo(50.2);
   });
 
   it("completes a pre-started record: sets completedAt and durationSeconds, preserves startedAt", async () => {
@@ -666,8 +762,6 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion({
       durationSeconds: 20,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 20_000),
       stepResults: [stepResult(true)],
@@ -684,118 +778,7 @@ describe(submitLessonCompletion, () => {
     expect(progress?.startedAt).toStrictEqual(startRecord?.startedAt);
   });
 
-  it("stores the learner-local date on daily and lesson progress", async () => {
-    const user = await userFixture();
-    const userId = user.id;
-
-    // Use yesterday's date so it's always within the ±48h drift window
-    // but different from today to prove we use localDate, not server UTC.
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const year = yesterday.getUTCFullYear();
-    const month = String(yesterday.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(yesterday.getUTCDate()).padStart(2, "0");
-    const localDate = `${year}-${month}-${day}`;
-
-    await submitLessonCompletion({
-      durationSeconds: 10,
-      lessonId: lesson.id,
-
-      localDate,
-      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    });
-
-    const [daily, lessonProgress] = await Promise.all([
-      prisma.dailyProgress.findFirst({ where: { userId } }),
-      prisma.lessonProgress.findUnique({ where: { userLesson: { lessonId: lesson.id, userId } } }),
-    ]);
-
-    expect(daily).not.toBeNull();
-
-    const expectedLocalDate = new Date(
-      Date.UTC(yesterday.getUTCFullYear(), yesterday.getUTCMonth(), yesterday.getUTCDate()),
-    );
-
-    expect(daily?.date).toStrictEqual(expectedLocalDate);
-    expect(lessonProgress?.completedDate).toStrictEqual(expectedLocalDate);
-  });
-
-  it("rejects localDate too far in the future", async () => {
-    const user = await userFixture();
-    const userId = user.id;
-
-    await expect(
-      submitLessonCompletion({
-        durationSeconds: 10,
-        lessonId: lesson.id,
-
-        localDate: "9999-12-31",
-        score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
-        startedAt: new Date(Date.now() - 10_000),
-        stepResults: [stepResult(true)],
-        userId,
-      }),
-    ).rejects.toThrow("localDate is too far from server time");
-  });
-
-  it("rejects localDate too far in the past", async () => {
-    const user = await userFixture();
-    const userId = user.id;
-
-    await expect(
-      submitLessonCompletion({
-        durationSeconds: 10,
-        lessonId: lesson.id,
-
-        localDate: "2020-01-01",
-        score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
-        startedAt: new Date(Date.now() - 10_000),
-        stepResults: [stepResult(true)],
-        userId,
-      }),
-    ).rejects.toThrow("localDate is too far from server time");
-  });
-
-  it("decay uses localDate so gaps and energy stay consistent", async () => {
-    const user = await userFixture();
-    const userId = user.id;
-
-    const localDate = todayLocalDate();
-    const todayMs = parseLocalDate(localDate).getTime();
-    const fiveDaysBefore = new Date(todayMs - 5 * 86_400_000);
-
-    await userProgressFixture({ currentEnergy: 50, lastActiveAt: fiveDaysBefore, userId });
-
-    await submitLessonCompletion({
-      durationSeconds: 10,
-      lessonId: lesson.id,
-
-      localDate,
-      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    });
-
-    // 5 day gap → 4 inactive days → decay=4 → base=46, +0.2 → 46.2
-    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
-    expect(userProgress?.currentEnergy).toBeCloseTo(46.2);
-
-    const dailyRecords = await prisma.dailyProgress.findMany({
-      orderBy: { date: "asc" },
-      where: { userId },
-    });
-
-    expect(dailyRecords).toHaveLength(5);
-    expect(dailyRecords[0]?.energyAtEnd).toBe(49);
-    expect(dailyRecords[3]?.energyAtEnd).toBe(46);
-    expect(dailyRecords[4]?.date).toStrictEqual(parseLocalDate(localDate));
-    expect(dailyRecords[4]?.energyAtEnd).toBeCloseTo(46.2);
-  });
-
-  it("applies decay and fills DailyProgress gaps for inactive days", async () => {
+  it("applies decay without creating DailyProgress rows for inactive days", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -805,15 +788,18 @@ describe(submitLessonCompletion, () => {
       Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
     );
 
-    const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
+    const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * MS_PER_DAY);
 
-    await userProgressFixture({ currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId });
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId }),
+      dailyProgressFixtureMany([
+        { date: fiveDaysAgo, energyAtEnd: 50, interactiveCompleted: 1, userId },
+      ]),
+    ]);
 
     await submitLessonCompletion({
       durationSeconds: 10,
       lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -829,14 +815,225 @@ describe(submitLessonCompletion, () => {
       where: { userId },
     });
 
-    expect(dailyRecords).toHaveLength(5);
+    expect(dailyRecords.map(({ date, energyAtEnd }) => ({ date, energyAtEnd }))).toStrictEqual([
+      { date: fiveDaysAgo, energyAtEnd: 50 },
+      { date: parseLocalDate(todayLocalDate()), energyAtEnd: 46.2 },
+    ]);
+  });
 
-    // Decay records: energy decreases by 1 each day
-    expect(dailyRecords[0]?.energyAtEnd).toBe(49);
-    expect(dailyRecords[1]?.energyAtEnd).toBe(48);
-    expect(dailyRecords[2]?.energyAtEnd).toBe(47);
-    expect(dailyRecords[3]?.energyAtEnd).toBe(46);
-    expect(dailyRecords[4]?.date).toStrictEqual(parseLocalDate(todayLocalDate()));
-    expect(dailyRecords[4]?.energyAtEnd).toBeCloseTo(46.2);
+  it("uses the server-derived local date when the learner is west of UTC", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-13T02:00:00Z"));
+
+    const user = await userFixture();
+
+    await Promise.all([
+      userProgressFixture({
+        currentEnergy: 50,
+        lastActiveAt: new Date("2026-07-11T06:30:00Z"),
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([
+        {
+          date: new Date("2026-07-10T00:00:00Z"),
+          energyAtEnd: 50,
+          interactiveCompleted: 1,
+          userId: user.id,
+        },
+      ]),
+    ]);
+
+    await submitLessonCompletion({
+      durationSeconds: 10,
+      lessonId: lesson.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date("2026-07-13T01:59:50Z"),
+      stepResults: [stepResult(true)],
+      timeZone: "America/Los_Angeles",
+      userId: user.id,
+    });
+
+    const [progress, rows] = await Promise.all([
+      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+      prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId: user.id } }),
+    ]);
+
+    expect(progress.currentEnergy).toBeCloseTo(49.2);
+
+    expect(rows.map(({ date, energyAtEnd }) => ({ date, energyAtEnd }))).toStrictEqual([
+      { date: new Date("2026-07-10T00:00:00Z"), energyAtEnd: 50 },
+      { date: new Date("2026-07-12T00:00:00Z"), energyAtEnd: 49.2 },
+    ]);
+  });
+
+  it("does not decay consecutive local dates when the learner is east of UTC", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-11T12:30:00Z"));
+
+    const user = await userFixture();
+
+    await Promise.all([
+      userProgressFixture({
+        currentEnergy: 50,
+        lastActiveAt: new Date("2026-07-10T12:30:00Z"),
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([
+        {
+          date: new Date("2026-07-11T00:00:00Z"),
+          energyAtEnd: 50,
+          interactiveCompleted: 1,
+          userId: user.id,
+        },
+      ]),
+    ]);
+
+    await submitLessonCompletion({
+      durationSeconds: 10,
+      lessonId: lesson.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date("2026-07-11T12:29:50Z"),
+      stepResults: [stepResult(true)],
+      timeZone: "Pacific/Kiritimati",
+      userId: user.id,
+    });
+
+    const progress = await prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } });
+
+    expect(progress.currentEnergy).toBeCloseTo(50.2);
+  });
+
+  it("uses the server-derived current date when a request crosses local midnight", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-12T07:00:01Z"));
+
+    const user = await userFixture();
+
+    await persistLessonCompletion({
+      durationSeconds: 10,
+      lessonId: lesson.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date("2026-07-12T06:59:50Z"),
+      stepResults: [stepResult(true)],
+      timeZone: "America/Los_Angeles",
+      userId: user.id,
+    });
+
+    const daily = await prisma.dailyProgress.findFirstOrThrow({ where: { userId: user.id } });
+
+    expect(daily.date).toStrictEqual(new Date("2026-07-12T00:00:00Z"));
+  });
+
+  it("keeps Date Line completions on their truthful daily progress date", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-12T14:00:00Z"));
+
+    const user = await userFixture();
+
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 99.9, userId: user.id }),
+      dailyProgressFixtureMany([
+        {
+          date: new Date("2026-07-13T00:00:00Z"),
+          energyAtEnd: 99.9,
+          interactiveCompleted: 1,
+          userId: user.id,
+        },
+      ]),
+    ]);
+
+    await submitLessonCompletion({
+      durationSeconds: 10,
+      lessonId: lesson.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date("2026-07-12T13:59:50Z"),
+      stepResults: [stepResult(true)],
+      timeZone: "Pacific/Honolulu",
+      userId: user.id,
+    });
+
+    const [energyRows, fullEnergyDays, lessonProgress, progress, initialProgress] =
+      await Promise.all([
+        prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId: user.id } }),
+        prisma.dailyProgress.count({ where: { energyAtEnd: { gte: 100 }, userId: user.id } }),
+        prisma.lessonProgress.findUniqueOrThrow({
+          where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+        }),
+        prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+        getPlayerProgressSnapshot({
+          bestDayRange: {
+            endDate: new Date("2026-07-12T00:00:00Z"),
+            startDate: new Date("2026-04-14T00:00:00Z"),
+          },
+          timeZone: "Pacific/Honolulu",
+          today: new Date("2026-07-12T00:00:00Z"),
+          userId: user.id,
+        }),
+      ]);
+
+    expect(energyRows).toHaveLength(2);
+    expect(energyRows[0]?.date).toStrictEqual(new Date("2026-07-12T00:00:00Z"));
+    expect(energyRows[0]?.energyAtEnd).toBe(100);
+    expect(energyRows[0]?.interactiveCompleted).toBe(1);
+    expect(energyRows[1]?.date).toStrictEqual(new Date("2026-07-13T00:00:00Z"));
+    expect(energyRows[1]?.energyAtEnd).toBe(99.9);
+    expect(energyRows[1]?.interactiveCompleted).toBe(1);
+    expect(fullEnergyDays).toBe(1);
+    expect(lessonProgress.completedDate).toStrictEqual(new Date("2026-07-12T00:00:00Z"));
+    expect(progress.currentEnergy).toBe(100);
+
+    expect(initialProgress.progressSnapshot).toMatchObject({
+      currentEnergy: 100,
+      todayBrainPower: 10,
+      todayCompletedLessons: 1,
+      todayInteractiveLessons: 1,
+    });
+  });
+
+  it("serializes concurrent Energy updates and applies inactivity decay once", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-12T12:00:00Z"));
+
+    const user = await userFixture();
+
+    await Promise.all([
+      userProgressFixture({
+        currentEnergy: 50,
+        lastActiveAt: new Date("2026-07-09T12:00:00Z"),
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([
+        {
+          date: new Date("2026-07-09T00:00:00Z"),
+          energyAtEnd: 50,
+          interactiveCompleted: 1,
+          userId: user.id,
+        },
+      ]),
+    ]);
+
+    const input = {
+      durationSeconds: 10,
+      lessonId: lesson.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date("2026-07-12T11:59:50Z"),
+      stepResults: [stepResult(true)],
+      userId: user.id,
+    };
+
+    await Promise.all([submitLessonCompletion(input), submitLessonCompletion(input)]);
+
+    const [progress, rows] = await Promise.all([
+      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+      prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId: user.id } }),
+    ]);
+
+    expect(progress.currentEnergy).toBeCloseTo(48.4);
+    expect(rows).toHaveLength(2);
+    expect(rows[0]?.date).toStrictEqual(new Date("2026-07-09T00:00:00Z"));
+    expect(rows[0]?.energyAtEnd).toBe(50);
+    expect(rows[1]?.date).toStrictEqual(new Date("2026-07-12T00:00:00Z"));
+    expect(rows[1]?.energyAtEnd).toBeCloseTo(48.4);
+    expect(rows[1]?.interactiveCompleted).toBe(2);
   });
 });

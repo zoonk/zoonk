@@ -1,6 +1,7 @@
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { describe, expect, it } from "vitest";
 import { getCompletionMilestoneKey } from "./completion-milestone-keys";
-import { type PlayerProgressSnapshot, getCompletionMilestones } from "./completion-milestones";
+import { getCompletionMilestones } from "./completion-milestones";
 
 function buildProgressSnapshot(
   overrides: Partial<PlayerProgressSnapshot> = {},

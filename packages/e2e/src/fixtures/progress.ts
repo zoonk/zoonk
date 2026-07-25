@@ -27,7 +27,7 @@ const ALL_PERIODS = ["month", "6months", "year"] as const;
  * insight card proves a non-zero count without changing the broader chart data.
  */
 function getEnergyAtEnd({ dayIndex, isCurrent }: { dayIndex: number; isCurrent: boolean }) {
-  if (isCurrent && dayIndex === 0) {
+  if (isCurrent && dayIndex === 1) {
     return CURRENT_MONTH_FULL_ENERGY;
   }
 

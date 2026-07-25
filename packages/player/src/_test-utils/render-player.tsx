@@ -3,8 +3,8 @@
 import { render } from "@testing-library/react";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import Link from "next/link";
-import { type PlayerProgressSnapshot } from "../completion-milestones";
 import { PlayerShell } from "../components/player-shell";
 import {
   type PlayerLessonProgress,

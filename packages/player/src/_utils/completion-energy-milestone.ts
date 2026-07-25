@@ -1,5 +1,6 @@
-import { clampEnergy } from "@zoonk/utils/energy";
-import { type CompletionProgress, type PlayerProgressSnapshot } from "../completion-milestones";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
+import { clampEnergy } from "@zoonk/core/progress/energy";
+import { type CompletionProgress } from "../completion-milestones";
 import {
   getReachedEnergyThreshold,
   hasCompletedNewFullEnergyDay,

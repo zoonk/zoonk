@@ -1,8 +1,9 @@
 import { getContributionCalendarDateRange } from "@zoonk/utils/contribution-calendar";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/date-ranges";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 
-const SCORE_RANGE_DAY_OFFSET = DEFAULT_PROGRESS_LOOKBACK_DAYS - 1;
+const SCORE_LOOKBACK_DAY_OFFSET = DEFAULT_PROGRESS_LOOKBACK_DAYS - 1;
 const TIME_ZONE_SEARCH_BUFFER = 2 * MS_PER_DAY;
 
 type DateRange = { endDate: Date; startDate: Date };
@@ -22,21 +23,7 @@ export type ScoreRangeParams = { endDate?: Date; now?: Date; startDate?: Date; t
  * a timezone's day begins at 00:00 during offset transitions.
  */
 function getLocalDateTimestamp({ date, timeZone }: { date: Date; timeZone: string }): number {
-  const dateParts = new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "numeric",
-    timeZone,
-    year: "numeric",
-  }).formatToParts(date);
-
-  const getPart = (type: Intl.DateTimeFormatPartTypes) =>
-    Number(dateParts.find((part) => part.type === type)?.value);
-
-  const year = getPart("year");
-  const month = getPart("month");
-  const day = getPart("day");
-
-  return Date.UTC(year, month - 1, day);
+  return getDateInTimeZone({ date, timeZone }).getTime();
 }
 
 /**
@@ -147,7 +134,7 @@ export function getScoreDateRange({
   });
 
   const dailyProgressStartDate = new Date(
-    dailyProgressEndDate.getTime() - SCORE_RANGE_DAY_OFFSET * MS_PER_DAY,
+    dailyProgressEndDate.getTime() - SCORE_LOOKBACK_DAY_OFFSET * MS_PER_DAY,
   );
 
   return {

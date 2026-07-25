@@ -2,8 +2,8 @@ import {
   type SerializedLesson,
   type SerializedStep,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { type PlayerCompletionMilestoneKey } from "./completion-milestone-keys";
-import { type PlayerProgressSnapshot } from "./completion-milestones";
 import { getLocalDate } from "./player-date";
 import { type PlayerPhase, type PlayerState, type SelectedAnswer } from "./player-reducer";
 

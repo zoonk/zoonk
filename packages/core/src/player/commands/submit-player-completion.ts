@@ -192,10 +192,10 @@ export async function submitPlayerCompletion(params: {
   await submitLessonCompletion({
     durationSeconds,
     lessonId: lesson.id,
-    localDate: params.input.localDate,
     score,
     startedAt: new Date(params.input.startedAt),
     stepResults: mergedStepResults,
+    timeZone: params.input.timeZone,
     userId: params.userId,
   });
 }

@@ -1,4 +1,5 @@
 import { MS_PER_DAY } from "./date";
+import { getDateInTimeZone } from "./time-zone";
 
 export const CONTRIBUTION_CALENDAR_DAYS_PER_WEEK = 7;
 
@@ -96,39 +97,14 @@ function getContributionCalendarStartDate(visibleEndDate: Date): Date {
 }
 
 /**
- * DateTimeFormat returns multiple part kinds, so this helper makes the required
- * calendar fields explicit before they become a UTC date-only value.
+ * Builds a contribution window from an already-resolved date-only endpoint.
+ * Callers that already captured a request-local date can reuse it without
+ * consulting another clock or timezone.
  */
-function getNumericDatePart({
-  dateParts,
-  type,
-}: {
-  dateParts: Intl.DateTimeFormatPart[];
-  type: "day" | "month" | "year";
-}): number {
-  return Number(dateParts.find((part) => part.type === type)?.value);
-}
-
-/**
- * Converts an instant into a date-only UTC value representing the calendar day
- * in the requested timezone. Keeping the result at UTC midnight lets database
- * date columns and calendar utilities compare the learner's local day safely.
- */
-function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): Date {
-  const dateParts = new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "numeric",
-    timeZone,
-    year: "numeric",
-  }).formatToParts(date);
-
-  return new Date(
-    Date.UTC(
-      getNumericDatePart({ dateParts, type: "year" }),
-      getNumericDatePart({ dateParts, type: "month" }) - 1,
-      getNumericDatePart({ dateParts, type: "day" }),
-    ),
-  );
+export function getContributionCalendarDateRangeFromEndDate(
+  endDate: Date,
+): ContributionCalendarDateRange {
+  return { endDate, startDate: getContributionCalendarStartDate(endDate) };
 }
 
 /**
@@ -145,5 +121,5 @@ export function getContributionCalendarDateRange({
 }): ContributionCalendarDateRange {
   const terminalDate = getDateInTimeZone({ date: now, timeZone });
 
-  return { endDate: terminalDate, startDate: getContributionCalendarStartDate(terminalDate) };
+  return getContributionCalendarDateRangeFromEndDate(terminalDate);
 }

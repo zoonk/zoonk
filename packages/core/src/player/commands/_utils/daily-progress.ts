@@ -1,6 +1,4 @@
 import { type TransactionClient } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
-import { DAILY_DECAY, MIN_ENERGY } from "@zoonk/utils/energy";
 import { type ScoreResult } from "../../contracts/compute-score";
 
 /**
@@ -16,36 +14,6 @@ export function getCompletionField(input: {
   }
 
   return "interactiveCompleted";
-}
-
-/**
- * Energy decay is global to the learner, not tied to a specific organization.
- * When the learner skips days, we materialize those missing daily progress rows
- * so charts and streak-like summaries can show the decay instead of jumping.
- */
-export async function fillDecayGaps(params: {
-  currentEnergy: number;
-  lastActiveDate: Date;
-  todayDate: Date;
-  tx: TransactionClient;
-  userId: string;
-}): Promise<void> {
-  const dayDiff = Math.round(
-    (params.todayDate.getTime() - params.lastActiveDate.getTime()) / MS_PER_DAY,
-  );
-
-  if (dayDiff <= 1) {
-    return;
-  }
-
-  const records = Array.from({ length: dayDiff - 1 }, (_, i) => {
-    const date = new Date(params.lastActiveDate.getTime() + (i + 1) * MS_PER_DAY);
-    const decayedEnergy = Math.max(MIN_ENERGY, params.currentEnergy - (i + 1) * DAILY_DECAY);
-
-    return { date, dayOfWeek: date.getUTCDay(), energyAtEnd: decayedEnergy, userId: params.userId };
-  });
-
-  await params.tx.dailyProgress.createMany({ data: records, skipDuplicates: true });
 }
 
 /**

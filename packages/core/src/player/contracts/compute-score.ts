@@ -1,5 +1,5 @@
 import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
-import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "@zoonk/utils/energy";
+import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "../../progress/energy";
 
 export type ScoreResult = {
   brainPower: number;

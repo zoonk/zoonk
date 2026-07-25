@@ -37,17 +37,6 @@ const inaccessibleLessonCases: { name: string; visibility: CompletableLessonVisi
 ];
 
 /**
- * Completion writes store a local calendar day alongside UTC timestamps so the
- * daily progress tables can aggregate by the learner's own timezone. Tests only
- * need a valid local date string, so this helper keeps that formatting in one place.
- */
-function todayLocalDate(): string {
-  const now = new Date();
-
-  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-${String(now.getUTCDate()).padStart(2, "0")}`;
-}
-
-/**
  * The shared completion command only needs a standard curriculum path:
  * org -> course -> chapter. Visibility stays configurable so tests can verify
  * that the command rejects non-public curriculum before writing progress.
@@ -283,11 +272,11 @@ function buildReviewCompletionInput(params: {
   return {
     answers: Object.fromEntries(params.stepIds.map(buildMultipleChoiceAnswerEntry)),
     lessonId: params.lessonId,
-    localDate: todayLocalDate(),
     startedAt,
     stepTimings: Object.fromEntries(
       params.stepIds.map((stepId) => buildStepTimingEntry({ startedAt, stepId })),
     ),
+    timeZone: "UTC",
   };
 }
 
@@ -334,11 +323,11 @@ function buildCompletionInput(params: {
       [stepId]: { kind: "multipleChoice", selectedOptionId: params.selectedOptionId ?? "a" },
     },
     lessonId: params.lessonId,
-    localDate: todayLocalDate(),
     startedAt,
     stepTimings: {
       [stepId]: { answeredAt: startedAt + 5000, dayOfWeek: 1, durationSeconds: 5, hourOfDay: 12 },
     },
+    timeZone: "UTC",
   };
 }
 
@@ -362,11 +351,11 @@ function buildCompletionInputForSteps(params: {
       ]),
     ),
     lessonId: params.lessonId,
-    localDate: todayLocalDate(),
     startedAt,
     stepTimings: Object.fromEntries(
       params.stepIds.map((stepId) => buildStepTimingEntry({ startedAt, stepId })),
     ),
+    timeZone: "UTC",
   };
 }
 
@@ -388,11 +377,11 @@ function buildLanguageSentenceCompletionInput(params: {
       params.steps.map((step) => buildLanguageSentenceAnswerEntry({ kind: params.kind, step })),
     ),
     lessonId: params.lessonId,
-    localDate: todayLocalDate(),
     startedAt,
     stepTimings: Object.fromEntries(
       params.steps.map((step) => buildStepTimingEntry({ startedAt, stepId: step.id })),
     ),
+    timeZone: "UTC",
   };
 }
 
@@ -437,9 +426,9 @@ function buildEmptyCompletionInput(params: { lessonId: string }): CompletionInpu
   return {
     answers: {},
     lessonId: params.lessonId,
-    localDate: todayLocalDate(),
     startedAt: Date.now() - 10_000,
     stepTimings: {},
+    timeZone: "UTC",
   };
 }
 

@@ -1,10 +1,10 @@
-import { parseLocalDate } from "@zoonk/utils/date";
-import { type CompletionProgress, type PlayerProgressSnapshot } from "../completion-milestones";
 import {
   type BestDayScore,
-  getBestDayScore,
-  hasCompletedNewLearningDay,
-} from "./completion-milestone-thresholds";
+  type PlayerProgressSnapshot,
+} from "@zoonk/core/player/contracts/progress-snapshot";
+import { parseLocalDate } from "@zoonk/utils/date";
+import { type CompletionProgress } from "../completion-milestones";
+import { getBestDayScore, hasCompletedNewLearningDay } from "./completion-milestone-thresholds";
 
 export type PatternsCompletionMilestone = {
   dayOfWeek: number;

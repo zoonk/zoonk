@@ -1,5 +1,4 @@
-import { getEnergyHistory } from "@/data/progress/get-energy-history";
-import { getEnergyInsights } from "@/data/progress/get-energy-insights";
+import { getEnergyData } from "@/data/progress/get-energy-data";
 import { getSession } from "@/data/users/get-session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
@@ -9,11 +8,7 @@ import { EnergyInsights, EnergyInsightsSkeleton } from "./energy-insights";
 import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
 export async function EnergyContent() {
-  const [data, insights, session] = await Promise.all([
-    getEnergyHistory(),
-    getEnergyInsights(),
-    getSession(),
-  ]);
+  const [data, session] = await Promise.all([getEnergyData(), getSession()]);
 
   const isAuthenticated = Boolean(session);
 
@@ -31,7 +26,7 @@ export async function EnergyContent() {
 
       <EnergyChart days={data.days} />
 
-      <EnergyInsights insights={insights} />
+      <EnergyInsights insights={data.insights} />
 
       <EnergyExplanation />
     </ProgressContent>

@@ -23,7 +23,7 @@ export async function dailyProgressFixtureMany(
       brainPowerEarned: input.brainPowerEarned ?? 0,
       correctAnswers: input.correctAnswers ?? 0,
       date: input.date,
-      dayOfWeek: input.date.getDay(),
+      dayOfWeek: input.date.getUTCDay(),
       energyAtEnd: input.energyAtEnd ?? 0,
       incorrectAnswers: input.incorrectAnswers ?? 0,
       interactiveCompleted: input.interactiveCompleted ?? 0,

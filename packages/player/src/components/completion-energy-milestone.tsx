@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_ENERGY } from "@zoonk/core/progress/energy";
 import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
 import { ZapIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
@@ -29,7 +30,7 @@ function EnergyThresholdCopy({
   const t = useExtracted();
   const format = useFormatter();
 
-  if (milestone.energy === 100) {
+  if (milestone.energy === MAX_ENERGY) {
     return (
       <>
         <CompletionMilestoneTitle>{t("Max Energy!")}</CompletionMilestoneTitle>

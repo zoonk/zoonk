@@ -1,10 +1,9 @@
+import { type BestDayScore } from "@zoonk/core/player/contracts/progress-snapshot";
+import { MAX_ENERGY, clampEnergy } from "@zoonk/core/progress/energy";
 import { type ScoredRow, findBestByScore } from "@zoonk/utils/aggregation";
-import { clampEnergy } from "@zoonk/utils/energy";
-
-export type BestDayScore = { correctAnswers: number; dayOfWeek: number; incorrectAnswers: number };
 
 const ENERGY_MILESTONE_STEP = 10;
-const FULL_ENERGY = 100;
+const FULL_ENERGY_DAY_MILESTONE = 100;
 const SECONDS_PER_MINUTE = 60;
 const MINUTES_PER_HOUR = 60;
 const SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
@@ -60,7 +59,7 @@ function getLearningTimeRangeSeconds(ranges: readonly MilestoneRange[]) {
 /* eslint-disable no-magic-numbers -- These literals are the product milestone ladder. Naming each threshold individually makes the progression harder to audit. */
 const FULL_ENERGY_DAY_MILESTONES = new Set([
   30,
-  FULL_ENERGY,
+  FULL_ENERGY_DAY_MILESTONE,
   200,
   300,
   365,
@@ -154,7 +153,7 @@ export function hasCompletedNewFullEnergyDay({
   newEnergy: number;
   todayEnergyAtEnd: number | null;
 }) {
-  return (todayEnergyAtEnd ?? 0) < FULL_ENERGY && newEnergy >= FULL_ENERGY;
+  return (todayEnergyAtEnd ?? 0) < MAX_ENERGY && newEnergy >= MAX_ENERGY;
 }
 
 /**

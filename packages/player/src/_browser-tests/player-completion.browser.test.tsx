@@ -1,9 +1,9 @@
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
-import { type PlayerProgressSnapshot } from "../completion-milestones";
 import { getLocalDate } from "../player-date";
 
 function buildProgressSnapshot(

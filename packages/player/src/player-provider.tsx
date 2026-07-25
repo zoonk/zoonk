@@ -2,12 +2,12 @@
 
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { useCallback, useMemo, useReducer } from "react";
 import {
   getEffectiveCompletionProgressSnapshot,
   getStoredCompletionMilestoneKeys,
 } from "./completion-milestone-storage";
-import { type PlayerProgressSnapshot } from "./completion-milestones";
 import {
   PlayerConfigContext,
   type PlayerLessonProgress,
@@ -27,7 +27,6 @@ import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
 
 export type { PlayerStepChangeEvent } from "./player-events";
-export type { PlayerProgressSnapshot } from "./completion-milestones";
 
 export function PlayerProvider({
   lesson,

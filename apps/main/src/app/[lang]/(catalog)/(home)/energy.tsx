@@ -11,6 +11,7 @@ import {
 } from "@/components/progress/progress-metric-card";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
+import { MAX_ENERGY } from "@zoonk/core/progress/energy";
 import { FeatureCardIndicator, FeatureCardLink } from "@zoonk/ui/components/feature";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { getExtracted, getFormatter } from "next-intl/server";
@@ -24,7 +25,7 @@ export async function Energy({ energy }: { energy: number }) {
   const energyMenu = getMenu("energy");
   const formattedEnergy = formatMetricPercent({ format, value: energy });
 
-  const description = energy < 100 ? t("Reach 100%") : t("Stay at 100%");
+  const description = energy < MAX_ENERGY ? t("Reach 100%") : t("Stay at 100%");
 
   return (
     <FeatureCardLink render={<Link href={energyMenu.url} prefetch />}>

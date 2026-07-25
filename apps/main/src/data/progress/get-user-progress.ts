@@ -1,14 +1,15 @@
 import "server-only";
 import { getUserProgressCacheTag } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
-import { type UserProgress, prisma } from "@zoonk/db";
+import { getUserProgress as queryUserProgress } from "@zoonk/core/progress/metrics";
+import { type UserProgress } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 
 async function findUserProgress(userId: string): Promise<UserProgress | null> {
   "use cache";
 
   cacheTag(getUserProgressCacheTag(userId));
-  return prisma.userProgress.findUnique({ where: { userId } });
+  return queryUserProgress({ userId });
 }
 
 /** Returns the authenticated learner's canonical progress row. */
