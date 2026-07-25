@@ -1,10 +1,6 @@
 "use client";
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
-import { useExtracted } from "next-intl";
-import { type PointerEvent } from "react";
-import { renderPlayerShortcutHintKey, showPlayerShortcutHint } from "../player-shortcut-hint";
-import { getNumberKeyShortcut } from "../player-shortcuts";
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneContext,
@@ -34,7 +30,6 @@ function ChoiceStepLayoutContent({
   question?: string | null;
   selectedKey: string | null;
 }) {
-  const t = useExtracted();
   const hasSelection = selectedKey !== null;
 
   const handleSelect = (index: number) => {
@@ -47,35 +42,6 @@ function ChoiceStepLayoutContent({
     onSelect(option.key);
   };
 
-  /**
-   * Multiple-choice cards visibly number their options, so the clicked card can
-   * teach the exact number key that would select the same answer next time.
-   * Translation choices use a different composition and intentionally do not
-   * opt into this callback.
-   */
-  function handleOptionPointerUp({
-    event,
-    index,
-  }: {
-    event: PointerEvent<HTMLButtonElement>;
-    index: number;
-  }) {
-    const shortcut = getNumberKeyShortcut(index);
-
-    if (!shortcut) {
-      return;
-    }
-
-    showPlayerShortcutHint({
-      event,
-      hint: "multipleChoiceNumber",
-      message: t.rich("Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer.", {
-        kbd: renderPlayerShortcutHintKey,
-        shortcut,
-      }),
-    });
-  }
-
   return (
     <>
       {(context || question) && (
@@ -86,7 +52,6 @@ function ChoiceStepLayoutContent({
       )}
 
       <PlayerChoiceSceneOptions
-        onOptionPointerUp={handleOptionPointerUp}
         onSelect={handleSelect}
         options={options.map((option) => ({
           content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,

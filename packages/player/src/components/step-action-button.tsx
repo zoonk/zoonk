@@ -4,9 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type PointerEvent } from "react";
 import { usePlayerRuntime } from "../player-context";
-import { renderPlayerShortcutHintKey, showPlayerShortcutHint } from "../player-shortcut-hint";
 
 /**
  * Single source of truth for the step action button
@@ -38,30 +36,12 @@ export function StepActionButton({
 
   const labelByButton = { check: t("Check"), continue: t("Continue") } as const;
 
-  /**
-   * Enter submits a pending selection, but Continue is a separate progression
-   * action. Limiting the tip to Check keeps this coachmark aligned with the
-   * exact shortcut discovery moment the learner just missed.
-   */
-  function handleActionPointerUp(event: PointerEvent<HTMLButtonElement>) {
-    if (run === "check") {
-      showPlayerShortcutHint({
-        event,
-        hint: "checkAnswer",
-        message: t.rich("Keyboard shortcut: press <kbd>Enter</kbd> to check your answer.", {
-          kbd: renderPlayerShortcutHintKey,
-        }),
-      });
-    }
-  }
-
   const buttonProps = {
     ...props,
     "aria-keyshortcuts": "Enter",
     className: cn("w-full", className),
     disabled,
     onClick: actionByRun[run],
-    onPointerUp: handleActionPointerUp,
     size: "lg" as const,
   };
 

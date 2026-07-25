@@ -1,5 +1,4 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { type PointerEvent } from "react";
 import { getNumberKeyShortcut } from "../player-shortcuts";
 import { ResultKbd } from "./result-kbd";
 
@@ -9,7 +8,6 @@ export function OptionCard({
   index,
   isDimmed,
   isSelected,
-  onPointerUp,
   onSelect,
   resultState,
 }: {
@@ -18,7 +16,6 @@ export function OptionCard({
   index: number;
   isDimmed?: boolean;
   isSelected: boolean;
-  onPointerUp?: (event: PointerEvent<HTMLButtonElement>) => void;
   onSelect: () => void;
   resultState: "correct" | "incorrect" | null;
 }) {
@@ -38,7 +35,6 @@ export function OptionCard({
       )}
       disabled={disabled}
       onClick={onSelect}
-      onPointerUp={onPointerUp}
       role="radio"
       type="button"
     >

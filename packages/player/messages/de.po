@@ -52,11 +52,6 @@ msgctxt "e7WNdK"
 msgid "Word bank"
 msgstr "Wortschatz"
 
-#: src/components/choice-step-layout.tsx
-msgctxt "usfevO"
-msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer."
-msgstr "Tastenkürzel: Drücke <kbd>{shortcut}</kbd>, um diese Antwort auszuwählen."
-
 #: src/components/completion-actions.tsx
 msgctxt "E2sGaF"
 msgid "Exit"
@@ -323,11 +318,6 @@ msgctxt "lYWSeP"
 msgid "Play pronunciation"
 msgstr "Aussprache abspielen"
 
-#: src/components/play-audio-button.tsx
-msgctxt "RPYE-D"
-msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to play audio."
-msgstr "Tastenkürzel: Drücke <kbd>{shortcut}</kbd>, um das Audio abzuspielen."
-
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
@@ -383,23 +373,6 @@ msgstr "Ziehe die Elemente in die richtige Reihenfolge"
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Prüfen"
-
-#: src/components/step-action-button.tsx
-msgctxt "ZnWuU7"
-msgid "Keyboard shortcut: press <kbd>Enter</kbd> to check your answer."
-msgstr "Tastenkürzel: Drücke <kbd>Enter</kbd>, um deine Antwort zu prüfen."
-
-#: src/components/step-navigation-button-group.tsx
-#: src/components/swipe-navigable-step-layout.tsx
-msgctxt "kp9T44"
-msgid "Keyboard shortcut: press <kbd>←</kbd> to go back."
-msgstr "Tastenkürzel: Drücke <kbd>←</kbd>, um zurückzugehen."
-
-#: src/components/step-navigation-button-group.tsx
-#: src/components/swipe-navigable-step-layout.tsx
-msgctxt "egQWyS"
-msgid "Keyboard shortcut: press <kbd>→</kbd> to continue."
-msgstr "Tastenkürzel: Drücke <kbd>→</kbd>, um fortzufahren."
 
 #: src/components/step-navigation-button-group.tsx
 msgctxt "JJNc3c"
