@@ -64,6 +64,7 @@
   --animate-badge-land: badge-land 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
   --animate-breathe: breathe 2s ease-in-out infinite;
   --animate-dot-pulse: dot-pulse 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-energy-charge: energy-charge 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-shimmer-text: shimmer-text 3s ease-in-out infinite;
   --animate-pulse-scale: pulse-scale 300ms ease-out;
   --animate-text-cycle: text-cycle 3.2s both;
@@ -302,6 +303,15 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes energy-charge {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }
 

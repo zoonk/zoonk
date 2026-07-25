@@ -12,10 +12,10 @@ export function MetricPillLinks() {
 
   const items = [
     { label: t("Activity"), segment: "activity", ...getMenu("activity") },
-    { label: t("Energy"), segment: "energy", ...getMenu("energy") },
-    { label: t("Level"), segment: "level", ...getMenu("level") },
     { label: t("Score"), segment: "score", ...getMenu("score") },
     { label: t("Patterns"), segment: "patterns", ...getMenu("patterns") },
+    { label: t("Level"), segment: "level", ...getMenu("level") },
+    { label: t("Energy"), segment: "energy", ...getMenu("energy") },
   ];
 
   return items.map((item) => (

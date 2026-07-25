@@ -85,9 +85,9 @@ msgid "Max Energy!"
 msgstr "Maximale Energie!"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "WwRCBI"
-msgid "You've been learning regularly and answering accurately. Stay consistent to keep your Energy at 100%."
-msgstr "Du lernst regelmäßig und beantwortest Fragen richtig. Bleib dran, damit deine Energie bei 100 % bleibt."
+msgctxt "-9aH4o"
+msgid "Complete lessons every day and answer correctly to keep it full."
+msgstr "Schließe jeden Tag Lektionen ab und antworte richtig, damit sie voll bleibt."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "J89SkG"
@@ -95,24 +95,24 @@ msgid "{percentage} Energy"
 msgstr "{percentage} Energie"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "pQ9XJb"
-msgid "You're building good momentum. Learning regularly and getting answers right will keep your Energy moving up."
-msgstr "Du kommst gut voran. Wenn du regelmäßig lernst und Fragen richtig beantwortest, steigt deine Energie weiter."
+msgctxt "AW9QoT"
+msgid "Complete lessons every day and answer correctly to reach 100%."
+msgstr "Schließe jeden Tag Lektionen ab und antworte richtig, um 100 % zu erreichen."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "5YVYKd"
 msgid "1 year of max Energy"
-msgstr "1 Jahr volle Energie"
+msgstr "1 Jahr lang maximale Energie"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "1WNk4i"
-msgid "{days} days of max Energy"
-msgstr "{days} Tage volle Energie"
+msgctxt "zcc-w4"
+msgid "{days} days at 100% Energy"
+msgstr "{days} Tage mit 100 % Energie"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "wl6CDc"
-msgid "You're building real consistency. Learning every day helps keep your mind active and improve your performance."
-msgstr "Du bleibst richtig gut dran. Tägliches Lernen hält deinen Geist aktiv und hilft dir, dich zu verbessern."
+msgctxt "JEEeYJ"
+msgid "Complete lessons every day and answer correctly to keep your Energy full."
+msgstr "Schließe jeden Tag Lektionen ab und antworte richtig, damit deine Energie voll bleibt."
 
 #: src/components/completion-learning-days-milestone.tsx
 msgctxt "SIXtG5"
