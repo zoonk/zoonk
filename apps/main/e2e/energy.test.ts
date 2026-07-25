@@ -1,3 +1,4 @@
+import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
@@ -37,6 +38,27 @@ function getStableEnergyTimeZone(): string {
 }
 
 const ENERGY_TIME_ZONE = getStableEnergyTimeZone();
+
+/**
+ * Records the requested scroll behavior while preserving the browser's native
+ * scrolling so the test can verify both the animation contract and the final
+ * visible state.
+ */
+async function recordScrollIntoViewBehavior(page: Page) {
+  await page.addInitScript(() => {
+    // oxlint-disable-next-line typescript/unbound-method -- The wrapper must preserve the native DOM method before replacing it.
+    const nativeScrollIntoView = Element.prototype.scrollIntoView;
+
+    Element.prototype.scrollIntoView = function scrollIntoView(
+      options?: boolean | ScrollIntoViewOptions,
+    ) {
+      const behavior = typeof options === "object" ? options.behavior : undefined;
+
+      Reflect.set(globalThis, "progressScrollBehavior", behavior);
+      nativeScrollIntoView.call(this, options);
+    };
+  });
+}
 
 /**
  * Creates sparse authoritative activity days so the Energy page must derive
@@ -96,6 +118,41 @@ test.describe("Energy Page", () => {
       await expect(navigationLinks.nth(3)).toHaveAccessibleName("Patterns");
       await expect(navigationLinks.nth(4)).toHaveAccessibleName("Level");
       await expect(navigationLinks.nth(5)).toHaveAccessibleName("Energy");
+    });
+
+    test("smoothly reveals the active pill on a direct mobile visit", async ({
+      browser,
+      withProgressUser,
+    }) => {
+      const browserContext = await browser.newContext({
+        storageState: withProgressUser.storageState,
+        viewport: { height: 812, width: 375 },
+      });
+
+      const energyPage = await browserContext.newPage();
+
+      try {
+        await recordScrollIntoViewBehavior(energyPage);
+        await energyPage.goto("/energy");
+
+        const energyLink = energyPage.getByRole("link", { name: "Energy" });
+
+        await expect(energyLink).toHaveAttribute("aria-current", "page");
+
+        await expect
+          .poll(() =>
+            energyPage.evaluate(() => {
+              const behavior: unknown = Reflect.get(globalThis, "progressScrollBehavior");
+
+              return typeof behavior === "string" ? behavior : null;
+            }),
+          )
+          .toBe("smooth");
+
+        await expect(energyLink).toBeInViewport({ ratio: 1 });
+      } finally {
+        await browserContext.close();
+      }
     });
 
     test("shows the Energy calendar and all-time metrics without date controls", async ({
