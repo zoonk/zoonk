@@ -12,7 +12,7 @@ export async function ProgressNavbar() {
   return (
     <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
       <HorizontalScroll>
-        <HorizontalScrollContent>
+        <HorizontalScrollContent className="justify-center">
           <Link className={buttonVariants({ size: "icon", variant: "outline" })} href="/" prefetch>
             <HomeIcon aria-hidden="true" />
             <span className="sr-only">{t("Home page")}</span>
@@ -28,7 +28,7 @@ export async function ProgressNavbar() {
 export function ProgressNavbarSkeleton() {
   return (
     <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
-      <div className="flex gap-2 px-4">
+      <div className="flex justify-center gap-2 px-4">
         <Skeleton className="size-9 rounded-md" />
         <Skeleton className="h-9 w-24 rounded-md" />
         <Skeleton className="h-9 w-20 rounded-md" />
