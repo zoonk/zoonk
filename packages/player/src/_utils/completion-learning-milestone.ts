@@ -1,4 +1,4 @@
-import { type PlayerProgressSnapshot } from "../completion-milestones";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import {
   getReachedLearningTimeThreshold,
   hasCompletedNewLearningDay,

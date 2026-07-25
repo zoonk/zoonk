@@ -7,7 +7,7 @@ import {
   ProgressMetricCardValue,
   ProgressMetricCardValueSkeleton,
 } from "@/components/progress/progress-metric-card";
-import { type EnergyInsightsData } from "@/data/progress/get-energy-insights";
+import { type EnergyInsightsData } from "@zoonk/core/progress/energy";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { GaugeIcon, ZapIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
@@ -54,7 +54,7 @@ async function FullEnergyCard({ count }: { count: number }) {
   );
 }
 
-/** Average Energy summarizes every stored learner day as one compact percent. */
+/** Average Energy summarizes the learner's complete derived timeline. */
 async function AverageEnergyCard({ averageEnergy }: { averageEnergy: number }) {
   const t = await getExtracted();
   const format = await getFormatter();

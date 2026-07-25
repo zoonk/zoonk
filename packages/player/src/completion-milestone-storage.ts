@@ -1,18 +1,15 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
-import { clampEnergy } from "@zoonk/utils/energy";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
+import { MAX_ENERGY, clampEnergy } from "@zoonk/core/progress/energy";
 import {
   type PlayerCompletionMilestoneKey,
   getCompletionMilestoneKey,
 } from "./completion-milestone-keys";
-import {
-  type PlayerCompletionMilestone,
-  type PlayerProgressSnapshot,
-} from "./completion-milestones";
+import { type PlayerCompletionMilestone } from "./completion-milestones";
 
 const MILESTONE_KEYS_STORAGE_KEY = "zoonk-player-shown-completion-milestones";
 const PROGRESS_STORAGE_KEY = "zoonk-player-completion-progress";
 const MAX_STORED_MILESTONE_KEYS = 200;
-const FULL_ENERGY = 100;
 
 type StoredCompletionProgress = {
   currentEnergy: number;
@@ -230,8 +227,8 @@ function getNextStoredCompletionProgress({
   }
 
   const currentEnergy = clampEnergy(progressSnapshot.currentEnergy + completion.energyDelta);
-  const todayWasAlreadyFull = (progressSnapshot.todayEnergyAtEnd ?? 0) >= FULL_ENERGY;
-  const todayIsNowFull = currentEnergy >= FULL_ENERGY;
+  const todayWasAlreadyFull = (progressSnapshot.todayEnergyAtEnd ?? 0) >= MAX_ENERGY;
+  const todayIsNowFull = currentEnergy >= MAX_ENERGY;
 
   const completedNewLearningDay = (progressSnapshot.todayCompletedLessons ?? 0) === 0;
 

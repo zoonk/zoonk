@@ -1,4 +1,5 @@
-import { type CompletionProgress, type PlayerProgressSnapshot } from "../completion-milestones";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
+import { type CompletionProgress } from "../completion-milestones";
 
 export type BrainPowerCompletionMilestone = {
   brainPower: number;

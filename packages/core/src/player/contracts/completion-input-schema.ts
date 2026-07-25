@@ -1,4 +1,5 @@
 import { type BeltLevelResult } from "@zoonk/utils/belt-level";
+import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 
 const MAX_DAY_OF_WEEK = 6;
@@ -66,9 +67,9 @@ const stepTimingSchema = z.object({
 export const completionInputSchema = z.object({
   answers: z.record(z.string(), selectedAnswerSchema),
   lessonId: z.string(),
-  localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
   startedAt: z.number(),
   stepTimings: z.record(z.string(), stepTimingSchema),
+  timeZone: z.string().refine(isValidTimeZone),
 });
 
 export type SelectedAnswer = z.infer<typeof selectedAnswerSchema>;

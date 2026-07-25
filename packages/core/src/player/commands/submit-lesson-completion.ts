@@ -1,19 +1,20 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
-import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
-import { hasUserLearningProgress } from "../../progress/user-progress";
+import { clampEnergy } from "../../progress/energy";
 import { type ScoreResult } from "../contracts/compute-score";
-import { fillDecayGaps, getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
+import { getCompletionEnergyContext } from "./_utils/completion-energy";
+import { getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
 import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-completion";
 
-const MAX_LOCAL_DATE_DRIFT_MS = 2 * MS_PER_DAY;
-
+/**
+ * Persists one validated lesson completion and its progress aggregates. Energy
+ * decay and the earned score share one lock so concurrent completions cannot
+ * apply inactivity twice or lose either completion's Energy change.
+ */
 export async function submitLessonCompletion(input: {
   durationSeconds: number;
   lessonId: string;
-  localDate: string;
   score: ScoreResult;
   startedAt: Date;
   stepResults: {
@@ -25,6 +26,7 @@ export async function submitLessonCompletion(input: {
     isCorrect: boolean;
     stepId: string;
   }[];
+  timeZone: string;
   userId: string;
 }): Promise<{
   belt: BeltLevelResult;
@@ -32,17 +34,13 @@ export async function submitLessonCompletion(input: {
   energyDelta: number;
   newTotalBp: number;
 }> {
-  const now = new Date();
-  const today = parseLocalDate(input.localDate);
-
-  // localDate is client-provided, so a malicious client could send a far-future
-  // date and cause fillDecayGaps to create millions of records. The ±48h window
-  // is generous enough for all real timezone differences (max ~14h).
-  if (Math.abs(today.getTime() - now.getTime()) > MAX_LOCAL_DATE_DRIFT_MS) {
-    throw new Error("localDate is too far from server time");
-  }
-
   return prisma.$transaction(async (tx) => {
+    const { completedAt, completionDate, currentEnergy } = await getCompletionEnergyContext({
+      timeZone: input.timeZone,
+      transaction: tx,
+      userId: input.userId,
+    });
+
     // Create StepAttempt records
     if (input.stepResults.length > 0) {
       await tx.stepAttempt.createMany({
@@ -61,8 +59,8 @@ export async function submitLessonCompletion(input: {
 
     await tx.lessonProgress.upsert({
       create: {
-        completedAt: now,
-        completedDate: today,
+        completedAt,
+        completedDate: completionDate,
         durationSeconds: input.durationSeconds,
         lessonId: input.lessonId,
         startedAt: input.startedAt,
@@ -77,59 +75,29 @@ export async function submitLessonCompletion(input: {
     // keep their original timestamp, learner-local date, and duration so
     // completion metrics do not move backward when a learner revisits a lesson.
     await tx.lessonProgress.updateMany({
-      data: { completedAt: now, completedDate: today, durationSeconds: input.durationSeconds },
+      data: { completedAt, completedDate: completionDate, durationSeconds: input.durationSeconds },
       where: { completedAt: null, lessonId: input.lessonId, userId: input.userId },
     });
 
     await syncDurableCurriculumCompletion(tx, { lessonId: input.lessonId, userId: input.userId });
 
-    // Find existing UserProgress to apply decay
-    const existingProgress = await tx.userProgress.findUnique({ where: { userId: input.userId } });
-    const shouldApplyDecay = hasUserLearningProgress(existingProgress);
+    const clampedEnergy = clampEnergy(currentEnergy + input.score.energyDelta);
 
-    const decayedBase = shouldApplyDecay
-      ? computeDecayedEnergy(existingProgress.currentEnergy, existingProgress.lastActiveAt, today)
-      : 0;
-
-    // Fill DailyProgress records for inactive days
-    if (shouldApplyDecay) {
-      const lastActiveDate = toUTCMidnight(existingProgress.lastActiveAt);
-
-      await fillDecayGaps({
-        currentEnergy: existingProgress.currentEnergy,
-        lastActiveDate,
-        todayDate: today,
-        tx,
-        userId: input.userId,
-      });
-    }
-
-    const clampedEnergy = clampEnergy(decayedBase + input.score.energyDelta);
-
-    // Absolute write is safe: the interactive transaction serializes row access,
-    // so concurrent requests block until the prior commit completes.
-    const updatedProgress = await tx.userProgress.upsert({
-      create: {
+    const updatedProgress = await tx.userProgress.update({
+      data: {
         currentEnergy: clampedEnergy,
-        lastActiveAt: now,
-        totalBrainPower: input.score.brainPower,
-        userId: input.userId,
-      },
-      update: {
-        currentEnergy: clampedEnergy,
-        lastActiveAt: now,
+        lastActiveAt: completedAt,
         totalBrainPower: { increment: input.score.brainPower },
       },
       where: { userId: input.userId },
     });
 
-    // DailyProgress upsert for today
     const field = getCompletionField(input);
 
     await upsertDailyProgress(tx, {
       clampedEnergy,
-      date: today,
-      dayOfWeek: today.getUTCDay(),
+      date: completionDate,
+      dayOfWeek: completionDate.getUTCDay(),
       durationSeconds: input.durationSeconds,
       field,
       score: input.score,

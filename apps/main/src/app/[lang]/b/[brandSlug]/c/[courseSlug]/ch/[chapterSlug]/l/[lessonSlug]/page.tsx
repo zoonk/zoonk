@@ -218,7 +218,7 @@ async function LessonContent({ params }: Pick<Props, "params">) {
     lesson,
     nextLesson,
     reviewLessonData,
-    progressSnapshot,
+    initialProgress,
     chapterLessons,
     courseChapters,
   ] = await Promise.all([
@@ -333,8 +333,7 @@ async function LessonContent({ params }: Pick<Props, "params">) {
         lessonTitle={lessonMeta.title}
         nextChapter={nextChapter}
         nextLesson={nextLesson}
-        progressSnapshot={progressSnapshot}
-        totalBrainPower={progressSnapshot?.totalBrainPower ?? 0}
+        initialProgress={initialProgress}
         userEmail={session?.user.email}
         userName={session?.user.name ?? null}
       />

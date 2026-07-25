@@ -1,13 +1,14 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getEffectiveCompletionProgressSnapshot,
   getStoredCompletionMilestoneKeys,
   rememberCompletionProgress,
 } from "./completion-milestone-storage";
-import { type PlayerProgressSnapshot, getCompletionMilestones } from "./completion-milestones";
+import { getCompletionMilestones } from "./completion-milestones";
 import { getLocalDate } from "./player-date";
 import { type PlayerState } from "./player-reducer";
 import { usePlayerActions } from "./use-player-actions";

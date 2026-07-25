@@ -41,7 +41,7 @@ function buildOwnerDailyProgress(
         brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
         correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
         date,
-        dayOfWeek: date.getDay(),
+        dayOfWeek: date.getUTCDay(),
         energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
         incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
         interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
@@ -154,7 +154,7 @@ export async function seedProgress(
   users: SeedUsers,
 ): Promise<void> {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 
   await seedUserProgress(prisma, users, now);
 

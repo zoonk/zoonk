@@ -1,12 +1,12 @@
 import "server-only";
 import { getUserProgressCacheTag } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
+import { type ScoreRangeParams } from "@zoonk/core/progress/score-date-range";
 import { prisma } from "@zoonk/db";
 import { formatLabel } from "@zoonk/utils/chart";
 import { safeAsync } from "@zoonk/utils/error";
 import { cacheTag } from "next/cache";
 import { resolveScoreDateRange } from "./_utils/resolve-score-date-range";
-import { type ScoreRangeParams } from "./_utils/score-date-range";
 import {
   type DatedAnswerCounts,
   type ScorePerformance,

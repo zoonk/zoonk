@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { parseLocalDate, serializeDate } from "./date";
+import { parseLocalDate, serializeDate, toUTCMidnight } from "./date";
+
+describe(toUTCMidnight, () => {
+  it("strips time and creates UTC midnight", () => {
+    const date = new Date("2025-03-15T14:30:45.123Z");
+    const result = toUTCMidnight(date);
+
+    expect(result).toStrictEqual(new Date("2025-03-15T00:00:00.000Z"));
+  });
+});
 
 describe(parseLocalDate, () => {
   it("parses a valid YYYY-MM-DD string to UTC midnight", () => {

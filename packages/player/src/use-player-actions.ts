@@ -78,7 +78,7 @@ export function usePlayerActions({
 
       if (transition.shouldPersistCompletion) {
         rememberCompletedStateMilestones(transition.nextState);
-        onComplete(buildCompletionInput(transition.nextState));
+        onComplete(buildCompletionInput({ state: transition.nextState }));
       }
 
       const stepChangeEvent = getPlayerStepChangeEvent({ nextState: transition.nextState, state });

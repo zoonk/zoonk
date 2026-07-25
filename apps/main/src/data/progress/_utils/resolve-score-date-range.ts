@@ -1,6 +1,10 @@
 import "server-only";
 import { getRequestTimeZone } from "@/data/_utils/get-request-time-zone";
-import { type ScoreDateRange, type ScoreRangeParams, getScoreDateRange } from "./score-date-range";
+import {
+  type ScoreDateRange,
+  type ScoreRangeParams,
+  getScoreDateRange,
+} from "@zoonk/core/progress/score-date-range";
 
 /**
  * Captures one approximate request instant inside a shared cache while keeping

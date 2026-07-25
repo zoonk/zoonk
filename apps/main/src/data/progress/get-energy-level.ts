@@ -1,43 +1,39 @@
 import "server-only";
-import { hasUserLearningProgress } from "@zoonk/core/progress/user-progress";
-import { type UserProgress } from "@zoonk/db";
-import { computeDecayedEnergy } from "@zoonk/utils/energy";
-import { getUserProgress } from "./get-user-progress";
+import { getRequestProgressDateContext } from "@/data/_utils/get-request-time-zone";
+import { getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
+import { type EnergyLevelData } from "@zoonk/core/progress/energy";
+import { getEnergyLevel as queryEnergyLevel } from "@zoonk/core/progress/energy-queries";
+import { cacheTag } from "next/cache";
 
-type EnergyLevelData = { currentEnergy: number };
-
-/**
- * Captures the approximate time used for daily Energy decay. Keeping this
- * producer local makes its default cache-window drift part of Energy behavior
- * instead of exposing a generic cached clock to unrelated features.
- */
-async function getEnergyCalculationDate(): Promise<Date> {
+/** Caches the reusable Energy query for the current authenticated learner. */
+async function findEnergyLevel({
+  currentDate,
+  timeZone,
+  userId,
+}: {
+  currentDate: Date;
+  timeZone: string;
+  userId: string;
+}): Promise<EnergyLevelData | null> {
   "use cache";
 
-  return new Date();
-}
+  cacheTag(getUserProgressCacheTag(userId));
 
-/**
- * Calculates time-sensitive energy from a durable progress row and an explicit timestamp.
- */
-function toEnergyLevel({
-  now,
-  progress,
-}: {
-  now: Date;
-  progress: UserProgress | null;
-}): EnergyLevelData | null {
-  if (!hasUserLearningProgress(progress)) {
-    return null;
-  }
-
-  return {
-    currentEnergy: computeDecayedEnergy(progress.currentEnergy, progress.lastActiveAt, now),
-  };
+  return queryEnergyLevel({ targetDate: currentDate, timeZone, userId });
 }
 
 /** Returns the current Energy level for the authenticated learner. */
 export async function getEnergyLevel(): Promise<EnergyLevelData | null> {
-  const [now, progress] = await Promise.all([getEnergyCalculationDate(), getUserProgress()]);
-  return toEnergyLevel({ now, progress });
+  const [dateContext, session] = await Promise.all([getRequestProgressDateContext(), getSession()]);
+
+  if (!session) {
+    return null;
+  }
+
+  return findEnergyLevel({
+    currentDate: dateContext.currentDate,
+    timeZone: dateContext.timeZone,
+    userId: session.user.id,
+  });
 }

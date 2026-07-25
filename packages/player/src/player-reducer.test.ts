@@ -2,8 +2,8 @@ import {
   type SerializedLesson,
   type SerializedStep,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { type PlayerProgressSnapshot } from "./completion-milestones";
 import {
   type PlayerState,
   type SelectedAnswer,

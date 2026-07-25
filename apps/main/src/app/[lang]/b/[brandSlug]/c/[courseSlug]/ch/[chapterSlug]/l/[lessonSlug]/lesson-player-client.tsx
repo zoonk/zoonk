@@ -8,11 +8,8 @@ import {
 } from "@/lib/track-events";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import {
-  type PlayerProgressSnapshot,
-  PlayerProvider,
-  type PlayerStepChangeEvent,
-} from "@zoonk/player/provider";
+import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
+import { PlayerProvider, type PlayerStepChangeEvent } from "@zoonk/player/provider";
 import { PlayerShell } from "@zoonk/player/shell";
 import { useCallback, useEffect, useRef } from "react";
 import { getPlayerViewer } from "./get-player-viewer";
@@ -41,8 +38,7 @@ type LessonPlayerClientProps = {
   lessonTitle: string;
   nextChapter: NextChapterTarget | null;
   nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
-  progressSnapshot: PlayerProgressSnapshot | null;
-  totalBrainPower: number;
+  initialProgress: PlayerInitialProgress | null;
   userEmail?: string;
   userName: string | null;
 };
@@ -72,8 +68,7 @@ export function LessonPlayerClient({
   lessonTitle,
   nextChapter,
   nextLesson,
-  progressSnapshot,
-  totalBrainPower,
+  initialProgress,
   userEmail,
   userName,
 }: LessonPlayerClientProps) {
@@ -193,8 +188,8 @@ export function LessonPlayerClient({
       onEscape={() => router.push(model.navigation.chapterHref)}
       onNext={handleNext}
       onStepChange={handleStepChange}
-      progressSnapshot={progressSnapshot}
-      totalBrainPower={totalBrainPower}
+      progressSnapshot={initialProgress?.progressSnapshot ?? null}
+      totalBrainPower={initialProgress?.totalBrainPower ?? 0}
       viewer={getPlayerViewer({
         chapterSlug,
         courseSlug,

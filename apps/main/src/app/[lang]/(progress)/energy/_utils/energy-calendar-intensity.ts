@@ -1,5 +1,6 @@
+import { MAX_ENERGY } from "@zoonk/core/progress/energy";
+
 const ENERGY_INTENSITY_STEP = 25;
-const MAXIMUM_ENERGY = 100;
 const MAXIMUM_ENERGY_INTENSITY = 5;
 
 /**
@@ -12,7 +13,7 @@ export function getEnergyCalendarIntensity(energy: number | null): number {
     return 0;
   }
 
-  return energy >= MAXIMUM_ENERGY
+  return energy >= MAX_ENERGY
     ? MAXIMUM_ENERGY_INTENSITY
     : Math.ceil(energy / ENERGY_INTENSITY_STEP);
 }

@@ -1,4 +1,5 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import {
   type BrainPowerCompletionMilestone,
   getDailyBrainPowerRecordMilestone,
@@ -18,7 +19,6 @@ import {
   type LevelCompletionMilestone,
   getLevelCompletionMilestone,
 } from "./_utils/completion-level-milestone";
-import { type BestDayScore } from "./_utils/completion-milestone-thresholds";
 import {
   type PatternsCompletionMilestone,
   getBestDayMilestone,
@@ -41,19 +41,6 @@ export type CompletionProgress = Pick<
     completedInteractiveLesson?: boolean;
     lessonDurationSeconds?: number;
   };
-
-export type PlayerProgressSnapshot = {
-  bestDayScores: BestDayScore[] | null;
-  currentEnergy: number;
-  fullEnergyDays: number;
-  highestPreviousDailyBrainPower: number;
-  learningDays: number;
-  todayBrainPower: number;
-  todayCompletedLessons: number;
-  todayEnergyAtEnd: number | null;
-  todayInteractiveLessons: number;
-  totalLearningSeconds: number;
-};
 
 export type PlayerCompletionMilestone =
   | BrainPowerCompletionMilestone

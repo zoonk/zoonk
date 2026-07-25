@@ -1,11 +1,11 @@
 import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
 import { getCappedLessonDurationSeconds } from "@zoonk/core/player/contracts/completion-duration";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { type PlayerCompletionMilestoneKey } from "./completion-milestone-keys";
 import {
   type PlayerCompletionResult,
-  type PlayerProgressSnapshot,
   getCompletionMilestones,
   getInitialCompletionMilestoneIndex,
 } from "./completion-milestones";
