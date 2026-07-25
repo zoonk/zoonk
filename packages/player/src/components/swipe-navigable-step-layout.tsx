@@ -3,8 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type PointerEvent, type TouchEvent, useEffect, useRef } from "react";
-import { renderPlayerShortcutHintKey, showPlayerShortcutHint } from "../player-shortcut-hint";
+import { type TouchEvent, useEffect, useRef } from "react";
 import { PlayAudioButton } from "./play-audio-button";
 import { NavigableStepLayout } from "./step-layouts";
 
@@ -42,32 +41,19 @@ function DesktopNavigationButton({
   "aria-label": ariaLabel,
   "aria-keyshortcuts": ariaKeyshortcuts,
   children,
-  hint,
-  hintMessage,
   onClick,
 }: {
   "aria-label": string;
   "aria-keyshortcuts": string;
   children: React.ReactNode;
-  hint: "navigateNext" | "navigatePrevious";
-  hintMessage: React.ReactNode;
   onClick: () => void;
 }) {
-  /**
-   * Pointer-up still identifies the physical input device before navigation
-   * replaces this button. The native click remains responsible for the action.
-   */
-  function handlePointerUp(event: PointerEvent<HTMLButtonElement>) {
-    showPlayerShortcutHint({ event, hint, message: hintMessage });
-  }
-
   return (
     <Button
       aria-label={ariaLabel}
       aria-keyshortcuts={ariaKeyshortcuts}
       className={DESKTOP_NAVIGATION_CONTROL_CLASS}
       onClick={onClick}
-      onPointerUp={handlePointerUp}
       size="icon-lg"
       type="button"
       variant="outline"
@@ -107,10 +93,6 @@ function DesktopNavigationToolbar({
           <DesktopNavigationButton
             aria-label={t("Previous step")}
             aria-keyshortcuts="ArrowLeft"
-            hint="navigatePrevious"
-            hintMessage={t.rich("Keyboard shortcut: press <kbd>←</kbd> to go back.", {
-              kbd: renderPlayerShortcutHintKey,
-            })}
             onClick={onNavigatePrev}
           >
             <ChevronLeftIcon />
@@ -130,10 +112,6 @@ function DesktopNavigationToolbar({
         <DesktopNavigationButton
           aria-label={t("Next step")}
           aria-keyshortcuts="ArrowRight"
-          hint="navigateNext"
-          hintMessage={t.rich("Keyboard shortcut: press <kbd>→</kbd> to continue.", {
-            kbd: renderPlayerShortcutHintKey,
-          })}
           onClick={onNavigateNext}
         >
           <ChevronRightIcon />

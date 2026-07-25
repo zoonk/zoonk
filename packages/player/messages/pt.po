@@ -52,11 +52,6 @@ msgctxt "e7WNdK"
 msgid "Word bank"
 msgstr "Banco de palavras"
 
-#: src/components/choice-step-layout.tsx
-msgctxt "usfevO"
-msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer."
-msgstr "Atalho de teclado: pressione <kbd>{shortcut}</kbd> para escolher esta resposta."
-
 #: src/components/completion-actions.tsx
 msgctxt "E2sGaF"
 msgid "Exit"
@@ -323,11 +318,6 @@ msgctxt "lYWSeP"
 msgid "Play pronunciation"
 msgstr "Ouvir pronúncia"
 
-#: src/components/play-audio-button.tsx
-msgctxt "RPYE-D"
-msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to play audio."
-msgstr "Atalho de teclado: pressione <kbd>{shortcut}</kbd> para tocar o áudio."
-
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
@@ -383,23 +373,6 @@ msgstr "Arraste os itens para a ordem correta"
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Conferir"
-
-#: src/components/step-action-button.tsx
-msgctxt "ZnWuU7"
-msgid "Keyboard shortcut: press <kbd>Enter</kbd> to check your answer."
-msgstr "Atalho de teclado: pressione <kbd>Enter</kbd> para conferir sua resposta."
-
-#: src/components/step-navigation-button-group.tsx
-#: src/components/swipe-navigable-step-layout.tsx
-msgctxt "kp9T44"
-msgid "Keyboard shortcut: press <kbd>←</kbd> to go back."
-msgstr "Atalho de teclado: pressione <kbd>←</kbd> para voltar."
-
-#: src/components/step-navigation-button-group.tsx
-#: src/components/swipe-navigable-step-layout.tsx
-msgctxt "egQWyS"
-msgid "Keyboard shortcut: press <kbd>→</kbd> to continue."
-msgstr "Atalho de teclado: pressione <kbd>→</kbd> para continuar."
 
 #: src/components/step-navigation-button-group.tsx
 msgctxt "JJNc3c"

@@ -5,9 +5,8 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type PointerEvent, useState } from "react";
+import { useState } from "react";
 import { useSharedPlayerAudio } from "../player-audio-context";
-import { renderPlayerShortcutHintKey, showPlayerShortcutHint } from "../player-shortcut-hint";
 import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "../player-shortcuts";
 import { useWordAudio } from "../use-word-audio";
 
@@ -78,24 +77,6 @@ export function PlayAudioButton({
   const Icon = isPlaying ? PauseIcon : Volume2Icon;
   const label = isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
 
-  /**
-   * Only active prompt audio has a player keyboard shortcut. Standalone word
-   * audio keeps its normal click behavior without advertising a key that does
-   * not control it.
-   */
-  function handleAudioPointerUp(event: PointerEvent<HTMLButtonElement>) {
-    if (keyboardShortcut) {
-      showPlayerShortcutHint({
-        event,
-        hint: "promptAudio",
-        message: t.rich("Keyboard shortcut: press <kbd>{shortcut}</kbd> to play audio.", {
-          kbd: renderPlayerShortcutHintKey,
-          shortcut: keyboardShortcut.toUpperCase(),
-        }),
-      });
-    }
-  }
-
   if (variant === "text") {
     return (
       <button
@@ -105,7 +86,6 @@ export function PlayAudioButton({
           className,
         )}
         onClick={handleClick}
-        onPointerUp={handleAudioPointerUp}
         type="button"
       >
         <Icon aria-hidden className="size-4" />
@@ -121,7 +101,6 @@ export function PlayAudioButton({
         aria-keyshortcuts={keyboardShortcut}
         className={cn("relative", className)}
         onClick={handleClick}
-        onPointerUp={handleAudioPointerUp}
         size={size === "md" ? "icon-lg" : "icon"}
         type="button"
         variant="outline"
@@ -146,7 +125,6 @@ export function PlayAudioButton({
         className,
       )}
       onClick={handleClick}
-      onPointerUp={handleAudioPointerUp}
       type="button"
     >
       <Icon className={size === "md" ? "size-6" : "size-5"} />

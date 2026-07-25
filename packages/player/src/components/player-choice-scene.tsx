@@ -1,7 +1,6 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { type PointerEvent } from "react";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { OptionCard } from "./option-card";
 import { PlayerRichText } from "./player-rich-text";
@@ -106,35 +105,17 @@ export function PlayerChoiceSceneOptionText({ children }: { children: React.Reac
 export function PlayerChoiceSceneOptions({
   ariaLabel,
   keyboardEnabled = true,
-  onOptionPointerUp,
   onSelect,
   options,
 }: {
   ariaLabel?: string;
   keyboardEnabled?: boolean;
-  onOptionPointerUp?: (input: { event: PointerEvent<HTMLButtonElement>; index: number }) => void;
   onSelect: (index: number) => void;
   options: readonly PlayerChoiceSceneOption[];
 }) {
   const t = useExtracted();
 
   useOptionKeyboard({ enabled: keyboardEnabled, onSelect, optionCount: options.length });
-
-  /**
-   * Pointer-up identifies the physical input before the native click selects
-   * the option, while number keys keep calling the same selection action
-   * directly through useOptionKeyboard. This preserves one selection path
-   * without confusing its input source.
-   */
-  function handleOptionPointerUp({
-    event,
-    index,
-  }: {
-    event: PointerEvent<HTMLButtonElement>;
-    index: number;
-  }) {
-    onOptionPointerUp?.({ event, index });
-  }
 
   return (
     <div
@@ -150,7 +131,6 @@ export function PlayerChoiceSceneOptions({
           isDimmed={option.isDimmed}
           isSelected={option.isSelected}
           key={option.key}
-          onPointerUp={(event) => handleOptionPointerUp({ event, index })}
           onSelect={() => onSelect(index)}
           resultState={option.resultState ?? null}
         >
