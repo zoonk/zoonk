@@ -3,9 +3,8 @@ import { getEnergyInsights } from "@/data/progress/get-energy-insights";
 import { getSession } from "@/data/users/get-session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
-import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
 import { EnergyChart, EnergyChartSkeleton } from "./energy-chart";
-import { EnergyExplanation } from "./energy-explanation";
+import { EnergyExplanation, EnergyExplanationSkeleton } from "./energy-explanation";
 import { EnergyInsights, EnergyInsightsSkeleton } from "./energy-insights";
 import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
@@ -45,7 +44,7 @@ export function EnergyContentSkeleton() {
       <EnergyStatsSkeleton />
       <EnergyChartSkeleton />
       <EnergyInsightsSkeleton />
-      <ProgressExplanationSkeleton />
+      <EnergyExplanationSkeleton />
     </ProgressContent>
   );
 }

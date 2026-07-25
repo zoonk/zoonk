@@ -213,8 +213,9 @@ test.describe("Home Page - Progress Section", () => {
     // Wait for Suspense content to load - Progress section only renders when data is available
     await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
 
-    // Use regex to match "Your energy is X%" where X can be any number (including decimals)
-    await expect(authenticatedPage.getByText(/your energy is \d+(?:\.\d+)?%/iu)).toBeVisible();
+    const energyCard = authenticatedPage.getByRole("article", { name: /^energy$/iu });
+
+    await expect(energyCard).toContainText("75%");
   });
 
   test("authenticated user with progress sees belt level", async ({ authenticatedPage }) => {

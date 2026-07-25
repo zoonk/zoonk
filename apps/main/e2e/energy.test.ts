@@ -25,11 +25,10 @@ test.describe("Energy Page", () => {
       // Wait for Progress section to load (indicates Suspense resolved)
       await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
 
-      // User clicks energy card on home page (use flexible matcher for energy percentage)
-      await authenticatedPage
-        .getByRole("link")
-        .filter({ has: authenticatedPage.getByText(/your energy is \d+(?:\.\d+)?%/iu) })
-        .click();
+      // User opens the Energy card from the progress section
+      const energyCard = authenticatedPage.getByRole("article", { name: /^energy$/iu });
+
+      await authenticatedPage.getByRole("link").filter({ has: energyCard }).click();
 
       // Wait for navigation to energy page
       await expect(authenticatedPage).toHaveURL(/\/energy/u);
@@ -37,7 +36,23 @@ test.describe("Energy Page", () => {
       // User sees the energy page heading
       await expect(authenticatedPage.getByRole("heading", { name: /^energy$/iu })).toBeVisible();
 
-      await expect(authenticatedPage.getByText(/current energy/iu)).toBeVisible();
+      await expect(
+        authenticatedPage.getByRole("progressbar", { name: /your energy/iu }),
+      ).toBeVisible();
+    });
+
+    test("shows progress navigation in metric priority order", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/energy");
+
+      const navigationLinks = authenticatedPage.getByRole("navigation").getByRole("link");
+
+      await expect(navigationLinks).toHaveCount(6);
+      await expect(navigationLinks.nth(0)).toHaveAccessibleName("Home page");
+      await expect(navigationLinks.nth(1)).toHaveAccessibleName("Activity");
+      await expect(navigationLinks.nth(2)).toHaveAccessibleName("Score");
+      await expect(navigationLinks.nth(3)).toHaveAccessibleName("Patterns");
+      await expect(navigationLinks.nth(4)).toHaveAccessibleName("Level");
+      await expect(navigationLinks.nth(5)).toHaveAccessibleName("Energy");
     });
 
     test("shows the Energy calendar and all-time metrics without date controls", async ({
@@ -64,11 +79,15 @@ test.describe("Energy Page", () => {
         await page.goto("/energy");
 
         const averageEnergyCard = page.getByRole("article", { name: /average energy/iu });
-        const fullEnergyCard = page.getByRole("article", { name: /full energy/iu });
+        const energyBattery = page.getByRole("progressbar", { name: /your energy/iu });
+        const fullEnergyCard = page.getByRole("article", { name: /days at 100% energy/iu });
         const energyChart = page.getByRole("figure", { name: /energy history/iu });
         const recordedEnergyDay = energyChart.getByRole("button", { name: /^50% energy on /iu });
 
-        await expect(page.getByText(/current energy/iu)).toBeVisible();
+        await expect(energyBattery).toHaveAttribute("aria-valuemin", "0");
+        await expect(energyBattery).toHaveAttribute("aria-valuemax", "100");
+        await expect(energyBattery).toHaveAttribute("aria-valuenow", "73");
+        await expect(energyBattery).toHaveAttribute("aria-valuetext", "73%");
         await expect(page.getByText(/^73%$/u)).toBeVisible();
         await expect(averageEnergyCard).toContainText("75%");
         await expect(fullEnergyCard).toContainText("1 day");
@@ -116,30 +135,16 @@ test.describe("Energy Page", () => {
 
         await expect(page.getByText(/^73%$/u)).toBeVisible();
         await expect(page.getByRole("article", { name: /average energy/iu })).toContainText("100%");
-        await expect(page.getByRole("article", { name: /full energy/iu })).toContainText("1 day");
+
+        await expect(page.getByRole("article", { name: /days at 100% energy/iu })).toContainText(
+          "1 day",
+        );
+
         await expect(page.getByRole("figure", { name: /energy history/iu })).toBeVisible();
         await expect(page.getByText(/start learning to track your progress/iu)).toHaveCount(0);
       } finally {
         await browserContext.close();
       }
-    });
-
-    test("displays energy explanation sections", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/energy");
-
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /what is energy/iu }),
-      ).toBeVisible();
-
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /how do i improve energy/iu }),
-      ).toBeVisible();
-
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /why is energy important/iu }),
-      ).toBeVisible();
-
-      await expect(authenticatedPage.getByText(/doesn't reset your progress/iu)).toBeVisible();
     });
   });
 

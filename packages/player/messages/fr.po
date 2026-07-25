@@ -82,12 +82,12 @@ msgstr "Tu as gagné {brainPower} PM aujourd’hui, plus que n’importe quel au
 #: src/components/completion-energy-milestone.tsx
 msgctxt "m2WzLQ"
 msgid "Max Energy!"
-msgstr "Énergie au max !"
+msgstr "Énergie au maximum !"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "WwRCBI"
-msgid "You've been learning regularly and answering accurately. Stay consistent to keep your Energy at 100%."
-msgstr "Tu apprends régulièrement et donnes de bonnes réponses. Garde ce rythme pour maintenir ton Énergie à 100 %."
+msgctxt "-9aH4o"
+msgid "Complete lessons every day and answer correctly to keep it full."
+msgstr "Termine des leçons chaque jour et réponds correctement pour qu’elle reste pleine."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "J89SkG"
@@ -95,24 +95,24 @@ msgid "{percentage} Energy"
 msgstr "{percentage} Énergie"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "pQ9XJb"
-msgid "You're building good momentum. Learning regularly and getting answers right will keep your Energy moving up."
-msgstr "Tu es sur une bonne lancée. Apprends régulièrement et donne de bonnes réponses pour continuer à faire monter ton Énergie."
+msgctxt "AW9QoT"
+msgid "Complete lessons every day and answer correctly to reach 100%."
+msgstr "Termine des leçons chaque jour et réponds correctement pour atteindre 100 %."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "5YVYKd"
 msgid "1 year of max Energy"
-msgstr "1 an d’Énergie au max"
+msgstr "1 an d’Énergie au maximum"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "1WNk4i"
-msgid "{days} days of max Energy"
-msgstr "{days} jours d’Énergie au max"
+msgctxt "zcc-w4"
+msgid "{days} days at 100% Energy"
+msgstr "Énergie à 100 % pendant {days} jours"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "wl6CDc"
-msgid "You're building real consistency. Learning every day helps keep your mind active and improve your performance."
-msgstr "Tu deviens vraiment régulier. Apprendre chaque jour aide à garder l’esprit actif et à progresser."
+msgctxt "JEEeYJ"
+msgid "Complete lessons every day and answer correctly to keep your Energy full."
+msgstr "Termine des leçons chaque jour et réponds correctement pour garder ton Énergie au maximum."
 
 #: src/components/completion-learning-days-milestone.tsx
 msgctxt "SIXtG5"

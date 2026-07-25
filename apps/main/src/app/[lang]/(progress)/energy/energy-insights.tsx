@@ -14,7 +14,7 @@ import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressInsightGrid } from "../_components/progress-insight-grid";
 
 const AVERAGE_ENERGY_LABEL_ID = "energy-average-label";
-const FULL_ENERGY_LABEL_ID = "energy-full-energy-label";
+const DAYS_AT_FULL_ENERGY_LABEL_ID = "energy-days-at-full-label";
 
 /**
  * Energy insights answer two stable lifetime questions without repeating the
@@ -42,12 +42,12 @@ async function FullEnergyCard({ count }: { count: number }) {
   const countLabel = await getProgressDayCountLabel({ count });
 
   return (
-    <ProgressMetricCard aria-labelledby={FULL_ENERGY_LABEL_ID} className="text-energy">
+    <ProgressMetricCard aria-labelledby={DAYS_AT_FULL_ENERGY_LABEL_ID} className="text-energy">
       <ProgressMetricCardIcon>
         <ZapIcon />
       </ProgressMetricCardIcon>
-      <ProgressMetricCardLabel id={FULL_ENERGY_LABEL_ID}>
-        {t("Full energy")}
+      <ProgressMetricCardLabel id={DAYS_AT_FULL_ENERGY_LABEL_ID}>
+        {t("Days at 100% Energy")}
       </ProgressMetricCardLabel>
       <ProgressMetricCardValue>{countLabel}</ProgressMetricCardValue>
     </ProgressMetricCard>

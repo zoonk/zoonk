@@ -17,14 +17,14 @@ import { getExtracted, getFormatter } from "next-intl/server";
 
 const HOME_ENERGY_LABEL_ID = "home-energy-label";
 
+/** Gives the home page one direct Energy goal and links to the full history. */
 export async function Energy({ energy }: { energy: number }) {
   const t = await getExtracted();
   const format = await getFormatter();
   const energyMenu = getMenu("energy");
   const formattedEnergy = formatMetricPercent({ format, value: energy });
 
-  const description =
-    energy < 100 ? t("Keep learning to increase it") : t("Keep learning to maintain it");
+  const description = energy < 100 ? t("Reach 100%") : t("Stay at 100%");
 
   return (
     <FeatureCardLink render={<Link href={energyMenu.url} prefetch />}>
@@ -36,15 +36,14 @@ export async function Energy({ energy }: { energy: number }) {
         <ProgressMetricCardTrailing>
           <FeatureCardIndicator />
         </ProgressMetricCardTrailing>
-        <ProgressMetricCardValue>
-          {t("Your energy is {percentage}", { percentage: formattedEnergy })}
-        </ProgressMetricCardValue>
+        <ProgressMetricCardValue>{formattedEnergy}</ProgressMetricCardValue>
         <ProgressMetricCardSubtitle>{description}</ProgressMetricCardSubtitle>
       </ProgressMetricCard>
     </FeatureCardLink>
   );
 }
 
+/** Keeps the Energy card stable while the signed-in learner's progress streams. */
 export function EnergySkeleton() {
   return (
     <ProgressMetricCard aria-hidden="true" className="w-full">

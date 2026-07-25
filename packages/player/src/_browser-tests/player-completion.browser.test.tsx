@@ -226,12 +226,12 @@ describe("player browser integration: completion", () => {
       .toHaveAttribute("href", "/energy");
   });
 
-  it("shows full-energy day milestones after the Energy threshold screen", async () => {
+  it("shows the one-year Energy milestone after the Max Energy screen", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       progressSnapshot: buildProgressSnapshot({
         currentEnergy: 99.8,
-        fullEnergyDays: 29,
+        fullEnergyDays: 364,
         todayEnergyAtEnd: 99.8,
       }),
       viewer: buildAuthenticatedViewer(),
@@ -249,7 +249,7 @@ describe("player browser integration: completion", () => {
 
     const fullEnergyScreen = page.getByRole("status");
 
-    await expect.element(fullEnergyScreen.getByText(/30 days of max energy/iu)).toBeInTheDocument();
+    await expect.element(fullEnergyScreen.getByText(/1 year of max energy/iu)).toBeInTheDocument();
 
     await expect
       .element(fullEnergyScreen.getByRole("link", { name: /learn about energy/iu }))

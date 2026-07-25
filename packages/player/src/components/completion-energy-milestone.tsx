@@ -9,6 +9,7 @@ import { PlayerSupportingText } from "./player-supporting-text";
 
 type EnergyMilestone = Extract<PlayerCompletionMilestone, { kind: "energy" }>;
 
+/** Marks Energy celebrations with the same restrained accent used across progress surfaces. */
 export function EnergyMilestoneIndicator() {
   return (
     <CompletionMilestoneMark>
@@ -19,6 +20,7 @@ export function EnergyMilestoneIndicator() {
   );
 }
 
+/** Keeps every threshold celebration pointed at the single 100% Energy goal. */
 function EnergyThresholdCopy({
   milestone,
 }: {
@@ -32,9 +34,7 @@ function EnergyThresholdCopy({
       <>
         <CompletionMilestoneTitle>{t("Max Energy!")}</CompletionMilestoneTitle>
         <PlayerSupportingText>
-          {t(
-            "You've been learning regularly and answering accurately. Stay consistent to keep your Energy at 100%.",
-          )}
+          {t("Complete lessons every day and answer correctly to keep it full.")}
         </PlayerSupportingText>
       </>
     );
@@ -48,14 +48,13 @@ function EnergyThresholdCopy({
         })}
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
-        {t(
-          "You're building good momentum. Learning regularly and getting answers right will keep your Energy moving up.",
-        )}
+        {t("Complete lessons every day and answer correctly to reach 100%.")}
       </PlayerSupportingText>
     </>
   );
 }
 
+/** Preserves the one-year celebration while naming other milestones by the familiar 100% goal. */
 function FullEnergyDaysTitle({ days }: { days: number }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -67,11 +66,12 @@ function FullEnergyDaysTitle({ days }: { days: number }) {
 
   return (
     <CompletionMilestoneTitle>
-      {t("{days} days of max Energy", { days: formattedDays })}
+      {t("{days} days at 100% Energy", { days: formattedDays })}
     </CompletionMilestoneTitle>
   );
 }
 
+/** Reinforces the daily action after a learner reaches a full-Energy milestone. */
 function FullEnergyDaysCopy({
   milestone,
 }: {
@@ -83,14 +83,13 @@ function FullEnergyDaysCopy({
     <>
       <FullEnergyDaysTitle days={milestone.days} />
       <PlayerSupportingText>
-        {t(
-          "You're building real consistency. Learning every day helps keep your mind active and improve your performance.",
-        )}
+        {t("Complete lessons every day and answer correctly to keep your Energy full.")}
       </PlayerSupportingText>
     </>
   );
 }
 
+/** Selects the matching copy while the milestone shell owns shared layout and actions. */
 export function EnergyMilestoneCopy({ milestone }: { milestone: EnergyMilestone }) {
   if (milestone.status === "threshold") {
     return <EnergyThresholdCopy milestone={milestone} />;

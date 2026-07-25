@@ -25,6 +25,7 @@
 - "practice questions": "perguntas práticas"
 - "options": "alternativas" (when used in the context of multiple choice questions)
 - "listening": "escuta"
+- "complete" (imperative, as in "Complete lessons"): "complete" (not "conclua")
 - "completed": "completou"
 - "we": "a gente"
 - "quiz": "quiz"

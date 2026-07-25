@@ -245,14 +245,14 @@ msgid "Continue learning"
 msgstr "Continue learning"
 
 #: src/app/[lang]/(catalog)/(home)/energy.tsx
-msgctxt "soDmlG"
-msgid "Keep learning to increase it"
-msgstr "Keep learning to increase it"
+msgctxt "S5vNR_"
+msgid "Reach 100%"
+msgstr "Reach 100%"
 
 #: src/app/[lang]/(catalog)/(home)/energy.tsx
-msgctxt "WgeB0r"
-msgid "Keep learning to maintain it"
-msgstr "Keep learning to maintain it"
+msgctxt "j-gOkC"
+msgid "Stay at 100%"
+msgstr "Stay at 100%"
 
 #: src/app/[lang]/(catalog)/(home)/energy.tsx
 #: src/app/[lang]/(progress)/_components/metric-pills.tsx
@@ -260,11 +260,6 @@ msgstr "Keep learning to maintain it"
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energy"
-
-#: src/app/[lang]/(catalog)/(home)/energy.tsx
-msgctxt "AV5XNu"
-msgid "Your energy is {percentage}"
-msgstr "Your energy is {percentage}"
 
 #: src/app/[lang]/(catalog)/(home)/learning-days.tsx
 msgctxt "QbNcMh"
@@ -1054,24 +1049,24 @@ msgid "High"
 msgstr "High"
 
 #: src/app/[lang]/(progress)/energy/energy-explanation.tsx
-msgctxt "TLPAMC"
-msgid "What is Energy?"
-msgstr "What is Energy?"
+msgctxt "b6XNAX"
+msgid "How do I increase my Energy?"
+msgstr "How do I increase my Energy?"
 
 #: src/app/[lang]/(progress)/energy/energy-explanation.tsx
-msgctxt "OvOWOR"
-msgid "Energy is a 0% to 100% score for your recent learning consistency and accuracy."
-msgstr "Energy is a 0% to 100% score for your recent learning consistency and accuracy."
+msgctxt "65k5kc"
+msgid "Complete lessons and answer questions correctly to increase your Energy."
+msgstr "Complete lessons and answer questions correctly to increase your Energy."
 
 #: src/app/[lang]/(progress)/energy/energy-explanation.tsx
-msgctxt "K3jN6p"
-msgid "How do I improve Energy?"
-msgstr "How do I improve Energy?"
+msgctxt "IDCKRi"
+msgid "Missed a day?"
+msgstr "Missed a day?"
 
 #: src/app/[lang]/(progress)/energy/energy-explanation.tsx
-msgctxt "pssms6"
-msgid "Answer questions correctly and keep learning regularly. Correct answers raise Energy; wrong answers and days away from studying lower it."
-msgstr "Answer questions correctly and keep learning regularly. Correct answers raise Energy; wrong answers and days away from studying lower it."
+msgctxt "tKCMUI"
+msgid "Your Energy drops a little. Complete lessons to fill it back up."
+msgstr "Your Energy drops a little. Complete lessons to fill it back up."
 
 #: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "-8Qx8X"
@@ -1079,14 +1074,14 @@ msgid "Why is Energy important?"
 msgstr "Why is Energy important?"
 
 #: src/app/[lang]/(progress)/energy/energy-explanation.tsx
-msgctxt "UfEfhq"
-msgid "Energy is like heart rate in a health app: it shows your current learning rhythm. Missing a day doesn't reset your progress; you recover as soon as you start learning again."
-msgstr "Energy is like heart rate in a health app: it shows your current learning rhythm. Missing a day doesn't reset your progress; you recover as soon as you start learning again."
+msgctxt "0-k3_3"
+msgid "Energy rewards consistency. Learning regularly helps reinforce what you learn."
+msgstr "Energy rewards consistency. Learning regularly helps reinforce what you learn."
 
 #: src/app/[lang]/(progress)/energy/energy-insights.tsx
-msgctxt "aaiQkv"
-msgid "Full energy"
-msgstr "Full energy"
+msgctxt "qm9EdM"
+msgid "Days at 100% Energy"
+msgstr "Days at 100% Energy"
 
 #: src/app/[lang]/(progress)/energy/energy-insights.tsx
 msgctxt "F9mA1x"
@@ -1094,19 +1089,14 @@ msgid "Average Energy"
 msgstr "Average Energy"
 
 #: src/app/[lang]/(progress)/energy/energy-stats.tsx
-msgctxt "zLCmVM"
-msgid "Current Energy"
-msgstr "Current Energy"
+msgctxt "jZpK89"
+msgid "Your Energy"
+msgstr "Your Energy"
 
 #: src/app/[lang]/(progress)/energy/page.tsx
-msgctxt "AZMpf3"
-msgid "Energy is a 0% to 100% score based on recent activity and accuracy."
-msgstr "Energy is a 0% to 100% score based on recent activity and accuracy."
-
-#: src/app/[lang]/(progress)/energy/page.tsx
-msgctxt "rsIaGW"
-msgid "A 0% to 100% score for recent activity and accuracy"
-msgstr "A 0% to 100% score for recent activity and accuracy"
+msgctxt "aHGjLP"
+msgid "Keep your Energy at 100% by studying every day."
+msgstr "Keep your Energy at 100% by studying every day."
 
 #: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "gaXaWV"

@@ -16,10 +16,7 @@ export const prefetch = "allow-runtime";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return {
-    description: t("Energy is a 0% to 100% score based on recent activity and accuracy."),
-    title: t("Energy"),
-  };
+  return { description: t("Keep your Energy at 100% by studying every day."), title: t("Energy") };
 }
 
 export default async function EnergyPage() {
@@ -31,7 +28,7 @@ export default async function EnergyPage() {
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Energy")}</ContainerTitle>
           <ContainerDescription>
-            {t("A 0% to 100% score for recent activity and accuracy")}
+            {t("Keep your Energy at 100% by studying every day.")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

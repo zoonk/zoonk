@@ -85,9 +85,9 @@ msgid "Max Energy!"
 msgstr "Max Energy!"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "WwRCBI"
-msgid "You've been learning regularly and answering accurately. Stay consistent to keep your Energy at 100%."
-msgstr "You've been learning regularly and answering accurately. Stay consistent to keep your Energy at 100%."
+msgctxt "-9aH4o"
+msgid "Complete lessons every day and answer correctly to keep it full."
+msgstr "Complete lessons every day and answer correctly to keep it full."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "J89SkG"
@@ -95,9 +95,9 @@ msgid "{percentage} Energy"
 msgstr "{percentage} Energy"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "pQ9XJb"
-msgid "You're building good momentum. Learning regularly and getting answers right will keep your Energy moving up."
-msgstr "You're building good momentum. Learning regularly and getting answers right will keep your Energy moving up."
+msgctxt "AW9QoT"
+msgid "Complete lessons every day and answer correctly to reach 100%."
+msgstr "Complete lessons every day and answer correctly to reach 100%."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "5YVYKd"
@@ -105,14 +105,14 @@ msgid "1 year of max Energy"
 msgstr "1 year of max Energy"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "1WNk4i"
-msgid "{days} days of max Energy"
-msgstr "{days} days of max Energy"
+msgctxt "zcc-w4"
+msgid "{days} days at 100% Energy"
+msgstr "{days} days at 100% Energy"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "wl6CDc"
-msgid "You're building real consistency. Learning every day helps keep your mind active and improve your performance."
-msgstr "You're building real consistency. Learning every day helps keep your mind active and improve your performance."
+msgctxt "JEEeYJ"
+msgid "Complete lessons every day and answer correctly to keep your Energy full."
+msgstr "Complete lessons every day and answer correctly to keep your Energy full."
 
 #: src/components/completion-learning-days-milestone.tsx
 msgctxt "SIXtG5"
