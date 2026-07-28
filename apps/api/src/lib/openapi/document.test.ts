@@ -23,7 +23,7 @@ import {
 
 const UUID = "00000000-0000-4000-8000-000000000001";
 const ISO_DATE = "2026-07-25T12:00:00.000Z";
-const DOCUMENTED_METHODS = ["get", "patch", "post"] as const;
+const DOCUMENTED_METHODS = ["delete", "get", "patch", "post"] as const;
 
 const CANONICAL_OPERATIONS = [
   { method: "get", operationId: "searchCatalog", path: "/catalog/search" },
@@ -35,6 +35,7 @@ const CANONICAL_OPERATIONS = [
   { method: "get", operationId: "getLesson", path: "/lessons/{lessonId}" },
   { method: "get", operationId: "listLanguageCourses", path: "/language-courses" },
   { method: "get", operationId: "listCurrentUserCourses", path: "/me/courses" },
+  { method: "delete", operationId: "removeCurrentUserCourse", path: "/me/courses/{courseId}" },
   {
     method: "get",
     operationId: "listCurrentUserCourseContinuations",
@@ -97,6 +98,7 @@ const operationContractSchema = z
 
 const pathItemContractSchema = z
   .object({
+    delete: operationContractSchema.optional(),
     get: operationContractSchema.optional(),
     patch: operationContractSchema.optional(),
     post: operationContractSchema.optional(),

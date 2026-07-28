@@ -32,6 +32,7 @@
     "./courses/list": "./src/courses/list-courses.ts",
     "./courses/prompt-contract": "./src/courses/course-prompt-contract.ts",
     "./courses/prompt-generation": "./src/courses/course-prompt-generation.ts",
+    "./courses/remove-current-user": "./src/courses/remove-current-user-course.ts",
     "./courses/resolve-prompt": "./src/courses/resolve-course-prompt.ts",
     "./courses/slug": "./src/courses/course-slug.ts",
     "./content/thumbnail": "./src/content/content-thumbnail.ts",

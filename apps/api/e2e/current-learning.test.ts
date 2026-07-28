@@ -1,4 +1,5 @@
 import { request } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
@@ -10,13 +11,16 @@ test.describe("Current learner catalog API", () => {
   test("requires authentication for learner-owned resources", async () => {
     const apiContext = await request.newContext({ baseURL: process.env.E2E_BASE_URL });
 
-    const [coursesResponse, continuationsResponse, visibilityResponse] = await Promise.all([
-      apiContext.get("/v1/me/courses"),
-      apiContext.get("/v1/me/course-continuations"),
-      apiContext.get("/v1/me/lesson-visibility"),
-    ]);
+    const [coursesResponse, removeCourseResponse, continuationsResponse, visibilityResponse] =
+      await Promise.all([
+        apiContext.get("/v1/me/courses"),
+        apiContext.delete("/v1/me/courses/00000000-0000-4000-8000-000000000001"),
+        apiContext.get("/v1/me/course-continuations"),
+        apiContext.get("/v1/me/lesson-visibility"),
+      ]);
 
     expect(coursesResponse.status()).toBe(401);
+    expect(removeCourseResponse.status()).toBe(401);
     expect(continuationsResponse.status()).toBe(401);
     expect(visibilityResponse.status()).toBe(401);
 
@@ -72,6 +76,48 @@ test.describe("Current learner catalog API", () => {
     expect(secondBody.pagination).toEqual({ hasMore: false, nextCursor: null });
 
     await Promise.all([apiContext.dispose(), otherUser.apiContext.dispose()]);
+  });
+
+  test("removes a course from the learner's library without clearing progress", async () => {
+    const baseURL = process.env.E2E_BASE_URL ?? "";
+
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "remove-course",
+    });
+
+    const organization = await organizationFixture({ kind: "brand" });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId: organization.id });
+    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: organization.id });
+
+    const [, lessonProgress] = await Promise.all([
+      courseUserFixture({ courseId: course.id, userId: user.id }),
+      lessonProgressFixture({
+        completedAt: new Date(),
+        durationSeconds: 60,
+        lessonId: lesson.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const response = await apiContext.delete(`/v1/me/courses/${course.id}`);
+
+    expect(response.status()).toBe(204);
+
+    const [courseUser, preservedProgress, updatedCourse] = await Promise.all([
+      prisma.courseUser.findUnique({
+        where: { courseUser: { courseId: course.id, userId: user.id } },
+      }),
+      prisma.lessonProgress.findUnique({ where: { id: lessonProgress.id } }),
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ]);
+
+    expect(courseUser).toBeNull();
+    expect(preservedProgress).not.toBeNull();
+    expect(updatedCourse.userCount).toBe(0);
+
+    await apiContext.dispose();
   });
 
   test("returns the learner's bounded continuation resources", async () => {

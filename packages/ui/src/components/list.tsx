@@ -1,5 +1,6 @@
 import {
   Item,
+  ItemActions,
   ItemContent,
   ItemDescription,
   ItemGroup,
@@ -103,6 +104,14 @@ export function ListItemIcon({ className, ...props }: ItemMediaProps) {
  */
 export function ListItemContent({ className, ...props }: React.ComponentProps<"div">) {
   return <ItemContent className={cn("gap-1", className)} {...props} />;
+}
+
+/**
+ * Row-level controls stay separate from the primary link so list items remain
+ * valid, accessible compositions when they expose secondary actions.
+ */
+export function ListItemActions({ className, ...props }: React.ComponentProps<"div">) {
+  return <ItemActions className={className} {...props} />;
 }
 
 /**
