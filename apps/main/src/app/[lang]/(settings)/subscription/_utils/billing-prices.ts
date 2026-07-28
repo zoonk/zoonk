@@ -2,6 +2,27 @@ import { type PriceInfo } from "@zoonk/utils/currency";
 
 type PlanPrices = { monthlyPrice: PriceInfo | null; yearlyPrice: PriceInfo | null };
 
+const MONTHS_PER_YEAR = 12;
+
+/**
+ * Turns the yearly total into the closest monthly amount the currency can
+ * display. The exact yearly charge stays visible beside this comparison.
+ */
+export function getMonthlyEquivalent({
+  yearlyPrice,
+}: {
+  yearlyPrice: PriceInfo | null;
+}): PriceInfo | null {
+  if (!yearlyPrice) {
+    return null;
+  }
+
+  return {
+    amount: Math.round(yearlyPrice.amount / MONTHS_PER_YEAR),
+    currency: yearlyPrice.currency,
+  };
+}
+
 /**
  * The single Plus offer can make a yearly-savings claim only when Stripe proves
  * that its monthly and yearly prices use the same currency and the annual total
@@ -16,7 +37,7 @@ export function getYearlySavings({ monthlyPrice, yearlyPrice }: PlanPrices): Pri
     return null;
   }
 
-  const savedAmount = monthlyPrice.amount * 12 - yearlyPrice.amount;
+  const savedAmount = monthlyPrice.amount * MONTHS_PER_YEAR - yearlyPrice.amount;
 
   if (savedAmount <= 0) {
     return null;
