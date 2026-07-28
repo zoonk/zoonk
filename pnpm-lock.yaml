@@ -27,9 +27,6 @@ catalogs:
     '@next/mdx':
       specifier: 16.3.0-preview.10
       version: 16.3.0-preview.10
-    '@next/playwright':
-      specifier: 16.3.0-preview.10
-      version: 16.3.0-preview.10
     '@next/third-parties':
       specifier: 16.3.0-preview.10
       version: 16.3.0-preview.10
@@ -472,9 +469,6 @@ importers:
       '@next/mdx':
         specifier: 'catalog:'
         version: 16.3.0-preview.10(@mdx-js/loader@3.1.1(supports-color@10.2.2)(webpack@5.108.4(@swc/core@1.15.46(@swc/helpers@0.5.23))(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.22)))(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.8))
-      '@next/playwright':
-        specifier: 'catalog:'
-        version: 16.3.0-preview.10(@playwright/test@1.61.1)
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.3.3
@@ -1965,14 +1959,6 @@ packages:
       '@mdx-js/loader':
         optional: true
       '@mdx-js/react':
-        optional: true
-
-  '@next/playwright@16.3.0-preview.10':
-    resolution: {integrity: sha512-pyEdNl4WB6WQlYZ4eTcNuhi0DIXXzZ3RvUdUS3edFSqpAJHo5IeDU3Tby7YkD/cH40vXMDMQ8SnCmdtE33XkDw==}
-    peerDependencies:
-      '@playwright/test': '>=1.0.0'
-    peerDependenciesMeta:
-      '@playwright/test':
         optional: true
 
   '@next/swc-darwin-arm64@16.3.0-preview.10':
@@ -8537,10 +8523,6 @@ snapshots:
     optionalDependencies:
       '@mdx-js/loader': 3.1.1(supports-color@10.2.2)(webpack@5.108.4(@swc/core@1.15.46(@swc/helpers@0.5.23))(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.22))
       '@mdx-js/react': 3.1.1(@types/react@19.2.17)(react@19.2.8)
-
-  '@next/playwright@16.3.0-preview.10(@playwright/test@1.61.1)':
-    optionalDependencies:
-      '@playwright/test': 1.61.1
 
   '@next/swc-darwin-arm64@16.3.0-preview.10':
     optional: true

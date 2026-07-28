@@ -24,7 +24,6 @@ catalog:
   "@mdx-js/loader": 3.1.1
   "@mdx-js/react": 3.1.1
   "@next/mdx": 16.3.0-preview.10
-  "@next/playwright": 16.3.0-preview.10
   "@next/third-parties": 16.3.0-preview.10
   "@sentry/nextjs": 10.67.0
   "@tailwindcss/postcss": 4.3.3
