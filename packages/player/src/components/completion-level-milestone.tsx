@@ -35,10 +35,10 @@ function AchievedLevelCopy({
     <>
       <CompletionMilestoneTitle>{t("Level achieved")}</CompletionMilestoneTitle>
       <PlayerSupportingText>
-        {t(
-          "Your effort is paying off—you've reached {belt}, level {level}. Keep it up—every lesson adds to your Brain Power.",
-          { belt: beltLabel, level: String(milestone.belt.level) },
-        )}
+        {t("You've reached {belt}, level {level}. Every lesson adds to your Brain Power.", {
+          belt: beltLabel,
+          level: String(milestone.belt.level),
+        })}
       </PlayerSupportingText>
     </>
   );

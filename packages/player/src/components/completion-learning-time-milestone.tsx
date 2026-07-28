@@ -3,6 +3,7 @@
 import { formatWholeNumber } from "@zoonk/utils/number";
 import { ClockIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { getLearningTimeReadingComparison } from "../_utils/learning-time-reading-comparison";
 import { type PlayerCompletionMilestone } from "../completion-milestones";
 import { CompletionMilestoneMark, CompletionMilestoneTitle } from "./completion-milestone-shell";
 import { PlayerSupportingText } from "./player-supporting-text";
@@ -61,16 +62,31 @@ function LearningTimeMilestoneTitle({ seconds }: { seconds: number }) {
 }
 
 /**
- * Connects accumulated learning time to the value of regular practice without
- * repeating the duration already shown in the milestone title.
+ * Turns the abstract time total into a reading comparison that stays concrete
+ * from the first few pages through large numbers of full-length books.
  */
-function LearningTimeMilestoneDescription() {
+function LearningTimeMilestoneDescription({ seconds }: { seconds: number }) {
   const t = useExtracted();
+  const format = useFormatter();
+  const comparison = getLearningTimeReadingComparison(seconds);
+
+  if (comparison.kind === "pages") {
+    const formattedPages = formatWholeNumber({ format, value: comparison.pages });
+
+    return (
+      <PlayerSupportingText>
+        {t("That's like reading about {pages} pages of a book.", { pages: formattedPages })}
+      </PlayerSupportingText>
+    );
+  }
+
+  const formattedPagesPerBook = formatWholeNumber({ format, value: comparison.pagesPerBook });
 
   return (
     <PlayerSupportingText>
       {t(
-        "All that time spent learning adds up. Even short, regular sessions can help new ideas stick.",
+        "That's like reading about {books, plural, one {one {pagesPerBook}-page book} other {# books of {pagesPerBook} pages each}}.",
+        { books: comparison.books, pagesPerBook: formattedPagesPerBook },
       )}
     </PlayerSupportingText>
   );
@@ -84,7 +100,7 @@ export function LearningTimeMilestoneCopy({ milestone }: { milestone: LearningTi
   return (
     <>
       <LearningTimeMilestoneTitle seconds={milestone.seconds} />
-      <LearningTimeMilestoneDescription />
+      <LearningTimeMilestoneDescription seconds={milestone.seconds} />
     </>
   );
 }

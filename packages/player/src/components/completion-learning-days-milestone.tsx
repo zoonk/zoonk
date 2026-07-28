@@ -39,7 +39,7 @@ export function LearningDaysMilestoneCopy({ milestone }: { milestone: LearningDa
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t(
-          "You're making learning part of your routine. Regular practice helps you remember more of what you learn.",
+          "Every day you complete a lesson adds to this total. Every lesson adds to your Brain Power.",
         )}
       </PlayerSupportingText>
     </>
