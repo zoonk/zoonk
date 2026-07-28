@@ -5,6 +5,7 @@ import {
   resolveCourseIdentity,
 } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
+import { getCompatibleCourseFormats } from "@zoonk/core/courses/prompt-generation";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseGetPayload, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
@@ -125,7 +126,7 @@ function getCandidateWhereClauses({
  */
 function getCourseIdentityWhere(request: GeneratableCoursePrompt): CourseWhereInput {
   return {
-    format: request.courseFormat,
+    format: { in: getCompatibleCourseFormats(request.courseFormat) },
     language: request.language,
     targetLanguage: request.targetLanguage,
   };

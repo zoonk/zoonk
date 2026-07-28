@@ -5,6 +5,7 @@ import {
   getAiGenerationCourseWhere,
   prisma,
 } from "@zoonk/db";
+import { getCompatibleCourseFormats } from "../course-prompt-generation";
 import { getCourseSlugForTitle } from "../course-slug";
 import { type CoursePromptWithCourse } from "./course-prompt-types";
 
@@ -28,7 +29,7 @@ async function findCompletedReusableCourse({
 
   return prisma.course.findFirst({
     where: getAiGenerationCourseWhere({
-      format,
+      format: { in: getCompatibleCourseFormats(format) },
       generationStatus: "completed",
       isPublished: true,
       language,

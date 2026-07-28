@@ -104,6 +104,55 @@ describe(getOrCreateCourse, () => {
     expect(updatedRequest.generationRunId).toBe(winningWorkflowRunId);
   });
 
+  it("recovers the same-slug course when its regular format differs", async () => {
+    const title = `Cross Format Collision ${randomUUID()}`;
+    const language = "en";
+    const slug = getCourseSlugForTitle({ language, title });
+    const winningWorkflowRunId = `winning-run-${randomUUID()}`;
+
+    const existingCourse = await courseFixture({
+      format: "core",
+      generationRunId: winningWorkflowRunId,
+      generationStatus: "running",
+      language,
+      organizationId,
+      slug,
+      title,
+    });
+
+    const request = await generatableCoursePromptFixture({
+      canonicalTitle: title,
+      courseFormat: "instrument",
+      language,
+    });
+
+    assertGeneratableCoursePrompt(request);
+
+    const result = await getOrCreateCourse({
+      coursePromptId: request.id,
+      existingCourse: null,
+      prompt: request,
+      workflowRunId: `run-${randomUUID()}`,
+    });
+
+    expect(result.status).toBe("running");
+    expect(result.course).toMatchObject({ courseId: existingCourse.id, format: "core" });
+
+    const [courses, updatedRequest] = await Promise.all([
+      prisma.course.findMany({ where: { organizationId, slug } }),
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+    ]);
+
+    expect(courses).toHaveLength(1);
+
+    expect(updatedRequest).toMatchObject({
+      courseFormat: "instrument",
+      courseId: existingCourse.id,
+      generationRunId: winningWorkflowRunId,
+      generationStatus: "running",
+    });
+  });
+
   it("continues a running course owned by the same workflow run", async () => {
     const title = `Retried Course ${randomUUID()}`;
     const language = "en";
@@ -143,7 +192,6 @@ describe(getOrCreateCourse, () => {
   });
 
   it.each([
-    { courseFormat: "core", courseLanguage: "en", courseTargetLanguage: null, mismatch: "format" },
     {
       courseFormat: "language",
       courseLanguage: "pt",

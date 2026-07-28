@@ -1,11 +1,12 @@
+import { getCompatibleCourseFormats } from "@zoonk/core/courses/prompt-generation";
 import { type Course } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { type GeneratableCoursePrompt } from "../steps/get-course-prompt-step";
 
 /**
  * Prevents cached, classified, or unique-conflict matches from linking a prompt
- * to a different generation identity. Format is authoritative, while source
- * and target languages are the dependent values that must match it exactly.
+ * to a different generation identity. Formats that share the regular course
+ * pipeline are compatible, while source and target languages must still match.
  */
 export function assertCourseMatchesPromptIdentity({
   course,
@@ -15,7 +16,7 @@ export function assertCourseMatchesPromptIdentity({
   prompt: GeneratableCoursePrompt;
 }): void {
   const matchesPrompt =
-    course.format === prompt.courseFormat &&
+    getCompatibleCourseFormats(prompt.courseFormat).includes(course.format) &&
     course.language === prompt.language &&
     course.targetLanguage === prompt.targetLanguage;
 

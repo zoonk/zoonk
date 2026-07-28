@@ -187,6 +187,30 @@ describe("course-prompt", () => {
     });
   });
 
+  it("reuses an existing course with the same slug regardless of regular format", async () => {
+    const prompt = `existing practical topic ${randomUUID()}`;
+    const title = `Existing Practical Course ${randomUUID().slice(0, 8)}`;
+    const course = await createCompletedAiCourse({ language: "en", title });
+    mockPromptTasks({ courseFormat: "practical", title });
+
+    const result = await resolveCoursePrompt({ language: "en", prompt });
+
+    expectCourseResult(result);
+    expect(result.course).toStrictEqual({ id: course.id, slug: course.slug });
+
+    const storedPrompt = await prisma.coursePrompt.findUniqueOrThrow({
+      where: {
+        languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+      },
+    });
+
+    expect(storedPrompt).toMatchObject({
+      courseFormat: "practical",
+      courseId: course.id,
+      generationStatus: "completed",
+    });
+  });
+
   it("uses a cached reusable prompt without calling model tasks", async () => {
     const prompt = `cached topic ${randomUUID()}`;
 

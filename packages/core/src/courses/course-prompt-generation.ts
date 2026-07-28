@@ -29,6 +29,19 @@ export function isRegularCourseFormat(
 }
 
 /**
+ * Treats every format that uses the regular generation pipeline as the same
+ * reusable course identity. Other formats keep their exact stored identity so
+ * language and future format-specific workflows remain isolated.
+ */
+export function getCompatibleCourseFormats(courseFormat: CourseFormat): CourseFormat[] {
+  if (isRegularCourseFormat(courseFormat)) {
+    return [...REGULAR_COURSE_FORMATS];
+  }
+
+  return [courseFormat];
+}
+
+/**
  * Language courses are only useful when the learner language and learned
  * language differ. Every entry point uses this shared check so an admin edit
  * cannot create a prompt that the generation workflow must reject later.
