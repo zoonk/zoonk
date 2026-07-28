@@ -1,6 +1,6 @@
 "use client";
 
-import { type ScorePerformance } from "@/data/progress/_utils/score-performance";
+import { type ScorePerformance } from "@zoonk/core/progress/score-performance";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { useExtracted, useFormatter } from "next-intl";
 import {

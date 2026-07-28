@@ -5,31 +5,31 @@ import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
+import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
 
 const TEST_RUN_ID = "test-run-id-redirect";
 
 /**
- * Mock the workflow APIs to avoid hitting real services.
+ * Mock the course-generation APIs to avoid hitting real services.
  * Returns a simple "in progress" state that shows the generation UI.
  */
-async function mockWorkflowApis(route: Route) {
+async function mockCourseGenerationApis(route: Route) {
   const url = route.request().url();
-  const method = route.request().method();
 
-  if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
+  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
     await route.fulfill({
-      body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
       contentType: "application/json",
-      status: 200,
+      status: 202,
     });
 
     return;
   }
 
-  if (url.includes("/v1/workflows/course-generation/status")) {
+  if (isGenerationEvents(url)) {
     // Return a simple in-progress message to show the generation UI
     await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "running", step: "getCoursePrompt" })}\n\n`,
+      body: `data: ${JSON.stringify({ status: "started", step: "getCoursePrompt" })}\n\n`,
       contentType: "text/event-stream",
       status: 200,
     });
@@ -65,8 +65,8 @@ test.describe("Generate Course Redirect", () => {
       prompt: `Generate ${title} ${slug}`,
     });
 
-    // Mock the workflow APIs before navigating
-    await authenticatedPage.route("**/v1/workflows/**", mockWorkflowApis);
+    // Mock the generation APIs before navigating
+    await routeGenerationApis({ handler: mockCourseGenerationApis, page: authenticatedPage });
 
     await authenticatedPage.goto(`/generate/c/${slug}`);
 
@@ -99,7 +99,7 @@ test.describe("Generate Course Redirect", () => {
       prompt: `Generate ${title} ${slug}`,
     });
 
-    await page.route("**/v1/workflows/**", mockWorkflowApis);
+    await routeGenerationApis({ handler: mockCourseGenerationApis, page });
 
     await page.goto(`/generate/c/${slug}`);
 

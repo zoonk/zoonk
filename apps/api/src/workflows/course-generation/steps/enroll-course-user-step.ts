@@ -1,4 +1,4 @@
-import { enrollUserInCourse } from "@zoonk/core/courses/enroll-user";
+import { enrollUserInCourse } from "@zoonk/core/workflows/internal/enroll-user-in-course";
 
 /**
  * Enrolls the authenticated learner after the workflow has resolved a concrete

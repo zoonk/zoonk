@@ -4,7 +4,7 @@ import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 
 export const test = base.extend<
   { authenticatedPage: Page; logoutPage: Page; userWithoutProgress: Page },
-  { logoutUser: E2EUser; noProgressUser: E2EUser; withProgressUser: E2EUser }
+  { noProgressUser: E2EUser; withProgressUser: E2EUser }
 >({
   authenticatedPage: async ({ browser, withProgressUser }, use) => {
     const ctx = await browser.newContext({ storageState: withProgressUser.storageState });
@@ -18,21 +18,13 @@ export const test = base.extend<
     await use(getBaseURL());
   },
 
-  logoutPage: async ({ browser, logoutUser }, use) => {
+  logoutPage: async ({ browser }, use) => {
+    const logoutUser = await createE2EUser(getBaseURL());
     const ctx = await browser.newContext({ storageState: logoutUser.storageState });
     const page = await ctx.newPage();
     await use(page);
     await ctx.close();
   },
-
-  logoutUser: [
-    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
-    async ({}, use) => {
-      const user = await createE2EUser(getBaseURL());
-      await use(user);
-    },
-    { scope: "worker" },
-  ],
 
   noProgressUser: [
     // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern

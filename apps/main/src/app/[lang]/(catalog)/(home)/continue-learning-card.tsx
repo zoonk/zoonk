@@ -1,6 +1,6 @@
-import { type ContinueLearningItem } from "@/data/courses/get-continue-learning";
 import { Link } from "@/i18n/navigation";
 import { getLessonDisplayMeta } from "@/lib/lessons";
+import { type ContinueLearningItem } from "@zoonk/core/courses/list-current-user-continue-learning";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -47,7 +47,7 @@ function getHrefs(item: ContinueLearningItem) {
     ? (`/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}` as const)
     : chapterHref;
 
-  if (item.status === "completed") {
+  if (item.status === "ready") {
     return { chapterHref, courseHref, headerHref: lessonHref, prefetch: true };
   }
 

@@ -1,7 +1,7 @@
 import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
-import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
 import { getCategoryHeader, getCategoryLabel, getCategoryMeta } from "@/lib/categories/category";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
+import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
 import {
   Container,
   ContainerDescription,

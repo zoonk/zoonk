@@ -1,4 +1,4 @@
-import { getStripePrices as queryStripePrices } from "@zoonk/core/auth/stripe-prices";
+import { getStripePrices as queryStripePrices } from "@zoonk/auth/stripe-prices";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
 

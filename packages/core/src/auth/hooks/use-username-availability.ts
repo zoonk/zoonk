@@ -1,8 +1,12 @@
 "use client";
 
 import { authClient } from "@zoonk/auth/client";
+import {
+  USERNAME_MIN_LENGTH,
+  isUsernameSyntaxValid,
+  normalizeUsername,
+} from "@zoonk/auth/username-rules";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { USERNAME_MIN_LENGTH, isUsernameSyntaxValid, normalizeUsername } from "../username-rules";
 
 export type UsernameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
 

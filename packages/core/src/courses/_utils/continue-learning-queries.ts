@@ -1,0 +1,96 @@
+import { type LessonKind, prisma } from "@zoonk/db";
+import { getLessonKindExclusionSql } from "../../lessons/lesson-kind-exclusions";
+
+/**
+ * The continue-learning feed only needs the learner's most recent completion
+ * anchor per course. Keeping that SQL in one helper makes the capability logic
+ * about item selection instead of raw historical query details.
+ */
+export type ContinueLearningRow = {
+  chapterId: string;
+  chapterPosition: number;
+  chapterTitle: string;
+  courseId: string;
+  courseImageUrl: string | null;
+  courseSlug: string;
+  courseTitle: string;
+  lessonId: string;
+  lessonPosition: number;
+  orgSlug: string | null;
+};
+
+/**
+ * The feed intentionally over-fetches recent courses because some of them will
+ * be filtered out later after durable completion and current curriculum checks.
+ */
+const SQL_LIMIT = 10;
+
+/**
+ * Over-fetches the ten most recent distinct course anchors because completed
+ * or no-longer-actionable candidates are filtered by the later state wave.
+ */
+async function findRecentContinueLearningRows({
+  excludedLessonKinds,
+  userId,
+}: {
+  excludedLessonKinds?: LessonKind[];
+  userId: string;
+}): Promise<ContinueLearningRow[]> {
+  const lessonKindFilter = getLessonKindExclusionSql({ excludedLessonKinds });
+
+  return prisma.$queryRaw<ContinueLearningRow[]>`
+        WITH last_per_course AS (
+          SELECT DISTINCT ON (ch.course_id)
+            ch.course_id,
+            ap.completed_at,
+            c.slug as course_slug,
+            c.title as course_title,
+            c.image_url as course_image_url,
+            o.slug as org_slug,
+            l.position as lesson_position,
+            l.id as lesson_id,
+            l.chapter_id,
+            ch.position as chapter_position,
+            ch.title as chapter_title
+          FROM lesson_progress ap
+          JOIN lessons l ON l.id = ap.lesson_id
+          JOIN chapters ch ON ch.id = l.chapter_id
+          JOIN courses c ON c.id = ch.course_id AND c.is_published = true
+          LEFT JOIN organizations o ON o.id = c.organization_id
+          WHERE ap.user_id = ${userId}
+            AND ap.completed_at IS NOT NULL
+            AND ${lessonKindFilter}
+            AND (o.kind = 'brand' OR o.id IS NULL)
+          ORDER BY ch.course_id, ap.completed_at DESC
+        )
+        SELECT
+          lpc.course_id as "courseId",
+          lpc.course_slug as "courseSlug",
+          lpc.course_title as "courseTitle",
+          lpc.course_image_url as "courseImageUrl",
+          lpc.org_slug as "orgSlug",
+          lpc.lesson_id as "lessonId",
+          lpc.lesson_position as "lessonPosition",
+          lpc.chapter_id as "chapterId",
+          lpc.chapter_position as "chapterPosition",
+          lpc.chapter_title as "chapterTitle"
+        FROM last_per_course lpc
+        ORDER BY lpc.completed_at DESC
+        LIMIT ${SQL_LIMIT}
+      `;
+}
+
+/**
+ * Historical completions keep a course eligible for continue-learning. The
+ * public capability derives this internal repository user id from its trusted
+ * authenticated session before calling the query.
+ */
+export async function listRecentContinueLearningRows({
+  excludedLessonKinds,
+  userId,
+}: {
+  excludedLessonKinds?: LessonKind[];
+  userId: string;
+}): Promise<ContinueLearningRow[]> {
+  return findRecentContinueLearningRows({ excludedLessonKinds, userId });
+}

@@ -1,4 +1,4 @@
-import { authClient } from "@zoonk/core/auth/client";
+import { authClient } from "@zoonk/auth/client";
 
 type WorkflowAuthHeaders = { Authorization?: string };
 

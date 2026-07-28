@@ -1,7 +1,7 @@
 export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 30;
 
-const USERNAME_ALLOWED_CHARACTERS = /^[a-z0-9_]+$/u;
+export const USERNAME_ALLOWED_CHARACTERS = /^[a-z0-9_]+$/iu;
 
 /**
  * Keeps every username entry point on the same canonical value before

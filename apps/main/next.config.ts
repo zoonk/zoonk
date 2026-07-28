@@ -1,7 +1,7 @@
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
+import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { NEXT_INTL_PO_FORMAT } from "@zoonk/i18n/next-intl/po-format";
-import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";

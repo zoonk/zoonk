@@ -4,14 +4,17 @@ import { type PublishedCourseChapter } from "./progress-queries";
 
 type ContinueLessonTargetBase = {
   brandSlug: string | null;
+  chapterId: string;
   chapterSlug: string;
   completed: boolean;
+  courseId: string;
   courseSlug: string;
   hasStarted: boolean;
 };
 
 type ContinueLessonTarget = ContinueLessonTargetBase & {
   canPrefetch: boolean;
+  lessonId: string;
   lessonPosition: number;
   lessonSlug: string;
 };
@@ -69,10 +72,13 @@ export function getContinueLessonTarget({
   return {
     brandSlug: state.brandSlug,
     canPrefetch: state.canPrefetch,
+    chapterId: state.chapterId,
     chapterSlug: state.chapterSlug,
     completed: state.completed,
+    courseId: state.courseId,
     courseSlug: state.courseSlug,
     hasStarted: state.hasStarted,
+    lessonId: state.lessonId,
     lessonPosition: state.lessonPosition,
     lessonSlug: state.lessonSlug,
   };
@@ -105,8 +111,10 @@ function getPendingChapterTarget({
   return {
     brandSlug: nextChapter.brandSlug,
     canPrefetch: false,
+    chapterId: nextChapter.chapterId,
     chapterSlug: nextChapter.chapterSlug,
     completed: false,
+    courseId: nextChapter.courseId,
     courseSlug: nextChapter.courseSlug,
     hasStarted: true,
   };

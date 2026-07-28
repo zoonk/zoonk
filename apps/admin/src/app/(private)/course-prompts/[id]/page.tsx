@@ -29,7 +29,6 @@ import { Suspense } from "react";
 import { CoursePromptForm } from "./course-prompt-form";
 
 export const metadata: Metadata = { title: "Edit Course Prompt" };
-export const prefetch = "allow-runtime";
 
 /**
  * The list remains one click away while the current breadcrumb clearly marks

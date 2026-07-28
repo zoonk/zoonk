@@ -39,19 +39,16 @@ export async function createE2EUser(
   const signupContext = await request.newContext({ baseURL });
 
   const signupResponse = await signupContext.post("/api/auth/sign-up/email", {
-    data: { email, name, password },
+    data: { email, name, password, username: `e2e_${uniqueId}` },
   });
 
   if (!signupResponse.ok()) {
     const body = await signupResponse.text();
+    await signupContext.dispose();
     throw new Error(`Sign-up failed for ${email}: ${signupResponse.status()} - ${body}`);
   }
 
-  await signupContext.dispose();
-
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });
-
-  await prisma.user.update({ data: { username: `e2e_${uniqueId}` }, where: { id: user.id } });
 
   if (options?.orgRole) {
     const org = options.orgSlug
@@ -80,19 +77,8 @@ export async function createE2EUser(
     await createE2EProgressData(user.id);
   }
 
-  const signinContext = await request.newContext({ baseURL });
-
-  const signinResponse = await signinContext.post("/api/auth/sign-in/email", {
-    data: { email, password },
-  });
-
-  if (!signinResponse.ok()) {
-    const body = await signinResponse.text();
-    throw new Error(`Sign-in failed for ${email}: ${signinResponse.status()} - ${body}`);
-  }
-
-  const storageState = await signinContext.storageState();
-  await signinContext.dispose();
+  const storageState = await signupContext.storageState();
+  await signupContext.dispose();
 
   return { email, id: user.id, password, storageState };
 }

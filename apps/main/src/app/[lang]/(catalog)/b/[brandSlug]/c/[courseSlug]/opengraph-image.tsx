@@ -1,10 +1,10 @@
-import { getCourse } from "@/data/courses/get-course";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import {
   catalogOpenGraphImageContentType,
   catalogOpenGraphImageSize,
   createCatalogOpenGraphImage,
 } from "@/lib/metadata/catalog-opengraph-image";
+import { getCourse } from "@zoonk/core/courses/get-by-slug";
 
 type Props = { params: Promise<{ brandSlug: string; courseSlug: string }> };
 

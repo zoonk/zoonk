@@ -38,17 +38,19 @@ test.describe("Course Generation Workflow API", () => {
 
     const apiContext = await request.newContext({ baseURL });
 
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { coursePromptId: startRequest.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: startRequest.id, type: "coursePrompt" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
-    expect(typeof body.runId).toBe("string");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
+
+    expect(response.headers().location).toBe(
+      `/v1/generations/${encodeURIComponent(String(body.id))}`,
+    );
 
     await apiContext.dispose();
   });
@@ -66,8 +68,8 @@ test.describe("Course Generation Workflow API", () => {
 
     const apiContext = await request.newContext({ baseURL });
 
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { coursePromptId: startRequest.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: startRequest.id, type: "coursePrompt" } },
     });
 
     expect(response.status()).toBe(400);
@@ -86,7 +88,7 @@ test.describe("Course Generation Workflow API", () => {
       prefix: "course-validation-missing",
     });
 
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", { data: {} });
+    const response = await apiContext.post("/v1/generations", { data: {} });
 
     expect(response.status()).toBe(400);
 
@@ -104,8 +106,8 @@ test.describe("Course Generation Workflow API", () => {
       prefix: "course-validation-type",
     });
 
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { coursePromptId: "invalid" },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: "invalid", type: "coursePrompt" } },
     });
 
     expect(response.status()).toBe(400);
@@ -124,8 +126,8 @@ test.describe("Course Generation Workflow API", () => {
       prefix: "course-validation-negative",
     });
 
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { coursePromptId: -1 },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: -1, type: "coursePrompt" } },
     });
 
     expect(response.status()).toBe(400);
@@ -148,17 +150,26 @@ test.describe("Course Generation Workflow API", () => {
       prefix: "course-workflow",
     });
 
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { coursePromptId: startRequest.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: startRequest.id, type: "coursePrompt" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
-    expect(typeof body.runId).toBe("string");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
+
+    const generationResponse = await apiContext.get(
+      `/v1/generations/${encodeURIComponent(String(body.id))}`,
+    );
+
+    expect(generationResponse.status()).toBe(200);
+
+    await expect(generationResponse.json()).resolves.toStrictEqual({
+      id: body.id,
+      status: expect.any(String),
+    });
 
     await apiContext.dispose();
   });
@@ -186,11 +197,11 @@ test.describe("Course Generation Workflow API", () => {
       prefix: "course-enrollment",
     });
 
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { coursePromptId: coursePrompt.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: coursePrompt.id, type: "coursePrompt" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     await expect(async () => {
       const [courseUser, updatedCourse] = await Promise.all([
@@ -207,9 +218,9 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error for status endpoint when runId is missing", async () => {
+  test("returns validation error when the generation ID is empty", async () => {
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get("/v1/workflows/course-generation/status");
+    const response = await apiContext.get("/v1/generations/%20/events");
 
     expect(response.status()).toBe(400);
 
@@ -221,7 +232,17 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns SSE stream for valid runId", async () => {
+  test("returns not found before streaming an unknown generation", async () => {
+    const apiContext = await request.newContext({ baseURL });
+    const response = await apiContext.get(`/v1/generations/run-${randomUUID()}/events`);
+
+    expect(response.status()).toBe(404);
+    await expect(response.json()).resolves.toMatchObject({ error: { code: "NOT_FOUND" } });
+
+    await apiContext.dispose();
+  });
+
+  test("returns SSE stream for a created generation", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const startRequest = await createCompletedCoursePrompt(`E2E Status Test ${uniqueId}`);
@@ -231,16 +252,16 @@ test.describe("Course Generation Workflow API", () => {
       prefix: "course-status",
     });
 
-    // First trigger the workflow to get a runId
-    const triggerResponse = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { coursePromptId: startRequest.id },
+    // First create the generation to get its public identifier.
+    const triggerResponse = await apiContext.post("/v1/generations", {
+      data: { target: { id: startRequest.id, type: "coursePrompt" } },
     });
 
     const triggerBody = await triggerResponse.json();
-    const runId = triggerBody.runId;
+    const generationId = triggerBody.id;
 
     const response = await fetch(
-      `${baseURL}/v1/workflows/course-generation/status?runId=${runId}`,
+      `${baseURL}/v1/generations/${encodeURIComponent(generationId)}/events`,
       { method: "HEAD" },
     );
 

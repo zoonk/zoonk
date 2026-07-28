@@ -1,8 +1,9 @@
 "use client";
 
 import { type PhaseStatus, enforcePhaseProgression } from "@/lib/generation-phases";
+import { type GeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { type GeneratedLessonKind, type PhaseName, getPhaseOrder } from "./generation-phase-config";
+import { type PhaseName, getPhaseOrder } from "./generation-phase-config";
 import {
   PHASE_ICONS,
   calculateTargetProgress,

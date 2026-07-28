@@ -1,10 +1,10 @@
 "use client";
 
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/auth/username-rules";
 import {
   type UsernameStatus as UsernameStatusType,
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
-import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/core/auth/username-rules";
 import {
   Field,
   FieldContent,

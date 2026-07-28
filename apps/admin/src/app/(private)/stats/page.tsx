@@ -20,7 +20,6 @@ import { type Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Stats" };
-export const prefetch = "allow-runtime";
 
 const sections = [
   {

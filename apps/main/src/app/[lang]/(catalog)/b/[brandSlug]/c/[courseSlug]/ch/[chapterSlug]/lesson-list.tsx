@@ -7,10 +7,10 @@ import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
 import { getCatalogLessonProgress } from "@/data/progress/catalog-progress";
 import { getActiveCatalogTarget } from "@/data/progress/get-catalog-target";
-import { getSession } from "@/data/users/get-session";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import { type LessonDisplayMeta, getLessonDisplayMeta, getLessonKindLabels } from "@/lib/lessons";
-import { getFilterableLessonKinds } from "@/lib/lessons/lesson-kind-filters";
+import { getFilterableLessonKinds } from "@zoonk/core/lessons/visibility";
+import { getSession } from "@zoonk/core/users/session";
 import { type Lesson, type LessonKind } from "@zoonk/db";
 import {
   GridGroup,

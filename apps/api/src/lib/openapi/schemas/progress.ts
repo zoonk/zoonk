@@ -1,28 +1,29 @@
 import { z } from "zod";
 
-const uuidQuery = (description: string) => z.uuid().meta({ description });
-
-export const courseCompletionQuerySchema = z
-  .object({ courseId: uuidQuery("Course ID") })
-  .meta({ id: "CourseCompletionQuery" });
-
 export const courseCompletionResponseSchema = z
   .object({
     chapters: z
       .array(
         z.object({
-          chapterId: z.string().meta({ description: "Chapter ID" }),
-          completedLessons: z.number().meta({ description: "Number of completed lessons" }),
-          totalLessons: z.number().meta({ description: "Total number of lessons" }),
+          chapterId: z.uuid().meta({ description: "Chapter ID" }),
+          completedLessons: z
+            .number()
+            .int()
+            .min(0)
+            .meta({ description: "Number of completed lessons" }),
+          totalLessons: z.number().int().min(0).meta({ description: "Total number of lessons" }),
         }),
       )
       .meta({ description: "Completion status per chapter" }),
+    percentComplete: z
+      .number()
+      .int()
+      .min(0)
+      .max(100)
+      .nullable()
+      .meta({ description: "Overall visible course completion percentage" }),
   })
   .meta({ id: "CourseCompletionResponse" });
-
-export const chapterCompletionQuerySchema = z
-  .object({ chapterId: uuidQuery("Chapter ID") })
-  .meta({ id: "ChapterCompletionQuery" });
 
 export const chapterCompletionResponseSchema = z
   .object({
@@ -30,39 +31,70 @@ export const chapterCompletionResponseSchema = z
       .array(
         z.object({
           isCompleted: z.boolean().meta({ description: "Whether the lesson is completed" }),
-          lessonId: z.string().meta({ description: "Lesson ID" }),
+          lessonId: z.uuid().meta({ description: "Lesson ID" }),
         }),
       )
       .meta({ description: "Completion status per lesson" }),
+    percentComplete: z
+      .number()
+      .int()
+      .min(0)
+      .max(100)
+      .nullable()
+      .meta({ description: "Overall visible chapter completion percentage" }),
   })
   .meta({ id: "ChapterCompletionResponse" });
 
-export const nextLessonQuerySchema = z
+const nextLessonEmptyResponseSchema = z
   .object({
-    chapterId: uuidQuery("Chapter ID").optional(),
-    courseId: uuidQuery("Course ID").optional(),
-    lessonId: uuidQuery("Lesson ID").optional(),
+    completed: z.literal(false).meta({ description: "Whether all lessons are completed" }),
+    hasStarted: z.literal(false).meta({ description: "Whether the user has started" }),
+    type: z.literal("empty").meta({ description: "No next-learning target is available" }),
   })
-  .refine(
-    (data) => {
-      const provided = [data.courseId, data.chapterId, data.lessonId].filter(
-        (value) => value !== undefined,
-      );
+  .strict();
 
-      return provided.length === 1;
-    },
-    { message: "Exactly one of courseId, chapterId, or lessonId must be provided" },
-  )
-  .meta({ id: "NextLessonQuery" });
+const nextLessonChapterResponseSchema = z
+  .object({
+    canPrefetch: z
+      .literal(false)
+      .meta({ description: "Whether the next lesson can be prefetched" }),
+    chapterId: z.uuid().meta({ description: "Chapter ID" }),
+    chapterSlug: z.string().meta({ description: "Chapter slug" }),
+    completed: z.literal(false).meta({ description: "Whether all lessons are completed" }),
+    courseId: z.uuid().meta({ description: "Course ID" }),
+    courseSlug: z.string().meta({ description: "Course slug" }),
+    hasStarted: z.literal(true).meta({ description: "Whether the user has started" }),
+    organizationSlug: z.string().meta({ description: "Organization slug" }),
+    type: z.literal("chapter").meta({ description: "Continue at a chapter awaiting lessons" }),
+  })
+  .strict();
+
+const nextLessonLessonResponseSchema = z
+  .object({
+    canPrefetch: z.boolean().meta({ description: "Whether the next lesson can be prefetched" }),
+    chapterId: z.uuid().meta({ description: "Chapter ID" }),
+    chapterSlug: z.string().meta({ description: "Chapter slug" }),
+    completed: z.boolean().meta({ description: "Whether all lessons are completed" }),
+    courseId: z.uuid().meta({ description: "Course ID" }),
+    courseSlug: z.string().meta({ description: "Course slug" }),
+    hasStarted: z.boolean().meta({ description: "Whether the user has started" }),
+    lessonId: z.uuid().meta({ description: "Lesson ID" }),
+    lessonPosition: z.number().int().min(0).meta({ description: "Lesson position in the chapter" }),
+    lessonSlug: z.string().meta({ description: "Lesson slug" }),
+    organizationSlug: z.string().meta({ description: "Organization slug" }),
+    type: z.literal("lesson").meta({ description: "Continue at a concrete lesson" }),
+  })
+  .strict();
 
 export const nextLessonResponseSchema = z
-  .object({
-    brandSlug: z.string().optional().meta({ description: "Organization slug" }),
-    chapterSlug: z.string().optional().meta({ description: "Chapter slug" }),
-    completed: z.boolean().meta({ description: "Whether all lessons are completed" }),
-    courseSlug: z.string().optional().meta({ description: "Course slug" }),
-    hasStarted: z.boolean().meta({ description: "Whether the user has started" }),
-    lessonPosition: z.number().optional().meta({ description: "Lesson position in the lesson" }),
-    lessonSlug: z.string().optional().meta({ description: "Lesson slug" }),
-  })
-  .meta({ id: "NextLessonResponse" });
+  .discriminatedUnion("type", [
+    nextLessonEmptyResponseSchema,
+    nextLessonChapterResponseSchema,
+    nextLessonLessonResponseSchema,
+  ])
+  .meta({
+    id: "NextLessonResponse",
+    override: ({ jsonSchema }) => {
+      jsonSchema.discriminator = { propertyName: "type" };
+    },
+  });

@@ -55,6 +55,20 @@ const stepContentSchemas = {
   vocabulary: vocabularyContentSchema,
 } as const;
 
+export const stepContentEnvelopeSchema = z.discriminatedUnion("kind", [
+  z.object({ content: alphabetContentSchema, kind: z.literal("alphabet") }),
+  z.object({ content: fillBlankContentSchema, kind: z.literal("fillBlank") }),
+  z.object({ content: listeningContentSchema, kind: z.literal("listening") }),
+  z.object({ content: matchColumnsContentSchema, kind: z.literal("matchColumns") }),
+  z.object({ content: multipleChoiceContentSchema, kind: z.literal("multipleChoice") }),
+  z.object({ content: readingContentSchema, kind: z.literal("reading") }),
+  z.object({ content: selectImageContentSchema, kind: z.literal("selectImage") }),
+  z.object({ content: sortOrderContentSchema, kind: z.literal("sortOrder") }),
+  z.object({ content: staticContentSchema, kind: z.literal("static") }),
+  z.object({ content: translationContentSchema, kind: z.literal("translation") }),
+  z.object({ content: vocabularyContentSchema, kind: z.literal("vocabulary") }),
+]);
+
 const malformedJsonBackslashEscape = "\u00005c";
 const postgresUnsupportedNullCharacter = "\u0000";
 

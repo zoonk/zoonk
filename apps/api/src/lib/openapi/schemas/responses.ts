@@ -1,6 +1,4 @@
-import { z } from "zod";
 import { errorSchema } from "./common";
-import { workflowStatusQuerySchema, workflowTriggerResponseSchema } from "./workflows";
 
 export const validationErrorResponse = {
   content: { "application/json": { schema: errorSchema } },
@@ -22,59 +20,27 @@ export const unauthorizedResponse = {
   description: "Authentication required",
 } as const;
 
-const subscriptionRequiredResponse = {
+export const forbiddenResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Same-origin request required for cookie authentication",
+} as const;
+
+export const internalErrorResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Internal server error",
+} as const;
+
+export const notFoundResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Resource not found",
+} as const;
+
+export const paymentRequiredResponse = {
   content: { "application/json": { schema: errorSchema } },
   description: "Subscription required",
 } as const;
 
-const workflowStartedResponse = {
-  content: { "application/json": { schema: workflowTriggerResponseSchema } },
-  description: "Workflow started",
+export const unprocessableEntityResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "The request is valid but cannot be applied to the resource",
 } as const;
-
-const sseStreamResponse = {
-  content: { "text/event-stream": { schema: z.string() } },
-  description: "SSE stream of workflow status",
-} as const;
-
-export function workflowTriggerEndpoint({
-  schema,
-  summary,
-  requiresSubscription = false,
-}: {
-  schema: z.ZodType;
-  summary: string;
-  requiresSubscription?: boolean;
-}) {
-  return {
-    post: {
-      description: [
-        requiresSubscription
-          ? "Requires active subscription when the free first-chapter rule does not apply."
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" "),
-      requestBody: { content: { "application/json": { schema } } },
-      responses: {
-        "200": workflowStartedResponse,
-        "400": validationErrorResponse,
-        ...(requiresSubscription && { "402": subscriptionRequiredResponse }),
-      },
-      summary,
-      tags: ["Workflows"],
-    },
-  };
-}
-
-export function workflowStatusEndpoint(summary: string) {
-  return {
-    get: {
-      description: "Returns a Server-Sent Events stream with workflow status updates.",
-      requestParams: { query: workflowStatusQuerySchema },
-      responses: { "200": sseStreamResponse },
-      summary,
-      tags: ["Workflows"],
-    },
-  };
-}

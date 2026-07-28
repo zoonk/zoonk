@@ -1,5 +1,6 @@
-import { getScoreHistory } from "@/data/progress/get-score-history";
-import { getSession } from "@/data/users/get-session";
+import { loadOptionalData } from "@/data/_utils/load-optional-data";
+import { getScoreHistory } from "@zoonk/core/progress/get-score-history";
+import { getSession } from "@zoonk/core/users/session";
 import { getLocale } from "next-intl/server";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
@@ -11,7 +12,10 @@ import { ScoreStats, ScoreStatsSkeleton } from "./score-stats";
 export async function ScoreContent() {
   const locale = await getLocale();
 
-  const [history, session] = await Promise.all([getScoreHistory({ locale }), getSession()]);
+  const [history, session] = await Promise.all([
+    loadOptionalData(() => getScoreHistory({ locale })),
+    getSession(),
+  ]);
 
   const isAuthenticated = Boolean(session);
 

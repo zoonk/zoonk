@@ -1,8 +1,8 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { CatalogHeaderImage } from "@/components/catalog/catalog-header-image";
-import { type ChapterWithDetails } from "@/data/chapters/get-chapter";
 import { Link } from "@/i18n/navigation";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
+import { type ChapterWithDetails } from "@zoonk/core/chapters/get-by-slug";
 import {
   MediaCard,
   MediaCardBreadcrumb,

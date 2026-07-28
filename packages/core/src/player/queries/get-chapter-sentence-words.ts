@@ -1,4 +1,3 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { type PlayerChapterSentence } from "./get-chapter-sentences";

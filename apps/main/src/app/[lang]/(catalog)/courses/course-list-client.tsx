@@ -2,8 +2,8 @@
 
 import { CatalogGridContent, CatalogGridItem } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
-import { type CourseWithOrg } from "@/data/courses/list-courses";
 import { Link } from "@/i18n/navigation";
+import { type CourseWithOrg } from "@zoonk/core/courses/list";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,

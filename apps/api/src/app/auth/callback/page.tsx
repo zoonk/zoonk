@@ -1,6 +1,6 @@
 import { trackAuthCompleted } from "@/lib/server-track-events";
-import { getSession } from "@zoonk/core/users/session/get";
-import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
+import { externalRedirect } from "@zoonk/core/navigation/external-redirect";
+import { getSession } from "@zoonk/core/users/session";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";

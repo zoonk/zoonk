@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { instant } from "@next/playwright";
+import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -43,6 +44,28 @@ test.describe("Instant navigation", () => {
       const energyChart = authenticatedPage.getByRole("figure", { name: /energy history/iu });
 
       expect(await energyChart.isVisible()).toBe(true);
+    });
+  });
+
+  test("shows fully prefetched home content without a fallback", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/courses");
+    await authenticatedPage.waitForLoadState("networkidle");
+
+    const homeLink = authenticatedPage.getByRole("link", { name: /home page/iu });
+    await expect(homeLink).toBeVisible();
+
+    await instant(authenticatedPage, async () => {
+      await homeLink.click();
+
+      await expect(authenticatedPage).toHaveURL(/\/$/u);
+
+      expect(
+        await authenticatedPage.getByRole("heading", { name: /continue learning/iu }).isVisible(),
+      ).toBe(true);
+
+      expect(
+        await authenticatedPage.getByRole("region", { name: /^progress$/iu }).isVisible(),
+      ).toBe(true);
     });
   });
 
@@ -108,7 +131,10 @@ test.describe("Instant navigation", () => {
     });
   });
 
-  test("shows a runtime-prefetched lesson during navigation", async ({ authenticatedPage }) => {
+  test("shows a runtime-prefetched lesson during navigation", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const organization = await getAiOrganization();
     const courseTitle = `E2E Instant Lesson Course ${uniqueId}`;
@@ -159,11 +185,32 @@ test.describe("Instant navigation", () => {
     const lessonLink = authenticatedPage.getByRole("link", { name: new RegExp(lessonTitle, "u") });
     await expect(lessonLink).toBeVisible();
 
+    const lessonStartResponse = authenticatedPage.waitForResponse(
+      (response) =>
+        response.request().method() === "POST" &&
+        new URL(response.url()).pathname === `/api/lessons/${lesson.id}/starts`,
+    );
+
     await instant(authenticatedPage, async () => {
       await lessonLink.click();
 
       await expect(authenticatedPage).toHaveURL(lessonUrl);
       await expect(authenticatedPage.getByRole("heading", { name: stepTitle })).toBeVisible();
     });
+
+    const lessonStart = await lessonStartResponse;
+    expect(lessonStart.status()).toBe(204);
+    expect(lessonStart.request().headers()["next-action"]).toBeUndefined();
+
+    await expect(async () => {
+      const progress = await prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: lesson.id, userId: withProgressUser.id } },
+      });
+
+      expect(progress).not.toBeNull();
+    }).toPass({ timeout: 10_000 });
+
+    await expect(authenticatedPage).toHaveURL(lessonUrl);
+    await expect(authenticatedPage.getByRole("heading", { name: stepTitle })).toBeVisible();
   });
 });

@@ -1,4 +1,3 @@
-import "server-only";
 import {
   type LessonGetPayload,
   getPublishedLessonWhere,
@@ -7,7 +6,7 @@ import {
 } from "@zoonk/db";
 
 export type PlayerLesson = LessonGetPayload<{
-  include: { steps: { include: { sentence: true; word: true } } };
+  include: { chapter: true; steps: { include: { sentence: true; word: true } } };
 }>;
 
 /**
@@ -17,6 +16,7 @@ export type PlayerLesson = LessonGetPayload<{
 export function getLesson(lessonId: string): Promise<PlayerLesson | null> {
   return prisma.lesson.findFirst({
     include: {
+      chapter: true,
       steps: {
         include: { sentence: true, word: true },
         orderBy: { position: "asc" },

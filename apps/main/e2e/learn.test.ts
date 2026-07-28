@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { COURSE_PROMPT_MAX_LENGTH } from "@zoonk/core/courses/prompt-contract";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
@@ -8,38 +9,38 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
+import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
 
 const TEST_RUN_ID = "test-run-id-learn-generate-link";
 
 /**
  * The learn-flow tests only verify navigation into the generation page. Mocking
- * the workflow API keeps that page from starting real course generation after
+ * the generation API keeps that page from starting real course generation after
  * the URL assertion has already proved the behavior under test.
  */
 async function mockCourseGenerationWorkflow(page: Page): Promise<void> {
-  await page.route("**/v1/workflows/course-generation/**", handleCourseGenerationRoute);
+  await routeGenerationApis({ handler: handleCourseGenerationRoute, page });
 }
 
 /**
- * The generation client expects the trigger endpoint to return a run id and
+ * The generation client expects the trigger endpoint to return a generation ID and
  * the status endpoint to speak SSE. Returning an empty stream is enough for
  * navigation tests while preventing the API app from touching AI providers.
  */
 async function handleCourseGenerationRoute(route: Route): Promise<void> {
   const url = route.request().url();
-  const method = route.request().method();
 
-  if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
+  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
     await route.fulfill({
-      body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
       contentType: "application/json",
-      status: 200,
+      status: 202,
     });
 
     return;
   }
 
-  if (url.includes("/v1/workflows/course-generation/status")) {
+  if (isGenerationEvents(url)) {
     await route.fulfill({ body: "", contentType: "text/event-stream", status: 200 });
     return;
   }
@@ -253,6 +254,15 @@ test.describe("Learn Form", () => {
 });
 
 test.describe("Course Start Routing", () => {
+  test("returns an oversized direct prompt to the bounded learn form", async ({ page }) => {
+    const prompt = "a".repeat(COURSE_PROMPT_MAX_LENGTH + 1);
+
+    await page.goto(`/start/learn/${encodeURIComponent(prompt)}`);
+
+    await expect(page).toHaveURL(/\/start\/learn$/u);
+    await expect(page.getByRole("textbox")).toBeVisible();
+  });
+
   test("redirects cached topic prompts to the generation page", async ({ page }) => {
     await mockCourseGenerationWorkflow(page);
 

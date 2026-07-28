@@ -2,8 +2,42 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, it } from "vitest";
-import { getNextLessonInCourse } from "./get-next-lesson-in-course";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { cacheTag } from "next/cache";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { getCourseCurriculumCacheTag } from "../cache/tags";
+import { getNextLessonAfter, getNextLessonInCourse } from "./get-next-lesson-in-course";
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
+
+/**
+ * Creates a two-lesson published curriculum whose course ownership can vary
+ * independently from the structural successor lookup.
+ */
+async function createSuccessorCurriculum({
+  organizationId,
+  userId,
+}: {
+  organizationId: string | null;
+  userId?: string;
+}) {
+  const course = await courseFixture({ isPublished: true, organizationId, userId });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId,
+    position: 0,
+  });
+
+  const [lesson, nextLesson] = await Promise.all([
+    lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId, position: 0 }),
+    lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId, position: 1 }),
+  ]);
+
+  return { lesson, nextLesson };
+}
 
 describe(getNextLessonInCourse, () => {
   let courseId: string;
@@ -82,6 +116,8 @@ describe(getNextLessonInCourse, () => {
       lessonId: lesson2Id,
       lessonSlug: lesson2Slug,
     });
+
+    expect(cacheTag).toHaveBeenCalledWith(getCourseCurriculumCacheTag(courseId));
   });
 
   it("returns first lesson of next chapter when at last lesson of current chapter", async () => {
@@ -406,6 +442,56 @@ describe(getNextLessonInCourse, () => {
       lessonId: lesson3.id,
       lessonPosition: 0,
       lessonSlug: lesson3.slug,
+    });
+  });
+});
+
+describe(getNextLessonAfter, () => {
+  beforeEach(() => {
+    mockSession(null);
+  });
+
+  it("returns a public brand curriculum successor to a guest", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const { lesson, nextLesson } = await createSuccessorCurriculum({
+      organizationId: organization.id,
+    });
+
+    await expect(getNextLessonAfter({ lessonId: lesson.id })).resolves.toMatchObject({
+      lesson: { lessonId: nextLesson.id },
+      status: "ready",
+    });
+  });
+
+  it("does not expose a non-brand organization curriculum by lesson ID", async () => {
+    const organization = await organizationFixture({ kind: "school" });
+    const { lesson } = await createSuccessorCurriculum({ organizationId: organization.id });
+
+    await expect(getNextLessonAfter({ lessonId: lesson.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+  });
+
+  it("only returns a personal curriculum successor to its owner", async () => {
+    const [owner, otherUser] = await Promise.all([userFixture(), userFixture()]);
+
+    const { lesson, nextLesson } = await createSuccessorCurriculum({
+      organizationId: null,
+      userId: owner.id,
+    });
+
+    mockSession(otherUser.id);
+
+    await expect(getNextLessonAfter({ lessonId: lesson.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
+    mockSession(owner.id);
+
+    await expect(getNextLessonAfter({ lessonId: lesson.id })).resolves.toMatchObject({
+      lesson: { lessonId: nextLesson.id },
+      status: "ready",
     });
   });
 });

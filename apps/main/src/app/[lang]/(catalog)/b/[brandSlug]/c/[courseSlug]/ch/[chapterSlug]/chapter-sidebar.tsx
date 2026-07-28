@@ -4,10 +4,10 @@ import {
   ContinueLessonLink,
   ContinueLessonLinkSkeleton,
 } from "@/components/catalog/continue-lesson-link";
-import { getChapter } from "@/data/chapters/get-chapter";
-import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
-import { getSession } from "@/data/users/get-session";
-import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
+import { getChapter } from "@zoonk/core/chapters/get-by-slug";
+import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
+import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
+import { getSession } from "@zoonk/core/users/session";
 import { type Lesson, type LessonKind } from "@zoonk/db";
 import { GridToolbar } from "@zoonk/ui/components/grid";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -41,11 +41,13 @@ export async function ChapterSidebar({
 }: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">, "params">) {
   const { brandSlug, chapterSlug, courseSlug } = await params;
 
-  const [chapter, hiddenLessonKinds, session] = await Promise.all([
+  const [chapter, lessonVisibility, session] = await Promise.all([
     getChapter({ brandSlug, chapterSlug, courseSlug }),
-    getUserHiddenLessonKinds(),
+    getLessonVisibility(),
     getSession(),
   ]);
+
+  const { hiddenLessonKinds } = lessonVisibility;
 
   if (!chapter) {
     notFound();

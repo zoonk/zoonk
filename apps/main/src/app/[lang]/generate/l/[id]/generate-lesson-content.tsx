@@ -1,21 +1,15 @@
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
+import { redirect } from "@/i18n/navigation";
+import { getLessonDisplayMeta } from "@/lib/lessons";
+import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import {
   getChapterLessonsCacheTag,
   getCourseCurriculumCacheTag,
   getLessonCacheTag,
   getLessonRouteCacheTag,
-} from "@/data/cache-tags";
-import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
-import { redirect } from "@/i18n/navigation";
-import { getLessonDisplayMeta } from "@/lib/lessons";
-import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
-import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
-import {
-  getGeneratedCompanionForSourceLesson,
-  getSourceLessonForGeneratedCompanion,
-  isGeneratedCompanionLessonKind,
-} from "@zoonk/core/lessons/generated-companions";
+} from "@zoonk/core/cache-tags";
+import { getLessonGenerationView } from "@zoonk/core/workflows/lesson-generation-view";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -23,25 +17,6 @@ import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { invalidateGeneratedContent } from "../../invalidate-generated-content";
 import { GenerationClient } from "./generation-client";
-import { isGeneratedLessonKind } from "./generation-phase-config";
-
-type LessonForGeneration = NonNullable<Awaited<ReturnType<typeof getLessonForGeneration>>>;
-
-async function GeneratedCompanionRedirect({
-  lesson,
-  locale,
-}: {
-  lesson: LessonForGeneration;
-  locale: string;
-}) {
-  const sourceLesson = await getSourceLessonForGeneratedCompanion(lesson);
-
-  if (!sourceLesson) {
-    notFound();
-  }
-
-  return redirect({ href: `/generate/l/${sourceLesson.id}`, locale });
-}
 
 export async function GenerateLessonContent({
   params,
@@ -49,12 +24,17 @@ export async function GenerateLessonContent({
   params: Promise<{ id: string; lang: string }>;
 }) {
   const { id, lang: locale } = await params;
-  const lesson = await getLessonForGeneration(id);
+  const view = await getLessonGenerationView(id);
 
-  if (!lesson || !isGeneratedLessonKind(lesson.kind)) {
+  if (view.status === "notFound") {
     notFound();
   }
 
+  if (view.status === "redirectToSource") {
+    return redirect({ href: `/generate/l/${view.sourceLessonId}`, locale });
+  }
+
+  const { lesson } = view;
   const t = await getExtracted();
 
   const backHref =
@@ -62,21 +42,7 @@ export async function GenerateLessonContent({
 
   const backLabel = t("Back to chapter");
 
-  const accessRequirement = getLessonAccessRequirement({ lesson });
-
-  const lessonMeta = await getLessonDisplayMeta(lesson);
-  const companionLesson = await getGeneratedCompanionForSourceLesson(lesson);
-
-  const hasIncompleteCompanion =
-    companionLesson?.generationStatus === "pending" ||
-    companionLesson?.generationStatus === "failed";
-
-  const initialStatus = getInitialGenerationPageStatus({
-    generationStatus: lesson.generationStatus,
-    isReadyForRedirect:
-      (lesson.generationStatus === "completed" || lesson._count.steps > 0) &&
-      !hasIncompleteCompanion,
-  });
+  const lessonMeta = view.status === "ready" ? await getLessonDisplayMeta(lesson) : null;
 
   const generatedLessonCacheTags = [
     getCourseCurriculumCacheTag(lesson.chapter.course.id),
@@ -98,17 +64,18 @@ export async function GenerateLessonContent({
   }
 
   const content =
-    lesson.generationStatus !== "completed" && isGeneratedCompanionLessonKind(lesson.kind) ? (
-      <GeneratedCompanionRedirect lesson={lesson} locale={locale} />
-    ) : (
+    view.status === "ready" && lessonMeta ? (
       <GenerationClient
         chapterSlug={lesson.chapter.slug}
         courseSlug={lesson.chapter.course.slug}
         generationRunId={lesson.generationRunId}
-        initialStatus={initialStatus}
+        initialStatus={getInitialGenerationPageStatus({
+          generationStatus: lesson.generationStatus,
+          isReadyForRedirect: view.isReadyForRedirect,
+        })}
         invalidateContent={invalidateGeneratedLesson}
         lessonId={id}
-        lessonKind={lesson.kind}
+        lessonKind={view.lessonKind}
         lessonSlug={lesson.slug}
         lessonTitle={lessonMeta.title}
       >
@@ -116,7 +83,7 @@ export async function GenerateLessonContent({
           {backLabel}
         </GenerationExitLink>
       </GenerationClient>
-    );
+    ) : null;
 
   return (
     <Container variant="narrow">
@@ -124,7 +91,7 @@ export async function GenerateLessonContent({
         <SubscriptionGate
           backHref={backHref}
           backLabel={backLabel}
-          bypass={accessRequirement === "free"}
+          hasAccess={view.status === "ready"}
         >
           {content}
         </SubscriptionGate>

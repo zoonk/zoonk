@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, type APIResponse, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { getString } from "@zoonk/utils/json";
 
 const AUTH_UNIQUE_ID_LENGTH = 8;
 const AUTH_PREFIX_MAX_LENGTH = 24;
@@ -47,7 +48,12 @@ export async function createAuthenticatedApiContext({
 }: {
   baseURL: string;
   prefix: string;
-}): Promise<{ apiContext: APIRequestContext; uniqueId: string; user: { id: string } }> {
+}): Promise<{
+  apiContext: APIRequestContext;
+  token: string;
+  uniqueId: string;
+  user: { id: string };
+}> {
   const credentials = getAuthCredentials(prefix);
   const signupContext = await request.newContext({ baseURL });
 
@@ -63,15 +69,24 @@ export async function createAuthenticatedApiContext({
   await signupContext.dispose();
 
   const user = await prisma.user.findUniqueOrThrow({ where: { email: credentials.email } });
-  const apiContext = await request.newContext({ baseURL });
+
+  const apiContext = await request.newContext({
+    baseURL,
+    extraHTTPHeaders: { Origin: new URL(baseURL).origin },
+  });
 
   const signInResponse = await apiContext.post("/v1/auth/sign-in/email", {
     data: { email: credentials.email, password: credentials.password },
   });
 
   await assertAuthResponseOk({ action: "sign in", response: signInResponse });
+  const token = getString(await signInResponse.json(), "token");
 
-  return { apiContext, uniqueId: credentials.uniqueId, user };
+  if (!token) {
+    throw new Error("Sign in did not return a bearer token.");
+  }
+
+  return { apiContext, token, uniqueId: credentials.uniqueId, user };
 }
 
 /**

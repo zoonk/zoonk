@@ -1,10 +1,10 @@
-import { getLesson } from "@/data/lessons/get-lesson";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import {
   catalogOpenGraphImageContentType,
   catalogOpenGraphImageSize,
   createCatalogOpenGraphImage,
 } from "@/lib/metadata/catalog-opengraph-image";
+import { getLesson } from "@zoonk/core/lessons/get-by-slug";
 
 type Props = {
   params: Promise<{

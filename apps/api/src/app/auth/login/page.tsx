@@ -1,5 +1,5 @@
 import { Login, LoginDivider, LoginFooter, LoginHeader, LoginTitle } from "@/components/login";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getSession } from "@zoonk/core/users/session";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";

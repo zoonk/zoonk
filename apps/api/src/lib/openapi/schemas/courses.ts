@@ -1,13 +1,15 @@
+import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { z } from "zod";
+import { organizationSummarySchema } from "./catalog-resources";
 
-export const courseSearchQuerySchema = z
+export const courseListQuerySchema = z
   .object({
+    category: z.enum(COURSE_CATEGORIES).optional().meta({ description: "Course category filter" }),
     cursor: z.string().optional().meta({ description: "Pagination cursor" }),
     language: z
       .string()
       .min(2, "Language code must be at least 2 characters")
-      .optional()
-      .meta({ description: "Language code for sorting preference", examples: ["en"] }),
+      .meta({ description: "Course language code", examples: ["en"] }),
     limit: z.coerce
       .number()
       .int()
@@ -16,26 +18,14 @@ export const courseSearchQuerySchema = z
       .optional()
       .default(10)
       .meta({ description: "Results per page" }),
-    query: z
-      .string()
-      .min(1, "Search query is required")
-      .meta({ description: "Search query", examples: ["javascript"] }),
   })
-  .meta({ id: "CourseSearchQuery" });
-
-const organizationSummarySchema = z
-  .object({
-    id: z.number().meta({ description: "Organization ID" }),
-    logo: z.string().nullable().meta({ description: "Organization logo URL" }),
-    name: z.string().meta({ description: "Organization name" }),
-    slug: z.string().meta({ description: "Organization slug" }),
-  })
-  .meta({ id: "OrganizationSummary" });
+  .strict()
+  .meta({ id: "CourseListQuery" });
 
 export const courseResultSchema = z
   .object({
     description: z.string().nullable().meta({ description: "Course description" }),
-    id: z.number().meta({ description: "Course ID" }),
+    id: z.uuid().meta({ description: "Course ID" }),
     imageUrl: z.string().nullable().meta({ description: "Cover image URL" }),
     language: z.string().meta({ description: "Language code" }),
     organization: organizationSummarySchema,

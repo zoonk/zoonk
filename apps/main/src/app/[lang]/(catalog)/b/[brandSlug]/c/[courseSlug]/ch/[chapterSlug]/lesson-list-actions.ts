@@ -1,14 +1,14 @@
 "use server";
 
-import { updateUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
+import { updateLessonVisibility } from "@zoonk/core/users/lesson-visibility";
 import { type LessonKind } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
 
 /**
- * Lesson type visibility is a user setting, so the data helper owns current
- * session lookup before touching the shared learning-profile preferences record.
+ * The app action owns transport error handling and route refresh while core
+ * resolves identity and persists the reusable visibility resource.
  */
 export async function updateHiddenLessonKindsAction({
   hiddenLessonKinds,
@@ -16,17 +16,15 @@ export async function updateHiddenLessonKindsAction({
   hiddenLessonKinds: LessonKind[];
 }) {
   const { data: result, error } = await safeAsync(() =>
-    updateUserHiddenLessonKinds({ hiddenLessonKinds }),
+    updateLessonVisibility({ hiddenLessonKinds }),
   );
 
-  const updateError = error ?? result?.error;
-
-  if (updateError) {
-    logError("Error updating hidden lesson kinds:", updateError);
+  if (error) {
+    logError("Error updating hidden lesson kinds:", error);
     return { status: "error" as const };
   }
 
-  if (!result?.saved) {
+  if (!result) {
     return { status: "error" as const };
   }
 

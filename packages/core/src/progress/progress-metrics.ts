@@ -1,4 +1,3 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
 
 export type TotalLearningDaysData = { learningDays: number };

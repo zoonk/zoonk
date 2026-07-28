@@ -1,5 +1,5 @@
-import { getLearningActivity } from "@/data/progress/get-learning-activity";
-import { getSession } from "@/data/users/get-session";
+import { getLearningActivity } from "@zoonk/core/progress/get-learning-activity";
+import { getSession } from "@zoonk/core/users/session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { ActivityChart, ActivityChartSkeleton } from "./activity-chart";

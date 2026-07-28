@@ -1,8 +1,5 @@
-import { getBeltLevel } from "@/data/progress/get-belt-level";
-import { getEnergyLevel } from "@/data/progress/get-energy-level";
-import { getLearningActivityTotals } from "@/data/progress/get-learning-activity-totals";
-import { getScore } from "@/data/progress/get-score";
-import { getScorePatterns } from "@/data/progress/get-score-patterns";
+import { loadOptionalData } from "@/data/_utils/load-optional-data";
+import { getCurrentUserProgress } from "@zoonk/core/progress/get-current-user";
 import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
@@ -18,15 +15,13 @@ import { Score, ScoreSkeleton } from "./score";
 const PROGRESS_TITLE_ID = "progress-title";
 
 export async function Progress() {
-  const t = await getExtracted();
+  const progress = await loadOptionalData(getCurrentUserProgress);
 
-  const [energyData, beltData, activityTotals, scoreData, scorePatterns] = await Promise.all([
-    getEnergyLevel(),
-    getBeltLevel(),
-    getLearningActivityTotals(),
-    getScore(),
-    getScorePatterns(),
-  ]);
+  if (!progress?.level) {
+    return null;
+  }
+
+  const t = await getExtracted();
 
   return (
     <section aria-labelledby={PROGRESS_TITLE_ID} className="flex flex-col gap-3 py-4 md:py-6">
@@ -35,38 +30,32 @@ export async function Progress() {
       </FeatureCardSectionTitle>
 
       <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
-        {energyData && <Energy energy={energyData.currentEnergy} />}
+        {progress.energy && <Energy energy={progress.energy.currentEnergy} />}
 
-        {beltData && (
-          <Level
-            bpToNextLevel={beltData.bpToNextLevel}
-            color={beltData.color}
-            isMaxLevel={beltData.isMaxLevel}
-            level={beltData.level}
-          />
-        )}
+        <Level
+          bpToNextLevel={progress.level.bpToNextLevel}
+          color={progress.level.color}
+          isMaxLevel={progress.level.isMaxLevel}
+          level={progress.level.level}
+        />
 
-        {activityTotals && (
-          <>
-            <CompletedLessons completedLessons={activityTotals.totalLessonCompletions} />
-            <LearningDays learningDays={activityTotals.learningDays} />
-            <LearningTime totalLearningSeconds={activityTotals.totalLearningSeconds} />
-          </>
-        )}
+        <CompletedLessons completedLessons={progress.activity.totalLessonCompletions} />
+        <LearningDays learningDays={progress.activity.learningDays} />
+        <LearningTime totalLearningSeconds={progress.activity.totalLearningSeconds} />
 
-        {scoreData && <Score score={scoreData.score} />}
+        {progress.score && <Score score={progress.score.score} />}
 
-        {scorePatterns?.strongestWeekday && (
+        {progress.scorePatterns?.strongestWeekday && (
           <BestDay
-            dayOfWeek={scorePatterns.strongestWeekday.dayOfWeek}
-            score={scorePatterns.strongestWeekday.score}
+            dayOfWeek={progress.scorePatterns.strongestWeekday.dayOfWeek}
+            score={progress.scorePatterns.strongestWeekday.score}
           />
         )}
 
-        {scorePatterns?.strongestTime && (
+        {progress.scorePatterns?.strongestTime && (
           <BestTime
-            period={scorePatterns.strongestTime.period}
-            score={scorePatterns.strongestTime.score}
+            period={progress.scorePatterns.strongestTime.period}
+            score={progress.scorePatterns.strongestTime.score}
           />
         )}
       </div>

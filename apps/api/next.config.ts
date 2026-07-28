@@ -1,6 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { NEXT_INTL_PO_FORMAT } from "@zoonk/i18n/next-intl/po-format";
-import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
@@ -13,9 +13,12 @@ const e2eAliases: Record<string, string> = isE2E
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.local"],
+  cacheComponents: true,
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
+    // The API enables Cache Components for request deduplication, not to require every auth page to navigate instantly.
+    instantInsights: { validationLevel: "manual-warning" },
     turbopackFileSystemCacheForBuild: true,
     turbopackRustReactCompiler: true,
     typedEnv: true,

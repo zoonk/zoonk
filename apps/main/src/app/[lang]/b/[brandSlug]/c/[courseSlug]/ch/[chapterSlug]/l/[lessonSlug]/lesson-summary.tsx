@@ -1,7 +1,7 @@
 import "server-only";
-import { type CatalogLesson } from "@/data/lessons/get-lesson";
 import { getLessonSeoSource } from "@/data/lessons/get-lesson-seo-source";
 import { getLessonPageMeta } from "@/lib/lessons";
+import { type CatalogLesson } from "@zoonk/core/lessons/get-by-slug";
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**

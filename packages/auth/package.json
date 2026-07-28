@@ -10,8 +10,7 @@
     "./testing": "./src/testing.ts",
     "./permissions": "./src/permissions.ts",
     "./username-rules": "./src/username-rules.ts",
-    "./stripe-prices": "./src/stripe/prices.ts",
-    "./subscription": "./src/stripe/subscription.ts"
+    "./stripe-prices": "./src/stripe/prices.ts"
   },
   "scripts": {
     "test": "vitest run",

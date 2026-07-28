@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@zoonk/core/auth";
+import { auth } from "@zoonk/auth";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";

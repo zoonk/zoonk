@@ -1,5 +1,5 @@
-import { getBeltLevel } from "@/data/progress/get-belt-level";
-import { getSession } from "@/data/users/get-session";
+import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
+import { getSession } from "@zoonk/core/users/session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { LevelExplanation, LevelExplanationSkeleton } from "./level-explanation";

@@ -23,15 +23,24 @@ export type PaginatedResponse<T> = {
   pagination: { nextCursor: string | null; hasMore: boolean };
 };
 
-export function createPaginatedResponse<T>(
-  items: T[],
-  limit: number,
-  offset: number,
-  totalFetched: number,
-): PaginatedResponse<T> {
-  const hasMore = totalFetched > limit;
-  const data = hasMore ? items.slice(0, limit) : items;
-  const nextOffset = offset + data.length;
+/**
+ * Converts a core-owned page outcome into the API cursor envelope. Core
+ * decides whether more domain results exist; this adapter only keeps the
+ * transport cursor aligned with the number of serialized items.
+ */
+export function createPaginatedResponse<T>({
+  hasMore,
+  items,
+  offset,
+}: {
+  hasMore: boolean;
+  items: T[];
+  offset: number;
+}): PaginatedResponse<T> {
+  const nextOffset = offset + items.length;
 
-  return { data, pagination: { hasMore, nextCursor: hasMore ? encodeCursor(nextOffset) : null } };
+  return {
+    data: items,
+    pagination: { hasMore, nextCursor: hasMore ? encodeCursor(nextOffset) : null },
+  };
 }

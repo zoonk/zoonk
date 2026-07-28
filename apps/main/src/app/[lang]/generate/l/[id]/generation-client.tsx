@@ -16,12 +16,11 @@ import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
+import { type GeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { LESSON_COMPLETION_STEP, type LessonStepName } from "@zoonk/core/workflows/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { type GeneratedLessonKind } from "./generation-phase-config";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
@@ -53,9 +52,7 @@ export function GenerationClient({
     completionStep: LESSON_COMPLETION_STEP,
     initialRunId: generationRunId,
     initialStatus,
-    statusUrl: `${API_URL}/v1/workflows/lesson-generation/status`,
-    triggerBody: { lessonId },
-    triggerUrl: `${API_URL}/v1/workflows/lesson-generation/trigger`,
+    target: { id: lessonId, type: "lesson" },
   });
 
   const {

@@ -1,6 +1,6 @@
 "use client";
 
-import { logout as authLogout } from "@zoonk/core/auth/client";
+import { logout as authLogout } from "@zoonk/auth/client";
 import { resetPostHogUser } from "./posthog";
 
 /**

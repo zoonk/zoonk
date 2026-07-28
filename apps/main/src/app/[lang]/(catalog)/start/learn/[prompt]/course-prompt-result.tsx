@@ -1,6 +1,7 @@
-import { type UnsupportedCoursePrompt, resolveCoursePrompt } from "@/data/courses/course-prompt";
-import { getSession } from "@/data/users/get-session";
+import { resolveCoursePrompt } from "@/data/courses/course-prompt";
 import { Link, redirect } from "@/i18n/navigation";
+import { type UnsupportedCoursePrompt } from "@zoonk/core/courses/resolve-prompt";
+import { getSession } from "@zoonk/core/users/session";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted, getLocale } from "next-intl/server";
 import {
@@ -105,6 +106,10 @@ async function UnsafeCoursePrompt() {
 export async function CourseStartResult({ prompt }: { prompt: string }) {
   const locale = await getLocale();
   const result = await resolveCoursePrompt({ language: locale, prompt });
+
+  if (result.kind === "invalid") {
+    return redirect({ href: "/start/learn", locale });
+  }
 
   if (result.kind === "course" || result.kind === "redirect") {
     return redirect({ href: result.href, locale });

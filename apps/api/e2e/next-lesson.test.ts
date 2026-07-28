@@ -6,6 +6,7 @@ import { expect, test } from "@zoonk/e2e/fixtures";
 test.describe("Next Lesson API", () => {
   let baseURL: string;
   let brandOrgId: string;
+  let brandOrgSlug: string;
 
   test.beforeAll(async () => {
     baseURL = process.env.E2E_BASE_URL ?? "";
@@ -20,30 +21,7 @@ test.describe("Next Lesson API", () => {
     });
 
     brandOrgId = org.id;
-  });
-
-  test("returns 400 when no scope param provided", async () => {
-    const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get("/v1/progress/next-lesson");
-
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-
-    await apiContext.dispose();
-  });
-
-  test("returns 400 when multiple scope params provided", async () => {
-    const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get("/v1/progress/next-lesson?courseId=1&chapterId=2");
-
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-
-    await apiContext.dispose();
+    brandOrgSlug = org.slug;
   });
 
   test("returns first lesson for unauthenticated user (course scope)", async () => {
@@ -92,7 +70,7 @@ test.describe("Next Lesson API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get(`/v1/progress/next-lesson?courseId=${course.id}`);
+    const response = await apiContext.get(`/v1/courses/${course.id}/next-lesson`);
 
     expect(response.status()).toBe(200);
 
@@ -103,6 +81,9 @@ test.describe("Next Lesson API", () => {
     expect(body.chapterSlug).toBe(chapter.slug);
     expect(body.lessonSlug).toBe(lesson.slug);
     expect(body.lessonPosition).toBe(0);
+    expect(body.organizationSlug).toBe(brandOrgSlug);
+    expect(body.type).toBe("lesson");
+    expect(body).not.toHaveProperty("brandSlug");
 
     await apiContext.dispose();
   });
@@ -153,18 +134,19 @@ test.describe("Next Lesson API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get(`/v1/progress/next-lesson?chapterId=${chapter.id}`);
+    const response = await apiContext.get(`/v1/chapters/${chapter.id}/next-lesson`);
 
     expect(response.status()).toBe(200);
 
     const body = await response.json();
     expect(body.chapterSlug).toBe(chapter.slug);
     expect(body.lessonSlug).toBe(lesson.slug);
+    expect(body.type).toBe("lesson");
 
     await apiContext.dispose();
   });
 
-  test("returns 200 with slug fields for lesson scope", async () => {
+  test("returns no structural successor for the final lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const course = await prisma.course.create({
@@ -210,13 +192,12 @@ test.describe("Next Lesson API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get(`/v1/progress/next-lesson?lessonId=${lesson.id}`);
+    const response = await apiContext.get(`/v1/lessons/${lesson.id}/next-lesson`);
 
     expect(response.status()).toBe(200);
 
     const body = await response.json();
-    expect(body.lessonSlug).toBe(lesson.slug);
-    expect(body.lessonPosition).toBe(0);
+    expect(body.lesson).toBeNull();
 
     await apiContext.dispose();
   });
@@ -237,14 +218,15 @@ test.describe("Next Lesson API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get(`/v1/progress/next-lesson?courseId=${course.id}`);
+    const response = await apiContext.get(`/v1/courses/${course.id}/next-lesson`);
 
     expect(response.status()).toBe(200);
 
     const body = await response.json();
     expect(body.hasStarted).toBe(false);
     expect(body.completed).toBe(false);
-    expect(body.brandSlug).toBeUndefined();
+    expect(body.type).toBe("empty");
+    expect(body.organizationSlug).toBeUndefined();
     expect(body.courseSlug).toBeUndefined();
 
     await apiContext.dispose();

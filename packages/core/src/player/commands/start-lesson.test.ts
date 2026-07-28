@@ -4,16 +4,22 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, it, vi } from "vitest";
-import { getSession } from "../../users/get-user-session";
+import { revalidateTag } from "next/cache";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  COURSE_LIST_CACHE_TAG,
+  getCourseCacheTag,
+  getUserProgressCacheTag,
+} from "../../cache/tags";
+import { getSession } from "../../users/get-session";
 import { startLesson } from "./start-lesson";
 
-vi.mock("../../users/get-user-session", () => ({ getSession: vi.fn() }));
+vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
-/** Authenticates a unique learner so progress rows stay isolated between tests. */
+/** Authenticates an isolated fixture learner so progress rows stay isolated between tests. */
 async function authenticateFixtureUser() {
   const user = await userFixture();
-  vi.mocked(getSession).mockResolvedValue({ user } as never);
+  vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
   return user.id;
 }
 
@@ -28,14 +34,23 @@ describe(startLesson, () => {
     lesson = await lessonFixture({ chapterId: chapter.id, kind: "quiz", organizationId: org.id });
   });
 
+  beforeEach(() => {
+    vi.mocked(getSession).mockResolvedValue(null);
+  });
+
   it("creates LessonProgress with completedAt null and durationSeconds null", async () => {
     const userId = await authenticateFixtureUser();
 
-    await startLesson(lesson.id);
+    const result = await startLesson(lesson.id);
 
     const progress = await prisma.lessonProgress.findUnique({
       where: { userLesson: { lessonId: lesson.id, userId } },
     });
+
+    expect(result).toStrictEqual({ status: "started" });
+    expect(revalidateTag).toHaveBeenCalledWith(COURSE_LIST_CACHE_TAG, { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith(getCourseCacheTag(course.id), { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith(getUserProgressCacheTag(userId), { expire: 0 });
 
     expect(progress).not.toBeNull();
     expect(progress?.completedAt).toBeNull();
@@ -115,13 +130,14 @@ describe(startLesson, () => {
   });
 
   it("does not create progress without an authenticated learner", async () => {
-    vi.mocked(getSession).mockResolvedValue(null);
     const progressCount = await prisma.lessonProgress.count({ where: { lessonId: lesson.id } });
 
-    await startLesson(lesson.id);
+    const result = await startLesson(lesson.id);
 
     await expect(prisma.lessonProgress.count({ where: { lessonId: lesson.id } })).resolves.toBe(
       progressCount,
     );
+
+    expect(result).toStrictEqual({ status: "unauthorized" });
   });
 });

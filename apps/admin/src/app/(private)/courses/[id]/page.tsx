@@ -27,7 +27,6 @@ import { Suspense } from "react";
 import { CourseForm } from "./course-form";
 
 export const metadata: Metadata = { title: "Edit Course" };
-export const prefetch = "allow-runtime";
 
 /**
  * The course editor stays anchored to the catalog list through the same compact

@@ -6,9 +6,9 @@ import {
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
-import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { getCatalogChapterProgress } from "@/data/progress/catalog-progress";
 import { getActiveCatalogTarget } from "@/data/progress/get-catalog-target";
+import { type CourseChapter } from "@zoonk/core/chapters/list-by-course";
 import { type LessonKind } from "@zoonk/db";
 import {
   GridGroup,

@@ -89,7 +89,7 @@ Do not inflate severity, invent failure modes, or report generic best-practice v
 
 ### 5. Review React and Next.js
 
-Read [Vercel React best practices](../vercel-react-best-practices/SKILL.md) and [Next.js best practices](../next-best-practices/SKILL.md) for React or Next.js changes. Read [Next.js Cache Components](../next-cache-components/SKILL.md) when the diff uses Cache Components, `use cache`, cache tags, or partial prerendering.
+Read [Vercel React best practices](../vercel-react-best-practices/SKILL.md) and [next-dev-loop](../next-dev-loop/SKILL.md) for React or Next.js changes. Read [Next.js Cache Components Optimizer](../next-cache-components-optimizer/SKILL.md) when the diff uses Cache Components, `use cache`, cache tags, or partial prerendering.
 
 - Prefer Server Components and server data fetching. Require a concrete browser-only need for every `"use client"`, `useState`, and `useEffect` boundary.
 - For every `useEffect`, first ask whether rendering, derived values, an event handler, `useSyncExternalStore`, a key, or server data can express the behavior. If the effect is necessary, verify dependencies, cleanup, race handling, Strict Mode behavior, stale closures, and whether `useEffectEvent` is appropriate. Also read React's [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect).

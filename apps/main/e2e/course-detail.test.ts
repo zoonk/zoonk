@@ -8,30 +8,30 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
+import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
 
 const TEST_RUN_ID = "test-run-id-course-detail";
 const UUID_SHORT_LENGTH = 8;
 
 /**
- * Mock the workflow APIs to avoid hitting real services.
+ * Mock the course-generation APIs to avoid hitting real services.
  */
-async function mockWorkflowApis(route: Route) {
+async function mockCourseGenerationApis(route: Route) {
   const url = route.request().url();
-  const method = route.request().method();
 
-  if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
+  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
     await route.fulfill({
-      body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
       contentType: "application/json",
-      status: 200,
+      status: 202,
     });
 
     return;
   }
 
-  if (url.includes("/v1/workflows/course-generation/status")) {
+  if (isGenerationEvents(url)) {
     await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "running", step: "getCoursePrompt" })}\n\n`,
+      body: `data: ${JSON.stringify({ status: "started", step: "getCoursePrompt" })}\n\n`,
       contentType: "text/event-stream",
       status: 200,
     });
@@ -208,7 +208,7 @@ test.describe("Course Detail Page", () => {
       prompt: `Generate ${title} ${slug}`,
     });
 
-    await authenticatedPage.route("**/v1/workflows/**", mockWorkflowApis);
+    await routeGenerationApis({ handler: mockCourseGenerationApis, page: authenticatedPage });
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${slug}`);
 

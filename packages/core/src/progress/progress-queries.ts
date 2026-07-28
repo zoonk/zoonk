@@ -1,10 +1,20 @@
 import "server-only";
-import { type LessonKind, type Sql, getPublishedLessonWhere, prisma, sql } from "@zoonk/db";
+import {
+  type GenerationStatus,
+  type LessonKind,
+  type Sql,
+  getPublishedLessonWhere,
+  prisma,
+  sql,
+} from "@zoonk/db";
+import { cacheTag } from "next/cache";
+import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../cache/tags";
 import {
   getLessonKindExclusionSql,
   getLessonKindExclusionWhere,
 } from "../lessons/lesson-kind-exclusions";
 import { type LessonScope } from "../lessons/lesson-scope";
+import { tagProgressScope, tagUserProgress } from "./_utils/progress-cache";
 
 export type PublishedLessonProgressRow = {
   brandSlug: string | null;
@@ -32,7 +42,9 @@ export type PublishedCourseChapter = {
   chapterPosition: number;
   chapterSlug: string;
   chapterTitle: string;
+  courseId: string;
   courseSlug: string;
+  generationStatus: GenerationStatus;
 };
 
 type ProgressQueryInput = {
@@ -51,6 +63,11 @@ export async function listPublishedLessonProgressRows({
   scope,
   userId,
 }: ProgressQueryInput): Promise<PublishedLessonProgressRow[]> {
+  "use cache: private";
+
+  tagProgressScope(scope);
+  tagUserProgress(userId);
+
   const lessonKindFilter = getLessonKindExclusionSql({ excludedLessonKinds });
   const scopeFilter = getPublishedLessonProgressScopeFilter({ scope });
   const progressUserFilter = userId ? sql`lp.user_id = ${userId}` : sql`FALSE`;
@@ -104,6 +121,10 @@ export async function listPublishedCourseChapters({
 }: {
   courseId: string;
 }): Promise<PublishedCourseChapter[]> {
+  "use cache";
+
+  cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
+
   const chapters = await prisma.chapter.findMany({
     include: { course: { include: { organization: true } } },
     orderBy: { position: "asc" },
@@ -116,7 +137,9 @@ export async function listPublishedCourseChapters({
     chapterPosition: chapter.position,
     chapterSlug: chapter.slug,
     chapterTitle: chapter.title,
+    courseId: chapter.courseId,
     courseSlug: chapter.course.slug,
+    generationStatus: chapter.generationStatus,
   }));
 }
 
@@ -130,6 +153,11 @@ export async function listDurableChapterCompletionIds({
   scope,
   userId,
 }: ProgressQueryInput): Promise<string[]> {
+  "use cache: private";
+
+  tagProgressScope(scope);
+  tagUserProgress(userId);
+
   if (!userId) {
     return [];
   }
@@ -156,6 +184,11 @@ export async function hasDurableCourseCompletion({
   courseId: string;
   userId: string | null;
 }): Promise<boolean> {
+  "use cache: private";
+
+  cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
+  tagUserProgress(userId);
+
   if (!userId) {
     return false;
   }

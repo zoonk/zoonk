@@ -1,8 +1,6 @@
-import {
-  type ContinueLearningItem,
-  MAX_CONTINUE_LEARNING_ITEMS,
-  getContinueLearning,
-} from "@/data/courses/get-continue-learning";
+import { getContinueLearning } from "@/data/courses/get-continue-learning";
+import { MAX_CONTINUE_LEARNING_ITEMS } from "@zoonk/core/courses/continue-learning-contract";
+import { type ContinueLearningItem } from "@zoonk/core/courses/list-current-user-continue-learning";
 import {
   FeatureCard,
   FeatureCardBody,

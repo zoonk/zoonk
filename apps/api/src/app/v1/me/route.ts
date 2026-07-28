@@ -1,102 +1,65 @@
 import { errors } from "@/lib/api-errors";
+import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { meUpdateSchema } from "@/lib/openapi/schemas/me";
-import { auth } from "@zoonk/core/auth";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
-import { prisma } from "@zoonk/db";
+import { getCurrentUser, updateCurrentUser } from "@zoonk/core/users/current";
 import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest, NextResponse } from "next/server";
-import {
-  getProfileUpdateErrorResponse,
-  getUserUpdateBody,
-  hasUserUpdateBody,
-} from "./_utils/me-profile-update";
+import { getProfileUpdateErrorResponse } from "./_utils/me-profile-update";
 import { createMeResponse } from "./_utils/me-response";
 
 /**
- * Reads the current session from the source session token instead of the cached
- * user cookie so `/v1/me` immediately reflects profile updates.
+ * Combines independently reusable account resources while their shared private
+ * session resolver joins repeated authentication calls.
  */
-async function getCurrentSession(headers: Headers) {
-  return auth.api.getSession({ headers, query: { disableCookieCache: true } });
-}
+async function getMeResponse() {
+  const [subscription, user] = await Promise.all([getActiveSubscription(), getCurrentUser()]);
 
-/**
- * Mirrors the main app's subscription lookup: Better Auth decides which row is
- * active, then Prisma reads the app-owned provider field from that row.
- */
-async function getCurrentSubscription(headers: Headers) {
-  const activeSubscription = await getActiveSubscription(headers);
-
-  if (!activeSubscription) {
-    return null;
+  if (!user) {
+    return errors.unauthorized();
   }
 
-  return prisma.subscription.findUnique({ where: { id: activeSubscription.id } });
-}
-
-/**
- * Combines the current auth profile with billing state in one response so
- * native clients can bootstrap account UI with a single authenticated request.
- */
-async function getMeResponse({
-  headers,
-  session,
-}: {
-  headers: Headers;
-  session: NonNullable<Awaited<ReturnType<typeof getCurrentSession>>>;
-}) {
-  const subscription = await getCurrentSubscription(headers);
-  return NextResponse.json(createMeResponse({ session, subscription }));
+  return NextResponse.json(createMeResponse({ subscription, user }));
 }
 
 /**
  * Exposes the signed-in user's profile and account state to native clients.
  */
-export async function GET(request: NextRequest) {
-  const session = await getCurrentSession(request.headers);
-
-  if (!session) {
-    return errors.unauthorized();
-  }
-
-  return getMeResponse({ headers: request.headers, session });
+async function getCurrentUserAccount() {
+  return getMeResponse();
 }
 
 /**
  * Updates the signed-in user's public profile using the same Better Auth path
  * as the main app, including username validation and uniqueness checks.
  */
-export async function PATCH(request: NextRequest) {
-  const session = await getCurrentSession(request.headers);
-
-  if (!session) {
-    return errors.unauthorized();
-  }
-
+async function updateCurrentUserAccount(request: NextRequest) {
   const parsed = await parseBody(request, meUpdateSchema);
 
   if (!parsed.success) {
     return errors.validation(parsed.error);
   }
 
-  const body = getUserUpdateBody({ currentUsername: session.user.username, profile: parsed.data });
-
-  if (!hasUserUpdateBody(body)) {
-    return getMeResponse({ headers: request.headers, session });
-  }
-
-  const { error } = await safeAsync(() => auth.api.updateUser({ body, headers: request.headers }));
+  const { data: result, error } = await safeAsync(() => updateCurrentUser({ input: parsed.data }));
 
   if (error) {
-    return getProfileUpdateErrorResponse(error);
+    const response = getProfileUpdateErrorResponse(error);
+
+    if (response) {
+      return response;
+    }
+
+    throw error;
   }
 
-  const updatedSession = await getCurrentSession(request.headers);
-
-  if (!updatedSession) {
+  if (!result) {
     return errors.unauthorized();
   }
 
-  return getMeResponse({ headers: request.headers, session: updatedSession });
+  const subscription = await getActiveSubscription();
+  return NextResponse.json(createMeResponse({ subscription, user: result }));
 }
+
+export const GET = withApiErrorBoundary(getCurrentUserAccount);
+export const PATCH = withApiErrorBoundary(updateCurrentUserAccount);

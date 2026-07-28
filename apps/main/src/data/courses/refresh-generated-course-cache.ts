@@ -5,8 +5,8 @@ import {
   LANGUAGE_COURSE_LIST_CACHE_TAG,
   getCourseCacheTag,
   getCourseCurriculumCacheTag,
-} from "@/data/cache-tags";
-import { prisma } from "@zoonk/db";
+} from "@zoonk/core/cache-tags";
+import { getCourseGenerationStatus } from "@zoonk/core/courses/get-generation-status";
 import { updateTag } from "next/cache";
 
 /**
@@ -19,9 +19,9 @@ export async function refreshGeneratedCourseCache({
 }: {
   courseId: string;
 }): Promise<boolean> {
-  const course = await prisma.course.findUnique({ where: { id: courseId } });
+  const generationStatus = await getCourseGenerationStatus({ courseId });
 
-  if (course?.generationStatus !== "completed") {
+  if (generationStatus !== "completed") {
     return false;
   }
 

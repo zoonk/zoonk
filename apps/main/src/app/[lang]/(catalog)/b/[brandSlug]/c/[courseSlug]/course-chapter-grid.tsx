@@ -1,9 +1,9 @@
 import { GeneratedCourseCacheRefresher } from "@/components/catalog/generated-course-cache-refresher";
-import { type CourseChapter, listCourseChapters } from "@/data/chapters/list-course-chapters";
-import { type CourseWithDetails, getCourse } from "@/data/courses/get-course";
-import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
 import { redirect } from "@/i18n/navigation";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
+import { type CourseChapter, listCourseChapters } from "@zoonk/core/chapters/list-by-course";
+import { type CourseWithDetails, getCourse } from "@zoonk/core/courses/get-by-slug";
+import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { notFound } from "next/navigation";
 import { ChapterList } from "./chapter-list";
@@ -40,10 +40,12 @@ export async function CourseChapterGrid({
 }: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">, "params">) {
   const { brandSlug, courseSlug, lang: locale } = await params;
 
-  const [course, hiddenLessonKinds] = await Promise.all([
+  const [course, lessonVisibility] = await Promise.all([
     getCourse({ brandSlug, courseSlug }),
-    getUserHiddenLessonKinds(),
+    getLessonVisibility(),
   ]);
+
+  const { hiddenLessonKinds } = lessonVisibility;
 
   if (!course) {
     notFound();
