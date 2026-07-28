@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { usePlayerLessonMeta, usePlayerNavigation } from "../player-context";
-import { LessonInfoPopover } from "./lesson-info-popover";
+import { LessonOptionsPopover } from "./lesson-options-popover";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 
@@ -52,7 +52,7 @@ export function InPlayStickyHeader({
 
         <div className="min-w-0 flex-1 text-center">{centerContent ?? <HeaderLessonTitle />}</div>
 
-        <LessonInfoPopover />
+        <LessonOptionsPopover />
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

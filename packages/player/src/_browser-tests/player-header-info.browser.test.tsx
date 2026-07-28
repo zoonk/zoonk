@@ -5,7 +5,7 @@ import { buildSerializedLesson } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
-describe("player header: lesson title and lesson info", () => {
+describe("player header: lesson title and options", () => {
   it("shows the lesson title in the header", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({ title: "Basic Greetings" }),
@@ -57,9 +57,8 @@ describe("player header: lesson title and lesson info", () => {
     await expect.element(page.getByText("Lesson 3 of 8")).toBeInTheDocument();
   });
 
-  it("lesson info popover prefers the current lesson description", async () => {
+  it("lesson options popover prefers the current lesson description", async () => {
     renderPlayer({
-      chapterTitle: "Verb Fundamentals",
       lesson: buildSerializedLesson({
         description: "Use present tense patterns to describe what someone does now.",
       }),
@@ -68,27 +67,24 @@ describe("player header: lesson title and lesson info", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("button", { name: /lesson info/iu }).click();
+    await page.getByRole("button", { name: /lesson options/iu }).click();
 
     await expect.element(page.getByRole("heading", { name: "Present Tense" })).toBeInTheDocument();
 
     await expect
       .element(page.getByText("Use present tense patterns to describe what someone does now."))
       .toBeInTheDocument();
-
-    await expect.element(page.getByText("Verb Fundamentals")).toBeInTheDocument();
   });
 
-  it("lesson info popover falls back to the lesson description", async () => {
+  it("lesson options popover falls back to the lesson description", async () => {
     renderPlayer({
-      chapterTitle: "Verb Fundamentals",
       lesson: buildSerializedLesson({ description: null }),
       lessonDescription: "Learn present tense conjugation patterns.",
       lessonTitle: "Present Tense",
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("button", { name: /lesson info/iu }).click();
+    await page.getByRole("button", { name: /lesson options/iu }).click();
 
     await expect
       .element(page.getByText("Learn present tense conjugation patterns."))

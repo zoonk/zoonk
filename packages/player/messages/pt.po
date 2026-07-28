@@ -282,10 +282,15 @@ msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Comentário sobre a resposta"
 
-#: src/components/lesson-info-popover.tsx
-msgctxt "RwePAQ"
-msgid "Lesson info"
-msgstr "Informações da aula"
+#: src/components/lesson-options-popover.tsx
+msgctxt "SZODgN"
+msgid "Lesson options"
+msgstr "Opções da aula"
+
+#: src/components/lesson-options-popover.tsx
+msgctxt "YLFqnP"
+msgid "Skip lesson"
+msgstr "Pular aula"
 
 #: src/components/listening-step.tsx
 msgctxt "aAmWaS"
