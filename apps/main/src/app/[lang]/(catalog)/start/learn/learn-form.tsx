@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { trackLearnForm } from "@/lib/track-events";
+import { COURSE_PROMPT_MAX_LENGTH } from "@zoonk/core/courses/prompt-contract";
 import { CyclingText } from "@zoonk/ui/components/cycling-text";
 import {
   InputGroup,
@@ -16,8 +17,6 @@ import { ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useTransition } from "react";
 import { LEARN_TITLE_ID } from "./learn-title";
-
-const PROMPT_MAX_LENGTH = 128;
 
 /**
  * Owns the interactive course goal input and records the form visibility event
@@ -69,7 +68,7 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
             className="peer"
             disabled={isPending}
             id={queryId}
-            maxLength={PROMPT_MAX_LENGTH}
+            maxLength={COURSE_PROMPT_MAX_LENGTH}
             name="query"
             placeholder=" "
             required

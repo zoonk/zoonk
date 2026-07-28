@@ -6,6 +6,58 @@ import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs"
 import { normalizeString } from "@zoonk/utils/string";
 import { createAuthenticatedApiContext, createSubscribedApiContext } from "./helpers/auth";
 
+/**
+ * Creates two paid chapters in one isolated AI course so a single authenticated
+ * client can verify authorization again after its subscription changes.
+ */
+async function subscriptionRefreshFixture(organizationId: string) {
+  const uniqueId = randomUUID().slice(0, 8);
+  const courseTitle = `E2E Subscription Refresh ${uniqueId}`;
+
+  const course = await prisma.course.create({
+    data: {
+      description: "Test course for fresh subscription authorization",
+      isPublished: true,
+      language: "en",
+      normalizedTitle: normalizeString(courseTitle),
+      organizationId,
+      slug: `e2e-subscription-refresh-${uniqueId}`,
+      title: courseTitle,
+    },
+  });
+
+  const [firstChapter, secondChapter] = await Promise.all([
+    prisma.chapter.create({
+      data: {
+        courseId: course.id,
+        description: "First paid chapter",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(`First Paid Chapter ${uniqueId}`),
+        organizationId,
+        position: 1,
+        slug: `e2e-first-paid-${uniqueId}`,
+        title: `First Paid Chapter ${uniqueId}`,
+      },
+    }),
+    prisma.chapter.create({
+      data: {
+        courseId: course.id,
+        description: "Second paid chapter",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(`Second Paid Chapter ${uniqueId}`),
+        organizationId,
+        position: 2,
+        slug: `e2e-second-paid-${uniqueId}`,
+        title: `Second Paid Chapter ${uniqueId}`,
+      },
+    }),
+  ]);
+
+  return { firstChapter, secondChapter };
+}
+
 test.describe("Chapter Generation Workflow API", () => {
   let baseURL: string;
   let aiOrgId: string;
@@ -53,16 +105,15 @@ test.describe("Chapter Generation Workflow API", () => {
 
     const apiContext = await request.newContext({ baseURL });
 
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: chapter.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: chapter.id, type: "chapter" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     await apiContext.dispose();
   });
@@ -99,8 +150,8 @@ test.describe("Chapter Generation Workflow API", () => {
 
     const apiContext = await request.newContext({ baseURL });
 
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: chapter.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: chapter.id, type: "chapter" } },
     });
 
     expect(response.status()).toBe(402);
@@ -113,54 +164,14 @@ test.describe("Chapter Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when chapterId is missing", async () => {
+  test("returns validation error when chapterId is not a UUID", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
-      prefix: "chapter-validation-missing",
+      prefix: "chapter-validation",
     });
 
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: {},
-    });
-
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-
-    await apiContext.dispose();
-  });
-
-  test("returns validation error when chapterId is invalid type", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "chapter-validation-type",
-    });
-
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: "invalid" },
-    });
-
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-
-    await apiContext.dispose();
-  });
-
-  test("returns validation error when chapterId is negative", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "chapter-validation-negative",
-    });
-
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: -1 },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: "not-a-uuid", type: "chapter" } },
     });
 
     expect(response.status()).toBe(400);
@@ -209,8 +220,8 @@ test.describe("Chapter Generation Workflow API", () => {
       prefix: "chapter-no-subscription",
     });
 
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: chapter.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: chapter.id, type: "chapter" } },
     });
 
     // Non-first chapter without subscription should return 402
@@ -264,16 +275,15 @@ test.describe("Chapter Generation Workflow API", () => {
       prefix: "chapter-first-free",
     });
 
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: chapter.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: chapter.id, type: "chapter" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     await apiContext.dispose();
   });
@@ -313,8 +323,8 @@ test.describe("Chapter Generation Workflow API", () => {
       prefix: "chapter-non-ai",
     });
 
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: chapter.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: chapter.id, type: "chapter" } },
     });
 
     expect(response.status()).toBe(404);
@@ -322,9 +332,9 @@ test.describe("Chapter Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error for status endpoint when runId is missing", async () => {
+  test("returns validation error when the generation ID is empty", async () => {
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get("/v1/workflows/chapter-generation/status");
+    const response = await apiContext.get("/v1/generations/%20/events");
 
     expect(response.status()).toBe(400);
 
@@ -368,17 +378,43 @@ test.describe("Chapter Generation Workflow API", () => {
       },
     });
 
-    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
-      data: { chapterId: chapter.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: chapter.id, type: "chapter" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
-    expect(typeof body.runId).toBe("string");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
+
+    await apiContext.dispose();
+  });
+
+  test("rechecks subscription access before each workflow start", async () => {
+    const { apiContext, user } = await createSubscribedApiContext({
+      baseURL,
+      prefix: "chapter-subscription-refresh",
+    });
+
+    const { firstChapter, secondChapter } = await subscriptionRefreshFixture(aiOrgId);
+
+    const firstResponse = await apiContext.post("/v1/generations", {
+      data: { target: { id: firstChapter.id, type: "chapter" } },
+    });
+
+    expect(firstResponse.status()).toBe(202);
+
+    await prisma.subscription.updateMany({
+      data: { status: "canceled" },
+      where: { referenceId: user.id },
+    });
+
+    const secondResponse = await apiContext.post("/v1/generations", {
+      data: { target: { id: secondChapter.id, type: "chapter" } },
+    });
+
+    expect(secondResponse.status()).toBe(402);
 
     await apiContext.dispose();
   });

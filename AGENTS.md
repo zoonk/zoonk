@@ -1,6 +1,6 @@
 ## Principles
 
-- Always prefer the **simplest solution**. If something feels complex, refactor
+- Always prefer the **simplest solution**. If something feels complex, refactor. Avoid over-engineering things
 - **Simplicity ≠ laziness.** Creating a reusable component for repeated patterns IS the simple solution—it maintains consistency and quality. Leaving duplication "because it's only N files" leads to inconsistency (bugs). DRY is about having a single source of truth, not just reducing typing. When you see the same pattern repeated, extract it
 - Favor **clarity and minimalism** in both code and UI
 - **Do not create formatting-only diffs.** Preserve existing formatting unless a line needs a semantic change. Formatting is handled by `oxfmt`, so never manually reflow unrelated code, expand one-line calls/types/objects into multiline, or collapse multiline code into one line unless that exact code is being changed for behavior.
@@ -39,6 +39,24 @@
 - Repeated translation lookups are expected and must never be treated as a performance problem
 - Only accept copy as a prop when caller-provided copy is an intentional part of the component's reusable API
 - Do not introduce props, helpers, components, promises, or caching to deduplicate cheap operations without measured evidence that they are a real bottleneck
+
+## Application and Core Boundaries
+
+- `@zoonk/core` is the shared Next.js-aware server and business package for Main, API, Admin, future Next.js apps, and clients that reach those capabilities through API. Do not add a framework-abstraction layer until another framework is actually adopted.
+- Put reusable business rules, authorization, Prisma access, business orchestration, shared authentication utilities, and reusable Cache Component reads in `@zoonk/core`. Apps are delivery adapters: they own HTTP parsing and serialization, UI composition, translations, URLs, redirects, metadata, Suspense, and presentation fallbacks.
+- Do not add direct Prisma access to an app for a capability that belongs in another app, the public API, mobile, CLI, or an agent. Web-only indexing and SEO queries such as sitemaps may remain in a web app.
+- Every reusable product capability exposed by Main must also be reachable through the public API so native apps, CLI tools, and agents can provide the same behavior. Audit new Main pages against the OpenAPI document; exclude only delivery-specific concerns such as URLs, redirects, metadata, prefetch presentation, and SEO.
+- If an app must coordinate multiple core calls to perform one coherent API-like operation, add a resource- or domain-capability leaf in core instead of duplicating that orchestration across apps. Do not create page-sized aggregate functions or expose one function per Prisma query.
+- Public authenticated core functions call the shared `getSession()` capability themselves and own every permission check. Apps may pass untrusted resource IDs and validated input, but they must never pass a caller-selected acting `userId` to a public core capability.
+- Internal core helpers may receive a user ID only after a public core boundary derives it from the authenticated session. Do not export those helpers as authorization boundaries.
+- Use `"use cache"` for reusable caller-independent reads and `"use cache: private"` for authenticated or request-dependent reads that need same-tree deduplication and runtime prefetching. Cache the complete exported read capability when instant navigation depends on its full result.
+- Do not blanket-cache every Prisma read. Mutations, authorization preconditions whose freshness controls a write, generation polling, and durable workflow-step reads remain uncached unless their freshness and invalidation contract is explicitly designed.
+- Do not convert session or persistence failures into `null` inside reusable core reads or Cache Component leaves. Reserve `null` for legitimate missing data, let infrastructure failures propagate for HTTP 5xx mapping, and place any intentional web-only graceful fallback in the owning app outside the `"use cache"` or `"use cache: private"` leaf.
+- Use the default cache-life profile unless a product requirement explicitly establishes another freshness policy. You don't need to call `cacheLife("default")`. That's redundant.
+- Normalize route values and other semantically equivalent inputs before calling a regular `"use cache"` leaf so encoded and decoded values share one canonical cache key.
+- Core mutations own cache-tag invalidation and return only their domain resource or outcome. Use `revalidateTag(tag, { expire: 0 })` inside shared mutations that can run from both Server Actions and Route Handlers; apps retain only route-specific `revalidatePath()` calls.
+- Import core capabilities through direct package subpath leaf exports. Do not create a monolithic facade or root barrel that imports every feature; client-only, workflow-safe, and server-only leaves must remain separate so unused dependencies stay outside each consumer's module graph.
+- Treat the public OpenAPI document as a product contract. Reuse runtime Zod boundary schemas in the document, give public operations stable `operationId` and security declarations, make compatibility an explicit product decision instead of adding aliases by default, and keep Better Auth's infrastructure routes out of the public product API.
 
 ## Engineering Mindset
 
@@ -93,7 +111,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Don't add comments to a component's props
 - Don't create migration files manually. Run `pnpm --filter @zoonk/db db:migrate --name <migration-name>` to generate migration
 - Workflow files (`"use workflow"`) can't call Node APIs directly; wrap them in `"use step"` functions
-- When adding a new endpoint, add docs for it in `document.ts`
+- When adding a public API endpoint, add its contract to `document.ts`. Unversioned same-origin UI transport routes stay out of the public OpenAPI document, but they require an explicit architecture record, CSRF protection for cookie-authenticated mutations, and end-to-end coverage
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 - Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
 - When moving a type or function to a different file, update all references to import from the new location. Never re-export from the old file — re-exports create unnecessary indirection and drift
@@ -121,6 +139,7 @@ When writing React components, use compound components. Always read this before 
 ## Testing
 
 - Default to TDD: write a failing test first, run it to confirm it fails for the right reason, then write the code to make it pass. Exception is for internal apps like `admin`, `evals`, and `blog`. Don't write tests for those
+- Never add app routes, pages, or endpoints solely for E2E tests. E2E tests must exercise real product surfaces
 - Don't write unit tests for React components, prefer E2E tests. React unit tests require mocking and test implementation details, making tests fail if we change implementation
 - Add unit tests for pure functions, helpers, and utils
 - Extract pure functions with non-trivial logic (validation, transformation, regex) from component files into their own file (e.g., `_utils/`). This follows the single-concern principle and enables direct unit testing without exporting internals from component files

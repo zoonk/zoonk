@@ -4,10 +4,10 @@ import {
   ContinueLessonLink,
   ContinueLessonLinkSkeleton,
 } from "@/components/catalog/continue-lesson-link";
-import { listCourseChapters } from "@/data/chapters/list-course-chapters";
-import { getCourse } from "@/data/courses/get-course";
-import { getSession } from "@/data/users/get-session";
-import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
+import { listCourseChapters } from "@zoonk/core/chapters/list-by-course";
+import { getCourse } from "@zoonk/core/courses/get-by-slug";
+import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
+import { getSession } from "@zoonk/core/users/session";
 import { GridToolbar } from "@zoonk/ui/components/grid";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -22,11 +22,13 @@ export async function CourseSidebar({
 }: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">, "params">) {
   const { brandSlug, courseSlug } = await params;
 
-  const [course, hiddenLessonKinds, session] = await Promise.all([
+  const [course, lessonVisibility, session] = await Promise.all([
     getCourse({ brandSlug, courseSlug }),
-    getUserHiddenLessonKinds(),
+    getLessonVisibility(),
     getSession(),
   ]);
+
+  const { hiddenLessonKinds } = lessonVisibility;
 
   if (!course) {
     notFound();

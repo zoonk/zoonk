@@ -1,5 +1,5 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getSession } from "@zoonk/core/users/session";
 import { redirect, unauthorized } from "next/navigation";
 
 /**

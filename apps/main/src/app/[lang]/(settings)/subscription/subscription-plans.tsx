@@ -1,9 +1,9 @@
-import { getActiveSubscription } from "@/data/subscriptions/get-active-subscription";
 import { getBillingCountryCode } from "@/data/subscriptions/get-billing-country-code";
 import { type StripePriceMap, getStripePrices } from "@/data/subscriptions/get-stripe-prices";
 import { getCurrentUserAnalyticsDisabled } from "@/data/users/get-current-user-analytics-disabled";
-import { getSession } from "@/data/users/get-session";
-import { type Subscription, prisma } from "@zoonk/db";
+import { getActiveSubscription } from "@zoonk/core/auth/subscription";
+import { getSession } from "@zoonk/core/users/session";
+import { type Subscription } from "@zoonk/db";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { countryToCurrency } from "@zoonk/utils/currency";
 import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
@@ -232,19 +232,17 @@ function getPlusViewerState({
 }
 
 /**
- * Better Auth decides which row is currently active. Prisma then loads the
- * provider only when that row belongs to Plus, the sole paid plan.
+ * The shared account capability already returns the complete active billing
+ * resource, so this UI helper only narrows it to Plus, the sole paid plan.
  */
 async function getCurrentPlusSubscription(): Promise<Subscription | null> {
   const activeSubscription = await getActiveSubscription();
 
-  if (!activeSubscription) {
+  if (activeSubscription?.plan !== PLUS_PLAN.name) {
     return null;
   }
 
-  return prisma.subscription.findUnique({
-    where: { id: activeSubscription.id, plan: PLUS_PLAN.name },
-  });
+  return activeSubscription;
 }
 
 /**

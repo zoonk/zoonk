@@ -1,37 +1,40 @@
 import { z } from "zod";
 
-const uuidParam = (description: string) => z.uuid().meta({ description });
+const startIndexSchema = z.coerce
+  .number()
+  .int()
+  .min(0)
+  .optional()
+  .meta({ description: "Zero-based event index to resume from" });
 
-export const courseGenerationTriggerSchema = z
-  .object({ coursePromptId: uuidParam("Course prompt ID to generate from") })
-  .meta({ id: "CourseGenerationTrigger" });
-
-export const chapterGenerationTriggerSchema = z
-  .object({ chapterId: uuidParam("Chapter ID to generate content for") })
-  .meta({ id: "ChapterGenerationTrigger" });
-
-export const lessonGenerationTriggerSchema = z
-  .object({ lessonId: uuidParam("Lesson ID to generate content for") })
-  .meta({ id: "LessonGenerationTrigger" });
-
-export const lessonPreloadTriggerSchema = z
-  .object({ lessonId: uuidParam("Lesson ID to preload content for") })
-  .meta({ id: "LessonPreloadTrigger" });
-
-export const workflowTriggerResponseSchema = z
+const generationTargetSchema = z
   .object({
-    message: z.string().meta({ examples: ["Workflow started"] }),
-    runId: z.string().meta({ description: "Workflow run ID for status tracking" }),
+    id: z.uuid().meta({ description: "Course prompt, chapter, or lesson ID to generate" }),
+    type: z
+      .enum(["coursePrompt", "chapter", "lesson"])
+      .meta({ description: "Resource type to generate" }),
   })
-  .meta({ id: "WorkflowTriggerResponse" });
+  .meta({ id: "GenerationTarget" });
 
-export const workflowStatusQuerySchema = z
+export const createGenerationRequestSchema = z
+  .object({ target: generationTargetSchema })
+  .meta({ id: "CreateGenerationRequest" });
+
+export const generationResourceSchema = z
   .object({
-    runId: z.string().min(1).meta({ description: "Workflow run ID" }),
-    startIndex: z.coerce
-      .number()
-      .int()
-      .optional()
-      .meta({ description: "Event index to start from" }),
+    id: z.string().min(1).meta({ description: "Generation ID" }),
+    status: z.enum(["pending", "running", "completed", "failed", "cancelled"]),
   })
-  .meta({ id: "WorkflowStatusQuery" });
+  .meta({ id: "Generation" });
+
+export const generationEventStreamSchema = z
+  .string()
+  .meta({
+    description:
+      'Server-Sent Events stream. Every data field contains JSON with a required "status" and "step", plus optional "entityId" and "reason".',
+    examples: ['data: {"status":"started","step":"getLesson"}\n\n'],
+  });
+
+export const workflowEventsQuerySchema = z
+  .object({ startIndex: startIndexSchema })
+  .meta({ id: "WorkflowEventsQuery" });

@@ -207,7 +207,9 @@ describe(listPublishedCourseChapters, () => {
         chapterPosition: 0,
         chapterSlug: firstChapter.slug,
         chapterTitle: firstChapter.title,
+        courseId: course.id,
         courseSlug: course.slug,
+        generationStatus: firstChapter.generationStatus,
       },
       {
         brandSlug: organization.slug,
@@ -215,7 +217,9 @@ describe(listPublishedCourseChapters, () => {
         chapterPosition: 2,
         chapterSlug: laterChapter.slug,
         chapterTitle: laterChapter.title,
+        courseId: course.id,
         courseSlug: course.slug,
+        generationStatus: laterChapter.generationStatus,
       },
     ]);
   });

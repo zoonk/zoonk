@@ -1,4 +1,3 @@
-import "server-only";
 import {
   type GenerationStatus,
   getPublishedChapterWhere,
@@ -6,7 +5,10 @@ import {
   prisma,
 } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { hasActiveSubscription } from "../../auth/subscription";
+import { getLessonAccessRequirement } from "../../lessons/access";
 import { NON_STANDALONE_GENERATED_LESSON_KINDS } from "../../lessons/generated-companion-kinds";
+import { getSession } from "../../users/get-session";
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
 
 const preloadableGenerationStatuses = new Set<GenerationStatus>(["pending", "failed"]);
@@ -15,6 +17,8 @@ const maxPreloadTargets = 3;
 export type NextPreloadTarget =
   | { kind: "chapter"; chapterId: string }
   | { kind: "lesson"; lessonId: string };
+
+type PreloadTargetCandidate = { requiresSubscription: boolean; target: NextPreloadTarget };
 
 type LessonPreloadCursor = {
   chapterId: string;
@@ -98,12 +102,15 @@ function getLessonPreloadTarget({
   nextLesson,
 }: {
   nextLesson: NextLessonPreloadCandidate;
-}): NextPreloadTarget | null {
+}): PreloadTargetCandidate | null {
   if (!isPreloadableNextLesson(nextLesson)) {
     return null;
   }
 
-  return { kind: "lesson", lessonId: nextLesson.id };
+  return {
+    requiresSubscription: getLessonAccessRequirement({ lesson: nextLesson }) === "subscription",
+    target: { kind: "lesson", lessonId: nextLesson.id },
+  };
 }
 
 /**
@@ -114,7 +121,7 @@ function getLessonPreloadTarget({
  */
 function getChapterPreloadTarget(
   nextChapter: NextChapterPreloadCandidate | null,
-): NextPreloadTarget | null {
+): PreloadTargetCandidate | null {
   if (!nextChapter) {
     return null;
   }
@@ -127,14 +134,19 @@ function getChapterPreloadTarget(
     return null;
   }
 
-  return { chapterId: nextChapter.id, kind: "chapter" };
+  return {
+    requiresSubscription: nextChapter.position !== 0,
+    target: { chapterId: nextChapter.id, kind: "chapter" },
+  };
 }
 
 /**
  * Keeps arrays typed after filtering optional lesson and chapter targets.
  */
-function isNextPreloadTarget(target: NextPreloadTarget | null): target is NextPreloadTarget {
-  return Boolean(target);
+function isPreloadTargetCandidate(
+  candidate: PreloadTargetCandidate | null,
+): candidate is PreloadTargetCandidate {
+  return Boolean(candidate);
 }
 
 /**
@@ -150,7 +162,7 @@ async function getChapterPreloadTargetWhenNeeded({
   courseId: string;
   currentChapterPosition: number;
   nextLessons: NextLessonPreloadCandidate[];
-}): Promise<NextPreloadTarget | null> {
+}): Promise<PreloadTargetCandidate | null> {
   if (nextLessons.length >= maxPreloadTargets) {
     return null;
   }
@@ -168,7 +180,7 @@ async function getChapterPreloadTargetWhenNeeded({
 function getLessonPreloadTargets(nextLessons: NextLessonPreloadCandidate[]) {
   return nextLessons
     .map((nextLesson) => getLessonPreloadTarget({ nextLesson }))
-    .filter((target) => isNextPreloadTarget(target));
+    .filter((candidate) => isPreloadTargetCandidate(candidate));
 }
 
 /**
@@ -179,11 +191,11 @@ function getPreloadTargets({
   chapterTarget,
   lessonTargets,
 }: {
-  chapterTarget: NextPreloadTarget | null;
-  lessonTargets: NextPreloadTarget[];
-}): NextPreloadTarget[] {
+  chapterTarget: PreloadTargetCandidate | null;
+  lessonTargets: PreloadTargetCandidate[];
+}): PreloadTargetCandidate[] {
   return [...lessonTargets, chapterTarget]
-    .filter((target) => isNextPreloadTarget(target))
+    .filter((candidate) => isPreloadTargetCandidate(candidate))
     .slice(0, maxPreloadTargets);
 }
 
@@ -194,7 +206,7 @@ function getPreloadTargets({
  */
 async function getNextPreloadTargetsAfterLessonPosition(
   cursor: LessonPreloadCursor,
-): Promise<NextPreloadTarget[]> {
+): Promise<PreloadTargetCandidate[]> {
   const nextLessons = await getNextLessonPreloadCandidates(cursor);
 
   const lessonTargets = getLessonPreloadTargets(nextLessons);
@@ -209,34 +221,60 @@ async function getNextPreloadTargetsAfterLessonPosition(
 }
 
 /**
- * The browser only proves that a learner interacted with the current lesson.
- * This command derives the next preload targets on the server so callers do not
- * trust a client-provided lesson or chapter id for an expensive AI job.
+ * Filters paid generation work through the same subscription capability used
+ * by player access. Free first-chapter targets never perform a billing read,
+ * while one request-local lookup covers every paid target in the lookahead.
  */
-export async function getNextPreloadTargets({
-  lessonId,
-  userId,
+async function getAuthorizedPreloadTargets({
+  candidates,
 }: {
-  lessonId: string;
-  userId: string;
+  candidates: PreloadTargetCandidate[];
 }): Promise<NextPreloadTarget[]> {
-  if (!isUuid(lessonId) || !isUuid(userId)) {
-    return [];
+  if (!candidates.some((candidate) => candidate.requiresSubscription)) {
+    return candidates.map((candidate) => candidate.target);
+  }
+
+  const canAccessPaidTargets = await hasActiveSubscription();
+
+  return candidates
+    .filter((candidate) => !candidate.requiresSubscription || canAccessPaidTargets)
+    .map((candidate) => candidate.target);
+}
+
+/**
+ * The browser only proves that a learner interacted with the current lesson.
+ * This resource derives the next preload targets on the server and distinguishes
+ * authentication from an unavailable current lesson. Callers never choose the
+ * IDs of expensive AI jobs.
+ */
+export async function getNextPreloadTargetResource({ lessonId }: { lessonId: string }) {
+  const session = await getSession();
+
+  if (!session) {
+    return { status: "unauthorized" as const };
+  }
+
+  if (!isUuid(lessonId)) {
+    return { status: "notFound" as const };
   }
 
   const lesson = await prisma.lesson.findFirst({
     include: { chapter: true },
-    where: getCompletableLessonWhere({ lessonId, userId }),
+    where: getCompletableLessonWhere({ lessonId, userId: session.user.id }),
   });
 
   if (!lesson) {
-    return [];
+    return { status: "notFound" as const };
   }
 
-  return getNextPreloadTargetsAfterLessonPosition({
+  const candidates = await getNextPreloadTargetsAfterLessonPosition({
     chapterId: lesson.chapterId,
     chapterPosition: lesson.chapter.position,
     courseId: lesson.chapter.courseId,
     lessonPosition: lesson.position,
   });
+
+  const targets = await getAuthorizedPreloadTargets({ candidates });
+
+  return { status: "ready" as const, targets };
 }

@@ -1,6 +1,6 @@
-import { getSession } from "@/data/users/get-session";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
+import { getSession } from "@zoonk/core/users/session";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { Skeleton } from "@zoonk/ui/components/skeleton";

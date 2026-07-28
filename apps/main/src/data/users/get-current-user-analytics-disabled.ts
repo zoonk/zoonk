@@ -1,35 +1,16 @@
 import "server-only";
-import { getUserSessionCacheTag } from "@/data/cache-tags";
-import { getActiveSubscription } from "@/data/subscriptions/get-active-subscription";
-import { getSession } from "@/data/users/get-session";
-import { prisma } from "@zoonk/db";
-import { cacheTag } from "next/cache";
-
-async function findAnalyticsUser(userId: string) {
-  "use cache";
-
-  cacheTag(getUserSessionCacheTag(userId));
-
-  return prisma.user.findUnique({
-    select: { analyticsDisabled: true, id: true, username: true },
-    where: { id: userId },
-  });
-}
+import { loadOptionalData } from "@/data/_utils/load-optional-data";
+import { getActiveSubscription } from "@zoonk/core/auth/subscription";
+import { getCurrentUser } from "@zoonk/core/users/current";
 
 /**
  * Resolves analytics identity and billing for the current browser without
  * exposing user identity as caller-provided data.
  */
 export async function getCurrentUserAnalyticsState() {
-  const session = await getSession();
-
-  if (!session) {
-    return { analyticsDisabled: false, plan: "free", userId: null, username: null };
-  }
-
   const [subscription, user] = await Promise.all([
-    getActiveSubscription(),
-    findAnalyticsUser(session.user.id),
+    loadOptionalData(getActiveSubscription),
+    getCurrentUser(),
   ]);
 
   if (!user) {

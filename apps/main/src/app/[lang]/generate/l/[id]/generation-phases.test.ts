@@ -1,5 +1,6 @@
+import { isGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { describe, expect, it } from "vitest";
-import { getPhaseOrder, isGeneratedLessonKind } from "./generation-phase-config";
+import { getPhaseOrder } from "./generation-phase-config";
 import { calculateWeightedProgress, getPhaseStatus } from "./generation-phases";
 
 describe(isGeneratedLessonKind, () => {

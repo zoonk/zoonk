@@ -2,8 +2,8 @@
 
 import { trackLessonStarted } from "@/lib/track-events";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { startTransition, useEffect } from "react";
-import { recordLessonStart } from "./start-lesson-action";
+import { useEffect } from "react";
+import { recordLessonStart } from "./record-lesson-start";
 
 type LessonStartedTrackingInput = {
   chapterPosition: number;
@@ -41,9 +41,7 @@ export function useTrackLessonStarted({
     });
 
     if (isAuthenticated) {
-      startTransition(() => {
-        void recordLessonStart(lesson.id);
-      });
+      void recordLessonStart(lesson.id);
     }
   }, [
     chapterPosition,

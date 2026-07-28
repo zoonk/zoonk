@@ -2,24 +2,49 @@ import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fi
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getContributionCalendarDateRange } from "@zoonk/utils/contribution-calendar";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it } from "vitest";
-import { getEnergyData, getEnergyLevel } from "./energy-queries";
+import { describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { getEnergyData } from "./get-energy-data";
+import { getEnergyLevel } from "./get-energy-level";
+import { getRequestProgressDateContext } from "./get-request-date-context";
 
 const NOW = new Date("2025-01-10T12:00:00Z");
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
+vi.mock("./get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
+
+/** Selects the learner and local date used by one private Energy read. */
+function mockEnergyRequest({
+  currentDate,
+  timeZone = "UTC",
+  userId,
+}: {
+  currentDate: Date;
+  timeZone?: string;
+  userId: string;
+}) {
+  mockSession(userId);
+
+  vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+    currentDate,
+    currentInstant: NOW,
+    timeZone,
+  });
+}
 
 describe(getEnergyData, () => {
   it("returns null without an authoritative Energy cursor", async () => {
     const user = await userFixture();
     const dateRange = getContributionCalendarDateRange({ now: NOW });
+    mockEnergyRequest({ currentDate: dateRange.endDate, userId: user.id });
 
-    await expect(
-      getEnergyData({ ...dateRange, timeZone: "UTC", userId: user.id }),
-    ).resolves.toBeNull();
+    await expect(getEnergyData()).resolves.toBeNull();
   });
 
   it("returns current Energy when historical daily rows are unavailable", async () => {
     const user = await userFixture();
     const dateRange = getContributionCalendarDateRange({ now: NOW });
+    mockEnergyRequest({ currentDate: dateRange.endDate, userId: user.id });
 
     await userProgressFixture({
       currentEnergy: 70,
@@ -27,7 +52,7 @@ describe(getEnergyData, () => {
       userId: user.id,
     });
 
-    const result = await getEnergyData({ ...dateRange, timeZone: "UTC", userId: user.id });
+    const result = await getEnergyData();
 
     expect(result?.currentEnergy).toBe(70);
     expect(result?.days).toHaveLength(370);
@@ -37,6 +62,8 @@ describe(getEnergyData, () => {
 
   it("derives current Energy, visible gaps, and the lifetime average from sparse cursors", async () => {
     const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
+    const currentDate = getContributionCalendarDateRange({ now: NOW }).endDate;
+    mockEnergyRequest({ currentDate, userId: user.id });
 
     await Promise.all([
       userProgressFixture({
@@ -52,11 +79,7 @@ describe(getEnergyData, () => {
       ]),
     ]);
 
-    const result = await getEnergyData({
-      ...getContributionCalendarDateRange({ now: NOW }),
-      timeZone: "UTC",
-      userId: user.id,
-    });
+    const result = await getEnergyData();
 
     expect(result?.currentEnergy).toBe(0);
     expect(result?.days).toHaveLength(370);
@@ -85,6 +108,12 @@ describe(getEnergyData, () => {
       timeZone: "Pacific/Kiritimati",
     });
 
+    mockEnergyRequest({
+      currentDate: dateRange.endDate,
+      timeZone: "Pacific/Kiritimati",
+      userId: user.id,
+    });
+
     await Promise.all([
       userProgressFixture({
         currentEnergy: 1,
@@ -94,11 +123,7 @@ describe(getEnergyData, () => {
       dailyProgressFixtureMany([{ date: firstDate, energyAtEnd: 1, userId: user.id }]),
     ]);
 
-    const result = await getEnergyData({
-      ...dateRange,
-      timeZone: "Pacific/Kiritimati",
-      userId: user.id,
-    });
+    const result = await getEnergyData();
 
     const lifetimeDayCount = (dateRange.endDate.getTime() - firstDate.getTime()) / MS_PER_DAY;
 
@@ -116,6 +141,12 @@ describe(getEnergyData, () => {
   it("keeps later activity authoritative and counts only stored full-Energy days", async () => {
     const user = await userFixture();
 
+    const currentDate = getContributionCalendarDateRange({
+      now: new Date("2025-01-12T12:00:00Z"),
+    }).endDate;
+
+    mockEnergyRequest({ currentDate, userId: user.id });
+
     await Promise.all([
       userProgressFixture({
         currentEnergy: 50,
@@ -128,11 +159,7 @@ describe(getEnergyData, () => {
       ]),
     ]);
 
-    const result = await getEnergyData({
-      ...getContributionCalendarDateRange({ now: new Date("2025-01-12T12:00:00Z") }),
-      timeZone: "UTC",
-      userId: user.id,
-    });
+    const result = await getEnergyData();
 
     expect(result?.currentEnergy).toBe(49);
     expect(result?.insights?.averageEnergy).toBeCloseTo(589 / 7);
@@ -141,6 +168,12 @@ describe(getEnergyData, () => {
 
   it("keeps a future cursor current without drawing it into the visible calendar", async () => {
     const user = await userFixture();
+
+    const currentDate = getContributionCalendarDateRange({
+      now: new Date("2026-01-11T12:00:00Z"),
+    }).endDate;
+
+    mockEnergyRequest({ currentDate, userId: user.id });
 
     await Promise.all([
       userProgressFixture({
@@ -154,11 +187,7 @@ describe(getEnergyData, () => {
       ]),
     ]);
 
-    const result = await getEnergyData({
-      ...getContributionCalendarDateRange({ now: new Date("2026-01-11T12:00:00Z") }),
-      timeZone: "UTC",
-      userId: user.id,
-    });
+    const result = await getEnergyData();
 
     expect(result?.currentEnergy).toBe(70);
 
@@ -172,18 +201,14 @@ describe(getEnergyData, () => {
 describe(getEnergyLevel, () => {
   it("returns null without an authoritative Energy cursor", async () => {
     const user = await userFixture();
+    mockEnergyRequest({ currentDate: new Date("2026-07-12T00:00:00Z"), userId: user.id });
 
-    await expect(
-      getEnergyLevel({
-        targetDate: new Date("2026-07-12T00:00:00Z"),
-        timeZone: "UTC",
-        userId: user.id,
-      }),
-    ).resolves.toBeNull();
+    await expect(getEnergyLevel()).resolves.toBeNull();
   });
 
   it("returns Energy unchanged on a consecutive learner-local day", async () => {
     const user = await userFixture();
+    mockEnergyRequest({ currentDate: new Date("2026-07-12T00:00:00Z"), userId: user.id });
 
     await userProgressFixture({
       currentEnergy: 85.5,
@@ -191,17 +216,12 @@ describe(getEnergyLevel, () => {
       userId: user.id,
     });
 
-    await expect(
-      getEnergyLevel({
-        targetDate: new Date("2026-07-12T00:00:00Z"),
-        timeZone: "UTC",
-        userId: user.id,
-      }),
-    ).resolves.toStrictEqual({ currentEnergy: 85.5 });
+    await expect(getEnergyLevel()).resolves.toStrictEqual({ currentEnergy: 85.5 });
   });
 
   it("derives current Energy from the persisted completion state", async () => {
     const user = await userFixture();
+    mockEnergyRequest({ currentDate: new Date("2026-07-12T00:00:00Z"), userId: user.id });
 
     await userProgressFixture({
       currentEnergy: 50,
@@ -209,17 +229,12 @@ describe(getEnergyLevel, () => {
       userId: user.id,
     });
 
-    await expect(
-      getEnergyLevel({
-        targetDate: new Date("2026-07-12T00:00:00Z"),
-        timeZone: "UTC",
-        userId: user.id,
-      }),
-    ).resolves.toStrictEqual({ currentEnergy: 46 });
+    await expect(getEnergyLevel()).resolves.toStrictEqual({ currentEnergy: 46 });
   });
 
   it("clamps derived Energy at zero", async () => {
     const user = await userFixture();
+    mockEnergyRequest({ currentDate: new Date("2026-07-12T00:00:00Z"), userId: user.id });
 
     await userProgressFixture({
       currentEnergy: 20,
@@ -227,12 +242,6 @@ describe(getEnergyLevel, () => {
       userId: user.id,
     });
 
-    await expect(
-      getEnergyLevel({
-        targetDate: new Date("2026-07-12T00:00:00Z"),
-        timeZone: "UTC",
-        userId: user.id,
-      }),
-    ).resolves.toStrictEqual({ currentEnergy: 0 });
+    await expect(getEnergyLevel()).resolves.toStrictEqual({ currentEnergy: 0 });
   });
 });

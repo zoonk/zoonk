@@ -1,4 +1,3 @@
-import "server-only";
 import { type ChapterSentenceGetPayload, prisma } from "@zoonk/db";
 
 export type PlayerChapterSentence = ChapterSentenceGetPayload<{ include: { sentence: true } }>;

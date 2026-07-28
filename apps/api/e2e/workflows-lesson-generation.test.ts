@@ -10,18 +10,20 @@ import { normalizeString } from "@zoonk/utils/string";
 import { createAuthenticatedApiContext, createSubscribedApiContext } from "./helpers/auth";
 
 /**
- * Route-contract tests only need a published AI-owned lesson with a specific
- * chapter position. The lesson is already completed so starting the workflow
- * exercises the API gate without making the test depend on real AI generation.
+ * Route-contract tests need a published AI-owned lesson with a specific
+ * chapter position and generation state. Completed is the safe default because
+ * most cases only exercise the API gate without depending on real AI work.
  */
 async function createAiLessonForWorkflow({
   aiOrgId,
   chapterPosition,
+  generationStatus = "completed",
   lessonPosition = 0,
   uniqueId,
 }: {
   aiOrgId: string;
   chapterPosition: number;
+  generationStatus?: "completed" | "failed" | "pending" | "running";
   lessonPosition?: number;
   uniqueId: string;
 }) {
@@ -41,7 +43,7 @@ async function createAiLessonForWorkflow({
 
   return lessonFixture({
     chapterId: chapter.id,
-    generationStatus: "completed",
+    generationStatus,
     isPublished: true,
     kind: "explanation",
     organizationId: aiOrgId,
@@ -77,16 +79,15 @@ test.describe("Lesson Generation Workflow API", () => {
 
     const apiContext = await request.newContext({ baseURL });
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: lesson.id, type: "lesson" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     await apiContext.dispose();
   });
@@ -98,8 +99,8 @@ test.describe("Lesson Generation Workflow API", () => {
 
     const apiContext = await request.newContext({ baseURL });
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: lesson.id, type: "lesson" } },
     });
 
     expect(response.status()).toBe(402);
@@ -112,52 +113,14 @@ test.describe("Lesson Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when lessonId is missing", async () => {
+  test("returns validation error when lessonId is not a UUID", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
-      prefix: "lesson-validation-missing",
+      prefix: "lesson-validation",
     });
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", { data: {} });
-
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-
-    await apiContext.dispose();
-  });
-
-  test("returns validation error when lessonId is invalid type", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "lesson-validation-type",
-    });
-
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: "invalid" },
-    });
-
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-
-    await apiContext.dispose();
-  });
-
-  test("returns validation error when lessonId is negative", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "lesson-validation-negative",
-    });
-
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: -1 },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: "not-a-uuid", type: "lesson" } },
     });
 
     expect(response.status()).toBe(400);
@@ -179,8 +142,8 @@ test.describe("Lesson Generation Workflow API", () => {
       prefix: "lesson-no-subscription",
     });
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: lesson.id, type: "lesson" } },
     });
 
     expect(response.status()).toBe(402);
@@ -209,28 +172,26 @@ test.describe("Lesson Generation Workflow API", () => {
       prefix: "lesson-first-free",
     });
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: lesson.id, type: "lesson" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
-    expect(typeof body.runId).toBe("string");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     await apiContext.dispose();
   });
 
-  test("returns validation error for status endpoint when runId is missing", async () => {
+  test("returns validation error when the generation ID is empty", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
-      prefix: "lesson-non-ai",
+      prefix: "lesson-generation-id",
     });
 
-    const response = await apiContext.get("/v1/workflows/lesson-generation/status");
+    const response = await apiContext.get("/v1/generations/%20/events");
 
     expect(response.status()).toBe(400);
 
@@ -292,8 +253,8 @@ test.describe("Lesson Generation Workflow API", () => {
       prefix: "lesson-non-ai",
     });
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: lesson.id, type: "lesson" } },
     });
 
     expect(response.status()).toBe(404);
@@ -368,17 +329,15 @@ test.describe("Lesson Generation Workflow API", () => {
       }),
     ]);
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: practice.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: practice.id, type: "lesson" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
-    expect(typeof body.runId).toBe("string");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     await apiContext.dispose();
   });
@@ -451,8 +410,8 @@ test.describe("Lesson Generation Workflow API", () => {
       }),
     ]);
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: translation.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: translation.id, type: "lesson" } },
     });
 
     expect(response.status()).toBe(404);
@@ -511,17 +470,15 @@ test.describe("Lesson Generation Workflow API", () => {
       },
     });
 
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: lesson.id, type: "lesson" } },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.message).toBe("Workflow started");
-    expect(body.runId).toBeDefined();
-    expect(typeof body.runId).toBe("string");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     await apiContext.dispose();
   });

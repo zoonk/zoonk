@@ -8,6 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
+import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
 
 /**
  * Test Architecture for Chapter Generation Page
@@ -18,14 +19,14 @@ import { expect, test } from "./fixtures";
  * 3. Authenticated with subscription - Shows generation UI
  *
  * The generation flow interacts with 2 APIs on the API server:
- * 1. POST ${API_BASE_URL}/v1/workflows/chapter-generation/trigger - Starts the workflow, returns { runId: string }
- * 2. GET ${API_BASE_URL}/v1/workflows/chapter-generation/status?runId=X&startIndex=N - Returns SSE stream of step updates
+ * 1. POST ${API_BASE_URL}/v1/generations - Starts the workflow, returns the generation resource
+ * 2. GET ${API_BASE_URL}/v1/generations/{generationId}/events?startIndex=N - Returns SSE stream of step updates
  */
 
 const TEST_RUN_ID = "test-run-id-chapter-12345";
 
 type MockApiOptions = {
-  triggerResponse?: { runId?: string; error?: string; status?: number };
+  triggerResponse?: { id?: string; error?: string; status?: number };
   streamMessages?: { reason?: string; step: string; status: string }[];
   streamError?: boolean;
   statusDelayMs?: number;
@@ -44,17 +45,16 @@ function createSSEStream(messages: { reason?: string; step: string; status: stri
 function createRouteHandler(options: MockApiOptions) {
   const {
     statusDelayMs = 0,
-    triggerResponse = { runId: TEST_RUN_ID },
+    triggerResponse = { id: TEST_RUN_ID },
     streamMessages = [],
     streamError = false,
   } = options;
 
   return async (route: Route) => {
     const url = route.request().url();
-    const method = route.request().method();
 
     // Mock trigger API
-    if (url.includes("/v1/workflows/chapter-generation/trigger") && method === "POST") {
+    if (isGenerationTrigger({ request: route.request(), targetType: "chapter" })) {
       if (triggerResponse.error) {
         await route.fulfill({
           body: JSON.stringify({ error: triggerResponse.error }),
@@ -66,16 +66,16 @@ function createRouteHandler(options: MockApiOptions) {
       }
 
       await route.fulfill({
-        body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
+        body: JSON.stringify({ id: triggerResponse.id, status: "pending" }),
         contentType: "application/json",
-        status: 200,
+        status: 202,
       });
 
       return;
     }
 
-    // Mock status stream API
-    if (url.includes("/v1/workflows/chapter-generation/status")) {
+    // Mock event stream API
+    if (isGenerationEvents(url)) {
       if (streamError) {
         await route.abort("failed");
         return;
@@ -106,7 +106,7 @@ function createRouteHandler(options: MockApiOptions) {
  */
 async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<void> {
   const handler = createRouteHandler(options);
-  await page.route("**/v1/workflows/chapter-generation/**", handler);
+  await routeGenerationApis({ handler, page });
 }
 
 /**
@@ -325,34 +325,36 @@ test.describe("Generate Chapter Page - With Subscription", () => {
      */
     let statusRequestCount = 0;
 
-    await userWithoutProgress.route("**/v1/workflows/chapter-generation/**", async (route) => {
-      const url = route.request().url();
-      const method = route.request().method();
+    await routeGenerationApis({
+      handler: async (route) => {
+        const url = route.request().url();
 
-      if (url.includes("/trigger") && method === "POST") {
-        await route.fulfill({
-          body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
-          contentType: "application/json",
-          status: 200,
-        });
+        if (isGenerationTrigger({ request: route.request(), targetType: "chapter" })) {
+          await route.fulfill({
+            body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
+            contentType: "application/json",
+            status: 202,
+          });
 
-        return;
-      }
+          return;
+        }
 
-      if (url.includes("/status")) {
-        statusRequestCount += 1;
-        const messages = statusRequestCount === 1 ? partialMessages : remainingMessages;
+        if (isGenerationEvents(url)) {
+          statusRequestCount += 1;
+          const messages = statusRequestCount === 1 ? partialMessages : remainingMessages;
 
-        await route.fulfill({
-          body: createSSEStream(messages),
-          contentType: "text/event-stream",
-          status: 200,
-        });
+          await route.fulfill({
+            body: createSSEStream(messages),
+            contentType: "text/event-stream",
+            status: 200,
+          });
 
-        return;
-      }
+          return;
+        }
 
-      await route.continue();
+        await route.continue();
+      },
+      page: userWithoutProgress,
     });
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
@@ -386,41 +388,43 @@ test.describe("Generate Chapter Page - With Subscription", () => {
       title: `E2E Interrupted Lesson ${uniqueId}`,
     });
 
-    await userWithoutProgress.route("**/v1/workflows/chapter-generation/**", async (route) => {
-      const url = route.request().url();
-      const method = route.request().method();
+    await routeGenerationApis({
+      handler: async (route) => {
+        const url = route.request().url();
 
-      if (url.includes("/trigger") && method === "POST") {
-        await route.fulfill({
-          body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
-          contentType: "application/json",
-          status: 200,
-        });
+        if (isGenerationTrigger({ request: route.request(), targetType: "chapter" })) {
+          await route.fulfill({
+            body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
+            contentType: "application/json",
+            status: 202,
+          });
 
-        return;
-      }
-
-      if (url.includes("/status")) {
-        const reconnectCount = new URL(url).searchParams.get("_rc");
-
-        if (reconnectCount === "0") {
-          await route.abort("failed");
           return;
         }
 
-        await route.fulfill({
-          body: createSSEStream([
-            { status: "started", step: "setChapterAsCompleted" },
-            { status: "completed", step: "setChapterAsCompleted" },
-          ]),
-          contentType: "text/event-stream",
-          status: 200,
-        });
+        if (isGenerationEvents(url)) {
+          const reconnectCount = new URL(url).searchParams.get("_rc");
 
-        return;
-      }
+          if (reconnectCount === "0") {
+            await route.abort("failed");
+            return;
+          }
 
-      await route.continue();
+          await route.fulfill({
+            body: createSSEStream([
+              { status: "started", step: "setChapterAsCompleted" },
+              { status: "completed", step: "setChapterAsCompleted" },
+            ]),
+            contentType: "text/event-stream",
+            status: 200,
+          });
+
+          return;
+        }
+
+        await route.continue();
+      },
+      page: userWithoutProgress,
     });
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
@@ -456,26 +460,28 @@ test.describe("Generate Chapter Page - With Subscription", () => {
       title: `E2E Retry Lesson ${uniqueId}`,
     });
 
-    await userWithoutProgress.route("**/v1/workflows/chapter-generation/**", async (route) => {
-      const url = route.request().url();
-      const method = route.request().method();
+    await routeGenerationApis({
+      handler: async (route) => {
+        const url = route.request().url();
 
-      if (url.includes("/trigger") && method === "POST") {
-        await route.fulfill({
-          body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
-          contentType: "application/json",
-          status: 200,
-        });
+        if (isGenerationTrigger({ request: route.request(), targetType: "chapter" })) {
+          await route.fulfill({
+            body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
+            contentType: "application/json",
+            status: 202,
+          });
 
-        return;
-      }
+          return;
+        }
 
-      if (url.includes("/status")) {
-        await route.abort("failed");
-        return;
-      }
+        if (isGenerationEvents(url)) {
+          await route.abort("failed");
+          return;
+        }
 
-      await route.continue();
+        await route.continue();
+      },
+      page: userWithoutProgress,
     });
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);

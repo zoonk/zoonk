@@ -1,5 +1,5 @@
 import { Setup, SetupDescription, SetupHeader, SetupTitle } from "@/components/setup";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getSession } from "@zoonk/core/users/session";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";

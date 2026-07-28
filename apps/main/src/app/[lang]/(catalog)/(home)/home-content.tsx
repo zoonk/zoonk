@@ -1,38 +1,37 @@
-import { getBeltLevel } from "@/data/progress/get-belt-level";
+import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { Suspense } from "react";
 import { StartContent } from "../start/start-content";
 import { ContinueLearningList, ContinueLearningSkeleton } from "./continue-learning";
 import { Progress, ProgressSkeleton } from "./progress";
 
 /**
- * Shows progress for learners who have started and reuses the goal picker for
- * visitors or learners who still need to choose what to learn first.
+ * Resolves only the prerequisite shared by the start and continue-learning
+ * surfaces, so unrelated progress metrics cannot delay the primary content.
  */
-export async function HomeContent() {
+async function LearningContent() {
   const beltData = await getBeltLevel();
 
   if (!beltData) {
     return <StartContent />;
   }
 
+  return <ContinueLearningList />;
+}
+
+/**
+ * Starts the primary content and progress capabilities as independent siblings
+ * so Cache Components can prefetch both branches in the same render wave.
+ */
+export function HomeContent() {
   return (
     <>
       <Suspense fallback={<ContinueLearningSkeleton />}>
-        <ContinueLearningList />
+        <LearningContent />
       </Suspense>
 
       <Suspense fallback={<ProgressSkeleton />}>
         <Progress />
       </Suspense>
-    </>
-  );
-}
-
-export function HomeContentSkeleton() {
-  return (
-    <>
-      <ContinueLearningSkeleton />
-      <ProgressSkeleton />
     </>
   );
 }

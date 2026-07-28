@@ -1,5 +1,5 @@
-import { getCoursePromptByCourseSlug } from "@/data/courses/course-prompt-by-course";
 import { redirect } from "@/i18n/navigation";
+import { getCoursePromptByCourseSlug } from "@zoonk/core/courses/get-prompt-by-course";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { notFound } from "next/navigation";
 

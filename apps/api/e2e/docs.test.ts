@@ -44,7 +44,7 @@ test.describe("API Documentation", () => {
     await apiContext.dispose();
   });
 
-  test("OpenAPI spec includes custom API paths", async () => {
+  test("OpenAPI spec serves representative product operations", async () => {
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.get("/v1/docs/openapi.json");
 
@@ -52,21 +52,21 @@ test.describe("API Documentation", () => {
 
     const spec = await response.json();
 
-    expect(spec.paths).toHaveProperty("/auth/health");
-    expect(spec.paths).toHaveProperty("/courses/search");
+    expect(spec.paths).toHaveProperty("/catalog/search");
+    expect(spec.paths).toHaveProperty("/courses");
+    expect(spec.paths).toHaveProperty("/lessons/{lessonId}/content");
+    expect(spec.paths).toHaveProperty("/me/progress");
+    expect(spec.paths).toHaveProperty("/generations");
+    expect(spec.paths).toHaveProperty("/generations/{generationId}");
+    expect(spec.paths).toHaveProperty("/generations/{generationId}/events");
     expect(spec.paths).toHaveProperty("/feedback");
     expect(spec.paths).toHaveProperty("/me");
-    expect(spec.paths).toHaveProperty("/workflows/course-generation/trigger");
-    expect(spec.paths).toHaveProperty("/workflows/course-generation/status");
-    expect(spec.paths).toHaveProperty("/workflows/chapter-generation/trigger");
-    expect(spec.paths).toHaveProperty("/workflows/chapter-generation/status");
-    expect(spec.paths).toHaveProperty("/workflows/lesson-generation/trigger");
-    expect(spec.paths).toHaveProperty("/workflows/lesson-generation/status");
+    expect(spec.paths["/courses"].get.operationId).toBe("listCourses");
 
     await apiContext.dispose();
   });
 
-  test("OpenAPI spec includes Better Auth endpoints", async () => {
+  test("OpenAPI spec owns its auth contract without exposing Better Auth endpoints", async () => {
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.get("/v1/docs/openapi.json");
 
@@ -74,10 +74,14 @@ test.describe("API Documentation", () => {
 
     const spec = await response.json();
 
-    expect(spec.paths).toHaveProperty("/sign-in/email");
-    expect(spec.paths).toHaveProperty("/sign-up/email");
-    expect(spec.paths).toHaveProperty("/sign-out");
-    expect(spec.components).toBeDefined();
+    expect(spec.paths).not.toHaveProperty("/sign-in/email");
+    expect(spec.paths).not.toHaveProperty("/sign-up/email");
+    expect(spec.paths).not.toHaveProperty("/sign-out");
+
+    expect(spec.components.securitySchemes).toMatchObject({
+      bearerAuth: { scheme: "bearer", type: "http" },
+      cookieAuth: { in: "cookie", name: "better-auth.session_token", type: "apiKey" },
+    });
 
     await apiContext.dispose();
   });

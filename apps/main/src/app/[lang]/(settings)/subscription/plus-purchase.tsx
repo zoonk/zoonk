@@ -2,7 +2,7 @@
 
 import { Link } from "@/i18n/navigation";
 import { trackSubscriptionCheckoutStarted } from "@/lib/track-events";
-import { authClient } from "@zoonk/core/auth/client";
+import { authClient } from "@zoonk/auth/client";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { CyclingText } from "@zoonk/ui/components/cycling-text";

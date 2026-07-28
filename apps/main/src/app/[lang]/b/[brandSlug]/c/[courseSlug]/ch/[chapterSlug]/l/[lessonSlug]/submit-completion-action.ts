@@ -1,15 +1,12 @@
 "use server";
 
-import { getUserProgressCacheTag } from "@/data/cache-tags";
-import { getSession } from "@/data/users/get-session";
-import { submitPlayerCompletion } from "@zoonk/core/player/commands/submit-player-completion";
+import { completeLesson } from "@zoonk/core/player/commands/create-lesson-completion";
 import {
   type CompletionInput,
   completionInputSchema,
 } from "@zoonk/core/player/contracts/completion-input-schema";
 import { logError } from "@zoonk/utils/logger";
-import { revalidatePath, updateTag } from "next/cache";
-import { getAuthorizedPlayerLesson } from "./authorize-player-lesson";
+import { revalidatePath } from "next/cache";
 
 /**
  * Validates and persists a lesson completion before invalidating progress UI.
@@ -26,22 +23,13 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
     return;
   }
 
-  const input = parsed.data;
-
-  const [lesson, session] = await Promise.all([
-    getAuthorizedPlayerLesson(input.lessonId),
-    getSession(),
-  ]);
-
-  if (!lesson || !session) {
-    return;
-  }
-
-  const userId = session.user.id;
-
   try {
-    await submitPlayerCompletion({ input, userId });
-    updateTag(getUserProgressCacheTag(userId));
+    const result = await completeLesson(parsed.data);
+
+    if (result.status !== "completed") {
+      return;
+    }
+
     revalidatePath("/[lang]/(catalog)", "layout");
     revalidatePath("/[lang]/(progress)", "layout");
   } catch (error) {

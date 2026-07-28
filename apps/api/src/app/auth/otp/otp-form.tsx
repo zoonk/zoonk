@@ -7,7 +7,7 @@ import {
   OTPInput,
   OTPSubmit,
 } from "@/components/otp";
-import { authClient } from "@zoonk/core/auth/client";
+import { authClient } from "@zoonk/auth/client";
 import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useRouter } from "next/navigation";

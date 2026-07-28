@@ -8,11 +8,11 @@ import {
   SetupLabel,
   SetupSubmit,
 } from "@/components/setup";
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/auth/username-rules";
 import {
   type UsernameStatus,
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
-import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/core/auth/username-rules";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";

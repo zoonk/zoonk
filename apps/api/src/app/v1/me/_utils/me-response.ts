@@ -1,16 +1,16 @@
-import { type auth } from "@zoonk/core/auth";
+import { type CurrentUser } from "@zoonk/core/users/current";
 import { type Subscription } from "@zoonk/db";
 import { serializeDate } from "@zoonk/utils/date";
 
-type AuthSession = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
 type ActiveSubscription = Subscription | null;
 
 /**
  * Keeps `/v1/me` focused on the profile fields native clients need instead of
  * exposing raw Better Auth session internals such as tokens and IP metadata.
  */
-function serializeUser(user: AuthSession["user"]) {
+function serializeUser(user: CurrentUser) {
   return {
+    analyticsDisabled: user.analyticsDisabled,
     createdAt: serializeDate(user.createdAt) ?? "",
     displayUsername: user.displayUsername ?? null,
     email: user.email,
@@ -33,6 +33,7 @@ function serializeSubscription(subscription: ActiveSubscription) {
   }
 
   return {
+    cancelAt: serializeDate(subscription.cancelAt),
     cancelAtPeriodEnd: subscription.cancelAtPeriodEnd ?? null,
     id: subscription.id,
     periodEnd: serializeDate(subscription.periodEnd),
@@ -48,17 +49,17 @@ function serializeSubscription(subscription: ActiveSubscription) {
  * subscription lookup so GET and PATCH return the exact same response shape.
  */
 export function createMeResponse({
-  session,
   subscription,
+  user,
 }: {
-  session: AuthSession;
   subscription: ActiveSubscription;
+  user: CurrentUser;
 }) {
   return {
     account: {
       hasActiveSubscription: Boolean(subscription),
       subscription: serializeSubscription(subscription),
     },
-    user: serializeUser(session.user),
+    user: serializeUser(user),
   };
 }

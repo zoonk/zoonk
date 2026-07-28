@@ -3,15 +3,13 @@ import {
   CatalogGridSkeleton,
   CatalogSidebarSkeleton,
 } from "@/components/catalog/catalog-skeletons";
-import { getChapter } from "@/data/chapters/get-chapter";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
+import { getChapter } from "@zoonk/core/chapters/get-by-slug";
 import { Grid } from "@zoonk/ui/components/grid";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { ChapterLessonGrid } from "./chapter-lesson-grid";
 import { ChapterSidebar } from "./chapter-sidebar";
-
-export const prefetch = "allow-runtime";
 
 export async function generateMetadata({
   params,

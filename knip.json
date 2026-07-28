@@ -22,9 +22,9 @@
     "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },
     "apps/main": {
       "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
-      "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts"]
+      "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
-    "packages/core": { "project": ["src/**/*.ts!"] },
+    "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
       "entry": ["prisma.config.ts"],
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],

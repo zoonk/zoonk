@@ -1,6 +1,6 @@
 "use server";
 
-import { COURSE_LIST_CACHE_TAG, LANGUAGE_COURSE_LIST_CACHE_TAG } from "@/data/cache-tags";
+import { COURSE_LIST_CACHE_TAG, LANGUAGE_COURSE_LIST_CACHE_TAG } from "@zoonk/core/cache-tags";
 import { revalidatePath, updateTag } from "next/cache";
 
 export async function invalidateGeneratedCourse(destinationHref: string): Promise<void> {

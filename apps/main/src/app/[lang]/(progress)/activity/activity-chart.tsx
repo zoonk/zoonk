@@ -1,4 +1,4 @@
-import { type LearningActivityDay } from "@/data/progress/get-learning-activity";
+import { type LearningActivityDay } from "@zoonk/core/progress/get-learning-activity";
 import {
   ContributionCalendar,
   ContributionCalendarCaption,

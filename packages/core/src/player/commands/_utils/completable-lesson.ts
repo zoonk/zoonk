@@ -1,5 +1,4 @@
-import "server-only";
-import { getPublishedLessonWhere } from "@zoonk/db";
+import { type GenerationStatus, getPublishedLessonWhere } from "@zoonk/db";
 
 /**
  * Player write commands must only act on lessons the learner can reach through
@@ -7,14 +6,16 @@ import { getPublishedLessonWhere } from "@zoonk/db";
  * organization-less courses are only eligible for their owner.
  */
 export function getCompletableLessonWhere({
+  generationStatus,
   lessonId,
   userId,
 }: {
+  generationStatus?: GenerationStatus;
   lessonId: string;
   userId: string;
 }) {
   return getPublishedLessonWhere({
     courseWhere: { OR: [{ organization: { kind: "brand" } }, { organizationId: null, userId }] },
-    lessonWhere: { id: lessonId },
+    lessonWhere: { generationStatus, id: lessonId },
   });
 }

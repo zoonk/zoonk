@@ -1,5 +1,6 @@
 import { type Lesson } from "@zoonk/db";
 
+export type GeneratedLessonKind = Exclude<Lesson["kind"], "custom" | "review">;
 export type GeneratedCompanionLessonKind = Extract<Lesson["kind"], "listening" | "translation">;
 export type GeneratedCompanionSourceKind = Extract<Lesson["kind"], "reading" | "vocabulary">;
 export type StandaloneGeneratedLessonKind = Exclude<
@@ -27,6 +28,11 @@ const GENERATED_COMPANION_TARGET_KINDS = {
   reading: "listening",
   vocabulary: "translation",
 } as const satisfies Record<GeneratedCompanionSourceKind, GeneratedCompanionLessonKind>;
+
+/** Identifies every lesson kind whose content is owned by a generation workflow. */
+export function isGeneratedLessonKind(kind: Lesson["kind"]): kind is GeneratedLessonKind {
+  return kind !== "custom" && kind !== "review";
+}
 
 /** Translation and listening rows are materialized by their source lesson workflow. */
 export function isGeneratedCompanionLessonKind(

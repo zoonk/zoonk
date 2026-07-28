@@ -1,4 +1,3 @@
-import "server-only";
 import { type Lesson, prisma } from "@zoonk/db";
 import {
   getGeneratedCompanionSourceKind,

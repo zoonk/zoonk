@@ -1,7 +1,7 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { CatalogHeaderImage } from "@/components/catalog/catalog-header-image";
-import { type CourseWithDetails } from "@/data/courses/get-course";
 import { getCategories } from "@/lib/categories/category";
+import { type CourseWithDetails } from "@zoonk/core/courses/get-by-slug";
 import { Badge } from "@zoonk/ui/components/badge";
 import {
   MediaCard,

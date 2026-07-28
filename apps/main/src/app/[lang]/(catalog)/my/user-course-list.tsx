@@ -1,5 +1,5 @@
-import { listUserCourses } from "@/data/courses/list-user-courses";
 import { Link } from "@/i18n/navigation";
+import { listCurrentUserCourses } from "@zoonk/core/courses/list-current-user";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -25,7 +25,7 @@ import Image from "next/image";
 
 export async function UserCourseList() {
   const t = await getExtracted();
-  const courses = await listUserCourses();
+  const courses = await listCurrentUserCourses();
 
   if (courses.length === 0) {
     return (

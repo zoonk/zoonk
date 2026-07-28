@@ -1,42 +1,32 @@
 "use server";
 
-import { triggerPreloadTarget } from "@/data/progress/trigger-preload-target";
-import { getSession } from "@/data/users/get-session";
-import { getNextPreloadTargets } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
 import { logError } from "@zoonk/utils/logger";
+import { API_URL } from "@zoonk/utils/url";
 import { headers } from "next/headers";
 import { after } from "next/server";
 
-type NextPreloadInput = {
-  cookieHeader: string;
-  lessonId: string;
-  requestHeaders: Headers;
-  userId: string;
-};
+type NextPreloadInput = { cookieHeader: string; lessonId: string };
+const API_ORIGIN = new URL(API_URL).origin;
 
 /**
- * Runs the expensive preload path after the server action returns. Keeping this
- * in a named helper makes the action itself a linear auth-and-schedule wrapper,
- * while still swallowing background errors so preload failures do not surface
- * as user-visible player errors.
+ * Delegates preload target selection and workflow starts to the same API
+ * capability used by external clients, then keeps background failures out of
+ * the learner's current lesson.
  */
 async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
   try {
-    const targets = await getNextPreloadTargets({ lessonId: input.lessonId, userId: input.userId });
-
-    if (targets.length === 0) {
-      return;
-    }
-
-    await Promise.all(
-      targets.map((target) =>
-        triggerPreloadTarget({
-          cookieHeader: input.cookieHeader,
-          requestHeaders: input.requestHeaders,
-          target,
-        }),
-      ),
+    const response = await fetch(
+      `${API_URL}/v1/lessons/${encodeURIComponent(input.lessonId)}/preloads`,
+      { headers: { Cookie: input.cookieHeader, Origin: API_ORIGIN }, method: "POST" },
     );
+
+    if (!response.ok) {
+      logError("[preloadNextLesson] Failed to trigger preload:", {
+        lessonId: input.lessonId,
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
   } catch (error) {
     logError("[preloadNextLesson] Failed to trigger preload:", error);
   }
@@ -49,18 +39,7 @@ async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
  * checks so this cannot be used as a generic generation proxy.
  */
 export async function preloadNextLesson(lessonId: string): Promise<void> {
-  const [reqHeaders, session] = await Promise.all([headers(), getSession()]);
+  const reqHeaders = await headers();
 
-  if (!session) {
-    return;
-  }
-
-  after(() =>
-    triggerNextPreload({
-      cookieHeader: reqHeaders.get("cookie") ?? "",
-      lessonId,
-      requestHeaders: reqHeaders,
-      userId: session.user.id,
-    }),
-  );
+  after(() => triggerNextPreload({ cookieHeader: reqHeaders.get("cookie") ?? "", lessonId }));
 }

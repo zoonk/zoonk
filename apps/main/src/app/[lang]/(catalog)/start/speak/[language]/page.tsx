@@ -1,11 +1,8 @@
 import { getAiCourseHref } from "@/data/courses/course-href";
-import {
-  getCompletedLanguageCourse,
-  getOrCreateLanguageCoursePromptRequest,
-} from "@/data/courses/language-course";
 import { redirect } from "@/i18n/navigation";
+import { resolveLanguageCourse } from "@zoonk/core/courses/language";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getLanguageName, isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -36,21 +33,13 @@ async function StartSpeakLanguageRedirect({ params }: { params: StartSpeakLangua
     return redirect({ href: "/start/speak", locale });
   }
 
-  const completedCourse = await getCompletedLanguageCourse({ language: locale, targetLanguage });
+  const resolution = await resolveLanguageCourse({ language: locale, targetLanguage });
 
-  if (completedCourse) {
-    return redirect({ href: getAiCourseHref(completedCourse), locale });
+  if (resolution.kind === "course") {
+    return redirect({ href: getAiCourseHref(resolution.course), locale });
   }
 
-  const title = getLanguageName({ targetLanguage, userLanguage: locale });
-
-  const request = await getOrCreateLanguageCoursePromptRequest({
-    language: locale,
-    targetLanguage,
-    title,
-  });
-
-  return redirect({ href: `/generate/course/${request.id}`, locale });
+  return redirect({ href: `/generate/course/${resolution.coursePrompt.id}`, locale });
 }
 
 /**

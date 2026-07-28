@@ -2,7 +2,7 @@
 
 import { LoginError, LoginSocial, LoginWithApple, LoginWithGoogle } from "@/components/login";
 import { trackSignInMethodChosen } from "@/lib/track-events";
-import { authClient } from "@zoonk/core/auth/client";
+import { authClient } from "@zoonk/auth/client";
 import { logError } from "@zoonk/utils/logger";
 import { useExtracted } from "next-intl";
 import { useState } from "react";

@@ -1,6 +1,6 @@
 import { type AssertAllCovered } from "@/lib/generation-phases";
+import { type GeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { type LessonKind } from "@zoonk/db";
 import { ALPHABET_PHASE_ORDER, ALPHABET_PHASE_STEPS } from "./phase-kind-steps/alphabet";
 import { EXPLANATION_PHASE_ORDER, EXPLANATION_PHASE_STEPS } from "./phase-kind-steps/explanation";
 import { GRAMMAR_PHASE_ORDER, GRAMMAR_PHASE_STEPS } from "./phase-kind-steps/grammar";
@@ -41,13 +41,6 @@ export type PhaseName =
   | "creatingImages"
   | "creatingLessonImage"
   | "saving";
-
-export type GeneratedLessonKind = Exclude<LessonKind, "custom" | "review">;
-
-/** Tells generation routes whether a lesson kind has a workflow-owned generation path. */
-export function isGeneratedLessonKind(kind: LessonKind): kind is GeneratedLessonKind {
-  return kind !== "custom" && kind !== "review";
-}
 
 const PHASE_ORDER_MAP: Record<GeneratedLessonKind, PhaseName[]> = {
   alphabet: ALPHABET_PHASE_ORDER,

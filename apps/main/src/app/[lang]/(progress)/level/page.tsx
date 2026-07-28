@@ -11,8 +11,6 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { LevelContent, LevelContentSkeleton } from "./level-content";
 
-export const prefetch = "allow-runtime";
-
 /** Keeps the browser description focused on the learner's current milestone. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();

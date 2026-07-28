@@ -23,8 +23,6 @@ import { UserHeader } from "./user-header";
 import { UserLesson } from "./user-lesson";
 import { UserSubscription } from "./user-subscription";
 
-export const prefetch = "allow-runtime";
-
 function UserBreadcrumb() {
   return (
     <Breadcrumb>

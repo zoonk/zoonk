@@ -104,10 +104,16 @@ test.describe("Lesson Start Tracking", () => {
     expect(progressBefore).toBeNull();
     expect(courseUserBefore).toBeNull();
 
-    await page.goto(url);
-    await page.waitForLoadState("networkidle");
+    const lessonStartResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === "POST" &&
+        new URL(response.url()).pathname === `/api/lessons/${lesson.id}/starts`,
+    );
 
-    // after() runs asynchronously — use toPass retry pattern
+    await page.goto(url);
+    const response = await lessonStartResponse;
+    expect(response.status()).toBe(204);
+
     await expect(async () => {
       const [progress, courseUser, updatedCourse] = await Promise.all([
         prisma.lessonProgress.findUnique({
@@ -136,5 +142,55 @@ test.describe("Lesson Start Tracking", () => {
     const progress = await prisma.lessonProgress.findFirst({ where: { lessonId: lesson.id } });
 
     expect(progress).toBeNull();
+  });
+
+  test("authenticated request for a missing lesson returns not found", async ({
+    authenticatedPage,
+    baseURL,
+  }) => {
+    const response = await authenticatedPage.request.post(`/api/lessons/${randomUUID()}/starts`, {
+      headers: { Origin: new URL(baseURL!).origin },
+    });
+
+    expect(response.status()).toBe(404);
+  });
+
+  test("cross-origin request cannot use the learner's session", async ({ baseURL }) => {
+    const [email, { course, lesson }] = await Promise.all([
+      createUniqueUser(baseURL!),
+      createTestLesson(),
+    ]);
+
+    const requestContext = await request.newContext({ baseURL });
+
+    const signInResponse = await requestContext.post("/api/auth/sign-in/email", {
+      data: { email, password: "password123" },
+    });
+
+    expect(signInResponse.ok()).toBe(true);
+
+    const response = await requestContext.post(`/api/lessons/${lesson.id}/starts`, {
+      headers: { Origin: "https://attacker.example" },
+    });
+
+    expect(response.status()).toBe(403);
+
+    const user = await prisma.user.findFirstOrThrow({ where: { email } });
+
+    const [progress, courseUser, unchangedCourse] = await Promise.all([
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+      }),
+      prisma.courseUser.findUnique({
+        where: { courseUser: { courseId: course.id, userId: user.id } },
+      }),
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ]);
+
+    expect(progress).toBeNull();
+    expect(courseUser).toBeNull();
+    expect(unchangedCourse.userCount).toBe(0);
+
+    await requestContext.dispose();
   });
 });

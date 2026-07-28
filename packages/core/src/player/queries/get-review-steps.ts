@@ -1,4 +1,3 @@
-import "server-only";
 import { type LessonKind, type StepGetPayload, getPublishedStepWhere, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { ANSWERABLE_STEP_KINDS } from "../contracts/validate-answers";

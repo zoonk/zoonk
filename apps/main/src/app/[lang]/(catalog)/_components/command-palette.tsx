@@ -3,6 +3,7 @@
 import { Link, useRouter } from "@/i18n/navigation";
 import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
+import { type CatalogSearchResults } from "@zoonk/core/catalog/search";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Command,
@@ -27,7 +28,7 @@ import {
   getVisiblePaletteGroups,
 } from "./command-palette-items";
 import { PaletteResultGroup } from "./command-palette-options";
-import { type CatalogSearchResults, searchCatalogAction } from "./search-courses-action";
+import { searchCatalogAction } from "./search-courses-action";
 
 const EMPTY_SEARCH_RESULTS: CatalogSearchResults = { chapters: [], courses: [] };
 

@@ -1,6 +1,6 @@
-import { getChapter } from "@/data/chapters/get-chapter";
-import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
-import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
+import { getChapter } from "@zoonk/core/chapters/get-by-slug";
+import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
+import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { notFound } from "next/navigation";
 import { ChapterNotGenerated } from "./chapter-not-generated";
@@ -15,10 +15,12 @@ export async function ChapterLessonGrid({
 }: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">, "params">) {
   const { brandSlug, chapterSlug, courseSlug } = await params;
 
-  const [chapter, hiddenLessonKinds] = await Promise.all([
+  const [chapter, lessonVisibility] = await Promise.all([
     getChapter({ brandSlug, chapterSlug, courseSlug }),
-    getUserHiddenLessonKinds(),
+    getLessonVisibility(),
   ]);
+
+  const { hiddenLessonKinds } = lessonVisibility;
 
   if (!chapter) {
     notFound();

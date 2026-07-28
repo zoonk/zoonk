@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { normalizeString } from "@zoonk/utils/string";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { searchCourses } from "./search-courses";
 
 describe(searchCourses, () => {
@@ -42,6 +42,10 @@ describe(searchCourses, () => {
         title: "School JavaScript Course",
       }),
     ]);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("returns empty array for empty query", async () => {
@@ -252,6 +256,14 @@ describe(searchCourses, () => {
     expect(result).toHaveLength(5);
   });
 
+  it("does not count every ranking bucket before reading the first page", async () => {
+    const count = vi.spyOn(prisma.course, "count");
+
+    await searchCourses({ language: "en", query: "JavaScript" });
+
+    expect(count).not.toHaveBeenCalled();
+  });
+
   it("returns exact match first", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `exactmatch${uniqueId}`;
@@ -353,24 +365,40 @@ describe(searchCourses, () => {
     expect(result).toStrictEqual([]);
   });
 
-  it("clamps offset to prevent unbounded database queries", async () => {
+  it("paginates beyond the first 100 results without repeating an earlier page", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const searchTerm = `clampoffset${uniqueId}`;
+    const searchTerm = `largeoffset${uniqueId}`;
 
-    await courseFixture({
-      isPublished: true,
-      language: "en",
-      normalizedTitle: searchTerm,
-      organizationId: brandOrg.id,
-      title: searchTerm,
+    await prisma.course.createMany({
+      data: Array.from({ length: 140 }, (_, index) => ({
+        description: `Large offset course ${index}`,
+        isPublished: true,
+        language: "en",
+        normalizedTitle: `${searchTerm} course ${index}`,
+        organizationId: brandOrg.id,
+        slug: `large-offset-${uniqueId}-${index}`,
+        title: `${searchTerm} Course ${index}`,
+      })),
     });
 
-    // A very large offset should be clamped to 100
-    // and not cause the query to fetch millions of rows
-    const result = await searchCourses({ language: "en", offset: 1_000_000, query: searchTerm });
+    const pageAt100 = await searchCourses({
+      language: "en",
+      limit: 20,
+      offset: 100,
+      query: searchTerm,
+    });
 
-    // With offset clamped to 100 and only 1 result, we get empty array
-    expect(result).toStrictEqual([]);
+    const pageAt120 = await searchCourses({
+      language: "en",
+      limit: 20,
+      offset: 120,
+      query: searchTerm,
+    });
+
+    expect(pageAt100).toHaveLength(20);
+    expect(pageAt120).toHaveLength(20);
+    expect(pageAt100.map((course) => course.id)).not.toContain(pageAt120[0]?.id);
+    expect(new Set([...pageAt100, ...pageAt120].map((course) => course.id)).size).toBe(40);
   });
 
   it("excludes courses without an organization", async () => {

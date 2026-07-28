@@ -1,7 +1,7 @@
+import { type TimeScorePattern } from "@zoonk/core/progress/get-score-patterns";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { type LucideIcon, Moon, MoonStar, Sun, Sunrise } from "lucide-react";
 import { getExtracted, getFormatter, getLocale } from "next-intl/server";
-import { type TimeScorePattern } from "./_utils/pattern-rows";
 import { getScoreTimePeriodRange } from "./_utils/time-period";
 import {
   PatternSection,

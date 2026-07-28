@@ -12,7 +12,6 @@ import { Suspense } from "react";
 import { UserList, UserListSkeleton } from "./user-list";
 
 export const metadata: Metadata = { title: "Users" };
-export const prefetch = "allow-runtime";
 
 export default function UsersPage({ searchParams }: PageProps<"/users">) {
   return (

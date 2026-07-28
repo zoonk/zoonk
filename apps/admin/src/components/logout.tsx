@@ -1,6 +1,6 @@
 "use client";
 
-import { logout } from "@zoonk/core/auth/client";
+import { logout } from "@zoonk/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 
 export function LogoutButton() {

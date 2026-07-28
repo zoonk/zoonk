@@ -1,4 +1,4 @@
-import { type ScorePerformance } from "@/data/progress/_utils/score-performance";
+import { type ScorePerformance } from "@zoonk/core/progress/score-performance";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ScoreChartClient } from "./score-chart-client";
 

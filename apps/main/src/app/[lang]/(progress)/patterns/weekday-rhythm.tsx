@@ -1,10 +1,10 @@
 "use client";
 
+import { type WeekdayScorePattern } from "@zoonk/core/progress/get-score-patterns";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { CalendarDays, Crown } from "lucide-react";
 import { useExtracted, useFormatter, useLocale } from "next-intl";
 import { useState } from "react";
-import { type WeekdayScorePattern } from "./_utils/pattern-rows";
 import {
   getScoreWeekdayLabel,
   getScoreWeekdayMessageValue,

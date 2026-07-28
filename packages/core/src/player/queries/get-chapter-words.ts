@@ -1,4 +1,3 @@
-import "server-only";
 import { type ChapterWordGetPayload, prisma } from "@zoonk/db";
 
 export type PlayerChapterWord = ChapterWordGetPayload<{

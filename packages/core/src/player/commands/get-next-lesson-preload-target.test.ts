@@ -1,10 +1,14 @@
+import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
-import { getNextPreloadTargets } from "./get-next-lesson-preload-target";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../../_test-utils/mock-session";
+import { getNextPreloadTargetResource } from "./get-next-lesson-preload-target";
+
+vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 type PreloadTargetVisibility = {
   chapterIsPublished?: boolean;
@@ -14,6 +18,37 @@ type PreloadTargetVisibility = {
 
 const preloadGenerationStatuses = ["pending", "failed"] as const;
 const nonPreloadGenerationStatuses = ["completed", "running"] as const;
+
+/**
+ * Returns the ready target list for one fixture learner so the happy-path
+ * integration tests can stay focused on target selection and ordering.
+ */
+async function getReadyNextPreloadTargetsForUser({
+  lessonId,
+  userId,
+}: {
+  lessonId: string;
+  userId: string;
+}) {
+  mockSession(userId);
+  const result = await getNextPreloadTargetResource({ lessonId });
+
+  if (result.status !== "ready") {
+    throw new Error(`Expected ready preload targets, received ${result.status}`);
+  }
+
+  return result.targets;
+}
+
+/**
+ * Marks a fixture learner as paid when a test expects work in a chapter beyond
+ * the free first-chapter boundary.
+ */
+async function subscribeUser(userId: string) {
+  await prisma.subscription.create({
+    data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },
+  });
+}
 
 const inaccessibleCurrentLessonCases: {
   currentLessonIsPublished?: boolean;
@@ -79,14 +114,18 @@ async function createLessonPair(params: {
   return { currentLesson, nextLesson };
 }
 
-describe(getNextPreloadTargets, () => {
+describe(getNextPreloadTargetResource, () => {
+  beforeEach(() => {
+    mockSession(null);
+  });
+
   it("returns the next lesson target before considering chapter generation", async () => {
     const [user, lessons] = await Promise.all([
       userFixture(),
       createLessonPair({ nextLessonGenerationStatus: "pending" }),
     ]);
 
-    const result = await getNextPreloadTargets({
+    const result = await getReadyNextPreloadTargetsForUser({
       lessonId: lessons.currentLesson.id,
       userId: user.id,
     });
@@ -122,7 +161,10 @@ describe(getNextPreloadTargets, () => {
       throw new Error("Expected current lesson plus three preload candidates");
     }
 
-    const result = await getNextPreloadTargets({ lessonId: currentLesson.id, userId: user.id });
+    const result = await getReadyNextPreloadTargetsForUser({
+      lessonId: currentLesson.id,
+      userId: user.id,
+    });
 
     expect(result).toStrictEqual([
       { kind: "lesson", lessonId: first.id },
@@ -153,7 +195,12 @@ describe(getNextPreloadTargets, () => {
         }),
       ]);
 
-      const result = await getNextPreloadTargets({ lessonId: currentLesson.id, userId: user.id });
+      await subscribeUser(user.id);
+
+      const result = await getReadyNextPreloadTargetsForUser({
+        lessonId: currentLesson.id,
+        userId: user.id,
+      });
 
       expect(result).toStrictEqual([{ chapterId: nextChapter.id, kind: "chapter" }]);
     },
@@ -167,7 +214,7 @@ describe(getNextPreloadTargets, () => {
         createLessonPair({ nextLessonGenerationStatus }),
       ]);
 
-      const result = await getNextPreloadTargets({
+      const result = await getReadyNextPreloadTargetsForUser({
         lessonId: lessons.currentLesson.id,
         userId: user.id,
       });
@@ -190,21 +237,30 @@ describe(getNextPreloadTargets, () => {
         }),
       ]);
 
-      const result = await getNextPreloadTargets({
-        lessonId: lessons.currentLesson.id,
-        userId: user.id,
-      });
+      mockSession(user.id);
 
-      expect(result).toStrictEqual([]);
+      await expect(
+        getNextPreloadTargetResource({ lessonId: lessons.currentLesson.id }),
+      ).resolves.toStrictEqual({ status: "notFound" });
     },
   );
 
   it("returns no targets for malformed lesson ids before querying UUID columns", async () => {
     const user = await userFixture();
 
-    const result = await getNextPreloadTargets({ lessonId: "not-a-uuid", userId: user.id });
+    mockSession(user.id);
 
-    expect(result).toStrictEqual([]);
+    await expect(getNextPreloadTargetResource({ lessonId: "not-a-uuid" })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+  });
+
+  it("returns no targets for a guest", async () => {
+    const lessons = await createLessonPair({ nextLessonGenerationStatus: "pending" });
+
+    await expect(
+      getNextPreloadTargetResource({ lessonId: lessons.currentLesson.id }),
+    ).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
   it.each(nonPreloadGenerationStatuses)(
@@ -229,7 +285,10 @@ describe(getNextPreloadTargets, () => {
         }),
       ]);
 
-      const result = await getNextPreloadTargets({ lessonId: currentLesson.id, userId: user.id });
+      const result = await getReadyNextPreloadTargetsForUser({
+        lessonId: currentLesson.id,
+        userId: user.id,
+      });
 
       expect(result).toStrictEqual([]);
     },
@@ -275,7 +334,10 @@ describe(getNextPreloadTargets, () => {
 
     const [vocabulary, , reading, grammar] = lessons;
 
-    const result = await getNextPreloadTargets({ lessonId: vocabulary.id, userId: user.id });
+    const result = await getReadyNextPreloadTargetsForUser({
+      lessonId: vocabulary.id,
+      userId: user.id,
+    });
 
     expect(result).toStrictEqual([
       { kind: "lesson", lessonId: reading.id },
@@ -310,11 +372,46 @@ describe(getNextPreloadTargets, () => {
       }),
     ]);
 
-    const result = await getNextPreloadTargets({ lessonId: currentLesson.id, userId: user.id });
+    await subscribeUser(user.id);
+
+    const result = await getReadyNextPreloadTargetsForUser({
+      lessonId: currentLesson.id,
+      userId: user.id,
+    });
 
     expect(result).toStrictEqual([
       { kind: "lesson", lessonId: nextLesson.id },
       { chapterId: nextChapter.id, kind: "chapter" },
     ]);
+  });
+
+  it("only returns later-chapter targets to subscribed learners", async () => {
+    const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
+
+    const nextChapter = await chapterFixture({
+      courseId: context.chapter.courseId,
+      generationStatus: "pending",
+      isPublished: true,
+      organizationId: context.organization.id,
+      position: 1,
+    });
+
+    const currentLesson = await lessonFixture({
+      chapterId: context.chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      organizationId: context.organization.id,
+      position: 0,
+    });
+
+    await expect(
+      getReadyNextPreloadTargetsForUser({ lessonId: currentLesson.id, userId: user.id }),
+    ).resolves.toStrictEqual([]);
+
+    await subscribeUser(user.id);
+
+    await expect(
+      getReadyNextPreloadTargetsForUser({ lessonId: currentLesson.id, userId: user.id }),
+    ).resolves.toStrictEqual([{ chapterId: nextChapter.id, kind: "chapter" }]);
   });
 });

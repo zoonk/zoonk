@@ -5,6 +5,7 @@ import {
   getActivePhaseDurationMs as getDuration,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
+import { type GeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import {
   AudioLinesIcon,
@@ -22,7 +23,6 @@ import {
   TextIcon,
 } from "lucide-react";
 import {
-  type GeneratedLessonKind,
   type PhaseName,
   getPhaseOrder,
   getPhaseSteps,

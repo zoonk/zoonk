@@ -1,5 +1,5 @@
 import { CATALOG_TOP_TARGET_ID } from "@/components/catalog/catalog-top-target";
-import { getSession } from "@/data/users/get-session";
+import { getSession } from "@zoonk/core/users/session";
 import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { Suspense } from "react";

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { usernameCandidateSchema } from "./usernames";
 
 /**
  * Requires PATCH callers to send at least one profile field while still letting
@@ -11,39 +12,41 @@ function hasProfileUpdate(data: { name?: string; username?: string }) {
 export const meUpdateSchema = z
   .object({
     name: z.string().trim().min(1).optional().meta({ description: "Display name" }),
-    username: z
-      .string()
-      .trim()
-      .toLowerCase()
+    username: usernameCandidateSchema
       .optional()
       .meta({ description: "Username shown in profile URLs and mentions" }),
   })
+  .strict()
   .refine(hasProfileUpdate, { message: "At least one profile field must be provided" })
-  .meta({ id: "MeUpdate" });
+  .meta({ id: "MeUpdate", override: { minProperties: 1 } });
 
 const meUserSchema = z
   .object({
-    createdAt: z.string().meta({ description: "User creation timestamp" }),
+    analyticsDisabled: z
+      .boolean()
+      .meta({ description: "Whether product analytics are disabled for this account" }),
+    createdAt: z.iso.datetime().meta({ description: "User creation timestamp" }),
     displayUsername: z.string().nullable().meta({ description: "Display username" }),
     email: z.email().meta({ description: "Email address" }),
     emailVerified: z.boolean().meta({ description: "Whether the email has been verified" }),
-    id: z.string().meta({ description: "User ID" }),
+    id: z.uuid().meta({ description: "User ID" }),
     image: z.string().nullable().meta({ description: "Profile image URL" }),
     name: z.string().meta({ description: "Display name" }),
-    updatedAt: z.string().meta({ description: "User update timestamp" }),
+    updatedAt: z.iso.datetime().meta({ description: "User update timestamp" }),
     username: z.string().nullable().meta({ description: "Normalized username" }),
   })
   .meta({ id: "MeUser" });
 
 const meSubscriptionSchema = z
   .object({
+    cancelAt: z.iso.datetime().nullable().meta({ description: "Scheduled cancellation timestamp" }),
     cancelAtPeriodEnd: z
       .boolean()
       .nullable()
       .meta({ description: "Whether cancellation is scheduled" }),
-    id: z.string().meta({ description: "Subscription ID" }),
-    periodEnd: z.string().nullable().meta({ description: "Current billing period end" }),
-    periodStart: z.string().nullable().meta({ description: "Current billing period start" }),
+    id: z.uuid().meta({ description: "Subscription ID" }),
+    periodEnd: z.iso.datetime().nullable().meta({ description: "Current billing period end" }),
+    periodStart: z.iso.datetime().nullable().meta({ description: "Current billing period start" }),
     plan: z.string().meta({ description: "Subscription plan" }),
     provider: z.string().meta({ description: "Billing provider" }),
     status: z.string().nullable().meta({ description: "Subscription status" }),

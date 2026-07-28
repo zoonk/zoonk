@@ -11,13 +11,14 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
+import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
 
 /**
  * Test Architecture for Course Generation Page
  *
  * The generation page interacts with 2 APIs on the API server:
- * 1. POST ${API_BASE_URL}/v1/workflows/course-generation/trigger - Starts the workflow, returns { runId: string }
- * 2. GET ${API_BASE_URL}/v1/workflows/course-generation/status?runId=X&startIndex=N - Returns SSE stream of step updates
+ * 1. POST ${API_BASE_URL}/v1/generations - Starts the workflow, returns the generation resource
+ * 2. GET ${API_BASE_URL}/v1/generations/{generationId}/events?startIndex=N - Returns SSE stream of step updates
  *
  * Client behavior:
  * - Auto-triggers workflow on mount (no idle state)
@@ -38,7 +39,7 @@ const TEST_RUN_ID = "test-run-id-12345";
 type MockApiOptions = {
   assertBearerAuth?: boolean;
   triggerResponseGate?: Promise<unknown>;
-  triggerResponse?: { runId?: string; error?: string; status?: number };
+  triggerResponse?: { id?: string; error?: string; status?: number };
   streamMessages?: { entityId?: string; reason?: string; step: string; status: string }[];
   streamError?: boolean;
   statusDelayMs?: number;
@@ -72,17 +73,16 @@ function createRouteHandler(options: MockApiOptions) {
     assertBearerAuth = false,
     statusDelayMs = 0,
     triggerResponseGate,
-    triggerResponse = { runId: TEST_RUN_ID },
+    triggerResponse = { id: TEST_RUN_ID },
     streamMessages = [],
     streamError = false,
   } = options;
 
   return async (route: Route) => {
     const url = route.request().url();
-    const method = route.request().method();
 
     // Mock trigger API
-    if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
+    if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
       if (assertBearerAuth) {
         expectBearerAuthorization(route);
       }
@@ -100,16 +100,16 @@ function createRouteHandler(options: MockApiOptions) {
       }
 
       await route.fulfill({
-        body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
+        body: JSON.stringify({ id: triggerResponse.id, status: "pending" }),
         contentType: "application/json",
-        status: 200,
+        status: 202,
       });
 
       return;
     }
 
     // Mock status stream API
-    if (url.includes("/v1/workflows/course-generation/status")) {
+    if (isGenerationEvents(url)) {
       if (assertBearerAuth) {
         expectBearerAuthorization(route);
       }
@@ -146,7 +146,7 @@ function createRouteHandler(options: MockApiOptions) {
  */
 async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<void> {
   const handler = createRouteHandler(options);
-  await page.route("**/v1/workflows/course-generation/**", handler);
+  await routeGenerationApis({ handler, page });
 }
 
 /**
@@ -251,7 +251,7 @@ test.describe("Generate Course Page", () => {
       const triggerRequest = localizedPage.waitForRequest(
         (pageRequest) =>
           pageRequest.method() === "POST" &&
-          pageRequest.url().includes("/v1/workflows/course-generation/trigger"),
+          isGenerationTrigger({ request: pageRequest, targetType: "coursePrompt" }),
       );
 
       try {
@@ -281,7 +281,7 @@ test.describe("Generate Course Page", () => {
       const triggerRequest = authenticatedPage.waitForRequest(
         (pageRequest) =>
           pageRequest.method() === "POST" &&
-          pageRequest.url().includes("/v1/workflows/course-generation/trigger"),
+          isGenerationTrigger({ request: pageRequest, targetType: "coursePrompt" }),
       );
 
       try {
@@ -354,8 +354,11 @@ test.describe("Generate Course Page", () => {
         language: "en",
       });
 
-      await authenticatedPage.route("**/v1/workflows/course-generation/**", async (route) => {
-        throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+      await routeGenerationApis({
+        handler: async (route) => {
+          throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+        },
+        page: authenticatedPage,
       });
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
@@ -381,8 +384,11 @@ test.describe("Generate Course Page", () => {
         language: "en",
       });
 
-      await authenticatedPage.route("**/v1/workflows/course-generation/**", async (route) => {
-        throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+      await routeGenerationApis({
+        handler: async (route) => {
+          throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+        },
+        page: authenticatedPage,
       });
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
@@ -415,8 +421,11 @@ test.describe("Generate Course Page", () => {
         targetLanguage: "es",
       });
 
-      await authenticatedPage.route("**/v1/workflows/course-generation/**", async (route) => {
-        throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+      await routeGenerationApis({
+        handler: async (route) => {
+          throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+        },
+        page: authenticatedPage,
       });
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);

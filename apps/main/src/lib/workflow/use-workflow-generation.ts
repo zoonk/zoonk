@@ -2,7 +2,9 @@
 
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { getString } from "@zoonk/utils/json";
+import { API_URL } from "@zoonk/utils/url";
 import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
+import { getGenerationEventsUrl } from "./_utils/generation-events-url";
 import { getWorkflowAuthHeaders } from "./auth-headers";
 import {
   type GenerationAction,
@@ -12,9 +14,28 @@ import {
   handleStepStreamMessage,
   initialGenerationState,
 } from "./generation-store";
+import { type GenerationTarget } from "./generation-target";
 import { useSSE } from "./use-sse";
 
 const MAX_STREAM_RECONNECTS = 5;
+
+/**
+ * Builds the authenticated JSON request accepted by the unified generation
+ * collection.
+ */
+function getGenerationTriggerRequest({
+  authHeaders,
+  target,
+}: {
+  authHeaders: Awaited<ReturnType<typeof getWorkflowAuthHeaders>>;
+  target: GenerationTarget;
+}): RequestInit {
+  return {
+    body: JSON.stringify({ target }),
+    headers: { ...authHeaders, "Content-Type": "application/json" },
+    method: "POST",
+  };
+}
 
 export function useWorkflowGeneration<TStep extends string = string>(config: {
   autoTrigger?: boolean;
@@ -22,18 +43,9 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   entityId?: string;
   initialRunId?: string | null;
   initialStatus?: GenerationStatus;
-  statusUrl: string;
-  triggerBody: Record<string, unknown>;
-  triggerUrl: string;
+  target: GenerationTarget;
 }) {
-  const {
-    autoTrigger = true,
-    completionStep,
-    entityId,
-    statusUrl,
-    triggerBody,
-    triggerUrl,
-  } = config;
+  const { autoTrigger = true, completionStep, entityId, target } = config;
 
   const hasTriggeredRef = useRef(false);
 
@@ -114,7 +126,11 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
    */
   const sseUrl =
     state.status === "streaming" && state.runId
-      ? `${statusUrl}?runId=${state.runId}&_rc=${state.reconnectCount}`
+      ? getGenerationEventsUrl({
+          baseUrl: `${API_URL}/v1/generations`,
+          generationId: state.runId,
+          reconnectCount: state.reconnectCount,
+        })
       : null;
 
   const { resetIndex } = useSSE<StepStreamMessage<TStep>>(sseUrl, {
@@ -129,24 +145,23 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     try {
       const authHeaders = await getWorkflowAuthHeaders();
 
-      const response = await fetch(triggerUrl, {
-        body: JSON.stringify(triggerBody),
-        headers: { ...authHeaders, "Content-Type": "application/json" },
-        method: "POST",
-      });
+      const response = await fetch(
+        `${API_URL}/v1/generations`,
+        getGenerationTriggerRequest({ authHeaders, target }),
+      );
 
       if (!response.ok) {
         throw new Error("Failed to start generation");
       }
 
       const data: unknown = await response.json();
-      const newRunId = getString(data, "runId");
+      const generationId = getString(data, "id");
 
-      if (!newRunId) {
-        throw new Error("Invalid response: missing runId");
+      if (!generationId) {
+        throw new Error("Invalid response: missing generation ID");
       }
 
-      dispatch({ runId: newRunId, type: "triggerSuccess" });
+      dispatch({ runId: generationId, type: "triggerSuccess" });
     } catch (error) {
       dispatch({
         error: error instanceof Error ? error.message : "Failed to start",

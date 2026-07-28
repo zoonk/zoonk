@@ -10,7 +10,7 @@ import {
   WaitlistStatus,
   WaitlistSubmit,
 } from "@/components/waitlist/waitlist";
-import { type UnsupportedCoursePrompt } from "@/data/courses/course-prompt";
+import { type UnsupportedCoursePrompt } from "@zoonk/core/courses/resolve-prompt";
 import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 

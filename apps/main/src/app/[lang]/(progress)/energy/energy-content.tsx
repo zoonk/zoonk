@@ -1,5 +1,6 @@
-import { getEnergyData } from "@/data/progress/get-energy-data";
-import { getSession } from "@/data/users/get-session";
+import { loadOptionalData } from "@/data/_utils/load-optional-data";
+import { getEnergyData } from "@zoonk/core/progress/get-energy-data";
+import { getSession } from "@zoonk/core/users/session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { EnergyChart, EnergyChartSkeleton } from "./energy-chart";
@@ -8,7 +9,7 @@ import { EnergyInsights, EnergyInsightsSkeleton } from "./energy-insights";
 import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
 export async function EnergyContent() {
-  const [data, session] = await Promise.all([getEnergyData(), getSession()]);
+  const [data, session] = await Promise.all([loadOptionalData(getEnergyData), getSession()]);
 
   const isAuthenticated = Boolean(session);
 

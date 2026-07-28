@@ -1,5 +1,5 @@
-import { type BeltLevelDetails } from "@/data/progress/get-belt-level";
 import { BELT_BG_CLASSES, getBeltLabel } from "@/lib/belt-colors";
+import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import {
   ProgressIndicator,

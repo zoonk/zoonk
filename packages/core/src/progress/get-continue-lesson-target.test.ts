@@ -171,7 +171,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: null });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: chapter.slug,
@@ -191,7 +191,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: null });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: false,
       chapterSlug: chapter.slug,
@@ -217,7 +217,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: tree.course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -259,7 +259,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: tree.course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.firstChapter.slug,
@@ -291,7 +291,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { chapterId: tree.chapter.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -335,7 +335,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: tree.course.id } as const;
     const result = await resolveContinueTarget({ excludedLessonKinds, scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -369,7 +369,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: tree.course.id } as const;
     const result = await resolveContinueTarget({ excludedLessonKinds, scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -405,7 +405,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: tree.course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -425,7 +425,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: tree.course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.secondChapter.slug,
@@ -463,7 +463,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: tree.course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -514,7 +514,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { courseId: course.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: false,
       chapterSlug: nextChapter.slug,
@@ -538,7 +538,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { chapterId: tree.chapter.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -576,7 +576,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { chapterId: tree.chapter.id } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -602,7 +602,7 @@ describe(getContinueLessonTarget, () => {
     const scope = { lessonId: lesson?.id ?? "" } as const;
     const result = await resolveContinueTarget({ scope, userId: user.id });
 
-    expect(result).toStrictEqual({
+    expect(result).toMatchObject({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,

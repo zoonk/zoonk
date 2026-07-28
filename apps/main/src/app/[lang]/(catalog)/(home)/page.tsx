@@ -1,7 +1,6 @@
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
-import { HomeContent, HomeContentSkeleton } from "./home-content";
+import { HomeContent } from "./home-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -16,9 +15,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Home() {
-  return (
-    <Suspense fallback={<HomeContentSkeleton />}>
-      <HomeContent />
-    </Suspense>
-  );
+  return <HomeContent />;
 }

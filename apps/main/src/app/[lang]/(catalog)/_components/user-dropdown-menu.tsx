@@ -1,6 +1,6 @@
-import { getSession } from "@/data/users/get-session";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
+import { getSession } from "@zoonk/core/users/session";
 import {
   DropdownMenuContent,
   DropdownMenuItem,

@@ -1,4 +1,3 @@
-import "server-only";
 import { type UserProgress, prisma } from "@zoonk/db";
 import { MAX_ENERGY, projectPersistedEnergy } from "../../progress/energy";
 import {
@@ -47,8 +46,8 @@ function getCurrentEnergy({
 
 /**
  * Loads and assembles the complete pre-completion progress snapshot for an
- * authenticated learner. Dates stay explicit so web, native, school, and
- * white-label adapters can supply their own verified request context.
+ * authenticated learner. Dates stay explicit so the private request boundary
+ * can supply one verified timezone and clock to every composed query.
  */
 export async function getPlayerProgressSnapshot({
   bestDayRange,

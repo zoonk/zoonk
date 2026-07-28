@@ -1,4 +1,4 @@
-import { getSession } from "@/data/users/get-session";
+import { getSession } from "@zoonk/core/users/session";
 import {
   Container,
   ContainerBody,

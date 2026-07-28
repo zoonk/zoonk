@@ -1,25 +1,15 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
 import {
   getContributionCalendarDateKey,
   getContributionCalendarDates,
 } from "@zoonk/utils/contribution-calendar";
 import { projectEnergyTimeline } from "./_utils/energy-timeline";
-import {
-  type EnergyCursor,
-  type EnergyData,
-  type EnergyDay,
-  type EnergyLevelData,
-  MAX_ENERGY,
-  projectPersistedEnergy,
-} from "./energy";
-import { getUserProgress } from "./progress-metrics";
-import { hasUserLearningProgress } from "./user-progress";
+import { type EnergyCursor, type EnergyData, type EnergyDay, MAX_ENERGY } from "./energy";
 
 type EnergyRows = Awaited<ReturnType<typeof listEnergyCursors>>;
 
 /** Loads truthful learner-local Energy history without coupling the query to an app cache. */
-function listEnergyCursors({ userId }: { userId: string }) {
+export function listEnergyCursors({ userId }: { userId: string }) {
   return prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId } });
 }
 
@@ -54,7 +44,7 @@ function getFullEnergyDays(rows: EnergyRows): number {
 }
 
 /** Builds the shared Energy history read model from authoritative completion rows. */
-function buildEnergyData({
+export function buildEnergyData({
   currentEnergy,
   endDate,
   rows,
@@ -79,61 +69,4 @@ function buildEnergyData({
         ? null
         : { averageEnergy: projection.averageEnergy, fullEnergyDays: getFullEnergyDays(rows) },
   };
-}
-
-/**
- * Returns a complete Energy history for an explicit learner and visible range.
- * Apps remain responsible for authenticating the user and selecting that range.
- */
-export async function getEnergyData({
-  endDate,
-  startDate,
-  timeZone,
-  userId,
-}: {
-  endDate: Date;
-  startDate: Date;
-  timeZone: string;
-  userId: string;
-}): Promise<EnergyData | null> {
-  const [rows, progress] = await Promise.all([
-    listEnergyCursors({ userId }),
-    getUserProgress({ userId }),
-  ]);
-
-  if (!hasUserLearningProgress(progress)) {
-    return null;
-  }
-
-  const projection = projectPersistedEnergy({
-    persistedEnergy: progress,
-    targetDate: endDate,
-    timeZone,
-  });
-
-  return buildEnergyData({ currentEnergy: projection.currentEnergy, endDate, rows, startDate });
-}
-
-/**
- * Returns current Energy from the learner's singleton persisted state so
- * compact surfaces do not load DailyProgress history.
- */
-export async function getEnergyLevel({
-  targetDate,
-  timeZone,
-  userId,
-}: {
-  targetDate: Date;
-  timeZone: string;
-  userId: string;
-}): Promise<EnergyLevelData | null> {
-  const progress = await getUserProgress({ userId });
-
-  if (!hasUserLearningProgress(progress)) {
-    return null;
-  }
-
-  const projection = projectPersistedEnergy({ persistedEnergy: progress, targetDate, timeZone });
-
-  return { currentEnergy: projection.currentEnergy };
 }

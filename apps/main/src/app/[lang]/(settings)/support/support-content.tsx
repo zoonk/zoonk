@@ -1,6 +1,6 @@
 import { ContactForm, ContactFormSkeleton } from "@/components/feedback/contact-form";
-import { getSession } from "@/data/users/get-session";
 import { getSocialProfiles } from "@/lib/social";
+import { getSession } from "@zoonk/core/users/session";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,

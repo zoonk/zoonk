@@ -1,5 +1,0 @@
-{
-  "exclude": ["node_modules", "dist"],
-  "extends": "@zoonk/tsconfig/nextjs.json",
-  "include": ["src"]
-}

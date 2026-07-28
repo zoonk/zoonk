@@ -28,6 +28,8 @@ export const errors = {
     errorResponse("PAYMENT_REQUIRED", msg, httpStatus.paymentRequired),
   unauthorized: (msg = "Authentication required") =>
     errorResponse("UNAUTHORIZED", msg, httpStatus.unauthorized),
+  unprocessableEntity: (msg = "Request could not be applied") =>
+    errorResponse("UNPROCESSABLE_ENTITY", msg, httpStatus.unprocessableEntity),
   validation: (zodError: z.ZodError) => {
     const details = zodError.issues.map((issue) => ({ message: issue.message, path: issue.path }));
     return errorResponse("VALIDATION_ERROR", "Invalid request", httpStatus.badRequest, details);

@@ -1,4 +1,3 @@
-import "server-only";
 import { type SpeechModelName } from "@zoonk/ai/speech-models";
 import {
   type LanguageAudioTextType,

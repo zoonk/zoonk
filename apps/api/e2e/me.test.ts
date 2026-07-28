@@ -3,6 +3,7 @@ import { type APIResponse, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getString } from "@zoonk/utils/json";
+import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const PASSWORD = "password123";
 
@@ -149,6 +150,106 @@ test.describe("Current User API", () => {
     await apiContext.dispose();
   });
 
+  test("returns analytics preference and scheduled subscription cancellation state", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const cancelAt = new Date("2027-01-15T12:00:00.000Z");
+
+    const { apiContext, userId } = await createBearerApiContext({
+      baseURL,
+      uniqueId,
+      withSubscription: true,
+    });
+
+    await Promise.all([
+      prisma.user.update({ data: { analyticsDisabled: true }, where: { id: userId } }),
+      prisma.subscription.updateMany({
+        data: { cancelAt, cancelAtPeriodEnd: true },
+        where: { referenceId: userId },
+      }),
+    ]);
+
+    const response = await apiContext.get("/v1/me");
+
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.user.analyticsDisabled).toBe(true);
+    expect(body.account.subscription.cancelAt).toBe(cancelAt.toISOString());
+
+    await apiContext.dispose();
+  });
+
+  test("returns the signed-in user through a cookie session", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "me-cookie",
+    });
+
+    const response = await apiContext.get("/v1/me");
+
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.user.id).toBe(user.id);
+
+    await apiContext.dispose();
+  });
+
+  test("rejects cookie-authenticated profile updates without a same-origin Origin header", async () => {
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "me-cookie-origin",
+    });
+
+    const storageState = await apiContext.storageState();
+
+    const [missingOriginContext, crossOriginContext] = await Promise.all([
+      request.newContext({ baseURL, storageState }),
+      request.newContext({
+        baseURL,
+        extraHTTPHeaders: { Origin: "https://attacker.example" },
+        storageState,
+      }),
+    ]);
+
+    const [missingOriginResponse, crossOriginResponse] = await Promise.all([
+      missingOriginContext.patch("/v1/me", { data: { name: "Missing Origin" } }),
+      crossOriginContext.patch("/v1/me", { data: { name: "Cross Origin" } }),
+    ]);
+
+    await Promise.all([
+      expectApiError({ code: "FORBIDDEN", response: missingOriginResponse, status: 403 }),
+      expectApiError({ code: "FORBIDDEN", response: crossOriginResponse, status: 403 }),
+    ]);
+
+    await Promise.all([
+      apiContext.dispose(),
+      missingOriginContext.dispose(),
+      crossOriginContext.dispose(),
+    ]);
+  });
+
+  test("allows a same-origin cookie-authenticated profile update", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "me-cookie-update",
+    });
+
+    const response = await apiContext.patch("/v1/me", {
+      data: { name: "Same-origin Cookie User" },
+    });
+
+    expect(response.status()).toBe(200);
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
+      name: "Same-origin Cookie User",
+    });
+
+    await apiContext.dispose();
+  });
+
   test("updates the signed-in user's profile", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { apiContext, email, userId } = await createBearerApiContext({ baseURL, uniqueId });
@@ -195,13 +296,32 @@ test.describe("Current User API", () => {
     await apiContext.dispose();
   });
 
-  test("rejects invalid username updates", async () => {
+  test("rejects profile fields outside the public contract", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { apiContext } = await createBearerApiContext({ baseURL, uniqueId });
+
+    const response = await apiContext.patch("/v1/me", { data: { role: "admin" } });
+
+    await expectApiError({ code: "VALIDATION_ERROR", response, status: 400 });
+
+    await apiContext.dispose();
+  });
+
+  test("rejects username updates outside the documented syntax contract", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { apiContext, userId, username } = await createBearerApiContext({ baseURL, uniqueId });
 
-    const response = await apiContext.patch("/v1/me", { data: { username: "" } });
+    const responses = await Promise.all(
+      ["", "ab", "a".repeat(31), "invalid-name"].map((invalidUsername) =>
+        apiContext.patch("/v1/me", { data: { username: invalidUsername } }),
+      ),
+    );
 
-    await expectApiError({ code: "BAD_REQUEST", response, status: 400 });
+    await Promise.all(
+      responses.map((response) =>
+        expectApiError({ code: "VALIDATION_ERROR", response, status: 400 }),
+      ),
+    );
 
     const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
 

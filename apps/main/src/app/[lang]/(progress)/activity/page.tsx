@@ -11,8 +11,6 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ActivityContent, ActivityContentSkeleton } from "./activity-content";
 
-export const prefetch = "allow-runtime";
-
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 

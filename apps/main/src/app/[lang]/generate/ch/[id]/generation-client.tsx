@@ -18,7 +18,6 @@ import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { CHAPTER_COMPLETION_STEP, type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { useGenerationPhases } from "./use-generation-phases";
@@ -48,9 +47,7 @@ export function GenerationClient({
     completionStep: CHAPTER_COMPLETION_STEP,
     initialRunId: generationRunId,
     initialStatus,
-    statusUrl: `${API_URL}/v1/workflows/chapter-generation/status`,
-    triggerBody: { chapterId },
-    triggerUrl: `${API_URL}/v1/workflows/chapter-generation/trigger`,
+    target: { id: chapterId, type: "chapter" },
   });
 
   const {

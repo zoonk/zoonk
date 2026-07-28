@@ -1,6 +1,6 @@
 import { getActiveCatalogTarget } from "@/data/progress/get-catalog-target";
 import { type LessonScope } from "@zoonk/core/lessons/scope";
-import { type ActiveCatalogTarget } from "@zoonk/core/progress/continue-lesson-target";
+import { type ActiveLessonTarget } from "@zoonk/core/progress/get-next-lesson";
 import { type LessonKind } from "@zoonk/db";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ArrowDownIcon } from "lucide-react";
@@ -26,7 +26,7 @@ function getActiveShortcutSlug({
   activeTarget,
   kind,
 }: {
-  activeTarget: ActiveCatalogTarget | null;
+  activeTarget: ActiveLessonTarget | null;
   kind: CatalogActiveShortcutKind;
 }) {
   if (!activeTarget) {

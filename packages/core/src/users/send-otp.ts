@@ -2,9 +2,9 @@ import "server-only";
 import { auth } from "@zoonk/auth";
 
 /**
- * Send the sign-in OTP through Better Auth and return its delivery result.
+ * Sends the sign-in OTP through Better Auth and returns its delivery result.
  *
- * Better Auth now needs request headers when resolving a dynamic base URL.
+ * Better Auth needs request headers when resolving a dynamic base URL.
  * Accepting the current request headers here keeps login actions aligned with
  * the real incoming host instead of relying on the auth fallback. Callers keep
  * the `success` response so they do not advance to the OTP screen if Better

@@ -11,8 +11,6 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { PatternsContent, PatternsContentSkeleton } from "./patterns-content";
 
-export const prefetch = "allow-runtime";
-
 /** Names the learner's complete fixed-window performance patterns. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();

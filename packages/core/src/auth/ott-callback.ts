@@ -1,6 +1,6 @@
 import "server-only";
+import { auth } from "@zoonk/auth";
 import { type NextRequest } from "next/server";
-import { auth } from "./auth";
 import { getSafeAppRelativePath } from "./ott-redirect";
 import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "./ott-state";
 

@@ -1,4 +1,3 @@
-import { prisma } from "@zoonk/db";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { type Page, expect, test } from "./fixtures";
 
@@ -73,21 +72,17 @@ test.describe("Courses Page - Basic", () => {
       throw new Error("Missing rendered course href");
     }
 
-    const coursePathSegments = new URL(courseHref, page.url()).pathname.split("/");
-    const brandSlug = coursePathSegments.at(-3);
-    const courseSlug = coursePathSegments.at(-1);
-
-    if (!brandSlug || !courseSlug) {
-      throw new Error(`Invalid rendered course href: ${courseHref}`);
-    }
-
-    const course = await prisma.course.findFirstOrThrow({
-      where: { organization: { slug: brandSlug }, slug: courseSlug },
-    });
+    const courseUrl = new URL(courseHref, page.url()).toString();
+    const courseCardText = await courseLink.innerText();
 
     await courseLink.click();
 
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    await expect(page).toHaveURL(courseUrl);
+
+    const courseHeading = page.getByRole("heading", { level: 1 });
+
+    await expect(courseHeading).toBeVisible();
+    expect(courseCardText).toContain(await courseHeading.innerText());
   });
 
   test("empty category lets users create a course about that category", async ({ page }) => {

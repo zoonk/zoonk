@@ -7,6 +7,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { mockFeedbackSubmission } from "./feedback";
 import { expect, test } from "./fixtures";
+import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
 
 const TEST_RUN_ID = "test-run-id-start-language";
 
@@ -16,29 +17,28 @@ const TEST_RUN_ID = "test-run-id-start-language";
  * starting real AI generation.
  */
 async function mockCourseGenerationWorkflow(page: Page): Promise<void> {
-  await page.route("**/v1/workflows/course-generation/**", handleCourseGenerationRoute);
+  await routeGenerationApis({ handler: handleCourseGenerationRoute, page });
 }
 
 /**
  * The generation page starts the course workflow from the browser. Returning a
- * run id and an empty SSE stream gives that client enough contract to render
+ * generation ID and an empty SSE stream gives that client enough contract to render
  * without depending on the API app.
  */
 async function handleCourseGenerationRoute(route: Route): Promise<void> {
   const url = route.request().url();
-  const method = route.request().method();
 
-  if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
+  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
     await route.fulfill({
-      body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
       contentType: "application/json",
-      status: 200,
+      status: 202,
     });
 
     return;
   }
 
-  if (url.includes("/v1/workflows/course-generation/status")) {
+  if (isGenerationEvents(url)) {
     await route.fulfill({ body: "", contentType: "text/event-stream", status: 200 });
     return;
   }

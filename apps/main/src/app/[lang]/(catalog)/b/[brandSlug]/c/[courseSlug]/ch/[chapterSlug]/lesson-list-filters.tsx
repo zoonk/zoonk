@@ -7,11 +7,11 @@ import {
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridContext } from "@/components/catalog/catalog-grid-context";
 import {
-  type LessonKindFilterSettings,
+  type LessonVisibilityPreferences,
   getClearedHiddenLessonKinds,
   getHiddenLessonKindsForFilter,
   getNextHiddenLessonKinds,
-} from "@/lib/lessons/lesson-kind-filters";
+} from "@zoonk/core/lessons/visibility";
 import { type LessonKind } from "@zoonk/db";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -52,7 +52,7 @@ export function LessonListFilters({
 }: {
   canPersistFilters: boolean;
   children: ReactNode;
-  initialHiddenLessonKinds: LessonKindFilterSettings["hiddenLessonKinds"];
+  initialHiddenLessonKinds: LessonVisibilityPreferences["hiddenLessonKinds"];
   items: LessonTypeFilterItem[];
   lessonKindOptions: LessonKindOption[];
   placeholder: string;

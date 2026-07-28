@@ -1,8 +1,8 @@
 import { type AppRoute } from "@/i18n/navigation";
 import { type getMenu } from "@/lib/menu";
+import { type ChapterSearchResult, type CourseSearchResult } from "@zoonk/core/catalog/search";
 import { removeAccents } from "@zoonk/utils/string";
 import { LogOutIcon, type LucideIcon } from "lucide-react";
-import { type ChapterSearchResult, type CourseSearchResult } from "./search-courses-action";
 
 type PaletteRoute = AppRoute<ReturnType<typeof getMenu>["url"]>;
 

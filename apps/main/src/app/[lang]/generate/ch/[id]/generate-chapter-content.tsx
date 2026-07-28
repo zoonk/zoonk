@@ -1,13 +1,13 @@
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
+import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import {
   getChapterCacheTag,
   getChapterLessonsCacheTag,
   getChapterRouteCacheTag,
   getCourseCurriculumCacheTag,
-} from "@/data/cache-tags";
-import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
-import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
+} from "@zoonk/core/cache-tags";
+import { getChapterGenerationView } from "@zoonk/core/workflows/chapter-generation-access";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -18,12 +18,13 @@ import { GenerationClient } from "./generation-client";
 
 export async function GenerateChapterContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const chapter = await getChapterForGeneration(id);
+  const access = await getChapterGenerationView(id);
 
-  if (!chapter) {
+  if (access.status === "notFound") {
     notFound();
   }
 
+  const { chapter } = access;
   const t = await getExtracted();
 
   const backHref = `/b/${AI_ORG_SLUG}/c/${chapter.course.slug}` as const;
@@ -55,7 +56,11 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
   return (
     <Container variant="narrow">
       <ContainerBody>
-        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={chapter.position === 0}>
+        <SubscriptionGate
+          backHref={backHref}
+          backLabel={backLabel}
+          hasAccess={access.status === "ready"}
+        >
           <GenerationClient
             chapterId={id}
             chapterSlug={chapter.slug}
