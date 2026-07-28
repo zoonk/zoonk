@@ -73,7 +73,7 @@ export function PatternsMilestoneCopy({ milestone }: { milestone: PatternsMilest
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t(
-          "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day. Think about what works well then—you may be able to use it throughout the week.",
+          "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day.",
           { day: weekdayKey, percentage: formattedScore },
         )}
       </PlayerSupportingText>

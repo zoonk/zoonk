@@ -75,9 +75,9 @@ msgid "New daily best"
 msgstr "New daily best"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgctxt "0TbCx0"
-msgid "You earned {brainPower} BP today, more than on any other day. Keep it up—this effort will pay off."
-msgstr "You earned {brainPower} BP today, more than on any other day. Keep it up—this effort will pay off."
+msgctxt "WhzRyH"
+msgid "You earned {brainPower} BP today, more than on any other day."
+msgstr "You earned {brainPower} BP today, more than on any other day."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "m2WzLQ"
@@ -120,9 +120,9 @@ msgid "{days} learning days"
 msgstr "{days} learning days"
 
 #: src/components/completion-learning-days-milestone.tsx
-msgctxt "_M8z1y"
-msgid "You're making learning part of your routine. Regular practice helps you remember more of what you learn."
-msgstr "You're making learning part of your routine. Regular practice helps you remember more of what you learn."
+msgctxt "nUxfIs"
+msgid "Every day you complete a lesson adds to this total. Every lesson adds to your Brain Power."
+msgstr "Every day you complete a lesson adds to this total. Every lesson adds to your Brain Power."
 
 #: src/components/completion-learning-time-milestone.tsx
 msgctxt "dZvEPp"
@@ -140,9 +140,14 @@ msgid "{hours, plural, one {# hour of learning} other {# hours of learning}}"
 msgstr "{hours, plural, one {# hour of learning} other {# hours of learning}}"
 
 #: src/components/completion-learning-time-milestone.tsx
-msgctxt "YYZPzp"
-msgid "All that time spent learning adds up. Even short, regular sessions can help new ideas stick."
-msgstr "All that time spent learning adds up. Even short, regular sessions can help new ideas stick."
+msgctxt "Y9ocVC"
+msgid "That's like reading about {pages} pages of a book."
+msgstr "That's like reading about {pages} pages of a book."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgctxt "PCoIee"
+msgid "That's like reading about {books, plural, one {one {pagesPerBook}-page book} other {# books of {pagesPerBook} pages each}}."
+msgstr "That's like reading about {books, plural, one {one {pagesPerBook}-page book} other {# books of {pagesPerBook} pages each}}."
 
 #: src/components/completion-level-milestone.tsx
 msgctxt "155cHi"
@@ -150,9 +155,9 @@ msgid "Level achieved"
 msgstr "Level achieved"
 
 #: src/components/completion-level-milestone.tsx
-msgctxt "WheDiX"
-msgid "Your effort is paying off—you've reached {belt}, level {level}. Keep it up—every lesson adds to your Brain Power."
-msgstr "Your effort is paying off—you've reached {belt}, level {level}. Keep it up—every lesson adds to your Brain Power."
+msgctxt "6gG1fx"
+msgid "You've reached {belt}, level {level}. Every lesson adds to your Brain Power."
+msgstr "You've reached {belt}, level {level}. Every lesson adds to your Brain Power."
 
 #: src/components/completion-level-milestone.tsx
 msgctxt "VfEqvB"
@@ -185,9 +190,9 @@ msgid "{day} is your best day"
 msgstr "{day} is your best day"
 
 #: src/components/completion-patterns-milestone.tsx
-msgctxt "bim3gG"
-msgid "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day. Think about what works well then—you may be able to use it throughout the week."
-msgstr "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day. Think about what works well then—you may be able to use it throughout the week."
+msgctxt "hJIIFP"
+msgid "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day."
+msgstr "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day."
 
 #: src/components/completion-progress-milestone-screen.tsx
 msgctxt "iSioEh"

@@ -75,9 +75,9 @@ msgid "New daily best"
 msgstr "Nuevo récord diario"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgctxt "0TbCx0"
-msgid "You earned {brainPower} BP today, more than on any other day. Keep it up—this effort will pay off."
-msgstr "Hoy ganaste {brainPower} PM, más que cualquier otro día. Sigue así: este esfuerzo dará sus frutos."
+msgctxt "WhzRyH"
+msgid "You earned {brainPower} BP today, more than on any other day."
+msgstr "Hoy ganaste {brainPower} PM, más que cualquier otro día."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "m2WzLQ"
@@ -120,9 +120,9 @@ msgid "{days} learning days"
 msgstr "{days} días de estudio"
 
 #: src/components/completion-learning-days-milestone.tsx
-msgctxt "_M8z1y"
-msgid "You're making learning part of your routine. Regular practice helps you remember more of what you learn."
-msgstr "El estudio ya forma parte de tu rutina. Practicar con regularidad te ayuda a recordar mejor lo que aprendes."
+msgctxt "nUxfIs"
+msgid "Every day you complete a lesson adds to this total. Every lesson adds to your Brain Power."
+msgstr "Cada día que completas una lección se suma a este total. Cada lección aumenta tu Poder Mental."
 
 #: src/components/completion-learning-time-milestone.tsx
 msgctxt "dZvEPp"
@@ -140,9 +140,14 @@ msgid "{hours, plural, one {# hour of learning} other {# hours of learning}}"
 msgstr "{hours, plural, one {# hora de estudio} other {# horas de estudio}}"
 
 #: src/components/completion-learning-time-milestone.tsx
-msgctxt "YYZPzp"
-msgid "All that time spent learning adds up. Even short, regular sessions can help new ideas stick."
-msgstr "Todo el tiempo que dedicas al estudio suma. Incluso las sesiones cortas y frecuentes ayudan a que las ideas nuevas se queden contigo."
+msgctxt "Y9ocVC"
+msgid "That's like reading about {pages} pages of a book."
+msgstr "Es como leer unas {pages} páginas de un libro."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgctxt "PCoIee"
+msgid "That's like reading about {books, plural, one {one {pagesPerBook}-page book} other {# books of {pagesPerBook} pages each}}."
+msgstr "Es como leer {books, plural, one {aproximadamente un libro de {pagesPerBook} páginas} other {aproximadamente # libros de {pagesPerBook} páginas cada uno}}."
 
 #: src/components/completion-level-milestone.tsx
 msgctxt "155cHi"
@@ -150,9 +155,9 @@ msgid "Level achieved"
 msgstr "Nivel alcanzado"
 
 #: src/components/completion-level-milestone.tsx
-msgctxt "WheDiX"
-msgid "Your effort is paying off—you've reached {belt}, level {level}. Keep it up—every lesson adds to your Brain Power."
-msgstr "Tu esfuerzo está dando frutos: alcanzaste {belt}, nivel {level}. Sigue así: cada lección aumenta tu Poder Mental."
+msgctxt "6gG1fx"
+msgid "You've reached {belt}, level {level}. Every lesson adds to your Brain Power."
+msgstr "Has alcanzado {belt}, nivel {level}. Cada lección aumenta tu Poder Mental."
 
 #: src/components/completion-level-milestone.tsx
 msgctxt "VfEqvB"
@@ -185,9 +190,9 @@ msgid "{day} is your best day"
 msgstr "{day} es tu mejor día"
 
 #: src/components/completion-patterns-milestone.tsx
-msgctxt "bim3gG"
-msgid "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day. Think about what works well then—you may be able to use it throughout the week."
-msgstr "Tu promedio es de {percentage} {day, select, sunday {los domingos} monday {los lunes} tuesday {los martes} wednesday {los miércoles} thursday {los jueves} friday {los viernes} saturday {los sábados} other {en tu mejor día}}, mejor que cualquier otro día. Piensa en qué funciona bien ese día: quizá puedas aplicarlo durante toda la semana."
+msgctxt "hJIIFP"
+msgid "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day."
+msgstr "Tu promedio es de {percentage} {day, select, sunday {los domingos} monday {los lunes} tuesday {los martes} wednesday {los miércoles} thursday {los jueves} friday {los viernes} saturday {los sábados} other {en tu mejor día}}, mejor que cualquier otro día."
 
 #: src/components/completion-progress-milestone-screen.tsx
 msgctxt "iSioEh"
