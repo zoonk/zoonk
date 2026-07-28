@@ -1,5 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { getYearlySavings } from "./billing-savings";
+import { getMonthlyEquivalent, getYearlySavings } from "./billing-prices";
+
+describe(getMonthlyEquivalent, () => {
+  it("returns the yearly price divided across twelve months", () => {
+    const monthlyEquivalent = getMonthlyEquivalent({
+      yearlyPrice: { amount: 18_000, currency: "usd" },
+    });
+
+    expect(monthlyEquivalent).toStrictEqual({ amount: 1500, currency: "usd" });
+  });
+
+  it("rounds the equivalent to the nearest minor currency unit", () => {
+    const monthlyEquivalent = getMonthlyEquivalent({
+      yearlyPrice: { amount: 9999, currency: "usd" },
+    });
+
+    expect(monthlyEquivalent).toStrictEqual({ amount: 833, currency: "usd" });
+  });
+
+  it("returns null when the yearly price is missing", () => {
+    expect(getMonthlyEquivalent({ yearlyPrice: null })).toBeNull();
+  });
+});
 
 describe(getYearlySavings, () => {
   it("returns the proven yearly savings for Plus", () => {

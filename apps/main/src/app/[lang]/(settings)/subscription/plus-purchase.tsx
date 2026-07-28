@@ -12,7 +12,7 @@ import { logError } from "@zoonk/utils/logger";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useState } from "react";
-import { getYearlySavings } from "./_utils/billing-savings";
+import { getMonthlyEquivalent, getYearlySavings } from "./_utils/billing-prices";
 
 type BillingPeriod = "monthly" | "yearly";
 type RequestState = "error" | "idle" | "loading";
@@ -107,15 +107,16 @@ function AvailablePlusPurchase({
   const [requestState, setRequestState] = useState<RequestState>("idle");
   const t = useExtracted();
   const locale = useLocale();
-  const price = getSelectedPrice({ monthlyPrice, period, yearlyPrice });
+  const price = getDisplayedPrice({ monthlyPrice, period, yearlyPrice });
   const yearlySavings = getYearlySavings({ monthlyPrice, yearlyPrice });
   const valueComparisons = useValueComparisons();
   const isLoading = requestState === "loading";
-  const priceLabel = price ? formatPrice(price.amount, price.currency, locale) : null;
-  const periodLabel = period === "monthly" ? t("per month") : t("per year");
+  const priceLabel = formatOptionalPrice({ locale, price });
+  const yearlyPriceLabel = formatOptionalPrice({ locale, price: yearlyPrice });
+  const yearlySavingsAmount = formatOptionalPrice({ locale, price: yearlySavings });
 
-  const yearlySavingsAmount = yearlySavings
-    ? formatPrice(yearlySavings.amount, yearlySavings.currency, locale)
+  const yearlyBillingLabel = yearlyPriceLabel
+    ? t("{amount} billed yearly", { amount: yearlyPriceLabel })
     : null;
 
   const savingsLabel = yearlySavingsAmount
@@ -192,15 +193,15 @@ function AvailablePlusPurchase({
         {priceLabel ? (
           <p className="flex items-baseline gap-2">
             <span className="text-4xl font-semibold tracking-tight tabular-nums">{priceLabel}</span>
-            <span className="text-muted-foreground text-sm">{periodLabel}</span>
+            <span className="text-muted-foreground text-sm">{t("per month")}</span>
           </p>
         ) : (
           <p className="text-muted-foreground text-sm">{t("Price shown at checkout")}</p>
         )}
 
         <div className="min-h-5">
-          {period === "yearly" && savingsLabel && (
-            <p className="text-success text-sm font-medium">{savingsLabel}</p>
+          {period === "yearly" && yearlyBillingLabel && (
+            <p className="text-muted-foreground text-sm">{yearlyBillingLabel}</p>
           )}
         </div>
       </div>
@@ -344,10 +345,10 @@ function getStripeLocaleOverride(locale: string): StripeLocaleOverride | undefin
 }
 
 /**
- * Keeps the displayed amount and the checkout interval tied to the same
- * explicit billing choice.
+ * Keeps both billing options comparable at a glance. Yearly billing uses its
+ * monthly equivalent here while the exact charge remains visible below it.
  */
-function getSelectedPrice({
+function getDisplayedPrice({
   monthlyPrice,
   period,
   yearlyPrice,
@@ -356,5 +357,17 @@ function getSelectedPrice({
   period: BillingPeriod;
   yearlyPrice: PriceInfo | null;
 }) {
-  return period === "monthly" ? monthlyPrice : yearlyPrice;
+  if (period === "monthly") {
+    return monthlyPrice;
+  }
+
+  return getMonthlyEquivalent({ yearlyPrice });
+}
+
+/**
+ * Keeps optional Stripe prices out of the UI until a complete amount and
+ * currency are available to format together.
+ */
+function formatOptionalPrice({ locale, price }: { locale: string; price: PriceInfo | null }) {
+  return price ? formatPrice(price.amount, price.currency, locale) : null;
 }

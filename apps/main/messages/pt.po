@@ -1509,14 +1509,9 @@ msgid "a planner you'll definitely use"
 msgstr "uma agenda que você com certeza vai usar"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "Rw82_V"
-msgid "per month"
-msgstr "por mês"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "qxHg3H"
-msgid "per year"
-msgstr "por ano"
+msgctxt "1qALXt"
+msgid "{amount} billed yearly"
+msgstr "{amount} cobrados por ano"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "h9kFux"
@@ -1548,6 +1543,11 @@ msgstr "Mensal"
 msgctxt "dqD39h"
 msgid "Yearly"
 msgstr "Anual"
+
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
+msgctxt "Rw82_V"
+msgid "per month"
+msgstr "por mês"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "Lxn0Fm"
