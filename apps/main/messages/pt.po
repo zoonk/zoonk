@@ -839,11 +839,6 @@ msgid "Dinosaur extinction"
 msgstr "Extinção dos dinossauros"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "MO2lwh"
-msgid "How volcanoes work"
-msgstr "Como os vulcões funcionam"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "ZzbdHP"
 msgid "World history"
 msgstr "História mundial"
@@ -862,11 +857,6 @@ msgstr "Álgebra linear"
 msgctxt "5gOFKJ"
 msgid "Black holes"
 msgstr "Buracos negros"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "eQHeGX"
-msgid "How the internet works"
-msgstr "Como a internet funciona"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "QOSGzc"
