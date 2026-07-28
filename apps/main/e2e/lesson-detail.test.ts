@@ -72,6 +72,37 @@ async function createTestLesson(options?: {
   return { chapter, course, lesson, lessonTitle, uniqueId };
 }
 
+/**
+ * Builds two playable lessons so the player can prove its quiet skip action
+ * follows the real published curriculum order instead of a test-only route.
+ */
+async function createPlayerSkipScenario() {
+  const scenario = await createTestLesson({ generationStatus: "completed", lessonPosition: 0 });
+
+  const nextLesson = await lessonFixture({
+    chapterId: scenario.chapter.id,
+    generationStatus: "completed",
+    isPublished: true,
+    kind: "explanation",
+    organizationId: scenario.lesson.organizationId,
+    position: 1,
+    slug: `e2e-skip-next-lesson-${scenario.uniqueId}`,
+    title: `E2E Skip Next Lesson ${scenario.uniqueId}`,
+  });
+
+  await stepFixture({
+    content: {
+      text: `Next lesson content ${scenario.uniqueId}`,
+      title: `Next lesson step ${scenario.uniqueId}`,
+      variant: "text",
+    },
+    isPublished: true,
+    lessonId: nextLesson.id,
+  });
+
+  return { ...scenario, nextLesson };
+}
+
 async function expectGuestProgressWarning(page: Page) {
   await expect(page.getByRole("heading", { name: "Progress won't be saved" })).toBeVisible();
 }
@@ -546,6 +577,19 @@ test.describe("Lesson Player Page", () => {
     await expect(
       authenticatedPage.getByRole("heading", { name: `Step ${uniqueId} #0` }),
     ).toBeVisible();
+  });
+
+  test("lesson options let the learner skip to the next lesson", async ({ authenticatedPage }) => {
+    const { chapter, course, lesson, nextLesson } = await createPlayerSkipScenario();
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(authenticatedPage.getByRole("link", { name: "Skip lesson" })).not.toBeVisible();
+
+    await authenticatedPage.getByRole("button", { name: "Lesson options" }).click();
+    await authenticatedPage.getByRole("link", { name: "Skip lesson" }).click();
+
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/l/${nextLesson.slug}$`, "u"));
   });
 
   test("formats lesson progress using the app locale", async ({ browser, withProgressUser }) => {
