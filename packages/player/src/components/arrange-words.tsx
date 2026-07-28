@@ -13,11 +13,39 @@ import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-
 import { InteractiveStepLayout } from "./step-layouts";
 import { WordBankOptionButton } from "./word-bank-option-content";
 
-type WordBankTile = { isUsed: boolean; key: string; option: WordBankOption };
+type WordBankTile = { index: number; isUsed: boolean; key: string; option: WordBankOption };
+type PlacedWordWithBankIndex = PlacedWord & { wordBankIndex: number | null };
 
 /**
- * Duplicate words are valid, so a tile is considered used only when the learner
- * has already placed this exact occurrence of that word.
+ * Submitted answers preserve only their words, so a restored result cannot
+ * identify which duplicate bank tile originally supplied each word. Matching
+ * those untracked words by occurrence keeps the completed-answer view stable.
+ */
+function isUntrackedOccurrenceUsed({
+  index,
+  option,
+  placedWords,
+  words,
+}: {
+  index: number;
+  option: WordBankOption;
+  placedWords: PlacedWordWithBankIndex[];
+  words: WordBankOption[];
+}): boolean {
+  const usedCount = placedWords.filter(
+    (placed) => placed.wordBankIndex === null && placed.word === option.word,
+  ).length;
+
+  const occurrenceCount = words
+    .slice(0, index + 1)
+    .filter((item) => item.word === option.word).length;
+
+  return usedCount >= occurrenceCount;
+}
+
+/**
+ * Duplicate words are valid, so interactive selections use the original bank
+ * index to keep the tapped tile attached to the placed answer.
  */
 function getWordBankTile({
   index,
@@ -27,16 +55,14 @@ function getWordBankTile({
 }: {
   index: number;
   option: WordBankOption;
-  placedWords: PlacedWord[];
+  placedWords: PlacedWordWithBankIndex[];
   words: WordBankOption[];
 }): WordBankTile {
-  const usedCount = placedWords.filter((placed) => placed.word === option.word).length;
+  const isUsed =
+    placedWords.some((placed) => placed.wordBankIndex === index) ||
+    isUntrackedOccurrenceUsed({ index, option, placedWords, words });
 
-  const occurrenceCount = words
-    .slice(0, index + 1)
-    .filter((item) => item.word === option.word).length;
-
-  return { isUsed: usedCount >= occurrenceCount, key: `bank-${option.word}-${index}`, option };
+  return { index, isUsed, key: `bank-${option.word}-${index}`, option };
 }
 
 /**
@@ -47,7 +73,7 @@ function getWordBankTiles({
   placedWords,
   words,
 }: {
-  placedWords: PlacedWord[];
+  placedWords: PlacedWordWithBankIndex[];
   words: WordBankOption[];
 }): WordBankTile[] {
   return words.map((option, index) => getWordBankTile({ index, option, placedWords, words }));
@@ -60,8 +86,8 @@ function WordBank({
   words,
 }: {
   disabled: boolean;
-  onPlace: (option: WordBankOption) => void;
-  placedWords: PlacedWord[];
+  onPlace: (tile: WordBankTile) => void;
+  placedWords: PlacedWordWithBankIndex[];
   words: WordBankOption[];
 }) {
   const t = useExtracted();
@@ -81,7 +107,7 @@ function WordBank({
           disabled={disabled}
           isSelected={tile.isUsed}
           key={tile.key}
-          onToggle={() => onPlace(tile.option)}
+          onToggle={() => onPlace(tile)}
           option={tile.option}
         />
       ))}
@@ -113,7 +139,7 @@ export function ArrangeWordsInteraction({
   const idCounter = useRef(0);
   const { trigger } = useWebHaptics();
 
-  const [placedWords, setPlacedWords] = useState<PlacedWord[]>(() => {
+  const [placedWords, setPlacedWords] = useState<PlacedWordWithBankIndex[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
       return result.answer.arrangedWords.map((word) => {
         const id = String(idCounter.current);
@@ -126,6 +152,7 @@ export function ArrangeWordsInteraction({
           romanization: null,
           translation: null,
           word,
+          wordBankIndex: null,
         };
       });
     }
@@ -138,7 +165,7 @@ export function ArrangeWordsInteraction({
   const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
 
   const syncSelectedAnswer = useCallback(
-    (next: PlacedWord[]) => {
+    (next: PlacedWordWithBankIndex[]) => {
       const arrangedWords = next.map((placedWord) => placedWord.word);
 
       if (acceptedWordLengths.includes(next.length)) {
@@ -154,13 +181,19 @@ export function ArrangeWordsInteraction({
   );
 
   const handlePlace = useCallback(
-    (option: WordBankOption) => {
+    (tile: WordBankTile) => {
       if (result || placedWords.length >= maxAnswerLength) {
         return;
       }
 
-      void play(option.audioUrl);
-      const placed: PlacedWord = { ...option, id: String(idCounter.current) };
+      void play(tile.option.audioUrl);
+
+      const placed: PlacedWordWithBankIndex = {
+        ...tile.option,
+        id: String(idCounter.current),
+        wordBankIndex: tile.index,
+      };
+
       idCounter.current += 1;
       const next = [...placedWords, placed];
       setPlacedWords(next);

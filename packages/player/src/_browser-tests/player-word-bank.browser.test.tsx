@@ -137,6 +137,38 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(mundoOption).toBeEnabled();
   });
 
+  it("moves the tapped duplicate arrange-word option", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "reading",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            kind: "reading",
+            sentence: buildSerializedSentence({ sentence: "he he", translation: "he he" }),
+            wordBankOptions: [
+              buildWordBankOption({ word: "he" }),
+              buildWordBankOption({ word: "he" }),
+            ],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const duplicateOptions = page
+      .getByRole("group", { name: /word bank/iu })
+      .getByRole("button", { exact: true, name: "he" });
+
+    const firstOption = duplicateOptions.nth(0);
+    const secondOption = duplicateOptions.nth(1);
+
+    await secondOption.click();
+
+    await expect.element(firstOption).toBeEnabled();
+    await expect.element(secondOption).toBeDisabled();
+  });
+
   it("keeps selected fill-blank options as disabled placeholders", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
