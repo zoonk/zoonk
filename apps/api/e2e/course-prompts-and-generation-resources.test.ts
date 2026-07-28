@@ -24,12 +24,14 @@ test.describe("Course prompt and generation resources API", () => {
     await prisma.$disconnect();
   });
 
-  test("resolves a cached topic prompt into a route-neutral generation target", async () => {
+  test("resolves a cached coding prompt into a route-neutral generation target", async () => {
     const uniqueId = randomUUID();
     const prompt = `Learn focused API design ${uniqueId}`;
 
     const coursePrompt = await coursePromptFixture({
       canonicalTitle: `Focused API design ${uniqueId}`,
+      courseFormat: "coding",
+      generationStatus: null,
       language: "en",
       normalizedPrompt: normalizeString(prompt),
       prompt,
@@ -47,6 +49,10 @@ test.describe("Course prompt and generation resources API", () => {
       coursePromptId: coursePrompt.id,
       kind: "generation",
     });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
+    ).resolves.toMatchObject({ courseFormat: "coding", generationStatus: "pending" });
 
     await apiContext.dispose();
   });

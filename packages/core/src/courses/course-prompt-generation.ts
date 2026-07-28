@@ -1,12 +1,32 @@
-import { type CoursePrompt } from "@zoonk/db";
+import { type CourseFormat, type CoursePrompt } from "@zoonk/db";
 
 const SAME_LANGUAGE_COURSE_ERROR = "Language course source and target languages must be different";
 const UNSUPPORTED_COURSE_PROMPT_ERROR = "Course prompt is not generatable";
+
+const REGULAR_COURSE_FORMATS = [
+  "coding",
+  "core",
+  "instrument",
+  "practical",
+] as const satisfies readonly CourseFormat[];
+
+export type RegularCourseFormat = (typeof REGULAR_COURSE_FORMATS)[number];
 
 type CoursePromptGenerationInput = Pick<
   CoursePrompt,
   "canonicalTitle" | "courseFormat" | "generationStatus" | "intent" | "language" | "targetLanguage"
 >;
+
+/**
+ * Identifies formats that use the regular course pipeline. Keeping this rule in
+ * Core lets routing and Workflow agree on generation support while preserving
+ * the classified format on the prompt and generated course.
+ */
+export function isRegularCourseFormat(
+  courseFormat: CourseFormat | null,
+): courseFormat is RegularCourseFormat {
+  return REGULAR_COURSE_FORMATS.some((format) => format === courseFormat);
+}
 
 /**
  * Language courses are only useful when the learner language and learned
@@ -33,7 +53,7 @@ export function getCoursePromptGenerationError(prompt: CoursePromptGenerationInp
     return UNSUPPORTED_COURSE_PROMPT_ERROR;
   }
 
-  if (prompt.courseFormat === "core") {
+  if (isRegularCourseFormat(prompt.courseFormat)) {
     return prompt.targetLanguage === null ? null : UNSUPPORTED_COURSE_PROMPT_ERROR;
   }
 

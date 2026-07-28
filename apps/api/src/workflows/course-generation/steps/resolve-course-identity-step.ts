@@ -134,7 +134,7 @@ function getCourseIdentityWhere(request: GeneratableCoursePrompt): CourseWhereIn
 /**
  * Combines format identity with the amount of fuzzy title search each format
  * needs. A language target is already the complete reusable-course identity,
- * while core courses still need at least one usable title or alias clause.
+ * while regular courses still need at least one usable title or alias clause.
  */
 function getCandidateSearchWhere({
   request,

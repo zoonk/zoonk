@@ -1,5 +1,8 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { getCoursePromptGenerationError } from "@zoonk/core/courses/prompt-generation";
+import {
+  type RegularCourseFormat,
+  getCoursePromptGenerationError,
+} from "@zoonk/core/courses/prompt-generation";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CoursePrompt, type GenerationStatus, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
@@ -11,13 +14,13 @@ type GeneratableCoursePromptBase = CoursePrompt & {
 };
 
 export type GeneratableCoursePrompt =
-  | (GeneratableCoursePromptBase & { courseFormat: "core"; targetLanguage: null })
+  | (GeneratableCoursePromptBase & { courseFormat: RegularCourseFormat; targetLanguage: null })
   | (GeneratableCoursePromptBase & { courseFormat: "language"; targetLanguage: string });
 
 /**
- * Narrows persisted routing decisions to the subset the course workflow can
- * generate today. Redirect-only, waitlist, and unsafe prompts are valid admin
- * records but invalid workflow inputs.
+ * Narrows persisted routing decisions to the regular and language formats the
+ * course workflow can generate. Redirect-only, waitlist, and unsafe prompts
+ * are valid admin records but invalid workflow inputs.
  */
 export function assertGeneratableCoursePrompt(
   prompt: CoursePrompt,

@@ -9,7 +9,7 @@ export type CoursePromptGenerationCompletionKind = "course" | "introductionLesso
 /**
  * Resolves the route-neutral destination that becomes available while a course
  * prompt is generating. Language courses wait for the complete curriculum,
- * while core courses become usable as soon as their published intro lesson
+ * while regular courses become usable as soon as their published intro lesson
  * exists.
  */
 async function getCoursePromptGenerationTarget({

@@ -1,4 +1,8 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import {
+  type RegularCourseFormat,
+  isRegularCourseFormat,
+} from "@zoonk/core/courses/prompt-generation";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import {
@@ -26,8 +30,13 @@ type CourseContextBase = {
   organizationId: string;
 };
 
+export type RegularCourseContext = CourseContextBase & {
+  format: RegularCourseFormat;
+  targetLanguage: null;
+};
+
 export type CourseContext =
-  | (CourseContextBase & { format: "core"; targetLanguage: null })
+  | RegularCourseContext
   | (CourseContextBase & { format: "language"; targetLanguage: string });
 
 export type InitializedCourse = { course: CourseContext; existing: ExistingCourseContent | null };
@@ -56,8 +65,8 @@ export function getCourseContext({
     organizationId,
   };
 
-  if (course.format === "core" && course.targetLanguage === null) {
-    return { ...context, format: "core", targetLanguage: null };
+  if (isRegularCourseFormat(course.format) && course.targetLanguage === null) {
+    return { ...context, format: course.format, targetLanguage: null };
   }
 
   if (
