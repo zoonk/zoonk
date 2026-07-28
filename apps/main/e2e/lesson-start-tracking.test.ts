@@ -144,6 +144,17 @@ test.describe("Lesson Start Tracking", () => {
     expect(progress).toBeNull();
   });
 
+  test("authenticated request for a missing lesson returns not found", async ({
+    authenticatedPage,
+    baseURL,
+  }) => {
+    const response = await authenticatedPage.request.post(`/api/lessons/${randomUUID()}/starts`, {
+      headers: { Origin: new URL(baseURL!).origin },
+    });
+
+    expect(response.status()).toBe(404);
+  });
+
   test("cross-origin request cannot use the learner's session", async ({ baseURL }) => {
     const [email, { course, lesson }] = await Promise.all([
       createUniqueUser(baseURL!),

@@ -104,8 +104,8 @@ export function GenerationClient({
     isActive ? activePhaseNames : [],
   );
 
-  const destinationCourseSlug = generation.completionEntityId ?? linkedCourseSlug ?? courseSlug;
-  const redirectHref = `/b/${AI_ORG_SLUG}/c/${destinationCourseSlug}`;
+  const destinationTarget = generation.completionEntityId ?? linkedCourseSlug ?? courseSlug;
+  const redirectHref = `/b/${AI_ORG_SLUG}/c/${destinationTarget}`;
 
   const completedTitle = isLanguageCourse ? t("Your course is ready") : t("Your lesson is ready");
 
@@ -114,11 +114,7 @@ export function GenerationClient({
     : t("Taking you to your first lesson…");
 
   useCompletionRedirect({
-    beforeRedirect: () =>
-      invalidateGeneratedCourse({
-        courseSlug: destinationCourseSlug,
-        destinationHref: redirectHref,
-      }),
+    beforeRedirect: () => invalidateGeneratedCourse(redirectHref),
     status: generation.status,
     url: redirectHref,
   });

@@ -26,8 +26,12 @@ export async function POST(
   try {
     const result = await startLesson(lessonId);
 
-    if (result.status !== "started") {
+    if (result.status === "unauthorized") {
       return new Response(null, { status: 401 });
+    }
+
+    if (result.status === "notFound") {
+      return new Response(null, { status: 404 });
     }
 
     return new Response(null, { status: 204 });

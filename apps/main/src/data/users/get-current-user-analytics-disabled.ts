@@ -1,4 +1,5 @@
 import "server-only";
+import { loadOptionalData } from "@/data/_utils/load-optional-data";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getCurrentUser } from "@zoonk/core/users/current";
 
@@ -7,7 +8,10 @@ import { getCurrentUser } from "@zoonk/core/users/current";
  * exposing user identity as caller-provided data.
  */
 export async function getCurrentUserAnalyticsState() {
-  const [subscription, user] = await Promise.all([getActiveSubscription(), getCurrentUser()]);
+  const [subscription, user] = await Promise.all([
+    loadOptionalData(getActiveSubscription),
+    getCurrentUser(),
+  ]);
 
   if (!user) {
     return { analyticsDisabled: false, plan: "free", userId: null, username: null };
