@@ -5,6 +5,7 @@ import {
   lessonVisibilitySchema,
   lessonVisibilityUpdateSchema,
 } from "../schemas/current-learning";
+import { coursePathParamsSchema } from "../schemas/paths";
 import { badRequestResponse, forbiddenResponse, unauthorizedResponse } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
 
@@ -38,6 +39,21 @@ export const currentLearningPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "List current user's courses",
+      tags: ["Courses"],
+    },
+  },
+  "/me/courses/{courseId}": {
+    delete: {
+      operationId: "removeCurrentUserCourse",
+      requestParams: { path: coursePathParamsSchema },
+      responses: {
+        "204": { description: "Course removed from learner library" },
+        "400": badRequestResponse,
+        "401": unauthorizedResponse,
+        "403": forbiddenResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Remove a course from the current user's library",
       tags: ["Courses"],
     },
   },

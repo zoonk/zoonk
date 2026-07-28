@@ -545,6 +545,47 @@ msgctxt "Dr13kE"
 msgid "Continue where you left off"
 msgstr "Continúa donde lo dejaste"
 
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+msgctxt "zfUTRh"
+msgid "More options for {courseTitle}"
+msgstr "Más opciones para {courseTitle}"
+
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+msgctxt "M9_kBE"
+msgid "Remove from My Courses"
+msgstr "Quitar de Mis cursos"
+
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+msgctxt "SZ0Rgi"
+msgid "Remove {courseTitle}?"
+msgstr "¿Quitar {courseTitle}?"
+
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+msgctxt "RGYckE"
+msgid "The course will disappear from My Courses. Your progress will be kept."
+msgstr "El curso desaparecerá de Mis cursos. Tu progreso se conservará."
+
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+msgctxt "xjTT7H"
+msgid "We couldn't remove this course. Please try again."
+msgstr "No pudimos quitar este curso. Inténtalo de nuevo."
+
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+msgctxt "RC2XA4"
+msgid "Removing..."
+msgstr "Quitando…"
+
+#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
+msgctxt "D4eTra"
+msgid "Remove course"
+msgstr "Quitar curso"
+
 #: src/app/[lang]/(catalog)/my/user-course-list.tsx
 msgctxt "BDHWkf"
 msgid "No courses yet"
@@ -684,11 +725,6 @@ msgstr "Buscando la mejor forma de ayudarte"
 msgctxt "1A36NM"
 msgid "We're checking your learning goal. This may take a few seconds."
 msgstr "Estamos revisando tu objetivo de estudio. Esto puede tardar unos segundos."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Cancelar"
 
 #: src/app/[lang]/(catalog)/start/learn/[prompt]/page.tsx
 msgctxt "CaU_nf"
