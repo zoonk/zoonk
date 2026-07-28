@@ -54,7 +54,7 @@ async function startChapterImagesWithoutFailingCourse(courseId: string): Promise
 
 /**
  * Starts the optional image workflow for every course and generates the first
- * chapter only for language courses. Core courses already generate their
+ * chapter only for language courses. Regular courses already generate their
  * introduction lessons during setup, so they no longer need another chapter
  * workflow to start automatically.
  */

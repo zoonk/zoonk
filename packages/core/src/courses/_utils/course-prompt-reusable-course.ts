@@ -1,4 +1,11 @@
-import { type Course, type CoursePrompt, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
+import {
+  type Course,
+  type CourseFormat,
+  type CoursePrompt,
+  getAiGenerationCourseWhere,
+  prisma,
+} from "@zoonk/db";
+import { getCompatibleCourseFormats } from "../course-prompt-generation";
 import { getCourseSlugForTitle } from "../course-slug";
 import { type CoursePromptWithCourse } from "./course-prompt-types";
 
@@ -10,9 +17,11 @@ export type ReusableCourse = Pick<Course, "id" | "slug">;
  * generation only when the exact generated course identity already exists.
  */
 async function findCompletedReusableCourse({
+  format,
   language,
   title,
 }: {
+  format: CourseFormat;
   language: string;
   title: string;
 }): Promise<Course | null> {
@@ -20,7 +29,7 @@ async function findCompletedReusableCourse({
 
   return prisma.course.findFirst({
     where: getAiGenerationCourseWhere({
-      format: "core",
+      format: { in: getCompatibleCourseFormats(format) },
       generationStatus: "completed",
       isPublished: true,
       language,
@@ -79,11 +88,15 @@ async function getReusableCourseForPrompt(prompt: CoursePromptWithCourse): Promi
     return linkedCourse;
   }
 
-  if (!prompt.canonicalTitle) {
+  if (!(prompt.canonicalTitle && prompt.courseFormat)) {
     return null;
   }
 
-  return findCompletedReusableCourse({ language: prompt.language, title: prompt.canonicalTitle });
+  return findCompletedReusableCourse({
+    format: prompt.courseFormat,
+    language: prompt.language,
+    title: prompt.canonicalTitle,
+  });
 }
 
 /**

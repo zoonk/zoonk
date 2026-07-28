@@ -10,6 +10,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { getReusableCourseForCoursePrompt } from "./_utils/course-prompt-reusable-course";
 import { type CoursePromptWithCourse } from "./_utils/course-prompt-types";
 import { COURSE_LANGUAGE_MAX_LENGTH, COURSE_PROMPT_MAX_LENGTH } from "./course-prompt-contract";
+import { isRegularCourseFormat } from "./course-prompt-generation";
 
 type PromptIntent = CoursePrompt["intent"];
 type PersistedCourseFormat = CoursePrompt["courseFormat"];
@@ -83,7 +84,7 @@ async function findCachedCoursePrompt({
 }
 
 /**
- * Keeps the supported-generation check in one place. `core` courses use the
+ * Keeps the supported-generation check in one place. Regular formats use the
  * current course workflow, while language prompts only generate after the
  * dedicated language start flow has stored a concrete target language.
  */
@@ -96,11 +97,27 @@ function canGenerateCoursePrompt({
     return false;
   }
 
-  if (courseFormat === "core") {
+  if (isRegularCourseFormat(courseFormat)) {
     return true;
   }
 
   return courseFormat === "language" && Boolean(targetLanguage);
+}
+
+/**
+ * Promotes legacy waitlist rows when their format becomes generatable. The
+ * conditional update cannot replace a newer running or completed status when
+ * two visits or a workflow start race with this cached resolution.
+ */
+async function enableCoursePromptGeneration(prompt: CoursePrompt): Promise<void> {
+  if (prompt.generationStatus !== null) {
+    return;
+  }
+
+  await prisma.coursePrompt.updateMany({
+    data: { generationStatus: "pending" },
+    where: { generationStatus: null, id: prompt.id },
+  });
 }
 
 /**
@@ -111,7 +128,7 @@ function canGenerateCoursePrompt({
 async function getCoursePromptResolution(
   prompt: CoursePromptWithCourse,
 ): Promise<CoursePromptResolution> {
-  if (prompt.intent === "learn" && prompt.courseFormat === "core") {
+  if (prompt.intent === "learn" && isRegularCourseFormat(prompt.courseFormat)) {
     const course = await getReusableCourseForCoursePrompt(prompt);
 
     if (course) {
@@ -120,6 +137,8 @@ async function getCoursePromptResolution(
   }
 
   if (canGenerateCoursePrompt(prompt)) {
+    await enableCoursePromptGeneration(prompt);
+
     return {
       kind: "generate",
       prompt: {
@@ -257,8 +276,8 @@ async function upsertCoursePrompt({
 
 /**
  * Builds the persisted prompt fields for a newly classified prompt. Keeping the
- * mapper separate makes the launch limitation explicit: only shared-learning
- * core and concrete language prompts are sent to generation today.
+ * mapper separate makes the generation boundary explicit: shared regular
+ * formats and concrete language prompts are sent to generation today.
  */
 function getClassifiedCoursePromptInput({
   courseFormat,

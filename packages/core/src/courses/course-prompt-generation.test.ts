@@ -11,9 +11,12 @@ const generatableCorePrompt = {
 };
 
 describe(getCoursePromptGenerationError, () => {
-  it("accepts a pending learn prompt with a canonical title and core format", () => {
-    expect(getCoursePromptGenerationError(generatableCorePrompt)).toBeNull();
-  });
+  it.each(["coding", "core", "instrument", "practical"] as const)(
+    "accepts a pending learn prompt with a canonical title and %s format",
+    (courseFormat) => {
+      expect(getCoursePromptGenerationError({ ...generatableCorePrompt, courseFormat })).toBeNull();
+    },
+  );
 
   it.each([
     ["missing canonical title", { ...generatableCorePrompt, canonicalTitle: null }],

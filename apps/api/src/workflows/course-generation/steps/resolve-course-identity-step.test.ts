@@ -96,6 +96,34 @@ describe(resolveCourseIdentityStep, () => {
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
   });
 
+  it("returns and stores an exact-slug course with a different regular format", async () => {
+    const title = `Existing Cross Format Course ${randomUUID()}`;
+    const slug = getCourseSlugForTitle({ language: "en", title });
+
+    const [course, request] = await Promise.all([
+      courseFixture({ format: "core", organizationId, slug, title }),
+      generatableCoursePromptFixture({
+        canonicalTitle: title,
+        courseFormat: "coding",
+        language: "en",
+      }),
+    ]);
+
+    assertGeneratableCoursePrompt(request);
+
+    const result = await resolveCourseIdentityStep(request);
+
+    const linkedRequest = await prisma.coursePrompt.findUniqueOrThrow({
+      where: { id: request.id },
+    });
+
+    expect(result?.id).toBe(course.id);
+    expect(result?.format).toBe("core");
+    expect(linkedRequest).toMatchObject({ courseFormat: "coding", courseId: course.id });
+    expect(generateCourseIdentitySearchQueries).not.toHaveBeenCalled();
+    expect(resolveCourseIdentity).not.toHaveBeenCalled();
+  });
+
   it("uses AI classification to link semantically equivalent course titles", async () => {
     const [course, request] = await Promise.all([
       courseFixture({

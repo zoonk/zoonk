@@ -1,7 +1,7 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateIntroductionChapterStep } from "./generate-introduction-chapter-step";
-import { type CourseContext } from "./initialize-course-step";
+import { type RegularCourseContext } from "./initialize-course-step";
 
 const { generateCourseIntroductionMock } = vi.hoisted(() => ({
   generateCourseIntroductionMock: vi.fn(),
@@ -19,7 +19,7 @@ const course = {
   language: "en",
   organizationId: "org-1",
   targetLanguage: null,
-} satisfies Extract<CourseContext, { format: "core" }>;
+} satisfies RegularCourseContext;
 
 describe(generateIntroductionChapterStep, () => {
   beforeEach(() => {

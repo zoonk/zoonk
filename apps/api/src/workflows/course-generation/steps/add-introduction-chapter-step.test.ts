@@ -6,7 +6,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { addIntroductionChapterStep } from "./add-introduction-chapter-step";
-import { type CourseContext } from "./initialize-course-step";
+import { type RegularCourseContext } from "./initialize-course-step";
 
 describe(addIntroductionChapterStep, () => {
   let organizationId: string;
@@ -23,7 +23,7 @@ describe(addIntroductionChapterStep, () => {
   /**
    * Builds the regular-course context required by the intro chapter step. The
    * step intentionally excludes language courses, so every caller should pass a
-   * context with the core format and its null target language.
+   * context with a regular format and its null target language.
    */
   function getCourseContext(course: Awaited<ReturnType<typeof courseFixture>>) {
     return {
@@ -34,7 +34,7 @@ describe(addIntroductionChapterStep, () => {
       language: course.language,
       organizationId,
       targetLanguage: null,
-    } satisfies Extract<CourseContext, { format: "core" }>;
+    } satisfies RegularCourseContext;
   }
 
   it("creates a published running introduction chapter at position zero", async () => {

@@ -11,12 +11,10 @@ import { addIntroductionChapterStep } from "../steps/add-introduction-chapter-st
 import { completeIntroductionChapterStep } from "../steps/complete-introduction-chapter-step";
 import { completeIntroductionLessonStep } from "../steps/complete-introduction-lesson-step";
 import { getIntroductionLessonsStep } from "../steps/get-introduction-lessons-step";
-import { type CourseContext } from "../steps/initialize-course-step";
+import { type CourseContext, type RegularCourseContext } from "../steps/initialize-course-step";
 import { startIntroductionLessonsStep } from "../steps/start-introduction-lessons-step";
 
 const INITIAL_LESSON_GENERATION_TARGET_COUNT = 3;
-
-type IntroductionCourseContext = Extract<CourseContext, { format: "core" }>;
 
 /**
  * Keeps the intro chapter helper scoped to regular courses even if a future
@@ -26,8 +24,8 @@ type IntroductionCourseContext = Extract<CourseContext, { format: "core" }>;
  */
 function assertIntroductionCourseContext(
   course: CourseContext,
-): asserts course is IntroductionCourseContext {
-  if (course.format !== "core") {
+): asserts course is RegularCourseContext {
+  if (course.format === "language") {
     throw new Error("Introduction chapters are only generated for regular courses.");
   }
 }

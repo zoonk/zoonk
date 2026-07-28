@@ -410,74 +410,80 @@ describe(courseGenerationWorkflow, () => {
       expect(course.userCount).toBe(1);
     });
 
-    it("creates an intro chapter without triggering chapter generation for core courses", async () => {
-      vi.mocked(chapterGenerationWorkflow).mockClear();
+    it.each(["coding", "core", "instrument", "practical"] as const)(
+      "creates an intro chapter without triggering chapter generation for %s courses",
+      async (courseFormat) => {
+        vi.mocked(chapterGenerationWorkflow).mockClear();
 
-      const title = `Intro Chapter Course ${randomUUID()}`;
-      const slug = getCourseSlugForTitle({ language: "en", title });
+        const title = `Intro Chapter ${courseFormat} Course ${randomUUID()}`;
+        const slug = getCourseSlugForTitle({ language: "en", title });
 
-      const request = await coursePromptFixture({
-        canonicalTitle: title,
-        generationStatus: "pending",
-      });
+        const request = await coursePromptFixture({
+          canonicalTitle: title,
+          courseFormat,
+          generationStatus: "pending",
+        });
 
-      await generateCourse(request.id);
+        await generateCourse(request.id);
 
-      const course = await prisma.course.findFirstOrThrow({
-        include: {
-          chapters: {
-            include: { lessons: { orderBy: { position: "asc" } } },
-            orderBy: { position: "asc" },
+        const course = await prisma.course.findFirstOrThrow({
+          include: {
+            chapters: {
+              include: { lessons: { orderBy: { position: "asc" } } },
+              orderBy: { position: "asc" },
+            },
           },
-        },
-        where: { slug },
-      });
+          where: { slug },
+        });
 
-      const introductionChapter = course.chapters[0]!;
-      expect(introductionChapter.generationStatus).toBe("completed");
-      expect(introductionChapter.title).toBe("A quick guide to the field");
+        expect(course.format).toBe(courseFormat);
 
-      expect(introductionChapter.lessons.map((lesson) => lesson.kind)).toStrictEqual([
-        "explanation",
-        "quiz",
-        "practice",
-        "explanation",
-        "quiz",
-        "practice",
-        "explanation",
-        "quiz",
-        "practice",
-        "review",
-      ]);
+        const introductionChapter = course.chapters[0]!;
+        expect(introductionChapter.generationStatus).toBe("completed");
+        expect(introductionChapter.title).toBe("A quick guide to the field");
 
-      expect(introductionChapter.imageUrl).toBeNull();
+        expect(introductionChapter.lessons.map((lesson) => lesson.kind)).toStrictEqual([
+          "explanation",
+          "quiz",
+          "practice",
+          "explanation",
+          "quiz",
+          "practice",
+          "explanation",
+          "quiz",
+          "practice",
+          "review",
+        ]);
 
-      const firstMainChapter = course.chapters[1]!;
-      expect(firstMainChapter.position).toBe(1);
-      expect(firstMainChapter.title).toBe("Chapter 1");
-      expect(firstMainChapter.imageUrl).toBeNull();
+        expect(introductionChapter.imageUrl).toBeNull();
 
-      const thirdChapter = course.chapters[2]!;
-      expect(thirdChapter.position).toBe(2);
-      expect(thirdChapter.title).toBe("Chapter 2");
+        const firstMainChapter = course.chapters[1]!;
+        expect(firstMainChapter.position).toBe(1);
+        expect(firstMainChapter.title).toBe("Chapter 1");
+        expect(firstMainChapter.imageUrl).toBeNull();
 
-      const firstLesson = introductionChapter.lessons[0]!;
-      const secondLesson = introductionChapter.lessons[1]!;
-      const thirdLesson = introductionChapter.lessons[2]!;
+        const thirdChapter = course.chapters[2]!;
+        expect(thirdChapter.position).toBe(2);
+        expect(thirdChapter.title).toBe("Chapter 2");
 
-      expect(lessonGenerationWorkflow).toHaveBeenCalledWith(firstLesson.id);
-      expect(startMock).toHaveBeenCalledWith(lessonGenerationWorkflow, [secondLesson.id]);
-      expect(startMock).toHaveBeenCalledWith(lessonGenerationWorkflow, [thirdLesson.id]);
+        const firstLesson = introductionChapter.lessons[0]!;
+        const secondLesson = introductionChapter.lessons[1]!;
+        const thirdLesson = introductionChapter.lessons[2]!;
 
-      expect(startMock).toHaveBeenCalledWith(chapterImagesWorkflow, [course.id]);
+        expect(lessonGenerationWorkflow).toHaveBeenCalledWith(firstLesson.id);
+        expect(startMock).toHaveBeenCalledWith(lessonGenerationWorkflow, [secondLesson.id]);
+        expect(startMock).toHaveBeenCalledWith(lessonGenerationWorkflow, [thirdLesson.id]);
 
-      expect(generateCourseIntroduction).toHaveBeenCalledWith({
-        courseTitle: title,
-        language: "en",
-      });
+        expect(startMock).toHaveBeenCalledWith(chapterImagesWorkflow, [course.id]);
 
-      expect(chapterGenerationWorkflow).not.toHaveBeenCalled();
-    });
+        expect(generateCourseIntroduction).toHaveBeenCalledWith({
+          courseTitle: title,
+          language: "en",
+        });
+
+        expect(chapterGenerationWorkflow).not.toHaveBeenCalled();
+      },
+    );
 
     it("starts the first intro lesson before the main course setup finishes", async () => {
       startMock.mockClear();

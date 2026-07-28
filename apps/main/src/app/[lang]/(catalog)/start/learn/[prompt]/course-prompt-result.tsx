@@ -25,8 +25,8 @@ function renderHighlightedTitle(chunks: React.ReactNode) {
 }
 
 /**
- * Shows the waitlist state for prompt intents and reusable course formats that are
- * intentionally recognized before their dedicated learning workflows exist.
+ * Shows the waitlist state for prompt intents that are intentionally recognized
+ * before their dedicated learning workflows exist.
  */
 async function WaitlistedCoursePrompt({
   prompt,
