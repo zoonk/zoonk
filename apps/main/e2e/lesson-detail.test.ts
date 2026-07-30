@@ -948,7 +948,7 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/pt/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page).toHaveTitle(new RegExp(`Explicação sobre ${lessonTitle}`, "u"));
+    await expect(page).toHaveTitle(new RegExp(`${lessonTitle}.*:.*${course.title}`, "u"));
 
     await expect
       .poll(() =>
@@ -956,7 +956,9 @@ test.describe("Lesson Player Page", () => {
           () => document.querySelector<HTMLMetaElement>("meta[name='description']")?.content ?? "",
         ),
       )
-      .toBe(`E2E lesson description ${uniqueId}`);
+      .toMatch(
+        new RegExp(`${lessonTitle}.*${course.title}.*E2E lesson description ${uniqueId}`, "u"),
+      );
 
     await expectRobotsMeta({ page, value: "index, follow" });
   });
@@ -1029,7 +1031,7 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/pt/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page).toHaveTitle(new RegExp(`Quiz sobre ${sourceTitle}`, "u"));
+    await expect(page).toHaveTitle(new RegExp(`${sourceTitle}.*:.*${course.title}`, "u"));
 
     await expect(page).not.toHaveTitle(/Quiz Quiz/u);
   });

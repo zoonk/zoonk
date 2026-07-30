@@ -398,6 +398,16 @@ msgctxt "xTTP0x"
 msgid "Not started"
 msgstr "Sin empezar"
 
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "QB2G_Y"
+msgid "Chapter about {chapter} in the {course} course. {description}"
+msgstr "Capítulo sobre {chapter} del curso {course}. {description}"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "DcXGUl"
+msgid "{chapter}: {course} course"
+msgstr "{chapter}: curso de {course}"
+
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "iRubpl"
 msgid "Current chapter"
@@ -3011,6 +3021,16 @@ msgid "{chapter}: {kind, select, alphabet {Alphabet} custom {Custom lesson} expl
 msgstr "{chapter}: {kind, select, alphabet {Alfabeto} custom {Lección personalizada} explanation {Explicación} grammar {Gramática} listening {Escucha} practice {Práctica} quiz {Cuestionario} reading {Lectura} review {Repaso} translation {Traducción} tutorial {Tutorial} vocabulary {Vocabulario} other {Lección}} {position}"
 
 #: src/lib/lessons.ts
-msgctxt "EuLBDj"
-msgid "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}} - {course}"
-msgstr "{kind, select, alphabet {Alfabeto: {lesson}} custom {Lección personalizada: {lesson}} explanation {Explicación sobre {lesson}} grammar {Gramática: {lesson}} listening {Práctica de escucha: {lesson}} practice {Práctica de {lesson}} quiz {Quiz sobre {lesson}} reading {Práctica de lectura: {lesson}} review {Repaso de {lesson}} translation {Traducción de {lesson}} tutorial {Tutorial sobre {lesson}} vocabulary {Vocabulario: {lesson}} other {{lesson}}} - {course}"
+msgctxt "teYphW"
+msgid "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}}: {course} course"
+msgstr "{kind, select, alphabet {{lesson} Alfabeto} custom {{lesson} Lección personalizada} explanation {{lesson} Explicación} grammar {{lesson} Gramática} listening {{lesson} Escucha} practice {{lesson} Práctica} quiz {{lesson} Cuestionario} reading {{lesson} Lectura} review {{lesson} Repaso} translation {{lesson} Traducción} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulario} other {{lesson}}}: curso de {course}"
+
+#: src/lib/lessons.ts
+msgctxt "GeDl17"
+msgid "{lesson}: {course} course"
+msgstr "{lesson}: curso de {course}"
+
+#: src/lib/lessons.ts
+msgctxt "aACHYf"
+msgid "Lesson about {lesson} in the {course} course. {description}"
+msgstr "Lección sobre {lesson} del curso {course}. {description}"

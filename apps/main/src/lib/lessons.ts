@@ -183,15 +183,22 @@ async function getSeoTitle({
     const t = await getExtracted();
 
     return t(
-      "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}} - {course}",
+      "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}}: {course} course",
       { course: lesson.chapter.course.title, kind: lesson.kind, lesson: lessonTopic },
     );
   }
 
-  return getUntitledLessonSeoTitle({
+  const lessonTitle = await getUntitledLessonSeoTitle({
     chapterTitle: lesson.chapter.title,
     kind: lesson.kind,
     position: lesson.position,
+  });
+
+  const t = await getExtracted();
+
+  return t("{lesson}: {course} course", {
+    course: lesson.chapter.course.title,
+    lesson: lessonTitle,
   });
 }
 
@@ -237,11 +244,16 @@ export async function getLessonSeoMeta({
   sourceTitle: string | null;
 }): Promise<{ title: string; description: string }> {
   const lessonTopic = getLessonTopic({ lesson, sourceTitle });
+  const lessonTitle = lessonTopic ?? lesson.chapter.title;
   const title = await getSeoTitle({ lesson, sourceTitle });
 
-  const description = await getSeoLessonDescription({
-    lesson,
-    lessonTitle: lessonTopic ?? lesson.chapter.title,
+  const lessonDescription = await getSeoLessonDescription({ lesson, lessonTitle });
+  const t = await getExtracted();
+
+  const description = t("Lesson about {lesson} in the {course} course. {description}", {
+    course: lesson.chapter.course.title,
+    description: lessonDescription,
+    lesson: lessonTitle,
   });
 
   return { description, title };

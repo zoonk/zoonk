@@ -295,6 +295,18 @@ test.describe("Chapter Detail Page", () => {
   test("shows chapter content with title, description, and image", async ({ page }) => {
     await page.goto(chapterUrl);
 
+    await expect(page).toHaveTitle(`${chapterTitle}: ${courseTitle} course | Zoonk`);
+
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.querySelector<HTMLMetaElement>("meta[name='description']")?.content ?? "",
+        ),
+      )
+      .toMatch(
+        new RegExp(`${chapterTitle}.*${courseTitle}.*Different types of learning ${uniqueId}`, "u"),
+      );
+
     await expect(
       page.getByRole("heading", { exact: true, level: 1, name: `1. ${chapterTitle}` }),
     ).toBeVisible();

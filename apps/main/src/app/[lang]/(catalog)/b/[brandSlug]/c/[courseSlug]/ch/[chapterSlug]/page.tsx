@@ -7,6 +7,7 @@ import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getChapter } from "@zoonk/core/chapters/get-by-slug";
 import { Grid } from "@zoonk/ui/components/grid";
 import { type Metadata } from "next";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ChapterLessonGrid } from "./chapter-lesson-grid";
 import { ChapterSidebar } from "./chapter-sidebar";
@@ -22,6 +23,8 @@ export async function generateMetadata({
     return {};
   }
 
+  const t = await getExtracted({ locale: chapter.course.language });
+
   return {
     alternates: {
       canonical: getLocalizedUrl({
@@ -29,9 +32,16 @@ export async function generateMetadata({
         language: chapter.course.language,
       }),
     },
-    description: chapter.description,
-    robots: { follow: true, index: chapter.generationStatus === "completed" },
-    title: chapter.title,
+    description: t("Chapter about {chapter} in the {course} course. {description}", {
+      chapter: chapter.title,
+      course: chapter.course.title,
+      description: chapter.description,
+    }),
+    robots: { follow: true, index: true },
+    title: t("{chapter}: {course} course", {
+      chapter: chapter.title,
+      course: chapter.course.title,
+    }),
   };
 }
 
