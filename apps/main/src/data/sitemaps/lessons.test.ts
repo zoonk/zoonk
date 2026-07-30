@@ -112,7 +112,7 @@ describe(listSitemapLessons, () => {
       }),
     ]);
 
-    const [pendingLesson, reviewLesson, readingLesson, gatedLesson, untitledLesson] =
+    const [pendingLesson, runningLesson, reviewLesson, readingLesson, gatedLesson, untitledLesson] =
       await Promise.all([
         lessonFixture({
           chapterId: firstChapter.id,
@@ -123,12 +123,19 @@ describe(listSitemapLessons, () => {
         }),
         lessonFixture({
           chapterId: firstChapter.id,
+          generationStatus: "running",
+          isPublished: true,
+          organizationId: organization.id,
+          position: 1,
+        }),
+        lessonFixture({
+          chapterId: firstChapter.id,
           description: null,
           generationStatus: "completed",
           isPublished: true,
           kind: "review",
           organizationId: organization.id,
-          position: 1,
+          position: 2,
           title: null,
         }),
         lessonFixture({
@@ -137,7 +144,7 @@ describe(listSitemapLessons, () => {
           isPublished: true,
           kind: "reading",
           organizationId: organization.id,
-          position: 2,
+          position: 3,
           title: null,
         }),
         lessonFixture({
@@ -153,12 +160,12 @@ describe(listSitemapLessons, () => {
           generationStatus: "completed",
           isPublished: true,
           organizationId: organization.id,
-          position: 3,
+          position: 4,
           title: null,
         }),
       ]);
 
-    const includedLessons = [pendingLesson, reviewLesson, gatedLesson];
+    const includedLessons = [pendingLesson, runningLesson, reviewLesson, gatedLesson];
     const excludedLessons = [readingLesson, untitledLesson];
 
     const count = await countSitemapLessons();

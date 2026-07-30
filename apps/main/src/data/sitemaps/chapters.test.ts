@@ -7,7 +7,6 @@ import { countSitemapChapters, listSitemapChapters } from "./chapters";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 
 const sitemapChapterWhere = getPublishedChapterWhere({
-  chapterWhere: { generationStatus: "completed" },
   courseWhere: { organization: { kind: "brand" } },
 });
 
@@ -37,28 +36,24 @@ describe(countSitemapChapters, () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  it("only counts completed generated chapters", async () => {
+  it("counts published chapters regardless of generation status", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
-    const chapters = await Promise.all([
-      chapterFixture({
-        courseId: course.id,
-        generationStatus: "completed",
-        isPublished: true,
-        organizationId: organization.id,
-      }),
-      chapterFixture({
-        courseId: course.id,
-        generationStatus: "pending",
-        isPublished: true,
-        organizationId: organization.id,
-      }),
-    ]);
+    const chapters = await Promise.all(
+      (["pending", "running", "completed", "failed"] as const).map((generationStatus) =>
+        chapterFixture({
+          courseId: course.id,
+          generationStatus,
+          isPublished: true,
+          organizationId: organization.id,
+        }),
+      ),
+    );
 
     const chapterIds = chapters.map((chapter) => chapter.id);
 
-    await expect(countCreatedSitemapChapters(chapterIds)).resolves.toBe(1);
+    await expect(countCreatedSitemapChapters(chapterIds)).resolves.toBe(4);
   });
 });
 
@@ -90,6 +85,27 @@ describe(listSitemapChapters, () => {
       updatedAt: expect.any(Date),
     });
   });
+
+  it.each(["pending", "running", "failed"] as const)(
+    "includes published %s chapters",
+    async (generationStatus) => {
+      const organization = await organizationFixture({ kind: "brand" });
+      const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        generationStatus,
+        isPublished: true,
+        organizationId: organization.id,
+      });
+
+      const count = await countSitemapChapters();
+      const chapters = await listSitemapChapters(lastPage(count));
+      const found = chapters.find((item) => item.chapterSlug === chapter.slug);
+
+      expect(found).toBeDefined();
+    },
+  );
 
   it("excludes unpublished chapters", async () => {
     const org = await organizationFixture({ kind: "brand" });
