@@ -7,7 +7,7 @@ import { type CourseChapter } from "./course-chapters";
 import systemPrompt from "./course-landing-page.prompt.md";
 
 const defaultModel = "openai/gpt-5.6-luna";
-const fallbackModels = ["anthropic/claude-opus-4.8", "openai/gpt-5.5"] as const;
+const fallbackModels = ["anthropic/claude-opus-4.8", "openai/gpt-5.6-terra"] as const;
 
 const schema = z.object({
   audience: z.array(z.string()),
