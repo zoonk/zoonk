@@ -14,10 +14,14 @@ function getTaskGenerateInput({ modelId, testCase }: { modelId: string; testCase
   const model = getModelById(modelId);
   const gatewayModelId = getGatewayModelId(modelId);
 
+  if (!model) {
+    throw new Error(`Model ${modelId} not found`);
+  }
+
   return {
     ...testCase.userInput,
     model: gatewayModelId,
-    reasoning: model?.reasoning,
+    reasoning: model.reasoning,
     useFallback: false,
   };
 }

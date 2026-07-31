@@ -1,0 +1,77 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Mechanical-wave reasoning must keep the wave and medium distinct. Penalize if:\n   - The medium is said to travel all the way with the wave\n   - A mechanical wave is shown moving through empty space without matter\n   - Rope, spring, air, water, and ground examples are treated as decorative rather than the material carrying the disturbance\n\n2. SITUATION CHECK: Situations should make the learner use evidence from a rope, spring, sound, water, vibration, or ground-motion situation to decide what carries the disturbance or why a measurement failed.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-LIFE APPLICATIONS: The practice must be a collection of concrete situations where the source lesson concept affects an outcome that would matter outside a lesson. Penalize meta-situations where the learner is preparing teaching material, fixing educational labels, sorting classroom examples, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.\n\n2. CLEAR CONCEPT APPLICATION: Every situation should include a clear concept clue, named concept, defining feature, mechanism, rule, measurement, or real observation. The question should ask the learner to apply that concept to choose an action, explanation, classification, prediction, check, or consequence. Do not penalize a situation for naming the concept or giving the definition when the learner still has to use it.\n\n3. NOT MEMORIZATION: Penalize direct definition drills such as \"What is X?\", \"Which option is the definition of X?\", or \"Is X category A or B?\" when detached from a concrete situation. A good item can give a definition clue and ask what it implies in a real problem, such as \"cells without a nucleus -> likely bacteria\" or \"photosynthesis problem -> change light conditions.\"\n\n4. NO HIDDEN-CONCEPT PUZZLES: Penalize outputs that hide the concept behind abstract clues, convoluted case-file details, or mystery-style deduction. The learner should know which idea is relevant and be tested on whether they can use it, not on whether they can guess the hidden topic from option shape.\n\n5. FOCUSED SITUATION SET: Situations do not need to share a story, character, artifact, or final reveal. Penalize forced storytelling, escalating logistics, recurring plots that make the lesson harder to follow, and broad operational decisions where the source concept gets buried.\n\n6. VISUAL GROUNDING: Every situation should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason through a concrete object, organism, screen, report, sample, behavior, measurement, label, diagram, or visible state. Penalize generic image prompts that add no value.\n\n7. DIALOGUE QUALITY: Dialogue must be pure conversation with no narrator text, speaker labels, stage directions, colons before quoted speech, or surrounding quotation marks. A single person speaking directly to {{NAME}} is valid. Dialogue should introduce the concrete situation, useful clue, or practical reason the choice matters. Penalize dialogue that duplicates the question, gives away the answer, uses the correct option text or a close paraphrase, reads like a lecture, or turns into a story recap. If the question asks for a classification, action, cause, or conclusion, dialogue must not state that classification, action, cause, or conclusion before the learner answers.\n\n8. TONE: Clarity comes first. Light humor is allowed only when it is minimal and does not carry or hide the clue. Penalize joke-first situations, punchline dialogue, or all-silly distractor sets.\n\n9. FORMAT COMPLIANCE: Verify these constraints:\n   - Output has a situations array\n   - Output does not include a top-level scenario, scenario title, scenario text, intro step, or opening image\n   - every situation has: imagePrompt, dialogue, question, options\n   - each situation is understandable without reading another situation\n   - question should be short, direct, not already asked inside dialogue, and grounded in the situation\n   - option text should usually be short and easy to scan; terse options are fine when the question and situation make them unambiguous\n   - bare concept labels are allowed when the situation makes the label an applied choice, not a vocabulary drill\n   - dialogue gives evidence for the correct option, not the correct option text itself\n   - Exactly 1 option must have isCorrect: true\n\n10. PERSONALIZATION: The {{NAME}} placeholder should be used appropriately in dialogue only and sparingly. Penalize {{NAME}} in image prompts, questions, options, or feedback. Penalize outputs that put {{NAME}} in every dialogue or make most dialogue lines start with {{NAME}}; one or two natural uses in a practice lesson is enough.\n\n11. FEEDBACK QUALITY:\n   - Each option must explain why it is right or wrong in this exact situation.\n   - Every wrong option's feedback must complete the full correction in the same message: explain why the selected option fails, explicitly identify the correct option or an unmistakable paraphrase, and teach why the correct option follows by connecting the situation's evidence to the lesson concept and practical result.\n   - Explanations must use plain language and concrete facts from the situation before relying on domain labels. When it naturally clarifies the distinction, explain what condition would have made the selected option correct and contrast it with what actually happened. Do not require this counterfactual in every response.\n   - Feedback should act as a brief teaching moment. Use a relatable everyday consequence, familiar observation, practical decision, or real-world artifact when it naturally clarifies the same reasoning. The existing situation can provide this bridge; do not require a forced analogy or unrelated second example.\n   Penalize feedback that only dismisses the selected option, only names the correct answer without explaining why it follows, leaves the correct-answer reasoning to the correct option's separate feedback, substitutes compressed jargon or category shorthand for a concrete explanation, or gives a generic score report.\n\n12. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider for this exact situation. Penalize absurd, joke-shaped, random, or obviously irrelevant options. Penalize answer sets where the correct option is guessable because every distractor is on a different axis or obviously impossible.\n\n13. SITUATION COUNT: Practice should use as many situations as the lesson concepts need, and no more. The right count depends on the lesson. Penalize outputs that skip important lesson concepts, and penalize padded, repetitive, or same-question-with-new-prop situations.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require one story, one setting, one character, or one recurring case\n- Do NOT penalize independent situations just because they are disconnected from each other\n- Do NOT require a plot twist, final reveal, or narrative resolution\n- Do NOT penalize a valid real-world situation just because it is not the situation you would have chosen\n- Do NOT penalize concept names or definition clues when the learner must apply them to a concrete situation\n- Do NOT penalize a small overrun on text length if the situation is still fast, clear, and readable on the first pass\n- Do NOT require humor\n- Do NOT penalize dialogue just because one person speaks to {{NAME}} instead of alternating turns; penalize only if it stops sounding like direct speech or removes the learner's application\n- Do NOT require every dialogue to address the learner by name; most dialogue lines should work without {{NAME}}\n- Do NOT penalize terse option text by itself; penalize it only when it becomes vague, purely vocabulary-based, or answerable without the situation evidence\n- Do penalize direct definition/function/role/process questions when the learner can answer without using a real situation\n- Do penalize dialogue that says the correct option or direct answer before asking the learner to choose it\n- Do penalize repetitive {{NAME}} usage across every dialogue\n- Do penalize situations where the concept is hidden so deeply that the learner is solving a riddle instead of applying an idea\n- Do penalize situations where the learner can guess the answer by eliminating absurd distractors without understanding the concept\n- Do penalize generic decoration image prompts\n- Do penalize prompt residue, narrator text in dialogue, duplicated dialogue questions, forced storytelling, repetitive/filler decisions, all-silly distractor sets, poor distractor quality, and factually incorrect lesson application\n- Different valid practice approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-07-31T01:45:26.660Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Covers both lesson halves well: medium identification across rope, air, water, ground, and spring, plus two situations that actually test local oscillation (cork prediction, tape-marker high-speed test) rather than just asserting it. Question types vary (identify, act, predict, verify), distractors are mostly in-scene plausible objects, and wrong-answer feedback names and justifies the correct choice. Minor weaknesses: 'stretched object'/'the cord' wording is slightly coy in situation 1, and a couple of distractors ('a painted stripe') are weak.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Good variety: vacuum-tube repair action, compound options that force the local-oscillation vs. travels-with-the-wave distinction, and a verification check, so both concepts are exercised. Weaknesses: the opening item's bare labels (Rope/Spring/Air/Ground) are answerable by looking at the picture without the concept, and a couple of distractors are off-axis or near-absurd ('compression is an illusion', 'test a loose spring'), making some answers guessable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Physics is accurate and the medium/disturbance distinction is respected, with concrete scenes and solid, situation-specific feedback. But all five items are the identical question ('which medium carries the wave?') with a new prop, so the set is repetitive and never asks the learner to apply the local-oscillation idea — the dialogue simply states it each time, leaving only medium spotting.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Model B perfectly applies the conversational dialogue constraint, using natural framing like 'Watch the squeeze...' and 'Look at the field reading...'. It also effectively evaluates both parts of the lesson (identifying the medium and understanding local oscillation vs. traveling waves) through varied, practical applications. The distractors and feedback are well-crafted and align with the rubric.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model C provides a strong set of practical situations and meets most expectations, including excellent feedback with full corrections. However, it lapses into pure narrator text in Situations 3 and 4 (e.g., 'A cork floats near the center of a tank...'), violating the strict dialogue constraint. It avoids repetitive question structures, making it much better than Model A.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model A fails the dialogue constraint significantly, as almost all of its 'dialogue' lines are purely descriptive narrator text rather than conversation. Furthermore, the questions are extremely repetitive (all asking a variation of 'Which medium is carrying...'), and the dialogue often over-explains the exact mechanism before the learner has a chance to apply the concept.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Best balance of medium identification, local oscillation reasoning, and practical application, especially the near-vacuum troubleshooting and buried-sensor verification. Visuals and feedback are consistently evidence-based, though a few distractors such as “compression is an illusion” or testing a loose spring are too easy to reject.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strongly covers all listed media and directly tests the crucial distinction between a traveling disturbance and locally oscillating matter through the cork and tape-marker predictions. It is slightly padded with two rope situations, and several distractors are implausible or silly, reducing diagnostic value.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Accurate, clear, and comprehensive across rope, spring, air, water, and ground, with excellent situation-specific feedback and useful visuals. However, all five questions repeat straightforward medium identification after the dialogue largely supplies the answer, so learners rarely have to predict or explain local oscillation themselves.",
+          "score": 7.5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-practice",
+  "testCaseId": "en-mechanical-waves-medium-1"
+}

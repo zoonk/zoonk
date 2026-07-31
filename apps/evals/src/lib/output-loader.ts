@@ -86,6 +86,20 @@ export async function saveModelOutputs(
   await fs.writeFile(filePath, JSON.stringify(outputs, null, 2));
 }
 
+/**
+ * Removes every generated output for one task and model so a future run starts
+ * from a clean output file instead of preserving partial or stale generations.
+ */
+export async function deleteModelOutputs({
+  modelId,
+  taskId,
+}: {
+  modelId: string;
+  taskId: string;
+}): Promise<void> {
+  await fs.rm(getOutputsFilePath(taskId, modelId), { force: true });
+}
+
 export const loadModelOutputs = cache(
   async (taskId: string, modelId: string): Promise<ModelOutputs | null> => {
     const filePath = getOutputsFilePath(taskId, modelId);

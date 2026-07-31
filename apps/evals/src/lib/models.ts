@@ -8,6 +8,18 @@ export type ModelConfig = {
   reasoning?: Reasoning;
 };
 
+export const DEFAULT_REASONING: Reasoning = "provider-default";
+
+export const REASONING_OPTIONS = [
+  { label: "Provider default", value: DEFAULT_REASONING },
+  { label: "None", value: "none" },
+  { label: "Minimal", value: "minimal" },
+  { label: "Low", value: "low" },
+  { label: "Medium", value: "medium" },
+  { label: "High", value: "high" },
+  { label: "Extra high", value: "xhigh" },
+] as const satisfies readonly { label: string; value: Reasoning }[];
+
 export const EVAL_MODELS: ModelConfig[] = [
   { id: "anthropic/claude-fable-5", inputCost: 10, name: "claude-fable-5", outputCost: 50 },
   { id: "anthropic/claude-opus-5", inputCost: 5, name: "claude-opus-5", outputCost: 25 },
@@ -42,16 +54,72 @@ export const EVAL_MODELS: ModelConfig[] = [
   { id: "xai/grok-4.3", inputCost: 1.25, name: "grok-4.3", outputCost: 2.5 },
 ];
 
+/**
+ * Gives each portable AI SDK reasoning value a concise label for selectors,
+ * breadcrumbs, and comparison tables.
+ */
+export function getReasoningLabel(reasoning: Reasoning = DEFAULT_REASONING): string {
+  return REASONING_OPTIONS.find((option) => option.value === reasoning)?.label ?? reasoning;
+}
+
 export function getModelDisplayName(model: ModelConfig): string {
   if (model.reasoning) {
-    return `${model.name} (${model.reasoning})`;
+    return `${model.name} (${getReasoningLabel(model.reasoning)})`;
   }
 
   return model.name;
 }
 
+/**
+ * Accepts only reasoning values supported by AI SDK's portable top-level
+ * reasoning option so untrusted form and route values cannot reach generation.
+ */
+export function parseReasoning(value: string | null): Reasoning | null {
+  return REASONING_OPTIONS.find((option) => option.value === value)?.value ?? null;
+}
+
+/**
+ * Separates a saved evaluation id into its configured gateway model and optional
+ * reasoning level. Provider-default evaluations intentionally keep the original
+ * unsuffixed model id so existing output and result files remain compatible.
+ */
+function parseModelEvaluationId(
+  modelId: string,
+): { gatewayModelId: string; reasoning?: Reasoning } | null {
+  const separatorIndex = modelId.lastIndexOf(":");
+
+  if (separatorIndex === -1) {
+    return { gatewayModelId: modelId };
+  }
+
+  const reasoning = parseReasoning(modelId.slice(separatorIndex + 1));
+
+  if (!reasoning || reasoning === DEFAULT_REASONING) {
+    return null;
+  }
+
+  return { gatewayModelId: modelId.slice(0, separatorIndex), reasoning };
+}
+
+/**
+ * Resolves both configured models and their saved reasoning variants. Variants
+ * inherit pricing and display metadata from the configured gateway model while
+ * retaining their unique id for output, score, and leaderboard isolation.
+ */
 export function getModelById(modelId: string): ModelConfig | null {
-  return EVAL_MODELS.find((model) => model.id === modelId) ?? null;
+  const evaluation = parseModelEvaluationId(modelId);
+
+  if (!evaluation) {
+    return null;
+  }
+
+  const model = EVAL_MODELS.find((item) => item.id === evaluation.gatewayModelId);
+
+  if (!model) {
+    return null;
+  }
+
+  return evaluation.reasoning ? { ...model, id: modelId, reasoning: evaluation.reasoning } : model;
 }
 
 /**
@@ -59,6 +127,20 @@ export function getModelById(modelId: string): ModelConfig | null {
  * Strips any reasoning suffix (e.g., "openai/gpt-5.2:high" -> "openai/gpt-5.2")
  */
 export function getGatewayModelId(modelId: string): string {
-  const colonIndex = modelId.indexOf(":");
-  return colonIndex === -1 ? modelId : modelId.slice(0, colonIndex);
+  return parseModelEvaluationId(modelId)?.gatewayModelId ?? modelId;
+}
+
+/**
+ * Builds the stable id used to isolate generated outputs and scores for one
+ * model/reasoning pair. Provider-default reuses the base id for compatibility.
+ */
+export function getModelEvaluationId({
+  modelId,
+  reasoning,
+}: {
+  modelId: string;
+  reasoning: Reasoning;
+}): string {
+  const gatewayModelId = getGatewayModelId(modelId);
+  return reasoning === DEFAULT_REASONING ? gatewayModelId : `${gatewayModelId}:${reasoning}`;
 }

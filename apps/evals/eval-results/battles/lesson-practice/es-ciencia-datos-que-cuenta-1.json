@@ -1,0 +1,77 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Data-source reasoning must distinguish recorded signals from assumptions. Penalize if:\n   - Facts, measurements, responses, clicks, photos, texts, or logs are called data without checking what was actually captured\n   - Unrecorded context is treated as if it were in the dataset\n   - The model skips the loss that happens when reality becomes a simplified record\n\n2. SITUATION CHECK: Situations should involve deciding what an app, form, sensor, survey, photo, log, or dataset really captured. Penalize examples where \"data\" is just a buzzword and no recorded evidence changes the decision.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-LIFE APPLICATIONS: The practice must be a collection of concrete situations where the source lesson concept affects an outcome that would matter outside a lesson. Penalize meta-situations where the learner is preparing teaching material, fixing educational labels, sorting classroom examples, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.\n\n2. CLEAR CONCEPT APPLICATION: Every situation should include a clear concept clue, named concept, defining feature, mechanism, rule, measurement, or real observation. The question should ask the learner to apply that concept to choose an action, explanation, classification, prediction, check, or consequence. Do not penalize a situation for naming the concept or giving the definition when the learner still has to use it.\n\n3. NOT MEMORIZATION: Penalize direct definition drills such as \"What is X?\", \"Which option is the definition of X?\", or \"Is X category A or B?\" when detached from a concrete situation. A good item can give a definition clue and ask what it implies in a real problem, such as \"cells without a nucleus -> likely bacteria\" or \"photosynthesis problem -> change light conditions.\"\n\n4. NO HIDDEN-CONCEPT PUZZLES: Penalize outputs that hide the concept behind abstract clues, convoluted case-file details, or mystery-style deduction. The learner should know which idea is relevant and be tested on whether they can use it, not on whether they can guess the hidden topic from option shape.\n\n5. FOCUSED SITUATION SET: Situations do not need to share a story, character, artifact, or final reveal. Penalize forced storytelling, escalating logistics, recurring plots that make the lesson harder to follow, and broad operational decisions where the source concept gets buried.\n\n6. VISUAL GROUNDING: Every situation should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason through a concrete object, organism, screen, report, sample, behavior, measurement, label, diagram, or visible state. Penalize generic image prompts that add no value.\n\n7. DIALOGUE QUALITY: Dialogue must be pure conversation with no narrator text, speaker labels, stage directions, colons before quoted speech, or surrounding quotation marks. A single person speaking directly to {{NAME}} is valid. Dialogue should introduce the concrete situation, useful clue, or practical reason the choice matters. Penalize dialogue that duplicates the question, gives away the answer, uses the correct option text or a close paraphrase, reads like a lecture, or turns into a story recap. If the question asks for a classification, action, cause, or conclusion, dialogue must not state that classification, action, cause, or conclusion before the learner answers.\n\n8. TONE: Clarity comes first. Light humor is allowed only when it is minimal and does not carry or hide the clue. Penalize joke-first situations, punchline dialogue, or all-silly distractor sets.\n\n9. FORMAT COMPLIANCE: Verify these constraints:\n   - Output has a situations array\n   - Output does not include a top-level scenario, scenario title, scenario text, intro step, or opening image\n   - every situation has: imagePrompt, dialogue, question, options\n   - each situation is understandable without reading another situation\n   - question should be short, direct, not already asked inside dialogue, and grounded in the situation\n   - option text should usually be short and easy to scan; terse options are fine when the question and situation make them unambiguous\n   - bare concept labels are allowed when the situation makes the label an applied choice, not a vocabulary drill\n   - dialogue gives evidence for the correct option, not the correct option text itself\n   - Exactly 1 option must have isCorrect: true\n\n10. PERSONALIZATION: The {{NAME}} placeholder should be used appropriately in dialogue only and sparingly. Penalize {{NAME}} in image prompts, questions, options, or feedback. Penalize outputs that put {{NAME}} in every dialogue or make most dialogue lines start with {{NAME}}; one or two natural uses in a practice lesson is enough.\n\n11. FEEDBACK QUALITY:\n   - Each option must explain why it is right or wrong in this exact situation.\n   - Every wrong option's feedback must complete the full correction in the same message: explain why the selected option fails, explicitly identify the correct option or an unmistakable paraphrase, and teach why the correct option follows by connecting the situation's evidence to the lesson concept and practical result.\n   - Explanations must use plain language and concrete facts from the situation before relying on domain labels. When it naturally clarifies the distinction, explain what condition would have made the selected option correct and contrast it with what actually happened. Do not require this counterfactual in every response.\n   - Feedback should act as a brief teaching moment. Use a relatable everyday consequence, familiar observation, practical decision, or real-world artifact when it naturally clarifies the same reasoning. The existing situation can provide this bridge; do not require a forced analogy or unrelated second example.\n   Penalize feedback that only dismisses the selected option, only names the correct answer without explaining why it follows, leaves the correct-answer reasoning to the correct option's separate feedback, substitutes compressed jargon or category shorthand for a concrete explanation, or gives a generic score report.\n\n12. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider for this exact situation. Penalize absurd, joke-shaped, random, or obviously irrelevant options. Penalize answer sets where the correct option is guessable because every distractor is on a different axis or obviously impossible.\n\n13. SITUATION COUNT: Practice should use as many situations as the lesson concepts need, and no more. The right count depends on the lesson. Penalize outputs that skip important lesson concepts, and penalize padded, repetitive, or same-question-with-new-prop situations.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require one story, one setting, one character, or one recurring case\n- Do NOT penalize independent situations just because they are disconnected from each other\n- Do NOT require a plot twist, final reveal, or narrative resolution\n- Do NOT penalize a valid real-world situation just because it is not the situation you would have chosen\n- Do NOT penalize concept names or definition clues when the learner must apply them to a concrete situation\n- Do NOT penalize a small overrun on text length if the situation is still fast, clear, and readable on the first pass\n- Do NOT require humor\n- Do NOT penalize dialogue just because one person speaks to {{NAME}} instead of alternating turns; penalize only if it stops sounding like direct speech or removes the learner's application\n- Do NOT require every dialogue to address the learner by name; most dialogue lines should work without {{NAME}}\n- Do NOT penalize terse option text by itself; penalize it only when it becomes vague, purely vocabulary-based, or answerable without the situation evidence\n- Do penalize direct definition/function/role/process questions when the learner can answer without using a real situation\n- Do penalize dialogue that says the correct option or direct answer before asking the learner to choose it\n- Do penalize repetitive {{NAME}} usage across every dialogue\n- Do penalize situations where the concept is hidden so deeply that the learner is solving a riddle instead of applying an idea\n- Do penalize situations where the learner can guess the answer by eliminating absurd distractors without understanding the concept\n- Do penalize generic decoration image prompts\n- Do penalize prompt residue, narrator text in dialogue, duplicated dialogue questions, forced storytelling, repetitive/filler decisions, all-silly distractor sets, poor distractor quality, and factually incorrect lesson application\n- Different valid practice approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-07-31T01:45:46.142Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strong coverage of the lesson: each situation contrasts a captured signal (CSV reading, survey answer, click events, photo timestamp, ticket text, login log) with an assumed cause, and the final item about an unrecorded pressure reading directly teaches the loss when reality is not recorded. Question types vary usefully (identify supported fact, choose verifying record, correct a report claim, choose an action), image prompts show concrete evidence with explicit absences, and wrong-option feedback names and justifies the correct choice. Minor nits: a couple of dialogues telegraph the gap fairly strongly and one uses code-style backticks in speech.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Thorough, clean set covering every data type named in the lesson (measurement, form response, click event, photo, chat text, server log, inventory record), with detailed image prompts that specify what is visible and what is absent, and feedback that consistently identifies and explains the correct option. Weaknesses: nearly every item repeats the same 'what is supported by the record' frame, the first item leans more on reading numbers than on the recorded-vs-assumed distinction, one question is overlong and leading, and dialogue contains markdown backticks in spoken text.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Five solid, self-contained situations (form answer, click log, damage photo, sensor readings, customer text) with plausible distractors and concrete image prompts that state what is missing. Slightly narrower concept coverage and a very uniform 'what was actually captured?' question shape across all items; a few wrong-option feedbacks identify the correct answer only implicitly rather than stating it clearly.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model B provides exceptional pedagogical variety. Instead of merely asking what was recorded in every situation, it challenges the learner to identify what evidence would confirm an assumption, what remains unproven, and how to turn unrecorded observations into data. It adheres perfectly to all constraints, including the strict feedback structure and personalization limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Model A is highly effective and flawlessly follows all formatting, feedback, and personalization constraints. The situations are concrete, and the wrong-option feedback is excellent. It is ranked slightly below B only because its question structures are a bit more repetitive, but it remains an outstanding set of practice items.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model C follows all instructions and constraints accurately, including the complex feedback rules. However, it leans heavily on direct text-matching, where the correct option is often a nearly exact repetition of a phrase already stated in the dialogue, making the application slightly less rigorous than the other models.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Ofrece la aplicación más variada y práctica: distingue mediciones, intenciones, clics, fotos, textos, autenticaciones y recuerdos no registrados, y pide verificar o corregir decisiones reales. Las imágenes aportan evidencia y la retroalimentación explica con precisión qué señal existe, qué se asumió y qué registro adicional haría falta.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Cubre de forma muy completa los tipos de señales de la lección y mantiene una distinción rigurosa entre el registro y el contexto no capturado. La retroalimentación es excelente, aunque varias situaciones repiten casi la misma tarea de identificar la afirmación respaldada y algunas exigen menos decisión práctica que las de B.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Es claro, correcto y consistente al separar respuestas, clics, imágenes, mediciones y textos de causas o generalizaciones no observadas. Sin embargo, tiene menor variedad de decisiones y resulta algo más repetitivo, por lo que desarrolla menos la comprobación y recuperación de evidencia faltante.",
+          "score": 8.5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-practice",
+  "testCaseId": "es-ciencia-datos-que-cuenta-1"
+}

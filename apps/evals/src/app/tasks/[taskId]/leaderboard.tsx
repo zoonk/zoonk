@@ -60,6 +60,10 @@ export function Leaderboard({ taskId, results }: { taskId: string; results: Task
               Provider {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
 
+            <TableHead className="cursor-pointer" onClick={() => handleSort("reasoning")}>
+              Reasoning {sortKey === "reasoning" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+
             <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
               Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
@@ -83,6 +87,7 @@ export function Leaderboard({ taskId, results }: { taskId: string; results: Task
                 </Link>
               </TableCell>
               <TableCell>{entry.provider}</TableCell>
+              <TableCell>{entry.reasoning}</TableCell>
               <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
               <TableCell>{entry.averageDuration.toFixed(2)}s</TableCell>
               <TableCell>${entry.totalCost.toFixed(2)}</TableCell>

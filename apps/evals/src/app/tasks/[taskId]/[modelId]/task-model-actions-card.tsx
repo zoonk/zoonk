@@ -1,7 +1,7 @@
 import { ModelStatusBadge, ModelStatusBadgeSkeleton } from "@/components/model-status-badge";
-import { type ModelConfig } from "@/lib/models";
+import { type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type OutputProgress } from "@/lib/output-loader";
-import { Button, ButtonSkeleton } from "@zoonk/ui/components/button";
+import { ButtonSkeleton } from "@zoonk/ui/components/button";
 import {
   Card,
   CardContent,
@@ -11,10 +11,11 @@ import {
 } from "@zoonk/ui/components/card";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { DownloadIcon, PlayIcon, SparklesIcon } from "lucide-react";
-import Link from "next/link";
+import { DownloadIcon, PlayIcon, SparklesIcon, Trash2Icon } from "lucide-react";
 import { generateOutputsAction, runEvalAction } from "./actions";
+import { DeleteModelDataDialog } from "./delete-model-data-dialog";
 import { type OutputExportEntry, OutputsExport } from "./outputs-export";
+import { ReasoningSelect } from "./reasoning-select";
 
 export function TaskModelActionsCard({
   exportEntries,
@@ -30,7 +31,6 @@ export function TaskModelActionsCard({
   taskId: string;
 }) {
   const hasOutputs = outputStatus.status !== "missing";
-  const hasCompleteOutputs = outputStatus.status === "complete";
 
   return (
     <Card>
@@ -39,17 +39,18 @@ export function TaskModelActionsCard({
           Actions
           <ModelStatusBadge modelId={modelId} taskId={taskId} />
         </CardTitle>
-        <CardDescription>Evaluating with {model?.name || modelId}</CardDescription>
+        <CardDescription>Evaluating with {getModelDisplayName(model)}</CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <form action={generateOutputsAction}>
+        <div className="flex flex-wrap items-end gap-4">
+          <form action={generateOutputsAction} className="flex flex-wrap items-end gap-3">
             <input name="taskId" type="hidden" value={taskId} />
             <input name="modelId" type="hidden" value={modelId} />
-            <SubmitButton disabled={hasCompleteOutputs} icon={<SparklesIcon />}>
-              Generate Outputs
-            </SubmitButton>
+
+            <ReasoningSelect reasoning={model.reasoning} />
+
+            <SubmitButton icon={<SparklesIcon />}>Generate Outputs</SubmitButton>
           </form>
 
           {hasOutputs && (
@@ -59,7 +60,7 @@ export function TaskModelActionsCard({
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <form action={runEvalAction}>
             <input name="taskId" type="hidden" value={taskId} />
             <input name="modelId" type="hidden" value={modelId} />
@@ -68,11 +69,7 @@ export function TaskModelActionsCard({
             </SubmitButton>
           </form>
 
-          <Link href={`/tasks/${taskId}`}>
-            <Button type="button" variant="outline">
-              Change Model
-            </Button>
-          </Link>
+          <DeleteModelDataDialog disabled={!hasOutputs} modelId={modelId} taskId={taskId} />
 
           <OutputsExport entries={exportEntries} />
         </div>
@@ -99,20 +96,29 @@ export function TaskModelActionsCardSkeleton() {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <ButtonSkeleton>
-            <SparklesIcon />
-            Generate Outputs
-          </ButtonSkeleton>
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex items-end gap-3">
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-4 w-20 rounded" />
+              <Skeleton className="h-9 w-40 rounded-full" />
+            </div>
+            <ButtonSkeleton>
+              <SparklesIcon />
+              Generate Outputs
+            </ButtonSkeleton>
+          </div>
           <Skeleton className="h-5 w-40 rounded" />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <ButtonSkeleton>
             <PlayIcon />
             Run Eval
           </ButtonSkeleton>
-          <ButtonSkeleton variant="outline">Change Model</ButtonSkeleton>
+          <ButtonSkeleton variant="destructive">
+            <Trash2Icon />
+            Delete Outputs &amp; Results
+          </ButtonSkeleton>
           <ButtonSkeleton variant="outline">
             <DownloadIcon />
             Export Outputs

@@ -2,6 +2,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { NoOutputGeneratedError, Output, generateText } from "ai";
 import z from "zod";
+import { normalizeAnonymousId } from "./battle-mapping";
 import battleSystemPrompt from "./battle-system-prompt.md";
 import { type ModelRanking } from "./types";
 
@@ -17,15 +18,29 @@ const battleRankingSchema = z.object({ rankings: z.array(modelRankingSchema) });
 type BattleRankingResult = z.infer<typeof battleRankingSchema>;
 
 /**
- * Judges do not always preserve the exact anonymous label formatting from the
- * prompt. Normalizing the harmless `Model` prefix and trailing colon lets the
- * saved result retain the original anonymous-to-model mapping.
+ * Rejects labels that cannot be connected to an anonymized output instead of
+ * persisting the judge's label as though it were a configured model ID.
  */
-function normalizeAnonymousId(id: string): string {
-  return id
-    .replace(/^Model\s+/iu, "")
-    .replace(/:$/u, "")
-    .trim();
+function getModelMapping({
+  anonymousId,
+  judgeId,
+  mapping,
+}: {
+  anonymousId: string;
+  judgeId: string;
+  mapping: { anonymousId: string; modelId: string }[];
+}): { anonymousId: string; modelId: string } {
+  const normalizedAnonymousId = normalizeAnonymousId(anonymousId);
+
+  const modelMapping = mapping.find(
+    (entry) => normalizeAnonymousId(entry.anonymousId) === normalizedAnonymousId,
+  );
+
+  if (!modelMapping) {
+    throw new Error(`Battle judge ${judgeId} returned an unknown anonymous label: ${anonymousId}.`);
+  }
+
+  return modelMapping;
 }
 
 /**
@@ -142,21 +157,14 @@ Ties are allowed if outputs are truly equivalent in quality.
 
   const result = await generateBattleRankingResult({ judgeId, prompt: evalPrompt });
 
-  // Map anonymous IDs back to model IDs, normalizing format variations.
-  const rankings: ModelRanking[] = result.rankings.map((ranking) => {
-    const normalizedRanking = normalizeAnonymousId(ranking.anonymousId);
-
-    const modelMapping = mapping.find(
-      (entry) => normalizeAnonymousId(entry.anonymousId) === normalizedRanking,
-    );
+  return result.rankings.map((ranking) => {
+    const modelMapping = getModelMapping({ anonymousId: ranking.anonymousId, judgeId, mapping });
 
     return {
-      anonymousId: modelMapping?.anonymousId ?? ranking.anonymousId,
-      modelId: modelMapping?.modelId ?? ranking.anonymousId,
+      anonymousId: modelMapping.anonymousId,
+      modelId: modelMapping.modelId,
       reasoning: ranking.reasoning,
       score: ranking.score,
     };
   });
-
-  return rankings;
 }

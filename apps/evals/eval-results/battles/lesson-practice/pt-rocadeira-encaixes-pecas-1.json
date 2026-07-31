@@ -1,0 +1,77 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Brush-cutter part compatibility must use the physical fit clues in the lesson. Penalize if:\n   - Diameter, blade hole, thread, spline, handedness, or mounting position are ignored\n   - Any part is treated as compatible because it has a similar name or looks close enough\n   - The practice skips the purchase-risk consequence of ordering the wrong replacement\n\n2. SITUATION CHECK: Situations should involve identifying or buying a replacement part from measurements, photos, packaging, a manual, or a damaged machine. Penalize outputs that turn the lesson into a vocabulary tour of parts.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-LIFE APPLICATIONS: The practice must be a collection of concrete situations where the source lesson concept affects an outcome that would matter outside a lesson. Penalize meta-situations where the learner is preparing teaching material, fixing educational labels, sorting classroom examples, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.\n\n2. CLEAR CONCEPT APPLICATION: Every situation should include a clear concept clue, named concept, defining feature, mechanism, rule, measurement, or real observation. The question should ask the learner to apply that concept to choose an action, explanation, classification, prediction, check, or consequence. Do not penalize a situation for naming the concept or giving the definition when the learner still has to use it.\n\n3. NOT MEMORIZATION: Penalize direct definition drills such as \"What is X?\", \"Which option is the definition of X?\", or \"Is X category A or B?\" when detached from a concrete situation. A good item can give a definition clue and ask what it implies in a real problem, such as \"cells without a nucleus -> likely bacteria\" or \"photosynthesis problem -> change light conditions.\"\n\n4. NO HIDDEN-CONCEPT PUZZLES: Penalize outputs that hide the concept behind abstract clues, convoluted case-file details, or mystery-style deduction. The learner should know which idea is relevant and be tested on whether they can use it, not on whether they can guess the hidden topic from option shape.\n\n5. FOCUSED SITUATION SET: Situations do not need to share a story, character, artifact, or final reveal. Penalize forced storytelling, escalating logistics, recurring plots that make the lesson harder to follow, and broad operational decisions where the source concept gets buried.\n\n6. VISUAL GROUNDING: Every situation should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason through a concrete object, organism, screen, report, sample, behavior, measurement, label, diagram, or visible state. Penalize generic image prompts that add no value.\n\n7. DIALOGUE QUALITY: Dialogue must be pure conversation with no narrator text, speaker labels, stage directions, colons before quoted speech, or surrounding quotation marks. A single person speaking directly to {{NAME}} is valid. Dialogue should introduce the concrete situation, useful clue, or practical reason the choice matters. Penalize dialogue that duplicates the question, gives away the answer, uses the correct option text or a close paraphrase, reads like a lecture, or turns into a story recap. If the question asks for a classification, action, cause, or conclusion, dialogue must not state that classification, action, cause, or conclusion before the learner answers.\n\n8. TONE: Clarity comes first. Light humor is allowed only when it is minimal and does not carry or hide the clue. Penalize joke-first situations, punchline dialogue, or all-silly distractor sets.\n\n9. FORMAT COMPLIANCE: Verify these constraints:\n   - Output has a situations array\n   - Output does not include a top-level scenario, scenario title, scenario text, intro step, or opening image\n   - every situation has: imagePrompt, dialogue, question, options\n   - each situation is understandable without reading another situation\n   - question should be short, direct, not already asked inside dialogue, and grounded in the situation\n   - option text should usually be short and easy to scan; terse options are fine when the question and situation make them unambiguous\n   - bare concept labels are allowed when the situation makes the label an applied choice, not a vocabulary drill\n   - dialogue gives evidence for the correct option, not the correct option text itself\n   - Exactly 1 option must have isCorrect: true\n\n10. PERSONALIZATION: The {{NAME}} placeholder should be used appropriately in dialogue only and sparingly. Penalize {{NAME}} in image prompts, questions, options, or feedback. Penalize outputs that put {{NAME}} in every dialogue or make most dialogue lines start with {{NAME}}; one or two natural uses in a practice lesson is enough.\n\n11. FEEDBACK QUALITY:\n   - Each option must explain why it is right or wrong in this exact situation.\n   - Every wrong option's feedback must complete the full correction in the same message: explain why the selected option fails, explicitly identify the correct option or an unmistakable paraphrase, and teach why the correct option follows by connecting the situation's evidence to the lesson concept and practical result.\n   - Explanations must use plain language and concrete facts from the situation before relying on domain labels. When it naturally clarifies the distinction, explain what condition would have made the selected option correct and contrast it with what actually happened. Do not require this counterfactual in every response.\n   - Feedback should act as a brief teaching moment. Use a relatable everyday consequence, familiar observation, practical decision, or real-world artifact when it naturally clarifies the same reasoning. The existing situation can provide this bridge; do not require a forced analogy or unrelated second example.\n   Penalize feedback that only dismisses the selected option, only names the correct answer without explaining why it follows, leaves the correct-answer reasoning to the correct option's separate feedback, substitutes compressed jargon or category shorthand for a concrete explanation, or gives a generic score report.\n\n12. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider for this exact situation. Penalize absurd, joke-shaped, random, or obviously irrelevant options. Penalize answer sets where the correct option is guessable because every distractor is on a different axis or obviously impossible.\n\n13. SITUATION COUNT: Practice should use as many situations as the lesson concepts need, and no more. The right count depends on the lesson. Penalize outputs that skip important lesson concepts, and penalize padded, repetitive, or same-question-with-new-prop situations.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require one story, one setting, one character, or one recurring case\n- Do NOT penalize independent situations just because they are disconnected from each other\n- Do NOT require a plot twist, final reveal, or narrative resolution\n- Do NOT penalize a valid real-world situation just because it is not the situation you would have chosen\n- Do NOT penalize concept names or definition clues when the learner must apply them to a concrete situation\n- Do NOT penalize a small overrun on text length if the situation is still fast, clear, and readable on the first pass\n- Do NOT require humor\n- Do NOT penalize dialogue just because one person speaks to {{NAME}} instead of alternating turns; penalize only if it stops sounding like direct speech or removes the learner's application\n- Do NOT require every dialogue to address the learner by name; most dialogue lines should work without {{NAME}}\n- Do NOT penalize terse option text by itself; penalize it only when it becomes vague, purely vocabulary-based, or answerable without the situation evidence\n- Do penalize direct definition/function/role/process questions when the learner can answer without using a real situation\n- Do penalize dialogue that says the correct option or direct answer before asking the learner to choose it\n- Do penalize repetitive {{NAME}} usage across every dialogue\n- Do penalize situations where the concept is hidden so deeply that the learner is solving a riddle instead of applying an idea\n- Do penalize situations where the learner can guess the answer by eliminating absurd distractors without understanding the concept\n- Do penalize generic decoration image prompts\n- Do penalize prompt residue, narrator text in dialogue, duplicated dialogue questions, forced storytelling, repetitive/filler decisions, all-silly distractor sets, poor distractor quality, and factually incorrect lesson application\n- Different valid practice approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-07-31T01:45:49.073Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Covers every fit clue the lesson names (diâmetro nominal 25,9→26, furo/ressalto 25,4, M10×1,25 LH incluindo sentido, estrias, face de montagem, posição da abraçadeira) with same-axis distractors that force real use of the measurement rather than elimination of absurd options. Dialogue is clean direct speech, {{NAME}} used once, imagePrompts carry the evidence; feedback identifies the correct choice and why it follows. Minor flaws: backtick formatting residue in one dialogue/feedback and a few feedbacks that stay brief on practical consequence.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Strong purchase-risk framing (recusar/não comprar) across diameter, furo, rosca com passo e lado, estrias and blade orientation, with mechanism-rich feedback (torque via estrias, passo vs diâmetro nominal) and clean dialogue with a single {{NAME}}. Weakness: in four of five items the correct answer is the same 'refuse the part' shape while distractors are shortcut-style ('comprar porque parece igual', 'forçar o encaixe'), so the set is partly guessable and repetitive; the ad-photo mounting item is slightly incoherent (correcting a listing photo rather than the machine).",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Good coverage and detailed imagePrompts, but two items weaken it: the blade-hole dialogue effectively states the required action ('a medida precisa ser conferida') and the correct option is a procedural 'comparar os furos', and the mounting-side item contradicts itself (dialogue says there is no universal option while the catalog lists 'Modelo C — ambos os lados', which would in fact fit). The thread item also ignores handedness, and the splines item's answer is guessable because the distractors sit on unrelated axes.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model A perfectly captures the essence of the prompt. Its distractors are highly realistic and directly address the specific accuracy check to penalize 'looks close enough' or partial matches (e.g., 'Comprar porque ambas são M10', 'Escolher pelo diâmetro externo'). The feedback is excellent, concrete, and clearly explains the mechanical consequences of the choices.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model B is very well-structured and follows all formatting and feedback constraints flawlessly. However, its distractors are primarily numerical variations rather than conceptual misunderstandings, which makes the questions slightly less robust at testing real-world purchase traps compared to Model A.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Model C complies with the core requirements but features some awkward and clunky questions. For example, in situation 2, the dialogue already provides the two conflicting measurements, but the correct option is the abstract action 'Comparar os furos centrais', which feels repetitive and meta rather than a practical decision.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Cobre de forma clara todos os encaixes essenciais: diâmetro, furo, rosca com passo e sentido, estrias, lado de montagem e posição de fixação. As situações são concretas, os recursos visuais fornecem evidências úteis e os feedbacks corrigem cada alternativa com base nas medidas e no risco de incompatibilidade.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Aplica corretamente medidas, rosca esquerda, estrias e orientação da lâmina, com boas referências a compras incompatíveis e danos por forçar peças. Fica um pouco abaixo porque lado de montagem e posição de fixação são combinados em uma única situação de orientação, sem uma verificação posicional tão explícita quanto a do Modelo B.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Traz situações práticas e visualmente bem fundamentadas para diâmetro, furo, passo da rosca, estrias e posição de fixação. Contudo, ignora o sentido da rosca e apresenta uma inconsistência importante ao dizer que não há opção universal enquanto mostra um modelo para ambos os lados, que poderia ser compatível com a montagem esquerda.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-practice",
+  "testCaseId": "pt-rocadeira-encaixes-pecas-1"
+}

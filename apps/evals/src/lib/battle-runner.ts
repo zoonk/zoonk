@@ -3,6 +3,7 @@ import path from "node:path";
 import { toError } from "@zoonk/utils/error";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { getBattleLeaderboard } from "./battle-loader";
+import { resolveBattleMatchupModelIds } from "./battle-mapping";
 import { generateBattleRankings } from "./battle-score";
 import {
   getAllOutputsForTask,
@@ -78,7 +79,7 @@ async function loadExistingMatchup(
 
   try {
     const data = await fs.readFile(filePath, "utf8");
-    return JSON.parse(data) as BattleMatchup;
+    return resolveBattleMatchupModelIds(JSON.parse(data) as BattleMatchup);
   } catch {
     return null;
   }

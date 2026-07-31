@@ -26,34 +26,6 @@ export function BattleMatchupListSkeleton() {
   );
 }
 
-/**
- * Some judges output bare anonymous letters (e.g. "C") as modelId
- * instead of the real model ID. Build a letter→modelId mapping
- * from judges that have correct data in the same matchup.
- */
-function buildAnonymousIdMap(matchup: BattleMatchup): Map<string, string> {
-  const mapping = new Map<string, string>();
-
-  for (const judgment of matchup.judgments) {
-    for (const ranking of judgment.rankings) {
-      if (getModelById(ranking.modelId)) {
-        const letter = ranking.anonymousId.replace("Model ", "");
-        mapping.set(letter, ranking.modelId);
-      }
-    }
-  }
-
-  return mapping;
-}
-
-function resolveModelId(modelId: string, anonymousIdMap: Map<string, string>): string {
-  if (getModelById(modelId)) {
-    return modelId;
-  }
-
-  return anonymousIdMap.get(modelId) ?? modelId;
-}
-
 function buildJudgeViews(
   matchups: BattleMatchup[],
 ): {
@@ -71,8 +43,6 @@ function buildJudgeViews(
   const judgeNames = new Map<string, string>();
 
   for (const matchup of matchups) {
-    const anonymousIdMap = buildAnonymousIdMap(matchup);
-
     for (const judgment of matchup.judgments) {
       if (!judgeNames.has(judgment.judgeId)) {
         const judgeModel = getModelById(judgment.judgeId);
@@ -87,8 +57,7 @@ function buildJudgeViews(
       judgeMap.set(judgment.judgeId, modelMap);
 
       for (const ranking of judgment.rankings) {
-        const modelId = resolveModelId(ranking.modelId, anonymousIdMap);
-        const entries = modelMap.get(modelId) ?? [];
+        const entries = modelMap.get(ranking.modelId) ?? [];
 
         entries.push({
           anonymousId: ranking.anonymousId,
@@ -97,7 +66,7 @@ function buildJudgeViews(
           testCaseId: matchup.testCaseId,
         });
 
-        modelMap.set(modelId, entries);
+        modelMap.set(ranking.modelId, entries);
       }
     }
   }

@@ -1,4 +1,4 @@
-import { getModelById, getModelDisplayName } from "@/lib/models";
+import { getModelById, getReasoningLabel } from "@/lib/models";
 import { calculateScore } from "@/lib/score";
 import { getStatsFromResults } from "@/lib/stats";
 import { type TaskEvalResults } from "@/lib/types";
@@ -25,12 +25,19 @@ export type LeaderboardEntry = {
   modelId: string;
   modelName: string;
   provider: string;
+  reasoning: string;
   averageScore: number;
   averageDuration: number;
   totalCost: number;
 };
 
-export type SortKey = "modelName" | "provider" | "averageScore" | "averageDuration" | "totalCost";
+export type SortKey =
+  | "modelName"
+  | "provider"
+  | "reasoning"
+  | "averageScore"
+  | "averageDuration"
+  | "totalCost";
 export type SortDirection = "asc" | "desc";
 
 /**
@@ -52,8 +59,9 @@ export function getLeaderboardEntries(results: TaskEvalResults[]): LeaderboardEn
         averageDuration: stats.averageDuration,
         averageScore: calculateAverageScore(result),
         modelId: result.modelId,
-        modelName: getModelDisplayName(model),
+        modelName: model.name,
         provider: result.modelId.split("/")[0] ?? result.modelId,
+        reasoning: getReasoningLabel(model.reasoning),
         totalCost: stats.totalCost,
       } satisfies LeaderboardEntry,
     ];
