@@ -22,10 +22,11 @@ The quiz should feel varied, focused, and useful. It should assess transferable 
   - use multiple formats when they genuinely fit the concepts being tested
   - use at most 1 matchColumns question
   - use at most 1 sortOrder question
-  - use exactly 1 fillBlank question
+  - use at most 1 fillBlank question
   - use multipleChoice and selectImage for ordinary application questions
   - never force matchColumns just to include every format
   - never force sortOrder just to include every format
+  - never force fillBlank just to include every format
 - Plan the format sequence before writing questions. For each question, choose the `format` first, then write the fields for that format. Do not use the same format twice in a row.
 - Write conversationally, like a curious friend posing useful challenges.
 - Write every learner-facing string in `LANGUAGE`.
@@ -41,7 +42,7 @@ Use `LESSON` to identify the quiz scope. The source lesson includes a title and 
 - Do not reuse source lesson examples with superficial substitutions. A new scenario should change the setting, evidence, objects, actors, or decision being made enough that the learner must transfer the concept.
 - Default to multipleChoice or selectImage for ordinary quiz questions.
 - Use matchColumns only when a compact matching task is clearly stronger than a scenario, ordering, fill-in-the-blank, or image question.
-- Use fillBlank only when a missing word or phrase is the clearest way to test a precise relationship, contrast, formula, or term. Do not use fillBlank for broad conceptual distinctions, copied lesson phrasing, or facts that another format would test through application.
+- Use fillBlank only when a missing word or phrase is the clearest way to test a precise relationship, contrast, formula, or term. Every blank must have one uniquely correct answer for its position. Do not use fillBlank for broad conceptual distinctions, copied lesson phrasing, unordered lists, or facts that another format would test through application.
 - Use sortOrder only for a clear sequence where each item must happen before the next, such as a procedure, timeline, dependency chain, lifecycle stage, or cause-effect chain. Do not use sortOrder for optional steps, branching outcomes, alternative endings, unordered checklists, diagnostic criteria, reasoning checklists, or workflows where several orders could be reasonable.
 - Do not let one format dominate when other formats can test the content well.
 - Do not make the correct multiple-choice option easier to spot by making it longer, more specific, more careful, or more confident than the wrong options.
@@ -53,7 +54,7 @@ Each question must include a `format` field.
 Choose the format from what the learner needs to do:
 
 - `multipleChoice`: choose the best interpretation, prediction, diagnosis, explanation, or next move in a scenario.
-- `fillBlank`: complete a precise relationship, contrast, formula, or term when the missing words themselves matter. Use exactly one fillBlank question per quiz.
+- `fillBlank`: complete a precise relationship, contrast, formula, or term when the missing words themselves matter. Use at most one fillBlank question per quiz, and omit it when the source scope does not support a natural, unambiguous completion.
 - `matchColumns`: connect related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to their roles. Use at most one matchColumns question per quiz, and omit it when the source scope does not contain a natural set of relationships to match.
 - `sortOrder`: order a sequence where one correct order is essential, such as procedural steps, cause-effect chains, historical events, or stages that cannot be swapped. Use at most one sortOrder question per quiz, and omit it when the source scope does not contain a genuinely ordered concept.
 - `selectImage`: inspect visual evidence, compare visible features, read a diagram, identify a spatial pattern, or choose the image that matches a principle.
@@ -70,11 +71,15 @@ Format requirements:
 ## fillBlank
 
 - Use only when this format is clearly stronger than a scenario, matching, sorting, or image question.
+- Each answer must belong to exactly one blank. If the template has multiple blanks, moving an answer to another blank must make the result clearly wrong.
+- Do not blank out an unordered list or set of properties where the correct answers could trade places without changing the meaning.
 - `question`: Context for the fill-in-the-blank exercise.
 - `template`: Sentence(s) with `[BLANK]` placeholders. Use exactly `[BLANK]`.
 - `answers`: Correct words in order. Position 0 fills the first blank.
 - `distractors`: Plausible but incorrect words to include as options.
 - `feedback`: Explain why the answers belong in those positions.
+
+Before using fillBlank, ask: "Would a knowledgeable learner agree that each answer has only one defensible blank?" If not, choose another format or omit fillBlank.
 
 ## matchColumns
 
@@ -122,9 +127,10 @@ Before finalizing, revise the quiz until all are true:
 - Questions can be answered from conceptual understanding, not lesson-specific memory.
 - Scenarios are novel, not source lesson examples with renamed surface details.
 - The quiz uses multiple formats when the concepts support them.
-- The quiz uses no more than 1 matchColumns, no more than 1 sortOrder, and exactly 1 fillBlank.
+- The quiz uses no more than 1 matchColumns, no more than 1 sortOrder, and no more than 1 fillBlank.
 - matchColumns appears only when matching relationships is clearly useful and natural.
 - sortOrder appears only when the order is necessary and non-ambiguous.
+- fillBlank appears only when every answer has one uniquely correct position; it never turns an unordered list into an order-sensitive answer.
 - Questions that do not need matchColumns, sortOrder, or fillBlank use multipleChoice or selectImage.
 - No format appears twice in a row.
 - No single format dominates when other formats can test the content well.
