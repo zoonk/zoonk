@@ -1,20 +1,16 @@
 {
-  "modelId": "openai/gpt-5.6-sol",
+  "modelId": "openai/gpt-5.6-luna",
   "results": [
     {
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The first four situations are concrete but mostly end in classroom-style classification or identification, without an external decision or consequence; this weakens the required real-life application. Distractor quality is also materially weak: repeated “Nenhuma dessas funções” choices and options such as “Resíduos fornecem energia,” “Matéria dispensa metabolismo,” and “Reter produtos metabólicos” are too obviously false, allowing answers by elimination rather than concept application.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Some terminology is oversimplified or imprecise. Defining a consumer only as an organism that ingests other organisms overlooks broader heterotrophy, while “recursos não orgânicos” would be clearer as “substâncias inorgânicas.” In the fish item, calling gas elimination itself a metabolic “stage” is less precise than calling it elimination of a metabolic residue.",
+          "conclusion": "Several distractors are too easy or lie on a different axis from the intended choice. “Ser não vivo” is plainly implausible for a plant, rabbit, or visibly growing fungus; “cobrir as folhas com açúcar,” “apagar a luz,” and “trocar o peixe de aquário” are also weak compared with the correct actions. The aquarium wording says the filter is “removendo menos água,” although a filter normally circulates and filters water rather than removing it. Its decision also tests obvious equipment maintenance more strongly than the biological relationship among metabolism, work, and waste.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Give the producer, consumer, decomposer, and greenhouse cases practical stakes—for example, predicting growth, managing an ecosystem, diagnosing decay, or adjusting greenhouse conditions. Replace weak distractors with plausible misconceptions, and consider one integrated case that more explicitly links organic matter intake or production, energy release, biological work, and waste elimination.",
+          "conclusion": "Use more plausible misconceptions as distractors, such as confusing the organism’s source of matter with its source of energy or distinguishing ingestion from decomposition. Rephrase the aquarium clue as reduced water flow or reduced filtration, and make the decision depend more directly on how feeding and metabolism generate waste that must be removed. The first three items could also vary the applied consequence slightly instead of repeatedly asking for the trophic classification.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -35,9 +31,17 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The practice does not directly test the scheme as the target concept. HTTPS appears as context and as implausible edits, but no situation asks the learner to choose or predict a scheme change, despite scheme being one of the lesson’s five named URL parts. This leaves an important lesson concept underassessed.",
+          "kind": "majorErrors",
+          "score": 8
+        },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Add or substitute a concrete scheme-focused situation, such as correcting an HTTP link that must use HTTPS, with the learner predicting the connection-level consequence. The existing domain, path, query, fragment, and fragment-network-request situations are accurate and useful.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: URL decisions must preserve the browser-facing meaning of each part. Penalize if:\n   - Scheme, domain, path, query, or fragment are swapped or treated as interchangeable\n   - A fragment is described as causing a new network request by default\n   - Query parameters are treated as page path segments instead of extra instructions or filters\n\n2. SITUATION CHECK: Situations should involve real browser, product, support, analytics, routing, or link-sharing problems where one character changes the destination, filtered result, or on-page position. Penalize classroom URL labeling, poster cleanup, or generic definitions detached from a concrete broken link.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-LIFE APPLICATIONS: The practice must be a collection of concrete situations where the source lesson concept affects an outcome that would matter outside a lesson. Penalize meta-situations where the learner is preparing teaching material, fixing educational labels, sorting classroom examples, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.\n\n2. CLEAR CONCEPT APPLICATION: Every situation should include a clear concept clue, named concept, defining feature, mechanism, rule, measurement, or real observation. The question should ask the learner to apply that concept to choose an action, explanation, classification, prediction, check, or consequence. Do not penalize a situation for naming the concept or giving the definition when the learner still has to use it.\n\n3. NOT MEMORIZATION: Penalize direct definition drills such as \"What is X?\", \"Which option is the definition of X?\", or \"Is X category A or B?\" when detached from a concrete situation. A good item can give a definition clue and ask what it implies in a real problem, such as \"cells without a nucleus -> likely bacteria\" or \"photosynthesis problem -> change light conditions.\"\n\n4. NO HIDDEN-CONCEPT PUZZLES: Penalize outputs that hide the concept behind abstract clues, convoluted case-file details, or mystery-style deduction. The learner should know which idea is relevant and be tested on whether they can use it, not on whether they can guess the hidden topic from option shape.\n\n5. FOCUSED SITUATION SET: Situations do not need to share a story, character, artifact, or final reveal. Penalize forced storytelling, escalating logistics, recurring plots that make the lesson harder to follow, and broad operational decisions where the source concept gets buried.\n\n6. VISUAL GROUNDING: Every situation should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason through a concrete object, organism, screen, report, sample, behavior, measurement, label, diagram, or visible state. Penalize generic image prompts that add no value.\n\n7. DIALOGUE QUALITY: Dialogue must be pure conversation with no narrator text, speaker labels, stage directions, colons before quoted speech, or surrounding quotation marks. A single person speaking directly to {{NAME}} is valid. Dialogue should introduce the concrete situation, useful clue, or practical reason the choice matters. Penalize dialogue that duplicates the question, gives away the answer, uses the correct option text or a close paraphrase, reads like a lecture, or turns into a story recap. If the question asks for a classification, action, cause, or conclusion, dialogue must not state that classification, action, cause, or conclusion before the learner answers.\n\n8. TONE: Clarity comes first. Light humor is allowed only when it is minimal and does not carry or hide the clue. Penalize joke-first situations, punchline dialogue, or all-silly distractor sets.\n\n9. FORMAT COMPLIANCE: Verify these constraints:\n   - Output has a situations array\n   - Output does not include a top-level scenario, scenario title, scenario text, intro step, or opening image\n   - every situation has: imagePrompt, dialogue, question, options\n   - each situation is understandable without reading another situation\n   - question should be short, direct, not already asked inside dialogue, and grounded in the situation\n   - option text should usually be short and easy to scan; terse options are fine when the question and situation make them unambiguous\n   - bare concept labels are allowed when the situation makes the label an applied choice, not a vocabulary drill\n   - dialogue gives evidence for the correct option, not the correct option text itself\n   - Exactly 1 option must have isCorrect: true\n\n10. PERSONALIZATION: The {{NAME}} placeholder should be used appropriately in dialogue only and sparingly. Penalize {{NAME}} in image prompts, questions, options, or feedback. Penalize outputs that put {{NAME}} in every dialogue or make most dialogue lines start with {{NAME}}; one or two natural uses in a practice lesson is enough.\n\n11. FEEDBACK QUALITY:\n   - Each option must explain why it is right or wrong in this exact situation.\n   - Every wrong option's feedback must complete the full correction in the same message: explain why the selected option fails, explicitly identify the correct option or an unmistakable paraphrase, and teach why the correct option follows by connecting the situation's evidence to the lesson concept and practical result.\n   - Explanations must use plain language and concrete facts from the situation before relying on domain labels. When it naturally clarifies the distinction, explain what condition would have made the selected option correct and contrast it with what actually happened. Do not require this counterfactual in every response.\n   - Feedback should act as a brief teaching moment. Use a relatable everyday consequence, familiar observation, practical decision, or real-world artifact when it naturally clarifies the same reasoning. The existing situation can provide this bridge; do not require a forced analogy or unrelated second example.\n   Penalize feedback that only dismisses the selected option, only names the correct answer without explaining why it follows, leaves the correct-answer reasoning to the correct option's separate feedback, substitutes compressed jargon or category shorthand for a concrete explanation, or gives a generic score report.\n\n12. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider for this exact situation. Penalize absurd, joke-shaped, random, or obviously irrelevant options. Penalize answer sets where the correct option is guessable because every distractor is on a different axis or obviously impossible.\n\n13. SITUATION COUNT: Practice should use as many situations as the lesson concepts need, and no more. The right count depends on the lesson. Penalize outputs that skip important lesson concepts, and penalize padded, repetitive, or same-question-with-new-prop situations.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require one story, one setting, one character, or one recurring case\n- Do NOT penalize independent situations just because they are disconnected from each other\n- Do NOT require a plot twist, final reveal, or narrative resolution\n- Do NOT penalize a valid real-world situation just because it is not the situation you would have chosen\n- Do NOT penalize concept names or definition clues when the learner must apply them to a concrete situation\n- Do NOT penalize a small overrun on text length if the situation is still fast, clear, and readable on the first pass\n- Do NOT require humor\n- Do NOT penalize dialogue just because one person speaks to {{NAME}} instead of alternating turns; penalize only if it stops sounding like direct speech or removes the learner's application\n- Do NOT require every dialogue to address the learner by name; most dialogue lines should work without {{NAME}}\n- Do NOT penalize terse option text by itself; penalize it only when it becomes vague, purely vocabulary-based, or answerable without the situation evidence\n- Do penalize direct definition/function/role/process questions when the learner can answer without using a real situation\n- Do penalize dialogue that says the correct option or direct answer before asking the learner to choose it\n- Do penalize repetitive {{NAME}} usage across every dialogue\n- Do penalize situations where the concept is hidden so deeply that the learner is solving a riddle instead of applying an idea\n- Do penalize situations where the learner can guess the answer by eliminating absurd distractors without understanding the concept\n- Do penalize generic decoration image prompts\n- Do penalize prompt residue, narrator text in dialogue, duplicated dialogue questions, forced storytelling, repetitive/filler decisions, all-silly distractor sets, poor distractor quality, and factually incorrect lesson application\n- Different valid practice approaches exist - assess the quality of what IS provided\n\n    ",
@@ -56,19 +60,19 @@
     {
       "steps": [
         {
-          "conclusion": "Situation 3 incorrectly treats grouped ranges as the sample space even though the inspection records the exact whole-number defect count. The sample space for that stated trial is `0, 1, 2, 3, 4, 5`; ranges such as `1–2` and `3–5` are events or a partition unless the recorded result is explicitly changed to a risk band. This directly confuses events with the complete sample space and teaches a core lesson distinction incorrectly.",
+          "conclusion": "The die item is mathematically invalid: “Even and greater than six” is also a mutually exclusive pair for a standard six-sided die because “greater than six” is impossible. It is marked wrong, and its feedback mistakenly discusses “greater than four,” creating two defensible answers. In the first item, the feedback for “HH, TH, TT” falsely says the option includes all four outcomes; it actually contains only three and omits HT.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "A few distractors are weak, especially “Duplicate every face” in Situation 4 and “Add red a second time” in Situation 5. They are obviously contrary to listing outcomes once, making the correct choices easier to identify without much reasoning.",
+          "conclusion": "The collection is only partly grounded in practical uncertainty. The first situation is explicitly about correcting a worksheet, a prohibited educational meta-situation. The spinner report and die “team” have limited real-world purpose, while the package-label situation is practical but functions more as deterministic category design than as a random trial. Some dialogue and image cues also state the overlap issue so explicitly that little reasoning remains.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Revise Situation 3 either to list the six exact counts and ask about events, or state that the warehouse records one of three defect bands. More plausible distractors could also target event/sample-space confusion, such as replacing the die sample space with `{5, 6}` because that is the planned event.",
+          "conclusion": "Replace the invalid die distractor with a genuinely overlapping pair and ensure its feedback addresses that exact option. Reframe the worksheet and abstract team/report scenarios as consequential checks of a game, simulation, risk table, or random-draw setup. Preserve the strong complete-space feedback while making visual evidence useful without explicitly highlighting the answer.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -89,12 +93,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Some distractors are too implausible, especially “Sink to the bottom” and “Spin without stopping” for the floating cork, and “Brighten the chamber” for restoring sound. These make the correct answer easier to guess without applying mechanical-wave reasoning.",
+          "conclusion": "The set repeatedly asks only which medium carries the wave. Although local oscillation is accurately described in the dialogue and feedback, learners are never directly asked to explain or predict why the disturbance travels while the matter remains near its original position, leaving part of the lesson objective under-assessed.",
           "kind": "minorErrors",
           "score": 8.5
         },
         {
-          "conclusion": "The rope, spring, and marker situations could be strengthened with a practical consequence—such as diagnosing a failed signal, protecting equipment, or interpreting a measurement—rather than mainly observing or identifying the medium. Otherwise, the set accurately distinguishes traveling disturbances from locally oscillating matter and covers rope, spring, air, water, and ground effectively.",
+          "conclusion": "Replace one or two identification items with an applied explanation, prediction, or measurement-failure question—for example, using a floating marker to decide whether pond water travels outward, or diagnosing why a vibration sensor loses its signal when contact with the ground is broken. This would broaden application without adding more situations.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -117,12 +121,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Several distractors are too obviously wrong to test the concept well, especially “Apagar as etiquetas dos tablets,” “Pagar novamente o fornecedor,” and “R$ 590 mil.” Some sequencing distractors, such as requesting delivery proof or registering patrimônio before contracting a roof repair, are also easy to eliminate without closely applying the distinction between orçamento, caixa, despesa, and accountability.",
+          "conclusion": "Situation 4 correctly distinguishes asset recognition from payment, but it presents only recognition of the computer. A complete patrimonial update would also recognize or preserve the payable liability to the supplier until payment occurs.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9
         },
         {
-          "conclusion": "Use more plausible errors drawn from actual public-finance confusion, such as treating dotação as available cash, treating an agendamento as completed payment, omitting liquidação, or recording delivered assets only in expense records. Where useful, clarify that orçamento authorization is necessary but does not by itself complete all legal expenditure stages, including empenho, liquidação, payment, and supporting records.",
+          "conclusion": "Situation 1 could state more precisely that budget authorization provides a spending limit and supports commitment only after the applicable procurement, fiscal-programming, and expenditure procedures; it does not by itself authorize unrestricted execution up to the full amount.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -145,12 +149,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The practice covers all required fit clues accurately, but it does not clearly state the purchasing consequences of ordering an incompatible part, such as paying for a useless component, needing a return, or causing equipment downtime. The last two situations also focus on correcting installation rather than deciding whether a replacement is compatible before purchase, although they remain valid applications of mounting side and fixing position.",
+          "conclusion": "The fifth situation’s feedback explains the required mounting orientation but does not clearly state the practical consequence of mounting the blade backward, such as ineffective cutting, loosening, or a safety risk. Also, the second situation slightly overstates the evidence by calling the 25.4 mm interface an “eixo” when only the original blade’s bore was explicitly measured.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         {
-          "conclusion": "Add an explicit purchase-risk consequence to the dialogue or feedback in the replacement scenarios. A few distractors could also be more plausible and stay on the same compatibility axis; for example, “Trocar por lâmina maior” is weak because blade diameter does not address the visibly reversed mounting face. Some dialogue could sound slightly more conversational rather than like instructional exposition.",
+          "conclusion": "Strengthen the final situation by connecting the face and rotation markings to a concrete operating or safety outcome, and phrase the blade-bore comparison as matching the machine’s verified mounting interface rather than inferring shaft size solely from the removed blade.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -173,14 +177,14 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "One small wording imprecision appears in the R$720 distractor feedback: R$720 is mathematically 75% of the client contribution, but it does not itself “represent the leads that do not close.” The correction and final reasoning remain clear and accurate.",
+          "conclusion": "One distractor in the first situation is implausible and internally contradicted by the displayed data: “Pausar porque CPA supera R$ 240” when the CPA is explicitly R$ 70. This makes elimination possible without applying contribution-margin reasoning. The remaining situations are accurate, economically grounded, and provide complete corrective feedback.",
           "kind": "minorErrors",
-          "score": 9.5
+          "score": 9
         },
         {
-          "conclusion": "The ROAS situation could make the supplied R$70,000 revenue operationally useful by also showing ad spend and asking the learner to compare actual ROAS with the 4.0 break-even target. As written, the revenue figure is unnecessary, although the break-even calculation is correct.",
+          "conclusion": "Strengthen the first distractor set with realistic mistakes, such as treating the current CPA as safe regardless of margin or using revenue rather than contribution to set the limit. The scale decisions could also explicitly say to monitor whether CPA, closing rate, margin, and repeat purchases remain stable as budget rises, since historical unit economics do not guarantee the same performance at higher spend.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 9
         }
       ],
       "testCase": {
@@ -200,17 +204,17 @@
     {
       "steps": [
         {
-          "conclusion": "Most content is technically accurate and preserves the query-key-value pipeline, but the set has repeated task-fit and dialogue violations. Several situations are essentially isolated calculation exercises with a dashboard/diagram wrapper rather than consequential model-debugging, inference-quality, or attention-trace problems. In addition, dialogues in situations 1, 2, and 4 explicitly announce almost the same task as the question, contrary to the requirement that dialogue not duplicate the question. Situation 5 directly states that the positions have different queries and asks what explains their different focus, making the correct option nearly explicit before the learner answers; its image also draws the resulting strongest arrows.",
+          "conclusion": "The set is largely detached from consequential model-debugging or inference-quality outcomes: most items are textbook-style calculations with generic positions and vectors rather than concrete traces explaining an actual model output. It also omits important lesson coverage: learners never calculate a softmax distribution and never compare how different positions produce different attention patterns from their own queries. In addition, several incorrect-option feedback messages fail the requirement to provide the full correction in the same message—for example, the “flood,” “ignore all,” causal-mask, and first weighted-vector distractors do not clearly identify and explain the correct answer.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Some distractors are weak because they directly contradict stated facts rather than representing close misconceptions, especially “One query was reused” and “The mask reversed scores” in situation 5. Several image prompts are useful diagrams, but they function mainly as restatements of the supplied numbers rather than authentic evidence from an attention-debugging artifact. Situation 6 is the strongest practical audit scenario, though it provides no actual tensor values with which to perform the audit.",
+          "conclusion": "One feedback string contains a stray control character before the square-root expression. The causal-mask dialogue nearly gives the answer away by explicitly listing positions 1–3 as available and position 4 as future, leaving only a minimal application step. Some distractors, such as using 64 as the scaled score, are weaker than realistic mistakes.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Reframe more items around concrete failures or decisions—for example, diagnosing a mistranslation, preventing causal leakage, checking why a generated token copied irrelevant context, or validating a suspicious attention trace. Let dialogue provide evidence and practical stakes without restating the question or naming its answer. For situation 5, show the two queries and observed attention patterns without explicitly saying that query differences explain them. Preserve the strong option-specific feedback and accurate separation of scaled scores, masking, softmax weights, and blended values.",
+          "conclusion": "Use concrete debugging contexts, such as tracing why a translation selected the wrong antecedent or why a decoder copied a future token. Include visible query and key vectors, compute multiple scaled scores and their normalized softmax weights, and compare two query positions to show why their attention differs. Rewrite every wrong-option explanation to name the correct result and connect the visible evidence through scores, masking, weights, and the blended value output.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -233,12 +237,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The third situation's dialogue directly states that UAG signals a stop and then asks what will happen during translation, effectively giving away the correct answer (“Encerramento precoce”). This weakens the learner's required application in that item. The other situations provide appropriate sequence evidence without major factual or structural problems.",
+          "conclusion": "In the insertion situation, the displayed variant “AUG-CAAA-CCG-GAU” does not actually show the downstream bases regrouped into new triplets, despite the dialogue and image prompt claiming that the grouping changed. A correct regrouping would resemble “AUG-CAA-ACC-GGA...” and would make the frameshift visually explicit.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "Revise the third question to ask for the mutation classification (nonsense) or revise the dialogue so the learner must use the codon table to infer premature termination. The set could also state the practical significance of each laboratory annotation slightly more explicitly, though the sequence-report contexts are already valid and useful.",
+          "conclusion": "Include a small codon-table excerpt or amino-acid annotations in the first three images so learners can infer silent, missense, and nonsense effects from visible evidence rather than needing to recall the genetic code. A further deletion example involving one or two bases could also reinforce that deletions, like insertions, cause frameshifts only when their length is not a multiple of three.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -259,16 +263,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "A few formulations slightly blur the distinction between a recorded signal and the underlying reality. For example, “Temperatura de 34 °C” would be more precise as “Lectura registrada de 34 °C,” and a video-completion event confirms that playback reached the end, not necessarily that the visitor watched attentively. These are limited wording issues; the surrounding dialogue and feedback generally preserve the correct distinction.",
+          "conclusion": "Across all five situations, the dialogue states the correct evidence using the exact option text or a very close paraphrase—for example, “clic en ‘Ver detalles’,” the two temperature readings, and the written message. This violates the dialogue rule against giving away the answer and often reduces the task to matching repeated wording rather than applying the distinction between recorded signals and assumptions. The underlying data-source reasoning is otherwise accurate.",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "In the first situation, the dialogue says both the “No” response and the time were saved, but the question and feedback refer to the response as though it were the only captured datum. The selected answer remains valid among the options, but the wording should acknowledge that the timestamp was also recorded.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "In the final situation, explicitly state that the original pressure value is unrecoverable and that repeating the measurement produces a new record of the current pressure, which may not represent the earlier state. This would make the loss caused by failing to record reality even clearer.",
+          "conclusion": "The practice could preserve the strong range of forms, logs, photos, sensors, and text while asking more consequential questions, such as what conclusion is justified, what claim should be rejected, or what additional signal must be collected. This would reduce verbatim answer matching and strengthen real-world decision-making without hiding the concept.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {

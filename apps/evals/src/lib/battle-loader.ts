@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
+import { resolveBattleMatchupModelIds } from "./battle-mapping";
 import { type ModelConfig, getModelById, getModelDisplayName } from "./models";
 import { getAllOutputsForTask } from "./output-loader";
 import { type BattleLeaderboardEntry, type BattleMatchup, type ModelOutputs } from "./types";
@@ -26,7 +27,7 @@ export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMat
       matchupFiles.map(async (file) => {
         const filePath = path.join(taskDir, file);
         const data = await fs.readFile(filePath, "utf8");
-        return JSON.parse(data) as BattleMatchup;
+        return resolveBattleMatchupModelIds(JSON.parse(data) as BattleMatchup);
       }),
     );
 

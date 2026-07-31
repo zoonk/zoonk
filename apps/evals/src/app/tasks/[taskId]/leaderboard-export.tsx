@@ -31,11 +31,11 @@ export function LeaderboardExport({
       }
     } else {
       // Export all data
-      markdown = "| Model | Provider | Avg Score | Avg Duration | Cost |\n";
-      markdown += "|-------|----------|-----------|--------------|------|\n";
+      markdown = "| Model | Provider | Reasoning | Avg Score | Avg Duration | Cost |\n";
+      markdown += "|-------|----------|-----------|-----------|--------------|------|\n";
 
       for (const entry of entries) {
-        markdown += `| ${entry.modelName} | ${entry.provider} | ${entry.averageScore.toFixed(2)} | ${entry.averageDuration.toFixed(2)}s | $${entry.totalCost.toFixed(2)} |\n`;
+        markdown += `| ${entry.modelName} | ${entry.provider} | ${entry.reasoning} | ${entry.averageScore.toFixed(2)} | ${entry.averageDuration.toFixed(2)}s | $${entry.totalCost.toFixed(2)} |\n`;
       }
     }
 

@@ -48,6 +48,20 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
+/**
+ * Removes every scored result for one task and model so regenerated outputs
+ * cannot be paired with scores from an earlier evaluation.
+ */
+export async function deleteModelResults({
+  modelId,
+  taskId,
+}: {
+  modelId: string;
+  taskId: string;
+}): Promise<void> {
+  await fs.rm(getResultsFilePath(taskId, modelId), { force: true });
+}
+
 async function scoreOutput({
   output,
   task,

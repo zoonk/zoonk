@@ -1,0 +1,77 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: CPA and ROAS reasoning must connect ad cost to business economics. Penalize if:\n   - CPA is judged without ticket médio, margem, closing rate, or lifetime value when those facts are relevant\n   - ROAS is treated as automatically good without checking margin or break-even\n   - Lead and purchase conversions are mixed without accounting for taxa de fechamento\n\n2. SITUATION CHECK: Situations should involve campaign budgets, offers, margins, conversion data, or break-even decisions where the learner chooses a viable next action. Penalize generic ad-optimization advice with no numbers or economic constraint.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-LIFE APPLICATIONS: The practice must be a collection of concrete situations where the source lesson concept affects an outcome that would matter outside a lesson. Penalize meta-situations where the learner is preparing teaching material, fixing educational labels, sorting classroom examples, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.\n\n2. CLEAR CONCEPT APPLICATION: Every situation should include a clear concept clue, named concept, defining feature, mechanism, rule, measurement, or real observation. The question should ask the learner to apply that concept to choose an action, explanation, classification, prediction, check, or consequence. Do not penalize a situation for naming the concept or giving the definition when the learner still has to use it.\n\n3. NOT MEMORIZATION: Penalize direct definition drills such as \"What is X?\", \"Which option is the definition of X?\", or \"Is X category A or B?\" when detached from a concrete situation. A good item can give a definition clue and ask what it implies in a real problem, such as \"cells without a nucleus -> likely bacteria\" or \"photosynthesis problem -> change light conditions.\"\n\n4. NO HIDDEN-CONCEPT PUZZLES: Penalize outputs that hide the concept behind abstract clues, convoluted case-file details, or mystery-style deduction. The learner should know which idea is relevant and be tested on whether they can use it, not on whether they can guess the hidden topic from option shape.\n\n5. FOCUSED SITUATION SET: Situations do not need to share a story, character, artifact, or final reveal. Penalize forced storytelling, escalating logistics, recurring plots that make the lesson harder to follow, and broad operational decisions where the source concept gets buried.\n\n6. VISUAL GROUNDING: Every situation should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason through a concrete object, organism, screen, report, sample, behavior, measurement, label, diagram, or visible state. Penalize generic image prompts that add no value.\n\n7. DIALOGUE QUALITY: Dialogue must be pure conversation with no narrator text, speaker labels, stage directions, colons before quoted speech, or surrounding quotation marks. A single person speaking directly to {{NAME}} is valid. Dialogue should introduce the concrete situation, useful clue, or practical reason the choice matters. Penalize dialogue that duplicates the question, gives away the answer, uses the correct option text or a close paraphrase, reads like a lecture, or turns into a story recap. If the question asks for a classification, action, cause, or conclusion, dialogue must not state that classification, action, cause, or conclusion before the learner answers.\n\n8. TONE: Clarity comes first. Light humor is allowed only when it is minimal and does not carry or hide the clue. Penalize joke-first situations, punchline dialogue, or all-silly distractor sets.\n\n9. FORMAT COMPLIANCE: Verify these constraints:\n   - Output has a situations array\n   - Output does not include a top-level scenario, scenario title, scenario text, intro step, or opening image\n   - every situation has: imagePrompt, dialogue, question, options\n   - each situation is understandable without reading another situation\n   - question should be short, direct, not already asked inside dialogue, and grounded in the situation\n   - option text should usually be short and easy to scan; terse options are fine when the question and situation make them unambiguous\n   - bare concept labels are allowed when the situation makes the label an applied choice, not a vocabulary drill\n   - dialogue gives evidence for the correct option, not the correct option text itself\n   - Exactly 1 option must have isCorrect: true\n\n10. PERSONALIZATION: The {{NAME}} placeholder should be used appropriately in dialogue only and sparingly. Penalize {{NAME}} in image prompts, questions, options, or feedback. Penalize outputs that put {{NAME}} in every dialogue or make most dialogue lines start with {{NAME}}; one or two natural uses in a practice lesson is enough.\n\n11. FEEDBACK QUALITY:\n   - Each option must explain why it is right or wrong in this exact situation.\n   - Every wrong option's feedback must complete the full correction in the same message: explain why the selected option fails, explicitly identify the correct option or an unmistakable paraphrase, and teach why the correct option follows by connecting the situation's evidence to the lesson concept and practical result.\n   - Explanations must use plain language and concrete facts from the situation before relying on domain labels. When it naturally clarifies the distinction, explain what condition would have made the selected option correct and contrast it with what actually happened. Do not require this counterfactual in every response.\n   - Feedback should act as a brief teaching moment. Use a relatable everyday consequence, familiar observation, practical decision, or real-world artifact when it naturally clarifies the same reasoning. The existing situation can provide this bridge; do not require a forced analogy or unrelated second example.\n   Penalize feedback that only dismisses the selected option, only names the correct answer without explaining why it follows, leaves the correct-answer reasoning to the correct option's separate feedback, substitutes compressed jargon or category shorthand for a concrete explanation, or gives a generic score report.\n\n12. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider for this exact situation. Penalize absurd, joke-shaped, random, or obviously irrelevant options. Penalize answer sets where the correct option is guessable because every distractor is on a different axis or obviously impossible.\n\n13. SITUATION COUNT: Practice should use as many situations as the lesson concepts need, and no more. The right count depends on the lesson. Penalize outputs that skip important lesson concepts, and penalize padded, repetitive, or same-question-with-new-prop situations.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require one story, one setting, one character, or one recurring case\n- Do NOT penalize independent situations just because they are disconnected from each other\n- Do NOT require a plot twist, final reveal, or narrative resolution\n- Do NOT penalize a valid real-world situation just because it is not the situation you would have chosen\n- Do NOT penalize concept names or definition clues when the learner must apply them to a concrete situation\n- Do NOT penalize a small overrun on text length if the situation is still fast, clear, and readable on the first pass\n- Do NOT require humor\n- Do NOT penalize dialogue just because one person speaks to {{NAME}} instead of alternating turns; penalize only if it stops sounding like direct speech or removes the learner's application\n- Do NOT require every dialogue to address the learner by name; most dialogue lines should work without {{NAME}}\n- Do NOT penalize terse option text by itself; penalize it only when it becomes vague, purely vocabulary-based, or answerable without the situation evidence\n- Do penalize direct definition/function/role/process questions when the learner can answer without using a real situation\n- Do penalize dialogue that says the correct option or direct answer before asking the learner to choose it\n- Do penalize repetitive {{NAME}} usage across every dialogue\n- Do penalize situations where the concept is hidden so deeply that the learner is solving a riddle instead of applying an idea\n- Do penalize situations where the learner can guess the answer by eliminating absurd distractors without understanding the concept\n- Do penalize generic decoration image prompts\n- Do penalize prompt residue, narrator text in dialogue, duplicated dialogue questions, forced storytelling, repetitive/filler decisions, all-silly distractor sets, poor distractor quality, and factually incorrect lesson application\n- Different valid practice approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-07-31T01:45:48.085Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Five tight situations that cover CPA de equilíbrio, ROAS de equilíbrio (3,33x), CPL with taxa de fechamento, LTV-based CPA ceiling, and a two-campaign budget-allocation decision — all math is correct and every distractor encodes a recognizable misconception (percent-as-reais, 1÷margem inverted, per-lead vs per-cliente) with feedback that names and justifies the correct answer. Image prompts show legible dashboard figures, {{NAME}} appears sparingly, and dialogue sets up the economics without revealing the answer. Minor nits: a couple of imagePrompts carry instruction-style residue ('Sem exibir o resultado do cálculo') and three of five items are pure calculations rather than next-action decisions.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Broadest and economically sharpest set: correct break-even CPA/ROAS math, lead-vs-sale conversion handled through taxa de fechamento, and an excellent situation penalizing an unsupported LTV claim, which directly matches the accuracy guidance. Weaknesses are mild redundancy (S3 and S5 are the same contribution × close-rate computation with new props; S1 and S4 both re-derive margin × ticket), an irrelevant R$70.000 revenue figure, and feedback that is terser than the others though still complete.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Four efficient, non-padded situations covering margin-based CPA, break-even ROAS, CPL with closing rate, and LTV-based scaling, with correct math and detailed, self-contained feedback that shows the calculation. Held back by several weak distractors ('Pausar porque CPA supera R$240' when CPA is R$70; 'só 10,0x seria viável'; 'R$20') whose feedback merely says the number isn't derivable from the data, plus minor instruction residue in an imagePrompt.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model A follows all instructions perfectly and features exceptionally strong options and distractors. Rather than just offering numbers to calculate, the options frame the math around the practical business decision of whether to scale or pause the campaign, testing realistic conceptual misconceptions (e.g., assuming a ROAS > 1 is always profitable).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model B is very strong and provides a brilliant interpretation of the 'when it makes sense' prompt instruction in Situation 6, where the learner must reject an unsupported LTV projection. It ranks slightly below Model A because its earlier situations use plain numbers for options rather than framing them as scale/pause decisions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Model C is solid and meets all formatting and pedagogical expectations with accurate math and clear feedback. It ranks slightly lower because the distractors are less conceptually rich than Model A's, and the ROAS calculation in Situation 2 (3.33x) is a bit messier for mental math compared to the clean numbers in the other models.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Cobertura excepcional: aplica CPA, ROAS, taxa de fechamento, LTV sustentado e rejeição de LTV sem evidência em decisões econômicas concretas. Imagens, diálogos e feedbacks são úteis e completos; há apenas uma explicação um pouco imprecisa no distrator de R$ 720, sem comprometer a correção principal.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Conjunto forte e variado, com cálculos corretos, boas decisões de escala e distinção clara entre custo por lead e por cliente. O uso de um LTV apenas descrito como estimado é um pouco menos defensável que um histórico comprovado, mas os dados fornecidos sustentam o cálculo e a aplicação.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Aplica corretamente margem, ROAS de equilíbrio, fechamento de leads e contribuição ao longo da vida, com feedback específico e instrutivo. Perde qualidade por alguns distratores pouco plausíveis ou internamente contraditórios, como afirmar que um CPA de R$ 70 supera um ticket de R$ 240, tornando certas respostas fáceis por eliminação.",
+          "score": 8.5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-practice",
+  "testCaseId": "pt-google-ads-cpa-roas-margem-1"
+}

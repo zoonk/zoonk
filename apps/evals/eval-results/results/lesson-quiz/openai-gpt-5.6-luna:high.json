@@ -1,14 +1,18 @@
 {
-  "modelId": "openai/gpt-5.5",
+  "modelId": "openai/gpt-5.6-luna:high",
   "results": [
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The quiz is accurate, scenario-based, well scoped, and uses a strong mix of appropriately fitted formats. It could be improved slightly by changing the first question from the potentially broad “Como esse fato afeta o patrimônio?” to “Quais categorias contábeis são afetadas?” and by making the correct option in the merchandise-sale question explicitly mention both the decrease in inventory and recognition of the cost as an expense, rather than leaving that detail mainly to the feedback.",
+          "conclusion": "The shareholder-deposit scenario is under-specified: a shareholder can transfer money as either a capital contribution or a loan. It should explicitly say that the amount is an equity contribution before concluding that cash and equity increase without a liability. Also, the feedback claiming that the photographer's service involved no resource consumption is too absolute; the scenario only establishes that no separate expense was stated.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Make the select-image options more genuinely visual and phone-friendly, using large icons, arrows, and compact category labels rather than relying mainly on text-heavy before/after descriptions. An additional scenario explicitly asking how the identified effect should appear in the accounting record could strengthen the link between classification and recording judgment.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 9
         }
       ],
       "testCase": {
@@ -27,12 +31,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The quiz is strong overall. It could be slightly more challenging by including one scenario where two records both have useful features but differ in a subtler evidential flaw, rather than relying mostly on clearly decorative or invented alternatives.",
+          "conclusion": "In the second question, feedback for the symmetric front-view distractor says the correct record should be a “side sketch,” contradicting both the scenario and the correct option, which preserve the observed front face. This teaches an incorrect rule about maintaining the observed viewpoint.",
+          "kind": "majorErrors",
+          "score": 6.8
+        },
+        {
+          "conclusion": "The fill-in-the-blank item mainly asks learners to supply the lesson-like terms “observado” and “dúvida.” Although framed with a new specimen, it tests a broad conceptual distinction through predictable terminology rather than applying it through a decision or interpretation, which is specifically a poor fit for fill-blank. Several distractors across the quiz are also very obviously decorative or evidence-destroying, making parts of the assessment easier than necessary.",
+          "kind": "minorErrors",
+          "score": 7.8
+        },
+        {
+          "conclusion": "Correct the viewpoint wording in question 2, and redesign the fill-blank around a precise relationship where the missing words genuinely matter. The image questions could also rely more on clearly visible differences and less on textual indications inside the image; more plausible distractors would better challenge learners to distinguish faithful observation from subtle unsupported inference.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 8.4
         }
       ],
       "testCase": {
@@ -53,12 +65,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The first select-image question largely duplicates the sort-order question and represents the distinction through text-heavy labeled arrows rather than meaningful visual inspection, making the format feel somewhat forced. Also, the match-columns clue “SYN, SYN-ACK, ACK” assumes TCP-handshake detail beyond the stated lifecycle scope.",
+          "conclusion": "The sort-order question implies that the entire response is downloaded before parsing and rendering begin, while question 4 correctly teaches that HTML parsing can begin as bytes arrive. This creates a small internal inconsistency and oversimplifies overlapping browser work. Also, the first select-image question is essentially a text-based ordering question and repeats the same early lifecycle sequence already tested by the fill-blank and sort-order questions, so its visual format and added coverage are limited.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Replace the duplicated lifecycle diagram question with a genuinely visual debugging artifact or a novel scenario requiring learners to locate a failed stage. Use a scope-aligned TCP clue such as “connection established before TLS begins” unless handshake packet flags were explicitly taught.",
+          "conclusion": "Clarify the ordered events as the start of each stage, or distinguish the simplified lifecycle from real-world overlap between downloading, parsing, resource discovery, and rendering. The fill-blank could also be grounded in a brief debugging scenario so it tests the DNS-to-connection relationship rather than mainly recalling stage names. Replacing the first select-image item with a genuinely visual diagnostic would improve variety without repeating the lifecycle order.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -79,18 +91,14 @@
     },
     {
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Question 4 contains an internally impossible scenario if desktop and mobile are the full traffic mix. With desktop activation at 65%, mobile at 35%, and mobile exceeding 50% of traffic, the weighted overall activation rate must be below 50%, not unchanged at 50%. This factual contradiction weakens an otherwise valid segmentation question.",
-          "kind": "majorErrors",
-          "score": 6.5
-        },
-        {
-          "conclusion": "The fill-blank describes dropoff as people who “leave,” but funnel dropoff more precisely means users who do not complete the next step within the defined observation window; they need not visibly leave. Also, the strong-acquisition image question uses an unbenchmarked “tall” new-user bar, so acquisition strength is somewhat schematic rather than analytically established.",
+          "conclusion": "The match-columns question mainly tests vocabulary-definition recall rather than applying the concepts in a novel scenario. The fill-blank template already supplies a percent sign, but the answer and percentage distractors also include percent signs, which could render as “30%%.” In the first segmentation visual, stable desktop conversion and falling mobile conversion identify mobile as a candidate driver, but they do not prove it drove the aggregate decline without segment traffic shares or counts.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8
         },
         {
-          "conclusion": "Revise Question 4 with mathematically consistent traffic weights or simply state that the aggregate stayed flat while device segments moved in opposite directions. Adding explicit measurement windows or rate labels to funnel and retention visuals would also improve practical analytics rigor.",
+          "conclusion": "Replace the terminology-matching item with a short scenario that asks learners to distinguish acquisition, conversion, and retention evidence. Store the fill-blank percentage as “30” rather than “30%.” Add segment sizes or traffic shares to the device-by-period chart so its contribution to the overall conversion change can be assessed quantitatively.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -111,16 +119,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The fill-in-the-blank item is somewhat terminology-driven rather than scenario-based, and its first blank is not uniquely constrained: “fuente original,” “origen común,” “cadena informativa,” and even a shared “autoridad” could express the intended dependency. This creates avoidable grading ambiguity in a format that requires precise words.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "Question 6 makes an unsupported negative claim: the evidence does not establish that “not all the youth” participated; it only fails to establish that all participated. This conflicts with the lesson’s emphasis on proportional claims and careful treatment of absences. The answer should say that there was a large gathering in the plaza, without claiming participation by all youth.",
+          "kind": "majorErrors",
+          "score": 8
         },
         {
-          "conclusion": "Make the fill-in-the-blank relationship more exact and uniquely completable, ideally by grounding it in a compact case of copied documents. The image questions could also specify the key visual evidence slightly more explicitly—for example, showing that both independent records actually indicate the same outage time—while keeping the images phone-friendly.",
+          "conclusion": "The match-columns pairs use full, relatively long sentence-like descriptions on both sides rather than short labels or brief phrases, contrary to the format guidance. Also, the fill-blank mainly recalls the terms “independiente” and “barrio” from an abstract rule; it is less application-oriented than the otherwise strong scenario questions.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Revise Question 6 to say “sin poder afirmar que participó toda la juventud.” Shorten the matching pairs, for example to “Mismo boletín” → “Coincidencia dependiente,” and make the fill-blank complete a precise proportional relationship embedded in a concrete research decision rather than a general rule.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {

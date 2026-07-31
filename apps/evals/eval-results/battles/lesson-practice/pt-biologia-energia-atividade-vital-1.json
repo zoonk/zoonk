@@ -1,0 +1,77 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Energy and matter flow must be biologically accurate at a simple introductory level. Penalize if:\n   - Light is treated as matter or as food by itself\n   - Producers are described as eating soil, light, or ready sugar from the environment\n   - Fungi or similar heterotrophs are described as photosynthesizing in the dark\n   - Organic matter, biological work, and residues are not connected inside the situations that test them\n\n\nEVALUATION CRITERIA:\n\n1. REAL-LIFE APPLICATIONS: The practice must be a collection of concrete situations where the source lesson concept affects an outcome that would matter outside a lesson. Penalize meta-situations where the learner is preparing teaching material, fixing educational labels, sorting classroom examples, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.\n\n2. CLEAR CONCEPT APPLICATION: Every situation should include a clear concept clue, named concept, defining feature, mechanism, rule, measurement, or real observation. The question should ask the learner to apply that concept to choose an action, explanation, classification, prediction, check, or consequence. Do not penalize a situation for naming the concept or giving the definition when the learner still has to use it.\n\n3. NOT MEMORIZATION: Penalize direct definition drills such as \"What is X?\", \"Which option is the definition of X?\", or \"Is X category A or B?\" when detached from a concrete situation. A good item can give a definition clue and ask what it implies in a real problem, such as \"cells without a nucleus -> likely bacteria\" or \"photosynthesis problem -> change light conditions.\"\n\n4. NO HIDDEN-CONCEPT PUZZLES: Penalize outputs that hide the concept behind abstract clues, convoluted case-file details, or mystery-style deduction. The learner should know which idea is relevant and be tested on whether they can use it, not on whether they can guess the hidden topic from option shape.\n\n5. FOCUSED SITUATION SET: Situations do not need to share a story, character, artifact, or final reveal. Penalize forced storytelling, escalating logistics, recurring plots that make the lesson harder to follow, and broad operational decisions where the source concept gets buried.\n\n6. VISUAL GROUNDING: Every situation should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason through a concrete object, organism, screen, report, sample, behavior, measurement, label, diagram, or visible state. Penalize generic image prompts that add no value.\n\n7. DIALOGUE QUALITY: Dialogue must be pure conversation with no narrator text, speaker labels, stage directions, colons before quoted speech, or surrounding quotation marks. A single person speaking directly to {{NAME}} is valid. Dialogue should introduce the concrete situation, useful clue, or practical reason the choice matters. Penalize dialogue that duplicates the question, gives away the answer, uses the correct option text or a close paraphrase, reads like a lecture, or turns into a story recap. If the question asks for a classification, action, cause, or conclusion, dialogue must not state that classification, action, cause, or conclusion before the learner answers.\n\n8. TONE: Clarity comes first. Light humor is allowed only when it is minimal and does not carry or hide the clue. Penalize joke-first situations, punchline dialogue, or all-silly distractor sets.\n\n9. FORMAT COMPLIANCE: Verify these constraints:\n   - Output has a situations array\n   - Output does not include a top-level scenario, scenario title, scenario text, intro step, or opening image\n   - every situation has: imagePrompt, dialogue, question, options\n   - each situation is understandable without reading another situation\n   - question should be short, direct, not already asked inside dialogue, and grounded in the situation\n   - option text should usually be short and easy to scan; terse options are fine when the question and situation make them unambiguous\n   - bare concept labels are allowed when the situation makes the label an applied choice, not a vocabulary drill\n   - dialogue gives evidence for the correct option, not the correct option text itself\n   - Exactly 1 option must have isCorrect: true\n\n10. PERSONALIZATION: The {{NAME}} placeholder should be used appropriately in dialogue only and sparingly. Penalize {{NAME}} in image prompts, questions, options, or feedback. Penalize outputs that put {{NAME}} in every dialogue or make most dialogue lines start with {{NAME}}; one or two natural uses in a practice lesson is enough.\n\n11. FEEDBACK QUALITY:\n   - Each option must explain why it is right or wrong in this exact situation.\n   - Every wrong option's feedback must complete the full correction in the same message: explain why the selected option fails, explicitly identify the correct option or an unmistakable paraphrase, and teach why the correct option follows by connecting the situation's evidence to the lesson concept and practical result.\n   - Explanations must use plain language and concrete facts from the situation before relying on domain labels. When it naturally clarifies the distinction, explain what condition would have made the selected option correct and contrast it with what actually happened. Do not require this counterfactual in every response.\n   - Feedback should act as a brief teaching moment. Use a relatable everyday consequence, familiar observation, practical decision, or real-world artifact when it naturally clarifies the same reasoning. The existing situation can provide this bridge; do not require a forced analogy or unrelated second example.\n   Penalize feedback that only dismisses the selected option, only names the correct answer without explaining why it follows, leaves the correct-answer reasoning to the correct option's separate feedback, substitutes compressed jargon or category shorthand for a concrete explanation, or gives a generic score report.\n\n12. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider for this exact situation. Penalize absurd, joke-shaped, random, or obviously irrelevant options. Penalize answer sets where the correct option is guessable because every distractor is on a different axis or obviously impossible.\n\n13. SITUATION COUNT: Practice should use as many situations as the lesson concepts need, and no more. The right count depends on the lesson. Penalize outputs that skip important lesson concepts, and penalize padded, repetitive, or same-question-with-new-prop situations.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require one story, one setting, one character, or one recurring case\n- Do NOT penalize independent situations just because they are disconnected from each other\n- Do NOT require a plot twist, final reveal, or narrative resolution\n- Do NOT penalize a valid real-world situation just because it is not the situation you would have chosen\n- Do NOT penalize concept names or definition clues when the learner must apply them to a concrete situation\n- Do NOT penalize a small overrun on text length if the situation is still fast, clear, and readable on the first pass\n- Do NOT require humor\n- Do NOT penalize dialogue just because one person speaks to {{NAME}} instead of alternating turns; penalize only if it stops sounding like direct speech or removes the learner's application\n- Do NOT require every dialogue to address the learner by name; most dialogue lines should work without {{NAME}}\n- Do NOT penalize terse option text by itself; penalize it only when it becomes vague, purely vocabulary-based, or answerable without the situation evidence\n- Do penalize direct definition/function/role/process questions when the learner can answer without using a real situation\n- Do penalize dialogue that says the correct option or direct answer before asking the learner to choose it\n- Do penalize repetitive {{NAME}} usage across every dialogue\n- Do penalize situations where the concept is hidden so deeply that the learner is solving a riddle instead of applying an idea\n- Do penalize situations where the learner can guess the answer by eliminating absurd distractors without understanding the concept\n- Do penalize generic decoration image prompts\n- Do penalize prompt residue, narrator text in dialogue, duplicated dialogue questions, forced storytelling, repetitive/filler decisions, all-silly distractor sets, poor distractor quality, and factually incorrect lesson application\n- Different valid practice approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-07-31T01:45:30.152Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Covers the full lesson span in six tight, concrete situations: the three trophic roles, light as energy but not matter, energy release for biological work, and CO2 waste elimination — all biologically accurate. {{NAME}} appears once, image prompts carry real evidence (gills with blocked outflow, unrepaired culture), and dialogue supplies clues without naming the answer. Main weakness is the repeated filler distractor \"Nenhuma dessas funções\" and somewhat terse feedback on it.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Accurate, well-grounded classification items plus a good waste-removal aquarium item, with detailed feedback that names and justifies the correct option. Weaker points: {{NAME}} in three of five dialogues, the athlete item's dialogue essentially states the answer before asking, its correct option reads as jargon repeated verbatim inside feedback, and its distractors (\"Movimento cria nutrientes\", \"Oxigênio vira alimento\") are absurd enough to be eliminated without understanding.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Clear, accurate situations with a nice dark-closet plant item testing light as an energy source, and sparing {{NAME}} use. However, the \"Ser não vivo\" distractor is repeated in all three classification items and is off-axis/obviously impossible, making answers guessable; the aquarium filter item ties to residues only loosely and reads as equipment maintenance rather than metabolic reasoning, and the biological-work/energy-release link is thinner than in the other outputs.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model A follows all instructions well, providing concrete situations and biologically accurate applications of the concepts. It specifically addresses the negative constraint (not treating light as matter) effectively in Situation 4, and its scenarios for biological work and residue elimination are highly relevant. The distractors are plausible and the feedback is complete.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model C features excellent practical applications in Situations 4 and 5 (moving a plant to the light, cleaning a filter to remove residues). However, it relies heavily on the absurd distractor 'Ser não vivo' in the first three situations, violating the rule against obviously impossible or joke-shaped choices for organisms like rabbits and plants.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Model B uses non-standard phrasing for simple introductory levels ('Consumidor por ingestão', 'Decompositor de restos'). In Situation 5, it uses an absurd distractor ('Luz vira alimento muscular') in a scenario about a running athlete where light isn't even present, and the correct option is written more like a textbook summary than a practical application.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Cobertura mais completa e biologicamente correta: distingue produtores, consumidores e decompositores e relaciona matéria, energia, trabalho biológico e resíduos em situações concretas. As imagens e os feedbacks são específicos e úteis, embora algumas alternativas como “nenhuma dessas funções” sejam pouco plausíveis e a situação das células praticamente antecipe a relação pedida.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna:xhigh",
+          "reasoning": "Integra bem obtenção de matéria, liberação de energia, trabalho muscular e eliminação de resíduos, com bons feedbacks contextualizados. Perde qualidade pelo uso de {{NAME}} em três diálogos e por vários distratores obviamente falsos, como “consumidor de luz”, “oxigênio vira alimento” e “movimento cria nutrientes”.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "É claro, correto e visualmente fundamentado, com boas aplicações sobre falta de luz e acúmulo de resíduos. Contudo, repete classificações semelhantes, usa “ser não vivo” como distrator muito fraco e explora menos diretamente a liberação de energia química para o trabalho biológico; a descrição do filtro como removendo água também é imprecisa.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-practice",
+  "testCaseId": "pt-biologia-energia-atividade-vital-1"
+}

@@ -1,18 +1,10 @@
 {
-  "modelId": "openai/gpt-5.6-terra",
+  "modelId": "openai/gpt-5.6-luna:xhigh",
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "Question 2 presents an incomplete accounting effect as the representation of a cash sale of products. Such a sale increases cash and revenue, but it also normally decreases inventory (goods) and recognizes the related cost as an expense. Because the question asks which image represents the transaction without limiting the analysis to cash and revenue, the keyed answer can create a material misconception. It should either include all relevant effects or explicitly ask only about the effect on cash and revenue.",
-          "kind": "majorErrors",
-          "score": 6.5
-        },
-        {
-          "conclusion": "The feedback for the first incorrect option in Question 2 does not provide the required full correction. It explains that the pictured credit sale creates a receivable rather than cash, but it does not clearly say that the stated transaction was paid immediately or identify the intended cash-and-revenue answer and explain why it follows.",
-          "kind": "minorErrors",
-          "score": 8.5
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
@@ -32,13 +24,9 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The fill-blank completion “Precisa-se” is grammatically valid but somewhat unnatural as a field-note annotation; “A confirmar” or “É preciso confirmar” would be clearer. A few distractors, especially in the posture question, alter several clues at once and make the answer easier than necessary.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Use more plausible distractors that preserve most observational details while changing only the key issue, such as viewpoint, proportion, or whether an unseen part was inferred. The fill-blank could also use a more authentic annotation phrase while retaining its strong focus on distinguishing observation from uncertainty.",
+          "conclusion": "The quiz is strong overall. It could be improved by making a few distractors less obviously decorative or scientifically inappropriate, which would increase the conceptual challenge. The final question could also focus more directly on proportion rather than introducing scale, since proportion is explicitly within the lesson scope.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -59,16 +47,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The quiz slightly overemphasizes DNS: Questions 1 and 3 test nearly the same diagnosis, and DNS also appears in the fill-blank and matching questions. Meanwhile, downloading is assessed mainly through the sequence and distractors rather than as the focus of an applied question.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "The quiz omits the explicitly required sort-order question despite the lesson containing a fixed request lifecycle. The first select-image question effectively tests a partial sequence, but it does not replace an interaction in which learners order the full lifecycle: URL entry, DNS, TCP/TLS, HTTP request, server response, download, parsing, and rendering.",
+          "kind": "majorErrors",
+          "score": 6
         },
         {
-          "conclusion": "Replace one of the two DNS-delay questions with a scenario that distinguishes slow server response from slow response download, or that diagnoses parsing versus rendering. The sort-order question could also separate “server response” from “download” and “parsing” from “rendering” to assess the full lifecycle more precisely.",
+          "conclusion": "Several distractors are too obviously impossible, such as rendering before a network request or claiming HTTP requests do not need DNS. This lowers the challenge and lets learners answer some questions without carefully applying lifecycle knowledge.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the first select-image item with one sort-order question covering the complete lifecycle. Keep the second select-image item because its parallel rendering and image-download paths are genuinely suited to a diagram.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -89,12 +81,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The leading-indicator item slightly oversimplifies the concept: setup completion is a leading indicator only when it is meaningfully predictive of the later revenue outcome, not merely because it occurs earlier. Also, “First-time visitors from a podcast ad” is an acquisition segment or source rather than a clearly stated product measure, despite the match-columns prompt asking about measures.",
+          "conclusion": "The match-columns question is somewhat shallow and vocabulary-oriented: matching brief examples to “cohort analysis,” “retention,” and “acquisition” mainly tests category recognition rather than making an analytical decision. The rest of the quiz consistently uses clear, novel scenarios and provides accurate, instructive feedback.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9
         },
         {
-          "conclusion": "Clarify that setup completion is a hypothesized or validated predictor of future revenue. Rephrase the acquisition pair as a metric, such as “Number of first-time visitors acquired through a podcast ad.” The dropoff question could also ask for the “largest percentage dropoff” instead of the “most urgent” one, since urgency can depend on business impact beyond the rate alone.",
+          "conclusion": "Make the match-columns task slightly more applied, such as matching short business questions or observed patterns to the appropriate analysis. The leading-indicator question could also state that setup completion has historically correlated with later payment, making its predictive role better supported rather than merely plausible.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -115,14 +107,14 @@
     },
     {
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Two questions materially weaken conceptual accuracy. In the first select-image item, separate photographs from different angles are treated as independent merely because they are separate records; independence requires distinct provenance or otherwise established non-derivation. In the final item, both the intended answer and the July-only calendar show undocumented months, so more than one option could require the year-round claim to be qualified. The item also does not establish that blank calendar cells come from a systematic, complete record rather than missing documentation.",
-          "kind": "majorErrors",
-          "score": 8
+          "conclusion": "The fill-in-the-blank question mainly tests recall of the lesson’s key terms (“independientes” and “proporcional”) and closely mirrors the source wording instead of applying the ideas in a novel situation. This conflicts with the explicit requirement that the single fill-in-the-blank not test broad conceptual distinctions or terminology recall. Also, the match-columns left-hand entries are full sentence-like descriptions rather than the required short labels or brief phrases.",
+          "kind": "minorErrors",
+          "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Specify that the photographs were created independently by different observers or collections. For the calendar question, establish that it is a continuous administrative record expected to document every operating month, and revise the July-only distractor so it does not present the same evidentiary absence. Otherwise, the quiz has strong Spanish feedback, appropriate variety, novel scenarios, and good coverage of dependence, contradiction, scale, and absence.",
+          "conclusion": "The nationwide school-change image could depict observable changes across regions and years, rather than merely mentioning unspecified records, so that it supports both the claimed change and its geographic-temporal scale. The matching entries could be shortened to phrases such as “Mismo boletín,” “Registros de circuitos distintos,” and “Silencio de un diario.”",
           "kind": "potentialImprovements",
           "score": 9
         }

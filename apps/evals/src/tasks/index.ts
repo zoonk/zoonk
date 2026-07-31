@@ -27,6 +27,7 @@ import { lessonSentencesTask } from "./lesson-sentences/task";
 import { lessonTranslationTask } from "./lesson-translation/task";
 import { lessonTutorialTask } from "./lesson-tutorial/task";
 import { lessonVocabularyTask } from "./lesson-vocabulary/task";
+import { stepImagePromptsTask } from "./step-image-prompts/task";
 
 export const TASKS: readonly RegisteredTask[] = [
   lessonDistractorsTask,
@@ -55,6 +56,7 @@ export const TASKS: readonly RegisteredTask[] = [
   courseDescriptionTask,
   courseLandingPageTask,
   imageInputSafetyRewriteTask,
+  stepImagePromptsTask,
   languageChapterLessonsTask,
   languageCourseChaptersTask,
 ];

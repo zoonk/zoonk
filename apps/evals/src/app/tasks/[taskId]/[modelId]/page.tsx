@@ -6,7 +6,7 @@ import {
   TaskLinkBreadcrumb,
 } from "@/components/breadcrumb";
 import { getTaskResults } from "@/lib/eval-runner";
-import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
+import { getModelById, getModelDisplayName } from "@/lib/models";
 import {
   combineOutputsWithTestCases,
   getOutputStatus,
@@ -39,7 +39,7 @@ type TaskModelRouteProps = { params: TaskModelRouteParams };
 const getTaskModelRoute = cache(async (taskId: string, rawModelId: string) => {
   const { task } = await getTaskRoute(taskId);
   const modelId = decodeURIComponent(rawModelId);
-  const model = EVAL_MODELS.find((item) => item.id === modelId);
+  const model = getModelById(modelId);
 
   if (!model) {
     redirect(`/tasks/${taskId}`);

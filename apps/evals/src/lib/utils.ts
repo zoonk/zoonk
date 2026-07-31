@@ -1,7 +1,7 @@
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { getTaskResults } from "./eval-runner";
 import { EVAL_MODELS } from "./models";
-import { getOutputStatus } from "./output-loader";
+import { getAllOutputsForTask, getOutputStatus } from "./output-loader";
 import { getTestCaseRunProgress } from "./test-case-runs";
 import { type TaskEvalResults } from "./types";
 
@@ -72,11 +72,16 @@ export async function getSortedModels(taskId: string) {
   return sortedModels;
 }
 
-// Filter out models without any results
+/**
+ * Discovers result-bearing evaluation variants from saved outputs rather than
+ * only the static model registry so reasoning levels appear as separate rows.
+ */
 export async function getModelsWithResults(taskId: string): Promise<TaskEvalResults[]> {
+  const allOutputs = await getAllOutputsForTask(taskId);
+
   const results = await Promise.all(
-    EVAL_MODELS.map(async (model) => {
-      const res = await getTaskResults(taskId, model.id);
+    [...allOutputs.keys()].map(async (modelId) => {
+      const res = await getTaskResults(taskId, modelId);
       return res;
     }),
   );
