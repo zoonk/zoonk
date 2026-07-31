@@ -30,7 +30,7 @@ EVALUATION CRITERIA:
    - Select image: Default when visual inspection, visible comparison, a diagram, or spatial pattern is part of the concept.
    - Match columns: Use at most once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles. Omit match-columns when the scope does not contain a natural set of relationships to match. When used, include no more than 3 pairs, and keep pair text to short labels or brief phrases instead of long sentences.
    - Sort order: Use at most once when one correct order is essential, such as procedural steps, cause-effect chains, historical events, dependency chains, or stages that cannot be swapped. Omit sort-order when the scope does not contain a genuinely ordered concept.
-   - Fill blank: Use once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. It is often memorization-prone, so the single fill-blank must be especially well fit.
+   - Fill blank: Use at most once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. Omit fill-blank when the scope does not support a natural completion where every answer belongs to one uniquely correct blank.
 
    PENALIZE when:
    - Formats are used for variety rather than fit
@@ -40,8 +40,9 @@ EVALUATION CRITERIA:
    - A match-columns question uses long sentence-like pair text instead of short labels or brief phrases
    - A match-columns question is forced onto content where a scenario, image, fill-in-the-blank, or ordering question would clearly test understanding better
    - The quiz uses more than 1 sort-order question
-   - The quiz uses more or fewer than 1 fill-blank question
+   - The quiz uses more than 1 fill-blank question
    - A fill-blank question tests copied wording, broad conceptual distinctions, or terminology recall that another format could test through application
+   - A fill-blank question turns an unordered list or set of properties into position-specific answers even though two or more correct answers could trade places without changing the meaning
    - A sort-order question contains optional steps, branching outcomes, alternative endings, unordered checklists, diagnostic criteria, reasoning checklists, or workflows where several orders could be reasonable
    - The sort-order answer would still be defensible if neighboring items were swapped
    - A select-image question requires inspecting a full board, full dashboard, full workflow, many columns, many cards, tiny labels, or several simultaneous visual clues
@@ -55,6 +56,7 @@ EVALUATION CRITERIA:
    - Multiple-choice or select-image appears more often than the other formats because those are the default formats
    - The quiz omits match-columns because the source scope lacks a natural set of relationships to match
    - The quiz omits sort-order because the source scope lacks a necessary, non-ambiguous sequence
+   - The quiz omits fill-blank because the source scope lacks a natural completion with uniquely correct answer positions
    - Select-image options use a few large labels only when the distinction cannot be shown clearly without text
 
 4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must teach the reasoning, not just state correct/incorrect.
@@ -95,7 +97,7 @@ EVALUATION CRITERIA:
    Do NOT penalize for producing more than 5 questions when the extra questions cover real concepts from the source lesson scope and stay within the learner-friendly range.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT expect more than one match-columns, sort-order, or fill-blank question.
+- Do NOT require a match-columns, sort-order, or fill-blank question unless the source scope clearly supports that format.
 - Do NOT require a match-columns question unless the source scope clearly supports one.
 - Do NOT require an exact number of questions beyond the minimum and coverage needs
 - Do NOT check against an imagined "complete" quiz that goes beyond the source lesson scope
@@ -107,10 +109,30 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 BINARY CHECKS:
 - "Memorization vs understanding" is checked by: does the question reference the source lesson metadata directly or present a novel scenario? Direct source references = penalize. Novel scenarios = do not penalize.
 - Question count is checked by: at least 5 questions, never more than 15 questions, and no more than the lesson scope warrants.
-- Format choice is checked by fit, diversity, and sequencing. Penalize missing fill-blank, overusing heavier formats, forced match-columns or sort-order for weak-fit concepts, match-columns with more than 3 pairs or long sentence-like pair text, and back-to-back use of the same format.
+- Format choice is checked by fit, diversity, and sequencing. Penalize overusing heavier formats, forced match-columns, sort-order, or fill-blank for weak-fit concepts, ambiguous answer positions in fill-blank, match-columns with more than 3 pairs or long sentence-like pair text, and back-to-back use of the same format.
 `;
 
 export const TEST_CASES = [
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Questions, options, and feedback must be in American English.
+
+${SHARED_EXPECTATIONS}
+
+SPECIFIC EXPECTATION: Do not require or reward a fill-blank question merely to repeat the three editable properties. If the quiz uses fill-blank, every answer must belong to only one position. A template such as "you can modify its [BLANK], [BLANK], and [BLANK]" with "markup," "behavior," and "styling" is invalid because these properties form an unordered list and any permutation means the same thing.
+    `,
+    id: "en-shadcn-source-code-production-quiz",
+    userInput: {
+      chapterTitle: "How shadcn/ui builds flexible interfaces",
+      courseTitle: "shadcn/ui",
+      language: "en",
+      lesson: {
+        description:
+          "shadcn/ui is not a traditional component library hidden inside a package. It places component source code directly in your project, giving you full control over its markup, behavior, and styling.",
+        title: "Why shadcn/ui gives you the source code",
+      },
+    } satisfies LessonQuizParams,
+  },
   {
     expectations: `
 LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Portuguese.
