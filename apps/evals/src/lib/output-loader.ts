@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import { getTestCaseRunProgress } from "./test-case-runs";
+import { getBaseTestCaseId, getTestCaseRunProgress } from "./test-case-runs";
 import {
   type ModelOutputs,
   type OutputEntry,
@@ -16,20 +16,6 @@ const OUTPUTS_DIR = path.join(EVAL_RESULTS_DIR, "outputs");
 function getOutputsFilePath(taskId: string, modelId: string): string {
   const modelPath = modelId.replaceAll("/", "-");
   return path.join(OUTPUTS_DIR, taskId, `${modelPath}.json`);
-}
-
-/**
- * Generated output ids include the run number so repeated runs do not overwrite
- * each other, but the task registry stores the base test case id.
- */
-function getBaseTestCaseId(testCaseId: string): string {
-  const lastDashIndex = testCaseId.lastIndexOf("-");
-
-  if (lastDashIndex === -1) {
-    return testCaseId;
-  }
-
-  return testCaseId.slice(0, lastDashIndex);
 }
 
 /**

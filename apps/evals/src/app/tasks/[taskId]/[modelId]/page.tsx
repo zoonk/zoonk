@@ -12,6 +12,7 @@ import {
   getOutputStatus,
   loadModelOutputs,
 } from "@/lib/output-loader";
+import { createReviewExportEntries } from "@/lib/review-export";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
@@ -124,7 +125,7 @@ const getTaskModelContent = cache(async (taskId: string, rawModelId: string) => 
     ? combineOutputsWithTestCases({ modelOutputs, task })
     : null;
 
-  return { generatedOutputs, model, modelId, outputStatus, results, taskId };
+  return { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName: task.name };
 });
 
 /**
@@ -142,7 +143,7 @@ async function getTaskModelContentFromParams(params: TaskModelRouteParams) {
  * result section so its fallback always has a matching resolved element.
  */
 async function TaskModelActions({ params }: TaskModelRouteProps) {
-  const { generatedOutputs, model, modelId, outputStatus, taskId } =
+  const { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName } =
     await getTaskModelContentFromParams(params);
 
   return (
@@ -156,7 +157,12 @@ async function TaskModelActions({ params }: TaskModelRouteProps) {
       model={model}
       modelId={modelId}
       outputStatus={outputStatus}
+      reviewEntries={createReviewExportEntries({
+        outputs: generatedOutputs?.outputs ?? [],
+        results: results?.results ?? [],
+      })}
       taskId={taskId}
+      taskName={taskName}
     />
   );
 }

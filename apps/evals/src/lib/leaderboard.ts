@@ -1,5 +1,5 @@
 import { getModelById, getReasoningLabel } from "@/lib/models";
-import { calculateScore } from "@/lib/score";
+import { calculateScore } from "@/lib/score-calculation";
 import { getStatsFromResults } from "@/lib/stats";
 import { type TaskEvalResults } from "@/lib/types";
 

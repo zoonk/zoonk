@@ -3,6 +3,14 @@ import { type TestCase } from "./types";
 type TestCaseRunProgress = { completedRuns: number; totalRuns: number };
 
 /**
+ * Removes only the generated numeric run suffix so repeated outputs can be
+ * grouped without changing test case ids that already contain dashes or numbers.
+ */
+export function getBaseTestCaseId(testCaseRunId: string): string {
+  return testCaseRunId.replace(/-\d+$/u, "");
+}
+
+/**
  * Gives every generated run a stable id so generation, progress, and scoring
  * all refer to the same saved output entry.
  */
