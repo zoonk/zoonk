@@ -203,6 +203,53 @@ ${SHARED_EXPECTATIONS}
   },
   {
     expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about tracing depth-first and breadth-first traversals in trees. Penalize if:
+   - DFS is described as visiting every node on one level before descending, or BFS as following one branch before returning
+   - Pre-order, in-order, and post-order do not process the node respectively before, between, or after its child subtrees; in-order should not be generalized beyond the left-node-right structure of a binary tree
+   - DFS is disconnected from recursion or an explicit stack, or BFS is disconnected from the FIFO behavior of a queue
+
+2. BOUNDARY CHECK: The core arc should trace pre-order, in-order, post-order, and level-order traversal on a concrete tree while explaining when each node is processed and why a stack or queue produces that order. Brief uses or complexity notes are fine when they clarify the comparison. Penalize if the lesson becomes mainly about binary-search-tree operations, tree representation, recursion syntax, graph traversal with visited sets, balancing, heaps, or a catalog of applications.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ciencia-computacao-percursos-arvores",
+    userInput: {
+      chapterTitle: "Estruturas de dados",
+      courseTitle: "Ciência da Computação",
+      language: "pt",
+      lessonDescription:
+        "Rastreie percursos em pré-ordem, em ordem, pós-ordem e por níveis, observando quando cada nó é processado. Relacione percursos em profundidade a recursão ou pilhas e percursos em largura ao uso de filas.",
+      lessonTitle: "Percursos em árvores: DFS e BFS",
+      otherLessonTitles: [
+        "Tipos abstratos de dados e invariantes",
+        "Arrays (vetores) e memória contígua",
+        "Arrays dinâmicos e redimensionamento",
+        "Listas simplesmente ligadas",
+        "Listas duplamente ligadas e circulares",
+        "Localidade de memória e overhead de referências",
+        "Pilhas (stacks)",
+        "Filas e buffers circulares",
+        "Filas de duas pontas (deques)",
+        "Funções hash, igualdade e buckets",
+        "Tratamento de colisões em tabelas hash",
+        "Fator de carga e redimensionamento de tabelas hash",
+        "Anatomia e representação de árvores",
+        "Árvores binárias de busca: busca e inserção",
+        "Remoção em árvores binárias de busca",
+        "Árvores balanceadas: AVL e rubro-negras",
+        "Heap binário: propriedade e representação",
+        "Filas de prioridade com heaps",
+        "Grafos: vértices, arestas e tipos",
+        "Representações de grafos",
+      ],
+    },
+  },
+  {
+    expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: This lesson is about raids, captives, and what conflict was trying to achieve. Penalize if:
@@ -320,6 +367,37 @@ ${SHARED_EXPECTATIONS}
         "Work item age — idade do item",
         "Taxa de chegada e taxa de saída",
         "Média, mediana e valores extremos",
+      ],
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about separating profit, cash, and financial position. Penalize if:
+   - Profit is treated as the amount of money currently available in the bank account
+   - A sale on credit is treated as immediate cash receipt, or money received from a loan is treated as revenue or profit
+   - Result, cash movement, and the assets, obligations, and equity held at a point in time are collapsed into one interchangeable measure
+
+2. BOUNDARY CHECK: The core arc should stay on why a profitable company can still lack cash and how result, cash, and financial position answer different questions. Brief mentions of accrual accounting, receivables, payables, inventory, loans, or financial statements are useful when they make the timing difference concrete. Penalize if the lesson becomes mainly a survey of accounting reports, bookkeeping entries, the accounting equation, financial ratios, or cash-flow management.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-contabilidade-lucro-caixa",
+    userInput: {
+      chapterTitle: "Contabilidade: a linguagem das decisões",
+      courseTitle: "Contabilidade",
+      language: "pt",
+      lessonDescription:
+        "Uma empresa pode apresentar lucro e, ainda assim, ficar sem dinheiro para pagar as contas. Relatórios contábeis ajudam a distinguir resultado, caixa e patrimônio — três perspectivas diferentes sobre a saúde de uma organização.",
+      lessonTitle: "Por que lucro e dinheiro em caixa não são a mesma coisa",
+      otherLessonTitles: [
+        "Como a contabilidade transforma fatos em informação",
+        "A balança contábil entre bens, dívidas e patrimônio",
+        "Onde a contabilidade orienta decisões e carreiras",
+        "Como a contabilidade cria confiança na sociedade",
       ],
     },
   },
