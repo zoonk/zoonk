@@ -1,26 +1,12 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Output, generateText } from "ai";
+import { calculateScore } from "./score-calculation";
 import systemPrompt from "./system-prompt.md";
 import { type ScoreStep, scoreSchema } from "./types";
 
 const BAD_SCORE = 8;
 const GOOD_SCORE = 9.2;
 const SCORE_STEP_KINDS = ["majorErrors", "minorErrors", "potentialImprovements"] as const;
-
-// Weight configuration for different step types
-const STEP_WEIGHTS = { majorErrors: 3, minorErrors: 2, potentialImprovements: 1 } as const;
-
-/**
- * Calculates a weighted average score from evaluation steps.
- * Major errors have 3x weight, minor errors 2x, and potential improvements 1x.
- */
-export function calculateScore(steps: ScoreStep[]): number {
-  const weightedTotal = steps.reduce((acc, step) => acc + step.score * STEP_WEIGHTS[step.kind], 0);
-
-  const totalWeight = steps.reduce((acc, step) => acc + STEP_WEIGHTS[step.kind], 0);
-
-  return weightedTotal / totalWeight;
-}
 
 /**
  * Builds deterministic score steps for extractor-style tasks where one exact

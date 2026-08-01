@@ -1,6 +1,7 @@
 "use client";
 
-import { calculateScore, getScoreClassName } from "@/lib/score";
+import { getScoreClassName } from "@/lib/score";
+import { calculateScore } from "@/lib/score-calculation";
 import { type EvalResult, type ScoreStep, type TestCaseOutput } from "@/lib/types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";

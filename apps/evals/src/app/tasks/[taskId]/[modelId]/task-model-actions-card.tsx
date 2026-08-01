@@ -1,6 +1,7 @@
 import { ModelStatusBadge, ModelStatusBadgeSkeleton } from "@/components/model-status-badge";
 import { type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type OutputProgress } from "@/lib/output-loader";
+import { type ReviewExportEntry } from "@/lib/review-export";
 import { ButtonSkeleton } from "@zoonk/ui/components/button";
 import {
   Card,
@@ -11,24 +12,29 @@ import {
 } from "@zoonk/ui/components/card";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { DownloadIcon, PlayIcon, SparklesIcon, Trash2Icon } from "lucide-react";
+import { DownloadIcon, FileTextIcon, PlayIcon, SparklesIcon, Trash2Icon } from "lucide-react";
 import { generateOutputsAction, runEvalAction } from "./actions";
 import { DeleteModelDataDialog } from "./delete-model-data-dialog";
 import { type OutputExportEntry, OutputsExport } from "./outputs-export";
 import { ReasoningSelect } from "./reasoning-select";
+import { ReviewPdfExport } from "./review-pdf-export";
 
 export function TaskModelActionsCard({
   exportEntries,
   model,
   modelId,
   outputStatus,
+  reviewEntries,
   taskId,
+  taskName,
 }: {
   exportEntries: OutputExportEntry[];
   model: ModelConfig;
   modelId: string;
   outputStatus: OutputProgress;
+  reviewEntries: ReviewExportEntry[];
   taskId: string;
+  taskName: string;
 }) {
   const hasOutputs = outputStatus.status !== "missing";
 
@@ -72,6 +78,12 @@ export function TaskModelActionsCard({
           <DeleteModelDataDialog disabled={!hasOutputs} modelId={modelId} taskId={taskId} />
 
           <OutputsExport entries={exportEntries} />
+
+          <ReviewPdfExport
+            entries={reviewEntries}
+            key={`${taskId}-${modelId}`}
+            taskName={taskName}
+          />
         </div>
       </CardContent>
     </Card>
@@ -122,6 +134,10 @@ export function TaskModelActionsCardSkeleton() {
           <ButtonSkeleton variant="outline">
             <DownloadIcon />
             Export Outputs
+          </ButtonSkeleton>
+          <ButtonSkeleton variant="outline">
+            <FileTextIcon />
+            Export review PDF
           </ButtonSkeleton>
         </div>
       </CardContent>
