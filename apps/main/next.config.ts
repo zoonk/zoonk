@@ -25,10 +25,8 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     exposeTestingApiInProductionBuild: isE2E,
     staleTimes: { dynamic: 300 },
-    turbopackFileSystemCacheForBuild: true,
     turbopackRustReactCompiler: true,
     typedEnv: true,
-    useTypeScriptCli: true,
   },
   headers: getPublicAppSecurityHeaders,
   images: {

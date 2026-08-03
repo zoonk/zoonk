@@ -19,10 +19,8 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     // The API enables Cache Components for request deduplication, not to require every auth page to navigate instantly.
     instantInsights: { validationLevel: "manual-warning" },
-    turbopackFileSystemCacheForBuild: true,
     turbopackRustReactCompiler: true,
     typedEnv: true,
-    useTypeScriptCli: true,
   },
   headers: getPublicAppSecurityHeaders,
   reactCompiler: true,

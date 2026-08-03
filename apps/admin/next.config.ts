@@ -8,10 +8,8 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
     serverActions: { bodySizeLimit: "10mb" },
-    turbopackFileSystemCacheForBuild: true,
     turbopackRustReactCompiler: true,
     typedEnv: true,
-    useTypeScriptCli: true,
   },
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
