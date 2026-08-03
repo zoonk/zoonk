@@ -7,11 +7,11 @@ import { insertLessonFeedbackPrompt } from "../_utils/append-lesson-feedback-pro
 import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source-lessons";
 import baseSystemPrompt from "./lesson-quiz.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-sol";
+const defaultModel = "openai/gpt-5.5";
 
 const fallbackModels = [
+  "openai/gpt-5.6-sol",
   "anthropic/claude-opus-4.8",
-  "openai/gpt-5.5",
   "google/gemini-3.1-pro-preview",
 ] as const;
 
