@@ -11,8 +11,6 @@ Return only the required structured boolean.
 - `requiresPersonalization: true` means important information is missing or learner-specific, so intake is needed before defining the course.
 - `requiresPersonalization: false` means the request identifies one reusable course that can be shared by learners making the same request.
 
-The `LANGUAGE` field describes the language in which the request is written. It does not identify the requested course subject.
-
 # Ordered decision
 
 Apply the following steps in order. The first matching decision is final. Do not continue and overturn it with a later rule.
@@ -48,6 +46,8 @@ Recognize noun-phrase forms such as optimization, evaluation, refinement, and va
 Generic model optimization and generic model evaluation require personalization regardless of whether `model` refers to machine learning, science, business, design, or another field. The model subtype, objective, evidence, and success criteria remain unresolved.
 
 Do not silently choose the most familiar interpretation. A spelling typo remains reusable only when it has one plausible meaning and does not change the relationship between the words.
+
+If a standalone term conventionally names an established subject or professional field in any language, interpret it in the context of a learner naming a course and return `false`. This rule wins over unrelated everyday meanings of the same word.
 
 Do not treat a noun used as a modifier as equivalent to a related adjective. If a familiar field name appears only after changing a noun into an adjectival form, the original two-word relationship is unresolved unless that exact wording is itself established.
 

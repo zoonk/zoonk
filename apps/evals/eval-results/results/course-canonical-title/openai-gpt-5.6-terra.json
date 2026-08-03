@@ -1136,6 +1136,18 @@
         "id": "university-math-physics-1",
         "userInput": { "language": "en", "prompt": "University Mathematics and Physics" }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "acceptedTitles": ["Direito"] },
+        "id": "pt-direito-1",
+        "userInput": { "language": "pt", "prompt": "direito" }
+      }
     }
   ],
   "taskId": "course-canonical-title"

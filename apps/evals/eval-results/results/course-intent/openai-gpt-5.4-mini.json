@@ -1,5 +1,5 @@
 {
-  "modelId": "openai/gpt-5.6-luna",
+  "modelId": "openai/gpt-5.4-mini",
   "results": [
     {
       "steps": [
@@ -361,9 +361,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected intent `question`. Generated intent `learn`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `question`. Generated intent `learn`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `question`. Generated intent `learn`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "intents": ["question"] },
@@ -547,9 +559,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "intents": ["ambiguous"] },
@@ -893,21 +917,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected intent `learn`. Generated intent `ambiguous`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected intent `learn`. Generated intent `ambiguous`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected intent `learn`. Generated intent `ambiguous`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "intents": ["learn"] },
@@ -1157,9 +1169,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "intents": ["ambiguous"] },
@@ -1481,9 +1505,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected intent `ambiguous`. Generated intent `learn`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "intents": ["ambiguous"] },
@@ -1963,21 +1999,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected intent `learn`. Generated intent `ambiguous`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected intent `learn`. Generated intent `ambiguous`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected intent `learn`. Generated intent `ambiguous`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "intents": ["learn"] },

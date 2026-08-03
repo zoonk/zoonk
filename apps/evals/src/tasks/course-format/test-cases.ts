@@ -6,12 +6,6 @@ type ExpectedCourseFormat = CourseFormat | readonly CourseFormat[];
 
 type CourseFormatTestCase = TestCase<CourseFormatExpected, CourseFormatParams>;
 
-const SCORE_TIERS = `
-  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.
-  - Score 10 when the generated courseFormat exactly matches one accepted courseFormat.
-  - Score 6 for any other output, including core courses classified as coding, coding courses classified as core, language courses classified as core, missing courseFormat fields, or extra fields.
-`;
-
 /**
  * Narrows accepted course formats when a case intentionally allows more than one
  * valid answer for an ambiguous shared-learning prompt.
@@ -31,59 +25,21 @@ function getAcceptedCourseFormats(format: ExpectedCourseFormat): readonly Course
 }
 
 /**
- * Formats accepted course formats for human-readable expectations without
- * changing the structured values used by deterministic scoring.
- */
-function getAcceptedCourseFormatLabel(formats: readonly CourseFormat[]): string {
-  return formats.map((format) => `\`${format}\``).join(" or ");
-}
-
-/**
- * Builds one compact rubric for course-format evals so every case uses
- * the same score tiers while still documenting the accepted teaching format.
- */
-function getExpectations({
-  courseFormats,
-  extra,
-}: {
-  courseFormats: readonly CourseFormat[];
-  extra?: string;
-}): string {
-  const acceptedCourseFormats = getAcceptedCourseFormatLabel(courseFormats);
-
-  return `
-    - The output courseFormat should be ${acceptedCourseFormats}.
-    - Return only the structured courseFormat value; do not invent extra labels.
-    ${extra ?? ""}
-    ${SCORE_TIERS}
-  `;
-}
-
-/**
  * Keeps the course-format matrix focused on prompts that intent and
  * personalization should already have accepted as shared learning.
  */
 function courseFormatCase({
   courseFormat,
-  extra,
   id,
-  language = "en",
   prompt,
 }: {
   courseFormat: ExpectedCourseFormat;
-  extra?: string;
   id: string;
-  language?: string;
   prompt: string;
 }): CourseFormatTestCase {
   const courseFormats = getAcceptedCourseFormats(courseFormat);
 
-  return {
-    expectations: getExpectations({ courseFormats, extra }),
-    expected: { courseFormats },
-    id,
-    userInput: { language, prompt },
-  };
+  return { expected: { courseFormats }, id, userInput: { prompt } };
 }
 
 export const TEST_CASES: CourseFormatTestCase[] = [
@@ -103,13 +59,7 @@ export const TEST_CASES: CourseFormatTestCase[] = [
   courseFormatCase({ courseFormat: "practical", id: "artesanato", prompt: "artesanato" }),
   courseFormatCase({ courseFormat: "core", id: "music-theory", prompt: "music theory" }),
   courseFormatCase({ courseFormat: "core", id: "history-of-music", prompt: "history of music" }),
-  courseFormatCase({
-    courseFormat: "practical",
-    extra:
-      "- GitHub Actions is developer workflow automation, not a programming language or framework course.",
-    id: "github-actions",
-    prompt: "github actions",
-  }),
+  courseFormatCase({ courseFormat: "practical", id: "github-actions", prompt: "github actions" }),
   courseFormatCase({
     courseFormat: "core",
     id: "beginner-astronomy",
@@ -186,13 +136,7 @@ export const TEST_CASES: CourseFormatTestCase[] = [
   courseFormatCase({ courseFormat: "core", id: "tabela-periodica", prompt: "tabela periodica" }),
   courseFormatCase({ courseFormat: "core", id: "ai", prompt: "ai" }),
   courseFormatCase({ courseFormat: "core", id: "engenharia-f1", prompt: "engenharia f1" }),
-  courseFormatCase({
-    courseFormat: "core",
-    extra:
-      "- F1 is a popular aspirational domain, and engineering is a shared course identity here.",
-    id: "f1-engineering",
-    prompt: "F1 Engineering",
-  }),
+  courseFormatCase({ courseFormat: "core", id: "f1-engineering", prompt: "F1 Engineering" }),
   courseFormatCase({
     courseFormat: "core",
     id: "historia-do-brasil",
@@ -247,13 +191,7 @@ export const TEST_CASES: CourseFormatTestCase[] = [
     id: "grand-unified-field-theory",
     prompt: "Grand Unified Field Theory",
   }),
-  courseFormatCase({
-    courseFormat: "core",
-    extra:
-      "- Offensive security is a conceptual cybersecurity domain here, not a programming language, framework, or short workflow tutorial.",
-    id: "offense-security",
-    prompt: "Offense security",
-  }),
+  courseFormatCase({ courseFormat: "core", id: "offense-security", prompt: "Offense security" }),
   courseFormatCase({
     courseFormat: "core",
     id: "math-of-black-holes",
@@ -269,13 +207,7 @@ export const TEST_CASES: CourseFormatTestCase[] = [
     prompt: "Mechanical Engineering",
   }),
   courseFormatCase({ courseFormat: "core", id: "communication", prompt: "communication" }),
-  courseFormatCase({
-    courseFormat: "core",
-    extra:
-      "- Compilers is a computer-science domain with theory-heavy chapters unless the prompt asks to implement one in a specific language.",
-    id: "compilers",
-    prompt: "compilers",
-  }),
+  courseFormatCase({ courseFormat: "core", id: "compilers", prompt: "compilers" }),
   courseFormatCase({ courseFormat: "core", id: "math", prompt: "math" }),
   courseFormatCase({ courseFormat: "practical", id: "vibecoding", prompt: "vibecoding" }),
   courseFormatCase({ courseFormat: "coding", id: "golang", prompt: "golang" }),
@@ -331,4 +263,5 @@ export const TEST_CASES: CourseFormatTestCase[] = [
   courseFormatCase({ courseFormat: "core", id: "curso-de-biologia", prompt: "curso de biologia" }),
   courseFormatCase({ courseFormat: "core", id: "creative-writing", prompt: "creative writing" }),
   courseFormatCase({ courseFormat: "core", id: "zh-psychology", prompt: "心理学" }),
+  courseFormatCase({ courseFormat: "core", id: "direito", prompt: "direito" }),
 ];

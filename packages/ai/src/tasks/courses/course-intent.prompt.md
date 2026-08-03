@@ -1,6 +1,6 @@
 Determine the learner's product intent from `USER_INPUT`.
 
-Classify the meaning of the learner's request, not isolated keywords or its grammatical form. The input may be terse, misspelled, ungrammatical, or written in any language, and it does not need to match `LANGUAGE`.
+Classify the meaning of the learner's request, not isolated keywords or its grammatical form. The input may be terse, misspelled, ungrammatical, or written in any language.
 
 This task identifies the experience the user is asking for. It does not decide whether a learning path is reusable, personalized, broad, narrow, easy, or difficult.
 
