@@ -5,8 +5,8 @@ import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-alphabet.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-sol";
-const fallbackModels = ["google/gemini-3.5-flash"] as const;
+const defaultModel = "openai/gpt-5.5";
+const fallbackModels = ["openai/gpt-5.6-sol", "google/gemini-3.5-flash"] as const;
 
 const formSchema = z.object({ label: z.string(), symbol: z.string() }).strict();
 const introSchema = z.object({ text: z.string(), title: z.string() }).strict();

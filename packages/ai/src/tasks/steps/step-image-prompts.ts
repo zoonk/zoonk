@@ -5,8 +5,13 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./step-image-prompts.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-sol";
-const fallbackModels = ["anthropic/claude-opus-4.8", "google/gemini-3.1-pro-preview"] as const;
+const defaultModel = "openai/gpt-5.5";
+
+const fallbackModels = [
+  "openai/gpt-5.6-sol",
+  "anthropic/claude-opus-4.8",
+  "google/gemini-3.1-pro-preview",
+] as const;
 
 const imagePromptSchema = z.string().min(1);
 

@@ -9,8 +9,8 @@ import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source
 import { normalizePracticeOptions, practiceOptionLimit } from "./_utils/normalize-practice-options";
 import baseSystemPrompt from "./lesson-practice.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-sol";
-const fallbackModels = ["anthropic/claude-sonnet-5", "openai/gpt-5.6-sol"] as const;
+const defaultModel = "openai/gpt-5.5";
+const fallbackModels = ["openai/gpt-5.6-sol", "anthropic/claude-sonnet-5"] as const;
 const systemPrompt = insertLessonFeedbackPrompt(appendLessonRichTextPrompt(baseSystemPrompt));
 
 const practiceOptionSchema = z.object({
