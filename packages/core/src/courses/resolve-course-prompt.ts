@@ -328,9 +328,9 @@ export async function resolveCoursePrompt({
   // Start every independent task in one model wave to minimize routing latency.
   // Some results are intentionally discarded after intent determines the route.
   const [intent, personalization, formatClassification, canonicalTitle] = await Promise.all([
-    classifyCourseIntent({ language, prompt }),
-    classifyCoursePersonalization({ language, prompt }),
-    classifyCourseFormat({ language, prompt }),
+    classifyCourseIntent({ prompt }),
+    classifyCoursePersonalization({ prompt }),
+    classifyCourseFormat({ prompt }),
     generateCanonicalCourseTitle({ language, prompt }),
   ]);
 

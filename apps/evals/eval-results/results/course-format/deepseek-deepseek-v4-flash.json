@@ -1,5 +1,5 @@
 {
-  "modelId": "google/gemini-3.1-flash-lite",
+  "modelId": "deepseek/deepseek-v4-flash",
   "results": [
     {
       "steps": [
@@ -215,18 +215,6 @@
         "expected": { "courseFormats": ["practical"] },
         "id": "artesanato-3",
         "userInput": { "prompt": "artesanato" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "music-theory-1",
-        "userInput": { "prompt": "music theory" }
       }
     },
     {
@@ -454,18 +442,6 @@
       "testCase": {
         "expected": { "courseFormats": ["core"] },
         "id": "lithium-ion-battery-2",
-        "userInput": { "prompt": "lithium ion battery" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "lithium-ion-battery-3",
         "userInput": { "prompt": "lithium ion battery" }
       }
     },
@@ -813,18 +789,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "heat-transfer-2",
-        "userInput": { "prompt": "heat transfer" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "heat-transfer-3",
         "userInput": { "prompt": "heat transfer" }
       }
@@ -885,18 +849,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["coding"] },
-        "id": "coding-levels-2",
-        "userInput": { "prompt": "coding, intermidiate/beginner" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["coding"] },
         "id": "coding-levels-3",
         "userInput": { "prompt": "coding, intermidiate/beginner" }
       }
@@ -946,18 +898,6 @@
       "testCase": {
         "expected": { "courseFormats": ["core"] },
         "id": "black-holes-pt-1",
-        "userInput": { "prompt": "quero aprender sobre buracos negros" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "black-holes-pt-2",
         "userInput": { "prompt": "quero aprender sobre buracos negros" }
       }
     },
@@ -1437,18 +1377,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "time-management-3",
-        "userInput": { "prompt": "time management" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "philosophy-1",
         "userInput": { "prompt": "philosophy" }
       }
@@ -1569,18 +1497,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "psychology-2",
-        "userInput": { "prompt": "psychology" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "psychology-3",
         "userInput": { "prompt": "psychology" }
       }
@@ -1665,18 +1581,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "higgs-mechanism-1",
-        "userInput": { "prompt": "higgs mechanism" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "higgs-mechanism-2",
         "userInput": { "prompt": "higgs mechanism" }
       }
@@ -1714,18 +1618,6 @@
       "testCase": {
         "expected": { "courseFormats": ["core"] },
         "id": "investing-2",
-        "userInput": { "prompt": "investing" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "investing-3",
         "userInput": { "prompt": "investing" }
       }
     },
@@ -1785,18 +1677,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "aprender-a-aprender-2",
-        "userInput": { "prompt": "aprender a aprender" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "aprender-a-aprender-3",
         "userInput": { "prompt": "aprender a aprender" }
       }
@@ -1835,30 +1715,6 @@
         "expected": { "courseFormats": ["core"] },
         "id": "futurismo-e-foresight-3",
         "userInput": { "prompt": "futurismo e foresight" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "science-of-decision-making-1",
-        "userInput": { "prompt": "science of decision making" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "science-of-decision-making-2",
-        "userInput": { "prompt": "science of decision making" }
       }
     },
     {
@@ -1930,18 +1786,6 @@
       "testCase": {
         "expected": { "courseFormats": ["core"] },
         "id": "fotografie-2",
-        "userInput": { "prompt": "Fotografie" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "fotografie-3",
         "userInput": { "prompt": "Fotografie" }
       }
     },
@@ -2061,18 +1905,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "math-of-black-holes-1",
-        "userInput": { "prompt": "Math of Black holes" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "math-of-black-holes-2",
         "userInput": { "prompt": "Math of Black holes" }
       }
@@ -2098,30 +1930,6 @@
       "testCase": {
         "expected": { "courseFormats": ["coding"] },
         "id": "python-1",
-        "userInput": { "prompt": "Python" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["coding"] },
-        "id": "python-2",
-        "userInput": { "prompt": "Python" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["coding"] },
-        "id": "python-3",
         "userInput": { "prompt": "Python" }
       }
     },
@@ -2325,18 +2133,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "compilers-2",
-        "userInput": { "prompt": "compilers" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "compilers-3",
         "userInput": { "prompt": "compilers" }
       }
@@ -2403,21 +2199,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected course format `practical`. Generated course format `coding`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected course format `practical`. Generated course format `coding`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected course format `practical`. Generated course format `coding`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "courseFormats": ["practical"] },
@@ -2470,18 +2254,6 @@
       "testCase": {
         "expected": { "courseFormats": ["language"] },
         "id": "english-from-russian-1",
-        "userInput": { "prompt": "english from russian" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["language"] },
-        "id": "english-from-russian-2",
         "userInput": { "prompt": "english from russian" }
       }
     },
@@ -2721,18 +2493,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "physics-1",
-        "userInput": { "prompt": "physics" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "physics-2",
         "userInput": { "prompt": "physics" }
       }
@@ -2747,30 +2507,6 @@
         "expected": { "courseFormats": ["core"] },
         "id": "physics-3",
         "userInput": { "prompt": "physics" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "contabilidade-1",
-        "userInput": { "prompt": "contabilidade" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "contabilidade-2",
-        "userInput": { "prompt": "contabilidade" }
       }
     },
     {
@@ -2806,18 +2542,6 @@
       "testCase": {
         "expected": { "courseFormats": ["coding"] },
         "id": "coding-2",
-        "userInput": { "prompt": "coding" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["coding"] },
-        "id": "coding-3",
         "userInput": { "prompt": "coding" }
       }
     },
@@ -2914,18 +2638,6 @@
       "testCase": {
         "expected": { "courseFormats": ["core"] },
         "id": "maths-2",
-        "userInput": { "prompt": "maths" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "maths-3",
         "userInput": { "prompt": "maths" }
       }
     },
@@ -3309,18 +3021,6 @@
       ],
       "testCase": {
         "expected": { "courseFormats": ["core"] },
-        "id": "history-2",
-        "userInput": { "prompt": "history" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
         "id": "history-3",
         "userInput": { "prompt": "history" }
       }
@@ -3406,18 +3106,6 @@
       "testCase": {
         "expected": { "courseFormats": ["core"] },
         "id": "creative-writing-1",
-        "userInput": { "prompt": "creative writing" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "courseFormats": ["core"] },
-        "id": "creative-writing-2",
         "userInput": { "prompt": "creative writing" }
       }
     },

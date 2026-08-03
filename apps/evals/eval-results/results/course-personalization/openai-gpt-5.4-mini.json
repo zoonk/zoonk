@@ -1,5 +1,5 @@
 {
-  "modelId": "openai/gpt-5.6-luna",
+  "modelId": "openai/gpt-5.4-mini",
   "results": [
     {
       "steps": [
@@ -449,9 +449,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -663,9 +675,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": false },
@@ -675,9 +699,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": false },
@@ -687,9 +723,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": false },
@@ -2205,21 +2253,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": false },
@@ -2937,9 +2973,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -2949,9 +2997,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -2961,9 +3021,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -3189,9 +3261,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -3213,9 +3297,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -4299,21 +4395,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -4575,21 +4659,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -4611,21 +4683,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },
@@ -4971,9 +5031,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": true },

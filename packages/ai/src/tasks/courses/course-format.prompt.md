@@ -27,7 +27,7 @@ Creating software does not by itself make a course `coding`. Code hidden behind 
 
 ## Fast Classification
 
-`LANGUAGE` is the learner's locale, not the course subject. `USER_INPUT` may be written in any language and does not need to match `LANGUAGE`. A mismatch is never evidence that the learner wants a language course.
+`USER_INPUT` may be written in any language. The language or spelling of the text is not evidence that the learner wants a language course.
 
 Use the first rule whose condition is true:
 
