@@ -1,0 +1,81 @@
+name: Apple App
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+
+jobs:
+  format:
+    runs-on: macos-26
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Check Swift formatting
+        run: xcrun swift-format lint --recursive --parallel --strict apps/apple
+
+  build:
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: iOS
+            scheme: Zoonk
+            destination: generic/platform=iOS
+          - platform: macOS
+            scheme: Zoonk
+            destination: generic/platform=macOS
+          - platform: tvOS
+            scheme: Zoonk
+            destination: generic/platform=tvOS
+          - platform: visionOS
+            scheme: Zoonk
+            destination: generic/platform=visionOS
+          - platform: watchOS
+            scheme: Zoonk Watch App
+            destination: generic/platform=watchOS
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Build ${{ matrix.platform }}
+        run: >-
+          xcodebuild
+          -project apps/apple/Zoonk.xcodeproj
+          -scheme "${{ matrix.scheme }}"
+          -configuration Release
+          -destination "${{ matrix.destination }}"
+          CODE_SIGNING_ALLOWED=NO
+          build
+
+  ui-tests:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Run iOS UI tests
+        run: >-
+          xcodebuild
+          -project apps/apple/Zoonk.xcodeproj
+          -scheme Zoonk
+          -destination "platform=iOS Simulator,name=iPhone 17,OS=26.5"
+          -only-testing:ZoonkUITests
+          CODE_SIGNING_ALLOWED=NO
+          test

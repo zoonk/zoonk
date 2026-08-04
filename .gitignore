@@ -36,6 +36,19 @@ build
 dist
 *.tsbuildinfo
 
+# Apple development
+xcuserdata/
+DerivedData/
+.build/
+*.xcresult
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Playgrounds
+timeline.xctimeline
+playground.xcworkspace
 
 # Debug
 npm-debug.log*
