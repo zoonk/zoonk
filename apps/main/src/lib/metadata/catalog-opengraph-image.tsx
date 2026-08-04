@@ -42,38 +42,9 @@ export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageP
     imageUrl: params.imageUrl,
   });
 
-  const renderParams = { imageSrc, params };
-  const { data } = await safeAsync(() => renderCatalogOpenGraphImage(renderParams));
-  const response = data ?? (await renderCatalogOpenGraphImage(renderParams));
-
-  return new Response(response.body, {
-    headers: response.headers,
-    status: response.status,
-    statusText: response.statusText,
-  });
-}
-
-/**
- * Rasterizes the card before the route starts streaming so a transient native
- * image-renderer failure can be retried without terminating the HTTP socket.
- */
-async function renderCatalogOpenGraphImage({
-  imageSrc,
-  params,
-}: {
-  imageSrc: string;
-  params: CatalogOpenGraphImageParams;
-}) {
-  const response = new ImageResponse(<CatalogOpenGraphImage imageSrc={imageSrc} {...params} />, {
+  return new ImageResponse(<CatalogOpenGraphImage imageSrc={imageSrc} {...params} />, {
     ...catalogOpenGraphImageSize,
   });
-
-  return {
-    body: await response.arrayBuffer(),
-    headers: response.headers,
-    status: response.status,
-    statusText: response.statusText,
-  };
 }
 
 /**
