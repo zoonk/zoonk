@@ -86,12 +86,6 @@ Some design preferences:
 
 For detailed UX guidelines (interactions, animation, layout, accessibility), see [.agents/skills/zoonk-design/SKILL.md](.agents/skills/zoonk-design/SKILL.md)
 
-## Apple Platforms
-
-- For any development targeting iOS, iPadOS, macOS, visionOS, tvOS, or watchOS, read [.agents/skills/apple-human-interface-guidelines/SKILL.md](.agents/skills/apple-human-interface-guidelines/SKILL.md) and follow Apple's Human Interface Guidelines.
-- Always prefer Apple platform conventions over copying the web app. The `main` app can define product intent, but native Apple apps should use platform-appropriate navigation, layout, controls, input behavior, and system integration for each target platform.
-- Prefer system colors, semantic colors, system materials, system typography, native controls, and SF Symbols when available. Avoid custom colors, custom symbols, and custom controls unless the platform component does not fit the product need.
-
 ## Android Platforms
 
 - For any development targeting Android phones, tablets, foldables, ChromeOS, desktop windowing, Wear OS, Android TV, Android for Cars, Android XR, widgets, or other Android surfaces, read [.agents/skills/android-material-guidelines/SKILL.md](.agents/skills/android-material-guidelines/SKILL.md) and follow Google's Android and Material Design guidance.

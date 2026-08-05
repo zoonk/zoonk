@@ -1,0 +1,52 @@
+name: Apple App
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+
+jobs:
+  format:
+    runs-on: macos-26
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Check Swift formatting
+        run: make -C apps/apple format-check
+
+  build:
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: iOS
+            target: build-ios
+          - platform: macOS
+            target: build-macos
+          - platform: tvOS
+            target: build-tvos
+          - platform: visionOS
+            target: build-visionos
+          - platform: watchOS
+            target: build-watchos
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Build ${{ matrix.platform }}
+        run: make -C apps/apple ${{ matrix.target }}
