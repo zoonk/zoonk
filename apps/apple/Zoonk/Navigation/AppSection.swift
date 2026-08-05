@@ -12,15 +12,30 @@ enum AppSection: CaseIterable, Hashable, Identifiable {
   var title: LocalizedStringResource {
     switch self {
     case .home:
-      .Navigation.home
+      LocalizedStringResource(
+        "Home",
+        table: "Navigation",
+        comment: "Navigation title for the app's primary home section.")
     case .newCourse:
-      .Navigation.newCourse
+      LocalizedStringResource(
+        "New course",
+        table: "Navigation",
+        comment: "Navigation title for the destination where the learner creates a course.")
     case .courses:
-      .Navigation.courses
+      LocalizedStringResource(
+        "Courses",
+        table: "Navigation",
+        comment: "Navigation title for the learner's courses.")
     case .progress:
-      .Navigation.progress
+      LocalizedStringResource(
+        "Progress",
+        table: "Navigation",
+        comment: "Navigation title for the learner's progress overview.")
     case .search:
-      .Navigation.search
+      LocalizedStringResource(
+        "Search",
+        table: "Navigation",
+        comment: "Navigation title for searching Zoonk.")
     }
   }
 

@@ -13,17 +13,35 @@ enum WatchSection: CaseIterable, Hashable, Identifiable {
   var title: LocalizedStringResource {
     switch self {
     case .progress:
-      .Navigation.progress
+      LocalizedStringResource(
+        "Progress",
+        table: "Navigation",
+        comment: "Navigation title for the learner's progress overview.")
     case .activity:
-      .Navigation.activity
+      LocalizedStringResource(
+        "Activity",
+        table: "Navigation",
+        comment: "Navigation title for the learner's activity history.")
     case .score:
-      .Navigation.score
+      LocalizedStringResource(
+        "Score",
+        table: "Navigation",
+        comment: "Navigation title for the learner's score.")
     case .patterns:
-      .Navigation.patterns
+      LocalizedStringResource(
+        "Patterns",
+        table: "Navigation",
+        comment: "Navigation title for patterns in the learner's progress.")
     case .level:
-      .Navigation.level
+      LocalizedStringResource(
+        "Level",
+        table: "Navigation",
+        comment: "Navigation title for the learner's current level.")
     case .energy:
-      .Navigation.energy
+      LocalizedStringResource(
+        "Energy",
+        table: "Navigation",
+        comment: "Navigation title for the learner's Energy metric.")
     }
   }
 

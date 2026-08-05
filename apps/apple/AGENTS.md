@@ -27,9 +27,9 @@ These instructions apply to the multiplatform SwiftUI app in this directory and 
 
 ## Localization
 
-- Keep user-facing text in native Xcode String Catalogs and use generated localized symbols from Swift. Let the operating system select the app language; do not add a custom locale switcher or parallel translation store.
-- Reserve `Shared/Resources/Localization/Navigation.xcstrings` for cross-target navigation and app-shell terminology. When a durable feature receives its first feature-owned user-facing copy, add one named `<Feature>.xcstrings` catalog beside that feature instead of growing a global catalog. Keep every supported locale together in that feature catalog, keep catalog basenames unique and stable within each target, and use the generated `.Feature.*` symbols so the catalog name remains the explicit lookup table.
-- Zoonk currently supports English, Spanish, Portuguese, French, and German. Use the generic `pt` locale to match the product-wide locale contract. Every catalog must support all five locales rather than splitting files by language.
+- Keep user-facing text in native Xcode String Catalogs. Let the operating system select the app language; do not add a custom locale switcher or parallel translation store.
+- Prefer source-driven extraction. Pass English string literals directly to localizable SwiftUI or Foundation APIs, include a translator comment, and specify the owning feature catalog with `table: "<Feature>"`. Build the app to let Xcode add and update catalog entries automatically. Do not add `extractionState: "manual"` or catalog-first semantic keys unless a specific use case requires generated symbols whose values must change independently from their keys.
+- Reserve `Shared/Resources/Localization/Navigation.xcstrings` for cross-target navigation and app-shell terminology. When a durable feature receives its first feature-owned user-facing copy, add one named `<Feature>.xcstrings` catalog beside that feature instead of growing a global catalog. Keep every supported locale together in that feature catalog, and keep catalog basenames unique and stable within each target.
 - Reuse the main app's established wording when it fits native Apple UI, but prefer concise platform-standard terminology when the web wording is not appropriate for a native control.
 
 ## Verification

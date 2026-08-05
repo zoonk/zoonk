@@ -15,7 +15,7 @@ struct WatchAppView: View {
           }
         }
       }
-      .navigationTitle("Zoonk")
+      .navigationTitle(Text(verbatim: "Zoonk"))
     }
   }
 }
