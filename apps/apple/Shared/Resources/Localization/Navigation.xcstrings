@@ -30,6 +30,15 @@
         }
       }
     },
+    "Checking your account…" : {
+      "comment" : "Loading message while Apple Watch receives account state from iPhone",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Dein Konto wird überprüft …" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Comprobando tu cuenta…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vérification de votre compte…" } },
+        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Verificando sua conta…" } }
+      }
+    },
     "Courses" : {
       "comment" : "Navigation title for the learner's courses.",
       "localizations" : {
@@ -175,6 +184,15 @@
         }
       }
     },
+    "Open Zoonk on your iPhone and sign in. This Apple Watch will update automatically." : {
+      "comment" : "Explains the phone-first authentication handoff on Apple Watch",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Öffne Zoonk auf deinem iPhone und melde dich an. Diese Apple Watch wird automatisch aktualisiert." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre Zoonk en tu iPhone e inicia sesión. Tu Apple Watch se actualizará automáticamente." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrez Zoonk sur votre iPhone et connectez-vous. Cette Apple Watch se mettra à jour automatiquement." } },
+        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Abra o Zoonk no iPhone e entre. Este Apple Watch será atualizado automaticamente." } }
+      }
+    },
     "Patterns" : {
       "comment" : "Navigation title for patterns in the learner's progress.",
       "localizations" : {
@@ -289,6 +307,15 @@
             "value" : "Pesquisar"
           }
         }
+      }
+    },
+    "Sign in on iPhone" : {
+      "comment" : "Title asking an Apple Watch user to authenticate in the companion app",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Auf dem iPhone anmelden" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Iniciar sesión en el iPhone" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se connecter sur l’iPhone" } },
+        "pt" : { "stringUnit" : { "state" : "translated", "value" : "Entrar no iPhone" } }
       }
     }
   },

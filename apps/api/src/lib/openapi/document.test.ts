@@ -26,6 +26,7 @@ const ISO_DATE = "2026-07-25T12:00:00.000Z";
 const DOCUMENTED_METHODS = ["delete", "get", "patch", "post"] as const;
 
 const CANONICAL_OPERATIONS = [
+  { method: "post", operationId: "signInWithNativeApple", path: "/auth/sign-in/apple-native" },
   { method: "get", operationId: "searchCatalog", path: "/catalog/search" },
   { method: "get", operationId: "listCourses", path: "/courses" },
   { method: "get", operationId: "getCourse", path: "/courses/{courseId}" },
@@ -144,10 +145,10 @@ describe("OpenAPI document", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
     const operations = Object.values(document.paths).flatMap((pathItem) =>
-      [pathItem.get, pathItem.patch, pathItem.post].filter(
-        (operation): operation is z.infer<typeof operationContractSchema> =>
-          operation !== undefined,
-      ),
+      DOCUMENTED_METHODS.flatMap((method) => {
+        const operation = pathItem[method];
+        return operation ? [operation] : [];
+      }),
     );
 
     const operationIds = operations.map((operation) => operation.operationId);
@@ -253,6 +254,16 @@ describe("OpenAPI document", () => {
       },
     });
 
+    const meDeletionSchema = z
+      .object({ oneOf: z.array(z.object({ required: z.array(z.string()).optional() }).loose()) })
+      .parse(document.components.schemas.MeDeletion);
+
+    expect(meDeletionSchema.oneOf.map((variant) => variant.required ?? [])).toStrictEqual([
+      [],
+      ["appleCredentials"],
+      ["emailCredentials"],
+    ]);
+
     expect(document.components.schemas.CourseContinuationListResponse).toMatchObject({
       properties: { data: { maxItems: 4 } },
     });
@@ -292,6 +303,8 @@ describe("OpenAPI document", () => {
 
     expect(document.paths["/course-prompts"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("500");
+    expect(document.paths["/auth/sign-in/apple-native"]?.post?.responses).toHaveProperty("500");
+    expect(document.paths["/me"]?.delete?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.patch?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.patch?.responses).toHaveProperty("403");
     expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("403");
@@ -439,6 +452,18 @@ describe("OpenAPI document", () => {
     expect(document.paths["/courses/{courseId}/next-lesson"]?.get).toMatchObject({
       parameters: [{ in: "path", name: "courseId", required: true, schema: { format: "uuid" } }],
     });
+
+    expect(document.paths["/me"]?.delete).toMatchObject({
+      operationId: "deleteCurrentUser",
+      responses: {
+        "200": { description: "Account deleted with provider revocation outcome" },
+        "400": expect.any(Object),
+        "401": expect.any(Object),
+        "403": expect.any(Object),
+        "500": expect.any(Object),
+      },
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+    });
   });
 
   it("uses consistent course-prompt identifiers and supported language targets", () => {
@@ -515,6 +540,7 @@ describe("OpenAPI response schemas", () => {
   it("uses UUID and ISO date-time formats for the current user", () => {
     const response = {
       account: {
+        deletion: { hasAppleAccount: false },
         hasActiveSubscription: true,
         subscription: {
           cancelAt: null,

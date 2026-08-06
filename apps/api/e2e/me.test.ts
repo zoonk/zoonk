@@ -2,10 +2,24 @@ import { randomUUID } from "node:crypto";
 import { type APIResponse, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getString } from "@zoonk/utils/json";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { getOTPForEmail } from "./helpers/db";
 
 const PASSWORD = "password123";
+
+/**
+ * Links an Apple identity to the test user so the public account response can
+ * prove that Apple provider state comes from durable account data.
+ */
+function appleAccountFixture({ userId }: { userId: string }) {
+  return prisma.account.create({
+    data: { accountId: `e2e-apple-${randomUUID()}`, id: randomUUID(), providerId: "apple", userId },
+  });
+}
 
 /**
  * Verifies the public API error envelope so tests assert the client contract
@@ -89,7 +103,7 @@ async function createBearerApiContext({
     extraHTTPHeaders: { Authorization: `Bearer ${token}` },
   });
 
-  return { apiContext, email, name, userId: user.id, username };
+  return { apiContext, email, name, token, userId: user.id, username };
 }
 
 test.describe("Current User API", () => {
@@ -122,6 +136,187 @@ test.describe("Current User API", () => {
     await apiContext.dispose();
   });
 
+  test("rejects unauthenticated account deletion", async () => {
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.delete("/v1/me", { data: {} });
+
+    await expectApiError({ code: "UNAUTHORIZED", response, status: 401 });
+
+    await apiContext.dispose();
+  });
+
+  test("requires a fresh session to delete an account", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { apiContext, token, userId } = await createBearerApiContext({ baseURL, uniqueId });
+
+    await prisma.session.update({
+      data: { createdAt: new Date(Date.now() - 2 * 86_400_000) },
+      where: { token },
+    });
+
+    const response = await apiContext.delete("/v1/me", { data: {} });
+
+    await expectApiError({ code: "FORBIDDEN", response, status: 403 });
+    await expect(prisma.user.findUnique({ where: { id: userId } })).resolves.not.toBeNull();
+
+    await apiContext.dispose();
+  });
+
+  test("deletes a stale-session account and its personalized course after email OTP reauthentication", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const { apiContext, email, token, userId } = await createBearerApiContext({
+      baseURL,
+      uniqueId,
+    });
+
+    const personalizedCourse = await courseFixture({
+      format: "personalized",
+      title: `Email deletion course ${uniqueId}`,
+      userId,
+    });
+
+    await Promise.all([
+      prisma.session.update({
+        data: { createdAt: new Date(Date.now() - 2 * 86_400_000) },
+        where: { token },
+      }),
+      prisma.user.update({ data: { emailVerified: true }, where: { id: userId } }),
+    ]);
+
+    const otpContext = await request.newContext({ baseURL });
+
+    const otpResponse = await otpContext.post("/v1/auth/email-otp/send-verification-otp", {
+      data: { email, type: "sign-in" },
+    });
+
+    expect(otpResponse.ok()).toBe(true);
+
+    const otp = await getOTPForEmail(email);
+
+    if (!otp) {
+      throw new Error("Account deletion OTP was not stored");
+    }
+
+    const response = await apiContext.delete("/v1/me", {
+      data: { emailCredentials: { email, otp } },
+    });
+
+    expect(response.status()).toBe(200);
+    await expect(response.json()).resolves.toEqual({ appleAuthorizationRevoked: null });
+
+    const [user, course, sessionCount] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId } }),
+      prisma.course.findUnique({ where: { id: personalizedCourse.id } }),
+      prisma.session.count({ where: { userId } }),
+    ]);
+
+    expect(user).toBeNull();
+    expect(course).toBeNull();
+    expect(sessionCount).toBe(0);
+
+    await Promise.all([apiContext.dispose(), otpContext.dispose()]);
+  });
+
+  test("deletes the account, learning data, auth state, and local subscriptions", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const { apiContext, email, token, userId } = await createBearerApiContext({
+      baseURL,
+      uniqueId,
+      withSubscription: true,
+    });
+
+    const [otherUser, organization] = await Promise.all([
+      userFixture(),
+      organizationFixture({ kind: "brand" }),
+    ]);
+
+    const [personalizedCourse, sharedCourse] = await Promise.all([
+      courseFixture({
+        format: "personalized",
+        title: `Personalized account deletion course ${uniqueId}`,
+        userId,
+      }),
+      courseFixture({
+        isPublished: true,
+        organizationId: organization.id,
+        title: `Shared account deletion course ${uniqueId}`,
+      }),
+    ]);
+
+    await Promise.all([
+      courseUserFixture({ courseId: sharedCourse.id, userId }),
+      courseUserFixture({ courseId: sharedCourse.id, userId: otherUser.id }),
+    ]);
+
+    await appleAccountFixture({ userId });
+
+    const otpContext = await request.newContext({ baseURL });
+    const otpIdentifier = `sign-in-otp-${email}`;
+
+    const otpResponse = await otpContext.post("/v1/auth/email-otp/send-verification-otp", {
+      data: { email, type: "sign-in" },
+    });
+
+    expect(otpResponse.ok()).toBe(true);
+
+    await expect(prisma.verification.count({ where: { identifier: otpIdentifier } })).resolves.toBe(
+      1,
+    );
+
+    const response = await apiContext.delete("/v1/me", { data: {} });
+
+    expect(response.status()).toBe(200);
+    await expect(response.json()).resolves.toEqual({ appleAuthorizationRevoked: false });
+
+    const [
+      user,
+      accountCount,
+      sessionCount,
+      progressCount,
+      subscriptionCount,
+      verificationCount,
+      deletedCourse,
+      preservedSharedCourse,
+      deletedSharedMembership,
+      preservedSharedMembership,
+    ] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId } }),
+      prisma.account.count({ where: { userId } }),
+      prisma.session.count({ where: { token, userId } }),
+      prisma.userProgress.count({ where: { userId } }),
+      prisma.subscription.count({ where: { referenceId: userId } }),
+      prisma.verification.count({ where: { identifier: otpIdentifier } }),
+      prisma.course.findUnique({ where: { id: personalizedCourse.id } }),
+      prisma.course.findUnique({ where: { id: sharedCourse.id } }),
+      prisma.courseUser.findUnique({
+        where: { courseUser: { courseId: sharedCourse.id, userId } },
+      }),
+      prisma.courseUser.findUnique({
+        where: { courseUser: { courseId: sharedCourse.id, userId: otherUser.id } },
+      }),
+    ]);
+
+    expect(user).toBeNull();
+    expect(accountCount).toBe(0);
+    expect(sessionCount).toBe(0);
+    expect(progressCount).toBe(0);
+    expect(subscriptionCount).toBe(0);
+    expect(verificationCount).toBe(0);
+    expect(deletedCourse).toBeNull();
+    expect(preservedSharedCourse?.userCount).toBe(1);
+    expect(deletedSharedMembership).toBeNull();
+    expect(preservedSharedMembership).not.toBeNull();
+
+    const accountResponse = await apiContext.get("/v1/me");
+
+    await expectApiError({ code: "UNAUTHORIZED", response: accountResponse, status: 401 });
+
+    await Promise.all([apiContext.dispose(), otpContext.dispose()]);
+  });
+
   test("returns the signed-in user and account state", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -139,6 +334,7 @@ test.describe("Current User API", () => {
 
     expect(body.user).toMatchObject({ email, id: userId, name, username });
     expect(body.user.emailVerified).toBe(false);
+    expect(body.account.deletion.hasAppleAccount).toBe(false);
     expect(body.account.hasActiveSubscription).toBe(true);
 
     expect(body.account.subscription).toMatchObject({
@@ -146,6 +342,29 @@ test.describe("Current User API", () => {
       provider: "zoonk",
       status: "active",
     });
+
+    await apiContext.dispose();
+  });
+
+  test("returns Apple account state after profile reads and updates", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { apiContext, userId } = await createBearerApiContext({ baseURL, uniqueId });
+
+    await appleAccountFixture({ userId });
+
+    const getResponse = await apiContext.get("/v1/me");
+
+    const updateResponse = await apiContext.patch("/v1/me", {
+      data: { name: `Apple Me User ${uniqueId}` },
+    });
+
+    expect(getResponse.status()).toBe(200);
+    expect(updateResponse.status()).toBe(200);
+
+    const [getBody, updateBody] = await Promise.all([getResponse.json(), updateResponse.json()]);
+
+    expect(getBody.account.deletion.hasAppleAccount).toBe(true);
+    expect(updateBody.account.deletion.hasAppleAccount).toBe(true);
 
     await apiContext.dispose();
   });
@@ -270,6 +489,8 @@ test.describe("Current User API", () => {
       name: nextName,
       username: nextUsername,
     });
+
+    expect(updateBody.account.deletion.hasAppleAccount).toBe(false);
 
     const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
 
