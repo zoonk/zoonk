@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A0A00010000000000000001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, macos, ); productRef = 5A0A00200000000000000001 /* GoogleSignIn */; };
+		5A0A00020000000000000001 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, macos, ); productRef = 5A0A00210000000000000001 /* GoogleSignInSwift */; };
 		BEB8AB8A3022709B00E0E150 /* Zoonk Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -47,9 +49,22 @@
 		BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zoonk Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5A0A00300000000000000001 /* Exceptions for "Zoonk" folder in "Zoonk" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BEB8AB603022709A00E0E150 /* Zoonk */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5A0A00300000000000000001 /* Exceptions for "Zoonk" folder in "Zoonk" target */,
+			);
 			path = Zoonk;
 			sourceTree = "<group>";
 		};
@@ -75,6 +90,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A0A00010000000000000001 /* GoogleSignIn in Frameworks */,
+				5A0A00020000000000000001 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +156,8 @@
 			);
 			name = Zoonk;
 			packageProductDependencies = (
+				5A0A00200000000000000001 /* GoogleSignIn */,
+				5A0A00210000000000000001 /* GoogleSignInSwift */,
 			);
 			productName = Zoonk;
 			productReference = BEB8AB5E3022709A00E0E150 /* Zoonk.app */;
@@ -227,6 +246,9 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BEB8AB5F3022709A00E0E150 /* Products */;
+			packageReferences = (
+				5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -421,14 +443,21 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				CODE_SIGN_ENTITLEMENTS = Zoonk/Zoonk.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = Zoonk/Zoonk.macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CGXYKAQUT9;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				GOOGLE_IOS_CLIENT_ID = "";
+				GOOGLE_REVERSED_IOS_CLIENT_ID = "";
+				GOOGLE_SERVER_CLIENT_ID = "";
+				INFOPLIST_FILE = Zoonk/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -458,6 +487,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,7";
 				TVOS_DEPLOYMENT_TARGET = 18.0;
 				XROS_DEPLOYMENT_TARGET = 2.0;
+				ZOONK_API_BASE_URL = "http://localhost:4000";
 			};
 			name = Debug;
 		};
@@ -466,14 +496,21 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				CODE_SIGN_ENTITLEMENTS = Zoonk/Zoonk.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = Zoonk/Zoonk.macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CGXYKAQUT9;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				GOOGLE_IOS_CLIENT_ID = "";
+				GOOGLE_REVERSED_IOS_CLIENT_ID = "";
+				GOOGLE_SERVER_CLIENT_ID = "";
+				INFOPLIST_FILE = Zoonk/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -503,6 +540,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,7";
 				TVOS_DEPLOYMENT_TARGET = 18.0;
 				XROS_DEPLOYMENT_TARGET = 2.0;
+				ZOONK_API_BASE_URL = "https://api.zoonk.com";
 			};
 			name = Release;
 		};
@@ -652,6 +690,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-	};
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5A0A00200000000000000001 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		5A0A00210000000000000001 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
+};
 	rootObject = BEB8AB563022709A00E0E150 /* Project object */;
 }

@@ -1,5 +1,11 @@
+import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
 import { z } from "zod";
-import { meResponseSchema, meUpdateSchema } from "../schemas/me";
+import {
+  meDeletionResponseSchema,
+  meDeletionSchema,
+  meResponseSchema,
+  meUpdateSchema,
+} from "../schemas/me";
 import {
   badRequestResponse,
   conflictResponse,
@@ -24,7 +30,48 @@ export const accountPaths = {
       tags: ["Health"],
     },
   },
+  "/auth/sign-in/apple-native": {
+    post: {
+      operationId: "signInWithNativeApple",
+      requestBody: {
+        content: { "application/json": { schema: nativeAppleCredentialsSchema } },
+        required: true,
+      },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: z.object({ token: z.string().min(1) }) } },
+          description: "Native Apple authorization exchanged for a Zoonk session",
+        },
+        "400": badRequestResponse,
+        "401": unauthorizedResponse,
+        "500": internalErrorResponse,
+      },
+      security: PUBLIC_SECURITY,
+      summary: "Sign in with native Apple authorization",
+      tags: ["Account"],
+    },
+  },
   "/me": {
+    delete: {
+      operationId: "deleteCurrentUser",
+      requestBody: {
+        content: { "application/json": { schema: meDeletionSchema } },
+        required: true,
+      },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: meDeletionResponseSchema } },
+          description: "Account deleted with provider revocation outcome",
+        },
+        "400": badRequestResponse,
+        "401": unauthorizedResponse,
+        "403": forbiddenResponse,
+        "500": internalErrorResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Delete current user's account",
+      tags: ["Account"],
+    },
     get: {
       operationId: "getCurrentUser",
       responses: {

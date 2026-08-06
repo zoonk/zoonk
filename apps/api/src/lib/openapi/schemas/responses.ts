@@ -22,7 +22,7 @@ export const unauthorizedResponse = {
 
 export const forbiddenResponse = {
   content: { "application/json": { schema: errorSchema } },
-  description: "Same-origin request required for cookie authentication",
+  description: "Request forbidden",
 } as const;
 
 export const internalErrorResponse = {

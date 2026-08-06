@@ -16,6 +16,23 @@ function errorResponse(code: string, message: string, status: number, details?: 
   return NextResponse.json({ error: { code, details, message } }, { status });
 }
 
+/**
+ * Keeps feature-specific error codes on the same response envelope as the
+ * shared HTTP errors. Native clients use these codes for actionable recovery
+ * without parsing human-readable messages.
+ */
+export function createErrorResponse({
+  code,
+  message,
+  status,
+}: {
+  code: string;
+  message: string;
+  status: number;
+}) {
+  return errorResponse(code, message, status);
+}
+
 export const errors = {
   badRequest: (msg = "Invalid request") => errorResponse("BAD_REQUEST", msg, httpStatus.badRequest),
   conflict: (msg = "Resource already exists") =>

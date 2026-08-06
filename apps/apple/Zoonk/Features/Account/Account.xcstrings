@@ -1,0 +1,2239 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "6-digit code": {
+      "comment": "Placeholder for the account deletion verification code",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6-stelliger Code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código de 6 dígitos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code à 6 chiffres"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código de 6 dígitos"
+          }
+        }
+      }
+    },
+    "Account": {
+      "comment": "Accessibility label for the account button\nAccount sheet navigation title",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuenta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compte"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conta"
+          }
+        }
+      }
+    },
+    "Account deleted": {
+      "comment": "Title shown after deletion when Apple authorization needs manual removal\nTitle shown after successful account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto gelöscht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuenta eliminada"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compte supprimé"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conta excluída"
+          }
+        }
+      }
+    },
+    "Account deletion can't be undone.": {
+      "comment": "Warns that account deletion is irreversible",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Löschen des Kontos kann nicht rückgängig gemacht werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La eliminación de la cuenta no se puede deshacer."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La suppression du compte est irréversible."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A exclusão da conta não pode ser desfeita."
+          }
+        }
+      }
+    },
+    "Account email": {
+      "comment": "Section title above the read-only account email",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-Mail-Adresse des Kontos"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correo de la cuenta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse e-mail du compte"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email da conta"
+          }
+        }
+      }
+    },
+    "Account unavailable": {
+      "comment": "Title shown when the saved account cannot be loaded",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto nicht verfügbar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuenta no disponible"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compte indisponible"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conta indisponível"
+          }
+        }
+      }
+    },
+    "Active": {
+      "comment": "Status for an active subscription",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activa"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actif"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativa"
+          }
+        }
+      }
+    },
+    "Blog": {
+      "comment": "Account option for the blog",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blog"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blog"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blog"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blog"
+          }
+        }
+      }
+    },
+    "By continuing, you agree to the Zoonk Terms of Service and Privacy Policy.": {
+      "comment": "Legal agreement shown below sign-in methods",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn du fortfährst, stimmst du den Nutzungsbedingungen und der Datenschutzerklärung von Zoonk zu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al continuar, aceptas los Términos del Servicio y la Política de Privacidad de Zoonk."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En continuant, tu acceptes les Conditions d’utilisation et la Politique de confidentialité de Zoonk."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ao continuar, você concorda com os Termos de Serviço e a Política de Privacidade do Zoonk."
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "comment": "Cancels permanent account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        }
+      }
+    },
+    "Check the information and try again.": {
+      "comment": "Error shown when profile information is invalid",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überprüfe die Angaben und versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisa la información e inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifie les informations et réessaie."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confira as informações e tente de novo."
+          }
+        }
+      }
+    },
+    "Choose how your name appears before you continue.": {
+      "comment": "Explains why first-time profile setup is required",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lege fest, wie dein Name angezeigt werden soll, bevor du fortfährst."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige cómo aparecerá tu nombre antes de continuar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisis comment ton nom apparaîtra avant de continuer."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha como seu nome será exibido antes de continuar."
+          }
+        }
+      }
+    },
+    "Close": {
+      "comment": "Closes the account sheet",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schließen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechar"
+          }
+        }
+      }
+    },
+    "Continue with Apple to confirm that this account is yours before deleting it.": {
+      "comment": "Explains why Apple reauthorization is required for deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahre mit Apple fort, um vor dem Löschen zu bestätigen, dass dieses Konto dir gehört."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continúa con Apple para confirmar que esta cuenta es tuya antes de eliminarla."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue avec Apple pour confirmer que ce compte t’appartient avant de le supprimer."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue com a Apple para confirmar que esta conta é sua antes de excluí-la."
+          }
+        }
+      }
+    },
+    "Continue with email": {
+      "comment": "Email sign-in button label",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter mit E-Mail"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar con correo electrónico"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer avec un e-mail"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar com email"
+          }
+        }
+      }
+    },
+    "Course progress": {
+      "comment": "Learning data removed during account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kursfortschritt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progreso del curso"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progression du cours"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progresso do curso"
+          }
+        }
+      }
+    },
+    "Delete account": {
+      "comment": "Account deletion navigation title\nConfirms permanent account deletion\nStarts permanent account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto löschen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar cuenta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer le compte"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excluir conta"
+          }
+        }
+      }
+    },
+    "Delete your Zoonk account?": {
+      "comment": "Final confirmation title before permanent account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Zoonk-Konto löschen?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Eliminar tu cuenta de Zoonk?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer ton compte Zoonk ?"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excluir sua conta do Zoonk?"
+          }
+        }
+      }
+    },
+    "Deleting your Zoonk account doesn't cancel App Store billing. Cancel the subscription first if you don't want it to renew.": {
+      "comment": "Warns that App Store billing continues independently of Zoonk account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durch das Löschen deines Zoonk-Kontos wird die Abrechnung im App Store nicht beendet. Kündige zuerst das Abonnement, wenn es nicht verlängert werden soll."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar tu cuenta de Zoonk no cancela la facturación del App Store. Cancela primero la suscripción si no quieres que se renueve."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer ton compte Zoonk n’annule pas la facturation via l’App Store. Résilie d’abord l’abonnement si tu ne veux pas qu’il soit renouvelé."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excluir sua conta do Zoonk não cancela a cobrança da App Store. Cancele primeiro a assinatura se não quiser que ela seja renovada."
+          }
+        }
+      }
+    },
+    "Deleting your Zoonk account doesn't cancel Google Play billing. Cancel the subscription first if you don't want it to renew.": {
+      "comment": "Warns that Google Play billing continues independently of Zoonk account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durch das Löschen deines Zoonk-Kontos wird die Abrechnung bei Google Play nicht beendet. Kündige zuerst das Abonnement, wenn es nicht verlängert werden soll."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar tu cuenta de Zoonk no cancela la facturación de Google Play. Cancela primero la suscripción si no quieres que se renueve."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer ton compte Zoonk n’annule pas la facturation via Google Play. Résilie d’abord l’abonnement si tu ne veux pas qu’il soit renouvelé."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excluir sua conta do Zoonk não cancela a cobrança do Google Play. Cancele primeiro a assinatura se não quiser que ela seja renovada."
+          }
+        }
+      }
+    },
+    "Done": {
+      "comment": "Closes successful account deletion\nCloses the Apple revocation outcome",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concluído"
+          }
+        }
+      }
+    },
+    "Email": {
+      "comment": "Fixed account email used to reauthorize deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-Mail"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correo electrónico"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-mail"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
+        }
+      }
+    },
+    "Email sign-in": {
+      "comment": "Email login navigation title",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit E-Mail anmelden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicio de sesión con correo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connexion par e-mail"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrar com email"
+          }
+        }
+      }
+    },
+    "Enter a valid email address.": {
+      "comment": "Error shown when an email address is invalid",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine gültige E-Mail-Adresse ein."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ingresa un correo electrónico válido."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saisis une adresse e-mail valide."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digite um email válido."
+          }
+        }
+      }
+    },
+    "Feedback & Support": {
+      "comment": "Account option for feedback and support",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback & Support"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentarios y ayuda"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avis et aide"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sugestões e Suporte"
+          }
+        }
+      }
+    },
+    "Finish setup": {
+      "comment": "Navigation title for required first-time profile setup",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einrichtung abschließen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finalizar configuración"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminer la configuration"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concluir configuração"
+          }
+        }
+      }
+    },
+    "For your security, enter a new code sent to the email on this account.": {
+      "comment": "Explains the email reauthentication requirement for account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib zu deiner Sicherheit einen neuen Code ein, der an die E-Mail-Adresse dieses Kontos gesendet wurde."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por tu seguridad, introduce un nuevo código enviado al correo de esta cuenta."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour ta sécurité, saisis un nouveau code envoyé à l’adresse e-mail de ce compte."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para sua segurança, insira um novo código enviado para o email desta conta."
+          }
+        }
+      }
+    },
+    "Free": {
+      "comment": "Status shown when the account has no active subscription",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kostenlos"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gratis"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gratuit"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grátis"
+          }
+        }
+      }
+    },
+    "Keep your courses and progress available on all your devices.": {
+      "comment": "Explains the benefit of signing in",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Kurse und dein Fortschritt sind auf allen deinen Geräten verfügbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accede a tus cursos y a tu progreso desde todos tus dispositivos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retrouve tes cours et ta progression sur tous tes appareils."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acesse seus cursos e seu progresso em todos os seus dispositivos."
+          }
+        }
+      }
+    },
+    "Manage App Store subscription": {
+      "comment": "Opens Apple's subscription management before account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Store-Abonnement verwalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestionar suscripción del App Store"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gérer l’abonnement App Store"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerenciar assinatura da App Store"
+          }
+        }
+      }
+    },
+    "Manage Google Play subscription": {
+      "comment": "Opens Google Play subscription management before account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google-Play-Abonnement verwalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestionar suscripción de Google Play"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gérer l’abonnement Google Play"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerenciar assinatura do Google Play"
+          }
+        }
+      }
+    },
+    "Manage Sign in with Apple": {
+      "comment": "Opens Apple account authorization management after deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Mit Apple anmelden“ verwalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestionar Inicio de sesión con Apple"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gérer Connexion avec Apple"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerenciar Iniciar Sessão com a Apple"
+          }
+        }
+      }
+    },
+    "My courses": {
+      "comment": "Account option that opens the learner's courses",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meine Kurse"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mis cursos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mes cours"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meus cursos"
+          }
+        }
+      }
+    },
+    "Name": {
+      "comment": "Profile name field label",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome"
+          }
+        }
+      }
+    },
+    "Permanently deleted": {
+      "comment": "Heading above the data removed during account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauerhaft gelöscht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminado permanentemente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimé définitivement"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excluídos permanentemente"
+          }
+        }
+      }
+    },
+    "Personalized courses": {
+      "comment": "Personalized learning data removed during account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalisierte Kurse"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cursos personalizados"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cours personnalisés"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cursos personalizados"
+          }
+        }
+      }
+    },
+    "Privacy Policy": {
+      "comment": "Link to the privacy policy",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datenschutzerklärung"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Política de privacidad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Politique de confidentialité"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Política de privacidade"
+          }
+        }
+      }
+    },
+    "Profile": {
+      "comment": "Account option for profile\nProfile editor navigation title",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perfil"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perfil"
+          }
+        }
+      }
+    },
+    "Profile and account information": {
+      "comment": "Account data removed during deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil- und Kontoinformationen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Información del perfil y de la cuenta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informations du profil et du compte"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informações do perfil e da conta"
+          }
+        }
+      }
+    },
+    "Save": {
+      "comment": "Button that saves profile changes",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichern"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvar"
+          }
+        }
+      }
+    },
+    "Send a new code": {
+      "comment": "Sends a replacement account deletion verification code",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuen Code senden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar un código nuevo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer un nouveau code"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar novo código"
+          }
+        }
+      }
+    },
+    "Send code": {
+      "comment": "Button that sends an email sign-in code",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code senden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar código"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer le code"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar código"
+          }
+        }
+      }
+    },
+    "Send verification code": {
+      "comment": "Sends an email code for account deletion reauthorization",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestätigungscode senden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar código de verificación"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer le code de vérification"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar código de verificação"
+          }
+        }
+      }
+    },
+    "Sign in": {
+      "comment": "Button that verifies an email code",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmelden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar sesión"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se connecter"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrar"
+          }
+        }
+      }
+    },
+    "Sign in again": {
+      "comment": "Heading for email reauthentication before account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut anmelden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volver a iniciar sesión"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se reconnecter"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrar novamente"
+          }
+        }
+      }
+    },
+    "Sign in to Zoonk": {
+      "comment": "Title above the native sign-in methods",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei Zoonk anmelden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicia sesión en Zoonk"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecte-toi à Zoonk"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrar no Zoonk"
+          }
+        }
+      }
+    },
+    "Sign in with Google": {
+      "comment": "Accessibility label for the native Google sign-in button",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Google anmelden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar sesión con Google"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se connecter avec Google"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrar com o Google"
+          }
+        }
+      }
+    },
+    "Sign out": {
+      "comment": "Account sign-out action",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abmelden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar sesión"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se déconnecter"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sair"
+          }
+        }
+      }
+    },
+    "Sign out of Zoonk?": {
+      "comment": "Confirmation title for signing out on Apple TV",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von Zoonk abmelden?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cerrar sesión en Zoonk?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se déconnecter de Zoonk ?"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sair do Zoonk?"
+          }
+        }
+      }
+    },
+    "Sign out on all Apple devices?": {
+      "comment": "Confirmation title for synchronized sign-out",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf allen Apple-Geräten abmelden?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cerrar sesión en todos los dispositivos Apple?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se déconnecter de tous les appareils Apple ?"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sair em todos os dispositivos Apple?"
+          }
+        }
+      }
+    },
+    "Sign out on all devices": {
+      "comment": "Confirms synchronized sign-out",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf allen Geräten abmelden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar sesión en todos los dispositivos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se déconnecter de tous les appareils"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sair em todos os dispositivos"
+          }
+        }
+      }
+    },
+    "Subscription": {
+      "comment": "Heading for App Store billing guidance during account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suscripción"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnement"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinatura"
+          }
+        }
+      }
+    },
+    "Terms of Service": {
+      "comment": "Link to the terms of service",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutzungsbedingungen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Términos del Servicio"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conditions d’utilisation"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Termos de Serviço"
+          }
+        }
+      }
+    },
+    "That code belongs to a different account. Request a new code for this account.": {
+      "comment": "Error shown when an account deletion code belongs to a different account",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Code gehört zu einem anderen Konto. Fordere einen neuen Code für dieses Konto an."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ese código pertenece a otra cuenta. Solicita un código nuevo para esta cuenta."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce code appartient à un autre compte. Demande un nouveau code pour ce compte."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esse código pertence a outra conta. Solicite um novo código para esta conta."
+          }
+        }
+      }
+    },
+    "That code is invalid or expired. Request a new code and try again.": {
+      "comment": "Error shown when an email verification code is invalid or expired",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Code ist ungültig oder abgelaufen. Fordere einen neuen Code an und versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ese código no es válido o ha caducado. Solicita uno nuevo e inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce code est invalide ou a expiré. Demande un nouveau code et réessaie."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esse código é inválido ou expirou. Solicite um novo código e tente novamente."
+          }
+        }
+      }
+    },
+    "That code isn't valid. Check the email and try again.": {
+      "comment": "Error shown when an email sign-in code is invalid",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Code ist ungültig. Überprüfe die E-Mail und versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ese código no es válido. Revisa el correo e inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce code n’est pas valide. Vérifie l’e-mail et réessaie."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esse código não é válido. Confira o email e tente de novo."
+          }
+        }
+      }
+    },
+    "That username is already taken.": {
+      "comment": "Error shown when a chosen username is unavailable",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Benutzername ist bereits vergeben."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ese nombre de usuario ya está en uso."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce nom d’utilisateur est déjà pris."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esse nome de usuário já está em uso."
+          }
+        }
+      }
+    },
+    "This Zoonk session is shared through iCloud Keychain, so signing out removes it from your other Apple devices too.": {
+      "comment": "Explains why sign-out affects the user's other Apple devices",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Zoonk-Sitzung wird über den iCloud-Schlüsselbund geteilt. Wenn du dich abmeldest, wird sie daher auch von deinen anderen Apple-Geräten entfernt."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta sesión de Zoonk se comparte a través del llavero de iCloud, por lo que al cerrar sesión también se eliminará de tus otros dispositivos Apple."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette session Zoonk est partagée via le trousseau iCloud. Si tu te déconnectes, elle sera donc aussi supprimée de tes autres appareils Apple."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta sessão do Zoonk é compartilhada pelas Chaves do iCloud. Por isso, ao sair, ela também será removida dos seus outros dispositivos Apple."
+          }
+        }
+      }
+    },
+    "This permanently deletes your profile, progress, and personalized courses. This can't be undone.": {
+      "comment": "Explains the consequences of confirming permanent account deletion",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dadurch werden dein Profil, dein Fortschritt und deine personalisierten Kurse dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto elimina permanentemente tu perfil, tu progreso y tus cursos personalizados. No se puede deshacer."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ton profil, ta progression et tes cours personnalisés seront supprimés définitivement. Cette action est irréversible."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isso exclui permanentemente seu perfil, seu progresso e seus cursos personalizados. Não é possível desfazer."
+          }
+        }
+      }
+    },
+    "This signs you out on this Apple TV.": {
+      "comment": "Explains that Apple TV uses a local session",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dadurch wirst du auf diesem Apple TV abgemeldet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto cerrará tu sesión en este Apple TV."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu seras déconnecté de cette Apple TV."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isso encerra sua sessão nesta Apple TV."
+          }
+        }
+      }
+    },
+    "Try again": {
+      "comment": "Retries loading the saved account",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut versuchen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inténtalo de nuevo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayer"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar de novo"
+          }
+        }
+      }
+    },
+    "Use 3–30 letters, numbers, or underscores.": {
+      "comment": "Username requirements below the profile field",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwende 3–30 Zeichen: Buchstaben, Zahlen oder Unterstriche."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa entre 3 y 30 caracteres: letras, números o guiones bajos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utilise 3 à 30 caractères : lettres, chiffres ou tirets bas."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use de 3 a 30 caracteres: letras, números ou sublinhados."
+          }
+        }
+      }
+    },
+    "Use a different email": {
+      "comment": "Button that returns to the email entry step",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andere E-Mail-Adresse verwenden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar otro correo electrónico"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser une autre adresse e-mail"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar outro email"
+          }
+        }
+      }
+    },
+    "Use email instead": {
+      "comment": "Uses email OTP when Apple deletion reauthorization is unavailable",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stattdessen E-Mail verwenden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar correo electrónico"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser l’adresse e-mail"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar email"
+          }
+        }
+      }
+    },
+    "Username": {
+      "comment": "Profile username field label",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzername"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre de usuario"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom d’utilisateur"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome de usuário"
+          }
+        }
+      }
+    },
+    "Verification code": {
+      "comment": "Account deletion verification code field label",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestätigungscode"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código de verificación"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code de vérification"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código de verificação"
+          }
+        }
+      }
+    },
+    "Verify and delete": {
+      "comment": "Verifies the email code and permanently deletes the account",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestätigen und löschen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verificar y eliminar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifier et supprimer"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verificar e excluir"
+          }
+        }
+      }
+    },
+    "We sent a sign-in code to your email. It expires in 5 minutes.": {
+      "comment": "Explains where the email code was sent and when it expires",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir haben dir einen Anmeldecode per E-Mail gesendet. Er ist 5 Minuten lang gültig."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviamos un código de inicio de sesión a tu correo. Caduca en 5 minutos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nous avons envoyé un code de connexion à ton adresse e-mail. Il expire dans 5 minutes."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviamos um código de acesso para seu email. Ele expira em 5 minutos."
+          }
+        }
+      }
+    },
+    "Your Zoonk account and personalized data were permanently deleted.": {
+      "comment": "Confirms that account data was permanently deleted",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Zoonk-Konto und deine personalisierten Daten wurden dauerhaft gelöscht."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu cuenta de Zoonk y tus datos personalizados se eliminaron permanentemente."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ton compte Zoonk et tes données personnalisées ont été supprimés définitivement."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
+          }
+        }
+      }
+    },
+    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish.": {
+      "comment": "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se retirara la autorización. Elimina Zoonk de Inicio de sesión con Apple para finalizar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation. Retire Zoonk de Connexion avec Apple pour terminer."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar Sessão com a Apple para concluir."
+          }
+        }
+      }
+    },
+    "Your name": {
+      "comment": "Placeholder for the profile name field",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Name"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu nombre"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ton nom"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seu nome"
+          }
+        }
+      }
+    },
+    "Zoonk couldn't connect. Check your connection and try again.": {
+      "comment": "Error shown when an account request cannot reach the service",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk konnte keine Verbindung herstellen. Überprüfe deine Verbindung und versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk no pudo conectarse. Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk n’a pas pu se connecter. Vérifie ta connexion et réessaie."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo."
+          }
+        }
+      }
+    },
+    "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com.": {
+      "comment": "Generic account deletion failure message",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk konnte dein Konto nicht löschen. Versuche es erneut oder kontaktiere hello@zoonk.com."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk no pudo eliminar tu cuenta. Inténtalo de nuevo o contacta con hello@zoonk.com."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk n’a pas pu supprimer ton compte. Réessaie ou contacte hello@zoonk.com."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Zoonk não conseguiu excluir sua conta. Tente novamente ou entre em contato pelo email hello@zoonk.com."
+          }
+        }
+      }
+    },
+    "Zoonk couldn't load your account. Your sign-in is still safely stored.": {
+      "comment": "Explains that a temporary account load failure did not remove the session",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk konnte dein Konto nicht laden. Deine Anmeldung ist weiterhin sicher gespeichert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk no pudo cargar tu cuenta. Tu inicio de sesión sigue guardado de forma segura."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk n’a pas pu charger ton compte. Ta connexion reste enregistrée en toute sécurité."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Zoonk não conseguiu carregar sua conta. Seu acesso continua salvo com segurança."
+          }
+        }
+      }
+    },
+    "Zoonk couldn't sign you in. Try again or contact hello@zoonk.com.": {
+      "comment": "Generic sign-in failure message",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk konnte dich nicht anmelden. Versuche es erneut oder kontaktiere hello@zoonk.com."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk no pudo iniciar tu sesión. Inténtalo de nuevo o escribe a hello@zoonk.com."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoonk n’a pas pu te connecter. Réessaie ou contacte hello@zoonk.com."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível entrar no Zoonk. Tente de novo ou fale com hello@zoonk.com."
+          }
+        }
+      }
+    },
+    "username": {
+      "comment": "Placeholder for the username field",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "benutzername"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nombre de usuario"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nom d’utilisateur"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nome de usuário"
+          }
+        }
+      }
+    },
+    "you@example.com": {
+      "comment": "Example email address in the sign-in field",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "du@beispiel.de"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tu@ejemplo.com"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "toi@exemple.fr"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "voce@exemplo.com"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

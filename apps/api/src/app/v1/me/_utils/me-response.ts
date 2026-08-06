@@ -45,18 +45,21 @@ function serializeSubscription(subscription: ActiveSubscription) {
 }
 
 /**
- * Builds the public `/v1/me` response from the fresh auth session and active
- * subscription lookup so GET and PATCH return the exact same response shape.
+ * Builds the public `/v1/me` response from fresh auth, provider, and
+ * subscription reads so GET and PATCH return the exact same response shape.
  */
 export function createMeResponse({
+  hasAppleAccount,
   subscription,
   user,
 }: {
+  hasAppleAccount: boolean;
   subscription: ActiveSubscription;
   user: CurrentUser;
 }) {
   return {
     account: {
+      deletion: { hasAppleAccount },
       hasActiveSubscription: Boolean(subscription),
       subscription: serializeSubscription(subscription),
     },

@@ -2,8 +2,9 @@ import { appendFile } from "node:fs/promises";
 import { createAuthMiddleware } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
-import { emailOTP, oneTimeToken } from "better-auth/plugins";
-import { sendVerificationOTP } from "./plugins/otp";
+import { oneTimeToken } from "better-auth/plugins";
+import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
+import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
 import { stripePlugin } from "./stripe/plugin";
 
@@ -51,10 +52,16 @@ export const auth = betterAuth({
     ...baseAuthPlugins,
     ...fullPlugins.filter((plugin) => !e2ePluginOverrideIds.has(plugin.id)),
     stripePlugin({ createCustomerOnSignUp: false }),
-    emailOTP({ overrideDefaultEmailVerification: true, sendVerificationOTP, storeOTP: "plain" }),
+    createEmailOTPPlugin({ storeOTP: "plain" }),
     oneTimeToken({ storeToken: "plain" }),
     nextCookies(),
   ],
   rateLimit: { enabled: false },
   socialProviders,
+});
+
+/** @public Next's E2E alias replaces the package root with this module, so it must expose the same server capabilities as the production entrypoint while using test-safe OTP storage. */
+export const reauthorizeEmailForAccountDeletion = createEmailDeletionReauthentication({
+  rateLimit: { enabled: false },
+  storeOTP: "plain",
 });
