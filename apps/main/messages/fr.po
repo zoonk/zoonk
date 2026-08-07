@@ -2531,6 +2531,16 @@ msgctxt "_tq5fR"
 msgid "Creating content"
 msgstr "Création du contenu"
 
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "XqDTOi"
+msgid "learn anything with AI."
+msgstr "apprends tout ce que tu veux avec l’IA."
+
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "WUBzvQ"
+msgid "get an interactive course created for you."
+msgstr "obtiens un cours interactif créé pour toi."
+
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
 msgid "Read Zoonk's privacy policy to understand how we use and protect your personal information."

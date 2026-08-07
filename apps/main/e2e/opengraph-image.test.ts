@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { type APIRequestContext } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -48,6 +48,16 @@ async function expectGeneratedOpenGraphImage({
   expect(response.headers()["content-type"]).toContain("image/png");
   expect(image.subarray(0, 8).toString("hex")).toBe("89504e470d0a1a0a");
   expect(getPngSize(image)).toStrictEqual(OPEN_GRAPH_IMAGE_SIZE);
+
+  return image;
+}
+
+/**
+ * Image routes can use different URLs while still serving identical artwork,
+ * so comparing the response bytes proves that each locale gets its own card.
+ */
+function getImageHash(image: Buffer): string {
+  return createHash("sha256").update(image).digest("hex");
 }
 
 /**
@@ -87,6 +97,23 @@ test("uses the current app origin for the shared open graph image", async ({ pag
   expect(imageUrl.origin).toBe(getExpectedMetadataBase());
 
   await expectGeneratedOpenGraphImage({ path: `${imageUrl.pathname}${imageUrl.search}`, request });
+});
+
+test("localizes the shared open graph image for every locale", async ({ context, request }) => {
+  const pagePaths = ["/", "/de", "/es", "/fr", "/pt"];
+  const pages = await Promise.all(pagePaths.map(() => context.newPage()));
+
+  const imagePaths = await Promise.all(
+    pagePaths.map((path, index) => getOpenGraphImagePath({ page: pages[index]!, path })),
+  );
+
+  const images = await Promise.all(
+    imagePaths.map((path) => expectGeneratedOpenGraphImage({ path, request })),
+  );
+
+  const imageHashes = new Set(images.map((image) => getImageHash(image)));
+
+  expect(imageHashes.size).toBe(pagePaths.length);
 });
 
 test("generates route-specific open graph images for catalog pages", async ({ page, request }) => {
