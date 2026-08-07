@@ -36,7 +36,7 @@ export function MailboxIdentity({ className, ...props }: ComponentProps<"div">) 
 /** Gives this development tool a single, immediately recognizable heading. */
 export function MailboxTitle({ children, className, ...props }: ComponentProps<"h1">) {
   return (
-    <h1 className={cn("text-lg font-semibold tracking-[-0.025em]", className)} {...props}>
+    <h1 className={cn("text-lg font-semibold tracking-tight", className)} {...props}>
       {children}
     </h1>
   );
