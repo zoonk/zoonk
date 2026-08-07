@@ -2,7 +2,7 @@ import createMDX from "@next/mdx";
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["*.local"],
+  allowedDevOrigins: ["**.local"],
   experimental: {
     turbopackFileSystemCacheForBuild: true,
     turbopackRustReactCompiler: true,

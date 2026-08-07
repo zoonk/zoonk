@@ -1,10 +1,10 @@
 import { getEnvironment } from "@zoonk/utils/environment";
 import { type SafeReturn, toError } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { getLocalInboxConfig } from "./local-inbox";
+import { getLocalInboxUrl } from "./local-inbox";
 
 const apiUrl = "https://api.zeptomail.com/v1.1/email";
-const { url: localInboxUrl } = getLocalInboxConfig();
+const localInboxUrl = getLocalInboxUrl();
 
 type SendEmailParams = {
   to: string;

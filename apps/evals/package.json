@@ -6,7 +6,9 @@
     "analyze": "next experimental-analyze",
     "build": "next build",
     "build-and-start": "pnpm build && pnpm start",
-    "dev": "next dev -p 3201",
+    "dev": "portless run --name $(node ../../scripts/dev/print-service-name.mts evals) pnpm run dev:app",
+    "dev:app": "next dev",
+    "dev:direct": "next dev -p 3201",
     "start": "next start -p 3201",
     "typecheck": "next typegen && tsc --noEmit"
   },

@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getAllowedHosts, getBaseUrl, isCorsAllowedOrigin } from "./origin";
+import {
+  getAllowedHosts,
+  getBaseUrl,
+  getDevelopmentTrustedOrigins,
+  isCorsAllowedOrigin,
+} from "./origin";
 
 describe(getBaseUrl, () => {
   afterEach(() => {
@@ -14,6 +19,21 @@ describe(getBaseUrl, () => {
   it("returns http URL for localhost domains", () => {
     vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "localhost:4000");
     expect(getBaseUrl()).toBe("http://localhost:4000");
+  });
+
+  it("uses the Portless URL in development", () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "localhost:4000");
+    vi.stubEnv("PORTLESS_URL", "http://api.zoonk.localhost:1355");
+    expect(getBaseUrl()).toBe("http://api.zoonk.localhost:1355");
+  });
+
+  it("ignores the Portless URL outside local development", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "api.zoonk.com");
+    vi.stubEnv("PORTLESS_URL", "http://api.zoonk.localhost:1355");
+    expect(getBaseUrl()).toBe("https://api.zoonk.com");
   });
 
   it("prioritizes NEXT_PUBLIC_APP_DOMAIN over VERCEL_URL", () => {
@@ -53,7 +73,16 @@ describe(getAllowedHosts, () => {
 
   it("includes localhost:* in non-production", () => {
     vi.stubEnv("NODE_ENV", "development");
-    expect(getAllowedHosts()).toContain("localhost:*");
+
+    expect(getAllowedHosts()).toStrictEqual(
+      expect.arrayContaining([
+        "localhost:*",
+        "*.localhost",
+        "*.localhost:*",
+        "*.local",
+        "*.local:*",
+      ]),
+    );
   });
 
   it("includes localhost:* in production with E2E_TESTING=true", () => {
@@ -65,7 +94,16 @@ describe(getAllowedHosts, () => {
   it("excludes localhost:* in production (non-e2e)", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("E2E_TESTING", "false");
-    expect(getAllowedHosts()).not.toContain("localhost:*");
+
+    expect(getAllowedHosts()).not.toStrictEqual(
+      expect.arrayContaining([
+        "localhost:*",
+        "*.localhost",
+        "*.localhost:*",
+        "*.local",
+        "*.local:*",
+      ]),
+    );
   });
 
   it("includes *-zoonk.vercel.app when not Vercel production", () => {
@@ -76,6 +114,32 @@ describe(getAllowedHosts, () => {
   it("excludes *-zoonk.vercel.app in Vercel production", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     expect(getAllowedHosts()).not.toContain("*-zoonk.vercel.app");
+  });
+});
+
+describe(getDevelopmentTrustedOrigins, () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("includes protocol-qualified Portless patterns in development", () => {
+    vi.stubEnv("NODE_ENV", "development");
+
+    expect(getDevelopmentTrustedOrigins()).toStrictEqual(
+      expect.arrayContaining([
+        "http://*.localhost:*",
+        "https://*.localhost:*",
+        "http://*.local:*",
+        "https://*.local:*",
+      ]),
+    );
+  });
+
+  it("does not trust local origins in production", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", "production");
+
+    expect(getDevelopmentTrustedOrigins()).toStrictEqual([]);
   });
 });
 
@@ -120,8 +184,8 @@ describe(isCorsAllowedOrigin, () => {
       expect(isCorsAllowedOrigin("http://localhost:65535")).toBe(true);
     });
 
-    it("rejects https localhost", () => {
-      expect(isCorsAllowedOrigin("https://localhost:3000")).toBe(false);
+    it("allows https localhost", () => {
+      expect(isCorsAllowedOrigin("https://localhost:3000")).toBe(true);
     });
 
     it("rejects localhost without port", () => {
@@ -145,6 +209,28 @@ describe(isCorsAllowedOrigin, () => {
       vi.stubEnv("NODE_ENV", "production");
       vi.stubEnv("E2E_TESTING", "true");
       expect(isCorsAllowedOrigin("http://localhost:3000")).toBe(true);
+    });
+  });
+
+  describe("Portless hosts", () => {
+    it("allows named localhost and LAN origins in development", () => {
+      expect(isCorsAllowedOrigin("http://main.zoonk.localhost:1355")).toBe(true);
+      expect(isCorsAllowedOrigin("https://api.zoonk.localhost")).toBe(true);
+      expect(isCorsAllowedOrigin("http://main.zoonk.wills-mac-studio.local:1356")).toBe(true);
+      expect(isCorsAllowedOrigin("https://api.zoonk.wills-mac-studio.local")).toBe(true);
+    });
+
+    it("rejects malformed origins that resemble Portless hosts", () => {
+      expect(isCorsAllowedOrigin("http://main.zoonk.localhost.evil.com:1355")).toBe(false);
+      expect(isCorsAllowedOrigin("http://main.zoonk.localhost:1355/path")).toBe(false);
+      expect(isCorsAllowedOrigin("http://user@main.zoonk.localhost:1355")).toBe(false);
+    });
+
+    it("rejects named localhost and LAN origins in production", () => {
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("E2E_TESTING", "false");
+      expect(isCorsAllowedOrigin("http://main.zoonk.localhost:1355")).toBe(false);
+      expect(isCorsAllowedOrigin("http://main.zoonk.wills-mac-studio.local:1356")).toBe(false);
     });
   });
 
@@ -178,6 +264,7 @@ describe(isCorsAllowedOrigin, () => {
     it("rejects domains that look similar but are not zoonk", () => {
       expect(isCorsAllowedOrigin("https://fakezoonk.com")).toBe(false);
       expect(isCorsAllowedOrigin("https://zoonk-fake.com")).toBe(false);
+      expect(isCorsAllowedOrigin("https://user@zoonk.com")).toBe(false);
     });
   });
 });

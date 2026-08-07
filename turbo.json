@@ -13,11 +13,14 @@
       "GEMINI_API_KEY",
       "GOOGLE_*",
       "MAILER_API_KEY",
-      "MAILBOX_PORT",
+      "MAILBOX_URL",
+      "NEXT_PUBLIC_API_URL",
       "OPENAI_API_KEY",
       "SENTRY_AUTH_TOKEN",
       "STRIPE_*",
-      "VERCEL_*"
+      "VERCEL_*",
+      "PORTLESS_*",
+      "ZOONK_DEV_PROJECT"
     ],
     "ui": "tui",
     "cacheMaxAge": "7d",
@@ -60,6 +63,11 @@
     },
     "db:setup:test": { "cache": false, "dependsOn": ["^db:setup:test"] },
     "dev": { "cache": false, "dependsOn": ["db:generate", "^dev"], "persistent": true },
+    "dev:direct": {
+      "cache": false,
+      "dependsOn": ["db:generate", "^dev:direct"],
+      "persistent": true
+    },
     "e2e": { "dependsOn": ["build:e2e"], "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"] },
     "i18n:lint": {},
     "i18n": { "cache": false },

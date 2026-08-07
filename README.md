@@ -37,7 +37,10 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 
 ### Local Development
 
-- `pnpm dev` to start the development server
+- `pnpm dev` to start every app through Portless. Routes include the clone name, such as `http://main.zoonk.localhost:1355`, and linked worktrees also receive a branch prefix
+- `pnpm dev:lan` to expose the same named apps on the local network, such as `http://main.zoonk.local:1356`
+- `pnpm dev:direct` to bypass Portless and use the original fixed localhost ports
+- `pnpm dev:stop` to stop every registered Zoonk development stack and both shared proxies across clones and worktrees
 - `pnpm build` to create a production build
 - `pnpm lint` to run linting
 - `pnpm typecheck` to run TypeScript type checking

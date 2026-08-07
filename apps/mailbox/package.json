@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "portless run --name $(node ../../scripts/dev/print-service-name.mts mailbox) vite",
+    "dev:direct": "vite",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -18,7 +19,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "6.0.4",
-    "@zoonk/mailer": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "catalog:",
     "vite": "8.1.5"
