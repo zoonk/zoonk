@@ -1,3 +1,5 @@
+import { emailAccountDeletionCredentialsSchema } from "@zoonk/auth/email-deletion-contract";
+import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
 import { z } from "zod";
 import { usernameCandidateSchema } from "./usernames";
 
@@ -19,6 +21,28 @@ export const meUpdateSchema = z
   .strict()
   .refine(hasProfileUpdate, { message: "At least one profile field must be provided" })
   .meta({ id: "MeUpdate", override: { minProperties: 1 } });
+
+export const meDeletionSchema = z
+  .xor(
+    [
+      z.object({}).strict(),
+      z.object({ appleCredentials: nativeAppleCredentialsSchema }).strict(),
+      z.object({ emailCredentials: emailAccountDeletionCredentialsSchema }).strict(),
+    ],
+    "Send either Apple credentials or email credentials, not both",
+  )
+  .meta({ id: "MeDeletion" });
+
+export type MeDeletionInput = z.infer<typeof meDeletionSchema>;
+
+export const meDeletionResponseSchema = z
+  .object({
+    appleAuthorizationRevoked: z
+      .boolean()
+      .nullable()
+      .meta({ description: "Apple revocation result, or null when no Apple account was linked" }),
+  })
+  .meta({ id: "MeDeletionResponse" });
 
 const meUserSchema = z
   .object({
@@ -57,6 +81,13 @@ export const meResponseSchema = z
   .object({
     account: z
       .object({
+        deletion: z
+          .object({
+            hasAppleAccount: z
+              .boolean()
+              .meta({ description: "Whether the user has a linked Apple account" }),
+          })
+          .meta({ description: "Provider state relevant to account deletion" }),
         hasActiveSubscription: z
           .boolean()
           .meta({ description: "Whether the account has an active or trialing subscription" }),

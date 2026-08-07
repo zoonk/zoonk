@@ -1,12 +1,26 @@
+import { type AppleProfile } from "better-auth/social-providers";
 import { SignJWT, importPKCS8 } from "jose";
 
-let cached: { token: string; exp: number } | null = null;
+const cachedClientSecrets = new Map<string, { token: string; exp: number }>();
 
-const { APPLE_TEAM_ID, APPLE_CLIENT_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY } = process.env;
+const {
+  APPLE_APP_BUNDLE_IDENTIFIER,
+  APPLE_TEAM_ID,
+  APPLE_CLIENT_ID,
+  APPLE_KEY_ID,
+  APPLE_PRIVATE_KEY,
+} = process.env;
 
-type AppleConfig = { clientId: string; keyId: string; privateKey: string; teamId: string };
+export type AppleSigningConfiguration = {
+  clientId: string;
+  keyId: string;
+  privateKey: string;
+  teamId: string;
+};
 
-const appleConfig: AppleConfig | null =
+export type AppleConfiguration = AppleSigningConfiguration & { appBundleIdentifier: string };
+
+const appleSigningConfiguration: AppleSigningConfiguration | null =
   APPLE_TEAM_ID && APPLE_CLIENT_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY
     ? {
         clientId: APPLE_CLIENT_ID,
@@ -16,36 +30,91 @@ const appleConfig: AppleConfig | null =
       }
     : null;
 
-async function getAppleClientSecret(config: AppleConfig): Promise<string> {
+const appleConfiguration: AppleConfiguration | null =
+  APPLE_APP_BUNDLE_IDENTIFIER && appleSigningConfiguration
+    ? { ...appleSigningConfiguration, appBundleIdentifier: APPLE_APP_BUNDLE_IDENTIFIER }
+    : null;
+
+/**
+ * Exposes the complete server-only Apple configuration to the native token
+ * exchange without allowing any request to choose a client identifier.
+ */
+export function getAppleConfiguration() {
+  return appleConfiguration;
+}
+
+/**
+ * Supplies Better Auth's required email field on repeat Apple sign-ins, where
+ * Apple intentionally omits the email claim. The placeholder is never a
+ * delivery address; the existing provider account remains anchored by the
+ * stable Apple subject and keeps the real or relay email saved on first sign-in.
+ */
+function mapAppleProfileToUser(profile: AppleProfile) {
+  return { email: profile.email ?? `${profile.sub}@apple.placeholder.local` };
+}
+
+/**
+ * Signs a client secret for the identifier that will be sent to Apple. Web
+ * authorization codes use the Services ID, while native codes use the app's
+ * bundle identifier, so one globally cached secret would be invalid for one of
+ * those two flows.
+ */
+export async function getAppleClientSecret({
+  clientIdentifier,
+  configuration,
+}: {
+  clientIdentifier: string;
+  configuration: AppleSigningConfiguration;
+}): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
+  const cached = cachedClientSecrets.get(clientIdentifier);
 
   if (cached && cached.exp - 60 > now) {
     return cached.token;
   }
 
   const ttlSec = 2_592_000; // 1 month
-  const privateKeyPEM = config.privateKey.replaceAll(String.raw`\n`, "\n");
+  const privateKeyPEM = configuration.privateKey.replaceAll(String.raw`\n`, "\n");
   const key = await importPKCS8(privateKeyPEM, "ES256");
 
   const token = await new SignJWT({})
-    .setProtectedHeader({ alg: "ES256", kid: config.keyId })
-    .setIssuer(config.teamId)
-    .setSubject(config.clientId)
+    .setProtectedHeader({ alg: "ES256", kid: configuration.keyId })
+    .setIssuer(configuration.teamId)
+    .setSubject(clientIdentifier)
     .setAudience("https://appleid.apple.com")
     .setIssuedAt(now)
     .setExpirationTime(now + ttlSec)
     .sign(key);
 
-  cached = { exp: now + ttlSec, token };
+  cachedClientSecrets.set(clientIdentifier, { exp: now + ttlSec, token });
 
   return token;
 }
 
-export const appleProvider = appleConfig
+export const appleProvider = appleSigningConfiguration
   ? {
       apple: {
-        clientId: appleConfig.clientId,
-        clientSecret: await getAppleClientSecret(appleConfig),
+        clientId: appleSigningConfiguration.clientId,
+        clientSecret: await getAppleClientSecret({
+          clientIdentifier: appleSigningConfiguration.clientId,
+          configuration: appleSigningConfiguration,
+        }),
+        mapProfileToUser: mapAppleProfileToUser,
       },
     }
   : {};
+
+/**
+ * Gives the private native auth boundary an Apple provider that validates the
+ * app bundle audience. The public provider intentionally omits this option so
+ * Better Auth's generic social endpoint accepts only the web Services ID.
+ */
+export function getNativeAppleProvider() {
+  if (!appleConfiguration || !appleProvider.apple) {
+    return {};
+  }
+
+  return {
+    apple: { ...appleProvider.apple, appBundleIdentifier: appleConfiguration.appBundleIdentifier },
+  };
+}
