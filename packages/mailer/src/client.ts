@@ -1,8 +1,10 @@
 import { getEnvironment } from "@zoonk/utils/environment";
 import { type SafeReturn, toError } from "@zoonk/utils/error";
-import { logError, logInfo } from "@zoonk/utils/logger";
+import { logError } from "@zoonk/utils/logger";
+import { getLocalInboxConfig } from "./local-inbox";
 
 const apiUrl = "https://api.zeptomail.com/v1.1/email";
+const { url: localInboxUrl } = getLocalInboxConfig();
 
 type SendEmailParams = {
   to: string;
@@ -14,9 +16,9 @@ type SendEmailParams = {
 
 /**
  * Sends product emails through the configured provider while preserving the
- * local development workflow where missing credentials print OTP emails to the
- * terminal. Deployed environments must fail closed so a missing secret cannot
- * turn authentication codes into application logs.
+ * local development workflow where missing credentials capture messages in a
+ * browser inbox. Deployed environments must fail closed so a missing secret
+ * cannot turn authentication codes into application logs.
  */
 export async function sendEmail(params: SendEmailParams): Promise<SafeReturn<Response>> {
   const { to, subject, htmlBody, textBody, replyTo } = params;
@@ -61,10 +63,12 @@ export async function sendEmail(params: SendEmailParams): Promise<SafeReturn<Res
  * optional. Local development needs a disabled-mailer mode for OTP login, but
  * previews and production should expose the configuration problem immediately.
  */
-function handleMissingMailerApiKey(params: SendEmailParams): SafeReturn<Response> {
-  if (isMissingMailerApiKeyAllowed()) {
-    logDisabledEmail(params);
+async function handleMissingMailerApiKey(params: SendEmailParams): Promise<SafeReturn<Response>> {
+  if (getEnvironment() === "development") {
+    return captureDevelopmentEmail(params);
+  }
 
+  if (getEnvironment() === "e2e") {
     return { data: Response.json({ ok: true }), error: null };
   }
 
@@ -76,35 +80,32 @@ function handleMissingMailerApiKey(params: SendEmailParams): SafeReturn<Response
 }
 
 /**
- * Allows no-provider email only in environments that are not real mail
- * delivery surfaces. E2E reads OTPs from the database, while local development
- * prints them for manual login.
+ * Delivers a development message to the local-only Vite app instead of mixing
+ * HTML and sign-in codes into terminal output. The endpoint is bound to the
+ * loopback interface and exists only while the mailbox development server runs.
  */
-function isMissingMailerApiKeyAllowed(): boolean {
-  const environment = getEnvironment();
+async function captureDevelopmentEmail(params: SendEmailParams): Promise<SafeReturn<Response>> {
+  try {
+    const response = await fetch(localInboxUrl, {
+      body: JSON.stringify(params),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    });
 
-  return environment === "development" || environment === "e2e";
-}
+    if (!response.ok) {
+      const error = new Error(`Local email capture failed: ${response.statusText}`);
 
-/**
- * Logs disabled-mailer output without treating every non-provider environment
- * the same. Developers need the body locally to copy OTP codes, but E2E and any
- * future non-delivery mode should keep secret-bearing content out of logs.
- */
-function logDisabledEmail(params: SendEmailParams): void {
-  logInfo("Email sending is disabled.");
-  logInfo(getDisabledEmailLogPayload(params));
-}
+      logError(error.message);
 
-/**
- * Keeps the redaction rule explicit at the payload boundary so future mail
- * fields do not accidentally reintroduce OTP or message-body logging outside
- * local development.
- */
-function getDisabledEmailLogPayload({ subject, textBody, htmlBody, to }: SendEmailParams) {
-  if (getEnvironment() === "development") {
-    return { subject, textBody: textBody ?? htmlBody, to };
+      return { data: null, error };
+    }
+
+    return { data: response, error: null };
+  } catch (error) {
+    const normalizedError = toError(error);
+
+    logError(`Local email inbox is unavailable at ${localInboxUrl}. Run pnpm dev to start it.`);
+
+    return { data: null, error: normalizedError };
   }
-
-  return { subject, to };
 }

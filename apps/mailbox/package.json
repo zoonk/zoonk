@@ -1,0 +1,26 @@
+{
+  "name": "mailbox",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@zoonk/ui": "workspace:*",
+    "@zoonk/utils": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "6.0.4",
+    "@zoonk/mailer": "workspace:*",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:",
+    "vite": "8.1.5"
+  }
+}

@@ -13,6 +13,7 @@
       "GEMINI_API_KEY",
       "GOOGLE_*",
       "MAILER_API_KEY",
+      "MAILBOX_PORT",
       "OPENAI_API_KEY",
       "SENTRY_AUTH_TOKEN",
       "STRIPE_*",
