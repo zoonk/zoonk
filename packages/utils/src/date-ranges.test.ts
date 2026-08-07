@@ -1,35 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { calculateDateRanges, formatPeriodLabel, validatePeriod } from "./date-ranges";
+import { calculateDateRanges, formatPeriodLabel } from "./date-ranges";
 
 function eod(year: number, month: number, day: number): Date {
   return new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
 }
-
-describe(validatePeriod, () => {
-  it("returns 'month' unchanged", () => {
-    expect(validatePeriod("month")).toBe("month");
-  });
-
-  it("returns '6months' unchanged", () => {
-    expect(validatePeriod("6months")).toBe("6months");
-  });
-
-  it("returns 'year' unchanged", () => {
-    expect(validatePeriod("year")).toBe("year");
-  });
-
-  it("defaults invalid value to 'month'", () => {
-    expect(validatePeriod("invalid")).toBe("month");
-  });
-
-  it("defaults empty string to 'month'", () => {
-    expect(validatePeriod("")).toBe("month");
-  });
-
-  it("returns 'all' unchanged", () => {
-    expect(validatePeriod("all")).toBe("all");
-  });
-});
 
 describe(calculateDateRanges, () => {
   it("returns current and previous month for 'month' period in March", () => {

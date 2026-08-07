@@ -15,14 +15,6 @@ export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
 type DateRange = { start: Date; end: Date };
 type DateRanges = { current: DateRange; previous: DateRange };
 
-function isHistoryPeriod(value: string): value is HistoryPeriod {
-  return (HISTORY_PERIODS as readonly string[]).includes(value);
-}
-
-export function validatePeriod(value: string): HistoryPeriod {
-  return isHistoryPeriod(value) ? value : "month";
-}
-
 function endOfDay(date: Date): Date {
   return new Date(
     Date.UTC(
