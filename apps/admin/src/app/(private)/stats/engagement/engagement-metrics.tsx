@@ -1,5 +1,5 @@
+import { getActiveLearnerTrend } from "@/data/stats/get-active-learner-trend";
 import { getAvgTimeByLessonKind } from "@/data/stats/get-avg-time-by-lesson-kind";
-import { getDailyActiveLearners } from "@/data/stats/get-daily-active-learners";
 import { getPeriodAccuracyRate } from "@/data/stats/get-period-accuracy-rate";
 import { getPeriodActiveLearners } from "@/data/stats/get-period-active-learners";
 import { getPeriodAvgLessonTime } from "@/data/stats/get-period-avg-lesson-time";
@@ -43,7 +43,7 @@ export async function EngagementMetrics({ statsPeriod }: { statsPeriod: StatsPer
     getPeriodCompletionRate(previous.start, previous.end),
     getPeriodLearningTime(current.start, current.end),
     getPeriodLearningTime(previous.start, previous.end),
-    getDailyActiveLearners(current.start, current.end),
+    getActiveLearnerTrend(current.start, current.end, period),
     getAvgTimeByLessonKind(current.start, current.end),
   ]);
 
