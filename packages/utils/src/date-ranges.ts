@@ -1,8 +1,6 @@
 export const DEFAULT_PROGRESS_LOOKBACK_DAYS = 90;
 
-const HISTORY_PERIODS = ["month", "6months", "year", "all"] as const;
 const APP_LAUNCH_YEAR = 2025;
-const MONTHS_PER_HALF_YEAR = 6;
 const DECEMBER_INDEX = 11;
 const LAST_DAY_OF_DECEMBER = 31;
 const END_OF_DAY_HOURS = 23;
@@ -10,18 +8,10 @@ const END_OF_DAY_MINUTES = 59;
 const END_OF_DAY_SECONDS = 59;
 const END_OF_DAY_MS = 999;
 
-export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
+export type HistoryPeriod = "all" | "month" | "year";
 
 type DateRange = { start: Date; end: Date };
 type DateRanges = { current: DateRange; previous: DateRange };
-
-function isHistoryPeriod(value: string): value is HistoryPeriod {
-  return (HISTORY_PERIODS as readonly string[]).includes(value);
-}
-
-export function validatePeriod(value: string): HistoryPeriod {
-  return isHistoryPeriod(value) ? value : "month";
-}
 
 function endOfDay(date: Date): Date {
   return new Date(
@@ -49,28 +39,6 @@ function getMonthDateRanges(now: Date, offset: number): DateRanges {
   const previousEnd = endOfDay(
     new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset, 0)),
   );
-
-  return {
-    current: { end: currentEnd, start: currentStart },
-    previous: { end: previousEnd, start: previousStart },
-  };
-}
-
-function getHalfYearDateRanges(now: Date, offset: number): DateRanges {
-  const startMonth =
-    (Math.floor(now.getUTCMonth() / MONTHS_PER_HALF_YEAR) - offset) * MONTHS_PER_HALF_YEAR;
-
-  const currentStart = new Date(Date.UTC(now.getUTCFullYear(), startMonth, 1));
-
-  const currentEnd = endOfDay(
-    new Date(Date.UTC(now.getUTCFullYear(), startMonth + MONTHS_PER_HALF_YEAR, 0)),
-  );
-
-  const previousStart = new Date(
-    Date.UTC(now.getUTCFullYear(), startMonth - MONTHS_PER_HALF_YEAR, 1),
-  );
-
-  const previousEnd = endOfDay(new Date(Date.UTC(now.getUTCFullYear(), startMonth, 0)));
 
   return {
     current: { end: currentEnd, start: currentStart },
@@ -115,10 +83,6 @@ function getAllDateRanges(now: Date): DateRanges {
 function getRangesForPeriod(period: HistoryPeriod, now: Date, offset: number): DateRanges {
   if (period === "month") {
     return getMonthDateRanges(now, offset);
-  }
-
-  if (period === "6months") {
-    return getHalfYearDateRanges(now, offset);
   }
 
   return getYearDateRanges(now, offset);
@@ -190,18 +154,6 @@ export function formatPeriodLabel(
       timeZone: "UTC",
       year: "numeric",
     }).format(periodStart);
-  }
-
-  if (period === "6months") {
-    const startMonth = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
-      periodStart,
-    );
-
-    const endMonth = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
-      periodEnd,
-    );
-
-    return `${startMonth} - ${endMonth} ${periodStart.getUTCFullYear()}`;
   }
 
   return String(periodStart.getUTCFullYear());

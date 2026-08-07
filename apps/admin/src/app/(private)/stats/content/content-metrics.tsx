@@ -1,97 +1,137 @@
 import { countContent } from "@/data/stats/count-content";
-import { getDailyContentCreated } from "@/data/stats/get-daily-content-created";
+import {
+  type DailyContentRow,
+  getDailyContentCreated,
+} from "@/data/stats/get-daily-content-created";
 import { getPeriodContentCreated } from "@/data/stats/get-period-content-created";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
-import { BookOpenIcon, LayersIcon } from "lucide-react";
-import { Suspense } from "react";
-import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
+import { buildChartData } from "@zoonk/utils/chart";
+import { AdminAnalysisTable } from "../_components/admin-analysis-table";
+import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
+import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
+import { completeMetricTrend } from "../_utils/complete-metric-trend";
+import { type ContentAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { CompletedLessonsByKindTable } from "./completed-lessons-by-kind-table";
 import { ContentChart } from "./content-chart-filter";
 import { ContentTotalsTable } from "./content-totals-table";
 
-async function ContentChartSection({
-  start,
-  end,
-  period,
-}: {
-  start: Date;
-  end: Date;
-  period: HistoryPeriod;
-}) {
-  const dailyContent = await getDailyContentCreated(start, end);
-  return <ContentChart dailyContent={dailyContent} period={period} />;
-}
+type ContentMetric = "courses" | "lessons";
 
-export async function ContentMetrics({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+/**
+ * Loads one Content question at a time while preserving the existing trend,
+ * period totals, all-time totals, and completed-lesson kind breakdown.
+ */
+export async function ContentMetrics({
+  statsPeriod,
+  view,
+}: {
+  statsPeriod: StatsPeriod;
+  view: ContentAnalysisView;
+}) {
   "use cache: private";
 
-  const { current, period, previous } = statsPeriod;
+  if (view.id === "completed-lessons-by-kind") {
+    const totals = await countContent();
 
-  const [currentCreated, previousCreated, totals] = await Promise.all([
-    getPeriodContentCreated(current.start, current.end),
-    getPeriodContentCreated(previous.start, previous.end),
-    countContent(),
-  ]);
+    return (
+      <AdminAnalysisTable description="All completed-generation lessons grouped by their learning format.">
+        <CompletedLessonsByKindTable lessonsByKind={totals.completedLessonsByKind} />
+      </AdminAnalysisTable>
+    );
+  }
+
+  if (view.id === "content-totals") {
+    const [currentCreated, totals] = await Promise.all([
+      getPeriodContentCreated(statsPeriod.current.start, statsPeriod.current.end),
+      countContent(),
+    ]);
+
+    return (
+      <AdminAnalysisTable description="Current content inventory alongside completed content created during the selected period.">
+        <ContentTotalsTable periodCreated={currentCreated} totals={totals} />
+      </AdminAnalysisTable>
+    );
+  }
+
+  if (view.id === "content-creation") {
+    const [currentContent, previousContent] = await Promise.all([
+      getDailyContentCreated(statsPeriod.current.start, statsPeriod.current.end),
+      getDailyContentCreated(statsPeriod.previous.start, statsPeriod.previous.end),
+    ]);
+
+    return (
+      <ContentChart
+        currentContent={currentContent}
+        previousContent={previousContent}
+        statsPeriod={statsPeriod}
+      />
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-        <AdminMetricCard
-          change={{ current: currentCreated.courses, period, previous: previousCreated.courses }}
-          help="Courses created during the selected period"
-          icon={<BookOpenIcon />}
-          title="New Courses"
-          value={currentCreated.courses.toLocaleString()}
-        />
-
-        <AdminMetricCard
-          change={{ current: currentCreated.lessons, period, previous: previousCreated.lessons }}
-          help="Completed-generation lessons created during the selected period"
-          icon={<LayersIcon />}
-          title="New Lessons"
-          value={currentCreated.lessons.toLocaleString()}
-        />
-      </div>
-
-      <Suspense fallback={<Skeleton className="h-64 w-full rounded-xl" />}>
-        <ContentChartSection end={current.end} period={period} start={current.start} />
-      </Suspense>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="flex flex-col gap-3">
-          <h3 className="text-base font-semibold tracking-tight">Content Totals</h3>
-
-          <div className="rounded-lg border">
-            <ContentTotalsTable periodCreated={currentCreated} totals={totals} />
-          </div>
-        </section>
-
-        <section className="flex flex-col gap-3">
-          <h3 className="text-base font-semibold tracking-tight">Completed Lessons by Kind</h3>
-
-          <div className="rounded-lg border">
-            <CompletedLessonsByKindTable lessonsByKind={totals.completedLessonsByKind} />
-          </div>
-        </section>
-      </div>
-    </div>
+    <ContentMetricAnalysis
+      metric={view.id === "new-lessons" ? "lessons" : "courses"}
+      statsPeriod={statsPeriod}
+    />
   );
 }
 
-export function ContentMetricsSkeleton() {
+/**
+ * New courses and new lessons share one trend shape but keep separate entries
+ * in the analysis picker because they answer distinct operational questions.
+ */
+async function ContentMetricAnalysis({
+  metric,
+  statsPeriod,
+}: {
+  metric: ContentMetric;
+  statsPeriod: StatsPeriod;
+}) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentCreated, previousCreated, dailyContent] = await Promise.all([
+    getPeriodContentCreated(current.start, current.end),
+    getPeriodContentCreated(previous.start, previous.end),
+    getDailyContentCreated(current.start, current.end),
+  ]);
+
+  const rawTrend = getContentMetricTrend({ dailyContent, metric });
+
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(rawTrend, chartPeriod, "en"),
+    emptyValue: 0,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
+
+  const title = metric === "courses" ? "courses" : "completed-generation lessons";
+
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
-      </div>
-      <Skeleton className="h-64 w-full rounded-xl" />
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Skeleton className="h-48 w-full rounded-lg" />
-        <Skeleton className="h-48 w-full rounded-lg" />
-      </div>
-    </div>
+    <AdminAnalysisTrend
+      comparison={{
+        comparisonLabel,
+        current: currentCreated[metric],
+        previous: previousCreated[metric],
+      }}
+      description={`New ${title} created during the selected period.`}
+      value={currentCreated[metric].toLocaleString()}
+    >
+      <AdminMetricTrendChart dataPoints={dataPoints} label={`New ${metric}`} valueFormat="number" />
+    </AdminAnalysisTrend>
   );
+}
+
+/**
+ * Reduces the multi-type daily content rows to the one additive series needed
+ * by a selected course or lesson analysis.
+ */
+function getContentMetricTrend({
+  dailyContent,
+  metric,
+}: {
+  dailyContent: DailyContentRow[];
+  metric: ContentMetric;
+}) {
+  return dailyContent.map((row) => ({ count: row[metric], date: row.date }));
 }

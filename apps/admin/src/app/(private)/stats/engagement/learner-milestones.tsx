@@ -14,13 +14,11 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { BookCheckIcon, CalendarDaysIcon } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
-import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 
 type EngagementSearchParams = {
   completedLessons?: string | string[];
   learningDays?: string | string[];
-  offset?: string | string[];
-  period?: string | string[];
+  view?: string | string[];
 };
 
 /**
@@ -42,26 +40,20 @@ export function LearnerMilestones({ searchParams }: { searchParams: EngagementSe
     <CachedLearnerMilestones
       completedLessonsThreshold={completedLessonsThreshold}
       learningDaysThreshold={learningDaysThreshold}
-      offset={getFirstSearchParamValue(searchParams.offset)}
-      period={getFirstSearchParamValue(searchParams.period)}
     />
   );
 }
 
 /**
- * Parsed thresholds and scalar period state provide deterministic private-cache
- * keys while keeping the milestone result available before navigation.
+ * Parsed thresholds provide deterministic private-cache keys while keeping the
+ * milestone result available before navigation.
  */
 async function CachedLearnerMilestones({
   completedLessonsThreshold,
   learningDaysThreshold,
-  offset,
-  period,
 }: {
   completedLessonsThreshold: number;
   learningDaysThreshold: number;
-  offset?: string;
-  period?: string;
 }) {
   "use cache: private";
 
@@ -71,15 +63,13 @@ async function CachedLearnerMilestones({
   );
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-8 py-4">
       <LearnerMilestoneForm
         completedLessonsThreshold={completedLessonsThreshold}
         learningDaysThreshold={learningDaysThreshold}
-        offset={offset}
-        period={period}
       />
 
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+      <div className="border-border/60 grid grid-cols-1 divide-y border-y sm:grid-cols-2 sm:divide-x sm:divide-y-0">
         <LearnerMilestoneCard
           count={summary.completedLessonsUsers}
           icon={<BookCheckIcon />}
@@ -99,46 +89,26 @@ async function CachedLearnerMilestones({
 }
 
 /**
- * Analytics controls use one value per key, so repeated query values collapse
- * to the first value before they cross the private-cache boundary.
- */
-function getFirstSearchParamValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
-/**
- * The threshold form updates the engagement page with a plain GET request, so
- * admins can bookmark or share the exact thresholds they are inspecting.
+ * Milestones are all-time questions, so the form intentionally submits only
+ * their thresholds and view. Returning to a period analysis then starts from
+ * its default period instead of retaining a hidden milestone filter.
  */
 function LearnerMilestoneForm({
   completedLessonsThreshold,
   learningDaysThreshold,
-  offset,
-  period,
 }: {
   completedLessonsThreshold: number;
   learningDaysThreshold: number;
-  offset?: string | string[];
-  period?: string | string[];
 }) {
   return (
-    <Form action="/stats/engagement" className="flex flex-col gap-4">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-tight">Learner Milestones</h3>
-          <p className="text-muted-foreground text-sm">
-            All-time learner counts for completion depth and return days.
-          </p>
-        </div>
+    <Form action="/stats/engagement" className="flex flex-col gap-5">
+      <p className="text-muted-foreground max-w-2xl text-sm">
+        All-time learner counts for completion depth and return days. Adjust either threshold to
+        explore a different milestone.
+      </p>
 
-        <Button className="self-start" type="submit" variant="outline">
-          Apply
-        </Button>
-      </header>
-
-      <div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
-        <HiddenInput name="period" value={period} />
-        <HiddenInput name="offset" value={offset} />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <input name="view" type="hidden" value="learner-milestones" />
 
         <MilestoneThresholdField
           defaultValue={completedLessonsThreshold}
@@ -153,6 +123,10 @@ function LearnerMilestoneForm({
           label="Learning days"
           name="learningDays"
         />
+
+        <Button className="self-start sm:self-auto" type="submit" variant="outline">
+          Apply thresholds
+        </Button>
       </div>
     </Form>
   );
@@ -174,7 +148,7 @@ function MilestoneThresholdField({
   name: string;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    <div className="flex min-w-0 flex-1 flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
       <Input
         defaultValue={defaultValue}
@@ -186,20 +160,6 @@ function MilestoneThresholdField({
       />
     </div>
   );
-}
-
-/**
- * Form submissions should preserve the selected stats period, but repeated
- * query params still need to collapse to one hidden input value.
- */
-function HiddenInput({ name, value }: { name: string; value?: string | string[] }) {
-  const firstValue = Array.isArray(value) ? value[0] : value;
-
-  if (!firstValue) {
-    return null;
-  }
-
-  return <input name={name} type="hidden" value={firstValue} />;
 }
 
 /**
@@ -221,17 +181,19 @@ function LearnerMilestoneCard({
 
   return (
     <Link
-      className="hover:bg-muted/50 rounded-lg p-2 transition-colors"
+      className="hover:bg-muted/40 flex min-w-0 flex-col gap-3 px-2 py-8 transition-colors sm:px-8"
       href={buildLearnerMilestoneUsersHref({ kind, threshold })}
       prefetch
     >
-      <AdminMetricCard
-        description="Open user list"
-        help={copy.help}
-        icon={icon}
-        title={copy.pageTitle}
-        value={count.toLocaleString()}
-      />
+      <div className="text-muted-foreground flex items-center gap-2 text-sm">
+        <span className="flex size-4 items-center justify-center">{icon}</span>
+        <span>{copy.pageTitle}</span>
+      </div>
+      <p className="text-5xl leading-none font-semibold tracking-tight tabular-nums">
+        {count.toLocaleString()}
+      </p>
+      <p className="text-muted-foreground text-sm">{copy.help}</p>
+      <span className="text-sm font-medium">Open user list →</span>
     </Link>
   );
 }
@@ -242,24 +204,19 @@ function LearnerMilestoneCard({
  */
 export function LearnerMilestonesSkeleton() {
   return (
-    <section className="flex flex-col gap-4">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-1">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-4 w-80 max-w-full" />
+    <section className="flex flex-col gap-8 py-4">
+      <div className="flex flex-col gap-4">
+        <Skeleton className="h-4 w-96 max-w-full" />
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Skeleton className="h-16 flex-1 rounded-lg" />
+          <Skeleton className="h-16 flex-1 rounded-lg" />
+          <Skeleton className="h-9 w-32 rounded-4xl" />
         </div>
-
-        <Skeleton className="h-9 w-20 rounded-4xl" />
-      </header>
-
-      <div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
-        <Skeleton className="h-16 flex-1 rounded-lg" />
-        <Skeleton className="h-16 flex-1 rounded-lg" />
       </div>
 
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <Skeleton className="h-56 rounded-xl" />
+        <Skeleton className="h-56 rounded-xl" />
       </div>
     </section>
   );

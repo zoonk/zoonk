@@ -1,88 +1,56 @@
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { AdminPeriodNavigation } from "../_components/admin-period-navigation";
-import { StatsPageLayout, StatsPeriodNavigationSkeleton } from "../_components/stats-page-layout";
-import { getStatsPeriod } from "../_utils/stats-period";
-import { EngagementMetrics, EngagementMetricsSkeleton } from "./engagement-metrics";
+import {
+  StatsExplorerLayout,
+  StatsExplorerPageSkeleton,
+  StatsExplorerSkeleton,
+} from "../_components/stats-explorer-layout";
+import { getStatsAnalysisView } from "../_utils/stats-analysis";
+import { buildStatsPeriodQuery, getStatsPeriod } from "../_utils/stats-period";
+import { EngagementMetrics } from "./engagement-metrics";
 import { LearnerMilestones, LearnerMilestonesSkeleton } from "./learner-milestones";
 
-export const metadata: Metadata = { title: "Engagement & Learning" };
+export const metadata: Metadata = { title: "Engagement Stats" };
 
 /**
- * Stable analytics chrome stays in the App Shell while period metrics and
- * learner milestones resolve in independent boundaries.
+ * Engagement keeps an instant route shell while its URL-backed analysis state
+ * resolves behind Suspense.
  */
 export default function EngagementPage({ searchParams }: PageProps<"/stats/engagement">) {
   return (
-    <StatsPageLayout
-      navigation={
-        <Suspense fallback={<StatsPeriodNavigationSkeleton />}>
-          <EngagementPeriodNavigation searchParams={searchParams} />
-        </Suspense>
-      }
-      title="Engagement & Learning"
-    >
-      <div className="flex flex-col gap-8">
-        <Suspense fallback={<EngagementMetricsSkeleton />}>
-          <EngagementMetricsRegion searchParams={searchParams} />
-        </Suspense>
-
-        <Suspense fallback={<LearnerMilestonesSkeleton />}>
-          <LearnerMilestonesRegion searchParams={searchParams} />
-        </Suspense>
-      </div>
-    </StatsPageLayout>
-  );
-}
-
-/**
- * Runtime prefetching can resolve the selected period before navigation while
- * the shared title and breadcrumbs remain available from the route shell.
- */
-async function EngagementPeriodNavigation({
-  searchParams,
-}: Pick<PageProps<"/stats/engagement">, "searchParams">) {
-  const [params, { offset, period, periodLabel }] = await Promise.all([
-    searchParams,
-    getStatsPeriod(searchParams),
-  ]);
-
-  return period === "all" ? null : (
-    <AdminPeriodNavigation
-      basePath="/stats/engagement"
-      offset={offset}
-      period={period}
-      periodLabel={periodLabel}
-      queryParams={params}
-    />
-  );
-}
-
-/**
- * The URL and cached calendar range resolve before the private analytics query.
- * The keyed inner boundary resets only the metric body when the period changes.
- */
-async function EngagementMetricsRegion({
-  searchParams,
-}: Pick<PageProps<"/stats/engagement">, "searchParams">) {
-  const statsPeriod = await getStatsPeriod(searchParams);
-
-  return (
-    <Suspense
-      fallback={<EngagementMetricsSkeleton />}
-      key={`${statsPeriod.period}-${statsPeriod.offset}`}
-    >
-      <EngagementMetrics statsPeriod={statsPeriod} />
+    <Suspense fallback={<StatsExplorerPageSkeleton />}>
+      <EngagementExplorer searchParams={searchParams} />
     </Suspense>
   );
 }
 
 /**
- * Milestone thresholds are independent from the selected calendar period, so
- * their URL read and cached aggregate should stream in parallel with metrics.
+ * Once URL state is available, Engagement renders either one period analysis
+ * or the all-time milestone tool instead of showing both simultaneously.
  */
-async function LearnerMilestonesRegion({
+async function EngagementExplorer({
   searchParams,
 }: Pick<PageProps<"/stats/engagement">, "searchParams">) {
-  return <LearnerMilestones searchParams={await searchParams} />;
+  const params = await searchParams;
+  const statsPeriod = await getStatsPeriod(params);
+  const selectedView = getStatsAnalysisView({ path: "/stats/engagement", value: params.view });
+  const periodQuery = buildStatsPeriodQuery(statsPeriod);
+
+  return (
+    <StatsExplorerLayout
+      periodQuery={periodQuery}
+      selectedView={selectedView}
+      statsPeriod={statsPeriod}
+    >
+      {selectedView.id === "learner-milestones" ? (
+        <Suspense fallback={<LearnerMilestonesSkeleton />}>
+          <LearnerMilestones searchParams={params} />
+        </Suspense>
+      ) : (
+        <Suspense fallback={<StatsExplorerSkeleton />} key={`${selectedView.id}-${periodQuery}`}>
+          <EngagementMetrics statsPeriod={statsPeriod} view={selectedView} />
+        </Suspense>
+      )}
+    </StatsExplorerLayout>
+  );
 }

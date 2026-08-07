@@ -1,6 +1,5 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
 import { assertAdmin } from "@/lib/admin-guard";
 import { type Subscription, prisma } from "@zoonk/db";
@@ -37,10 +36,10 @@ export async function changePlanAction(formData: FormData) {
 }
 
 /**
- * Admin-managed paid plans are stored as Zoonk-owned active subscriptions, but
- * the free plan is the absence of an active subscription. Keeping a
- * Zoonk-managed row for "free" makes the learner billing page treat the account
- * as support-managed and blocks self-serve Stripe upgrades.
+ * Admin-managed paid plans are stored as Zoonk-owned active subscriptions. A
+ * move to Free ends the paid interval instead of deleting it, preserving the
+ * history needed by conversion analytics while still leaving no active
+ * support-managed subscription to block self-serve Stripe upgrades.
  */
 async function saveManualPlanChange({
   existing,
@@ -51,23 +50,25 @@ async function saveManualPlanChange({
   plan: SubscriptionPlanName;
   userId: string;
 }) {
+  const changedAt = new Date();
+
   if (plan === "free") {
-    return prisma.subscription.deleteMany({
+    return prisma.subscription.updateMany({
+      data: { canceledAt: changedAt, endedAt: changedAt, periodEnd: changedAt, status: "canceled" },
       where: { provider: "zoonk", referenceId: userId, status: { in: ["active", "trialing"] } },
     });
   }
 
   if (existing) {
     return prisma.subscription.update({
-      data: { periodStart: new Date(), plan, status: "active" },
+      data: { plan, status: "active" },
       where: { id: existing.id },
     });
   }
 
   return prisma.subscription.create({
     data: {
-      id: randomUUID(),
-      periodStart: new Date(),
+      periodStart: changedAt,
       plan,
       provider: "zoonk",
       referenceId: userId,

@@ -18,12 +18,22 @@ export function SubscribersTable({ data }: { data: { plan: string; count: number
       </TableHeader>
 
       <TableBody>
-        {data.map((sub) => (
-          <TableRow key={sub.plan}>
-            <TableCell className="font-medium capitalize">{sub.plan}</TableCell>
-            <TableCell className="text-right tabular-nums">{sub.count.toLocaleString()}</TableCell>
+        {data.length > 0 ? (
+          data.map((sub) => (
+            <TableRow key={sub.plan}>
+              <TableCell className="font-medium capitalize">{sub.plan}</TableCell>
+              <TableCell className="text-right tabular-nums">
+                {sub.count.toLocaleString()}
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell className="text-muted-foreground" colSpan={2}>
+              No active subscribers yet.
+            </TableCell>
           </TableRow>
-        ))}
+        )}
       </TableBody>
     </Table>
   );

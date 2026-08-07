@@ -42,9 +42,15 @@ export function LessonBreakdownTable({ data }: { data: LessonBreakdownRow[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((row) => (
-          <LessonBreakdownRow key={row.kind} row={row} />
-        ))}
+        {data.length > 0 ? (
+          data.map((row) => <LessonBreakdownRow key={row.kind} row={row} />)
+        ) : (
+          <TableRow>
+            <TableCell className="text-muted-foreground" colSpan={4}>
+              No completed lessons in this period.
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

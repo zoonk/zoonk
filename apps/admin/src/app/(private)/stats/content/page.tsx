@@ -1,67 +1,49 @@
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { AdminPeriodNavigation } from "../_components/admin-period-navigation";
-import { StatsPageLayout, StatsPeriodNavigationSkeleton } from "../_components/stats-page-layout";
-import { getStatsPeriod } from "../_utils/stats-period";
-import { ContentMetrics, ContentMetricsSkeleton } from "./content-metrics";
+import {
+  StatsExplorerLayout,
+  StatsExplorerPageSkeleton,
+  StatsExplorerSkeleton,
+} from "../_components/stats-explorer-layout";
+import { getStatsAnalysisView } from "../_utils/stats-analysis";
+import { buildStatsPeriodQuery, getStatsPeriod } from "../_utils/stats-period";
+import { ContentMetrics } from "./content-metrics";
 
-export const metadata: Metadata = { title: "Content & Operations" };
+export const metadata: Metadata = { title: "Content Stats" };
 
 /**
- * Stable analytics chrome stays in the App Shell while URL-backed controls and
- * cached metrics resolve in independent boundaries.
+ * Content keeps an instant route shell while its URL-backed analysis state
+ * resolves behind Suspense.
  */
 export default function ContentPage({ searchParams }: PageProps<"/stats/content">) {
   return (
-    <StatsPageLayout
-      navigation={
-        <Suspense fallback={<StatsPeriodNavigationSkeleton />}>
-          <ContentPeriodNavigation searchParams={searchParams} />
-        </Suspense>
-      }
-      title="Content & Operations"
-    >
-      <Suspense fallback={<ContentMetricsSkeleton />}>
-        <ContentMetricsRegion searchParams={searchParams} />
-      </Suspense>
-    </StatsPageLayout>
+    <Suspense fallback={<StatsExplorerPageSkeleton />}>
+      <ContentExplorer searchParams={searchParams} />
+    </Suspense>
   );
 }
 
 /**
- * Runtime prefetching can resolve the selected period before navigation while
- * the shared title and breadcrumbs remain available from the route shell.
+ * Once URL state is available, the shared explorer preserves both Content
+ * trends and complete operational tables without rendering them together.
  */
-async function ContentPeriodNavigation({
+async function ContentExplorer({
   searchParams,
 }: Pick<PageProps<"/stats/content">, "searchParams">) {
-  const { offset, period, periodLabel } = await getStatsPeriod(searchParams);
-
-  return period === "all" ? null : (
-    <AdminPeriodNavigation
-      basePath="/stats/content"
-      offset={offset}
-      period={period}
-      periodLabel={periodLabel}
-    />
-  );
-}
-
-/**
- * The URL and cached calendar range resolve before the private analytics query.
- * The keyed inner boundary resets only the metric body when the period changes.
- */
-async function ContentMetricsRegion({
-  searchParams,
-}: Pick<PageProps<"/stats/content">, "searchParams">) {
-  const statsPeriod = await getStatsPeriod(searchParams);
+  const params = await searchParams;
+  const statsPeriod = await getStatsPeriod(params);
+  const selectedView = getStatsAnalysisView({ path: "/stats/content", value: params.view });
+  const periodQuery = buildStatsPeriodQuery(statsPeriod);
 
   return (
-    <Suspense
-      fallback={<ContentMetricsSkeleton />}
-      key={`${statsPeriod.period}-${statsPeriod.offset}`}
+    <StatsExplorerLayout
+      periodQuery={periodQuery}
+      selectedView={selectedView}
+      statsPeriod={statsPeriod}
     >
-      <ContentMetrics statsPeriod={statsPeriod} />
-    </Suspense>
+      <Suspense fallback={<StatsExplorerSkeleton />} key={`${selectedView.id}-${periodQuery}`}>
+        <ContentMetrics statsPeriod={statsPeriod} view={selectedView} />
+      </Suspense>
+    </StatsExplorerLayout>
   );
 }
