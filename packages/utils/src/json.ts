@@ -9,6 +9,14 @@ export function isJsonObject(value: unknown): value is JsonObject {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/**
+ * Validates optional string fields at untrusted boundaries so each consumer
+ * does not need to recreate the same undefined-or-string check.
+ */
+export function isOptionalString(value: unknown): value is string | undefined {
+  return value === undefined || typeof value === "string";
+}
+
 export function getString(body: unknown, key: string): string | null {
   if (!isJsonObject(body) || !(key in body)) {
     return null;

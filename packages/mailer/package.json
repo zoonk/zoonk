@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/client.ts"
+    ".": "./src/client.ts",
+    "./local-inbox": "./src/local-inbox.ts"
   },
   "scripts": {
     "test": "vitest run",

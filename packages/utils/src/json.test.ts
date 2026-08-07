@@ -1,5 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { getNumber, stringifyUnknown } from "./json";
+import { getNumber, isOptionalString, stringifyUnknown } from "./json";
+
+describe(isOptionalString, () => {
+  it("accepts strings and omitted values", () => {
+    const value: { optional?: string } = {};
+
+    expect(isOptionalString("hello")).toBe(true);
+    expect(isOptionalString(value.optional)).toBe(true);
+  });
+
+  it("rejects other values", () => {
+    expect(isOptionalString(null)).toBe(false);
+    expect(isOptionalString(123)).toBe(false);
+  });
+});
 
 describe(getNumber, () => {
   it("reads a numeric property from an unknown object", () => {

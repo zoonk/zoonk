@@ -21,12 +21,12 @@ describe("sendEmail", () => {
     vi.unstubAllEnvs();
   });
 
-  it("logs the email body when local development disables email sending", async () => {
+  it("captures the email in the local inbox when development disables email sending", async () => {
     vi.stubEnv("MAILER_API_KEY", "");
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("VERCEL_ENV", "");
 
-    const info = vi.spyOn(console, "info").mockImplementation(() => {});
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ ok: true }));
     const sendEmail = await getSendEmail();
 
     const { data, error } = await sendEmail({
@@ -38,13 +38,25 @@ describe("sendEmail", () => {
     expect(error).toBeNull();
     expect(data?.ok).toBe(true);
 
-    expect(info).toHaveBeenCalledWith(
-      expect.objectContaining({
-        subject: "Your OTP code",
-        textBody: otpBody,
-        to: "user@example.com",
-      }),
-    );
+    expect(fetchMock).toHaveBeenCalledWith("http://127.0.0.1:3202/api/emails", {
+      body: JSON.stringify({ htmlBody: otpBody, subject: "Your OTP code", to: "user@example.com" }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    });
+  });
+
+  it("captures development email on the configured local inbox port", async () => {
+    vi.stubEnv("MAILBOX_PORT", "4317");
+    vi.stubEnv("MAILER_API_KEY", "");
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("VERCEL_ENV", "");
+
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ ok: true }));
+    const sendEmail = await getSendEmail();
+
+    await sendEmail({ htmlBody: otpBody, subject: "Your OTP code", to: "user@example.com" });
+
+    expect(fetchMock).toHaveBeenCalledWith("http://127.0.0.1:4317/api/emails", expect.any(Object));
   });
 
   it("allows missing mailer config in e2e without logging the email body", async () => {

@@ -20,6 +20,7 @@
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },
+    "apps/mailbox": { "project": ["src/**/*.{ts,tsx,css}!", "!src/server/**!"] },
     "apps/main": {
       "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts", "!**/_test-utils/**!"]

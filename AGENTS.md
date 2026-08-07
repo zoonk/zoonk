@@ -116,6 +116,11 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Do not store an unawaited promise solely to overlap async operations (for example, `const valuePromise = load(); ...; const value = await valuePromise`). Prefer a direct `await`. Only introduce explicit concurrency when it has a demonstrated benefit and can be expressed clearly with `Promise.all`
 - Run browser-launching test commands such as Playwright, Cypress, Puppeteer, Selenium, or repository E2E scripts with escalated sandbox permissions on the first attempt. Chromium-based browsers require Mach services that are blocked by the workspace sandbox, so do not first run these commands inside the sandbox; send the exact command to Auto-review for approval instead
 
+## Local Authentication
+
+- When a local page requires sign-in, choose an existing user from `packages/db/src/prisma/seed/users.ts`; it includes role-specific accounts such as `owner@zoonk.test`. Or if you need to test a new/random user, just use a random `@zoonk.test` email.
+- `pnpm dev` starts the local mailbox app. After requesting an OTP, open the newest message for that user's email and use its code. When parallel agents need isolated ports, start the full development command with a unique port, for example `MAILBOX_PORT=4317 pnpm dev`.
+
 ## Prisma Queries
 
 - **Don't use `select` by default.** Return the full model — most models have only small columns and `select` adds maintenance cost (manual types, updating selects when adding fields) with negligible performance benefit
