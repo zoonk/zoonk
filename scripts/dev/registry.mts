@@ -1,4 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 
 export type DevelopmentMode = "direct" | "lan" | "localhost";
@@ -8,12 +16,15 @@ export type DevelopmentProcessRegistration = {
   currentDirectory: string;
   launcherProcessId: number;
   mode: DevelopmentMode;
+  registryVersion?: 2;
 };
 
 type StoredDevelopmentProcessRegistration = {
   path: string;
   registration: DevelopmentProcessRegistration;
 };
+
+export type DevelopmentProcessStartup = { launcherProcessId: number; path: string };
 
 /** Keeps process ownership outside every clone and linked worktree so one stop command can find all Zoonk development stacks started by other agents. */
 export function getDevelopmentProcessRegistryDirectory(homeDirectory: string): string {
@@ -29,6 +40,54 @@ export function getDevelopmentProcessRegistrationPath({
   registryDirectory: string;
 }): string {
   return join(registryDirectory, `${launcherProcessId}.json`);
+}
+
+/** Creates a visible startup marker before Turbo is spawned so a concurrent stop waits for its complete registration. */
+export function registerDevelopmentProcessStartup({
+  launcherProcessId,
+  registryDirectory,
+}: {
+  launcherProcessId: number;
+  registryDirectory: string;
+}): string {
+  mkdirSync(registryDirectory, { recursive: true });
+
+  const startupPath = join(registryDirectory, `${launcherProcessId}.starting`);
+
+  writeFileSync(startupPath, "", { mode: 0o600 });
+
+  return startupPath;
+}
+
+/** Parses only startup filenames created by this registry so unrelated directory contents never become process IDs. */
+function getDevelopmentProcessStartup({
+  fileName,
+  registryDirectory,
+}: {
+  fileName: string;
+  registryDirectory: string;
+}): DevelopmentProcessStartup | null {
+  const match = /^(?<launcherProcessId>\d+)\.starting$/u.exec(fileName);
+  const launcherProcessId = Number(match?.groups?.launcherProcessId);
+
+  if (!Number.isSafeInteger(launcherProcessId) || launcherProcessId <= 0) {
+    return null;
+  }
+
+  return { launcherProcessId, path: join(registryDirectory, fileName) };
+}
+
+/** Lists startup markers with valid launcher PIDs so stop can wait for live launchers and discard markers left by crashes. */
+export function readDevelopmentProcessStartups(
+  registryDirectory: string,
+): DevelopmentProcessStartup[] {
+  if (!existsSync(registryDirectory)) {
+    return [];
+  }
+
+  return readdirSync(registryDirectory)
+    .map((fileName) => getDevelopmentProcessStartup({ fileName, registryDirectory }))
+    .filter((startup): startup is DevelopmentProcessStartup => startup !== null);
 }
 
 /** Recognizes the three launcher modes without narrowing an unknown JSON value through a type assertion. */
@@ -51,7 +110,8 @@ function isDevelopmentProcessRegistration(value: unknown): value is DevelopmentP
     registration.currentDirectory.length > 0 &&
     Number.isSafeInteger(registration.launcherProcessId) &&
     Number(registration.launcherProcessId) > 0 &&
-    isDevelopmentMode(registration.mode)
+    isDevelopmentMode(registration.mode) &&
+    (registration.registryVersion === undefined || registration.registryVersion === 2)
   );
 }
 
@@ -101,12 +161,19 @@ export function registerDevelopmentProcess({
     registryDirectory,
   });
 
-  writeFileSync(registrationPath, `${JSON.stringify(registration, null, 2)}\n`, { mode: 0o600 });
+  const temporaryPath = `${registrationPath}.${process.pid}.tmp`;
+
+  try {
+    writeFileSync(temporaryPath, `${JSON.stringify(registration, null, 2)}\n`, { mode: 0o600 });
+    renameSync(temporaryPath, registrationPath);
+  } finally {
+    rmSync(temporaryPath, { force: true });
+  }
 
   return registrationPath;
 }
 
-/** Removes one exact record when its stack exits normally so later stop commands do not need to reason about a reused process ID. */
+/** Removes one exact registry file when startup or execution finishes so stale ownership metadata is not reused. */
 export function unregisterDevelopmentProcess(registrationPath: string): void {
   rmSync(registrationPath, { force: true });
 }

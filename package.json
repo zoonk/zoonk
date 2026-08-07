@@ -7,7 +7,7 @@
     "build:e2e": "turbo build:e2e",
     "db:generate": "turbo db:generate",
     "dev": "node scripts/dev/start.mts",
-    "dev:direct": "PORTLESS=0 node scripts/dev/start.mts",
+    "dev:direct": "node scripts/dev/start.mts --direct",
     "dev:lan": "node scripts/dev/start.mts --lan",
     "dev:stop": "node scripts/dev/stop.mts",
     "e2e": "turbo e2e",

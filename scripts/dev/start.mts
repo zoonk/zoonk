@@ -6,17 +6,36 @@ import {
   getProjectName,
   getServiceName,
 } from "./config.mts";
-import { type CommandResult, applyCommandExit, runForegroundCommand } from "./process.mts";
+import {
+  type CommandResult,
+  applyCommandExit,
+  getPnpmCommand,
+  runForegroundCommand,
+} from "./process.mts";
 import {
   type DevelopmentMode,
   getDevelopmentProcessRegistrationPath,
   getDevelopmentProcessRegistryDirectory,
   registerDevelopmentProcess,
+  registerDevelopmentProcessStartup,
   unregisterDevelopmentProcess,
 } from "./registry.mts";
 
 const currentDirectory = process.cwd();
+const directMode = process.argv.includes("--direct");
 const lanMode = process.argv.includes("--lan");
+const pnpmCommand = getPnpmCommand(process.env);
+const registryDirectory = getDevelopmentProcessRegistryDirectory(homedir());
+
+const registrationPath = getDevelopmentProcessRegistrationPath({
+  launcherProcessId: process.pid,
+  registryDirectory,
+});
+
+const startupPath = registerDevelopmentProcessStartup({
+  launcherProcessId: process.pid,
+  registryDirectory,
+});
 
 /** Records one root task runner for the lifetime of a stack so another worktree can stop it without scanning unrelated system processes. */
 async function runDevelopmentCommand({
@@ -28,35 +47,32 @@ async function runDevelopmentCommand({
   environment: NodeJS.ProcessEnv;
   mode: DevelopmentMode;
 }): Promise<CommandResult> {
-  const registryDirectory = getDevelopmentProcessRegistryDirectory(homedir());
+  return runForegroundCommand({
+    args: [...pnpmCommand.args, ...args],
+    command: pnpmCommand.command,
+    currentDirectory,
+    environment,
+    onStart(childProcessId) {
+      registerDevelopmentProcess({
+        registration: {
+          childProcessId,
+          currentDirectory,
+          launcherProcessId: process.pid,
+          mode,
+          registryVersion: 2,
+        },
+        registryDirectory,
+      });
 
-  const registrationPath = getDevelopmentProcessRegistrationPath({
-    launcherProcessId: process.pid,
-    registryDirectory,
+      unregisterDevelopmentProcess(startupPath);
+    },
+    terminateProcessGroup: false,
   });
-
-  try {
-    return await runForegroundCommand({
-      args,
-      command: "pnpm",
-      currentDirectory,
-      environment,
-      onStart(childProcessId) {
-        registerDevelopmentProcess({
-          registration: { childProcessId, currentDirectory, launcherProcessId: process.pid, mode },
-          registryDirectory,
-        });
-      },
-      terminateProcessGroup: false,
-    });
-  } finally {
-    unregisterDevelopmentProcess(registrationPath);
-  }
 }
 
 /** Starts the dedicated proxy before Turbo launches apps so concurrent services never race to initialize shared state. */
 function startProxy(environment: NodeJS.ProcessEnv): void {
-  execFileSync("pnpm", ["exec", "portless", "proxy", "start"], {
+  execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", "start"], {
     cwd: currentDirectory,
     env: environment,
     stdio: "inherit",
@@ -75,7 +91,7 @@ function getServiceUrl({
 }): string {
   const name = getServiceName({ projectName, serviceName });
 
-  return execFileSync("pnpm", ["exec", "portless", "get", name], {
+  return execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "get", name], {
     cwd: currentDirectory,
     encoding: "utf8",
     env: environment,
@@ -85,7 +101,7 @@ function getServiceUrl({
 /** Runs the preserved fixed-port topology when Portless needs to be bypassed during the trial. */
 async function startDirectDevelopment(): Promise<CommandResult> {
   return runDevelopmentCommand({
-    args: ["exec", "turbo", "dev:direct"],
+    args: ["exec", "turbo", "dev:direct", `--cwd=${currentDirectory}`],
     environment: process.env,
     mode: "direct",
   });
@@ -105,7 +121,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   process.stdout.write(`API: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
 
   return runDevelopmentCommand({
-    args: ["exec", "turbo", "dev"],
+    args: ["exec", "turbo", "dev", `--cwd=${currentDirectory}`],
     environment: {
       ...environment,
       MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
@@ -116,7 +132,14 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   });
 }
 
-const result =
-  process.env.PORTLESS === "0" ? await startDirectDevelopment() : await startPortlessDevelopment();
+try {
+  const result =
+    directMode || process.env.PORTLESS === "0"
+      ? await startDirectDevelopment()
+      : await startPortlessDevelopment();
 
-applyCommandExit(result);
+  applyCommandExit(result);
+} finally {
+  unregisterDevelopmentProcess(startupPath);
+  unregisterDevelopmentProcess(registrationPath);
+}

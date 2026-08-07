@@ -4,6 +4,27 @@ const INTERRUPT_EXIT_CODE = 130;
 const TERMINATION_EXIT_CODE = 143;
 
 export type CommandResult = { code: number | null; signal: NodeJS.Signals | null };
+export type ExecutableCommand = { args: string[]; command: string };
+
+/** Invokes pnpm through the current Node runtime so Windows `.cmd` shims are not required inside pnpm lifecycle scripts. */
+export function getPnpmCommand(environment: NodeJS.ProcessEnv): ExecutableCommand {
+  const pnpmExecutable = environment.npm_execpath;
+
+  if (!pnpmExecutable) {
+    return { args: [], command: "pnpm" };
+  }
+
+  if (/\.[cm]?js$/iu.test(pnpmExecutable)) {
+    return { args: [pnpmExecutable], command: process.execPath };
+  }
+
+  return { args: [], command: pnpmExecutable };
+}
+
+/** Recognizes the harmless race where a detached child exits before Node reports its final status to the wrapper. */
+function isMissingProcessError(error: unknown): boolean {
+  return error instanceof Error && "code" in error && error.code === "ESRCH";
+}
 
 /**
  * Runs an interactive child with the current terminal attached and reports its real exit status. Keeping process ownership here makes the root launcher and Stripe listener behave consistently when an agent stops them.
@@ -40,7 +61,16 @@ export function runForegroundCommand({
       }
 
       if (usesProcessGroup && terminateProcessGroup) {
-        process.kill(-child.pid, signal);
+        try {
+          process.kill(-child.pid, signal);
+        } catch (error) {
+          if (!isMissingProcessError(error)) {
+            throw error;
+          }
+
+          child.kill(signal);
+        }
+
         return;
       }
 
