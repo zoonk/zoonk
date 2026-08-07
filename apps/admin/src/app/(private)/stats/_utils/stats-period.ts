@@ -109,8 +109,9 @@ function getCustomChartPeriod({ end, start }: { end: Date; start: Date }): Histo
 }
 
 /**
- * A custom range is used only when both dates are valid and ordered. Invalid
- * or partial shared links safely return to the current calendar month.
+ * A custom range is used only when both dates are valid, ordered, and not in
+ * the future. Invalid or partial shared links safely return to the current
+ * calendar month instead of comparing partial data with a complete prior range.
  */
 function getValidCustomRange({
   end,
@@ -121,8 +122,9 @@ function getValidCustomRange({
 }) {
   const parsedEnd = parseCustomDate(end);
   const parsedStart = parseCustomDate(start);
+  const today = getEndOfDay(new Date());
 
-  if (!parsedEnd || !parsedStart || parsedStart > parsedEnd) {
+  if (!parsedEnd || !parsedStart || parsedStart > parsedEnd || parsedEnd > today) {
     return;
   }
 

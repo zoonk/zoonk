@@ -1,15 +1,15 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filter";
-import { getPaidSubscriptionOverlapSql } from "@/data/stats/_utils/paid-subscription-overlap";
+import { getActivePaidSubscriptionAtSql } from "@/data/stats/_utils/paid-subscription-overlap";
 import { type RateTrendRow, toRateTrendPoint } from "@/data/stats/_utils/rate-trend";
 import { type Sql, prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
 /**
  * Creates the same daily, monthly, or yearly bucket boundaries used by the
- * visible chart. Each bucket gets a complete access window instead of grouping
- * by a signup or subscription event that happened on only one date.
+ * visible chart. Each bucket exposes its final instant so the numerator can
+ * measure the active subscriber stock after that bucket's additions and churn.
  */
 function getConversionBucketSeriesSql({
   end,
@@ -68,17 +68,16 @@ function hasConversionDenominator(row: RateTrendRow): boolean {
 }
 
 /**
- * Shows the paid share that existed inside each visible bucket. The numerator
- * uses paid-access overlap and the denominator includes tracked learners who
- * existed by that bucket's end, matching the period headline definition.
+ * Shows the active paid share at the end of each visible bucket. The numerator
+ * is a point-in-time subscriber stock while the denominator is the cumulative
+ * tracked learner population at the same instant.
  */
 export const getConversionRateTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const bucketSeriesSql = getConversionBucketSeriesSql({ end, period, start });
 
-    const overlapSql = getPaidSubscriptionOverlapSql({
-      periodEnd: sql`buckets.bucket_end`,
-      periodStart: sql`buckets.bucket_start`,
+    const activePaidSubscriptionSql = getActivePaidSubscriptionAtSql({
+      pointInTime: sql`buckets.bucket_end`,
     });
 
     const results = await prisma.$queryRaw<RateTrendRow[]>`
@@ -94,7 +93,7 @@ export const getConversionRateTrend = cacheAdminData(
           WHERE
             ${trackedAnalyticsUserSql}
             AND users.created_at <= buckets.bucket_end
-            AND ${overlapSql}
+            AND ${activePaidSubscriptionSql}
         ) AS numerator,
         (
           SELECT COUNT(*)

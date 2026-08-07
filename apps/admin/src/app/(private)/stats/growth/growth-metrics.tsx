@@ -118,9 +118,9 @@ async function ActivationRateAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
 }
 
 /**
- * Free-to-paid compares learners who existed by each period end with those who
- * held paid access during that period, including historical access that later
- * ended.
+ * The headline shows period conversion: learners who paid at any point in the
+ * selected range. The chart shows end-of-bucket subscriber share so additions
+ * and churn produce the stock-style trend admins expect.
  */
 async function ConversionRateAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;

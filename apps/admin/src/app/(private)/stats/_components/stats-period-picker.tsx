@@ -60,7 +60,8 @@ export function StatsPeriodPicker({
   const router = useRouter();
   const [customRangeError, setCustomRangeError] = useState<string>();
   const startValue = statsPeriod.current.start.toISOString().slice(0, 10);
-  const endValue = statsPeriod.current.end.toISOString().slice(0, 10);
+  const endValue = statsPeriod.chartEnd.toISOString().slice(0, 10);
+  const latestCustomDate = new Date().toISOString().slice(0, 10);
   const canPage = statsPeriod.period === "month" || statsPeriod.period === "year";
 
   /**
@@ -68,6 +69,7 @@ export function StatsPeriodPicker({
    * answers the expected current-period question first.
    */
   function selectPreset(period: AdminStatsPeriod) {
+    setCustomRangeError(undefined);
     router.push(`${path}?${getPresetSearchParams({ currentQuery, period }).toString()}`);
   }
 
@@ -76,6 +78,7 @@ export function StatsPeriodPicker({
    * preset so adjacent periods are easy to compare.
    */
   function movePeriod(offset: number) {
+    setCustomRangeError(undefined);
     const searchParams = new URLSearchParams(currentQuery);
     searchParams.set("period", statsPeriod.period);
     searchParams.set("offset", offset.toString());
@@ -177,6 +180,7 @@ export function StatsPeriodPicker({
                 aria-invalid={Boolean(customRangeError)}
                 defaultValue={startValue}
                 id="stats-start-date"
+                max={latestCustomDate}
                 name="start"
                 onChange={() => setCustomRangeError(undefined)}
                 required
@@ -190,6 +194,7 @@ export function StatsPeriodPicker({
                 aria-invalid={Boolean(customRangeError)}
                 defaultValue={endValue}
                 id="stats-end-date"
+                max={latestCustomDate}
                 name="end"
                 onChange={() => setCustomRangeError(undefined)}
                 required
