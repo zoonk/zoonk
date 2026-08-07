@@ -32,13 +32,9 @@ async function GrowthExplorer({ searchParams }: Pick<PageProps<"/stats/growth">,
   const statsPeriod = await getStatsPeriod(params);
   const selectedView = getStatsAnalysisView({ path: "/stats/growth", value: params.view });
   const periodQuery = buildStatsPeriodQuery(statsPeriod);
-  const currentSearchParams = new URLSearchParams(periodQuery);
-  currentSearchParams.set("view", selectedView.id);
 
   return (
     <StatsExplorerLayout
-      currentQuery={currentSearchParams.toString()}
-      path="/stats/growth"
       periodQuery={periodQuery}
       selectedView={selectedView}
       statsPeriod={statsPeriod}

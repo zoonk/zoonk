@@ -7,7 +7,7 @@ import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
 /**
  * Sums recorded learning time inside each visible bucket so the trend remains
- * additive when the page moves from daily to weekly, monthly, or yearly views.
+ * additive when the page moves from daily to monthly or yearly views.
  */
 export const getLearningTimeTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {

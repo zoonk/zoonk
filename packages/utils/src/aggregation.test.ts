@@ -1,31 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ScoredRow, aggregateByPeriod, findBestByScore } from "./aggregation";
 
-describe("aggregateByPeriod - week", () => {
-  const dataPoints = [
-    { date: new Date(Date.UTC(2026, 2, 2)), value: 10 }, // Monday
-    { date: new Date(Date.UTC(2026, 2, 3)), value: 20 }, // Tuesday (same week)
-    { date: new Date(Date.UTC(2026, 2, 9)), value: 30 }, // Next Monday (different week)
-  ];
-
-  it("aggregates by sum", () => {
-    const result = aggregateByPeriod(dataPoints, (point) => point.value, "sum", "week");
-    expect(result.map((row) => row.value)).toStrictEqual([30, 30]); // 10+20, 30
-  });
-
-  it("aggregates by average", () => {
-    const result = aggregateByPeriod(dataPoints, (point) => point.value, "average", "week");
-    expect(result.map((row) => row.value)).toStrictEqual([15, 30]); // (10+20)/2, 30/1
-  });
-
-  it("returns sorted results", () => {
-    const reversed = [...dataPoints].toReversed();
-    const result = aggregateByPeriod(reversed, (point) => point.value, "sum", "week");
-    const times = result.map((row) => row.date.getTime());
-    expect(times).toStrictEqual([...times].toSorted((left, right) => left - right));
-  });
-});
-
 describe("aggregateByPeriod - month", () => {
   const dataPoints = [
     { date: new Date(Date.UTC(2026, 0, 5)), value: 10 },

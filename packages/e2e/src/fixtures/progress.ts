@@ -20,7 +20,7 @@ const PREVIOUS_MONTH_INCORRECT = 7;
 const COMPLETED_LESSON_DURATION_SECONDS = 120;
 const COMPLETED_LESSON_START_OFFSET_SECONDS = 180;
 
-const ALL_PERIODS = ["month", "6months", "year"] as const;
+const ALL_PERIODS = ["month", "year"] as const;
 
 /**
  * The authenticated e2e user needs one visible full-energy day so the Energy
@@ -94,7 +94,7 @@ function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurre
 /**
  * Create daily progress rows that cover every supported chart period.
  * This gives the e2e progress pages enough historical data to verify daily,
- * weekly, monthly, and comparison states with one shared seed path.
+ * monthly, and comparison states with one shared seed path.
  */
 function buildDailyProgressInputs(today: Date, userId: string) {
   const dateEntries = ALL_PERIODS.flatMap((period) => {

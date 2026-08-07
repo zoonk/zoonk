@@ -6,6 +6,7 @@ import {
 import { validateOffset } from "@zoonk/utils/number";
 
 const CUSTOM_PERIOD_MAX_DAILY_DAYS = 62;
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 const END_OF_DAY_HOURS = 23;
 const END_OF_DAY_MINUTES = 59;
 const END_OF_DAY_SECONDS = 59;
@@ -45,7 +46,12 @@ function parseCustomDate(value: string | string[] | undefined): Date | undefined
   }
 
   const date = new Date(`${scalarValue}T00:00:00.000Z`);
-  return Number.isNaN(date.getTime()) ? undefined : date;
+
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== scalarValue) {
+    return undefined;
+  }
+
+  return date;
 }
 
 /**
@@ -98,7 +104,7 @@ function getCustomDateRanges({ end, start }: { end: Date; start: Date }) {
  * to monthly buckets so the chart does not become a wall of tiny points.
  */
 function getCustomChartPeriod({ end, start }: { end: Date; start: Date }): HistoryPeriod {
-  const durationDays = Math.ceil((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
+  const durationDays = Math.floor((end.getTime() - start.getTime()) / MILLISECONDS_PER_DAY) + 1;
   return durationDays <= CUSTOM_PERIOD_MAX_DAILY_DAYS ? "month" : "year";
 }
 

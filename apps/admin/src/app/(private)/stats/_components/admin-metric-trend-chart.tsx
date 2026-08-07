@@ -2,31 +2,17 @@
 
 import { formatDuration } from "@/lib/format-duration";
 import { isValidChartPayload } from "@zoonk/utils/chart";
-import {
-  Bar,
-  CartesianGrid,
-  ComposedChart,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { type MetricTrendDataPoint } from "../_utils/complete-metric-trend";
 
 const BAR_OPACITY = 0.72;
 const BAR_CORNER_RADIUS = 4;
 const BAR_RADIUS: [number, number, number, number] = [BAR_CORNER_RADIUS, BAR_CORNER_RADIUS, 0, 0];
-const ACTIVE_DOT_RADIUS = 4;
-/* oxlint-disable eslint/id-length -- Recharts uses `r` for SVG circle radius. */
-const ACTIVE_DOT = { fill: "var(--foreground)", r: ACTIVE_DOT_RADIUS, strokeWidth: 0 };
-/* oxlint-enable eslint/id-length */
 const MAX_BAR_SIZE = 40;
 const MAX_NUMBER_AXIS_TICKS = 5;
 const SECONDS_PER_HOUR = 3600;
 const SECONDS_PER_MINUTE = 60;
 
-export type MetricTrendChartKind = "bar" | "line" | "step";
 export type MetricTrendValueFormat = "duration" | "number" | "percent";
 
 /**
@@ -101,8 +87,28 @@ function getTrendExtremes(dataPoints: MetricTrendDataPoint[]) {
 
   return {
     low: validPoints.reduce((lowest, point) => (point.value < lowest.value ? point : lowest)),
+    observedPointCount: validPoints.length,
     peak: validPoints.reduce((highest, point) => (point.value > highest.value ? point : highest)),
   };
+}
+
+/**
+ * A flat chart can describe every bucket only when the series has no missing
+ * values. Sparse rate and average charts instead describe the buckets that
+ * were actually observed so the caption never contradicts visible gaps.
+ */
+function getFlatTrendLabel({
+  hasCompleteTrend,
+  observedPointCount,
+}: {
+  hasCompleteTrend: boolean;
+  observedPointCount: number;
+}): string {
+  if (observedPointCount === 1) {
+    return "Observed";
+  }
+
+  return hasCompleteTrend ? "Every bucket" : "Observed buckets";
 }
 
 /**
@@ -179,12 +185,10 @@ function AdminMetricTrendTooltip({
  */
 export function AdminMetricTrendChart({
   dataPoints,
-  kind,
   label,
   valueFormat,
 }: {
   dataPoints: MetricTrendDataPoint[];
-  kind: MetricTrendChartKind;
   label: string;
   valueFormat: MetricTrendValueFormat;
 }) {
@@ -202,6 +206,7 @@ export function AdminMetricTrendChart({
   }
 
   const isFlatTrend = extremes.low.value === extremes.peak.value;
+  const hasCompleteTrend = dataPoints.every((dataPoint) => dataPoint.value !== null);
   const domain = getTrendDomain({ maximumValue: extremes.peak.value, valueFormat });
   const tickCount = getTrendTickCount({ maximumValue: extremes.peak.value, valueFormat });
 
@@ -211,7 +216,10 @@ export function AdminMetricTrendChart({
         {isFlatTrend ? (
           <TrendAnnotation
             format={valueFormat}
-            label={dataPoints.length === 1 ? "Observed" : "Every bucket"}
+            label={getFlatTrendLabel({
+              hasCompleteTrend,
+              observedPointCount: extremes.observedPointCount,
+            })}
             point={extremes.peak}
             showDate={false}
           />
@@ -225,7 +233,7 @@ export function AdminMetricTrendChart({
 
       <div className="h-88 w-full sm:h-120 lg:h-[min(54vh,34rem)]">
         <ResponsiveContainer height="100%" width="100%">
-          <ComposedChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 8, top: 12 }}>
+          <BarChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 8, top: 12 }}>
             <CartesianGrid stroke="var(--border)" strokeDasharray="2 6" vertical={false} />
             <XAxis
               axisLine={false}
@@ -256,28 +264,15 @@ export function AdminMetricTrendChart({
               cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "3 3" }}
             />
 
-            {kind === "bar" ? (
-              <Bar
-                dataKey="value"
-                fill="var(--foreground)"
-                isAnimationActive={false}
-                maxBarSize={MAX_BAR_SIZE}
-                opacity={BAR_OPACITY}
-                radius={BAR_RADIUS}
-              />
-            ) : (
-              <Line
-                activeDot={ACTIVE_DOT}
-                connectNulls={false}
-                dataKey="value"
-                dot={dataPoints.length === 1 ? ACTIVE_DOT : false}
-                isAnimationActive={false}
-                stroke="var(--foreground)"
-                strokeWidth={2.25}
-                type={kind === "step" ? "stepAfter" : "monotone"}
-              />
-            )}
-          </ComposedChart>
+            <Bar
+              dataKey="value"
+              fill="var(--foreground)"
+              isAnimationActive={false}
+              maxBarSize={MAX_BAR_SIZE}
+              opacity={BAR_OPACITY}
+              radius={BAR_RADIUS}
+            />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </figure>

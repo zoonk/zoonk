@@ -67,7 +67,7 @@ export async function EngagementMetrics({
 
 /**
  * Active learners are distinct people across the selected period, while the
- * stepped chart shows distinct learners inside each visible calendar bucket.
+ * bars show distinct learners inside each visible calendar bucket.
  */
 async function ActiveLearnerAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
@@ -79,7 +79,7 @@ async function ActiveLearnerAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(trend, chartPeriod, "en"),
     emptyValue: 0,
     end: chartEnd,
     period: chartPeriod,
@@ -92,12 +92,7 @@ async function ActiveLearnerAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod
       description="Distinct learners who completed at least one lesson during the selected period."
       value={currentValue.toLocaleString()}
     >
-      <AdminMetricTrendChart
-        dataPoints={dataPoints}
-        kind="step"
-        label="Active learners"
-        valueFormat="number"
-      />
+      <AdminMetricTrendChart dataPoints={dataPoints} label="Active learners" valueFormat="number" />
     </AdminAnalysisTrend>
   );
 }
@@ -116,7 +111,7 @@ async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(trend, chartPeriod, "en"),
     emptyValue: null,
     end: chartEnd,
     period: chartPeriod,
@@ -129,12 +124,7 @@ async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
       description="Correct step answers divided by all step attempts in the selected period."
       value={`${currentValue.toFixed(1)}%`}
     >
-      <AdminMetricTrendChart
-        dataPoints={dataPoints}
-        kind="line"
-        label="Accuracy rate"
-        valueFormat="percent"
-      />
+      <AdminMetricTrendChart dataPoints={dataPoints} label="Accuracy rate" valueFormat="percent" />
     </AdminAnalysisTrend>
   );
 }
@@ -153,7 +143,7 @@ async function CompletionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod })
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(trend, chartPeriod, "en"),
     emptyValue: null,
     end: chartEnd,
     period: chartPeriod,
@@ -168,7 +158,6 @@ async function CompletionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod })
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}
-        kind="line"
         label="Completion rate"
         valueFormat="percent"
       />
@@ -177,8 +166,8 @@ async function CompletionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod })
 }
 
 /**
- * Average lesson time is non-additive, so the chart uses a continuous line and
- * leaves buckets without completions empty instead of inventing zero seconds.
+ * Average lesson time is non-additive, so each bar represents one independent
+ * bucket and leaves buckets without completions empty instead of inventing zero seconds.
  */
 async function AverageLessonTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
@@ -190,7 +179,7 @@ async function AverageLessonTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPe
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(trend, chartPeriod, "en"),
     emptyValue: null,
     end: chartEnd,
     period: chartPeriod,
@@ -205,7 +194,6 @@ async function AverageLessonTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPe
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}
-        kind="line"
         label="Average time per lesson"
         valueFormat="duration"
       />
@@ -227,7 +215,7 @@ async function LearningTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod 
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(trend, chartPeriod, "en"),
     emptyValue: 0,
     end: chartEnd,
     period: chartPeriod,
@@ -242,7 +230,6 @@ async function LearningTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod 
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}
-        kind="bar"
         label="Total learning time"
         valueFormat="duration"
       />

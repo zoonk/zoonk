@@ -45,8 +45,8 @@ export function LearnerMilestones({ searchParams }: { searchParams: EngagementSe
 }
 
 /**
- * Parsed thresholds and scalar period state provide deterministic private-cache
- * keys while keeping the milestone result available before navigation.
+ * Parsed thresholds provide deterministic private-cache keys while keeping the
+ * milestone result available before navigation.
  */
 async function CachedLearnerMilestones({
   completedLessonsThreshold,
@@ -89,8 +89,9 @@ async function CachedLearnerMilestones({
 }
 
 /**
- * The threshold form updates the engagement page with a plain GET request, so
- * admins can bookmark or share the exact thresholds they are inspecting.
+ * Milestones are all-time questions, so the form intentionally submits only
+ * their thresholds and view. Returning to a period analysis then starts from
+ * its default period instead of retaining a hidden milestone filter.
  */
 function LearnerMilestoneForm({
   completedLessonsThreshold,

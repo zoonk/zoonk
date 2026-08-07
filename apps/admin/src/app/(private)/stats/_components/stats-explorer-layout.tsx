@@ -1,12 +1,4 @@
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@zoonk/ui/components/breadcrumb";
-import {
   Container,
   ContainerBody,
   ContainerHeader,
@@ -14,10 +6,10 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import Link from "next/link";
-import { type StatsAnalysisPath, type StatsAnalysisView } from "../_utils/stats-analysis";
+import { type StatsAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { StatsAnalysisPicker } from "./stats-analysis-picker";
+import { StatsBreadcrumb } from "./stats-breadcrumb";
 import { StatsPeriodPicker } from "./stats-period-picker";
 
 /**
@@ -27,15 +19,11 @@ import { StatsPeriodPicker } from "./stats-period-picker";
  */
 export function StatsExplorerLayout({
   children,
-  currentQuery,
-  path,
   periodQuery,
   selectedView,
   statsPeriod,
 }: {
   children: React.ReactNode;
-  currentQuery: string;
-  path: StatsAnalysisPath;
   periodQuery: string;
   selectedView: StatsAnalysisView;
   statsPeriod: StatsPeriod;
@@ -44,10 +32,8 @@ export function StatsExplorerLayout({
     <Container className="min-h-full gap-2">
       <ContainerHeader className="items-start" variant="sidebar">
         <ContainerHeaderGroup className="min-w-0 flex-1 gap-3">
-          <StatsExplorerBreadcrumb />
+          <StatsBreadcrumb />
           <StatsExplorerControls
-            currentQuery={currentQuery}
-            path={path}
             periodQuery={periodQuery}
             selectedView={selectedView}
             statsPeriod={statsPeriod}
@@ -61,42 +47,20 @@ export function StatsExplorerLayout({
 }
 
 /**
- * The short breadcrumb grounds the unified explorer in the admin hierarchy
- * without repeating the selected category or analysis name.
- */
-function StatsExplorerBreadcrumb() {
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/" prefetch />}>Dashboard</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Stats</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
-
-/**
  * Mobile stacks the two meaningful decisions; wider layouts keep the analysis
  * on the left and its period on the right, mirroring the approved concept.
  */
 function StatsExplorerControls({
-  currentQuery,
-  path,
   periodQuery,
   selectedView,
   statsPeriod,
 }: {
-  currentQuery: string;
-  path: StatsAnalysisPath;
   periodQuery: string;
   selectedView: StatsAnalysisView;
   statsPeriod: StatsPeriod;
 }) {
+  const currentQuery = getCurrentStatsQuery({ periodQuery, selectedView });
+
   return (
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <ContainerTitle className="min-w-0 flex-1 text-2xl sm:text-3xl">
@@ -104,24 +68,51 @@ function StatsExplorerControls({
       </ContainerTitle>
 
       {selectedView.usesPeriod ? (
-        <StatsPeriodPicker currentQuery={currentQuery} path={path} statsPeriod={statsPeriod} />
+        <StatsPeriodPicker
+          currentQuery={currentQuery}
+          path={selectedView.path}
+          statsPeriod={statsPeriod}
+        />
       ) : null}
     </div>
   );
 }
 
 /**
- * The fallback mirrors the focused explorer rather than the old metric grid,
- * preventing the loading state from briefly reintroducing visual clutter.
+ * The selected view is part of the period picker's current URL state. Deriving
+ * it beside the controls prevents route pages from passing a path or query that
+ * disagrees with the selected analysis.
+ */
+function getCurrentStatsQuery({
+  periodQuery,
+  selectedView,
+}: {
+  periodQuery: string;
+  selectedView: StatsAnalysisView;
+}): string {
+  const searchParams = new URLSearchParams(periodQuery);
+  searchParams.set("view", selectedView.id);
+  return searchParams.toString();
+}
+
+/**
+ * The fallback stays deliberately neutral because the selected analysis may
+ * resolve to a chart, table, or threshold tool. Quiet text lines reserve space
+ * without previewing the wrong visualization.
  */
 export function StatsExplorerSkeleton() {
   return (
     <div className="flex min-h-128 flex-col gap-8 py-4">
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-12 w-40" />
-        <Skeleton className="h-4 w-56 max-w-full" />
+      <div className="flex flex-col gap-3">
+        <Skeleton className="h-6 w-64 max-w-full" />
+        <Skeleton className="h-4 w-96 max-w-full" />
       </div>
-      <Skeleton className="min-h-72 flex-1 rounded-xl" />
+      <div className="flex flex-col gap-5 pt-4">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+        <Skeleton className="h-4 w-11/12" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
     </div>
   );
 }

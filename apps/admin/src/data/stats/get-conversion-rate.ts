@@ -4,38 +4,28 @@ import {
   trackedAnalyticsUserSql,
   trackedAnalyticsUserWhere,
 } from "@/data/stats/_utils/analytics-user-filter";
-import { prisma, sql } from "@zoonk/db";
+import { getPaidSubscriptionOverlapSql } from "@/data/stats/_utils/paid-subscription-overlap";
+import { prisma } from "@zoonk/db";
 
 /**
- * Limits the headline to signup cohorts when a stats period is present while
- * keeping the dashboard overview's all-time behavior when dates are omitted.
+ * A period ratio includes every tracked learner who existed by its end. This
+ * keeps the denominator cumulative so a subscriber who joined before the
+ * selected month cannot disappear from that month's paid share.
  */
-function getConversionUserWhere({ start, end }: { start?: Date; end?: Date }) {
-  if (!start || !end) {
+function getConversionUserWhere(end?: Date) {
+  if (!end) {
     return trackedAnalyticsUserWhere;
   }
 
-  return { ...trackedAnalyticsUserWhere, createdAt: { gte: start, lte: end } };
+  return { ...trackedAnalyticsUserWhere, createdAt: { lte: end } };
 }
 
 /**
- * Adds the same optional signup-cohort boundary to the raw subscription count
- * used by the detailed Growth page.
- */
-function getConversionDateSql({ start, end }: { start?: Date; end?: Date }) {
-  if (!start || !end) {
-    return sql``;
-  }
-
-  return sql`AND users.created_at >= ${start} AND users.created_at <= ${end}`;
-}
-
-/**
- * Returns the active paid share for all tracked users on the overview or for
- * users created inside a selected period on the detailed Growth page.
+ * Returns the current paid share for the dashboard overview or the share that
+ * held paid access during a selected period on the detailed Growth page.
  */
 export const getConversionRate = cacheAdminData(async (start?: Date, end?: Date) => {
-  const userWhere = getConversionUserWhere({ end, start });
+  const userWhere = getConversionUserWhere(end);
 
   const [paid, total] = await Promise.all([
     countPaidTrackedUsers({ end, start }),
@@ -48,12 +38,21 @@ export const getConversionRate = cacheAdminData(async (start?: Date, end?: Date)
 });
 
 /**
- * Conversion rate compares paid users against total users, so duplicate active
- * subscription rows for one user must still count as one paid account.
+ * Conversion rate compares paid users against total users, so duplicate
+ * subscription rows for one learner must still count as one paid account.
  */
 async function countPaidTrackedUsers({ start, end }: { start?: Date; end?: Date }) {
-  const dateSql = getConversionDateSql({ end, start });
+  if (start && end) {
+    return countPeriodPaidTrackedUsers({ end, start });
+  }
 
+  return countCurrentPaidTrackedUsers();
+}
+
+/**
+ * The overview remains a current-state KPI because it has no selected period.
+ */
+async function countCurrentPaidTrackedUsers() {
   const result = await prisma.$queryRaw<[{ count: bigint }]>`
     SELECT COUNT(DISTINCT subscriptions.reference_id) AS count
     FROM subscriptions
@@ -62,7 +61,26 @@ async function countPaidTrackedUsers({ start, end }: { start?: Date; end?: Date 
       ${trackedAnalyticsUserSql}
       AND subscriptions.plan != 'free'
       AND subscriptions.status = 'active'
-      ${dateSql}
+  `;
+
+  return Number(result[0].count);
+}
+
+/**
+ * Historical periods count access intervals rather than today's subscription
+ * status, so a canceled learner remains visible in the months they paid.
+ */
+async function countPeriodPaidTrackedUsers({ start, end }: { start: Date; end: Date }) {
+  const overlapSql = getPaidSubscriptionOverlapSql({ periodEnd: end, periodStart: start });
+
+  const result = await prisma.$queryRaw<[{ count: bigint }]>`
+    SELECT COUNT(DISTINCT subscriptions.reference_id) AS count
+    FROM subscriptions
+    JOIN users ON users.id = subscriptions.reference_id
+    WHERE
+      ${trackedAnalyticsUserSql}
+      AND users.created_at <= ${end}
+      AND ${overlapSql}
   `;
 
   return Number(result[0].count);

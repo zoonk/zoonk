@@ -76,7 +76,7 @@ export function ContentChart({
     return {
       current: getFilteredTotal({ content: currentContent, filter }),
       dataPoints: completeMetricTrend({
-        dataPoints: buildChartData(filtered, statsPeriod.chartPeriod, "en").dataPoints,
+        dataPoints: buildChartData(filtered, statsPeriod.chartPeriod, "en"),
         emptyValue: 0,
         end: statsPeriod.chartEnd,
         period: statsPeriod.chartPeriod,
@@ -111,7 +111,6 @@ export function ContentChart({
 
       <AdminMetricTrendChart
         dataPoints={analysis.dataPoints}
-        kind="bar"
         label="Content creation"
         valueFormat="number"
       />

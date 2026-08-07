@@ -63,7 +63,7 @@ async function SignupAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(dailySignups, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(dailySignups, chartPeriod, "en"),
     emptyValue: 0,
     end: chartEnd,
     period: chartPeriod,
@@ -76,12 +76,7 @@ async function SignupAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
       description="User accounts created during the selected period."
       value={currentValue.toLocaleString()}
     >
-      <AdminMetricTrendChart
-        dataPoints={dataPoints}
-        kind="bar"
-        label="New signups"
-        valueFormat="number"
-      />
+      <AdminMetricTrendChart dataPoints={dataPoints} label="New signups" valueFormat="number" />
     </AdminAnalysisTrend>
   );
 }
@@ -100,7 +95,7 @@ async function ActivationRateAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(trend, chartPeriod, "en"),
     emptyValue: null,
     end: chartEnd,
     period: chartPeriod,
@@ -115,7 +110,6 @@ async function ActivationRateAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}
-        kind="line"
         label="Activation rate"
         valueFormat="percent"
       />
@@ -124,20 +118,21 @@ async function ActivationRateAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
 }
 
 /**
- * Free-to-paid compares signup cohorts with their current subscription state,
- * so chart buckets and the period headline use the same denominator.
+ * Free-to-paid compares learners who existed by each period end with those who
+ * held paid access during that period, including historical access that later
+ * ended.
  */
 async function ConversionRateAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
   const [currentValue, previousValue, trend] = await Promise.all([
-    getConversionRate(current.start, current.end),
+    getConversionRate(current.start, chartEnd),
     getConversionRate(previous.start, previous.end),
-    getConversionRateTrend(current.start, current.end, chartPeriod),
+    getConversionRateTrend(current.start, chartEnd, chartPeriod),
   ]);
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(trend, chartPeriod, "en"),
     emptyValue: null,
     end: chartEnd,
     period: chartPeriod,
@@ -147,12 +142,11 @@ async function ConversionRateAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
   return (
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: currentValue.rate, previous: previousValue.rate }}
-      description={`${currentValue.paid.toLocaleString()} paid learners from ${currentValue.total.toLocaleString()} signups in the selected cohort.`}
+      description={`${currentValue.paid.toLocaleString()} of ${currentValue.total.toLocaleString()} learners had paid access during the selected period.`}
       value={`${currentValue.rate.toFixed(1)}%`}
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}
-        kind="line"
         label="Free-to-paid conversion"
         valueFormat="percent"
       />

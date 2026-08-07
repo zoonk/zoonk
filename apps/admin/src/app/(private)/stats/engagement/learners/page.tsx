@@ -7,7 +7,7 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { StatsPageLayout, StatsPageSkeleton } from "../../_components/stats-page-layout";
+import { StatsPageLayout } from "../../_components/stats-page-layout";
 import { LearnerMilestoneThresholdForm } from "./learner-milestone-threshold-form";
 import { LearnerMilestoneUsers, LearnerMilestoneUsersSkeleton } from "./learner-milestone-users";
 
@@ -23,16 +23,15 @@ export default function LearnerMilestoneUsersPage({
   return (
     <Suspense
       fallback={
-        <StatsPageSkeleton
+        <StatsPageLayout
           breadcrumbItems={[
             { href: "/stats/engagement", label: "Engagement & Learning" },
             { label: "Learner Milestones" },
           ]}
-          showPeriodControls={false}
           title="Learner Milestones"
         >
           <LearnerMilestoneUsersPageSkeleton />
-        </StatsPageSkeleton>
+        </StatsPageLayout>
       }
     >
       <LearnerMilestoneUsersPageContent searchParams={searchParams} />
@@ -63,7 +62,6 @@ async function LearnerMilestoneUsersPageContent({
         { href: "/stats/engagement", label: "Engagement & Learning" },
         { label: "Learner Milestones" },
       ]}
-      showPeriodTabs={false}
       title={copy.pageTitle}
     >
       <div className="flex flex-col gap-6">

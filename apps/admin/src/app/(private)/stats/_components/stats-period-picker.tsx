@@ -12,7 +12,7 @@ import {
 } from "@zoonk/ui/components/popover";
 import { CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type SyntheticEvent } from "react";
+import { type SyntheticEvent, useState } from "react";
 import { type StatsAnalysisPath } from "../_utils/stats-analysis";
 import { type AdminStatsPeriod, type StatsPeriod } from "../_utils/stats-period";
 
@@ -21,6 +21,8 @@ const PERIODS = [
   { label: "Year", value: "year" },
   { label: "All time", value: "all" },
 ] as const satisfies { label: string; value: AdminStatsPeriod }[];
+
+const CUSTOM_RANGE_ERROR_ID = "stats-custom-range-error";
 
 /**
  * Replaces the period inside a complete query while preserving the selected
@@ -56,6 +58,7 @@ export function StatsPeriodPicker({
   statsPeriod: StatsPeriod;
 }) {
   const router = useRouter();
+  const [customRangeError, setCustomRangeError] = useState<string>();
   const startValue = statsPeriod.current.start.toISOString().slice(0, 10);
   const endValue = statsPeriod.current.end.toISOString().slice(0, 10);
   const canPage = statsPeriod.period === "month" || statsPeriod.period === "year";
@@ -92,6 +95,13 @@ export function StatsPeriodPicker({
     if (!submittedStart || !submittedEnd) {
       return;
     }
+
+    if (submittedStart > submittedEnd) {
+      setCustomRangeError("To date must be on or after From date.");
+      return;
+    }
+
+    setCustomRangeError(undefined);
 
     const searchParams = new URLSearchParams(currentQuery);
     searchParams.set("period", "custom");
@@ -162,13 +172,36 @@ export function StatsPeriodPicker({
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
               <Label htmlFor="stats-start-date">From</Label>
-              <Input defaultValue={startValue} id="stats-start-date" name="start" type="date" />
+              <Input
+                aria-describedby={customRangeError ? CUSTOM_RANGE_ERROR_ID : undefined}
+                aria-invalid={Boolean(customRangeError)}
+                defaultValue={startValue}
+                id="stats-start-date"
+                name="start"
+                onChange={() => setCustomRangeError(undefined)}
+                required
+                type="date"
+              />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="stats-end-date">To</Label>
-              <Input defaultValue={endValue} id="stats-end-date" name="end" type="date" />
+              <Input
+                aria-describedby={customRangeError ? CUSTOM_RANGE_ERROR_ID : undefined}
+                aria-invalid={Boolean(customRangeError)}
+                defaultValue={endValue}
+                id="stats-end-date"
+                name="end"
+                onChange={() => setCustomRangeError(undefined)}
+                required
+                type="date"
+              />
             </div>
           </div>
+          {customRangeError ? (
+            <p className="text-destructive text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
+              {customRangeError}
+            </p>
+          ) : null}
           <Button type="submit" variant="outline">
             Apply custom range
           </Button>

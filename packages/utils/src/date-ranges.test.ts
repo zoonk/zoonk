@@ -48,34 +48,6 @@ describe(calculateDateRanges, () => {
     vi.useRealTimers();
   });
 
-  it("returns correct half-year ranges in January (H1)", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(Date.UTC(2026, 0, 15)));
-
-    const ranges = calculateDateRanges("6months", 0);
-
-    expect(ranges.current.start).toStrictEqual(new Date(Date.UTC(2026, 0, 1)));
-    expect(ranges.current.end).toStrictEqual(eod(2026, 5, 30));
-    expect(ranges.previous.start).toStrictEqual(new Date(Date.UTC(2025, 6, 1)));
-    expect(ranges.previous.end).toStrictEqual(eod(2025, 6, 15));
-
-    vi.useRealTimers();
-  });
-
-  it("returns correct half-year ranges in July (H2)", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(Date.UTC(2026, 6, 15)));
-
-    const ranges = calculateDateRanges("6months", 0);
-
-    expect(ranges.current.start).toStrictEqual(new Date(Date.UTC(2026, 6, 1)));
-    expect(ranges.current.end).toStrictEqual(eod(2026, 11, 31));
-    expect(ranges.previous.start).toStrictEqual(new Date(Date.UTC(2026, 0, 1)));
-    expect(ranges.previous.end).toStrictEqual(eod(2026, 0, 15));
-
-    vi.useRealTimers();
-  });
-
   it("returns correct year ranges in March", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
@@ -139,13 +111,6 @@ describe(formatPeriodLabel, () => {
     const end = new Date(Date.UTC(2026, 2, 31));
     const result = formatPeriodLabel(start, end, "month", "en");
     expect(result).toBe("March 2026");
-  });
-
-  it("formats 6months period as short month range with year", () => {
-    const start = new Date(Date.UTC(2026, 0, 1));
-    const end = new Date(Date.UTC(2026, 5, 30));
-    const result = formatPeriodLabel(start, end, "6months", "en");
-    expect(result).toBe("Jan - Jun 2026");
   });
 
   it("formats year period as year number", () => {

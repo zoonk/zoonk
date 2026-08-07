@@ -16,8 +16,8 @@ import { Fragment } from "react";
 import { STATS_ANALYSIS_GROUPS, type StatsAnalysisView } from "../_utils/stats-analysis";
 
 /**
- * Builds the destination locally so switching analysis keeps the useful date
- * context without carrying view-specific milestone filters into another page.
+ * Builds the destination locally so switching analysis always keeps the useful
+ * date context, including while a view temporarily hides period controls.
  */
 function buildAnalysisHref({
   periodQuery,
@@ -26,7 +26,7 @@ function buildAnalysisHref({
   periodQuery: string;
   view: StatsAnalysisView;
 }): `${StatsAnalysisView["path"]}?${string}` {
-  const searchParams = new URLSearchParams(view.usesPeriod ? periodQuery : "");
+  const searchParams = new URLSearchParams(periodQuery);
   searchParams.set("view", view.id);
 
   return `${view.path}?${searchParams.toString()}`;

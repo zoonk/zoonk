@@ -34,13 +34,9 @@ async function ContentExplorer({
   const statsPeriod = await getStatsPeriod(params);
   const selectedView = getStatsAnalysisView({ path: "/stats/content", value: params.view });
   const periodQuery = buildStatsPeriodQuery(statsPeriod);
-  const currentSearchParams = new URLSearchParams(periodQuery);
-  currentSearchParams.set("view", selectedView.id);
 
   return (
     <StatsExplorerLayout
-      currentQuery={currentSearchParams.toString()}
-      path="/stats/content"
       periodQuery={periodQuery}
       selectedView={selectedView}
       statsPeriod={statsPeriod}

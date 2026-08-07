@@ -1,10 +1,27 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+import { MinusIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+
+/**
+ * Period comparisons use color only when the direction has meaning. An equal
+ * result is neither success nor failure, so it stays visually neutral instead
+ * of implying growth with a green upward arrow.
+ */
+function getAnalysisChangeAppearance(percentageChange: number) {
+  if (percentageChange > 0) {
+    return { Icon: TrendingUpIcon, className: "text-success" };
+  }
+
+  if (percentageChange < 0) {
+    return { Icon: TrendingDownIcon, className: "text-destructive" };
+  }
+
+  return { Icon: MinusIcon, className: "text-muted-foreground" };
+}
 
 /**
  * Period-level change is calculated independently from the chart endpoint so
  * the large headline remains an honest aggregate instead of masquerading as
- * the final daily point.
+ * the final chart bucket.
  */
 function AnalysisChange({
   comparisonLabel,
@@ -20,23 +37,16 @@ function AnalysisChange({
   }
 
   const percentageChange = ((current - previous) / previous) * 100;
-  const isPositive = percentageChange >= 0;
+  const { className, Icon } = getAnalysisChangeAppearance(percentageChange);
 
   const formattedChange = new Intl.NumberFormat("en", {
     maximumFractionDigits: 1,
-    signDisplay: "always",
+    signDisplay: percentageChange === 0 ? "never" : "always",
     trailingZeroDisplay: "stripIfInteger",
   }).format(percentageChange);
 
-  const Icon = isPositive ? TrendingUpIcon : TrendingDownIcon;
-
   return (
-    <div
-      className={cn(
-        "flex items-center gap-1 text-sm tabular-nums",
-        isPositive ? "text-success" : "text-destructive",
-      )}
-    >
+    <div className={cn("flex items-center gap-1 text-sm tabular-nums", className)}>
       <Icon aria-hidden className="size-4" />
       <span>
         {formattedChange}% {comparisonLabel}

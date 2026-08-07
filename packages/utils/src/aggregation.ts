@@ -1,17 +1,6 @@
-export type TimePeriod = "week" | "month" | "year";
+export type TimePeriod = "month" | "year";
 
 type TimePeriodConfig = { getKey: (date: Date) => string; getNormalizedDate: (date: Date) => Date };
-
-const SUNDAY_DAYS_SINCE_MONDAY = 6;
-
-function getMondayOfWeek(date: Date): Date {
-  const dayOfWeek = date.getUTCDay();
-  const daysSinceMonday = dayOfWeek === 0 ? SUNDAY_DAYS_SINCE_MONDAY : dayOfWeek - 1;
-
-  return new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - daysSinceMonday),
-  );
-}
 
 function getFirstOfMonth(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
@@ -19,10 +8,6 @@ function getFirstOfMonth(date: Date): Date {
 
 function getFirstOfYear(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-}
-
-function getWeekKey(date: Date): string {
-  return getMondayOfWeek(date).toISOString().slice(0, 10);
 }
 
 function getMonthKey(date: Date): string {
@@ -35,7 +20,6 @@ function getYearKey(date: Date): string {
 
 const PERIOD_CONFIGS: Record<TimePeriod, TimePeriodConfig> = {
   month: { getKey: getMonthKey, getNormalizedDate: getFirstOfMonth },
-  week: { getKey: getWeekKey, getNormalizedDate: getMondayOfWeek },
   year: { getKey: getYearKey, getNormalizedDate: getFirstOfYear },
 };
 

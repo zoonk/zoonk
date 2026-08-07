@@ -98,7 +98,7 @@ async function ContentMetricAnalysis({
   const rawTrend = getContentMetricTrend({ dailyContent, metric });
 
   const dataPoints = completeMetricTrend({
-    dataPoints: buildChartData(rawTrend, chartPeriod, "en").dataPoints,
+    dataPoints: buildChartData(rawTrend, chartPeriod, "en"),
     emptyValue: 0,
     end: chartEnd,
     period: chartPeriod,
@@ -117,12 +117,7 @@ async function ContentMetricAnalysis({
       description={`New ${title} created during the selected period.`}
       value={currentCreated[metric].toLocaleString()}
     >
-      <AdminMetricTrendChart
-        dataPoints={dataPoints}
-        kind="bar"
-        label={`New ${metric}`}
-        valueFormat="number"
-      />
+      <AdminMetricTrendChart dataPoints={dataPoints} label={`New ${metric}`} valueFormat="number" />
     </AdminAnalysisTrend>
   );
 }
