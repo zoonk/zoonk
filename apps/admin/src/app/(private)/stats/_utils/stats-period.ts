@@ -26,11 +26,11 @@ type StatsSearchParams = {
  * calendar month, calendar year, all time, or a deliberately chosen range.
  */
 function parseAdminStatsPeriod(value: string): AdminStatsPeriod {
-  if (value === "year" || value === "all" || value === "custom") {
+  if (value === "month" || value === "year" || value === "all" || value === "custom") {
     return value;
   }
 
-  return "month";
+  return "year";
 }
 
 /**
@@ -111,7 +111,7 @@ function getCustomChartPeriod({ end, start }: { end: Date; start: Date }): Histo
 /**
  * A custom range is used only when both dates are valid, ordered, and not in
  * the future. Invalid or partial shared links safely return to the current
- * calendar month instead of comparing partial data with a complete prior range.
+ * calendar year instead of comparing partial data with a complete prior range.
  */
 function getValidCustomRange({
   end,
@@ -139,7 +139,7 @@ function getValidCustomRange({
 export async function getStatsPeriod(params: StatsSearchParams) {
   "use cache: private";
 
-  const requestedPeriod = parseAdminStatsPeriod(String(params.period ?? "month"));
+  const requestedPeriod = parseAdminStatsPeriod(String(params.period ?? "year"));
   const customRange = getValidCustomRange({ end: params.end, start: params.start });
 
   if (requestedPeriod === "custom" && customRange) {
@@ -156,7 +156,7 @@ export async function getStatsPeriod(params: StatsSearchParams) {
     };
   }
 
-  const period = requestedPeriod === "custom" ? "month" : requestedPeriod;
+  const period = requestedPeriod === "custom" ? "year" : requestedPeriod;
   const offset = validateOffset(params.offset);
   const { current, previous } = calculateDateRanges(period, offset);
 
