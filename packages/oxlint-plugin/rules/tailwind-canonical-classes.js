@@ -233,16 +233,6 @@ function checkClassProperty({ context, property, sourceText }) {
   }
 }
 
-/**
- * A helper call inside `className={...}` is already covered by the surrounding
- * JSX attribute visitor, so skipping it here prevents duplicate diagnostics.
- */
-function isInsideClassAttribute({ context, node }) {
-  return context.sourceCode
-    .getAncestors(node)
-    .some((ancestor) => ancestor.type === "JSXAttribute" && isClassAttributeName(ancestor.name));
-}
-
 export default defineRule({
   create(context) {
     const sourceText = context.sourceCode.getText();
@@ -252,10 +242,6 @@ export default defineRule({
         const classFunctionName = getClassFunctionName(node.callee);
 
         if (!classFunctionName || !CLASS_FUNCTION_NAMES.has(classFunctionName)) {
-          return;
-        }
-
-        if (isInsideClassAttribute({ context, node })) {
           return;
         }
 
