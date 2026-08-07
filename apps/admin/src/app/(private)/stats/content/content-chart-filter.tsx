@@ -3,13 +3,15 @@
 import { type DailyContentRow } from "@/data/stats/get-daily-content-created";
 import { Button } from "@zoonk/ui/components/button";
 import { buildChartData } from "@zoonk/utils/chart";
-import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { useMemo, useState } from "react";
-import { AdminTrendChart } from "../_components/admin-trend-chart";
+import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
+import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
+import { completeMetricTrend } from "../_utils/complete-metric-trend";
+import { type StatsPeriod } from "../_utils/stats-period";
 
 type ContentFilterValue = "all" | "courses" | "chapters" | "lessons" | "steps";
 
-const filters: { label: string; value: ContentFilterValue }[] = [
+const FILTERS: { label: string; value: ContentFilterValue }[] = [
   { label: "All", value: "all" },
   { label: "Courses", value: "courses" },
   { label: "Chapters", value: "chapters" },
@@ -17,7 +19,17 @@ const filters: { label: string; value: ContentFilterValue }[] = [
   { label: "Steps", value: "steps" },
 ];
 
-function getCountForFilter(row: DailyContentRow, filter: ContentFilterValue): number {
+/**
+ * Content creation can be explored as one total or one creation pipeline
+ * stage, while every choice retains the same calendar buckets.
+ */
+function getCountForFilter({
+  filter,
+  row,
+}: {
+  filter: ContentFilterValue;
+  row: DailyContentRow;
+}): number {
   if (filter === "all") {
     return row.courses + row.chapters + row.lessons + row.steps;
   }
@@ -25,42 +37,84 @@ function getCountForFilter(row: DailyContentRow, filter: ContentFilterValue): nu
   return row[filter];
 }
 
-export function ContentChart({
-  dailyContent,
-  period,
+/**
+ * The selected content-type headline is the sum of its visible buckets, which
+ * keeps the filter, period total, and chart mathematically aligned.
+ */
+function getFilteredTotal({
+  content,
+  filter,
 }: {
-  dailyContent: DailyContentRow[];
-  period: HistoryPeriod;
+  content: DailyContentRow[];
+  filter: ContentFilterValue;
+}): number {
+  return content.reduce((total, row) => total + getCountForFilter({ filter, row }), 0);
+}
+
+/**
+ * Content creation is the one analysis with a useful second dimension. Its
+ * type filter stays local to the chart instead of becoming permanent global
+ * chrome or multiplying five near-identical entries in the analysis picker.
+ */
+export function ContentChart({
+  currentContent,
+  previousContent,
+  statsPeriod,
+}: {
+  currentContent: DailyContentRow[];
+  previousContent: DailyContentRow[];
+  statsPeriod: StatsPeriod;
 }) {
   const [filter, setFilter] = useState<ContentFilterValue>("all");
 
-  const { average, dataPoints } = useMemo(() => {
-    const filtered = dailyContent.map((row) => ({
-      count: getCountForFilter(row, filter),
+  const analysis = useMemo(() => {
+    const filtered = currentContent.map((row) => ({
+      count: getCountForFilter({ filter, row }),
       date: row.date,
     }));
 
-    return buildChartData(filtered, period, "en");
-  }, [dailyContent, filter, period]);
+    return {
+      current: getFilteredTotal({ content: currentContent, filter }),
+      dataPoints: completeMetricTrend({
+        dataPoints: buildChartData(filtered, statsPeriod.chartPeriod, "en").dataPoints,
+        emptyValue: 0,
+        end: statsPeriod.chartEnd,
+        period: statsPeriod.chartPeriod,
+        start: statsPeriod.current.start,
+      }),
+      previous: getFilteredTotal({ content: previousContent, filter }),
+    };
+  }, [currentContent, filter, previousContent, statsPeriod]);
 
   return (
-    <div className="flex flex-col gap-3">
+    <AdminAnalysisTrend
+      comparison={{
+        comparisonLabel: statsPeriod.comparisonLabel,
+        current: analysis.current,
+        previous: analysis.previous,
+      }}
+      description="Courses and completed chapters and lessons, plus steps created during the selected period."
+      value={analysis.current.toLocaleString()}
+    >
       <nav aria-label="Content type filter" className="flex flex-wrap gap-1">
-        {filters.map((item) => (
+        {FILTERS.map((item) => (
           <Button
             key={item.value}
             onClick={() => setFilter(item.value)}
             size="sm"
-            variant={filter === item.value ? "default" : "outline"}
+            variant={filter === item.value ? "default" : "ghost"}
           >
             {item.label}
           </Button>
         ))}
       </nav>
 
-      {dataPoints.length > 0 && (
-        <AdminTrendChart average={average} dataPoints={dataPoints} valueLabel="items" />
-      )}
-    </div>
+      <AdminMetricTrendChart
+        dataPoints={analysis.dataPoints}
+        kind="bar"
+        label="Content creation"
+        valueFormat="number"
+      />
+    </AdminAnalysisTrend>
   );
 }

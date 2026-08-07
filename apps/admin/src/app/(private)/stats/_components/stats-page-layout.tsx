@@ -155,7 +155,7 @@ function StatsPeriodTabsSkeleton() {
  * The selected date label depends on URL data and a cached clock read. This
  * reserves only that control while runtime prefetching resolves it.
  */
-export function StatsPeriodNavigationSkeleton() {
+function StatsPeriodNavigationSkeleton() {
   return (
     <div className="flex items-center gap-2">
       <Skeleton className="size-9 rounded-4xl" />

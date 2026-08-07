@@ -1,98 +1,161 @@
 import { countSubscribersByPlan } from "@/data/stats/count-subscribers-by-plan";
 import { getActivationRate } from "@/data/stats/get-activation-rate";
+import { getActivationRateTrend } from "@/data/stats/get-activation-rate-trend";
 import { getConversionRate } from "@/data/stats/get-conversion-rate";
+import { getConversionRateTrend } from "@/data/stats/get-conversion-rate-trend";
 import { getDailySignups } from "@/data/stats/get-daily-signups";
 import { getNewSignups } from "@/data/stats/get-new-signups";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildChartData } from "@zoonk/utils/chart";
-import { CreditCardIcon, TargetIcon, UsersIcon } from "lucide-react";
-import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
-import { AdminTrendChart } from "../_components/admin-trend-chart";
+import { AdminAnalysisTable } from "../_components/admin-analysis-table";
+import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
+import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
+import { completeMetricTrend } from "../_utils/complete-metric-trend";
+import { type GrowthAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { SubscribersTable } from "./subscribers-table";
 
-export async function GrowthMetrics({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+/**
+ * Loads only the selected Growth question. This preserves every existing stat
+ * while avoiding the query and visual cost of rendering the other three views
+ * behind the current analysis.
+ */
+export async function GrowthMetrics({
+  statsPeriod,
+  view,
+}: {
+  statsPeriod: StatsPeriod;
+  view: GrowthAnalysisView;
+}) {
   "use cache: private";
 
-  const { current, period, previous } = statsPeriod;
+  if (view.id === "subscribers-by-plan") {
+    const subscribers = await countSubscribersByPlan();
 
-  const [
-    currentSignups,
-    previousSignups,
-    currentActivation,
-    currentConversion,
-    dailySignups,
-    subscribers,
-  ] = await Promise.all([
+    return (
+      <AdminAnalysisTable description="Current active subscriptions grouped by each learner's latest plan.">
+        <SubscribersTable data={subscribers} />
+      </AdminAnalysisTable>
+    );
+  }
+
+  if (view.id === "activation-rate") {
+    return <ActivationRateAnalysis statsPeriod={statsPeriod} />;
+  }
+
+  if (view.id === "free-to-paid") {
+    return <ConversionRateAnalysis statsPeriod={statsPeriod} />;
+  }
+
+  return <SignupAnalysis statsPeriod={statsPeriod} />;
+}
+
+/**
+ * Signup volume is additive, so discrete bars make empty and high-volume
+ * calendar buckets easier to compare than a smoothed line.
+ */
+async function SignupAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, dailySignups] = await Promise.all([
     getNewSignups(current.start, current.end),
     getNewSignups(previous.start, previous.end),
-    getActivationRate(),
-    getConversionRate(),
     getDailySignups(current.start, current.end),
-    countSubscribersByPlan(),
   ]);
 
-  const { average: chartAverage, dataPoints: chartData } = buildChartData(
-    dailySignups,
-    period,
-    "en",
-  );
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(dailySignups, chartPeriod, "en").dataPoints,
+    emptyValue: 0,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-        <AdminMetricCard
-          change={{ current: currentSignups, period, previous: previousSignups }}
-          help="User accounts created during the selected period"
-          icon={<UsersIcon />}
-          title="New Signups"
-          value={currentSignups.toLocaleString()}
-        />
-
-        <AdminMetricCard
-          description={`${currentActivation.activated.toLocaleString()} of ${currentActivation.total.toLocaleString()} users`}
-          help="Users who completed at least 1 lesson divided by all users"
-          icon={<TargetIcon />}
-          title="Activation Rate"
-          value={`${currentActivation.rate.toFixed(1)}%`}
-        />
-
-        <AdminMetricCard
-          description={`${currentConversion.paid.toLocaleString()} paid of ${currentConversion.total.toLocaleString()} total`}
-          help="Users with an active paid subscription divided by all users"
-          icon={<CreditCardIcon />}
-          title="Free-to-Paid"
-          value={`${currentConversion.rate.toFixed(1)}%`}
-        />
-      </div>
-
-      {chartData.length > 0 && (
-        <AdminTrendChart average={chartAverage} dataPoints={chartData} valueLabel="signups" />
-      )}
-
-      {subscribers.length > 0 && (
-        <div className="flex flex-col gap-3">
-          <h3 className="text-base font-semibold tracking-tight">Subscribers by Plan</h3>
-
-          <div className="rounded-lg border">
-            <SubscribersTable data={subscribers} />
-          </div>
-        </div>
-      )}
-    </div>
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
+      description="User accounts created during the selected period."
+      value={currentValue.toLocaleString()}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="bar"
+        label="New signups"
+        valueFormat="number"
+      />
+    </AdminAnalysisTrend>
   );
 }
 
-export function GrowthMetricsSkeleton() {
+/**
+ * Activation follows signup cohorts rather than activity dates, matching the
+ * headline definition: users created in the range who completed a lesson.
+ */
+async function ActivationRateAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, trend] = await Promise.all([
+    getActivationRate(current.start, current.end),
+    getActivationRate(previous.start, previous.end),
+    getActivationRateTrend(current.start, current.end, chartPeriod),
+  ]);
+
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    emptyValue: null,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
+
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
-      </div>
-      <Skeleton className="h-64 w-full rounded-xl" />
-      <Skeleton className="h-32 w-full rounded-lg" />
-    </div>
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue.rate, previous: previousValue.rate }}
+      description={`${currentValue.activated.toLocaleString()} of ${currentValue.total.toLocaleString()} signups completed at least one lesson.`}
+      value={`${currentValue.rate.toFixed(1)}%`}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="line"
+        label="Activation rate"
+        valueFormat="percent"
+      />
+    </AdminAnalysisTrend>
+  );
+}
+
+/**
+ * Free-to-paid compares signup cohorts with their current subscription state,
+ * so chart buckets and the period headline use the same denominator.
+ */
+async function ConversionRateAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, trend] = await Promise.all([
+    getConversionRate(current.start, current.end),
+    getConversionRate(previous.start, previous.end),
+    getConversionRateTrend(current.start, current.end, chartPeriod),
+  ]);
+
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    emptyValue: null,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
+
+  return (
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue.rate, previous: previousValue.rate }}
+      description={`${currentValue.paid.toLocaleString()} paid learners from ${currentValue.total.toLocaleString()} signups in the selected cohort.`}
+      value={`${currentValue.rate.toFixed(1)}%`}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="line"
+        label="Free-to-paid conversion"
+        valueFormat="percent"
+      />
+    </AdminAnalysisTrend>
   );
 }

@@ -1,67 +1,51 @@
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { AdminPeriodNavigation } from "../_components/admin-period-navigation";
-import { StatsPageLayout, StatsPeriodNavigationSkeleton } from "../_components/stats-page-layout";
-import { getStatsPeriod } from "../_utils/stats-period";
-import { GrowthMetrics, GrowthMetricsSkeleton } from "./growth-metrics";
+import {
+  StatsExplorerLayout,
+  StatsExplorerPageSkeleton,
+  StatsExplorerSkeleton,
+} from "../_components/stats-explorer-layout";
+import { getStatsAnalysisView } from "../_utils/stats-analysis";
+import { buildStatsPeriodQuery, getStatsPeriod } from "../_utils/stats-period";
+import { GrowthMetrics } from "./growth-metrics";
 
-export const metadata: Metadata = { title: "Growth & Sustainability" };
+export const metadata: Metadata = { title: "Growth Stats" };
 
 /**
- * Stable analytics chrome stays in the App Shell while URL-backed controls and
- * cached metrics resolve in independent boundaries.
+ * Growth keeps an instant route shell while its URL-backed analysis state
+ * resolves behind Suspense.
  */
 export default function GrowthPage({ searchParams }: PageProps<"/stats/growth">) {
   return (
-    <StatsPageLayout
-      navigation={
-        <Suspense fallback={<StatsPeriodNavigationSkeleton />}>
-          <GrowthPeriodNavigation searchParams={searchParams} />
-        </Suspense>
-      }
-      title="Growth & Sustainability"
-    >
-      <Suspense fallback={<GrowthMetricsSkeleton />}>
-        <GrowthMetricsRegion searchParams={searchParams} />
-      </Suspense>
-    </StatsPageLayout>
+    <Suspense fallback={<StatsExplorerPageSkeleton />}>
+      <GrowthExplorer searchParams={searchParams} />
+    </Suspense>
   );
 }
 
 /**
- * Runtime prefetching can resolve the selected period before navigation while
- * the shared title and breadcrumbs remain available from the route shell.
+ * Once URL state is available, the shared explorer makes this durable route
+ * feel continuous with Engagement and Content.
  */
-async function GrowthPeriodNavigation({
-  searchParams,
-}: Pick<PageProps<"/stats/growth">, "searchParams">) {
-  const { offset, period, periodLabel } = await getStatsPeriod(searchParams);
-
-  return period === "all" ? null : (
-    <AdminPeriodNavigation
-      basePath="/stats/growth"
-      offset={offset}
-      period={period}
-      periodLabel={periodLabel}
-    />
-  );
-}
-
-/**
- * The URL and cached calendar range resolve before the private analytics query.
- * The keyed inner boundary resets only the metric body when the period changes.
- */
-async function GrowthMetricsRegion({
-  searchParams,
-}: Pick<PageProps<"/stats/growth">, "searchParams">) {
-  const statsPeriod = await getStatsPeriod(searchParams);
+async function GrowthExplorer({ searchParams }: Pick<PageProps<"/stats/growth">, "searchParams">) {
+  const params = await searchParams;
+  const statsPeriod = await getStatsPeriod(params);
+  const selectedView = getStatsAnalysisView({ path: "/stats/growth", value: params.view });
+  const periodQuery = buildStatsPeriodQuery(statsPeriod);
+  const currentSearchParams = new URLSearchParams(periodQuery);
+  currentSearchParams.set("view", selectedView.id);
 
   return (
-    <Suspense
-      fallback={<GrowthMetricsSkeleton />}
-      key={`${statsPeriod.period}-${statsPeriod.offset}`}
+    <StatsExplorerLayout
+      currentQuery={currentSearchParams.toString()}
+      path="/stats/growth"
+      periodQuery={periodQuery}
+      selectedView={selectedView}
+      statsPeriod={statsPeriod}
     >
-      <GrowthMetrics statsPeriod={statsPeriod} />
-    </Suspense>
+      <Suspense fallback={<StatsExplorerSkeleton />} key={`${selectedView.id}-${periodQuery}`}>
+        <GrowthMetrics statsPeriod={statsPeriod} view={selectedView} />
+      </Suspense>
+    </StatsExplorerLayout>
   );
 }

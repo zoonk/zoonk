@@ -1,135 +1,251 @@
+import { getAccuracyRateTrend } from "@/data/stats/get-accuracy-rate-trend";
 import { getActiveLearnerTrend } from "@/data/stats/get-active-learner-trend";
+import { getAvgLessonTimeTrend } from "@/data/stats/get-avg-lesson-time-trend";
 import { getAvgTimeByLessonKind } from "@/data/stats/get-avg-time-by-lesson-kind";
+import { getCompletionRateTrend } from "@/data/stats/get-completion-rate-trend";
+import { getLearningTimeTrend } from "@/data/stats/get-learning-time-trend";
 import { getPeriodAccuracyRate } from "@/data/stats/get-period-accuracy-rate";
 import { getPeriodActiveLearners } from "@/data/stats/get-period-active-learners";
 import { getPeriodAvgLessonTime } from "@/data/stats/get-period-avg-lesson-time";
 import { getPeriodCompletionRate } from "@/data/stats/get-period-completion-rate";
 import { getPeriodLearningTime } from "@/data/stats/get-period-learning-time";
 import { formatDuration } from "@/lib/format-duration";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildChartData } from "@zoonk/utils/chart";
-import { BookOpenIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
-import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
-import { AdminTrendChart } from "../_components/admin-trend-chart";
+import { AdminAnalysisTable } from "../_components/admin-analysis-table";
+import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
+import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
+import { completeMetricTrend } from "../_utils/complete-metric-trend";
+import { type EngagementAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { LessonBreakdownTable } from "./lesson-breakdown-table";
 
-export async function EngagementMetrics({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+/**
+ * Loads one Engagement question at a time. Learner milestones are handled by
+ * their existing independent component because they use all-time thresholds
+ * rather than a calendar period.
+ */
+export async function EngagementMetrics({
+  statsPeriod,
+  view,
+}: {
+  statsPeriod: StatsPeriod;
+  view: EngagementAnalysisView;
+}) {
   "use cache: private";
 
-  const { current, period, previous } = statsPeriod;
+  if (view.id === "accuracy-rate") {
+    return <AccuracyAnalysis statsPeriod={statsPeriod} />;
+  }
 
-  const [
-    currentActiveLearners,
-    previousActiveLearners,
-    currentAccuracy,
-    previousAccuracy,
-    currentAvgTime,
-    previousAvgTime,
-    currentCompletionRate,
-    previousCompletionRate,
-    currentLearningTime,
-    previousLearningTime,
-    dailyActive,
-    lessonBreakdown,
-  ] = await Promise.all([
+  if (view.id === "completion-rate") {
+    return <CompletionAnalysis statsPeriod={statsPeriod} />;
+  }
+
+  if (view.id === "avg-lesson-time") {
+    return <AverageLessonTimeAnalysis statsPeriod={statsPeriod} />;
+  }
+
+  if (view.id === "total-learning-time") {
+    return <LearningTimeAnalysis statsPeriod={statsPeriod} />;
+  }
+
+  if (view.id === "lesson-time-breakdown") {
+    const breakdown = await getAvgTimeByLessonKind(
+      statsPeriod.current.start,
+      statsPeriod.current.end,
+    );
+
+    return (
+      <AdminAnalysisTable description="Average duration, completion rate, and completed volume for each lesson type in the selected period.">
+        <LessonBreakdownTable data={breakdown} />
+      </AdminAnalysisTable>
+    );
+  }
+
+  return <ActiveLearnerAnalysis statsPeriod={statsPeriod} />;
+}
+
+/**
+ * Active learners are distinct people across the selected period, while the
+ * stepped chart shows distinct learners inside each visible calendar bucket.
+ */
+async function ActiveLearnerAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, trend] = await Promise.all([
     getPeriodActiveLearners(current.start, current.end),
     getPeriodActiveLearners(previous.start, previous.end),
-    getPeriodAccuracyRate(current.start, current.end),
-    getPeriodAccuracyRate(previous.start, previous.end),
-    getPeriodAvgLessonTime(current.start, current.end),
-    getPeriodAvgLessonTime(previous.start, previous.end),
-    getPeriodCompletionRate(current.start, current.end),
-    getPeriodCompletionRate(previous.start, previous.end),
-    getPeriodLearningTime(current.start, current.end),
-    getPeriodLearningTime(previous.start, previous.end),
-    getActiveLearnerTrend(current.start, current.end, period),
-    getAvgTimeByLessonKind(current.start, current.end),
+    getActiveLearnerTrend(current.start, current.end, chartPeriod),
   ]);
 
-  const { average: chartAverage, dataPoints: chartData } = buildChartData(
-    dailyActive,
-    period,
-    "en",
-  );
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    emptyValue: 0,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
-        <AdminMetricCard
-          change={{ current: currentActiveLearners, period, previous: previousActiveLearners }}
-          help="Users who completed at least 1 lesson in the selected period"
-          icon={<BookOpenIcon />}
-          title="Active Learners"
-          value={currentActiveLearners.toLocaleString()}
-        />
-
-        <AdminMetricCard
-          change={{ current: currentAccuracy, period, previous: previousAccuracy }}
-          help="Correct step answers divided by all step attempts"
-          icon={<TargetIcon />}
-          title="Accuracy Rate"
-          value={`${currentAccuracy.toFixed(1)}%`}
-        />
-
-        <AdminMetricCard
-          change={{ current: currentCompletionRate, period, previous: previousCompletionRate }}
-          help="Completed lessons divided by lessons users started"
-          icon={<CheckCircleIcon />}
-          title="Completion Rate"
-          value={`${currentCompletionRate.toFixed(1)}%`}
-        />
-
-        <AdminMetricCard
-          change={{ current: currentAvgTime, period, previous: previousAvgTime }}
-          help="Average recorded duration for completed lessons"
-          icon={<ClockIcon />}
-          title="Avg Time / Lesson"
-          value={formatDuration(currentAvgTime)}
-        />
-
-        <AdminMetricCard
-          change={{ current: currentLearningTime, period, previous: previousLearningTime }}
-          help="Total recorded lesson time in the selected period"
-          icon={<TimerIcon />}
-          title="Total Learning Time"
-          value={formatDuration(currentLearningTime)}
-        />
-      </div>
-
-      {chartData.length > 0 && (
-        <AdminTrendChart
-          average={chartAverage}
-          dataPoints={chartData}
-          valueLabel="active learners"
-        />
-      )}
-
-      {lessonBreakdown.length > 0 && (
-        <div className="flex flex-col gap-3">
-          <h3 className="text-base font-semibold tracking-tight">Lesson Time Breakdown</h3>
-
-          <div className="rounded-lg border">
-            <LessonBreakdownTable data={lessonBreakdown} />
-          </div>
-        </div>
-      )}
-    </div>
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
+      description="Distinct learners who completed at least one lesson during the selected period."
+      value={currentValue.toLocaleString()}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="step"
+        label="Active learners"
+        valueFormat="number"
+      />
+    </AdminAnalysisTrend>
   );
 }
 
-export function EngagementMetricsSkeleton() {
+/**
+ * Accuracy uses all answered steps for the headline and the same correct-share
+ * calculation inside each chart bucket.
+ */
+async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, trend] = await Promise.all([
+    getPeriodAccuracyRate(current.start, current.end),
+    getPeriodAccuracyRate(previous.start, previous.end),
+    getAccuracyRateTrend(current.start, current.end, chartPeriod),
+  ]);
+
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    emptyValue: null,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
+
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
-      </div>
-      <Skeleton className="h-64 w-full rounded-xl" />
-      <Skeleton className="h-48 w-full rounded-lg" />
-    </div>
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
+      description="Correct step answers divided by all step attempts in the selected period."
+      value={`${currentValue.toFixed(1)}%`}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="line"
+        label="Accuracy rate"
+        valueFormat="percent"
+      />
+    </AdminAnalysisTrend>
+  );
+}
+
+/**
+ * Completion uses started lessons as its denominator, preserving the existing
+ * definition while making changes across calendar buckets visible.
+ */
+async function CompletionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, trend] = await Promise.all([
+    getPeriodCompletionRate(current.start, current.end),
+    getPeriodCompletionRate(previous.start, previous.end),
+    getCompletionRateTrend(current.start, current.end, chartPeriod),
+  ]);
+
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    emptyValue: null,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
+
+  return (
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
+      description="Completed lessons divided by lessons learners started in the selected period."
+      value={`${currentValue.toFixed(1)}%`}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="line"
+        label="Completion rate"
+        valueFormat="percent"
+      />
+    </AdminAnalysisTrend>
+  );
+}
+
+/**
+ * Average lesson time is non-additive, so the chart uses a continuous line and
+ * leaves buckets without completions empty instead of inventing zero seconds.
+ */
+async function AverageLessonTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, trend] = await Promise.all([
+    getPeriodAvgLessonTime(current.start, current.end),
+    getPeriodAvgLessonTime(previous.start, previous.end),
+    getAvgLessonTimeTrend(current.start, current.end, chartPeriod),
+  ]);
+
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    emptyValue: null,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
+
+  return (
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
+      description="Average recorded duration for lessons completed in the selected period."
+      value={formatDuration(currentValue)}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="line"
+        label="Average time per lesson"
+        valueFormat="duration"
+      />
+    </AdminAnalysisTrend>
+  );
+}
+
+/**
+ * Total learning time is additive, so bars show the contribution of each
+ * bucket while the headline answers the period-wide total.
+ */
+async function LearningTimeAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
+
+  const [currentValue, previousValue, trend] = await Promise.all([
+    getPeriodLearningTime(current.start, current.end),
+    getPeriodLearningTime(previous.start, previous.end),
+    getLearningTimeTrend(current.start, current.end, chartPeriod),
+  ]);
+
+  const dataPoints = completeMetricTrend({
+    dataPoints: buildChartData(trend, chartPeriod, "en").dataPoints,
+    emptyValue: 0,
+    end: chartEnd,
+    period: chartPeriod,
+    start: current.start,
+  });
+
+  return (
+    <AdminAnalysisTrend
+      comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
+      description="Total recorded lesson time across all learners in the selected period."
+      value={formatDuration(currentValue)}
+    >
+      <AdminMetricTrendChart
+        dataPoints={dataPoints}
+        kind="bar"
+        label="Total learning time"
+        valueFormat="duration"
+      />
+    </AdminAnalysisTrend>
   );
 }
