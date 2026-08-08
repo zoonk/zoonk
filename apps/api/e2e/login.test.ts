@@ -1,6 +1,16 @@
 import { expect, test } from "@zoonk/e2e/fixtures";
 
 test.describe("Login Page", () => {
+  test("uses the locale passed by the originating app throughout auth", async ({ page }) => {
+    await page.goto("/auth/login?locale=pt");
+
+    await expect(page.getByRole("heading", { name: "Entre ou crie uma conta" })).toBeVisible();
+
+    await page.goto("/auth/otp?email=learner@zoonk.test");
+
+    await expect(page.getByRole("heading", { name: "Confira seu email" })).toBeVisible();
+  });
+
   test("displays login form with email input and social buttons", async ({ page }) => {
     await page.goto("/auth/login");
 

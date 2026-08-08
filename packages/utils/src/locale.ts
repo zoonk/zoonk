@@ -78,7 +78,7 @@ function getManualLocale(value?: string | null): SupportedLocale | null {
 /**
  * Detect the best locale from an Accept-Language header.
  */
-export function getLocaleFromHeaders(acceptLanguage: string | null): SupportedLocale {
+function getLocaleFromHeaders(acceptLanguage: string | null): SupportedLocale {
   if (!acceptLanguage) {
     return DEFAULT_LOCALE;
   }

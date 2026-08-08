@@ -1,6 +1,7 @@
 "use client";
 
 import { setCookie } from "@zoonk/utils/cookies";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { buildAuthLoginUrl } from "@zoonk/utils/origin";
 import { useEffect } from "react";
 import {
@@ -53,7 +54,13 @@ async function setLoginStateCookie(state: string): Promise<void> {
  * in the browser because `/login` is a normal page, while the state cookie must
  * be written before leaving the app origin.
  */
-async function startOneTimeTokenLogin(callbackPath: string): Promise<void> {
+async function startOneTimeTokenLogin({
+  callbackPath,
+  locale,
+}: {
+  callbackPath: string;
+  locale: SupportedLocale;
+}): Promise<void> {
   const state = createLoginState();
 
   const callbackUrl = addLoginStateToCallbackUrl({
@@ -62,7 +69,7 @@ async function startOneTimeTokenLogin(callbackPath: string): Promise<void> {
   });
 
   await setLoginStateCookie(state);
-  globalThis.location.assign(buildAuthLoginUrl({ callbackUrl }));
+  globalThis.location.assign(buildAuthLoginUrl({ callbackUrl, locale }));
 }
 
 /**
@@ -70,10 +77,16 @@ async function startOneTimeTokenLogin(callbackPath: string): Promise<void> {
  * effect synchronizes with browser APIs: it writes a cookie and performs a
  * document navigation outside the React app.
  */
-export function OneTimeTokenLoginRedirect({ callbackPath }: { callbackPath: string }) {
+export function OneTimeTokenLoginRedirect({
+  callbackPath,
+  locale,
+}: {
+  callbackPath: string;
+  locale: SupportedLocale;
+}) {
   useEffect(() => {
-    void startOneTimeTokenLogin(callbackPath);
-  }, [callbackPath]);
+    void startOneTimeTokenLogin({ callbackPath, locale });
+  }, [callbackPath, locale]);
 
   return null;
 }
