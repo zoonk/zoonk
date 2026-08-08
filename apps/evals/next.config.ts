@@ -3,12 +3,7 @@ import { type NextConfig } from "next";
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
-  experimental: {
-    turbopackFileSystemCacheForBuild: true,
-    turbopackRustReactCompiler: true,
-    typedEnv: true,
-    useTypeScriptCli: true,
-  },
+  experimental: { turbopackRustReactCompiler: true, typedEnv: true },
   images: {
     remotePatterns: [
       new URL("https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/**"),
