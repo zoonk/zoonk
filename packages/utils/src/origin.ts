@@ -1,4 +1,5 @@
 import { getEnvironment, isLocalhostSupported } from "./environment";
+import { type SupportedLocale } from "./locale";
 import { API_URL } from "./url";
 
 /**
@@ -42,11 +43,18 @@ export function getBaseUrl(): string {
 }
 
 /**
- * Builds the login URL for the centralized auth app.
- * @param callbackUrl - The URL to redirect to after successful authentication
+ * Builds the centralized auth URL with the originating app's locale so login
+ * does not fall back to a different API-host cookie or browser preference.
  */
-export function buildAuthLoginUrl({ callbackUrl }: { callbackUrl: string }): string {
+export function buildAuthLoginUrl({
+  callbackUrl,
+  locale,
+}: {
+  callbackUrl: string;
+  locale: SupportedLocale;
+}): string {
   const authUrl = new URL("/auth/login", API_URL);
+  authUrl.searchParams.set("locale", locale);
   authUrl.searchParams.set("redirectTo", callbackUrl);
 
   return authUrl.toString();

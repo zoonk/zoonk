@@ -1,4 +1,6 @@
+import { AUTH_LOCALE_HEADER, getAuthLocale } from "@/i18n/auth-locale";
 import { errors } from "@/lib/api-errors";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { isCorsAllowedOrigin } from "@zoonk/utils/origin";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -46,6 +48,30 @@ function requiresSameOrigin(request: NextRequest): boolean {
   );
 }
 
+/**
+ * Passes a validated auth locale to the current render and stores it on the
+ * API host so later OTP and provider callback pages keep the same language.
+ * Removing the incoming header ensures only this proxy can supply the value.
+ */
+function createPassThroughResponse(request: NextRequest): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete(AUTH_LOCALE_HEADER);
+
+  const locale = getAuthLocale(request);
+
+  if (locale) {
+    requestHeaders.set(AUTH_LOCALE_HEADER, locale);
+  }
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  if (locale) {
+    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", sameSite: "lax" });
+  }
+
+  return response;
+}
+
 export function proxy(request: NextRequest) {
   const origin = request.headers.get("origin");
 
@@ -56,7 +82,7 @@ export function proxy(request: NextRequest) {
   // Remaining requests without an origin are guests or explicit bearer clients.
   // We rate-limit requests in our Vercel config
   if (!origin) {
-    return NextResponse.next();
+    return createPassThroughResponse(request);
   }
 
   const isAllowed = isCorsAllowedOrigin(origin);
@@ -74,7 +100,7 @@ export function proxy(request: NextRequest) {
   }
 
   // Handle regular requests
-  const response = NextResponse.next();
+  const response = createPassThroughResponse(request);
   response.headers.set("Vary", "Origin");
 
   if (isAllowed) {
@@ -89,6 +115,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Apply shared CORS to every API route while Better Auth owns its origin validation.
-  matcher: "/v1/:path*",
+  // Apply shared CORS to API routes and locale handoff only to central-auth pages.
+  matcher: ["/auth/:path*", "/v1/:path*"],
 };

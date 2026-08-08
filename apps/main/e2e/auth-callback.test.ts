@@ -78,6 +78,22 @@ function expectAuthErrorRedirect(response: APIResponse): void {
 }
 
 test.describe("Auth Callback", () => {
+  test("passes the current locale to central auth", async ({ page }) => {
+    const authUrls: string[] = [];
+
+    await page.route("**/auth/login**", async (route) => {
+      authUrls.push(route.request().url());
+      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
+    });
+
+    await page.goto("/pt/login");
+    await expect.poll(() => authUrls.length).toBe(1);
+
+    const authUrl = getInterceptedAuthUrl(authUrls);
+
+    expect(new URL(authUrl).searchParams.get("locale")).toBe("pt");
+  });
+
   test("starts login when randomUUID is unavailable", async ({ context, page }) => {
     const baseURL = getBaseURL();
     const authUrls: string[] = [];

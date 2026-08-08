@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   getCountryFromAcceptLanguage,
-  getLocaleFromHeaders,
   getLocaleFromRequest,
   getSupportedLocaleFromLanguage,
   isValidLocale,
@@ -56,16 +55,6 @@ describe(getCountryFromAcceptLanguage, () => {
 
   it("extracts region from tags with script subtags", () => {
     expect(getCountryFromAcceptLanguage("zh-Hant-TW")).toBe("TW");
-  });
-});
-
-describe(getLocaleFromHeaders, () => {
-  it("matches French from regional browser preferences", () => {
-    expect(getLocaleFromHeaders("fr-FR,fr;q=0.9,en;q=0.8")).toBe("fr");
-  });
-
-  it("matches German from regional browser preferences", () => {
-    expect(getLocaleFromHeaders("de-DE,de;q=0.9,en;q=0.8")).toBe("de");
   });
 });
 

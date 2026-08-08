@@ -1,6 +1,7 @@
 import { OneTimeTokenLoginRedirect } from "@zoonk/core/auth/ott/login";
 import { getSafeAppRelativePath } from "@zoonk/core/auth/ott/redirect";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { Suspense } from "react";
 
 type Props = PageProps<"/[lang]/login">;
@@ -24,22 +25,23 @@ function getCallbackPath(nextPath: string | null) {
  * Resolves the return target inside Suspense so the page can prerender its
  * loading shell without reading request-specific query parameters.
  */
-async function LoginRedirect({ searchParams }: Pick<Props, "searchParams">) {
-  const { next } = await searchParams;
+async function LoginRedirect({ params, searchParams }: Pick<Props, "params" | "searchParams">) {
+  const [{ lang }, { next }] = await Promise.all([params, searchParams]);
   const callbackPath = getCallbackPath(getSafeAppRelativePath(next));
+  const locale = getSupportedLocaleFromLanguage(lang);
 
   return (
     <>
-      <OneTimeTokenLoginRedirect callbackPath={callbackPath} />
+      <OneTimeTokenLoginRedirect callbackPath={callbackPath} locale={locale} />
       <FullPageLoading />
     </>
   );
 }
 
-export default function LoginPage({ searchParams }: Props) {
+export default function LoginPage({ params, searchParams }: Props) {
   return (
     <Suspense fallback={<FullPageLoading />}>
-      <LoginRedirect searchParams={searchParams} />
+      <LoginRedirect params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
