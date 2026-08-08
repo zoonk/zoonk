@@ -19,7 +19,7 @@
     "@zoonk/utils": "workspace:*"
   },
   "devDependencies": {
-    "@playwright/test": "1.61.1",
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",

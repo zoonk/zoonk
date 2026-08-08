@@ -30,19 +30,19 @@
   },
   "devDependencies": {
     "@eloqnt/cli": "catalog:",
-    "@playwright/test": "1.61.1",
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "knip": "6.29.0",
-    "oxfmt": "0.60.0",
-    "oxlint": "1.75.0",
+    "knip": "6.32.0",
+    "oxfmt": "0.62.0",
+    "oxlint": "1.77.0",
     "oxlint-tsgolint": "7.0.2001",
     "portless": "0.15.5",
-    "turbo": "2.10.6",
+    "turbo": "2.10.9",
     "typescript": "catalog:"
   },
   "engines": {
     "node": "^24"
   },
-  "packageManager": "pnpm@11.16.0"
+  "packageManager": "pnpm@11.20.0"
 }
