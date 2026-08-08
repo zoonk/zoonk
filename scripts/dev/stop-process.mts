@@ -1,5 +1,7 @@
 import { execFileSync } from "node:child_process";
 
+const PROCESS_POLL_INTERVAL_MS = 100;
+
 export type ExpectedCommand = (command: string) => boolean;
 export type ProcessSignal = "SIGKILL" | "SIGTERM";
 
@@ -108,4 +110,29 @@ export function signalExpectedProcessTree({
   } catch {
     return signalExpectedProcess({ isExpectedCommand, processId, signal });
   }
+}
+
+/** Polls a managed process set until it exits or reaches a bounded shutdown deadline. */
+export function waitForProcesses({
+  isRunning,
+  timeoutMs,
+}: {
+  isRunning: () => boolean;
+  timeoutMs: number;
+}): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+
+  return new Promise((resolve) => {
+    /** Rechecks the managed process set without blocking signal delivery or child exit events. */
+    function poll(): void {
+      if (!isRunning() || Date.now() >= deadline) {
+        resolve();
+        return;
+      }
+
+      setTimeout(poll, PROCESS_POLL_INTERVAL_MS);
+    }
+
+    poll();
+  });
 }

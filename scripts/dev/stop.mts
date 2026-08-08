@@ -6,10 +6,8 @@ import { getPortlessEnvironment } from "./config.mts";
 import { getPnpmCommand } from "./process.mts";
 import {
   type DevelopmentProcessRegistration,
-  type DevelopmentProcessStartup,
   getDevelopmentProcessRegistryDirectory,
   readDevelopmentProcessRegistrations,
-  readDevelopmentProcessStartups,
   unregisterDevelopmentProcess,
 } from "./registry.mts";
 import {
@@ -18,11 +16,12 @@ import {
   getProcessCommand,
   isExpectedProcess,
   signalExpectedProcessTree,
+  waitForProcesses,
 } from "./stop-process.mts";
+import { stopDevelopmentStartups } from "./stop-startup.mts";
 import {
   type PortlessRouteProcess,
   getPortlessRouteProcesses,
-  isDevelopmentLauncherCommand,
   isDevelopmentTaskCommand,
   isDevelopmentTaskRoleCommand,
   isPortlessRouteCommand,
@@ -30,7 +29,6 @@ import {
 
 const GRACEFUL_SHUTDOWN_TIMEOUT_MS = 5000;
 const FORCED_SHUTDOWN_TIMEOUT_MS = 2000;
-const PROCESS_POLL_INTERVAL_MS = 100;
 const currentDirectory = process.cwd();
 const pnpmCommand = getPnpmCommand(process.env);
 
@@ -85,82 +83,37 @@ function isDevelopmentStackRunning(registration: DevelopmentProcessRegistration)
   return isDevelopmentTaskRoleCommand({ command, mode: registration.mode });
 }
 
-/** Checks whether a startup marker still belongs to the Zoonk launcher PID encoded in its filename. */
-function isDevelopmentStartupRunning(startup: DevelopmentProcessStartup): boolean {
-  return isExpectedProcess({
-    isExpectedCommand: isDevelopmentLauncherCommand,
-    processId: startup.launcherProcessId,
-  });
-}
-
-/** Removes markers whose launcher exited before it could publish a complete child registration. */
-function pruneStaleDevelopmentStartups(registryDirectory: string): void {
-  readDevelopmentProcessStartups(registryDirectory)
-    .filter((startup) => !isDevelopmentStartupRunning(startup))
-    .forEach(({ path }) => unregisterDevelopmentProcess(path));
-}
-
-/** Polls briefly for process-owned cleanup, returning early as soon as every target exits. */
-function waitForProcesses({
-  isRunning,
-  timeoutMs,
-}: {
-  isRunning: () => boolean;
-  timeoutMs: number;
-}): Promise<void> {
-  const deadline = Date.now() + timeoutMs;
-
-  return new Promise((resolve) => {
-    /** Rechecks the small managed process set until it exits or reaches the bounded shutdown deadline. */
-    function poll(): void {
-      if (!isRunning() || Date.now() >= deadline) {
-        resolve();
-        return;
-      }
-
-      setTimeout(poll, PROCESS_POLL_INTERVAL_MS);
-    }
-
-    poll();
-  });
-}
-
 /** Stops every launcher that opted into the shared registry, including fixed-port direct mode. */
 async function stopRegisteredDevelopmentStacks(): Promise<StopResult> {
   const registryDirectory = getDevelopmentProcessRegistryDirectory(homedir());
 
-  pruneStaleDevelopmentStartups(registryDirectory);
-
-  await waitForProcesses({
-    isRunning: () =>
-      readDevelopmentProcessStartups(registryDirectory).some((startup) =>
-        isDevelopmentStartupRunning(startup),
-      ),
-    timeoutMs: GRACEFUL_SHUTDOWN_TIMEOUT_MS,
+  const startupsStopped = await stopDevelopmentStartups({
+    forcedTimeoutMs: FORCED_SHUTDOWN_TIMEOUT_MS,
+    gracefulTimeoutMs: GRACEFUL_SHUTDOWN_TIMEOUT_MS,
+    registryDirectory,
   });
 
-  pruneStaleDevelopmentStartups(registryDirectory);
+  const entries = readDevelopmentProcessRegistrations(registryDirectory);
+  const managedEntries = entries.filter(({ registration }) => registration.registryVersion === 2);
 
-  const hasActiveStartup = readDevelopmentProcessStartups(registryDirectory).some((startup) =>
-    isDevelopmentStartupRunning(startup),
+  const legacyEntries = entries.filter(
+    ({ registration }) => registration.registryVersion === undefined,
   );
 
-  const entries = readDevelopmentProcessRegistrations(registryDirectory);
-
   const isAnyStackRunning = () =>
-    entries.some(({ registration }) => isDevelopmentStackRunning(registration));
+    managedEntries.some(({ registration }) => isDevelopmentStackRunning(registration));
 
-  entries.forEach(({ registration }) => requestDevelopmentShutdown(registration));
+  managedEntries.forEach(({ registration }) => requestDevelopmentShutdown(registration));
 
   await waitForProcesses({ isRunning: isAnyStackRunning, timeoutMs: GRACEFUL_SHUTDOWN_TIMEOUT_MS });
 
-  entries.forEach(({ registration }) =>
+  managedEntries.forEach(({ registration }) =>
     forceDevelopmentShutdown({ registration, signal: "SIGTERM" }),
   );
 
   await waitForProcesses({ isRunning: isAnyStackRunning, timeoutMs: FORCED_SHUTDOWN_TIMEOUT_MS });
 
-  entries.forEach(({ registration }) =>
+  managedEntries.forEach(({ registration }) =>
     forceDevelopmentShutdown({ registration, signal: "SIGKILL" }),
   );
 
@@ -170,7 +123,20 @@ async function stopRegisteredDevelopmentStacks(): Promise<StopResult> {
     .filter(({ registration }) => !isDevelopmentStackRunning(registration))
     .forEach(({ path }) => unregisterDevelopmentProcess(path));
 
-  return { count: entries.length, stopped: !hasActiveStartup && !isAnyStackRunning() };
+  const hasLegacyStackRunning = legacyEntries.some(({ registration }) =>
+    isDevelopmentStackRunning(registration),
+  );
+
+  if (hasLegacyStackRunning) {
+    process.stderr.write(
+      "Some development stacks were started by older scripts and cannot be stopped safely. Stop them from their original terminals, then restart them before using pnpm dev:stop again.\n",
+    );
+  }
+
+  return {
+    count: entries.length,
+    stopped: startupsStopped && !hasLegacyStackRunning && !isAnyStackRunning(),
+  };
 }
 
 /** Reads route owners from one dedicated Zoonk Portless state directory, including stacks started before process registration existed. */
