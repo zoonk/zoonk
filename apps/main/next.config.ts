@@ -21,7 +21,6 @@ const nextConfig: NextConfig = {
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
-    appNewScrollHandler: true,
     authInterrupts: true,
     exposeTestingApiInProductionBuild: isE2E,
     staleTimes: { dynamic: 300 },
