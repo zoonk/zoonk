@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type PlayerRoute } from "../player-context";
@@ -74,5 +74,33 @@ export function SecondaryActionLink({
       {children}
       <SecondaryKbd>{shortcut}</SecondaryKbd>
     </PlayerLink>
+  );
+}
+
+/**
+ * Gives completion callbacks the same secondary hierarchy and keyboard hint as
+ * completion links so navigation and in-player actions remain visually consistent.
+ */
+export function SecondaryActionButton({
+  children,
+  className,
+  onClick,
+  shortcut,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  onClick: () => void;
+  shortcut: string;
+}) {
+  return (
+    <Button
+      aria-keyshortcuts={getAriaKeyboardShortcut(shortcut)}
+      className={cn("w-full", className)}
+      onClick={onClick}
+      variant="outline"
+    >
+      {children}
+      <SecondaryKbd>{shortcut}</SecondaryKbd>
+    </Button>
   );
 }

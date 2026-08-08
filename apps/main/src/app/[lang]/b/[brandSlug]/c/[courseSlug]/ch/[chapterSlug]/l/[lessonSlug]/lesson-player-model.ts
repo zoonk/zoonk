@@ -245,11 +245,11 @@ export function buildLessonPlayerModel({
 
   const milestone = (() => {
     if (nextChapterHref) {
-      return { kind: "chapter" as const, nextHref: nextChapterHref, reviewHref: chapterHref };
+      return { chapterHref, kind: "chapter" as const, nextHref: nextChapterHref };
     }
 
     if (!nextLesson) {
-      return { kind: "course" as const, reviewHref: courseHref, secondaryReviewHref: chapterHref };
+      return { chapterHref, courseHref, kind: "course" as const };
     }
 
     return null;

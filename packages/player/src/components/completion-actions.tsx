@@ -1,11 +1,16 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type PlayerRoute, usePlayerMilestone } from "../player-context";
 import { PlayerLink } from "../player-link";
-import { PrimaryActionLink, PrimaryKbd, SecondaryKbd } from "./completion-action-link";
+import {
+  PrimaryActionLink,
+  PrimaryKbd,
+  SecondaryActionButton,
+  SecondaryKbd,
+} from "./completion-action-link";
 import { MilestoneActions } from "./completion-milestone-actions";
 
 /**
@@ -55,15 +60,13 @@ function SecondaryActions({
   );
 
   const restartButton = (
-    <Button
-      aria-keyshortcuts="r"
-      className={cn(isInline ? "flex-1" : "w-full")}
+    <SecondaryActionButton
+      className={isInline ? "flex-1" : undefined}
       onClick={onRestart}
-      variant="outline"
+      shortcut="R"
     >
       {t("Try again")}
-      <SecondaryKbd>R</SecondaryKbd>
-    </Button>
+    </SecondaryActionButton>
   );
 
   if (isInline) {
@@ -103,7 +106,7 @@ export function CompletionActions({
   if (milestone) {
     return (
       <CompletionActionsLayout>
-        <MilestoneActions />
+        <MilestoneActions onRestart={onRestart} />
       </CompletionActionsLayout>
     );
   }
