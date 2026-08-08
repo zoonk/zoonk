@@ -196,7 +196,7 @@ private struct SignedInAccountView: View {
       }
 
       Section {
-        Button(role: .destructive) {
+        Button {
           isConfirmingSignOut = true
         } label: {
           AccountRowLabel(
@@ -213,7 +213,9 @@ private struct SignedInAccountView: View {
               "Delete account",
               tableName: "Account",
               comment: "Account option that opens permanent account deletion"),
-            systemImage: "trash")
+            systemImage: "trash"
+          )
+          .foregroundStyle(.red)
         }
         .disabled(session.isWorking)
       }
@@ -229,7 +231,7 @@ private struct SignedInAccountView: View {
       isPresented: $isConfirmingSignOut,
       titleVisibility: .visible
     ) {
-      Button(role: .destructive) {
+      Button {
         Task {
           await session.signOut()
         }
@@ -358,7 +360,6 @@ private struct AccountRowLabel: View {
       title
     } icon: {
       Image(systemName: systemImage)
-        .foregroundStyle(.tint)
     }
   }
 }
