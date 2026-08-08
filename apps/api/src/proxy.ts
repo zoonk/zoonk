@@ -11,8 +11,19 @@ const corsHeaders = {
   "Access-Control-Max-Age": "86400",
 };
 
+const AUTH_PATH = "/auth";
 const BETTER_AUTH_PATH = "/v1/auth";
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+
+/**
+ * Keeps central-auth pages outside the API-specific origin guard. Next.js
+ * already protects Server Actions, while Portless presents a public browser
+ * origin that differs from the internal URL exposed through `request.nextUrl`.
+ */
+function isAuthPageRequest(request: NextRequest): boolean {
+  const pathname = request.nextUrl.pathname;
+  return pathname === AUTH_PATH || pathname.startsWith(`${AUTH_PATH}/`);
+}
 
 /**
  * Distinguishes token-authenticated native and CLI requests from browser
@@ -73,6 +84,10 @@ function createPassThroughResponse(request: NextRequest): NextResponse {
 }
 
 export function proxy(request: NextRequest) {
+  if (isAuthPageRequest(request)) {
+    return createPassThroughResponse(request);
+  }
+
   const origin = request.headers.get("origin");
 
   if (requiresSameOrigin(request) && origin !== request.nextUrl.origin) {
