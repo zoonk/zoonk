@@ -1,7 +1,7 @@
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["*.local"],
+  allowedDevOrigins: ["**.local"],
   cacheComponents: true,
   experimental: {
     turbopackFileSystemCacheForBuild: true,

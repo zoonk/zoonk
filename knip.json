@@ -1,13 +1,14 @@
 {
   "$schema": "./node_modules/knip/schema.json",
-  "ignore": ["**/*.d.**.ts", ".agents/**"],
+  "ignore": ["**/*.d.**.ts"],
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
-  "ignoreBinaries": ["stripe", "build-and-start", "turbo!"],
+  "ignoreBinaries": ["build-and-start", "turbo!"],
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",
     "next",
+    "portless",
     "postcss-load-config",
     "raw-loader",
     "tsx"
@@ -15,6 +16,7 @@
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
+    ".": { "project": ["scripts/dev/**/*.mts"] },
     "apps/api": {
       "entry": [".eloqnt/config.ts"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]

@@ -5,7 +5,9 @@
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "next build",
-    "dev": "next dev -p 3200",
+    "dev": "node ../../scripts/dev/run-service.mts admin",
+    "dev:app": "next dev",
+    "dev:direct": "next dev -p 3200",
     "start": "next start -p 3200",
     "typecheck": "next typegen && tsc --noEmit"
   },

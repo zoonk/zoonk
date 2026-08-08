@@ -45,8 +45,8 @@ describe("sendEmail", () => {
     });
   });
 
-  it("captures development email on the configured local inbox port", async () => {
-    vi.stubEnv("MAILBOX_PORT", "4317");
+  it("captures development email at the configured mailbox URL", async () => {
+    vi.stubEnv("MAILBOX_URL", "http://mailbox.zoonk.localhost:1355/api/emails");
     vi.stubEnv("MAILER_API_KEY", "");
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("VERCEL_ENV", "");
@@ -56,7 +56,10 @@ describe("sendEmail", () => {
 
     await sendEmail({ htmlBody: otpBody, subject: "Your OTP code", to: "user@example.com" });
 
-    expect(fetchMock).toHaveBeenCalledWith("http://127.0.0.1:4317/api/emails", expect.any(Object));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://mailbox.zoonk.localhost:1355/api/emails",
+      expect.any(Object),
+    );
   });
 
   it("allows missing mailer config in e2e without logging the email body", async () => {

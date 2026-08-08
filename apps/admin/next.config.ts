@@ -3,7 +3,7 @@ import { type NextConfig } from "next";
 const CACHE_IMAGE_DAYS = 30;
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["*.local"],
+  allowedDevOrigins: ["**.local"],
   cacheComponents: true,
   experimental: {
     authInterrupts: true,

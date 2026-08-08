@@ -1,7 +1,7 @@
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
-import { getAllowedHosts, getBaseUrl } from "@zoonk/utils/origin";
+import { getAllowedHosts, getBaseUrl, getDevelopmentTrustedOrigins } from "@zoonk/utils/origin";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
@@ -52,7 +52,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-  trustedOrigins: ["https://appleid.apple.com"],
+  trustedOrigins: ["https://appleid.apple.com", ...getDevelopmentTrustedOrigins()],
 };
 
 export const baseAuthPlugins = [

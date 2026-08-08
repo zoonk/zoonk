@@ -1,0 +1,5 @@
+{
+  "extends": "@zoonk/tsconfig/base.json",
+  "compilerOptions": { "allowImportingTsExtensions": true },
+  "include": ["dev/**/*.mts"]
+}

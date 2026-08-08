@@ -78,9 +78,13 @@ function expectAuthErrorRedirect(response: APIResponse): void {
 }
 
 test.describe("Auth Callback", () => {
-  test("starts login with a state-bound callback", async ({ context, page }) => {
+  test("starts login when randomUUID is unavailable", async ({ context, page }) => {
     const baseURL = getBaseURL();
     const authUrls: string[] = [];
+
+    await page.addInitScript(() => {
+      Object.defineProperty(globalThis.crypto, "randomUUID", { value: undefined });
+    });
 
     await page.route("**/auth/login**", async (route) => {
       authUrls.push(route.request().url());

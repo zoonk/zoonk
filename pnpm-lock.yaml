@@ -125,6 +125,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.3
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:packages/tsconfig
       knip:
         specifier: 6.29.0
         version: 6.29.0
@@ -137,6 +140,9 @@ importers:
       oxlint-tsgolint:
         specifier: 7.0.2001
         version: 7.0.2001
+      portless:
+        specifier: 0.15.5
+        version: 0.15.5
       turbo:
         specifier: 2.10.6
         version: 2.10.6
@@ -424,9 +430,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: 6.0.4
         version: 6.0.4(vite@8.1.5(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      '@zoonk/mailer':
-        specifier: workspace:*
-        version: link:../../packages/mailer
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -6492,6 +6495,12 @@ packages:
 
   po-parser@2.1.1:
     resolution: {integrity: sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==}
+
+  portless@0.15.5:
+    resolution: {integrity: sha512-zmJu4Q8/fY54oVUT/5NnmF4Ih8wTdCvCf6JCN783dRYl9mXkJBzXSckX2lztGCLIbM70varDjCudAbGKT73XPg==}
+    engines: {node: '>=24'}
+    os: [darwin, linux, win32]
+    hasBin: true
 
   postcss-selector-parser@6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -13291,6 +13300,8 @@ snapshots:
   pngjs@7.0.0: {}
 
   po-parser@2.1.1: {}
+
+  portless@0.15.5: {}
 
   postcss-selector-parser@6.0.10:
     dependencies:

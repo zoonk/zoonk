@@ -9,13 +9,23 @@ import {
   addLoginStateToCallbackUrl,
 } from "./ott-state";
 
+const LOGIN_STATE_BYTE_LENGTH = 32;
+const HEX_RADIX = 16;
+
+/** Encodes each random byte with a fixed width so the complete state can safely travel through cookies and URLs. */
+function byteToHex(byte: number): string {
+  return byte.toString(HEX_RADIX).padStart(2, "0");
+}
+
 /**
  * Creates an unpredictable state value in the browser that starts the login
- * flow. This is the value the callback must later see in both the query string
- * and the local cookie before it redeems a Better Auth one-time token.
+ * flow. `getRandomValues` remains available on insecure HTTP origins such as
+ * LAN development hosts, where browsers do not expose `randomUUID`.
  */
 function createLoginState(): string {
-  return crypto.randomUUID();
+  const randomBytes = globalThis.crypto.getRandomValues(new Uint8Array(LOGIN_STATE_BYTE_LENGTH));
+
+  return Array.from(randomBytes, byteToHex).join("");
 }
 
 /**
