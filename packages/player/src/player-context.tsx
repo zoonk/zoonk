@@ -70,7 +70,6 @@ type PlayerLessonMetaInput = Omit<PlayerLessonMeta, "description"> & {
 
 type PlayerConfigContextValue = {
   lessonMeta: PlayerLessonMetaInput;
-  escape: () => void;
   linkComponent: PlayerLinkComponent;
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;

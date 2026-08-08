@@ -14,6 +14,7 @@ import {
   type PlayerLinkComponent,
   type PlayerMilestone,
   type PlayerNavigation,
+  type PlayerRoute,
   PlayerRuntimeContext,
   type PlayerViewer,
 } from "./player-context";
@@ -58,7 +59,7 @@ export function PlayerProvider({
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
   onComplete: (input: CompletionInput) => void;
-  onEscape: () => void;
+  onEscape: (href: PlayerRoute) => void;
   onNext?: () => void;
   onStepChange?: (event: PlayerStepChangeEvent) => void;
   progressSnapshot?: PlayerProgressSnapshot | null;
@@ -93,11 +94,16 @@ export function PlayerProvider({
     onNext?.();
   }, [onNext]);
 
+  const escapeHref =
+    screen.scene === "completion" && milestone?.kind === "course"
+      ? milestone.courseHref
+      : navigation.chapterHref;
+
   usePlayerKeyboard({
     keyboard: screen.keyboard,
     onCheck: actions.check,
     onContinue: actions.continue,
-    onEscape,
+    onEscape: () => onEscape(escapeHref),
     onNavigateNext: actions.navigateNext,
     onNavigatePrev: actions.navigatePrev,
     onNext: onNext ? handleNext : null,
@@ -106,7 +112,6 @@ export function PlayerProvider({
 
   const configValue = useMemo(
     () => ({
-      escape: onEscape,
       lessonMeta: {
         chapterTitle,
         courseTitle,
@@ -136,7 +141,6 @@ export function PlayerProvider({
       linkComponent,
       milestone,
       navigation,
-      onEscape,
       viewer,
     ],
   );

@@ -174,9 +174,9 @@ msgid "Review"
 msgstr "Review"
 
 #: src/components/completion-milestone-actions.tsx
-msgctxt "w0D7HC"
-msgid "Review Course"
-msgstr "Review Course"
+msgctxt "qrEiLa"
+msgid "Back to course"
+msgstr "Back to course"
 
 #: src/components/completion-milestone-actions.tsx
 msgctxt "_N8rYN"

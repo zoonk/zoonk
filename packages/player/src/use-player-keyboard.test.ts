@@ -73,16 +73,11 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onContinue).not.toHaveBeenCalled();
     });
 
-    it("calls onNext when completion Enter action prefers next", () => {
+    it("calls onNext when completion exposes a next action", () => {
       const onNext = vi.fn();
 
       const opts = buildOptions({
-        keyboard: {
-          canRestart: true,
-          enterAction: "nextOrEscape",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: true, enterAction: "next", leftAction: null, rightAction: null },
         onNext,
       });
 
@@ -94,14 +89,9 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onEscape).not.toHaveBeenCalled();
     });
 
-    it("calls onEscape when completion Enter action has no next callback", () => {
+    it("does not fall back to Escape when completion has no next callback", () => {
       const opts = buildOptions({
-        keyboard: {
-          canRestart: true,
-          enterAction: "nextOrEscape",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: true, enterAction: "next", leftAction: null, rightAction: null },
         onNext: null,
       });
 
@@ -109,7 +99,7 @@ describe(usePlayerKeyboard, () => {
 
       fireKey("Enter");
 
-      expect(opts.onEscape).toHaveBeenCalledOnce();
+      expect(opts.onEscape).not.toHaveBeenCalled();
       expect(opts.onCheck).not.toHaveBeenCalled();
       expect(opts.onContinue).not.toHaveBeenCalled();
     });
@@ -183,12 +173,7 @@ describe(usePlayerKeyboard, () => {
   describe("R key", () => {
     it("calls onRestart when restart is enabled", () => {
       const opts = buildOptions({
-        keyboard: {
-          canRestart: true,
-          enterAction: "nextOrEscape",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: true, enterAction: "next", leftAction: null, rightAction: null },
       });
 
       renderHook(() => usePlayerKeyboard(opts));
@@ -209,12 +194,7 @@ describe(usePlayerKeyboard, () => {
 
     it("no-op when target is an input element", () => {
       const opts = buildOptions({
-        keyboard: {
-          canRestart: true,
-          enterAction: "nextOrEscape",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: true, enterAction: "next", leftAction: null, rightAction: null },
       });
 
       renderHook(() => usePlayerKeyboard(opts));

@@ -523,12 +523,12 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review course/iu }))
+      .element(completionScreen.getByRole("link", { name: /back to course/iu }))
       .toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("link", { name: /back to chapter/iu }))
-      .toBeInTheDocument();
+      .not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("button", { name: /review/iu }))

@@ -48,7 +48,7 @@ export async function advanceToCompletionSummary({
 function getCompletionSummaryAction(completionScreen: Locator) {
   return completionScreen
     .getByRole("link", {
-      name: /^(?<summaryAction>back to chapter|exit|next|next chapter|review course)$/iu,
+      name: /^(?<summaryAction>back to chapter|back to course|exit|next|next chapter)$/iu,
     })
     .first();
 }

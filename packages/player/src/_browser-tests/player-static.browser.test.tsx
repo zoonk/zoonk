@@ -785,6 +785,10 @@ describe("player browser integration: static steps", () => {
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     fireEvent.keyDown(globalThis.window, { key: "Enter" });
 
+    expect(onEscape).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(globalThis.window, { key: "Escape" });
+
     expect(onEscape).toHaveBeenCalledOnce();
   });
 });

@@ -356,7 +356,7 @@ test.describe("Review Step", () => {
       completionScreen.getByRole("heading", { name: /course complete/iu }),
     ).toBeVisible();
 
-    await expect(completionScreen.getByRole("link", { name: /review course/iu })).toBeVisible();
+    await expect(completionScreen.getByRole("link", { name: /back to course/iu })).toBeVisible();
 
     await expect(
       completionScreen.getByText(completionScoreText, { exact: true }),

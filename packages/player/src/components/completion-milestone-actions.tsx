@@ -23,8 +23,8 @@ function ReviewButton({ onRestart }: { onRestart: () => void }) {
 }
 
 /**
- * Course completion keeps both curriculum destinations available, then offers
- * lesson review without presenting the chapter link as though it starts a review.
+ * Course completion returns to the completed course with the same Escape
+ * shortcut used for chapter completion, while review stays inside the player.
  */
 function CourseCompleteActions({ onRestart }: { onRestart: () => void }) {
   const t = useExtracted();
@@ -36,13 +36,9 @@ function CourseCompleteActions({ onRestart }: { onRestart: () => void }) {
 
   return (
     <>
-      <PrimaryActionLink href={milestone.courseHref} shortcut="Enter">
-        {t("Review Course")}
+      <PrimaryActionLink href={milestone.courseHref} shortcut="Esc">
+        {t("Back to course")}
       </PrimaryActionLink>
-
-      <SecondaryActionLink href={milestone.chapterHref} shortcut="Esc">
-        {t("Back to chapter")}
-      </SecondaryActionLink>
 
       <ReviewButton onRestart={onRestart} />
     </>

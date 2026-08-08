@@ -185,7 +185,7 @@ export function LessonPlayerClient({
       milestone={model.milestone}
       navigation={model.navigation}
       onComplete={handleComplete}
-      onEscape={() => router.push(model.navigation.chapterHref)}
+      onEscape={(href) => router.push(href)}
       onNext={handleNext}
       onStepChange={handleStepChange}
       progressSnapshot={initialProgress?.progressSnapshot ?? null}
