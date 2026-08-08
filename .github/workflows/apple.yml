@@ -3,8 +3,10 @@ name: Apple App
 on:
   push:
     branches: [main]
+    paths: [apps/apple/**]
   pull_request:
     branches: [main]
+    paths: [apps/apple/**]
     types: [opened, synchronize, reopened]
 
 concurrency:
