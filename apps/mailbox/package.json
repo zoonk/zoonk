@@ -19,9 +19,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "6.0.4",
+    "@vitejs/plugin-react": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "catalog:",
-    "vite": "8.1.5"
+    "vite": "catalog:"
   }
 }

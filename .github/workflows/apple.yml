@@ -24,7 +24,7 @@ jobs:
     runs-on: macos-26
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check Swift formatting
         run: make -C apps/apple format-check
@@ -48,7 +48,7 @@ jobs:
             target: build-watchos
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build ${{ matrix.platform }}
         run: make -C apps/apple ${{ matrix.target }}
