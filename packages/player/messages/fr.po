@@ -63,7 +63,6 @@ msgid "Try again"
 msgstr "Réessayer"
 
 #: src/components/completion-actions.tsx
-#: src/components/completion-milestone-actions.tsx
 #: src/components/step-navigation-button-group.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
@@ -170,19 +169,24 @@ msgid "You're halfway to {belt}, level {level}. {count, plural, one {One more le
 msgstr "Tu es à mi-chemin de {belt}, niveau {level}. {count, plural, one {Encore une leçon et tu y seras} other {Encore # leçons et tu y seras}}."
 
 #: src/components/completion-milestone-actions.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Réviser"
+
+#: src/components/completion-milestone-actions.tsx
+msgctxt "qrEiLa"
+msgid "Back to course"
+msgstr "Retour au cours"
+
+#: src/components/completion-milestone-actions.tsx
+msgctxt "_N8rYN"
+msgid "Back to chapter"
+msgstr "Retour au chapitre"
+
+#: src/components/completion-milestone-actions.tsx
 msgctxt "DiIkZH"
 msgid "Next Chapter"
 msgstr "Chapitre suivant"
-
-#: src/components/completion-milestone-actions.tsx
-msgctxt "w0D7HC"
-msgid "Review Course"
-msgstr "Réviser le cours"
-
-#: src/components/completion-milestone-actions.tsx
-msgctxt "wm_M34"
-msgid "Review Chapter"
-msgstr "Réviser le chapitre"
 
 #: src/components/completion-patterns-milestone.tsx
 msgctxt "e6_3Ke"

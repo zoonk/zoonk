@@ -136,7 +136,8 @@ async function createLessonCompleteScenario(prefix: string) {
 
 /**
  * One lesson per chapter, two chapters. Completing chapter1's lesson → "Chapter Complete".
- * "Next Chapter" → chapter2 page. "Review Chapter" → chapter1 page.
+ * "Next Chapter" → chapter2 page. "Back to Chapter" → chapter1 page. "Review" restarts
+ * the lesson that completed chapter1.
  */
 async function createChapterCompleteScenario(prefix: string) {
   const org = await getAiOrganization();
@@ -249,8 +250,8 @@ async function createChapterCompleteWithUngeneratedNextChapterScenario(prefix: s
 }
 
 /**
- * One chapter, one lesson, one lesson. Completing it → "Course Complete".
- * "Review Course" → course page. "Review Chapter" → chapter page.
+ * One chapter, one lesson. Completing it → "Course Complete".
+ * "Back to course" uses Escape, while "Review" restarts the completed lesson.
  */
 async function createCourseCompleteScenario(prefix: string) {
   const org = await getAiOrganization();
@@ -285,7 +286,6 @@ async function createCourseCompleteScenario(prefix: string) {
   await createQuizLesson(lesson.id, uniqueId);
 
   return {
-    chapter,
     course,
     lessonUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
     uniqueId,
@@ -369,7 +369,7 @@ test.describe("Lesson Completion UX", () => {
     await browserContext.close();
   });
 
-  test("chapter complete: review chapter navigates to current chapter page", async ({
+  test("chapter complete: back to chapter navigates to current chapter page", async ({
     baseURL,
     browser,
   }) => {
@@ -383,8 +383,29 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await completionScreen.getByRole("link", { name: /review chapter/iu }).click();
+    await completionScreen.getByRole("link", { name: /back to chapter/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter1.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("chapter complete: review restarts the completed lesson", async ({ baseURL, browser }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { lessonUrl, uniqueId } = await createChapterCompleteScenario("chrestart");
+
+    await page.goto(lessonUrl);
+    await page.waitForLoadState("networkidle");
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
+
+    await page
+      .getByRole("status")
+      .getByRole("button", { name: /review/iu })
+      .click();
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Question ${uniqueId}`, "u") }),
+    ).toBeVisible();
 
     await browserContext.close();
   });
@@ -421,7 +442,10 @@ test.describe("Lesson Completion UX", () => {
 
   // --- Course Complete ---
 
-  test("course complete: review course navigates to course page", async ({ baseURL, browser }) => {
+  test("course complete: Escape follows the back to course action", async ({
+    baseURL,
+    browser,
+  }) => {
     const email = await createUniqueUser(baseURL!);
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
     const { lessonUrl, course, uniqueId } = await createCourseCompleteScenario("crsrev");
@@ -435,29 +459,16 @@ test.describe("Lesson Completion UX", () => {
     await expect(completionScreen.getByText(course.title)).toBeVisible();
     await expect(completionScreen.getByText(`Final Lesson ${uniqueId}`)).not.toBeVisible();
     await expect(completionScreen.getByText("No chapters left in this course")).not.toBeVisible();
+    const backToCourseLink = completionScreen.getByRole("link", { name: /back to course/iu });
 
-    await completionScreen.getByRole("link", { name: /review course/iu }).click();
+    await expect(backToCourseLink).toBeVisible();
+    await expect(completionScreen.getByRole("link", { name: /back to chapter/iu })).toHaveCount(0);
+
+    await page.keyboard.press("Enter");
+    await expect(backToCourseLink).toBeVisible();
+
+    await page.keyboard.press("Escape");
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
-
-    await browserContext.close();
-  });
-
-  test("course complete: review chapter navigates to current chapter page", async ({
-    baseURL,
-    browser,
-  }) => {
-    const email = await createUniqueUser(baseURL!);
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-    const { lessonUrl, chapter, uniqueId } = await createCourseCompleteScenario("crschrev");
-
-    await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
-    await completeQuizAndShowCompletionSummary({ page, uniqueId });
-
-    const completionScreen = page.getByRole("status");
-
-    await completionScreen.getByRole("link", { name: /review chapter/iu }).click();
-    await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
 
     await browserContext.close();
   });

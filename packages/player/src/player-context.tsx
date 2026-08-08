@@ -41,15 +41,11 @@ export type PlayerLessonProgress = {
   totalLessonsInChapter: number;
 };
 
-type ReviewMilestone = { kind: "chapter"; nextHref: PlayerRoute | null; reviewHref: PlayerRoute };
+type ChapterMilestone = { chapterHref: PlayerRoute; kind: "chapter"; nextHref: PlayerRoute | null };
 
-type CourseMilestone = {
-  kind: "course";
-  reviewHref: PlayerRoute;
-  secondaryReviewHref: PlayerRoute;
-};
+type CourseMilestone = { chapterHref: PlayerRoute; courseHref: PlayerRoute; kind: "course" };
 
-export type PlayerMilestone = ReviewMilestone | CourseMilestone;
+export type PlayerMilestone = ChapterMilestone | CourseMilestone;
 
 export type PlayerRuntimeContextValue = {
   actions: PlayerActions;
@@ -74,7 +70,6 @@ type PlayerLessonMetaInput = Omit<PlayerLessonMeta, "description"> & {
 
 type PlayerConfigContextValue = {
   lessonMeta: PlayerLessonMetaInput;
-  escape: () => void;
   linkComponent: PlayerLinkComponent;
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;

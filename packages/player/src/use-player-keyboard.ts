@@ -23,7 +23,6 @@ function runKeyboardAction({
   action,
   onCheck,
   onContinue,
-  onEscape,
   onNavigateNext,
   onNavigatePrev,
   onNext,
@@ -34,7 +33,7 @@ function runKeyboardAction({
     | PlayerKeyboardModel["rightAction"];
 } & Pick<
   PlayerKeyboardParams,
-  "onCheck" | "onContinue" | "onEscape" | "onNavigateNext" | "onNavigatePrev" | "onNext"
+  "onCheck" | "onContinue" | "onNavigateNext" | "onNavigatePrev" | "onNext"
 >) {
   if (!action) {
     return false;
@@ -53,8 +52,12 @@ function runKeyboardAction({
     case "navigatePrev":
       onNavigatePrev();
       return;
-    case "nextOrEscape":
-      (onNext ?? onEscape)();
+    case "next":
+      if (!onNext) {
+        return false;
+      }
+
+      onNext();
       return;
     default:
       return false;
@@ -78,7 +81,6 @@ export function usePlayerKeyboard({
         action: keyboard.enterAction,
         onCheck,
         onContinue,
-        onEscape,
         onNavigateNext,
         onNavigatePrev,
         onNext,
@@ -105,7 +107,6 @@ export function usePlayerKeyboard({
         action: keyboard.rightAction,
         onCheck,
         onContinue,
-        onEscape,
         onNavigateNext,
         onNavigatePrev,
         onNext,
@@ -120,7 +121,6 @@ export function usePlayerKeyboard({
         action: keyboard.leftAction,
         onCheck,
         onContinue,
-        onEscape,
         onNavigateNext,
         onNavigatePrev,
         onNext,

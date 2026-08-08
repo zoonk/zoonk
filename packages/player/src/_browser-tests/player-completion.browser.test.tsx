@@ -451,7 +451,7 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
   });
 
-  it("falls back to review-only chapter completion when there is no next chapter", async () => {
+  it("shows back and review actions when chapter completion has no next chapter", async () => {
     renderPlayer({
       chapterTitle: "Completed Chapter",
       lesson: buildCompletionQuizLesson(),
@@ -462,7 +462,7 @@ describe("player browser integration: completion", () => {
         totalLessonsInChapter: 4,
       },
       lessonTitle: "Completed Lesson",
-      milestone: { kind: "chapter", nextHref: null, reviewHref: "/review-chapter" },
+      milestone: { chapterHref: "/chapter", kind: "chapter", nextHref: null },
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -484,7 +484,11 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
+      .element(completionScreen.getByRole("link", { name: /back to chapter/iu }))
+      .toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByRole("button", { name: /review/iu }))
       .toBeInTheDocument();
 
     await expect
@@ -492,16 +496,12 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
   });
 
-  it("renders course completion review actions", async () => {
+  it("renders course completion navigation and review actions", async () => {
     renderPlayer({
       courseTitle: "Completed Course",
       lesson: buildCompletionQuizLesson(),
       lessonTitle: "Final Lesson",
-      milestone: {
-        kind: "course",
-        reviewHref: "/review-course",
-        secondaryReviewHref: "/review-chapter",
-      },
+      milestone: { chapterHref: "/chapter", courseHref: "/course", kind: "course" },
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -523,18 +523,22 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review course/iu }))
+      .element(completionScreen.getByRole("link", { name: /back to course/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
+      .element(completionScreen.getByRole("link", { name: /back to chapter/iu }))
+      .not.toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByRole("button", { name: /review/iu }))
       .toBeInTheDocument();
   });
 
   it("shows structural milestones for guest completion", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
-      milestone: { kind: "chapter", nextHref: "/next-chapter", reviewHref: "/review-chapter" },
+      milestone: { chapterHref: "/chapter", kind: "chapter", nextHref: "/next-chapter" },
       navigation: buildNavigation({ loginHref: "/sign-in" }),
       viewer: { isAuthenticated: false, userName: null },
     });
@@ -551,7 +555,11 @@ describe("player browser integration: completion", () => {
     await expect.element(completionScreen.getByText(/chapter complete/iu)).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
+      .element(completionScreen.getByRole("link", { name: /back to chapter/iu }))
+      .toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByRole("button", { name: /review/iu }))
       .toBeInTheDocument();
 
     await expect

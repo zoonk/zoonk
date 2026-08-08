@@ -105,9 +105,9 @@ describe(buildLessonPlayerModel, () => {
     });
 
     expect(model.milestone).toStrictEqual({
+      chapterHref: "/b/brand/c/course/ch/chapter-1",
       kind: "chapter",
       nextHref: "/b/brand/c/course/ch/chapter-2",
-      reviewHref: "/b/brand/c/course/ch/chapter-1",
     });
 
     expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-2/l/lesson-2");
@@ -123,9 +123,9 @@ describe(buildLessonPlayerModel, () => {
     });
 
     expect(model.milestone).toStrictEqual({
+      chapterHref: "/b/brand/c/course/ch/chapter-1",
+      courseHref: "/b/brand/c/course",
       kind: "course",
-      reviewHref: "/b/brand/c/course",
-      secondaryReviewHref: "/b/brand/c/course/ch/chapter-1",
     });
 
     expect(model.onNextHref).toBeNull();
@@ -142,9 +142,9 @@ describe(buildLessonPlayerModel, () => {
     });
 
     expect(model.milestone).toStrictEqual({
+      chapterHref: "/b/brand/c/course/ch/chapter-1",
       kind: "chapter",
       nextHref: "/b/brand/c/course/ch/chapter-2",
-      reviewHref: "/b/brand/c/course/ch/chapter-1",
     });
 
     expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-2");

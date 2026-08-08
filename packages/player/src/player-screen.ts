@@ -29,7 +29,7 @@ type PlayerBottomBarModel =
 
 export type PlayerKeyboardModel = {
   canRestart: boolean;
-  enterAction: "check" | "continue" | "navigateNext" | "nextOrEscape" | null;
+  enterAction: "check" | "continue" | "navigateNext" | "next" | null;
   leftAction: "navigatePrev" | null;
   rightAction: "navigateNext" | null;
 };
@@ -112,12 +112,7 @@ function getCompletedScreenModel({
 
   return {
     bottomBar: null,
-    keyboard: {
-      canRestart: true,
-      enterAction: "nextOrEscape",
-      leftAction: null,
-      rightAction: null,
-    },
+    keyboard: { canRestart: true, enterAction: "next", leftAction: null, rightAction: null },
     kind: "completed",
     scene: "completion",
     showChrome: false,
@@ -201,7 +196,7 @@ function getKeyboardModel({
   step: PlayerStepDescriptor;
 }): PlayerKeyboardModel {
   if (phase === "completed") {
-    return { canRestart: true, enterAction: "nextOrEscape", leftAction: null, rightAction: null };
+    return { canRestart: true, enterAction: "next", leftAction: null, rightAction: null };
   }
 
   const enterAction =

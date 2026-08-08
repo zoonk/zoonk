@@ -10,6 +10,7 @@ import {
   type PlayerLessonProgress,
   type PlayerMilestone,
   type PlayerNavigation,
+  type PlayerRoute,
   type PlayerViewer,
 } from "../player-context";
 import { PlayerProvider } from "../player-provider";
@@ -74,7 +75,7 @@ export function renderPlayer({
   milestone?: PlayerMilestone | null;
   navigation?: PlayerNavigation;
   onComplete?: (input: CompletionInput) => void;
-  onEscape?: () => void;
+  onEscape?: (href: PlayerRoute) => void;
   onNext?: () => void;
   progressSnapshot?: PlayerProgressSnapshot | null;
   totalBrainPower?: number;

@@ -120,7 +120,7 @@ describe(getPlayerScreenModel, () => {
     expect(screen.kind).toBe("completed");
     expect(screen.scene).toBe("completion");
     expect(screen.bottomBar).toBeNull();
-    expect(screen.keyboard.enterAction).toBe("nextOrEscape");
+    expect(screen.keyboard.enterAction).toBe("next");
     expect(screen.keyboard.canRestart).toBe(true);
   });
 
