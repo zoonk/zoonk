@@ -1,4 +1,5 @@
-import { getProjectName, getServiceName } from "./config.mts";
+import { homedir } from "node:os";
+import { getPortlessEnvironment, getProjectName, getServiceName } from "./config.mts";
 import { applyCommandExit, getPnpmCommand, runForegroundCommand } from "./process.mts";
 
 const [serviceName] = process.argv.slice(2);
@@ -8,8 +9,15 @@ if (!serviceName) {
 }
 
 const currentDirectory = process.cwd();
-const pnpmCommand = getPnpmCommand(process.env);
-const projectName = getProjectName({ currentDirectory });
+const lanMode = process.argv.includes("--lan") || process.env.PORTLESS_LAN === "1";
+
+const environment = {
+  ...process.env,
+  ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode }),
+};
+
+const pnpmCommand = getPnpmCommand(environment);
+const projectName = getProjectName({ currentDirectory, environment });
 const name = getServiceName({ projectName, serviceName });
 
 /** Gives Portless one clone-scoped service name while leaving application and child-process ownership to Portless and Turbo. */
@@ -28,7 +36,7 @@ const result = await runForegroundCommand({
   ],
   command: pnpmCommand.command,
   currentDirectory,
-  environment: process.env,
+  environment,
 });
 
 applyCommandExit(result);
