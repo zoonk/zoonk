@@ -6,6 +6,11 @@ import { type GenerationStatus } from "./generation-store";
 
 const DEFAULT_REDIRECT_DELAY_MS = 1500;
 
+/** Identifies the known Safari response interruption so it does not create a false alert. */
+function isExpectedResponseInterruption(error: unknown): boolean {
+  return error instanceof TypeError && error.message === "Load failed";
+}
+
 export function useCompletionRedirect(config: {
   beforeRedirect: () => Promise<void>;
   delay?: number;
@@ -16,6 +21,10 @@ export function useCompletionRedirect(config: {
 
   const onRedirect = useEffectEvent(async () => {
     await beforeRedirect().catch((error: unknown) => {
+      if (isExpectedResponseInterruption(error)) {
+        return;
+      }
+
       logError("Generation cache invalidation failed before redirect", error);
     });
 
