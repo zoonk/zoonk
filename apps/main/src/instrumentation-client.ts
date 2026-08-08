@@ -13,6 +13,17 @@ if (process.env.NODE_ENV === "production") {
     enableLogs: true,
     tracesSampleRate: 0.1,
   });
+
+  initBotId({
+    protect: [
+      { method: "POST", path: "/api/auth/*" },
+      { method: "GET", path: "/start/learn/*" },
+      // BotID sees localized browser paths before the proxy rewrites them.
+      { method: "GET", path: "/*/start/learn/*" },
+      { method: "GET", path: "/generate/*" },
+      { method: "GET", path: "/*/generate/*" },
+    ],
+  });
 }
 
 if (postHogConfig) {
@@ -23,14 +34,3 @@ if (postHogConfig) {
 }
 
 export const onRouterTransitionStart = captureRouterTransitionStart;
-
-initBotId({
-  protect: [
-    { method: "POST", path: "/api/auth/*" },
-    { method: "GET", path: "/start/learn/*" },
-    // BotID sees localized browser paths before the proxy rewrites them.
-    { method: "GET", path: "/*/start/learn/*" },
-    { method: "GET", path: "/generate/*" },
-    { method: "GET", path: "/*/generate/*" },
-  ],
-});

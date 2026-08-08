@@ -21,60 +21,32 @@ export function getPnpmCommand(environment: NodeJS.ProcessEnv): ExecutableComman
   return { args: [], command: pnpmExecutable };
 }
 
-/** Recognizes the harmless race where a detached child exits before Node reports its final status to the wrapper. */
-function isMissingProcessError(error: unknown): boolean {
-  return error instanceof Error && "code" in error && error.code === "ESRCH";
-}
-
 /**
- * Runs an interactive child with the current terminal attached and reports its real exit status. Keeping process ownership here makes the root launcher and Stripe listener behave consistently when an agent stops them.
+ * Keeps one interactive child attached to the current terminal and forwards explicit shutdowns to it. Turbo and Portless remain responsible for their own child processes.
  */
 export function runForegroundCommand({
   args,
   command,
   currentDirectory,
   environment,
-  onStart,
-  terminateProcessGroup = true,
 }: {
   args: string[];
   command: string;
   currentDirectory: string;
   environment: NodeJS.ProcessEnv;
-  onStart?: (childProcessId: number) => void;
-  terminateProcessGroup?: boolean;
 }): Promise<CommandResult> {
   return new Promise((resolve, reject) => {
-    const usesProcessGroup = process.platform !== "win32";
-
     const child = spawn(command, args, {
       cwd: currentDirectory,
-      detached: usesProcessGroup,
       env: environment,
       stdio: "inherit",
     });
 
-    /** Ensures stopping a wrapper also stops Portless and every dev server nested below it. */
+    /** Gives the child the same explicit stop received by this lightweight wrapper. */
     function forwardSignal(signal: NodeJS.Signals): void {
-      if (!child.pid || child.exitCode !== null) {
-        return;
+      if (child.exitCode === null && !child.killed) {
+        child.kill(signal);
       }
-
-      if (usesProcessGroup && terminateProcessGroup) {
-        try {
-          process.kill(-child.pid, signal);
-        } catch (error) {
-          if (!isMissingProcessError(error)) {
-            throw error;
-          }
-
-          child.kill(signal);
-        }
-
-        return;
-      }
-
-      child.kill(signal);
     }
 
     /** Forwards an interactive stop using the signal expected by terminal applications. */
@@ -105,16 +77,6 @@ export function runForegroundCommand({
       removeSignalHandlers();
       resolve({ code, signal });
     });
-
-    try {
-      if (child.pid) {
-        onStart?.(child.pid);
-      }
-    } catch (error) {
-      forwardTermination();
-      removeSignalHandlers();
-      reject(error instanceof Error ? error : new Error(String(error)));
-    }
   });
 }
 

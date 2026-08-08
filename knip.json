@@ -3,11 +3,12 @@
   "ignore": ["**/*.d.**.ts"],
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
-  "ignoreBinaries": ["build-and-start", "taskkill.exe", "turbo!"],
+  "ignoreBinaries": ["build-and-start", "turbo!"],
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",
     "next",
+    "portless",
     "postcss-load-config",
     "raw-loader",
     "tsx"

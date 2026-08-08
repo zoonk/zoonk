@@ -119,7 +119,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 ## Local Authentication
 
 - When a local page requires sign-in, choose an existing user from `packages/db/src/prisma/seed/users.ts`; it includes role-specific accounts such as `owner@zoonk.test`. Or if you need to test a new/random user, just use a random `@zoonk.test` email.
-- `pnpm dev` starts every app through clone- and worktree-scoped Portless routes, including the local mailbox app. After requesting an OTP, open the newest message for that user's email and use its code. Use `pnpm dev:lan` when a phone or another device needs `.local` routes, use `pnpm dev:direct` only when debugging without Portless, and use `pnpm dev:stop` to stop every Zoonk development stack and proxy across clones and worktrees.
+- `pnpm dev` starts every app through clone- and worktree-scoped Portless routes, including the local mailbox app. After requesting an OTP, open the newest message for that user's email and use its code. Use `pnpm dev:lan` only when a phone or another device needs `.local` routes, use `pnpm dev:direct` only when debugging without Portless, and use `pnpm dev:prune` to remove orphaned servers left by crashed Portless sessions. Stop active development stacks from their original terminals.
 
 ## Prisma Queries
 

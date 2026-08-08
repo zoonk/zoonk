@@ -12,61 +12,25 @@ import {
   getPnpmCommand,
   runForegroundCommand,
 } from "./process.mts";
-import {
-  type DevelopmentMode,
-  getDevelopmentProcessRegistrationPath,
-  getDevelopmentProcessRegistryDirectory,
-  registerDevelopmentProcess,
-  registerDevelopmentProcessStartup,
-  unregisterDevelopmentProcess,
-} from "./registry.mts";
 
 const currentDirectory = process.cwd();
 const directMode = process.argv.includes("--direct");
 const lanMode = process.argv.includes("--lan");
 const pnpmCommand = getPnpmCommand(process.env);
-const registryDirectory = getDevelopmentProcessRegistryDirectory(homedir());
 
-const registrationPath = getDevelopmentProcessRegistrationPath({
-  launcherProcessId: process.pid,
-  registryDirectory,
-});
-
-const startupPath = registerDevelopmentProcessStartup({
-  launcherProcessId: process.pid,
-  registryDirectory,
-});
-
-/** Records one root task runner for the lifetime of a stack so another worktree can stop it without scanning unrelated system processes. */
+/** Runs Turbo in the foreground so its normal terminal shutdown owns the complete development stack. */
 async function runDevelopmentCommand({
   args,
   environment,
-  mode,
 }: {
   args: string[];
   environment: NodeJS.ProcessEnv;
-  mode: DevelopmentMode;
 }): Promise<CommandResult> {
   return runForegroundCommand({
     args: [...pnpmCommand.args, ...args],
     command: pnpmCommand.command,
     currentDirectory,
     environment,
-    onStart(childProcessId) {
-      registerDevelopmentProcess({
-        registration: {
-          childProcessId,
-          currentDirectory,
-          launcherProcessId: process.pid,
-          mode,
-          registryVersion: 2,
-        },
-        registryDirectory,
-      });
-
-      unregisterDevelopmentProcess(startupPath);
-    },
-    terminateProcessGroup: false,
   });
 }
 
@@ -100,11 +64,7 @@ function getServiceUrl({
 
 /** Runs the preserved fixed-port topology when Portless needs to be bypassed during the trial. */
 async function startDirectDevelopment(): Promise<CommandResult> {
-  return runDevelopmentCommand({
-    args: ["exec", "turbo", "dev:direct", `--cwd=${currentDirectory}`],
-    environment: process.env,
-    mode: "direct",
-  });
+  return runDevelopmentCommand({ args: ["exec", "turbo", "dev:direct"], environment: process.env });
 }
 
 /** Resolves shared service URLs once before Next.js captures public environment variables at startup. */
@@ -115,31 +75,26 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
 
   startProxy(environment);
 
+  const mainUrl = getServiceUrl({ environment, projectName, serviceName: "main" });
   const apiUrl = getServiceUrl({ environment, projectName, serviceName: "api" });
   const mailboxUrl = getServiceUrl({ environment, projectName, serviceName: "mailbox" });
 
-  process.stdout.write(`API: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
+  process.stdout.write(`Main: ${mainUrl}\nAPI: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
 
   return runDevelopmentCommand({
-    args: ["exec", "turbo", "dev", `--cwd=${currentDirectory}`],
+    args: ["exec", "turbo", "dev"],
     environment: {
       ...environment,
       MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
       NEXT_PUBLIC_API_URL: apiUrl,
       ZOONK_DEV_PROJECT: projectName,
     },
-    mode: lanMode ? "lan" : "localhost",
   });
 }
 
-try {
-  const result =
-    directMode || process.env.PORTLESS === "0"
-      ? await startDirectDevelopment()
-      : await startPortlessDevelopment();
+const result =
+  directMode || process.env.PORTLESS === "0"
+    ? await startDirectDevelopment()
+    : await startPortlessDevelopment();
 
-  applyCommandExit(result);
-} finally {
-  unregisterDevelopmentProcess(startupPath);
-  unregisterDevelopmentProcess(registrationPath);
-}
+applyCommandExit(result);

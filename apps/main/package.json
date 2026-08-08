@@ -6,7 +6,7 @@
     "analyze": "next experimental-analyze",
     "build": "next build",
     "build:e2e": "env $(cat ../../packages/db/.env.e2e | xargs) next build",
-    "dev": "portless run --name $(node ../../scripts/dev/print-service-name.mts main) pnpm run dev:app",
+    "dev": "node ../../scripts/dev/run-service.mts main",
     "dev:app": "next dev",
     "dev:direct": "next dev",
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",

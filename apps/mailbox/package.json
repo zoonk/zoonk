@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "portless run --name $(node ../../scripts/dev/print-service-name.mts mailbox) vite",
+    "dev": "node ../../scripts/dev/run-service.mts mailbox",
+    "dev:app": "vite",
     "dev:direct": "vite",
     "typecheck": "tsc --noEmit"
   },

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "portless run --name $(node ../../scripts/dev/print-service-name.mts blog) pnpm run dev:app",
+    "dev": "node ../../scripts/dev/run-service.mts blog",
     "dev:app": "next dev",
     "dev:direct": "next dev -p 3300",
     "start": "next start -p 3300",

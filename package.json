@@ -9,7 +9,7 @@
     "dev": "node scripts/dev/start.mts",
     "dev:direct": "node scripts/dev/start.mts --direct",
     "dev:lan": "node scripts/dev/start.mts --lan",
-    "dev:stop": "node scripts/dev/stop.mts",
+    "dev:prune": "node scripts/dev/prune.mts",
     "e2e": "turbo e2e",
     "evals": "cd apps/evals && pnpm build-and-start",
     "evals:export": "./apps/evals/scripts/export-test-case.sh",
