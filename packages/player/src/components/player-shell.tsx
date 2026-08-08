@@ -120,7 +120,7 @@ export function PlayerShell() {
   usePlayerHaptics({ current: { phase: state.phase, result: currentResult, step: currentStep } });
 
   return (
-    <main className="flex h-dvh flex-col overflow-hidden">
+    <main className="ph-no-rageclick flex h-dvh flex-col overflow-hidden">
       {screen.showChrome && <InPlayStickyHeader progressValue={progressValue} />}
 
       <PlayerAudioProvider
