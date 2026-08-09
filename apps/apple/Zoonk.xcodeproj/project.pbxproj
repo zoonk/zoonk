@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5A0A00010000000000000001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, macos, ); productRef = 5A0A00200000000000000001 /* GoogleSignIn */; };
-		5A0A00020000000000000001 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, macos, ); productRef = 5A0A00210000000000000001 /* GoogleSignInSwift */; };
 		BEB8AB8A3022709B00E0E150 /* Zoonk Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -91,7 +90,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A0A00010000000000000001 /* GoogleSignIn in Frameworks */,
-				5A0A00020000000000000001 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,7 +155,6 @@
 			name = Zoonk;
 			packageProductDependencies = (
 				5A0A00200000000000000001 /* GoogleSignIn */,
-				5A0A00210000000000000001 /* GoogleSignInSwift */,
 			);
 			productName = Zoonk;
 			productReference = BEB8AB5E3022709A00E0E150 /* Zoonk.app */;
@@ -707,11 +704,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
-		};
-		5A0A00210000000000000001 /* GoogleSignInSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
-			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 };

@@ -1365,7 +1365,7 @@
       }
     },
     "Sign out" : {
-      "comment" : "Account sign-out action",
+      "comment" : "Account sign-out action\nConfirms signing out on Apple TV",
       "localizations" : {
         "de" : {
           "stringUnit" : {

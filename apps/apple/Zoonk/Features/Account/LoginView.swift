@@ -1,11 +1,6 @@
 import SwiftUI
 
-#if os(iOS) || os(macOS)
-  import GoogleSignInSwift
-#endif
-
 struct LoginView: View {
-  @Environment(\.colorScheme) private var colorScheme
   @Environment(SessionStore.self) private var session
 
   var body: some View {
@@ -45,24 +40,11 @@ struct LoginView: View {
             onFailure: session.reportSignInFailure)
 
           #if os(iOS) || os(macOS)
-            GoogleSignInButton(
-              scheme: colorScheme == .dark ? .dark : .light,
-              style: .standard,
-              state: session.isWorking ? .disabled : .normal
-            ) {
+            GoogleAuthorizationButton(isDisabled: session.isWorking) {
               Task {
                 await session.signInWithGoogle()
               }
             }
-            .frame(
-              width: authenticationButtonSize.width,
-              height: authenticationButtonSize.height
-            )
-            .accessibilityLabel(
-              Text(
-                "Sign in with Google",
-                tableName: "Account",
-                comment: "Accessibility label for the native Google sign-in button"))
           #endif
 
           NavigationLink {
@@ -78,6 +60,9 @@ struct LoginView: View {
             .frame(maxWidth: .infinity)
           }
           .buttonStyle(.bordered)
+          .buttonBorderShape(
+            .roundedRectangle(radius: authenticationButtonCornerRadius)
+          )
           .controlSize(.large)
           .frame(
             width: authenticationButtonSize.width,

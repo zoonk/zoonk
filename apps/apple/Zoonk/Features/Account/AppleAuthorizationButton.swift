@@ -8,6 +8,7 @@ import SwiftUI
 #else
   let authenticationButtonSize = CGSize(width: 214, height: 50)
 #endif
+let authenticationButtonCornerRadius: CGFloat = 6
 
 struct AppleAuthorizationButton: View {
   @Environment(\.colorScheme) private var colorScheme
