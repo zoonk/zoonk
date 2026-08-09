@@ -122,7 +122,7 @@ describe(getOrCreateCourse, () => {
 
     const request = await generatableCoursePromptFixture({
       canonicalTitle: title,
-      courseFormat: "instrument",
+      courseFormat: "practical",
       language,
     });
 
@@ -146,7 +146,7 @@ describe(getOrCreateCourse, () => {
     expect(courses).toHaveLength(1);
 
     expect(updatedRequest).toMatchObject({
-      courseFormat: "instrument",
+      courseFormat: "practical",
       courseId: existingCourse.id,
       generationRunId: winningWorkflowRunId,
       generationStatus: "running",

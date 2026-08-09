@@ -410,7 +410,7 @@ describe(courseGenerationWorkflow, () => {
       expect(course.userCount).toBe(1);
     });
 
-    it.each(["coding", "core", "instrument", "practical"] as const)(
+    it.each(["coding", "core", "practical"] as const)(
       "creates an intro chapter without triggering chapter generation for %s courses",
       async (courseFormat) => {
         vi.mocked(chapterGenerationWorkflow).mockClear();
