@@ -4,8 +4,8 @@ import { z } from "zod";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./course-personalization.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-luna";
-const fallbackModels = ["google/gemini-3.1-flash-lite", "anthropic/claude-haiku-4.5"] as const;
+const defaultModel = "google/gemini-3.1-flash-lite";
+const fallbackModels = ["openai/gpt-5.6-luna", "anthropic/claude-haiku-4.5"] as const;
 
 const schema = z.object({ requiresPersonalization: z.boolean() });
 

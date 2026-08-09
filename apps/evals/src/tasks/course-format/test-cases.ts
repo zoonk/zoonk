@@ -55,6 +55,7 @@ export const TEST_CASES: CourseFormatTestCase[] = [
     prompt: "beginner guitar",
   }),
   courseFormatCase({ courseFormat: "instrument", id: "piano", prompt: "piano" }),
+  courseFormatCase({ courseFormat: "instrument", id: "ukulele", prompt: "how to play ukulele" }),
   courseFormatCase({ courseFormat: "practical", id: "scrunchie", prompt: "scrunchie" }),
   courseFormatCase({ courseFormat: "practical", id: "artesanato", prompt: "artesanato" }),
   courseFormatCase({ courseFormat: "core", id: "music-theory", prompt: "music theory" }),

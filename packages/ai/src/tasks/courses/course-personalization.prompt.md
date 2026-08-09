@@ -17,11 +17,15 @@ Apply the following steps in order. The first matching decision is final. Do not
 
 These are product rules. A request can require personalization even when some generic course could be generated from its words.
 
-## 1. Human-language course
+## 1. Human-language or canonical musical-instrument course
 
 If the requested subject is learning a human language, return `false`.
 
 This rule wins even when the request names a source language, native language, script familiarity, romanization, current level, desired level, child, school grade, or curriculum. Language-course generation handles those differences without this intake step.
+
+Otherwise, if the request asks only to learn or play one named musical instrument, return `false`. This identifies the canonical course for that instrument; do not infer learner-specific technique, equipment, or practice constraints when none are stated.
+
+This musical-instrument rule does not apply when the request prescribes a narrower application, separately named theory or technique, exercise or drill plan, performance outcome, or constraint. Evaluate those requests with the later steps.
 
 ## 2. School-age course
 
