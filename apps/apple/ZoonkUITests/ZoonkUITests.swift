@@ -101,6 +101,36 @@ final class ZoonkUITests: XCTestCase {
       "Expected the confirmation to contain the final destructive action")
   }
 
+  /// Proves that signing out starts immediately instead of adding a confirmation step for a reversible action.
+  @MainActor
+  func testSignOutStartsImmediately() {
+    continueAfterFailure = false
+
+    let app = XCUIApplication()
+    app.launchArguments += [
+      "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing",
+      "--ui-testing-signed-in",
+    ]
+    app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
+    app.launch()
+
+    let accountButton = app.buttons["Account"]
+    XCTAssertTrue(
+      accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
+    accountButton.tap()
+
+    let signOutButton = app.buttons["Sign out"]
+    XCTAssertTrue(
+      signOutButton.waitForExistence(timeout: 5),
+      "Expected the signed-in account sheet to offer sign out")
+    signOutButton.tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Zoonk couldn't connect. Check your connection and try again."]
+        .waitForExistence(timeout: 5),
+      "Expected tapping sign out to start the API request immediately")
+  }
+
   /// Proves that every primary destination is reachable through the native tab bar and presents the matching screen title.
   @MainActor
   func testPrimaryTabsNavigateToTheirScreens() {

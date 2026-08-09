@@ -132,7 +132,6 @@ struct AccountSheet: View {
 
 private struct SignedInAccountView: View {
   @Environment(SessionStore.self) private var session
-  @State private var isConfirmingSignOut = false
 
   let account: CurrentAccount
   let deleteAccount: () -> Void
@@ -197,7 +196,9 @@ private struct SignedInAccountView: View {
 
       Section {
         Button {
-          isConfirmingSignOut = true
+          Task {
+            await session.signOut()
+          }
         } label: {
           AccountRowLabel(
             title: Text("Sign out", tableName: "Account", comment: "Account sign-out action"),
@@ -226,65 +227,6 @@ private struct SignedInAccountView: View {
         }
       }
     }
-    .confirmationDialog(
-      signOutConfirmationTitle,
-      isPresented: $isConfirmingSignOut,
-      titleVisibility: .visible
-    ) {
-      Button {
-        Task {
-          await session.signOut()
-        }
-      } label: {
-        signOutConfirmationAction
-      }
-
-      Button(role: .cancel) {
-      } label: {
-        Text("Cancel", tableName: "Account", comment: "Cancels sign-out")
-      }
-    } message: {
-      signOutConfirmationMessage
-    }
-  }
-
-  private var signOutConfirmationTitle: Text {
-    #if os(tvOS)
-      return Text(
-        "Sign out of Zoonk?",
-        tableName: "Account",
-        comment: "Confirmation title for signing out on Apple TV")
-    #else
-      return Text(
-        "Sign out on all Apple devices?",
-        tableName: "Account",
-        comment: "Confirmation title for synchronized sign-out")
-    #endif
-  }
-
-  private var signOutConfirmationAction: Text {
-    #if os(tvOS)
-      return Text("Sign out", tableName: "Account", comment: "Confirms signing out on Apple TV")
-    #else
-      return Text(
-        "Sign out on all devices",
-        tableName: "Account",
-        comment: "Confirms synchronized sign-out")
-    #endif
-  }
-
-  private var signOutConfirmationMessage: Text {
-    #if os(tvOS)
-      return Text(
-        "This signs you out on this Apple TV.",
-        tableName: "Account",
-        comment: "Explains that Apple TV uses a local session")
-    #else
-      return Text(
-        "This Zoonk session is shared through iCloud Keychain, so signing out removes it from your other Apple devices too.",
-        tableName: "Account",
-        comment: "Explains why sign-out affects the user's other Apple devices")
-    #endif
   }
 }
 

@@ -263,7 +263,7 @@
       }
     },
     "Cancel" : {
-      "comment" : "Cancels permanent account deletion\nCancels sign-out",
+      "comment" : "Cancels permanent account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1365,7 +1365,7 @@
       }
     },
     "Sign out" : {
-      "comment" : "Account sign-out action\nConfirms signing out on Apple TV",
+      "comment" : "Account sign-out action",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1389,93 +1389,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sair"
-          }
-        }
-      }
-    },
-    "Sign out of Zoonk?" : {
-      "comment" : "Confirmation title for signing out on Apple TV",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Von Zoonk abmelden?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Cerrar sesión en Zoonk?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se déconnecter de Zoonk ?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sair do Zoonk?"
-          }
-        }
-      }
-    },
-    "Sign out on all Apple devices?" : {
-      "comment" : "Confirmation title for synchronized sign-out",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auf allen Apple-Geräten abmelden?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Cerrar sesión en todos los dispositivos Apple?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se déconnecter de tous les appareils Apple ?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sair em todos os dispositivos Apple?"
-          }
-        }
-      }
-    },
-    "Sign out on all devices" : {
-      "comment" : "Confirms synchronized sign-out",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auf allen Geräten abmelden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerrar sesión en todos los dispositivos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se déconnecter de tous les appareils"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sair em todos os dispositivos"
           }
         }
       }
@@ -1680,64 +1593,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Isso exclui permanentemente seu perfil, seu progresso e seus cursos personalizados. Não é possível desfazer."
-          }
-        }
-      }
-    },
-    "This signs you out on this Apple TV." : {
-      "comment" : "Explains that Apple TV uses a local session",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dadurch wirst du auf diesem Apple TV abgemeldet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esto cerrará tu sesión en este Apple TV."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu seras déconnecté de cette Apple TV."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Isso encerra sua sessão nesta Apple TV."
-          }
-        }
-      }
-    },
-    "This Zoonk session is shared through iCloud Keychain, so signing out removes it from your other Apple devices too." : {
-      "comment" : "Explains why sign-out affects the user's other Apple devices",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Zoonk-Sitzung wird über den iCloud-Schlüsselbund geteilt. Wenn du dich abmeldest, wird sie daher auch von deinen anderen Apple-Geräten entfernt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta sesión de Zoonk se comparte a través del llavero de iCloud, por lo que al cerrar sesión también se eliminará de tus otros dispositivos Apple."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette session Zoonk est partagée via le trousseau iCloud. Si tu te déconnectes, elle sera donc aussi supprimée de tes autres appareils Apple."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta sessão do Zoonk é compartilhada pelas Chaves do iCloud. Por isso, ao sair, ela também será removida dos seus outros dispositivos Apple."
           }
         }
       }
