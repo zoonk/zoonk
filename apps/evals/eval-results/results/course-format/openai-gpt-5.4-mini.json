@@ -3552,6 +3552,42 @@
         "id": "direito-3",
         "userInput": { "prompt": "direito" }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "courseFormats": ["instrument"] },
+        "id": "ukulele-1",
+        "userInput": { "prompt": "how to play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "courseFormats": ["instrument"] },
+        "id": "ukulele-2",
+        "userInput": { "prompt": "how to play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "courseFormats": ["instrument"] },
+        "id": "ukulele-3",
+        "userInput": { "prompt": "how to play ukulele" }
+      }
     }
   ],
   "taskId": "course-format"

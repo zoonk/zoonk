@@ -574,4 +574,20 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
     requiresPersonalization: true,
   }),
   personalizationCase({ id: "direito", prompt: "direito", requiresPersonalization: false }),
+  personalizationCase({
+    id: "how-to-play-ukulele",
+    prompt: "how to play ukulele",
+    requiresPersonalization: false,
+  }),
+  personalizationCase({
+    id: "play-ukulele",
+    prompt: "play ukulele",
+    requiresPersonalization: false,
+  }),
+  personalizationCase({ id: "piano", prompt: "play piano", requiresPersonalization: false }),
+  personalizationCase({
+    id: "guitar",
+    prompt: "how to play guitar",
+    requiresPersonalization: false,
+  }),
 ];

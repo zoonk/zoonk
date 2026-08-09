@@ -3069,9 +3069,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": false },
@@ -3081,9 +3093,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "requiresPersonalization": false },
@@ -5051,6 +5075,150 @@
         "expected": { "requiresPersonalization": false },
         "id": "direito-3",
         "userInput": { "prompt": "direito" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "how-to-play-ukulele-1",
+        "userInput": { "prompt": "how to play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "how-to-play-ukulele-2",
+        "userInput": { "prompt": "how to play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "how-to-play-ukulele-3",
+        "userInput": { "prompt": "how to play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "play-ukulele-1",
+        "userInput": { "prompt": "play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "play-ukulele-2",
+        "userInput": { "prompt": "play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "play-ukulele-3",
+        "userInput": { "prompt": "play ukulele" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "piano-1",
+        "userInput": { "prompt": "play piano" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "piano-2",
+        "userInput": { "prompt": "play piano" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "piano-3",
+        "userInput": { "prompt": "play piano" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "guitar-1",
+        "userInput": { "prompt": "how to play guitar" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "guitar-2",
+        "userInput": { "prompt": "how to play guitar" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "requiresPersonalization": false },
+        "id": "guitar-3",
+        "userInput": { "prompt": "how to play guitar" }
       }
     }
   ],

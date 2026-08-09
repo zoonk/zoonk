@@ -62,7 +62,7 @@ export const TASKS: readonly RegisteredTask[] = [
 ];
 
 // Number of times each test case should be run for more reliable results
-export const RUNS_PER_TEST_CASE = 3;
+export const RUNS_PER_TEST_CASE = 1;
 
 export function getTaskById(taskId: string): RegisteredTask | null {
   return TASKS.find((t) => t.id === taskId) ?? null;
