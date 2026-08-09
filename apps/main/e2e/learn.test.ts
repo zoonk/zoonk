@@ -86,25 +86,32 @@ async function cacheTopicPrompt(rawPrompt: string) {
  * Seeds one unsupported request so E2E can verify the waitlist surface without
  * calling the AI router or relying on model output to choose that branch.
  */
-async function cacheWaitlistedPrompt(rawPrompt: string) {
+async function cacheWaitlistedPrompt({
+  courseFormat = "question",
+  rawPrompt,
+}: {
+  courseFormat?: "instrument" | "question";
+  rawPrompt: string;
+}) {
   const language = "en";
+  const intent = courseFormat === "instrument" ? "learn" : "question";
   const normalizedPrompt = normalizeString(rawPrompt);
 
   const request = await prisma.coursePrompt.upsert({
     create: {
       canonicalTitle: rawPrompt,
-      courseFormat: "question",
+      courseFormat,
       generationStatus: null,
-      intent: "question",
+      intent,
       language,
       normalizedPrompt,
       prompt: rawPrompt,
     },
     update: {
       canonicalTitle: rawPrompt,
-      courseFormat: "question",
+      courseFormat,
       generationStatus: null,
-      intent: "question",
+      intent,
       prompt: rawPrompt,
       targetLanguage: null,
     },
@@ -175,7 +182,7 @@ test.describe("Learn Form", () => {
   test("submits by button and shows its pending state while the prompt is routing", async ({
     page,
   }) => {
-    const cached = await cacheWaitlistedPrompt(`e2e pending topic ${randomUUID()}`);
+    const cached = await cacheWaitlistedPrompt({ rawPrompt: `e2e pending topic ${randomUUID()}` });
 
     await page.goto("/start/learn");
 
@@ -282,11 +289,27 @@ test.describe("Course Start Routing", () => {
     await expect(page.getByRole("heading", { level: 1, name: cached.course.title })).toBeVisible();
   });
 
+  test("shows the waitlist for cached instrument prompts", async ({ page }) => {
+    const cached = await cacheWaitlistedPrompt({
+      courseFormat: "instrument",
+      rawPrompt: `e2e instrument goal ${randomUUID()}`,
+    });
+
+    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
+
+    await expect(
+      page.getByRole("heading", { name: /this option isn't available yet/iu }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("button", { name: /notify me/iu })).toBeVisible();
+    await expect(page.getByText(cached.prompt, { exact: true })).toBeVisible();
+  });
+
   test("prefills the waitlist email for signed-in users", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
-    const cached = await cacheWaitlistedPrompt(`e2e waitlist goal ${randomUUID()}`);
+    const cached = await cacheWaitlistedPrompt({ rawPrompt: `e2e waitlist goal ${randomUUID()}` });
 
     await authenticatedPage.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 

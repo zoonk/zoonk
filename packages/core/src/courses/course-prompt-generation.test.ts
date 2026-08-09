@@ -11,7 +11,7 @@ const generatableCorePrompt = {
 };
 
 describe(getCoursePromptGenerationError, () => {
-  it.each(["coding", "core", "instrument", "practical"] as const)(
+  it.each(["coding", "core", "practical"] as const)(
     "accepts a pending learn prompt with a canonical title and %s format",
     (courseFormat) => {
       expect(getCoursePromptGenerationError({ ...generatableCorePrompt, courseFormat })).toBeNull();
@@ -20,7 +20,11 @@ describe(getCoursePromptGenerationError, () => {
 
   it.each([
     ["missing canonical title", { ...generatableCorePrompt, canonicalTitle: null }],
-    ["unsupported format", { ...generatableCorePrompt, courseFormat: "question" as const }],
+    [
+      "unsupported instrument format",
+      { ...generatableCorePrompt, courseFormat: "instrument" as const },
+    ],
+    ["unsupported prompt format", { ...generatableCorePrompt, courseFormat: "question" as const }],
     ["missing generation status", { ...generatableCorePrompt, generationStatus: null }],
     ["unsupported intent", { ...generatableCorePrompt, intent: "question" as const }],
   ])("rejects a prompt with %s", (_reason, prompt) => {
