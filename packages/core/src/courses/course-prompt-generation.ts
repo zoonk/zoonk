@@ -6,7 +6,6 @@ const UNSUPPORTED_COURSE_PROMPT_ERROR = "Course prompt is not generatable";
 const REGULAR_COURSE_FORMATS = [
   "coding",
   "core",
-  "instrument",
   "practical",
 ] as const satisfies readonly CourseFormat[];
 

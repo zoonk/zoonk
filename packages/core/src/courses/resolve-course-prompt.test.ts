@@ -235,7 +235,7 @@ describe("course-prompt", () => {
     expect(titleSpy).not.toHaveBeenCalled();
   });
 
-  it.each(["coding", "instrument", "practical"] as const)(
+  it.each(["coding", "practical"] as const)(
     "enables generation for a cached %s prompt that was previously waitlisted",
     async (courseFormat) => {
       const prompt = `cached ${courseFormat} topic ${randomUUID()}`;
@@ -268,6 +268,41 @@ describe("course-prompt", () => {
       expect(titleSpy).not.toHaveBeenCalled();
     },
   );
+
+  it("keeps a cached instrument prompt on the waitlist without calling model tasks", async () => {
+    const prompt = `cached instrument topic ${randomUUID()}`;
+    const title = `Cached Instrument Course ${randomUUID()}`;
+
+    const cached = await coursePromptFixture({
+      canonicalTitle: title,
+      courseFormat: "instrument",
+      generationStatus: null,
+      normalizedPrompt: normalizeString(prompt),
+      prompt,
+    });
+
+    const intentSpy = vi.spyOn(intentTask, "classifyCourseIntent");
+    const personalizationSpy = vi.spyOn(personalizationTask, "classifyCoursePersonalization");
+    const courseFormatSpy = vi.spyOn(formatTask, "classifyCourseFormat");
+    const titleSpy = vi.spyOn(canonicalTitleTask, "generateCanonicalCourseTitle");
+
+    const result = await resolveCoursePrompt({ language: "en", prompt });
+
+    expect(result).toStrictEqual({
+      kind: "unsupported",
+      prompt: { courseFormat: "instrument", intent: "learn" },
+      title,
+    });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: cached.id } }),
+    ).resolves.toMatchObject({ courseFormat: "instrument", generationStatus: null });
+
+    expect(intentSpy).not.toHaveBeenCalled();
+    expect(personalizationSpy).not.toHaveBeenCalled();
+    expect(courseFormatSpy).not.toHaveBeenCalled();
+    expect(titleSpy).not.toHaveBeenCalled();
+  });
 
   it("redirects cached reusable prompts to an existing reusable course without model tasks", async () => {
     const prompt = `cached existing topic ${randomUUID()}`;
@@ -445,11 +480,7 @@ describe("course-prompt", () => {
     expect(titleSpy).not.toHaveBeenCalled();
   });
 
-  it.each([
-    { courseFormat: "coding" },
-    { courseFormat: "instrument" },
-    { courseFormat: "practical" },
-  ] as const)(
+  it.each([{ courseFormat: "coding" }, { courseFormat: "practical" }] as const)(
     "creates a generatable prompt while preserving the $courseFormat format",
     async ({ courseFormat }) => {
       const prompt = `${courseFormat} prompt ${randomUUID()}`;
@@ -475,6 +506,33 @@ describe("course-prompt", () => {
       });
     },
   );
+
+  it("persists instrument prompts as waitlist requests", async () => {
+    const prompt = `instrument prompt ${randomUUID()}`;
+    const title = `Instrument course ${randomUUID()}`;
+    mockPromptTasks({ courseFormat: "instrument", title });
+
+    const result = await resolveCoursePrompt({ language: "en", prompt });
+
+    expect(result).toStrictEqual({
+      kind: "unsupported",
+      prompt: { courseFormat: "instrument", intent: "learn" },
+      title,
+    });
+
+    const storedPrompt = await prisma.coursePrompt.findUnique({
+      where: {
+        languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+      },
+    });
+
+    expect(storedPrompt).toMatchObject({
+      canonicalTitle: title,
+      courseFormat: "instrument",
+      generationStatus: null,
+      intent: "learn",
+    });
+  });
 
   it("persists personalization-required learning prompts as personalized", async () => {
     const prompt = `personalized prompt ${randomUUID()}`;
