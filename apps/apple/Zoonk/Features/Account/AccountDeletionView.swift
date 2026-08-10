@@ -34,6 +34,9 @@ struct AccountDeletionView: View {
           tableName: "Account",
           comment: "Account deletion navigation title")
       )
+      #if !os(macOS)
+        .toolbarTitleDisplayMode(.inline)
+      #endif
       .confirmationDialog(
         Text(
           "Delete your Zoonk account?",
@@ -66,6 +69,9 @@ struct AccountDeletionView: View {
       }
       .onAppear {
         session.clearFailure()
+      }
+      .onChange(of: session.account?.user.id) { _, accountId in
+        dismissStaleDeletion(accountId: accountId)
       }
   }
 
@@ -131,6 +137,7 @@ struct AccountDeletionView: View {
               Image(systemName: "arrow.up.right.square")
             }
           }
+          .accountLinkStyle()
         } header: {
           Text(
             "Subscription",
@@ -149,6 +156,7 @@ struct AccountDeletionView: View {
         }
       }
     }
+    .accountFormLayout()
   }
 
   @ViewBuilder
@@ -228,6 +236,7 @@ struct AccountDeletionView: View {
         #if os(iOS) || os(tvOS) || os(visionOS)
           .keyboardType(.numberPad)
         #endif
+        .accountTextFieldStyle()
         .textContentType(.oneTimeCode)
         .accessibilityLabel(
           Text(
@@ -354,6 +363,15 @@ struct AccountDeletionView: View {
 
   private var normalizedEmail: String {
     email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  }
+
+  /// Closes a deletion flow whose account was removed through synchronized credentials, without hiding the result of the deletion currently running on this device.
+  private func dismissStaleDeletion(accountId: String?) {
+    guard accountId == nil, !session.isWorking else {
+      return
+    }
+
+    dismiss()
   }
 
   /// Names the store that owns billing so users can distinguish Apple's and Google's external subscription controls.

@@ -1,7 +1,9 @@
 #if os(iOS) || os(macOS)
   import SwiftUI
 
-  /// Uses Google's current gradient logo and branded colors while keeping the visible action localized by the app.
+  private let googleButtonLogoSize: CGFloat = 20
+
+  /// Uses Google's official multicolor mark and current button metrics while keeping the action text in Zoonk's native String Catalog so it follows the app language.
   struct GoogleAuthorizationButton: View {
     @Environment(\.colorScheme) private var colorScheme
 
@@ -13,37 +15,42 @@
         HStack(spacing: 12) {
           Image("GoogleSignInLogo")
             .resizable()
+            .interpolation(.high)
             .scaledToFit()
-            .frame(width: 23, height: 23)
+            .frame(width: googleButtonLogoSize, height: googleButtonLogoSize)
             .accessibilityHidden(true)
 
           Text(
             "Sign in with Google",
             tableName: "Account",
-            comment: "Accessibility label for the native Google sign-in button"
+            comment: "Visible label on the Google sign-in button"
           )
-          .font(.system(size: 16, weight: .medium))
+          .font(.system(size: 14, weight: .medium))
           .lineLimit(1)
-          .minimumScaleFactor(0.75)
         }
-        .foregroundStyle(foregroundColor)
+        .padding(.horizontal, 16)
         .frame(
           width: authenticationButtonSize.width,
-          height: authenticationButtonSize.height
+          height: authenticationButtonSize.height,
+          alignment: .leading
         )
-        .background(
-          backgroundColor,
-          in: RoundedRectangle(cornerRadius: authenticationButtonCornerRadius)
-        )
+        .foregroundStyle(foregroundColor)
+        .background(backgroundColor)
         .overlay {
           RoundedRectangle(cornerRadius: authenticationButtonCornerRadius)
             .strokeBorder(borderColor, lineWidth: 1)
         }
-        .contentShape(
-          RoundedRectangle(cornerRadius: authenticationButtonCornerRadius)
-        )
+        .clipShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
+        .contentShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
       }
       .buttonStyle(GoogleAuthorizationButtonStyle())
+      .accessibilityLabel(
+        Text(
+          "Sign in with Google",
+          tableName: "Account",
+          comment: "Accessibility label for the native Google sign-in button"
+        )
+      )
       .disabled(isDisabled)
     }
 
@@ -69,7 +76,7 @@
   private struct GoogleAuthorizationButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
-    /// Adds press and disabled feedback without changing Google's approved colors or geometry.
+    /// Adds the press and disabled feedback required for a custom button without changing Google's approved colors or geometry.
     func makeBody(configuration: Configuration) -> some View {
       configuration.label
         .opacity(opacity(isPressed: configuration.isPressed))

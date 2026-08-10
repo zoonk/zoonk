@@ -1,9 +1,18 @@
 import SwiftUI
 
+/// Opens the account surface directly in Debug UI runs so every platform can render the same states without relying on device-specific pointer, gaze, or remote automation.
+private func shouldPresentAccountForUITesting() -> Bool {
+  #if DEBUG
+    ProcessInfo.processInfo.arguments.contains("--ui-testing-account-sheet")
+  #else
+    false
+  #endif
+}
+
 struct AppView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(SessionStore.self) private var session
-  @State private var isAccountPresented = false
+  @State private var isAccountPresented = shouldPresentAccountForUITesting()
   @State private var selectedSection = AppSection.home
 
   var body: some View {

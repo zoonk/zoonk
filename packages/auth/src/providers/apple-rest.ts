@@ -3,6 +3,7 @@ import { type AppleConfiguration, getAppleClientSecret, getAppleConfiguration } 
 
 const APPLE_REVOKE_URL = "https://appleid.apple.com/auth/revoke";
 const APPLE_TOKEN_URL = "https://appleid.apple.com/auth/token";
+const APPLE_REQUEST_TIMEOUT_MS = 10_000;
 const HTTP_SERVER_ERROR_THRESHOLD = 500;
 
 const appleTokenResponseSchema = z.object({
@@ -39,6 +40,7 @@ type AppleRESTDependencies = {
   configuration: AppleConfiguration | null;
   getClientSecret: typeof getAppleClientSecret;
   request: AppleRequest;
+  requestTimeoutMs?: number;
 };
 
 const liveDependencies: AppleRESTDependencies = {
@@ -77,6 +79,7 @@ async function requestApple({
       body: body.toString(),
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       method: "POST",
+      signal: AbortSignal.timeout(dependencies.requestTimeoutMs ?? APPLE_REQUEST_TIMEOUT_MS),
     });
   } catch {
     throw new AppleAuthorizationError("unavailable");

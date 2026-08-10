@@ -39,6 +39,10 @@ Run one test or test class by passing an Xcode test identifier:
 make test TEST_ARGUMENTS='-only-testing:ZoonkUITests/ZoonkUITests/testPrimaryTabsNavigateToTheirScreens'
 ```
 
+## Local authentication
+
+Start the repository with `pnpm dev`. The development launcher writes the printed clone-specific API URL to an ignored Xcode configuration file, so the next Debug build connects to the correct local API automatically. For a physical Apple device, run `pnpm dev:lan` instead so the generated configuration uses the reachable `.local` API URL. Open the printed Mailbox URL after requesting an email code to read the local OTP. Debug builds fall back to `http://localhost:4000` when no generated configuration exists, which matches `pnpm dev:direct`; `ZOONK_API_BASE_URL` remains available as a one-off Xcode scheme override.
+
 ## Localization
 
 Write user-facing English literals with a localizable SwiftUI or Foundation API, a translator comment, and the feature's String Catalog table. For example:

@@ -5,17 +5,16 @@ import Foundation
 #endif
 
 nonisolated private let companionHasCredentialKey = "hasCredential"
-nonisolated private let companionSessionTokenKey = "sessionToken"
 
 @MainActor
 protocol CompanionCredentialSyncing {
-  func synchronize(token: String?)
+  func synchronize(isSignedIn: Bool)
 }
 
 @MainActor
 struct NoopCompanionCredentialSync: CompanionCredentialSyncing {
   /// Keeps the shared session store platform-neutral on devices that cannot pair with Apple Watch.
-  func synchronize(token: String?) {}
+  func synchronize(isSignedIn: Bool) {}
 }
 
 #if os(iOS)
@@ -34,18 +33,13 @@ struct NoopCompanionCredentialSync: CompanionCredentialSyncing {
       session?.activate()
     }
 
-    /// Replaces the durable application context because Apple Watch only needs the latest Zoonk credential state, not a history of login events.
-    func synchronize(token: String?) {
-      let context: [String: Any] =
-        token.map {
-          [companionHasCredentialKey: true, companionSessionTokenKey: $0]
-        } ?? [companionHasCredentialKey: false]
-
-      latestContext = context
+    /// Replaces the durable application context because Apple Watch only needs the latest Zoonk account state, not a history of login events.
+    func synchronize(isSignedIn: Bool) {
+      latestContext = [companionHasCredentialKey: isSignedIn]
       publishLatestContext()
     }
 
-    /// Publishes the latest snapshot only after activation so an app launch cannot lose a restored credential to WatchConnectivity's startup race.
+    /// Publishes the latest snapshot only after activation so an app launch cannot lose restored account state to WatchConnectivity's startup race.
     private func publishLatestContext() {
       guard let latestContext, session?.activationState == .activated else {
         return
@@ -83,9 +77,15 @@ struct NoopCompanionCredentialSync: CompanionCredentialSyncing {
 @MainActor
 func makeCompanionCredentialSync() -> any CompanionCredentialSyncing {
   #if os(iOS)
-    PhoneCompanionCredentialSync()
+    #if targetEnvironment(simulator)
+      if !ProcessInfo.processInfo.arguments.contains("--enable-watch-connectivity") {
+        return NoopCompanionCredentialSync()
+      }
+    #endif
+
+    return PhoneCompanionCredentialSync()
   #else
-    NoopCompanionCredentialSync()
+    return NoopCompanionCredentialSync()
   #endif
 }
 
@@ -102,12 +102,29 @@ func makeCompanionCredentialSync() -> any CompanionCredentialSyncing {
   @Observable
   final class WatchCredentialStore: NSObject, WCSessionDelegate {
     private(set) var state: WatchCredentialState
-    private(set) var token: String?
 
     private let session: WCSession?
 
     /// Activates the paired iPhone channel and starts in a restoring state until WatchConnectivity supplies its latest application context.
     override init() {
+      #if targetEnvironment(simulator)
+        #if DEBUG
+          if ProcessInfo.processInfo.arguments.contains("--ui-testing-signed-in") {
+            state = .signedIn
+            session = nil
+            super.init()
+            return
+          }
+        #endif
+
+        if !ProcessInfo.processInfo.arguments.contains("--enable-watch-connectivity") {
+          state = .signedOut
+          session = nil
+          super.init()
+          return
+        }
+      #endif
+
       state = .restoring
       session = WCSession.isSupported() ? .default : nil
       super.init()
@@ -122,21 +139,13 @@ func makeCompanionCredentialSync() -> any CompanionCredentialSyncing {
     /// Creates inert state for SwiftUI previews without connecting the preview process to a paired iPhone.
     init(previewState: WatchCredentialState) {
       state = previewState
-      token = previewState == .signedIn ? "preview-session" : nil
       session = nil
       super.init()
     }
 
-    /// Applies one complete phone snapshot so a logout cannot leave a stale Watch credential behind.
-    private func apply(hasCredential: Bool, token: String?) {
-      guard hasCredential, let token, !token.isEmpty else {
-        self.token = nil
-        state = .signedOut
-        return
-      }
-
-      self.token = token
-      state = .signedIn
+    /// Applies the paired phone's latest account presence without copying its reusable bearer credential onto Apple Watch.
+    private func apply(hasCredential: Bool) {
+      state = hasCredential ? .signedIn : .signedOut
     }
 
     /// Uses the context already persisted by WatchConnectivity as soon as activation finishes, including when the iPhone app is not currently running.
@@ -147,10 +156,9 @@ func makeCompanionCredentialSync() -> any CompanionCredentialSyncing {
     ) {
       let context = session.receivedApplicationContext
       let hasSnapshot = context[companionHasCredentialKey] as? Bool
-      let token = context[companionSessionTokenKey] as? String
 
       Task { @MainActor [weak self] in
-        self?.apply(hasCredential: hasSnapshot == true, token: token)
+        self?.apply(hasCredential: hasSnapshot == true)
       }
     }
 
@@ -160,10 +168,9 @@ func makeCompanionCredentialSync() -> any CompanionCredentialSyncing {
       didReceiveApplicationContext applicationContext: [String: Any]
     ) {
       let hasCredential = applicationContext[companionHasCredentialKey] as? Bool
-      let token = applicationContext[companionSessionTokenKey] as? String
 
       Task { @MainActor [weak self] in
-        self?.apply(hasCredential: hasCredential == true, token: token)
+        self?.apply(hasCredential: hasCredential == true)
       }
     }
   }

@@ -1,13 +1,16 @@
 import XCTest
 
 final class ZoonkUITests: XCTestCase {
-  /// Proves that the account affordance opens directly to every supported sign-in method without an extra navigation step.
+  /// Proves that the account affordance opens directly to the sign-in methods configured in this test build without an extra navigation step.
   @MainActor
   func testAccountSheetOffersEverySignInMethod() {
     continueAfterFailure = false
 
     let app = XCUIApplication()
-    app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing"]
+    app.launchArguments += [
+      "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing",
+      "--ui-testing-google-sign-in",
+    ]
     app.launch()
 
     let accountButton = app.buttons["Account"]
@@ -15,15 +18,15 @@ final class ZoonkUITests: XCTestCase {
       accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
     accountButton.tap()
 
-    XCTAssertTrue(
-      app.navigationBars["Account"].waitForExistence(timeout: 5),
-      "Expected the account sheet to open")
-
     for method in ["Continue with Apple", "Sign in with Google", "Continue with email"] {
       XCTAssertTrue(
         app.buttons[method].waitForExistence(timeout: 5),
         "Expected the login screen to offer \(method)")
     }
+
+    XCTAssertFalse(
+      app.navigationBars["Account"].exists,
+      "Expected the sign-in sheet to avoid a redundant Account title")
   }
 
   /// Proves the accessible email field uses the email keyboard and accepts lowercase input without changing what the user typed.

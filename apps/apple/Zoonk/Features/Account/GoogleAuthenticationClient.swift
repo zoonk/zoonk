@@ -18,10 +18,18 @@ enum GoogleAuthenticationError: Error {
 
 @MainActor
 struct GoogleAuthenticationClient {
+  var isAvailable: Bool {
+    #if os(iOS) || os(macOS)
+      hasRequiredConfiguration
+    #else
+      false
+    #endif
+  }
+
   /// Presents Google's supported native authorization flow and returns the signed ID token that Better Auth verifies on the server.
   func signIn() async throws -> String {
     #if os(iOS) || os(macOS)
-      guard hasRequiredConfiguration else {
+      guard isAvailable else {
         throw GoogleAuthenticationError.unavailable
       }
 

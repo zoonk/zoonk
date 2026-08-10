@@ -21,9 +21,6 @@ struct AccountSheet: View {
   var body: some View {
     NavigationStack(path: $path) {
       accountContent
-        .navigationTitle(
-          Text("Account", tableName: "Account", comment: "Account sheet navigation title")
-        )
         .toolbar {
           #if os(iOS)
             ToolbarItem(placement: .topBarTrailing) {
@@ -45,23 +42,38 @@ struct AccountSheet: View {
           case .profile:
             if let account = session.account {
               ProfileEditorView(account: account, isRequiredSetup: false)
+                .id(account.user.id)
             }
           }
         }
         .onChange(of: session.state) { _, state in
-          resetNavigationAfterSignIn(state)
+          reconcileNavigation(state)
         }
     }
     .presentationDetents([.large])
     .presentationDragIndicator(.visible)
+    #if os(iOS)
+      .presentationSizing(.page)
+    #elseif os(macOS)
+      .frame(width: 560, height: 420)
+    #elseif os(tvOS)
+      .frame(width: 720, height: 860)
+    #endif
     .task {
       await session.reconcileSynchronizedCredential()
+      #if DEBUG
+        presentRequestedUITestingDestination()
+      #endif
     }
   }
 
   private var closeButton: some View {
     Button(action: dismiss.callAsFunction) {
-      Image(systemName: "xmark")
+      #if os(macOS)
+        Text("Close", tableName: "Account", comment: "Closes the account sheet")
+      #else
+        Image(systemName: "xmark")
+      #endif
     }
     .accessibilityLabel(
       Text("Close", tableName: "Account", comment: "Closes the account sheet"))
@@ -78,12 +90,17 @@ struct AccountSheet: View {
     case .signedIn(let account):
       if account.needsProfileSetup {
         ProfileEditorView(account: account, isRequiredSetup: true)
+          .id(account.user.id)
       } else {
         SignedInAccountView(
           account: account,
           deleteAccount: { path.append(.deleteAccount(makeDeletionDestination(account))) },
           editProfile: { path.append(.profile) },
-          openCourses: showCourses)
+          openCourses: showCourses
+        )
+        .navigationTitle(
+          Text("Account", tableName: "Account", comment: "Account sheet navigation title")
+        )
       }
     case .unavailable:
       ContentUnavailableView {
@@ -111,16 +128,24 @@ struct AccountSheet: View {
         .buttonStyle(.borderedProminent)
         .disabled(session.isWorking)
       }
+      .navigationTitle(
+        Text("Account", tableName: "Account", comment: "Account sheet navigation title")
+      )
     }
   }
 
-  /// Returns to the account overview after any authentication method finishes instead of leaving the successful sign-in screen on the navigation stack.
-  private func resetNavigationAfterSignIn(_ state: AccountSessionState) {
-    guard case .signedIn = state else {
-      return
+  /// Returns to the current account overview after authentication or synchronized account changes, while leaving a local deletion result visible until the user dismisses it.
+  private func reconcileNavigation(_ state: AccountSessionState) {
+    switch state {
+    case .signedIn:
+      path.removeAll()
+    case .signedOut, .unavailable:
+      if path.last == .profile {
+        path.removeAll()
+      }
+    case .restoring:
+      break
     }
-
-    path.removeAll()
   }
 
   /// Closes the modal before moving to the app's native courses section, matching the web account menu without opening a duplicate web surface.
@@ -128,6 +153,24 @@ struct AccountSheet: View {
     dismiss()
     openCourses()
   }
+
+  #if DEBUG
+    /// Opens nested account forms directly during cross-platform UI review so remote and gaze-driven simulators can render the same states as touch devices.
+    private func presentRequestedUITestingDestination() {
+      guard path.isEmpty, let account = session.account else {
+        return
+      }
+
+      if ProcessInfo.processInfo.arguments.contains("--ui-testing-profile") {
+        path.append(.profile)
+        return
+      }
+
+      if ProcessInfo.processInfo.arguments.contains("--ui-testing-delete-account") {
+        path.append(.deleteAccount(makeDeletionDestination(account)))
+      }
+    }
+  #endif
 }
 
 private struct SignedInAccountView: View {
@@ -143,6 +186,7 @@ private struct SignedInAccountView: View {
       Section {
         HStack(spacing: 12) {
           AccountAvatar(user: account.user, size: 56)
+            .accessibilityHidden(true)
 
           VStack(alignment: .leading, spacing: 2) {
             Text(account.user.preferredName)
@@ -183,6 +227,7 @@ private struct SignedInAccountView: View {
             title: Text("Blog", tableName: "Account", comment: "Account option for the blog"),
             systemImage: "newspaper")
         }
+        .accountLinkStyle()
 
         Link(destination: AccountLinks.support) {
           AccountRowLabel(
@@ -192,6 +237,7 @@ private struct SignedInAccountView: View {
               comment: "Account option for feedback and support"),
             systemImage: "questionmark.circle")
         }
+        .accountLinkStyle()
       }
 
       Section {
@@ -227,6 +273,7 @@ private struct SignedInAccountView: View {
         }
       }
     }
+    .accountMenuStyle()
   }
 }
 
@@ -249,6 +296,7 @@ private struct AccountSubscriptionRow: View {
       Link(destination: destination) {
         rowLabel(status: activeStatus)
       }
+      .accountLinkStyle()
     } else {
       rowLabel(
         status: Text(

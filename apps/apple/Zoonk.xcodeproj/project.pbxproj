@@ -43,6 +43,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5A0A00400000000000000001 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
 		BEB8AB5E3022709A00E0E150 /* Zoonk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zoonk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zoonk Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +114,7 @@
 		BEB8AB553022709A00E0E150 = {
 			isa = PBXGroup;
 			children = (
+				5A0A00400000000000000001 /* Debug.xcconfig */,
 				BEB8AB603022709A00E0E150 /* Zoonk */,
 				BEB8AB8D3022709B00E0E150 /* Shared */,
 				BEB8AB8E3022709B00E0E150 /* ZoonkWatch */,
@@ -437,6 +439,7 @@
 		};
 		BEB8AB823022709B00E0E150 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5A0A00400000000000000001 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
@@ -451,10 +454,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				GOOGLE_IOS_CLIENT_ID = "";
-				GOOGLE_REVERSED_IOS_CLIENT_ID = "";
-				GOOGLE_SERVER_CLIENT_ID = "";
 				INFOPLIST_FILE = Zoonk/Info.plist;
+				INFOPLIST_PREPROCESS = YES;
+				INFOPLIST_PREPROCESSOR_DEFINITIONS = "$(inherited) ZOONK_DEBUG_ALLOW_INSECURE_HTTP=1";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -484,7 +486,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,7";
 				TVOS_DEPLOYMENT_TARGET = 18.0;
 				XROS_DEPLOYMENT_TARGET = 2.0;
-				ZOONK_API_BASE_URL = "http://localhost:4000";
+				ZOONK_API_BASE_URL = "$(ZOONK_DEVELOPMENT_API_BASE_URL)";
 			};
 			name = Debug;
 		};
@@ -504,10 +506,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				GOOGLE_IOS_CLIENT_ID = "";
-				GOOGLE_REVERSED_IOS_CLIENT_ID = "";
-				GOOGLE_SERVER_CLIENT_ID = "";
 				INFOPLIST_FILE = Zoonk/Info.plist;
+				INFOPLIST_PREPROCESS = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

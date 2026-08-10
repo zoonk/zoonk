@@ -1336,7 +1336,7 @@
       }
     },
     "Sign in with Google" : {
-      "comment" : "Accessibility label for the native Google sign-in button",
+      "comment" : "Accessibility label for the native Google sign-in button\nVisible label on the Google sign-in button",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1505,36 +1505,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esse código é inválido ou expirou. Solicite um novo código e tente novamente."
-          }
-        }
-      }
-    },
-    "That code isn't valid. Check the email and try again." : {
-      "comment" : "Error shown when an email sign-in code is invalid",
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieser Code ist ungültig. Überprüfe die E-Mail und versuche es erneut."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ese código no es válido. Revisa el correo e inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce code n’est pas valide. Vérifie l’e-mail et réessaie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esse código não é válido. Confira o email e tente de novo."
           }
         }
       }

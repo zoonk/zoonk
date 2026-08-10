@@ -40,9 +40,11 @@ struct LoginView: View {
             onFailure: session.reportSignInFailure)
 
           #if os(iOS) || os(macOS)
-            GoogleAuthorizationButton(isDisabled: session.isWorking) {
-              Task {
-                await session.signInWithGoogle()
+            if session.isGoogleSignInAvailable {
+              GoogleAuthorizationButton(isDisabled: session.isWorking) {
+                Task {
+                  await session.signInWithGoogle()
+                }
               }
             }
           #endif
@@ -96,7 +98,12 @@ struct LoginView: View {
                   "Terms of Service",
                   tableName: "Account",
                   comment: "Link to the terms of service")
-              })
+              }
+            )
+            .accountLinkStyle()
+            #if os(iOS)
+              .frame(minHeight: 44)
+            #endif
 
             Link(
               destination: AccountLinks.privacy,
@@ -105,17 +112,29 @@ struct LoginView: View {
                   "Privacy Policy",
                   tableName: "Account",
                   comment: "Link to the privacy policy")
-              })
+              }
+            )
+            .accountLinkStyle()
+            #if os(iOS)
+              .frame(minHeight: 44)
+            #endif
           }
           .font(.footnote)
         }
       }
-      .frame(maxWidth: 480)
+      .frame(maxWidth: contentMaxWidth)
       .padding(24)
       .frame(maxWidth: .infinity)
     }
   }
 
+  private var contentMaxWidth: CGFloat {
+    #if os(tvOS)
+      600
+    #else
+      480
+    #endif
+  }
 }
 
 struct AccountFailureMessage: View {

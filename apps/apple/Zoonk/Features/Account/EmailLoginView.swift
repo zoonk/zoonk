@@ -23,6 +23,7 @@ struct EmailLoginView: View {
           .textInputAutocapitalization(.never)
           .keyboardType(.emailAddress)
         #endif
+        .accountTextFieldStyle()
         .autocorrectionDisabled()
         .textContentType(.emailAddress)
         .accessibilityLabel(
@@ -43,6 +44,10 @@ struct EmailLoginView: View {
               tableName: "Account",
               comment: "Email sign-in code field label")
           }
+          #if os(iOS) || os(tvOS) || os(visionOS)
+            .keyboardType(.numberPad)
+          #endif
+          .accountTextFieldStyle()
           .textContentType(.oneTimeCode)
           .accessibilityLabel(
             Text(
@@ -111,9 +116,13 @@ struct EmailLoginView: View {
         }
       }
     }
+    .accountFormLayout()
     .navigationTitle(
       Text("Email sign-in", tableName: "Account", comment: "Email login navigation title")
     )
+    #if !os(macOS)
+      .toolbarTitleDisplayMode(.inline)
+    #endif
     .onChange(of: session.state) { _, state in
       dismissAfterSignIn(state)
     }

@@ -7,13 +7,24 @@ struct AccountToolbarButton: View {
 
   var body: some View {
     Button(action: action) {
-      AccountAvatar(user: session.account?.user, size: 32)
-        .frame(width: 44, height: 44)
+      AccountAvatar(user: session.account?.user, size: toolbarAvatarSize)
+        #if !os(macOS)
+          .frame(width: 44, height: 44)
+        #endif
         .contentShape(Circle())
     }
     .buttonStyle(.plain)
     .accessibilityLabel(
       Text("Account", tableName: "Account", comment: "Accessibility label for the account button"))
+  }
+
+  /// Uses the compact image size of a native Mac toolbar item while preserving the larger touch target expected on touch and spatial platforms.
+  private var toolbarAvatarSize: CGFloat {
+    #if os(macOS)
+      28
+    #else
+      32
+    #endif
   }
 }
 

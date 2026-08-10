@@ -39,6 +39,7 @@ struct ProfileEditorView: View {
         ) {
           Text("Name", tableName: "Account", comment: "Profile name field label")
         }
+        .accountTextFieldStyle()
         .textContentType(.name)
         .accessibilityLabel(
           Text("Name", tableName: "Account", comment: "Profile name field label"))
@@ -55,6 +56,7 @@ struct ProfileEditorView: View {
         #if os(iOS) || os(tvOS) || os(visionOS)
           .textInputAutocapitalization(.never)
         #endif
+        .accountTextFieldStyle()
         .autocorrectionDisabled()
         .textContentType(.username)
         .accessibilityLabel(
@@ -86,8 +88,12 @@ struct ProfileEditorView: View {
         }
       }
     }
+    .accountFormLayout()
     .disabled(session.isWorking)
     .navigationTitle(profileNavigationTitle)
+    #if !os(macOS)
+      .toolbarTitleDisplayMode(.inline)
+    #endif
     .toolbar {
       ToolbarItem(placement: .confirmationAction) {
         Button {

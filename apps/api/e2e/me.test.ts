@@ -450,6 +450,56 @@ test.describe("Current User API", () => {
     ]);
   });
 
+  test("rejects cookie-authenticated account deletion without a same-origin Origin header", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "me-cookie-delete-origin",
+    });
+
+    const storageState = await apiContext.storageState();
+
+    const [missingOriginContext, crossOriginContext] = await Promise.all([
+      request.newContext({ baseURL, storageState }),
+      request.newContext({
+        baseURL,
+        extraHTTPHeaders: { Origin: "https://attacker.example" },
+        storageState,
+      }),
+    ]);
+
+    const [missingOriginResponse, crossOriginResponse] = await Promise.all([
+      missingOriginContext.delete("/v1/me", { data: {} }),
+      crossOriginContext.delete("/v1/me", { data: {} }),
+    ]);
+
+    await Promise.all([
+      expectApiError({ code: "FORBIDDEN", response: missingOriginResponse, status: 403 }),
+      expectApiError({ code: "FORBIDDEN", response: crossOriginResponse, status: 403 }),
+    ]);
+
+    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.not.toBeNull();
+
+    await Promise.all([
+      apiContext.dispose(),
+      missingOriginContext.dispose(),
+      crossOriginContext.dispose(),
+    ]);
+  });
+
+  test("allows same-origin cookie-authenticated account deletion", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "me-cookie-delete",
+    });
+
+    const response = await apiContext.delete("/v1/me", { data: {} });
+
+    expect(response.status()).toBe(200);
+    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
+
+    await apiContext.dispose();
+  });
+
   test("allows a same-origin cookie-authenticated profile update", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,

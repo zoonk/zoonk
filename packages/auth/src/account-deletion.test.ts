@@ -5,12 +5,14 @@ import {
 } from "./account-deletion";
 
 const mocks = vi.hoisted(() => ({
+  cancelStripeSubscription: vi.fn(),
   decrementCourseUserCounts: vi.fn(),
   deleteCourseMemberships: vi.fn(),
   deleteManySubscriptions: vi.fn(),
   deleteManyVerifications: vi.fn(),
   findAppleAccounts: vi.fn(),
   findCourseMemberships: vi.fn(),
+  findStripeSubscriptions: vi.fn(),
   revokeStoredAppleAuthorization: vi.fn(),
   transaction: vi.fn(),
 }));
@@ -19,7 +21,10 @@ vi.mock("@zoonk/db", () => ({
   prisma: {
     $transaction: mocks.transaction,
     account: { findMany: mocks.findAppleAccounts },
-    subscription: { deleteMany: mocks.deleteManySubscriptions },
+    subscription: {
+      deleteMany: mocks.deleteManySubscriptions,
+      findMany: mocks.findStripeSubscriptions,
+    },
     verification: { deleteMany: mocks.deleteManyVerifications },
   },
 }));
@@ -28,15 +33,21 @@ vi.mock("./providers/apple-revocation", () => ({
   revokeStoredAppleAuthorization: mocks.revokeStoredAppleAuthorization,
 }));
 
+vi.mock("./stripe/client", () => ({
+  stripeClient: { subscriptions: { cancel: mocks.cancelStripeSubscription } },
+}));
+
 describe(deleteUserDependenciesBeforeAuthDelete, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.deleteManySubscriptions.mockResolvedValue({ count: 1 });
     mocks.deleteManyVerifications.mockResolvedValue({ count: 1 });
+    mocks.cancelStripeSubscription.mockResolvedValue({ id: "sub_active" });
     mocks.deleteCourseMemberships.mockResolvedValue({ count: 0 });
     mocks.decrementCourseUserCounts.mockResolvedValue({ count: 0 });
     mocks.findAppleAccounts.mockResolvedValue([]);
     mocks.findCourseMemberships.mockResolvedValue([]);
+    mocks.findStripeSubscriptions.mockResolvedValue([]);
     mocks.revokeStoredAppleAuthorization.mockResolvedValue(true);
 
     mocks.transaction.mockImplementation(
@@ -67,6 +78,24 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     expect(mocks.deleteManySubscriptions).toHaveBeenCalledExactlyOnceWith({
       where: { referenceId: userId },
     });
+  });
+
+  it("cancels Stripe billing before removing the local subscription", async () => {
+    const userId = "019fcaf2-d5ef-7a12-aa82-f1228a863753";
+
+    mocks.findStripeSubscriptions.mockResolvedValue([{ stripeSubscriptionId: "sub_active" }]);
+
+    await deleteUserDependenciesBeforeAuthDelete({ email: "learner@example.com", id: userId });
+
+    expect(mocks.findStripeSubscriptions).toHaveBeenCalledExactlyOnceWith({
+      where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: { not: null } },
+    });
+
+    expect(mocks.cancelStripeSubscription).toHaveBeenCalledExactlyOnceWith("sub_active");
+
+    expect(mocks.cancelStripeSubscription.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.deleteManySubscriptions.mock.invocationCallOrder[0]!,
+    );
   });
 
   it("removes course memberships and decrements every surviving course user count", async () => {

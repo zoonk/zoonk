@@ -9,19 +9,21 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>$(GOOGLE_REVERSED_IOS_CLIENT_ID)</string>
+				<string>com.googleusercontent.apps.435450998434-he7jugpaqj7c66im3hf5sdlkgtgpgjej</string>
 			</array>
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-	<string>$(GOOGLE_IOS_CLIENT_ID)</string>
+	<string>435450998434-he7jugpaqj7c66im3hf5sdlkgtgpgjej.apps.googleusercontent.com</string>
 	<key>GIDServerClientID</key>
-	<string>$(GOOGLE_SERVER_CLIENT_ID)</string>
+	<string>435450998434-jhj2skfq5b089dkjrth5dvo1bhujfp3h.apps.googleusercontent.com</string>
+#if ZOONK_DEBUG_ALLOW_INSECURE_HTTP
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsLocalNetworking</key>
+		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+#endif
 	<key>ZoonkAPIBaseURL</key>
 	<string>$(ZOONK_API_BASE_URL)</string>
 </dict>

@@ -101,4 +101,22 @@ describe("Apple REST authentication", () => {
       }),
     ).rejects.toMatchObject({ reason: "unavailable" } satisfies Partial<AppleAuthorizationError>);
   });
+
+  it("stops waiting when Apple does not finish the request", async () => {
+    request.mockImplementation(
+      (_input: RequestInfo | URL, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => reject(new Error("request aborted")));
+        }),
+    );
+
+    await expect(
+      revokeAppleToken({
+        clientIdentifier: configuration.appBundleIdentifier,
+        dependencies: { configuration, getClientSecret, request, requestTimeoutMs: 1 },
+        token: "apple-refresh-token",
+        tokenType: "refresh_token",
+      }),
+    ).rejects.toMatchObject({ reason: "unavailable" } satisfies Partial<AppleAuthorizationError>);
+  });
 });

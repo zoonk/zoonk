@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { revokeStoredAppleAuthorization } from "./providers/apple-revocation";
+import { stripeClient } from "./stripe/client";
 
 type AccountDeletionCleanupReporter = {
   reportAppleAuthorizationRevocation: (revoked: boolean | null) => void;
@@ -128,6 +129,25 @@ async function deleteLocalUserDependencies({ email, userId }: { email: string; u
 }
 
 /**
+ * Stops Stripe billing before its local lookup row is removed. App Store and
+ * Google Play subscriptions remain store-managed because those providers do
+ * not let Zoonk cancel a user's purchase from this server deletion hook.
+ */
+async function cancelStripeSubscriptions(userId: string) {
+  const subscriptions = await prisma.subscription.findMany({
+    where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: { not: null } },
+  });
+
+  const subscriptionIds = subscriptions
+    .map(({ stripeSubscriptionId }) => stripeSubscriptionId)
+    .filter((subscriptionId): subscriptionId is string => Boolean(subscriptionId));
+
+  await Promise.all(
+    subscriptionIds.map((subscriptionId) => stripeClient.subscriptions.cancel(subscriptionId)),
+  );
+}
+
+/**
  * Cleans up records that cannot rely on the User foreign-key cascade. Better
  * Auth invokes this hook only after it validates the authoritative session and
  * its freshness, so stale credentials cannot revoke Apple access or remove data.
@@ -139,5 +159,6 @@ export async function deleteUserDependenciesBeforeAuthDelete(user: { email: stri
     .getStore()
     ?.reportAppleAuthorizationRevocation(appleAuthorizationRevoked);
 
+  await cancelStripeSubscriptions(user.id);
   await deleteLocalUserDependencies({ email: user.email, userId: user.id });
 }

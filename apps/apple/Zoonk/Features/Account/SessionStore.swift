@@ -53,6 +53,16 @@ final class SessionStore {
     return account
   }
 
+  var isGoogleSignInAvailable: Bool {
+    #if DEBUG
+      if ProcessInfo.processInfo.arguments.contains("--ui-testing-google-sign-in") {
+        return true
+      }
+    #endif
+
+    return googleAuthentication.isAvailable
+  }
+
   /// Composes the live API and Keychain dependencies once at the application boundary while keeping UI tests off the real credential store.
   static func live(configuration: AppConfiguration = .current) -> SessionStore {
     let api = AccountAPI.live(baseURL: configuration.apiBaseURL)
@@ -383,13 +393,13 @@ final class SessionStore {
     failure = nil
   }
 
-  /// Validates a new session before synchronizing it so another device never receives a token the current device has not proved usable.
+  /// Validates a new session before telling Apple Watch that the paired iPhone has a usable account.
   private func completeSignIn(token: String) async throws {
     let account = try await api.getCurrentAccount(token: token)
     try credentialStore.save(token)
     self.token = token
     state = .signedIn(account)
-    companionCredentialSync.synchronize(token: token)
+    companionCredentialSync.synchronize(isSignedIn: true)
   }
 
   /// Clears Zoonk and Google credentials once the server session is gone or local authentication can no longer represent a usable account.
@@ -398,7 +408,7 @@ final class SessionStore {
     try? credentialStore.delete()
     token = nil
     state = .signedOut
-    companionCredentialSync.synchronize(token: nil)
+    companionCredentialSync.synchronize(isSignedIn: false)
   }
 
   /// Clears local credentials after server deletion and preserves Apple's manual fallback when the API cannot confirm that Sign in with Apple authorization was revoked.
@@ -442,7 +452,7 @@ final class SessionStore {
         token = nil
         failure = nil
         state = .signedOut
-        companionCredentialSync.synchronize(token: nil)
+        companionCredentialSync.synchronize(isSignedIn: false)
         return
       }
 
@@ -489,7 +499,7 @@ final class SessionStore {
       self.token = token
       failure = nil
       state = .signedIn(account)
-      companionCredentialSync.synchronize(token: token)
+      companionCredentialSync.synchronize(isSignedIn: true)
     case .unauthorized:
       clearLocalSession()
       failure = nil
