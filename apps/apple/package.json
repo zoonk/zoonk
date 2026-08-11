@@ -1,0 +1,18 @@
+{
+  "name": "apple",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "i18n:lint": "eloqnt lint --strict",
+    "i18n": "eloqnt translate",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@eloqnt/cli": "catalog:",
+    "@eloqnt/format-apple-xcstrings": "catalog:",
+    "@types/node": "catalog:",
+    "@zoonk/i18n": "workspace:*",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

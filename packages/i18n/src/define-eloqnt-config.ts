@@ -2,8 +2,12 @@ import { defineConfig } from "@eloqnt/cli";
 import { codexCli } from "ai-sdk-provider-codex-cli";
 import { NEXT_INTL_PO_FORMAT } from "./next-intl/po-format";
 
-// Can be extended as necessary
-type EloqntProjectOptions = { srcPath?: string | string[] };
+type EloqntMessages = Parameters<typeof defineConfig>[0]["messages"];
+
+type EloqntProjectOptions = {
+  messages?: Partial<EloqntMessages>;
+  srcPath?: string | string[] | null;
+};
 
 /**
  * Points Eloqnt at a Codex CLI installed outside this repo.
@@ -12,6 +16,14 @@ type EloqntProjectOptions = { srcPath?: string | string[] };
  */
 function getCodexPath() {
   return process.env.CODEX_PATH ?? "codex";
+}
+
+function getSrcPath(srcPath: EloqntProjectOptions["srcPath"]) {
+  if (srcPath === null) {
+    return;
+  }
+
+  return srcPath ?? "./src";
 }
 
 /**
@@ -25,8 +37,9 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
       locales: "infer",
       path: "./messages",
       sourceLocale: "en",
+      ...options.messages,
     },
     model: codexCli("gpt-5.6-sol", { codexPath: getCodexPath() }),
-    srcPath: options.srcPath ?? "./src",
+    srcPath: getSrcPath(options.srcPath),
   });
 }
