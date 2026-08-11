@@ -19,7 +19,10 @@ function getCodexPath() {
 }
 
 function getSrcPath(srcPath: EloqntProjectOptions["srcPath"]) {
-  if (srcPath === null) return undefined;
+  if (srcPath === null) {
+    return;
+  }
+
   return srcPath ?? "./src";
 }
 
