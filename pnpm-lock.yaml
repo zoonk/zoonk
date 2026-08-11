@@ -324,12 +324,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.3
+      '@zoonk/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      ai-sdk-provider-codex-cli:
-        specifier: 2.1.2
-        version: 2.1.2(zod@4.4.3)
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

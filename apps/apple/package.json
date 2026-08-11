@@ -11,8 +11,8 @@
     "@eloqnt/cli": "catalog:",
     "@eloqnt/format-apple-xcstrings": "catalog:",
     "@types/node": "catalog:",
+    "@zoonk/i18n": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
-    "ai-sdk-provider-codex-cli": "2.1.2",
     "typescript": "catalog:"
   }
 }
