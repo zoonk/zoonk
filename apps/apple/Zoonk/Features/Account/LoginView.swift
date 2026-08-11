@@ -39,15 +39,13 @@ struct LoginView: View {
             },
             onFailure: session.reportSignInFailure)
 
-          #if os(iOS) || os(macOS)
-            if session.isGoogleSignInAvailable {
-              GoogleAuthorizationButton(isDisabled: session.isWorking) {
-                Task {
-                  await session.signInWithGoogle()
-                }
+          if session.isGoogleSignInAvailable {
+            GoogleAuthorizationButton(isDisabled: session.isWorking) {
+              Task {
+                await session.signInWithGoogle()
               }
             }
-          #endif
+          }
 
           NavigationLink {
             EmailLoginView()
@@ -100,10 +98,7 @@ struct LoginView: View {
                   comment: "Link to the terms of service")
               }
             )
-            .accountLinkStyle()
-            #if os(iOS)
-              .frame(minHeight: 44)
-            #endif
+            .frame(minHeight: 44)
 
             Link(
               destination: AccountLinks.privacy,
@@ -114,26 +109,15 @@ struct LoginView: View {
                   comment: "Link to the privacy policy")
               }
             )
-            .accountLinkStyle()
-            #if os(iOS)
-              .frame(minHeight: 44)
-            #endif
+            .frame(minHeight: 44)
           }
           .font(.footnote)
         }
       }
-      .frame(maxWidth: contentMaxWidth)
+      .frame(maxWidth: 480)
       .padding(24)
       .frame(maxWidth: .infinity)
     }
-  }
-
-  private var contentMaxWidth: CGFloat {
-    #if os(tvOS)
-      600
-    #else
-      480
-    #endif
   }
 }
 

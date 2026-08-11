@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Opens the account surface directly in Debug UI runs so every platform can render the same states without relying on device-specific pointer, gaze, or remote automation.
+/// Opens the account surface directly in Debug UI runs so iPhone and iPad UI tests can render account states without relying on prior navigation.
 private func shouldPresentAccountForUITesting() -> Bool {
   #if DEBUG
     ProcessInfo.processInfo.arguments.contains("--ui-testing-account-sheet")
@@ -62,34 +62,23 @@ struct AppView: View {
     }
   }
 
-  /// Keeps the App Store-style account affordance beside the large screen title on touch devices while preserving each other platform's native toolbar placement.
-  @ViewBuilder
+  /// Keeps the App Store-style account affordance beside the large screen title on both iPhone and iPad.
   private func sectionRoot(_ section: AppSection) -> some View {
-    #if os(iOS)
-      section.tabContent
-        .safeAreaInset(edge: .top, spacing: 0) {
-          HStack {
-            Text(section.title)
-              .font(.largeTitle.bold())
-              .accessibilityAddTraits(.isHeader)
+    section.tabContent
+      .safeAreaInset(edge: .top, spacing: 0) {
+        HStack {
+          Text(section.title)
+            .font(.largeTitle.bold())
+            .accessibilityAddTraits(.isHeader)
 
-            Spacer()
+          Spacer()
 
-            accountButton
-          }
-          .padding(.horizontal)
-          .padding(.vertical, 8)
-          .background(.background)
+          accountButton
         }
-    #else
-      section.tabContent
-        .navigationTitle(section.title)
-        .toolbar {
-          ToolbarItem(placement: .primaryAction) {
-            accountButton
-          }
-        }
-    #endif
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(.background)
+      }
   }
 }
 

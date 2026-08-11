@@ -8,18 +8,9 @@ struct ZoonkApp: App {
     WindowGroup {
       AppView()
         .environment(session)
-        #if os(iOS) || os(macOS)
-          .onOpenURL { url in
-            session.handleGoogleSignInURL(url)
-          }
-        #endif
+        .onOpenURL { url in
+          session.handleGoogleSignInURL(url)
+        }
     }
-
-    #if os(macOS)
-      Settings {
-        SettingsView()
-          .environment(session)
-      }
-    #endif
   }
 }

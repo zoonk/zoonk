@@ -34,9 +34,7 @@ struct AccountDeletionView: View {
           tableName: "Account",
           comment: "Account deletion navigation title")
       )
-      #if !os(macOS)
-        .toolbarTitleDisplayMode(.inline)
-      #endif
+      .toolbarTitleDisplayMode(.inline)
       .confirmationDialog(
         Text(
           "Delete your Zoonk account?",
@@ -137,7 +135,6 @@ struct AccountDeletionView: View {
               Image(systemName: "arrow.up.right.square")
             }
           }
-          .accountLinkStyle()
         } header: {
           Text(
             "Subscription",
@@ -156,7 +153,6 @@ struct AccountDeletionView: View {
         }
       }
     }
-    .accountFormLayout()
   }
 
   @ViewBuilder
@@ -233,10 +229,7 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Account deletion verification code field label")
         }
-        #if os(iOS) || os(tvOS) || os(visionOS)
-          .keyboardType(.numberPad)
-        #endif
-        .accountTextFieldStyle()
+        .keyboardType(.numberPad)
         .textContentType(.oneTimeCode)
         .accessibilityLabel(
           Text(

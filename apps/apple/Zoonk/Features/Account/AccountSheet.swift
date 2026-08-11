@@ -22,15 +22,9 @@ struct AccountSheet: View {
     NavigationStack(path: $path) {
       accountContent
         .toolbar {
-          #if os(iOS)
-            ToolbarItem(placement: .topBarTrailing) {
-              closeButton
-            }
-          #else
-            ToolbarItem(placement: .cancellationAction) {
-              closeButton
-            }
-          #endif
+          ToolbarItem(placement: .topBarTrailing) {
+            closeButton
+          }
         }
         .navigationDestination(for: AccountDestination.self) { destination in
           switch destination {
@@ -52,13 +46,7 @@ struct AccountSheet: View {
     }
     .presentationDetents([.large])
     .presentationDragIndicator(.visible)
-    #if os(iOS)
-      .presentationSizing(.page)
-    #elseif os(macOS)
-      .frame(width: 560, height: 420)
-    #elseif os(tvOS)
-      .frame(width: 720, height: 860)
-    #endif
+    .presentationSizing(.page)
     .task {
       await session.reconcileSynchronizedCredential()
       #if DEBUG
@@ -69,11 +57,7 @@ struct AccountSheet: View {
 
   private var closeButton: some View {
     Button(action: dismiss.callAsFunction) {
-      #if os(macOS)
-        Text("Close", tableName: "Account", comment: "Closes the account sheet")
-      #else
-        Image(systemName: "xmark")
-      #endif
+      Image(systemName: "xmark")
     }
     .accessibilityLabel(
       Text("Close", tableName: "Account", comment: "Closes the account sheet"))
@@ -227,7 +211,6 @@ private struct SignedInAccountView: View {
             title: Text("Blog", tableName: "Account", comment: "Account option for the blog"),
             systemImage: "newspaper")
         }
-        .accountLinkStyle()
 
         Link(destination: AccountLinks.support) {
           AccountRowLabel(
@@ -237,7 +220,6 @@ private struct SignedInAccountView: View {
               comment: "Account option for feedback and support"),
             systemImage: "questionmark.circle")
         }
-        .accountLinkStyle()
       }
 
       Section {
@@ -273,7 +255,6 @@ private struct SignedInAccountView: View {
         }
       }
     }
-    .accountMenuStyle()
   }
 }
 
@@ -296,7 +277,6 @@ private struct AccountSubscriptionRow: View {
       Link(destination: destination) {
         rowLabel(status: activeStatus)
       }
-      .accountLinkStyle()
     } else {
       rowLabel(
         status: Text(

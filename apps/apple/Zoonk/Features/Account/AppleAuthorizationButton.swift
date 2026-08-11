@@ -1,15 +1,7 @@
 import AuthenticationServices
 import SwiftUI
 
-#if os(tvOS)
-  let authenticationButtonSize = CGSize(width: 312, height: 73)
-#elseif os(visionOS)
-  let authenticationButtonSize = CGSize(width: 257, height: 60)
-#elseif os(macOS)
-  let authenticationButtonSize = CGSize(width: 214, height: 30)
-#else
-  let authenticationButtonSize = CGSize(width: 214, height: 50)
-#endif
+let authenticationButtonSize = CGSize(width: 214, height: 50)
 let authenticationButtonCornerRadius: CGFloat = 6
 
 struct AppleAuthorizationButton: View {

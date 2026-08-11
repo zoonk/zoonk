@@ -9,7 +9,6 @@ final class SessionStore {
   private(set) var state = AccountSessionState.restoring
 
   private let api: AccountAPI
-  private let companionCredentialSync: any CompanionCredentialSyncing
   private let credentialStore: any SessionCredentialStoring
   private let googleAuthentication: GoogleAuthenticationClient
   private let skipsCredentialReconciliation: Bool
@@ -33,13 +32,11 @@ final class SessionStore {
 
   init(
     api: AccountAPI,
-    companionCredentialSync: any CompanionCredentialSyncing,
     credentialStore: any SessionCredentialStoring,
     googleAuthentication: GoogleAuthenticationClient,
     skipsCredentialReconciliation: Bool = false
   ) {
     self.api = api
-    self.companionCredentialSync = companionCredentialSync
     self.credentialStore = credentialStore
     self.googleAuthentication = googleAuthentication
     self.skipsCredentialReconciliation = skipsCredentialReconciliation
@@ -79,7 +76,6 @@ final class SessionStore {
 
     let store = SessionStore(
       api: api,
-      companionCredentialSync: makeCompanionCredentialSync(),
       credentialStore: credentialStore,
       googleAuthentication: GoogleAuthenticationClient(),
       skipsCredentialReconciliation: usesSignedInUITestFixture)
@@ -100,7 +96,6 @@ final class SessionStore {
     let api = AccountAPI.live(baseURL: AppConfiguration.current.apiBaseURL)
     let store = SessionStore(
       api: api,
-      companionCredentialSync: NoopCompanionCredentialSync(),
       credentialStore: InMemorySessionCredentialStore(),
       googleAuthentication: GoogleAuthenticationClient())
     store.didRestore = true
@@ -217,12 +212,10 @@ final class SessionStore {
     }
   }
 
-  #if os(iOS) || os(macOS)
-    /// Returns Google OAuth callbacks to the SDK instance that owns the active native sign-in flow.
-    func handleGoogleSignInURL(_ url: URL) {
-      googleAuthentication.handle(url)
-    }
-  #endif
+  /// Returns Google OAuth callbacks to the SDK instance that owns the active native sign-in flow.
+  func handleGoogleSignInURL(_ url: URL) {
+    googleAuthentication.handle(url)
+  }
 
   /// Saves first-time setup and later profile edits through the same authenticated product API.
   func updateProfile(name: String, username: String) async -> Bool {
@@ -393,13 +386,12 @@ final class SessionStore {
     failure = nil
   }
 
-  /// Validates a new session before telling Apple Watch that the paired iPhone has a usable account.
+  /// Validates a new session before persisting it so the app never restores a bearer token that cannot load its account.
   private func completeSignIn(token: String) async throws {
     let account = try await api.getCurrentAccount(token: token)
     try credentialStore.save(token)
     self.token = token
     state = .signedIn(account)
-    companionCredentialSync.synchronize(isSignedIn: true)
   }
 
   /// Clears Zoonk and Google credentials once the server session is gone or local authentication can no longer represent a usable account.
@@ -408,7 +400,6 @@ final class SessionStore {
     try? credentialStore.delete()
     token = nil
     state = .signedOut
-    companionCredentialSync.synchronize(isSignedIn: false)
   }
 
   /// Clears local credentials after server deletion and preserves Apple's manual fallback when the API cannot confirm that Sign in with Apple authorization was revoked.
@@ -452,7 +443,6 @@ final class SessionStore {
         token = nil
         failure = nil
         state = .signedOut
-        companionCredentialSync.synchronize(isSignedIn: false)
         return
       }
 
@@ -499,7 +489,6 @@ final class SessionStore {
       self.token = token
       failure = nil
       state = .signedIn(account)
-      companionCredentialSync.synchronize(isSignedIn: true)
     case .unauthorized:
       clearLocalSession()
       failure = nil

@@ -63,7 +63,7 @@ struct SessionCredentialStore: SessionCredentialStoring {
   }
 
   private var updateQuery: [String: Any] {
-    matchQuery.merging([kSecAttrSynchronizable as String: synchronizable]) { _, newValue in
+    matchQuery.merging([kSecAttrSynchronizable as String: true]) { _, newValue in
       newValue
     }
   }
@@ -72,7 +72,7 @@ struct SessionCredentialStore: SessionCredentialStoring {
     [
       kSecAttrAccount as String: account,
       kSecAttrService as String: service,
-      kSecAttrSynchronizable as String: synchronizableQuery,
+      kSecAttrSynchronizable as String: kSecAttrSynchronizableAny,
       kSecClass as String: kSecClassGenericPassword,
     ]
   }
@@ -86,29 +86,13 @@ struct SessionCredentialStore: SessionCredentialStoring {
     }
   }
 
-  private var synchronizable: Any {
-    #if os(tvOS)
-      return false
-    #else
-      return true
-    #endif
-  }
-
-  private var synchronizableQuery: Any {
-    #if os(tvOS)
-      return false
-    #else
-      return kSecAttrSynchronizableAny
-    #endif
-  }
-
   /// Inserts the credential only when no matching item exists, preserving a single source of truth in the user's Keychain.
   private func add(_ data: Data) throws {
     let query: [String: Any] = [
       kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked,
       kSecAttrAccount as String: account,
       kSecAttrService as String: service,
-      kSecAttrSynchronizable as String: synchronizable,
+      kSecAttrSynchronizable as String: true,
       kSecClass as String: kSecClassGenericPassword,
       kSecValueData as String: data,
     ]

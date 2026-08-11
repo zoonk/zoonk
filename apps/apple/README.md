@@ -1,6 +1,8 @@
-# Zoonk for Apple Platforms
+# Zoonk for iPhone and iPad
 
-This directory contains the native SwiftUI app for iOS, iPadOS, macOS, tvOS, visionOS, and watchOS. Use the Make targets below as the shared command interface for local development, automation, and agents.
+This directory contains the native SwiftUI app for iPhone and iPad. One adaptive iOS target supports both devices.
+
+The iPad app also remains available in Apple's Designed for iPad compatibility mode on Apple silicon Macs and Apple Vision Pro. These compatibility destinations use the iOS build; they are not separate native app targets.
 
 ## Requirements
 
@@ -12,18 +14,14 @@ This directory contains the native SwiftUI app for iOS, iPadOS, macOS, tvOS, vis
 
 Run commands from this directory:
 
-| Command               | Purpose                                                        |
-| --------------------- | -------------------------------------------------------------- |
-| `make build`          | Build every supported Apple platform in Release configuration. |
-| `make build-ios`      | Build the shared app for iOS and iPadOS.                       |
-| `make build-macos`    | Build the shared app for macOS.                                |
-| `make build-tvos`     | Build the shared app for tvOS.                                 |
-| `make build-visionos` | Build the shared app for visionOS.                             |
-| `make build-watchos`  | Build the companion watchOS app.                               |
-| `make test`           | Run the app's test targets on the default iPhone simulator.    |
-| `make format`         | Format Swift source files in place.                            |
-| `make format-check`   | Check Swift formatting without changing files.                 |
-| `make check`          | Run formatting checks, build every platform, and run tests.    |
+| Command             | Purpose                                                       |
+| ------------------- | ------------------------------------------------------------- |
+| `make build`        | Build the iPhone and iPad app in Release configuration.       |
+| `make build-ios`    | Build the iPhone and iPad app in Release configuration.       |
+| `make test`         | Run the app's test targets on the default iPhone simulator.   |
+| `make format`       | Format Swift source files in place.                           |
+| `make format-check` | Check Swift formatting without changing files.                |
+| `make check`        | Run formatting checks, build the app, and run its test suite. |
 
 From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`.
 
@@ -58,4 +56,4 @@ Build the app after adding or changing copy so Xcode extracts the source strings
 
 ## Continuous Integration
 
-GitHub Actions checks Swift formatting and builds each supported platform independently. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.
+GitHub Actions checks Swift formatting and builds the iPhone and iPad app. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.
