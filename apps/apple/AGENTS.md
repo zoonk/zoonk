@@ -28,7 +28,8 @@ These instructions apply to the native iPhone and iPad app in this directory and
 
 - Keep user-facing text in native Xcode String Catalogs. Let the operating system select the app language; do not add a custom locale switcher or parallel translation store.
 - Prefer source-driven extraction. Pass English string literals directly to localizable SwiftUI or Foundation APIs, include a translator comment, and specify the owning feature catalog with `table: "<Feature>"`. Build the app to let Xcode add and update catalog entries automatically. Do not add `extractionState: "manual"` or catalog-first semantic keys unless a specific use case requires generated symbols whose values must change independently from their keys.
-- Keep app-shell terminology in `Zoonk/Navigation/Navigation.xcstrings`. When a durable feature receives its first feature-owned user-facing copy, add one named `<Feature>.xcstrings` catalog beside that feature instead of growing a global catalog. Keep every supported locale together in that feature catalog, and keep catalog basenames unique and stable within the target.
+- Keep String Catalogs together in `Zoonk/Resources/Localization`, named by their owning feature or app surface, such as `Account.xcstrings` and `Navigation.xcstrings`. Keep catalog basenames unique and stable within the target; Eloqnt discovers every catalog in this directory automatically.
+- After building to extract changed strings, run `pnpm --filter apple i18n` from the repository root to translate them and `pnpm --filter apple i18n:lint` to validate the catalogs. Never edit generated translations in `.xcstrings` files manually.
 - Reuse the main app's established wording when it fits native Apple UI, but prefer concise platform-standard terminology when the web wording is not appropriate for a native control.
 
 ## Verification

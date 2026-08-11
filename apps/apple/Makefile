@@ -1,5 +1,6 @@
 PROJECT := Zoonk.xcodeproj
 APP_SCHEME := Zoonk
+SWIFT_SOURCES := Zoonk ZoonkUITests
 CONFIGURATION ?= Release
 TEST_DESTINATION ?= platform=iOS Simulator,name=iPhone 17,OS=latest
 TEST_ARGUMENTS ?=
@@ -17,9 +18,9 @@ test:
 	$(XCODEBUILD) -scheme "$(APP_SCHEME)" -destination "$(TEST_DESTINATION)" CODE_SIGNING_ALLOWED=NO $(TEST_ARGUMENTS) test
 
 format:
-	xcrun swift-format format --recursive --in-place .
+	xcrun swift-format format --recursive --in-place $(SWIFT_SOURCES)
 
 format-check:
-	xcrun swift-format lint --recursive --parallel --strict .
+	xcrun swift-format lint --recursive --parallel --strict $(SWIFT_SOURCES)
 
 check: format-check build test
