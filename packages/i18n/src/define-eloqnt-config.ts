@@ -29,8 +29,6 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
     },
     model: codexCli("gpt-5.6-sol", { codexPath: getCodexPath() }),
     srcPath: options.srcPath ?? "./src",
-    // Absolute, so every consumer reads the same styleguides no matter how
-    // deeply its own config is nested.
-    styleguides: fileURLToPath(new URL("../styleguides", import.meta.url)),
+    styleguides: fileURLToPath(new URL("../.eloqnt", import.meta.url)),
   });
 }
