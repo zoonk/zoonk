@@ -17,6 +17,10 @@
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
     ".": { "project": ["scripts/dev/**/*.mts"] },
+    "apps/apple": {
+      "entry": [".eloqnt/config.ts"],
+      "ignoreDependencies": ["@eloqnt/format-apple-xcstrings"]
+    },
     "apps/api": {
       "entry": [".eloqnt/config.ts"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]

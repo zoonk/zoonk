@@ -18,6 +18,9 @@ catalogs:
     '@eloqnt/cli':
       specifier: 0.6.7
       version: 0.6.7
+    '@eloqnt/format-apple-xcstrings':
+      specifier: 0.0.2
+      version: 0.0.2
     '@mdx-js/loader':
       specifier: 3.1.1
       version: 3.1.1
@@ -309,6 +312,27 @@ importers:
       zod-openapi:
         specifier: 6.0.0
         version: 6.0.0(zod@4.4.3)
+
+  apps/apple:
+    devDependencies:
+      '@eloqnt/cli':
+        specifier: 'catalog:'
+        version: 0.6.7(@swc/helpers@0.5.23)
+      '@eloqnt/format-apple-xcstrings':
+        specifier: 'catalog:'
+        version: 0.0.2(@swc/helpers@0.5.23)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.3
+      '@zoonk/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
 
   apps/blog:
     dependencies:
@@ -1434,6 +1458,12 @@ packages:
   '@eloqnt/cli@0.6.7':
     resolution: {integrity: sha512-BX4PSxJ6Dlo80Kd+80NWiRmNUjeoKLXy0loeA/K1i92bdwHB3o2S9P//8L4p3NODcqthQ9NwJ7tGT017DKWwmQ==}
     hasBin: true
+
+  '@eloqnt/format-apple-xcstrings@0.0.2':
+    resolution: {integrity: sha512-5aXfwaKrmP45jETXhMDFgW9uxdavjGtDAEW4Pi4dDVUuzqB5A6ZX+BxnKIRm3V7/RQY1rMyMPvMpfOiU/IXEmw==}
+
+  '@eloqnt/sdk@0.6.5':
+    resolution: {integrity: sha512-q8DPQngrkmEos0qn5H+bhX2DYvjp2lymBdRtm/mxPDpgmX09UfF28gj+aE3SDvjlHEDVErkV9FXeJjTo5CcEbQ==}
 
   '@eloqnt/sdk@0.6.6':
     resolution: {integrity: sha512-wA4zCKyjUeyvVeOA3IpPj+97MYsJD/guhX+0acKIQghzvdE+CSYrHM5BctSRjcYWjgXSjUHXfGWZJCHd3VagOA==}
@@ -8112,6 +8142,28 @@ snapshots:
       citty: 0.1.6
       open: 11.0.0
       picocolors: 1.1.1
+    transitivePeerDependencies:
+      - '@swc/helpers'
+
+  '@eloqnt/format-apple-xcstrings@0.0.2(@swc/helpers@0.5.23)':
+    dependencies:
+      '@eloqnt/sdk': 0.6.5(@swc/helpers@0.5.23)
+      '@formatjs/icu-messageformat-parser': 3.5.16
+    transitivePeerDependencies:
+      - '@swc/helpers'
+
+  '@eloqnt/sdk@0.6.5(@swc/helpers@0.5.23)':
+    dependencies:
+      '@formatjs/icu-messageformat-parser': 3.5.16
+      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
+      ai: 7.0.58(zod@4.4.3)
+      jiti: 2.7.0
+      magic-string: 0.30.21
+      next-intl-swc-plugin-extractor: 0.0.0-canary-9f1cde4
+      po-parser: 2.1.1
+      tinyglobby: 0.2.17
+      yaml: 2.9.0
+      zod: 4.4.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
