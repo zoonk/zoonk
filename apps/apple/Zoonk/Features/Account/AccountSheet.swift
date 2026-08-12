@@ -51,9 +51,6 @@ struct AccountSheet: View {
     .presentationSizing(.page)
     .task {
       await session.reconcileSynchronizedCredential()
-      #if DEBUG
-        presentRequestedUITestingDestination()
-      #endif
     }
   }
 
@@ -148,23 +145,6 @@ struct AccountSheet: View {
     openCourses()
   }
 
-  #if DEBUG
-    /// Opens nested account forms directly during cross-platform UI review so remote and gaze-driven simulators can render the same states as touch devices.
-    private func presentRequestedUITestingDestination() {
-      guard path.isEmpty, let account = session.account else {
-        return
-      }
-
-      if ProcessInfo.processInfo.arguments.contains("--ui-testing-profile") {
-        path.append(.profile)
-        return
-      }
-
-      if ProcessInfo.processInfo.arguments.contains("--ui-testing-delete-account") {
-        path.append(.deleteAccount(makeDeletionDestination(account)))
-      }
-    }
-  #endif
 }
 
 private struct SignedInAccountView: View {

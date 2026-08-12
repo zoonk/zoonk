@@ -1,19 +1,14 @@
 import SwiftUI
 
-/// Opens the account surface directly in Debug UI runs so iPhone and iPad UI tests can render account states without relying on prior navigation.
-private func shouldPresentAccountForUITesting() -> Bool {
-  #if DEBUG
-    ProcessInfo.processInfo.arguments.contains("--ui-testing-account-sheet")
-  #else
-    false
-  #endif
-}
-
 struct AppView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(SessionStore.self) private var session
-  @State private var isAccountPresented = shouldPresentAccountForUITesting()
+  @State private var isAccountPresented: Bool
   @State private var selectedSection = AppSection.home
+
+  init(initiallyPresentsAccount: Bool = false) {
+    _isAccountPresented = State(initialValue: initiallyPresentsAccount)
+  }
 
   var body: some View {
     TabView(selection: $selectedSection) {

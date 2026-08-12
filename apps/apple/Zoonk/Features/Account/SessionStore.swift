@@ -51,60 +51,34 @@ final class SessionStore {
   }
 
   var isGoogleSignInAvailable: Bool {
-    #if DEBUG
-      if ProcessInfo.processInfo.arguments.contains("--ui-testing-google-sign-in") {
-        return true
-      }
-    #endif
-
-    return googleAuthentication.isAvailable
+    googleAuthentication.isAvailable
   }
 
-  /// Composes the live API and Keychain dependencies once at the application boundary while keeping UI tests off the real credential store.
+  /// Composes the live API and Keychain dependencies once at the application boundary.
   static func live(configuration: AppConfiguration = .current) -> SessionStore {
-    let api = AccountAPI.live(baseURL: configuration.apiBaseURL)
-    #if DEBUG
-      let usesRequiredSetupUITestFixture = ProcessInfo.processInfo.arguments.contains(
-        "--ui-testing-required-setup")
-      let usesSignedInUITestFixture =
-        usesRequiredSetupUITestFixture
-        || ProcessInfo.processInfo.arguments.contains("--ui-testing-signed-in")
-    #else
-      let usesRequiredSetupUITestFixture = false
-      let usesSignedInUITestFixture = false
-    #endif
-    let credentialStore: any SessionCredentialStoring =
-      ProcessInfo.processInfo.arguments.contains("--ui-testing")
-      ? InMemorySessionCredentialStore()
-      : SessionCredentialStore()
-
-    let store = SessionStore(
-      api: api,
-      credentialStore: credentialStore,
-      googleAuthentication: GoogleAuthenticationClient(),
-      skipsCredentialReconciliation: usesSignedInUITestFixture)
-
-    #if DEBUG
-      if usesSignedInUITestFixture {
-        store.didRestore = true
-        store.token = "ui-testing-session"
-        store.state = .signedIn(
-          usesRequiredSetupUITestFixture ? uiTestingRequiredSetupAccount : uiTestingAccount)
-      }
-    #endif
-
-    return store
+    SessionStore(
+      api: AccountAPI.live(baseURL: configuration.apiBaseURL),
+      credentialStore: SessionCredentialStore(),
+      googleAuthentication: GoogleAuthenticationClient())
   }
 
-  /// Supplies a stable signed-out session to previews without starting network or Keychain work.
-  static func preview() -> SessionStore {
+  /// Supplies isolated session state to SwiftUI previews and Debug UI runs without reading the user's Keychain.
+  static func preview(account: CurrentAccount? = nil) -> SessionStore {
     let api = AccountAPI.live(baseURL: AppConfiguration.current.apiBaseURL)
     let store = SessionStore(
       api: api,
       credentialStore: InMemorySessionCredentialStore(),
-      googleAuthentication: GoogleAuthenticationClient())
+      googleAuthentication: GoogleAuthenticationClient(),
+      skipsCredentialReconciliation: true)
     store.didRestore = true
-    store.state = .signedOut
+
+    if let account {
+      store.token = "preview-session"
+      store.state = .signedIn(account)
+    } else {
+      store.state = .signedOut
+    }
+
     return store
   }
 
@@ -558,28 +532,4 @@ final class SessionStore {
       return .accountDeletion
     }
   }
-
-  #if DEBUG
-    private static let uiTestingRequiredSetupAccount = CurrentAccount(
-      account: uiTestingAccount.account,
-      user: AccountUser(
-        displayUsername: nil,
-        email: "ui-test@zoonk.test",
-        id: "7846d3f5-b9c4-4ded-b283-35f70a48af86",
-        image: nil,
-        name: "",
-        username: nil))
-
-    private static let uiTestingAccount = CurrentAccount(
-      account: AccountAccess(
-        deletion: AccountDeletionRequirements(hasAppleAccount: false),
-        subscription: AccountSubscription(plan: "plus", provider: "google", status: "active")),
-      user: AccountUser(
-        displayUsername: "ui_test_user",
-        email: "ui-test@zoonk.test",
-        id: "7846d3f5-b9c4-4ded-b283-35f70a48af86",
-        image: nil,
-        name: "UI Test User",
-        username: "ui_test_user"))
-  #endif
 }

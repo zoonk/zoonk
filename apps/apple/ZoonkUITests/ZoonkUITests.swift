@@ -1,16 +1,72 @@
 import XCTest
 
+private enum UITestScenario: Equatable {
+  case requiredSetup
+  case signedIn
+  case signedOut
+
+  var accountJSON: String? {
+    switch self {
+    case .requiredSetup:
+      requiredSetupAccountJSON
+    case .signedIn:
+      signedInAccountJSON
+    case .signedOut:
+      nil
+    }
+  }
+
+  var launchArguments: [String] {
+    ["-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing"]
+      + (self == .requiredSetup ? ["--ui-testing-account-sheet"] : [])
+  }
+
+  private var requiredSetupAccountJSON: String {
+    """
+    {
+      "account": {
+        "deletion": { "hasAppleAccount": false },
+        "subscription": { "plan": "plus", "provider": "google", "status": "active" }
+      },
+      "user": {
+        "displayUsername": null,
+        "email": "ui-test@zoonk.test",
+        "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
+        "image": null,
+        "name": "",
+        "username": null
+      }
+    }
+    """
+  }
+
+  private var signedInAccountJSON: String {
+    """
+    {
+      "account": {
+        "deletion": { "hasAppleAccount": false },
+        "subscription": { "plan": "plus", "provider": "google", "status": "active" }
+      },
+      "user": {
+        "displayUsername": "ui_test_user",
+        "email": "ui-test@zoonk.test",
+        "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
+        "image": null,
+        "name": "UI Test User",
+        "username": "ui_test_user"
+      }
+    }
+    """
+  }
+}
+
 final class ZoonkUITests: XCTestCase {
   /// Proves that the account affordance opens directly to the sign-in methods configured in this test build without an extra navigation step.
   @MainActor
   func testAccountSheetOffersEverySignInMethod() {
     continueAfterFailure = false
 
-    let app = XCUIApplication()
-    app.launchArguments += [
-      "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing",
-      "--ui-testing-google-sign-in",
-    ]
+    let app = makeApp()
     app.launch()
 
     let accountButton = app.buttons["Account"]
@@ -34,8 +90,7 @@ final class ZoonkUITests: XCTestCase {
   func testEmailSignInUsesAccessibleEmailKeyboard() {
     continueAfterFailure = false
 
-    let app = XCUIApplication()
-    app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing"]
+    let app = makeApp()
     app.launch()
 
     let accountButton = app.buttons["Account"]
@@ -68,11 +123,7 @@ final class ZoonkUITests: XCTestCase {
   func testRequiredProfileSetupOnlyOffersSave() {
     continueAfterFailure = false
 
-    let app = XCUIApplication()
-    app.launchArguments += [
-      "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing",
-      "--ui-testing-required-setup", "--ui-testing-account-sheet",
-    ]
+    let app = makeApp(for: .requiredSetup)
     app.launch()
 
     XCTAssertTrue(
@@ -91,11 +142,7 @@ final class ZoonkUITests: XCTestCase {
   func testAccountDeletionRequiresConfirmation() {
     continueAfterFailure = false
 
-    let app = XCUIApplication()
-    app.launchArguments += [
-      "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing",
-      "--ui-testing-signed-in",
-    ]
+    let app = makeApp(for: .signedIn)
     app.launch()
 
     let accountButton = app.buttons["Account"]
@@ -132,11 +179,7 @@ final class ZoonkUITests: XCTestCase {
   func testSignOutStartsImmediately() {
     continueAfterFailure = false
 
-    let app = XCUIApplication()
-    app.launchArguments += [
-      "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing",
-      "--ui-testing-signed-in",
-    ]
+    let app = makeApp(for: .signedIn)
     app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     app.launch()
 
@@ -162,8 +205,7 @@ final class ZoonkUITests: XCTestCase {
   func testPrimaryTabsNavigateToTheirScreens() {
     continueAfterFailure = false
 
-    let app = XCUIApplication()
-    app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing"]
+    let app = makeApp()
     app.launch()
 
     let screenTitles = ["Home", "New course", "Courses", "Progress", "Search"]
@@ -186,5 +228,18 @@ final class ZoonkUITests: XCTestCase {
         app.staticTexts[screenTitle].firstMatch.waitForExistence(timeout: 5),
         "Expected the \(screenTitle) screen title to exist")
     }
+  }
+
+  /// Creates one isolated app process from scenario data owned by the UI-test target rather than the distributable app.
+  @MainActor
+  private func makeApp(for scenario: UITestScenario = .signedOut) -> XCUIApplication {
+    let app = XCUIApplication()
+    app.launchArguments += scenario.launchArguments
+
+    if let accountJSON = scenario.accountJSON {
+      app.launchEnvironment["ZOONK_UI_TEST_ACCOUNT"] = accountJSON
+    }
+
+    return app
   }
 }

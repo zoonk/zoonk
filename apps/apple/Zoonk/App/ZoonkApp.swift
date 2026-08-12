@@ -2,11 +2,25 @@ import SwiftUI
 
 @main
 struct ZoonkApp: App {
-  @State private var session = SessionStore.live()
+  @State private var session: SessionStore
+  private let initiallyPresentsAccount: Bool
+
+  init() {
+    #if DEBUG
+      if let configuration = UITestConfiguration.current {
+        _session = State(initialValue: configuration.session)
+        initiallyPresentsAccount = configuration.initiallyPresentsAccount
+        return
+      }
+    #endif
+
+    _session = State(initialValue: SessionStore.live())
+    initiallyPresentsAccount = false
+  }
 
   var body: some Scene {
     WindowGroup {
-      AppView()
+      AppView(initiallyPresentsAccount: initiallyPresentsAccount)
         .environment(session)
         .onOpenURL { url in
           session.handleGoogleSignInURL(url)
