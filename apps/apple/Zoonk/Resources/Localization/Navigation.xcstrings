@@ -1,35 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Activity" : {
-      "comment" : "Navigation title for the learner's activity history.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktivität"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Actividad"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activité"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atividade"
-          }
-        }
-      }
-    },
     "Courses" : {
       "comment" : "Navigation title for the learner's courses.",
       "localizations" : {
@@ -55,35 +26,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cursos"
-          }
-        }
-      }
-    },
-    "Energy" : {
-      "comment" : "Navigation title for the learner's Energy metric.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energie"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energía"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Énergie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energia"
           }
         }
       }
@@ -117,35 +59,6 @@
         }
       }
     },
-    "Level" : {
-      "comment" : "Navigation title for the learner's current level.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Level"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nivel"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niveau"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nível"
-          }
-        }
-      }
-    },
     "New course" : {
       "comment" : "Navigation title for the destination where the learner creates a course.",
       "localizations" : {
@@ -175,35 +88,6 @@
         }
       }
     },
-    "Patterns" : {
-      "comment" : "Navigation title for patterns in the learner's progress.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muster"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Patrones"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tendances"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Padrões"
-          }
-        }
-      }
-    },
     "Progress" : {
       "comment" : "Navigation title for the learner's progress overview.",
       "localizations" : {
@@ -229,35 +113,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Progresso"
-          }
-        }
-      }
-    },
-    "Score" : {
-      "comment" : "Navigation title for the learner's score.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punktestand"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puntuación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Score"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pontuação"
           }
         }
       }

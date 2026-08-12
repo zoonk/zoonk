@@ -63,6 +63,29 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertEqual(emailField.value as? String, "test@example.com")
   }
 
+  /// Proves required profile setup cannot be dismissed from its toolbar before the user saves a valid profile.
+  @MainActor
+  func testRequiredProfileSetupOnlyOffersSave() {
+    continueAfterFailure = false
+
+    let app = XCUIApplication()
+    app.launchArguments += [
+      "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing",
+      "--ui-testing-required-setup", "--ui-testing-account-sheet",
+    ]
+    app.launch()
+
+    XCTAssertTrue(
+      app.navigationBars["Finish setup"].waitForExistence(timeout: 5),
+      "Expected required profile setup to open directly")
+    XCTAssertTrue(
+      app.buttons["Save"].exists,
+      "Expected required profile setup to offer its save action")
+    XCTAssertFalse(
+      app.buttons["Close"].exists,
+      "Expected required profile setup to omit the account sheet close action")
+  }
+
   /// Proves that account deletion is a deliberate native flow: the account option opens a dedicated screen and the irreversible request still requires confirmation.
   @MainActor
   func testAccountDeletionRequiresConfirmation() {

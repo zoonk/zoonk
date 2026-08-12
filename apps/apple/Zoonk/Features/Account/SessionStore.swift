@@ -64,9 +64,13 @@ final class SessionStore {
   static func live(configuration: AppConfiguration = .current) -> SessionStore {
     let api = AccountAPI.live(baseURL: configuration.apiBaseURL)
     #if DEBUG
-      let usesSignedInUITestFixture = ProcessInfo.processInfo.arguments.contains(
-        "--ui-testing-signed-in")
+      let usesRequiredSetupUITestFixture = ProcessInfo.processInfo.arguments.contains(
+        "--ui-testing-required-setup")
+      let usesSignedInUITestFixture =
+        usesRequiredSetupUITestFixture
+        || ProcessInfo.processInfo.arguments.contains("--ui-testing-signed-in")
     #else
+      let usesRequiredSetupUITestFixture = false
       let usesSignedInUITestFixture = false
     #endif
     let credentialStore: any SessionCredentialStoring =
@@ -84,7 +88,8 @@ final class SessionStore {
       if usesSignedInUITestFixture {
         store.didRestore = true
         store.token = "ui-testing-session"
-        store.state = .signedIn(uiTestingAccount)
+        store.state = .signedIn(
+          usesRequiredSetupUITestFixture ? uiTestingRequiredSetupAccount : uiTestingAccount)
       }
     #endif
 
@@ -555,6 +560,16 @@ final class SessionStore {
   }
 
   #if DEBUG
+    private static let uiTestingRequiredSetupAccount = CurrentAccount(
+      account: uiTestingAccount.account,
+      user: AccountUser(
+        displayUsername: nil,
+        email: "ui-test@zoonk.test",
+        id: "7846d3f5-b9c4-4ded-b283-35f70a48af86",
+        image: nil,
+        name: "",
+        username: nil))
+
     private static let uiTestingAccount = CurrentAccount(
       account: AccountAccess(
         deletion: AccountDeletionRequirements(hasAppleAccount: false),

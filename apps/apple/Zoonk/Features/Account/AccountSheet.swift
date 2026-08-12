@@ -22,8 +22,10 @@ struct AccountSheet: View {
     NavigationStack(path: $path) {
       accountContent
         .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            closeButton
+          if !requiresProfileSetup {
+            ToolbarItem(placement: .topBarTrailing) {
+              closeButton
+            }
           }
         }
         .navigationDestination(for: AccountDestination.self) { destination in
@@ -61,6 +63,14 @@ struct AccountSheet: View {
     }
     .accessibilityLabel(
       Text("Close", tableName: "Account", comment: "Closes the account sheet"))
+  }
+
+  private var requiresProfileSetup: Bool {
+    guard case .signedIn(let account) = session.state else {
+      return false
+    }
+
+    return account.needsProfileSetup
   }
 
   @ViewBuilder
