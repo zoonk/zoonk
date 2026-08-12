@@ -1,1 +1,0 @@
-../../../packages/i18n/.eloqnt/styleguide.de.md

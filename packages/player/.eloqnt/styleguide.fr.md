@@ -1,1 +1,0 @@
-../../i18n/.eloqnt/styleguide.fr.md

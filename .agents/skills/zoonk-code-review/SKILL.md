@@ -142,7 +142,7 @@ Read [Zoonk testing](../zoonk-testing/SKILL.md) whenever the change adds behavio
 - Require ICU plural messages instead of code branches for singular and plural copy.
 - Check `ClientLink` is used when a Base UI `render` prop requires a client component.
 - Never recommend manual PO edits. Source strings must be extracted by the relevant build and translated with `pnpm i18n`.
-- Review UI copy against `packages/i18n/.eloqnt/styleguide.md`: use plain, direct, concrete language; avoid jargon, internal taxonomy, ambiguity, and unnecessary words.
+- Review UI copy against `packages/i18n/styleguides/styleguide.md`: use plain, direct, concrete language; avoid jargon, internal taxonomy, ambiguity, and unnecessary words.
 - Read [copywriting](../copywriting/SKILL.md) for new persuasive or marketing copy and [copy editing](../copy-editing/SKILL.md) for revisions to existing copy. For marketing copy (eg pricing pages, landing pages, etc), also read [marketing psychology](../marketing-psychology/SKILL.md).
 
 ### 10. Verify Quality and CI Evidence

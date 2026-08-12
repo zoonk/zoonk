@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "@eloqnt/cli";
 import { codexCli } from "ai-sdk-provider-codex-cli";
 import { NEXT_INTL_PO_FORMAT } from "./next-intl/po-format";
@@ -28,5 +29,8 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
     },
     model: codexCli("gpt-5.6-sol", { codexPath: getCodexPath() }),
     srcPath: options.srcPath ?? "./src",
+    // Absolute, so every consumer reads the same styleguides no matter how
+    // deeply its own config is nested.
+    styleguides: fileURLToPath(new URL("../styleguides", import.meta.url)),
   });
 }

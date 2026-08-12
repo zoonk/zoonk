@@ -16,8 +16,8 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     '@eloqnt/cli':
-      specifier: 0.6.5
-      version: 0.6.5
+      specifier: 0.6.7
+      version: 0.6.7
     '@mdx-js/loader':
       specifier: 3.1.1
       version: 3.1.1
@@ -132,7 +132,7 @@ importers:
     devDependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.6.5(@swc/helpers@0.5.23)
+        version: 0.6.7(@swc/helpers@0.5.23)
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.62.1
@@ -791,7 +791,7 @@ importers:
     dependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.6.5(@swc/helpers@0.5.23)
+        version: 0.6.7(@swc/helpers@0.5.23)
       ai-sdk-provider-codex-cli:
         specifier: 2.1.2
         version: 2.1.2(zod@4.4.3)
@@ -1431,12 +1431,12 @@ packages:
   '@electric-sql/pglite@0.4.3':
     resolution: {integrity: sha512-ichuWTgtd4mOM1G4SpyGJa5trT03lWbMypDV0fUXUCXg5hiHqVAz/bZyV68NqmkLB7WcYmj1RMJVSp8HV/v/ZQ==}
 
-  '@eloqnt/cli@0.6.5':
-    resolution: {integrity: sha512-AlcT+7W/+fXmj6frmL0RPtWYeeNmTTurk1talG4nTeqI/EzeHxufvR44OYKsC7M/Bt9u4iYMuesLWstpExpZ4g==}
+  '@eloqnt/cli@0.6.7':
+    resolution: {integrity: sha512-BX4PSxJ6Dlo80Kd+80NWiRmNUjeoKLXy0loeA/K1i92bdwHB3o2S9P//8L4p3NODcqthQ9NwJ7tGT017DKWwmQ==}
     hasBin: true
 
-  '@eloqnt/sdk@0.6.4':
-    resolution: {integrity: sha512-A2UlgVntZHzqtt4eP49yJ/hRF9OeNyRL51xftDRySBPTQFGHfaGroly2Q+xqKdfJJrbHjLYgaOHmmxRmv9wTXg==}
+  '@eloqnt/sdk@0.6.6':
+    resolution: {integrity: sha512-wA4zCKyjUeyvVeOA3IpPj+97MYsJD/guhX+0acKIQghzvdE+CSYrHM5BctSRjcYWjgXSjUHXfGWZJCHd3VagOA==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -8105,17 +8105,17 @@ snapshots:
 
   '@electric-sql/pglite@0.4.3': {}
 
-  '@eloqnt/cli@0.6.5(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.6.7(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.7.0
-      '@eloqnt/sdk': 0.6.4(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.6.6(@swc/helpers@0.5.23)
       citty: 0.1.6
       open: 11.0.0
       picocolors: 1.1.1
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@eloqnt/sdk@0.6.4(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.6.6(@swc/helpers@0.5.23)':
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.16
       '@swc/core': 1.15.47(@swc/helpers@0.5.23)
