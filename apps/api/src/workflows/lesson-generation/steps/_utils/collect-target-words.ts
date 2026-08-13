@@ -16,12 +16,10 @@ export function collectTargetWords({
   const targetWords: string[] = [];
 
   for (const word of canonicalWords) {
-    const normalizedWord = normalizePunctuation(word).trim();
-
-    if (normalizedWord && !seenCanonicalWords.has(normalizedWord)) {
-      seenCanonicalWords.add(normalizedWord);
-      seenGeneratedKeys.add(getTargetKey(normalizedWord));
-      targetWords.push(normalizedWord);
+    if (word.trim() && !seenCanonicalWords.has(word)) {
+      seenCanonicalWords.add(word);
+      seenGeneratedKeys.add(getTargetKey(word));
+      targetWords.push(word);
     }
   }
 
