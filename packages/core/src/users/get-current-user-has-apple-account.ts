@@ -3,9 +3,9 @@ import { prisma } from "@zoonk/db";
 import { getSession } from "./get-session";
 
 /**
- * Tells authenticated clients whether the current user has linked an Apple
- * account. The user ID always comes from the trusted session because callers
- * must not choose which account's provider state is inspected.
+ * Lets native clients offer Apple reauthentication during account deletion so
+ * the server can revoke a linked Sign in with Apple grant. The bearer session
+ * intentionally does not expose which providers the user has linked.
  */
 export async function getCurrentUserHasAppleAccount() {
   const session = await getSession();
