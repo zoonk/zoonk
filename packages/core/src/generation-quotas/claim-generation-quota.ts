@@ -10,6 +10,7 @@ import { getGenerationQuotaRules } from "./limits";
 import { getGenerationQuotaViewer } from "./viewer";
 
 type GenerationQuotaRule = ReturnType<typeof getGenerationQuotaRules>[number];
+type GenerationQuotaCounterTarget = { actorKey: string; rule: GenerationQuotaRule };
 type ReachedLimitSignal = { limit: GenerationQuotaLimit; type: symbol };
 
 const REACHED_LIMIT = Symbol("generation quota reached");
@@ -38,55 +39,88 @@ function isReachedLimitSignal(error: unknown): error is ReachedLimitSignal {
   );
 }
 
+/** Expands every identity and period into the counters one generation must claim together. */
+function getQuotaCounterTargets({
+  actorKeys,
+  rules,
+}: {
+  actorKeys: string[];
+  rules: GenerationQuotaRule[];
+}): GenerationQuotaCounterTarget[] {
+  return actorKeys.flatMap((actorKey) => rules.map((rule) => ({ actorKey, rule })));
+}
+
 /** Creates missing period buckets before conditional increments acquire their row locks. */
 async function ensureQuotaCounters({
-  actorKey,
+  counterTargets,
   resource,
-  rules,
   transaction,
 }: {
-  actorKey: string;
+  counterTargets: GenerationQuotaCounterTarget[];
   resource: GenerationQuotaResource;
-  rules: GenerationQuotaRule[];
   transaction: TransactionClient;
 }) {
   await transaction.generationQuotaCounter.createMany({
-    data: rules.map((rule) => ({
-      actorKey,
-      period: rule.period,
-      periodStart: rule.periodStart,
+    data: counterTargets.map((target) => ({
+      actorKey: target.actorKey,
+      period: target.rule.period,
+      periodStart: target.rule.periodStart,
       resource,
     })),
     skipDuplicates: true,
   });
 }
 
-/** Increments only counters still below their entitlement and returns each conditional update result. */
-async function incrementQuotaCounters({
-  actorKey,
+/** Conditionally increments one identity-period counter and keeps its rule beside the result. */
+async function incrementQuotaCounter({
+  counterTarget,
   resource,
-  rules,
   transaction,
 }: {
-  actorKey: string;
+  counterTarget: GenerationQuotaCounterTarget;
   resource: GenerationQuotaResource;
-  rules: GenerationQuotaRule[];
+  transaction: TransactionClient;
+}) {
+  const increment = await transaction.generationQuotaCounter.updateMany({
+    data: { count: { increment: 1 } },
+    where: {
+      actorKey: counterTarget.actorKey,
+      count: { lt: counterTarget.rule.limit },
+      period: counterTarget.rule.period,
+      periodStart: counterTarget.rule.periodStart,
+      resource,
+    },
+  });
+
+  return { increment, rule: counterTarget.rule };
+}
+
+/** Increments only counters still below their entitlement and returns each conditional update result. */
+async function incrementQuotaCounters({
+  counterTargets,
+  resource,
+  transaction,
+}: {
+  counterTargets: GenerationQuotaCounterTarget[];
+  resource: GenerationQuotaResource;
   transaction: TransactionClient;
 }) {
   return Promise.all(
-    rules.map((rule) =>
-      transaction.generationQuotaCounter.updateMany({
-        data: { count: { increment: 1 } },
-        where: {
-          actorKey,
-          count: { lt: rule.limit },
-          period: rule.period,
-          periodStart: rule.periodStart,
-          resource,
-        },
-      }),
+    counterTargets.map((counterTarget) =>
+      incrementQuotaCounter({ counterTarget, resource, transaction }),
     ),
   );
+}
+
+/** Keeps the durable claim row tied to one stable identity while all identities share its idempotency. */
+function getPrimaryActorKey(actorKeys: string[]): string {
+  const actorKey = actorKeys[0];
+
+  if (!actorKey) {
+    throw new Error("Generation quota requires at least one actor identity");
+  }
+
+  return actorKey;
 }
 
 /**
@@ -96,20 +130,22 @@ async function incrementQuotaCounters({
  * idempotent.
  */
 async function claimQuotaInTransaction({
-  actorKey,
+  actorKeys,
   resource,
   rules,
   targetId,
   transaction,
   viewer,
 }: {
-  actorKey: string;
+  actorKeys: string[];
   resource: GenerationQuotaResource;
   rules: GenerationQuotaRule[];
   targetId: string;
   transaction: TransactionClient;
   viewer: GenerationQuotaViewer;
 }): Promise<GenerationQuotaResult> {
+  const actorKey = getPrimaryActorKey(actorKeys);
+
   const claim = await transaction.generationQuotaClaim.createMany({
     data: [{ actorKey, resource, targetId }],
     skipDuplicates: true,
@@ -119,19 +155,14 @@ async function claimQuotaInTransaction({
     return { status: "ready" };
   }
 
-  await ensureQuotaCounters({ actorKey, resource, rules, transaction });
-  const increments = await incrementQuotaCounters({ actorKey, resource, rules, transaction });
-  const blockedRuleIndex = increments.findIndex((increment) => increment.count === 0);
+  const counterTargets = getQuotaCounterTargets({ actorKeys, rules });
+  await ensureQuotaCounters({ counterTargets, resource, transaction });
+  const increments = await incrementQuotaCounters({ counterTargets, resource, transaction });
+  const blockedIncrement = increments.find(({ increment }) => increment.count === 0);
 
-  if (blockedRuleIndex !== -1) {
-    const blockedRule = rules[blockedRuleIndex];
-
-    if (!blockedRule) {
-      throw new Error("Generation quota update did not match a configured rule");
-    }
-
+  if (blockedIncrement) {
     throw new Error("Generation quota reached", {
-      cause: getReachedLimitSignal({ period: blockedRule.period, resource, viewer }),
+      cause: getReachedLimitSignal({ period: blockedIncrement.rule.period, resource, viewer }),
     });
   }
 
@@ -151,12 +182,12 @@ async function claimGenerationQuota({
   resource: GenerationQuotaResource;
   targetId: string;
 }): Promise<GenerationQuotaResult> {
-  const { actorKey, viewer } = await getGenerationQuotaViewer();
+  const { actorKeys, viewer } = await getGenerationQuotaViewer();
   const rules = getGenerationQuotaRules({ now, resource, viewer });
 
   try {
     return await prisma.$transaction((transaction) =>
-      claimQuotaInTransaction({ actorKey, resource, rules, targetId, transaction, viewer }),
+      claimQuotaInTransaction({ actorKeys, resource, rules, targetId, transaction, viewer }),
     );
   } catch (error) {
     if (error instanceof Error && isReachedLimitSignal(error.cause)) {
