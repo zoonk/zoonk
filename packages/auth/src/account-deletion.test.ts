@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   captureAccountDeletionCleanup,
@@ -6,27 +8,7 @@ import {
 
 const mocks = vi.hoisted(() => ({
   cancelStripeSubscription: vi.fn(),
-  decrementCourseUserCounts: vi.fn(),
-  deleteCourseMemberships: vi.fn(),
-  deleteManySubscriptions: vi.fn(),
-  deleteManyVerifications: vi.fn(),
-  findAppleAccounts: vi.fn(),
-  findCourseMemberships: vi.fn(),
-  findStripeSubscriptions: vi.fn(),
   revokeStoredAppleAuthorization: vi.fn(),
-  transaction: vi.fn(),
-}));
-
-vi.mock("@zoonk/db", () => ({
-  prisma: {
-    $transaction: mocks.transaction,
-    account: { findMany: mocks.findAppleAccounts },
-    subscription: {
-      deleteMany: mocks.deleteManySubscriptions,
-      findMany: mocks.findStripeSubscriptions,
-    },
-    verification: { deleteMany: mocks.deleteManyVerifications },
-  },
 }));
 
 vi.mock("./providers/apple-revocation", () => ({
@@ -37,103 +19,168 @@ vi.mock("./stripe/client", () => ({
   stripeClient: { subscriptions: { cancel: mocks.cancelStripeSubscription } },
 }));
 
+/**
+ * Creates an isolated persisted user so cleanup assertions exercise the same
+ * foreign keys and cascades as production instead of reproducing Prisma in a mock.
+ */
+function createTestUser() {
+  const id = randomUUID();
+
+  return prisma.user.create({
+    data: { email: `account-deletion-${id}@example.test`, id, name: "Deletion Test User" },
+  });
+}
+
+/**
+ * Creates the smallest real course shape needed to prove membership cleanup
+ * updates denormalized learner counts without coupling this package to shared fixtures.
+ */
+function createTestCourse({ userId }: { userId: null | string }) {
+  const id = randomUUID();
+
+  return prisma.course.create({
+    data: {
+      language: "en",
+      normalizedTitle: `account deletion ${id}`,
+      slug: `account-deletion-${id}`,
+      title: "Account deletion test course",
+      userCount: 1,
+      userId,
+    },
+  });
+}
+
 describe(deleteUserDependenciesBeforeAuthDelete, () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.deleteManySubscriptions.mockResolvedValue({ count: 1 });
-    mocks.deleteManyVerifications.mockResolvedValue({ count: 1 });
     mocks.cancelStripeSubscription.mockResolvedValue({ id: "sub_active" });
-    mocks.deleteCourseMemberships.mockResolvedValue({ count: 0 });
-    mocks.decrementCourseUserCounts.mockResolvedValue({ count: 0 });
-    mocks.findAppleAccounts.mockResolvedValue([]);
-    mocks.findCourseMemberships.mockResolvedValue([]);
-    mocks.findStripeSubscriptions.mockResolvedValue([]);
     mocks.revokeStoredAppleAuthorization.mockResolvedValue(true);
-
-    mocks.transaction.mockImplementation(
-      (
-        operation: (transaction: {
-          course: { updateMany: typeof mocks.decrementCourseUserCounts };
-          courseUser: {
-            deleteMany: typeof mocks.deleteCourseMemberships;
-            findMany: typeof mocks.findCourseMemberships;
-          };
-        }) => Promise<unknown>,
-      ) =>
-        operation({
-          course: { updateMany: mocks.decrementCourseUserCounts },
-          courseUser: {
-            deleteMany: mocks.deleteCourseMemberships,
-            findMany: mocks.findCourseMemberships,
-          },
-        }),
-    );
   });
 
   it("removes local subscription records", async () => {
-    const userId = "019fcaf2-d5ef-7a12-aa82-f1228a863752";
+    const user = await createTestUser();
 
-    await deleteUserDependenciesBeforeAuthDelete({ email: "learner@example.com", id: userId });
-
-    expect(mocks.deleteManySubscriptions).toHaveBeenCalledExactlyOnceWith({
-      where: { referenceId: userId },
+    const subscription = await prisma.subscription.create({
+      data: {
+        id: randomUUID(),
+        plan: "plus",
+        provider: "zoonk",
+        referenceId: user.id,
+        status: "active",
+      },
     });
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+
+    await expect(
+      prisma.subscription.findUnique({ where: { id: subscription.id } }),
+    ).resolves.toBeNull();
   });
 
   it("cancels Stripe billing before removing the local subscription", async () => {
-    const userId = "019fcaf2-d5ef-7a12-aa82-f1228a863753";
+    const user = await createTestUser();
 
-    mocks.findStripeSubscriptions.mockResolvedValue([{ stripeSubscriptionId: "sub_active" }]);
-
-    await deleteUserDependenciesBeforeAuthDelete({ email: "learner@example.com", id: userId });
-
-    expect(mocks.findStripeSubscriptions).toHaveBeenCalledExactlyOnceWith({
-      where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: { not: null } },
+    const subscription = await prisma.subscription.create({
+      data: {
+        id: randomUUID(),
+        plan: "plus",
+        provider: "stripe",
+        referenceId: user.id,
+        status: "active",
+        stripeSubscriptionId: `sub_${randomUUID()}`,
+      },
     });
 
-    expect(mocks.cancelStripeSubscription).toHaveBeenCalledExactlyOnceWith("sub_active");
+    mocks.cancelStripeSubscription.mockImplementationOnce(async () => {
+      await expect(
+        prisma.subscription.findUnique({ where: { id: subscription.id } }),
+      ).resolves.not.toBeNull();
 
-    expect(mocks.cancelStripeSubscription.mock.invocationCallOrder[0]).toBeLessThan(
-      mocks.deleteManySubscriptions.mock.invocationCallOrder[0]!,
+      return { id: subscription.stripeSubscriptionId };
+    });
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+
+    expect(mocks.cancelStripeSubscription).toHaveBeenCalledExactlyOnceWith(
+      subscription.stripeSubscriptionId,
     );
+
+    await expect(
+      prisma.subscription.findUnique({ where: { id: subscription.id } }),
+    ).resolves.toBeNull();
   });
 
   it("removes course memberships and decrements every surviving course user count", async () => {
-    const userId = "019fcaf2-d5ef-7a12-aa82-f1228a863756";
+    const [deletingUser, otherOwner] = await Promise.all([createTestUser(), createTestUser()]);
 
-    mocks.findCourseMemberships.mockResolvedValue([
-      { course: { userId: null }, courseId: "shared-course-id" },
-      {
-        course: { userId: "019fcaf2-d5ef-7a12-aa82-f1228a863757" },
-        courseId: "other-user-owned-course-id",
-      },
-      { course: { userId }, courseId: "owned-course-id" },
+    const [sharedCourse, otherOwnedCourse, deletingUserOwnedCourse] = await Promise.all([
+      createTestCourse({ userId: null }),
+      createTestCourse({ userId: otherOwner.id }),
+      createTestCourse({ userId: deletingUser.id }),
     ]);
 
-    await deleteUserDependenciesBeforeAuthDelete({ email: "learner@example.com", id: userId });
-
-    expect(mocks.deleteCourseMemberships).toHaveBeenCalledExactlyOnceWith({ where: { userId } });
-
-    expect(mocks.decrementCourseUserCounts).toHaveBeenCalledExactlyOnceWith({
-      data: { userCount: { decrement: 1 } },
-      where: {
-        id: { in: ["shared-course-id", "other-user-owned-course-id"] },
-        userCount: { gt: 0 },
-      },
+    await prisma.courseUser.createMany({
+      data: [sharedCourse, otherOwnedCourse, deletingUserOwnedCourse].map((course) => ({
+        courseId: course.id,
+        userId: deletingUser.id,
+      })),
     });
+
+    await deleteUserDependenciesBeforeAuthDelete(deletingUser);
+
+    const [membershipCount, updatedSharedCourse, updatedOtherOwnedCourse, ownedCourse] =
+      await Promise.all([
+        prisma.courseUser.count({ where: { userId: deletingUser.id } }),
+        prisma.course.findUniqueOrThrow({ where: { id: sharedCourse.id } }),
+        prisma.course.findUniqueOrThrow({ where: { id: otherOwnedCourse.id } }),
+        prisma.course.findUniqueOrThrow({ where: { id: deletingUserOwnedCourse.id } }),
+      ]);
+
+    expect(membershipCount).toBe(0);
+    expect(updatedSharedCourse.userCount).toBe(0);
+    expect(updatedOtherOwnedCourse.userCount).toBe(0);
+    expect(ownedCourse.userCount).toBe(1);
   });
 
   it("attempts stored Apple revocation before removing local account state", async () => {
-    const userId = "019fcaf2-d5ef-7a12-aa82-f1228a863755";
+    const user = await createTestUser();
+    const normalizedEmail = user.email.toLowerCase();
 
-    mocks.findAppleAccounts.mockResolvedValue([
-      { idToken: "stored-id-token", refreshToken: "stored-refresh-token" },
+    const verificationIdentifiers = [
+      `email-verification-otp-${normalizedEmail}`,
+      `sign-in-otp-${normalizedEmail}`,
+      `forget-password-otp-${normalizedEmail}`,
+    ];
+
+    await Promise.all([
+      prisma.account.create({
+        data: {
+          accountId: `apple-${randomUUID()}`,
+          idToken: "stored-id-token",
+          providerId: "apple",
+          refreshToken: "stored-refresh-token",
+          userId: user.id,
+        },
+      }),
+      prisma.verification.createMany({
+        data: verificationIdentifiers.map((identifier) => ({
+          expiresAt: new Date(Date.now() + 60_000),
+          identifier,
+          value: "123456",
+        })),
+      }),
     ]);
 
-    mocks.revokeStoredAppleAuthorization.mockResolvedValue(false);
+    mocks.revokeStoredAppleAuthorization.mockImplementationOnce(async () => {
+      await expect(
+        prisma.verification.count({ where: { identifier: { in: verificationIdentifiers } } }),
+      ).resolves.toBe(3);
+
+      return false;
+    });
 
     const cleanup = await captureAccountDeletionCleanup(async () => {
-      await deleteUserDependenciesBeforeAuthDelete({ email: "Learner@Example.com", id: userId });
+      await deleteUserDependenciesBeforeAuthDelete(user);
       return "deleted" as const;
     });
 
@@ -144,20 +191,8 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
       refreshToken: "stored-refresh-token",
     });
 
-    expect(mocks.deleteManySubscriptions).toHaveBeenCalledExactlyOnceWith({
-      where: { referenceId: userId },
-    });
-
-    expect(mocks.deleteManyVerifications).toHaveBeenCalledExactlyOnceWith({
-      where: {
-        identifier: {
-          in: [
-            "email-verification-otp-learner@example.com",
-            "sign-in-otp-learner@example.com",
-            "forget-password-otp-learner@example.com",
-          ],
-        },
-      },
-    });
+    await expect(
+      prisma.verification.count({ where: { identifier: { in: verificationIdentifiers } } }),
+    ).resolves.toBe(0);
   });
 });
