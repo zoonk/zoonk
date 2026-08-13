@@ -23,7 +23,6 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
     exposeTestingApiInProductionBuild: isE2E,
-    staleTimes: { dynamic: 300 },
     turbopackRustReactCompiler: true,
     typedEnv: true,
   },
