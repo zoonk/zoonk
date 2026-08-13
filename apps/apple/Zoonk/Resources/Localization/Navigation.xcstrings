@@ -59,6 +59,35 @@
         }
       }
     },
+    "New" : {
+      "comment" : "Short tab label for the destination where the learner creates a course.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novo"
+          }
+        }
+      }
+    },
     "New course" : {
       "comment" : "Navigation title for the destination where the learner creates a course.",
       "localizations" : {

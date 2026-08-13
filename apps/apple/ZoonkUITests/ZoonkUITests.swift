@@ -208,12 +208,19 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp()
     app.launch()
 
-    let screenTitles = ["Home", "New course", "Courses", "Progress", "Search"]
+    let destinations = [
+      (tabTitle: "Home", screenTitle: "Home"),
+      (tabTitle: "New", screenTitle: "New course"),
+      (tabTitle: "Courses", screenTitle: "Courses"),
+      (tabTitle: "Progress", screenTitle: "Progress"),
+      (tabTitle: "Search", screenTitle: "Search"),
+    ]
 
-    for screenTitle in screenTitles {
-      let tab = app.buttons[screenTitle].firstMatch
-      XCTAssertTrue(tab.waitForExistence(timeout: 5), "Expected the \(screenTitle) tab to exist")
-      XCTAssertTrue(tab.isHittable, "Expected the \(screenTitle) tab to be hittable")
+    for destination in destinations {
+      let tab = app.buttons[destination.tabTitle].firstMatch
+      XCTAssertTrue(
+        tab.waitForExistence(timeout: 5), "Expected the \(destination.tabTitle) tab to exist")
+      XCTAssertTrue(tab.isHittable, "Expected the \(destination.tabTitle) tab to be hittable")
       tab.tap()
 
       let selectedTab = XCTNSPredicateExpectation(
@@ -222,11 +229,11 @@ final class ZoonkUITests: XCTestCase {
       XCTAssertEqual(
         XCTWaiter.wait(for: [selectedTab], timeout: 5),
         .completed,
-        "Expected the \(screenTitle) tab to become selected")
+        "Expected the \(destination.tabTitle) tab to become selected")
 
       XCTAssertTrue(
-        app.staticTexts[screenTitle].firstMatch.waitForExistence(timeout: 5),
-        "Expected the \(screenTitle) screen title to exist")
+        app.staticTexts[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
+        "Expected the \(destination.screenTitle) screen title to exist")
     }
   }
 

@@ -39,6 +39,17 @@ enum AppSection: CaseIterable, Hashable, Identifiable {
     }
   }
 
+  var tabTitle: LocalizedStringResource {
+    if self == .newCourse {
+      return LocalizedStringResource(
+        "New",
+        table: "Navigation",
+        comment: "Short tab label for the destination where the learner creates a course.")
+    }
+
+    return title
+  }
+
   var systemImage: String {
     switch self {
     case .home:

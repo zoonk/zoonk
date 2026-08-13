@@ -19,7 +19,7 @@ struct AppView: View {
           }
         } label: {
           Label {
-            Text(section.title)
+            Text(section.tabTitle)
           } icon: {
             Image(systemName: section.systemImage)
           }
