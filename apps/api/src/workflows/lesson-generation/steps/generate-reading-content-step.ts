@@ -1,5 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/sentences";
+import { isSplitLessonSlug } from "@zoonk/core/lessons/split-lessons";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
@@ -17,17 +18,18 @@ async function getVocabularySourceLessonsSincePreviousReading(context: LessonCon
     where: { chapterId: context.chapterId, kind: { in: ["reading", "vocabulary"] } },
   });
 
-  const readingIndex = lessons.findIndex((lesson) => lesson.id === context.id);
+  const authoredLessons = lessons.filter((lesson) => !isSplitLessonSlug(lesson.slug));
+  const readingIndex = authoredLessons.findIndex((lesson) => lesson.id === context.id);
 
   if (readingIndex === -1) {
     throw new FatalError("Reading lesson is missing from its chapter order");
   }
 
-  const previousReadingIndex = lessons
+  const previousReadingIndex = authoredLessons
     .slice(0, readingIndex)
     .findLastIndex((lesson) => lesson.kind === "reading");
 
-  const vocabularyLessons = lessons
+  const vocabularyLessons = authoredLessons
     .slice(previousReadingIndex + 1, readingIndex)
     .filter((lesson) => lesson.kind === "vocabulary");
 

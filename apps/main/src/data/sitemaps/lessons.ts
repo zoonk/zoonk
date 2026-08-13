@@ -4,6 +4,7 @@ import {
   INDEXABLE_CHAPTER_LESSON_KIND,
   INDEXABLE_EXPLANATION_COMPANION_LESSON_KINDS,
 } from "@/lib/lessons/seo";
+import { SPLIT_LESSON_SLUG_MARKER } from "@zoonk/core/lessons/split-lessons";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 
@@ -18,6 +19,7 @@ function getSitemapLessonWhere() {
   return {
     AND: [
       getPublishedLessonWhere({ courseWhere: { organization: { kind: "brand" } } }),
+      { NOT: { slug: { contains: SPLIT_LESSON_SLUG_MARKER } } },
       {
         OR: [
           {

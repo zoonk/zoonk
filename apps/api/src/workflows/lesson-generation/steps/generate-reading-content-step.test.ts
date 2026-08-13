@@ -155,13 +155,14 @@ describe(generateReadingContentStep, () => {
     await Promise.all([
       lessonFixture({
         chapterId: context.chapterId,
-        description: null,
+        description: `First description ${uniqueId}`,
         generationStatus: "completed",
         isPublished: true,
         kind: "vocabulary",
         organizationId,
         position: 3,
-        title: null,
+        slug: `${firstVocabulary.slug}--split--${firstVocabulary.id}--2`,
+        title: `First vocabulary ${uniqueId} 2`,
       }),
       lessonFixture({
         chapterId: context.chapterId,

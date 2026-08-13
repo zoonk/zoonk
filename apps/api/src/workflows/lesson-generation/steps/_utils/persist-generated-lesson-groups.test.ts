@@ -117,6 +117,57 @@ describe(persistGeneratedLessonGroups, () => {
     expect(lessons.every((lesson) => !lesson.isPublished)).toBe(true);
   });
 
+  it("copies authored metadata with numbered titles for continuation lessons", async () => {
+    const workflowRunId = "atomic-split-metadata";
+
+    const context = await createLessonContext({
+      generationRunId: workflowRunId,
+      generationStatus: "running",
+      kind: "vocabulary",
+      organizationId,
+    });
+
+    await prisma.lesson.update({
+      data: {
+        description: "Learn useful words for everyday Cyrillic conversations.",
+        normalizedTitle: "everyday cyrillic words",
+        title: "Everyday Cyrillic words",
+      },
+      where: { id: context.id },
+    });
+
+    await persistGeneratedLessonGroups({
+      chapterId: context.chapterId,
+      groupCount: 3,
+      lessonId: context.id,
+      persistGroups: async () => {},
+      workflowRunId,
+    });
+
+    const lessons = await prisma.lesson.findMany({
+      orderBy: { position: "asc" },
+      where: { chapterId: context.chapterId, kind: "vocabulary" },
+    });
+
+    expect(lessons.map((lesson) => lesson.title)).toStrictEqual([
+      "Everyday Cyrillic words",
+      "Everyday Cyrillic words 2",
+      "Everyday Cyrillic words 3",
+    ]);
+
+    expect(lessons.map((lesson) => lesson.description)).toStrictEqual([
+      "Learn useful words for everyday Cyrillic conversations.",
+      "Learn useful words for everyday Cyrillic conversations.",
+      "Learn useful words for everyday Cyrillic conversations.",
+    ]);
+
+    expect(lessons.map((lesson) => lesson.normalizedTitle)).toStrictEqual([
+      "everyday cyrillic words",
+      "everyday cyrillic words 2",
+      "everyday cyrillic words 3",
+    ]);
+  });
+
   it("serializes concurrent splits in the same chapter", async () => {
     const firstRunId = "atomic-concurrent-first";
     const secondRunId = "atomic-concurrent-second";

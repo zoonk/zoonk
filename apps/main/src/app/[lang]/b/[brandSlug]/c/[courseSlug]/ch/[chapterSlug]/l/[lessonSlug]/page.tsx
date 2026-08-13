@@ -112,6 +112,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       index: isLessonSeoIndexable({
         description: lessonShell.description,
         kind: lessonShell.kind,
+        slug: lessonShell.slug,
         sourceTitle,
         title: lessonShell.title,
       }),

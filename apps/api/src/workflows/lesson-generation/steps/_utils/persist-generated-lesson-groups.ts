@@ -1,5 +1,7 @@
 import { findGeneratedCompanionForSourceLesson } from "@zoonk/core/lessons/generated-companions";
+import { getSplitLessonSlug } from "@zoonk/core/lessons/split-lessons";
 import { type Lesson, type LessonCreateManyInput, type TransactionClient, prisma } from "@zoonk/db";
+import { normalizeString } from "@zoonk/utils/string";
 import { lockChapterLessonOrder } from "./lock-chapter-lesson-order";
 
 const LESSON_PERSISTENCE_TRANSACTION_TIMEOUT_MS = 30_000;
@@ -19,8 +21,8 @@ type PersistGeneratedLessonGroupsInput = {
 
 /**
  * Builds a continuation row that exists only inside the final persistence
- * transaction until its content is ready. Authored metadata stays on the root
- * lesson so later reading prompts do not count one split topic more than once.
+ * transaction until its content is ready. Continuations copy the authored
+ * description and number the title so learners can distinguish each part.
  */
 function getContinuationLessonData({
   partNumber,
@@ -35,9 +37,11 @@ function getContinuationLessonData({
   template: Lesson;
   workflowRunId: string;
 }): LessonCreateManyInput {
+  const title = template.title ? `${template.title} ${partNumber}` : null;
+
   return {
     chapterId: template.chapterId,
-    description: null,
+    description: template.description,
     generationRunId: workflowRunId,
     generationStatus: "completed",
     imageUrl: null,
@@ -45,11 +49,11 @@ function getContinuationLessonData({
     isPublished: template.isPublished,
     kind: template.kind,
     language: template.language,
-    normalizedTitle: null,
+    normalizedTitle: title ? normalizeString(title) : null,
     organizationId: template.organizationId,
     position,
-    slug: `${template.slug}-split-${rootLessonId}-${partNumber}`,
-    title: null,
+    slug: getSplitLessonSlug({ partNumber, rootLessonId, slug: template.slug }),
+    title,
   };
 }
 
