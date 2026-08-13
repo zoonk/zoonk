@@ -1,7 +1,8 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { type GeneratedLessonStatus } from "@/lib/generated-lesson-status";
+import { type GeneratedLessonFilter } from "@/lib/generated-lesson-status";
 import { type LessonKind, prisma } from "@zoonk/db";
+import { listMissingAudioLessonIds } from "./list-missing-audio-lesson-ids";
 
 const aiGeneratedLessonKinds = [
   "alphabet",
@@ -14,9 +15,18 @@ const aiGeneratedLessonKinds = [
   "vocabulary",
 ] as const satisfies readonly LessonKind[];
 
+const audioLessonKinds = [
+  "alphabet",
+  "reading",
+  "vocabulary",
+] as const satisfies readonly LessonKind[];
+
 const cachedListGeneratedLessons = cacheAdminData(
-  async (limit: number, offset: number, status: GeneratedLessonStatus, search?: string) => {
-    const where = buildGeneratedLessonWhere({ search, status });
+  async (limit: number, offset: number, filter: GeneratedLessonFilter, search?: string) => {
+    const missingAudioLessonIds =
+      filter === "missingAudio" ? await listMissingAudioLessonIds() : [];
+
+    const where = buildGeneratedLessonWhere({ filter, missingAudioLessonIds, search });
 
     const [lessons, total] = await Promise.all([
       prisma.lesson.findMany({
@@ -45,17 +55,17 @@ export type ListedGeneratedLesson = Awaited<
  * positional primitive arguments internally for stable memoization.
  */
 export async function listGeneratedLessons({
+  filter,
   limit,
   offset,
   search,
-  status,
 }: {
+  filter: GeneratedLessonFilter;
   limit: number;
   offset: number;
   search?: string;
-  status: GeneratedLessonStatus;
 }) {
-  return cachedListGeneratedLessons(limit, offset, status, search);
+  return cachedListGeneratedLessons(limit, offset, filter, search);
 }
 
 /**
@@ -64,13 +74,15 @@ export async function listGeneratedLessons({
  * is missing or too generic.
  */
 function buildGeneratedLessonWhere({
+  filter,
+  missingAudioLessonIds,
   search,
-  status,
 }: {
+  filter: GeneratedLessonFilter;
+  missingAudioLessonIds: string[];
   search?: string;
-  status: GeneratedLessonStatus;
 }) {
-  const baseWhere = getAiGeneratedLessonWhere({ status });
+  const baseWhere = getAiGeneratedLessonWhere({ filter, missingAudioLessonIds });
 
   if (!search) {
     return baseWhere;
@@ -96,6 +108,20 @@ function buildGeneratedLessonWhere({
  * existing generated resources, so including them makes the log look larger
  * than the set of lessons that actually went through model-authored generation.
  */
-function getAiGeneratedLessonWhere({ status }: { status: GeneratedLessonStatus }) {
-  return { generationStatus: status, kind: { in: [...aiGeneratedLessonKinds] } };
+function getAiGeneratedLessonWhere({
+  filter,
+  missingAudioLessonIds,
+}: {
+  filter: GeneratedLessonFilter;
+  missingAudioLessonIds: string[];
+}) {
+  if (filter === "missingAudio") {
+    return {
+      generationStatus: "completed" as const,
+      id: { in: missingAudioLessonIds },
+      kind: { in: [...audioLessonKinds] },
+    };
+  }
+
+  return { generationStatus: filter, kind: { in: [...aiGeneratedLessonKinds] } };
 }

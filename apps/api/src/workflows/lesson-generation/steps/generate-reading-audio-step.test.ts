@@ -63,4 +63,67 @@ describe(generateReadingAudioStep, () => {
       textType: "sentence",
     });
   });
+
+  it("throws for retry after saving successful audio and only retries missing sentences", async () => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const successfulSentence = `成功${uniqueId}`;
+    const failedSentence = `失敗${uniqueId}`;
+
+    const context = await createLessonContext({
+      kind: "reading",
+      organizationId,
+      targetLanguage: "ja",
+    });
+
+    vi.mocked(generateLanguageAudio).mockImplementation(({ text }) =>
+      Promise.resolve(
+        text === failedSentence
+          ? { data: null, error: new Error("No speech audio generated") }
+          : { data: `/audio/${text}.mp3`, error: null },
+      ),
+    );
+
+    await expect(
+      generateReadingAudioStep({
+        context,
+        sentences: [
+          { explanation: "", sentence: successfulSentence, translation: "successful" },
+          { explanation: "", sentence: failedSentence, translation: "failed" },
+        ],
+      }),
+    ).rejects.toThrow("optionalAudioGenerationIncomplete");
+
+    await expect(
+      prisma.sentence.findUniqueOrThrow({
+        where: {
+          orgSentence: { organizationId, sentence: successfulSentence, targetLanguage: "ja" },
+        },
+      }),
+    ).resolves.toMatchObject({ audioUrl: `/audio/${successfulSentence}.mp3` });
+
+    vi.clearAllMocks();
+
+    vi.mocked(generateLanguageAudio).mockImplementation(({ text }) =>
+      Promise.resolve({ data: `/audio/${text}.mp3`, error: null }),
+    );
+
+    await expect(
+      generateReadingAudioStep({
+        context,
+        sentences: [
+          { explanation: "", sentence: successfulSentence, translation: "successful" },
+          { explanation: "", sentence: failedSentence, translation: "failed" },
+        ],
+      }),
+    ).resolves.toStrictEqual({
+      sentenceAudioUrls: {
+        [failedSentence]: `/audio/${failedSentence}.mp3`,
+        [successfulSentence]: `/audio/${successfulSentence}.mp3`,
+      },
+    });
+
+    expect(generateLanguageAudio).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ text: failedSentence }),
+    );
+  });
 });

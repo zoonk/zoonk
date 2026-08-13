@@ -1,5 +1,5 @@
 import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
-import { parseGeneratedLessonStatus } from "@/lib/generated-lesson-status";
+import { parseGeneratedLessonFilter } from "@/lib/generated-lesson-status";
 import {
   Container,
   ContainerBody,
@@ -27,7 +27,7 @@ export default function GeneratedLessonsPage({ searchParams }: PageProps<"/lesso
         <ContainerHeaderGroup>
           <ContainerTitle>Generated Lessons</ContainerTitle>
           <ContainerDescription>
-            Review lessons that finished generation or need failure follow-up.
+            Review failed generation, missing audio, and completed lesson output.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
@@ -53,7 +53,7 @@ async function GeneratedLessonFilters({
   searchParams,
 }: Pick<PageProps<"/lessons">, "searchParams">) {
   const params = await searchParams;
-  const status = parseGeneratedLessonStatus(params.status);
+  const status = parseGeneratedLessonFilter(params.status);
   const search = Array.isArray(params.search) ? params.search[0] : params.search;
 
   return (
@@ -74,6 +74,7 @@ function GeneratedLessonFiltersSkeleton() {
       <AdminSearchSkeleton />
       <div className="flex gap-1">
         <Skeleton className="h-8 w-24 rounded-4xl" />
+        <Skeleton className="h-8 w-28 rounded-4xl" />
         <Skeleton className="h-8 w-24 rounded-4xl" />
       </div>
     </div>

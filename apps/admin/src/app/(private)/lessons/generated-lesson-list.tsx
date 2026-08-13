@@ -2,8 +2,8 @@ import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-t
 import { AdminPagination } from "@/components/pagination";
 import { listGeneratedLessons } from "@/data/lessons/list-generated-lessons";
 import {
-  type GeneratedLessonStatus,
-  parseGeneratedLessonStatus,
+  type GeneratedLessonFilter,
+  parseGeneratedLessonFilter,
 } from "@/lib/generated-lesson-status";
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -19,7 +19,7 @@ import { GeneratedLessonRow } from "./generated-lesson-row";
 
 /**
  * The generated lesson log mirrors the courses table but scopes results to the
- * terminal generation status selected in the URL.
+ * generation or missing audio filter selected in the URL.
  */
 export async function GeneratedLessonList({
   searchParams,
@@ -28,7 +28,7 @@ export async function GeneratedLessonList({
 }) {
   const params = await searchParams;
   const { page, limit, offset, search } = parseSearchParams(params);
-  const status = parseGeneratedLessonStatus(params.status);
+  const filter = parseGeneratedLessonFilter(params.status);
 
   return (
     <CachedGeneratedLessonList
@@ -36,7 +36,7 @@ export async function GeneratedLessonList({
       offset={offset}
       page={page}
       search={search}
-      status={status}
+      filter={filter}
     />
   );
 }
@@ -46,21 +46,21 @@ export async function GeneratedLessonList({
  * entries for every generated-lesson URL that can be prefetched.
  */
 async function CachedGeneratedLessonList({
+  filter,
   limit,
   offset,
   page,
   search,
-  status,
 }: {
+  filter: GeneratedLessonFilter;
   limit: number;
   offset: number;
   page: number;
   search?: string;
-  status: GeneratedLessonStatus;
 }) {
   "use cache: private";
 
-  const { lessons, total } = await listGeneratedLessons({ limit, offset, search, status });
+  const { lessons, total } = await listGeneratedLessons({ filter, limit, offset, search });
   const totalPages = Math.ceil(total / limit);
 
   return (
@@ -71,10 +71,12 @@ async function CachedGeneratedLessonList({
 
           <TableBody>
             {lessons.length > 0 ? (
-              lessons.map((lesson) => <GeneratedLessonRow key={lesson.id} lesson={lesson} />)
+              lessons.map((lesson) => (
+                <GeneratedLessonRow filter={filter} key={lesson.id} lesson={lesson} />
+              ))
             ) : (
               <TableRow>
-                <TableCell className="text-muted-foreground" colSpan={8}>
+                <TableCell className="text-muted-foreground" colSpan={9}>
                   No lessons found.
                 </TableCell>
               </TableRow>
@@ -87,7 +89,7 @@ async function CachedGeneratedLessonList({
         basePath="/lessons"
         limit={limit}
         page={page}
-        queryParams={{ status }}
+        queryParams={{ status: filter }}
         search={search}
         totalPages={totalPages}
       />
@@ -129,6 +131,7 @@ function GeneratedLessonTableHeader() {
         <TableHead>Status</TableHead>
         <TableHead className="text-right">Steps</TableHead>
         <TableHead>Updated At</TableHead>
+        <TableHead className="text-right">Actions</TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -164,6 +167,9 @@ function GeneratedLessonSkeletonRow() {
       </TableCell>
       <TableCell>
         <Skeleton className="h-4 w-24" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="ml-auto h-8 w-28 rounded-full" />
       </TableCell>
     </TableRow>
   );

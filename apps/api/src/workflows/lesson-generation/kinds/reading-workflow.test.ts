@@ -81,6 +81,13 @@ describe(readingLessonWorkflow, () => {
     readingState.distractors = {};
     readingState.sentence = "";
     readingState.translation = "";
+
+    vi.mocked(generateLanguageAudio).mockImplementation(({ text }) =>
+      Promise.resolve({
+        data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
+        error: null,
+      }),
+    );
   });
 
   it("stores reading sentences and word metadata from vocabulary lesson metadata", async () => {
@@ -174,6 +181,48 @@ describe(readingLessonWorkflow, () => {
       [sourceWords[0], `${sourceWords[0]} translated`],
       [sourceWords[1], `${sourceWords[1]} translated`],
     ]);
+  });
+
+  it("saves the lesson after optional sentence audio retries remain incomplete", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const sentence = `satz${uniqueId}`;
+
+    const context = await createLessonContext({
+      kind: "reading",
+      organizationId,
+      position: 2,
+      targetLanguage: "de",
+    });
+
+    await lessonFixture({
+      chapterId: context.chapterId,
+      description: `German source ${uniqueId}`,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId,
+      position: 1,
+      title: `German Vocabulary ${uniqueId}`,
+    });
+
+    readingState.sentence = sentence;
+    readingState.translation = `sentence ${uniqueId}`;
+
+    vi.mocked(generateLanguageAudio).mockImplementation(({ text }) =>
+      Promise.resolve(
+        text === sentence
+          ? { data: null, error: new Error("No speech audio generated") }
+          : { data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`, error: null },
+      ),
+    );
+
+    await expect(readingLessonWorkflow(context)).resolves.toBeUndefined();
+
+    await expect(
+      prisma.sentence.findFirstOrThrow({
+        where: { organizationId, sentence, targetLanguage: "de" },
+      }),
+    ).resolves.toMatchObject({ audioUrl: null });
   });
 
   it("keeps canonical word metadata when a reading distractor normalizes to the same key", async () => {

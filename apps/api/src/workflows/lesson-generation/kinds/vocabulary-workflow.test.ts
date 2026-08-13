@@ -10,6 +10,8 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { vocabularyLessonWorkflow } from "./vocabulary-workflow";
 
+const { logErrorMock } = vi.hoisted(() => ({ logErrorMock: vi.fn() }));
+
 const vocabularyState = vi.hoisted(() => ({
   distractors: {} as Record<string, string[]>,
   words: [] as { translation: string; word: string }[],
@@ -58,6 +60,8 @@ vi.mock("@zoonk/core/audio/generate", () => ({
     ),
 }));
 
+vi.mock("@zoonk/utils/logger", () => ({ logError: logErrorMock }));
+
 describe(vocabularyLessonWorkflow, () => {
   let organizationId: string;
 
@@ -70,6 +74,13 @@ describe(vocabularyLessonWorkflow, () => {
     vi.clearAllMocks();
     vocabularyState.words = [];
     vocabularyState.distractors = {};
+
+    vi.mocked(generateLanguageAudio).mockImplementation(({ text }) =>
+      Promise.resolve({
+        data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
+        error: null,
+      }),
+    );
   });
 
   it("stores vocabulary words, enrichment metadata, and vocabulary steps", async () => {
@@ -159,6 +170,41 @@ describe(vocabularyLessonWorkflow, () => {
         }))
         .toSorted((a, b) => a.word.localeCompare(b.word)),
     );
+  });
+
+  it("saves the lesson after optional audio retries remain incomplete", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word = `音声-${uniqueId}`;
+
+    const context = await createLessonContext({
+      kind: "vocabulary",
+      organizationId,
+      targetLanguage: "ja",
+    });
+
+    vocabularyState.words = [{ translation: `audio ${uniqueId}`, word }];
+
+    vi.mocked(generateLanguageAudio).mockResolvedValue({
+      data: null,
+      error: new Error("No speech audio generated"),
+    });
+
+    await expect(vocabularyLessonWorkflow(context)).resolves.toBeUndefined();
+
+    expect(logErrorMock).toHaveBeenCalledExactlyOnceWith(
+      "[Lesson Audio Generation Permanently Failed]",
+      expect.objectContaining({
+        error: expect.stringContaining(word),
+        lessonId: context.id,
+        step: "generateVocabularyAudio",
+      }),
+    );
+
+    await expect(
+      prisma.word.findUniqueOrThrow({
+        where: { orgWord: { organizationId, targetLanguage: "ja", word } },
+      }),
+    ).resolves.toMatchObject({ audioUrl: null });
   });
 
   it("keeps canonical word enrichment when a distractor normalizes to the same key", async () => {
