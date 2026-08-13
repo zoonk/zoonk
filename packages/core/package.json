@@ -38,6 +38,8 @@
     "./content/thumbnail": "./src/content/content-thumbnail.ts",
     "./courses/search": "./src/courses/search-courses.ts",
     "./feedback/send": "./src/feedback/send-feedback-message.ts",
+    "./generation-quotas/claim": "./src/generation-quotas/claim-generation-quota.ts",
+    "./generation-quotas/contract": "./src/generation-quotas/contract.ts",
     "./images/optimize": "./src/images/optimize-image.ts",
     "./images/upload": "./src/images/upload-image.ts",
     "./lessons/access": "./src/lessons/access.ts",

@@ -16,6 +16,7 @@ describe(getCourseGenerationAccess, () => {
 
     await expect(getCourseGenerationAccess(prompt.id)).resolves.toStrictEqual({
       coursePromptId: prompt.id,
+      shouldClaimQuota: true,
       status: "ready",
       userId: user.id,
     });
@@ -26,8 +27,18 @@ describe(getCourseGenerationAccess, () => {
 
     await expect(getCourseGenerationAccess(prompt.id)).resolves.toStrictEqual({
       coursePromptId: prompt.id,
+      shouldClaimQuota: true,
       status: "ready",
       userId: null,
+    });
+  });
+
+  it("does not claim quota when a course generation is already running", async () => {
+    const prompt = await coursePromptFixture({ generationStatus: "running" });
+
+    await expect(getCourseGenerationAccess(prompt.id)).resolves.toMatchObject({
+      shouldClaimQuota: false,
+      status: "ready",
     });
   });
 

@@ -25,11 +25,20 @@ describe("generation access", () => {
   beforeEach(() => vi.mocked(getSession).mockResolvedValue(null));
 
   it("allows guests to generate the free first chapter", async () => {
-    const chapter = await chapterFixture({ courseId, organizationId, position: 0 });
+    const chapter = await chapterFixture({
+      courseId,
+      generationStatus: "pending",
+      organizationId,
+      position: 0,
+    });
 
     const result = await getChapterGenerationAccess(chapter.id);
 
-    expect(result).toMatchObject({ chapter: { id: chapter.id }, status: "ready" });
+    expect(result).toMatchObject({
+      chapter: { id: chapter.id },
+      shouldClaimQuota: true,
+      status: "ready",
+    });
   });
 
   it("requires a subscription for later chapters", async () => {
@@ -49,6 +58,7 @@ describe("generation access", () => {
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
+      generationStatus: "pending",
       kind: "explanation",
       organizationId,
     });
@@ -61,7 +71,37 @@ describe("generation access", () => {
 
     const result = await getLessonGenerationAccess(lesson.id);
 
-    expect(result).toMatchObject({ lesson: { id: lesson.id }, status: "ready" });
+    expect(result).toMatchObject({
+      lesson: { id: lesson.id },
+      shouldClaimQuota: true,
+      status: "ready",
+    });
+  });
+
+  it("does not claim quota for chapter and lesson no-op repairs", async () => {
+    const repairCourse = await courseFixture({ organizationId });
+
+    const chapter = await chapterFixture({
+      courseId: repairCourse.id,
+      generationStatus: "pending",
+      organizationId,
+      position: 0,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      kind: "explanation",
+      organizationId,
+    });
+
+    const [chapterAccess, lessonAccess] = await Promise.all([
+      getChapterGenerationAccess(chapter.id),
+      getLessonGenerationAccess(lesson.id),
+    ]);
+
+    expect(chapterAccess).toMatchObject({ shouldClaimQuota: false, status: "ready" });
+    expect(lessonAccess).toMatchObject({ shouldClaimQuota: false, status: "ready" });
   });
 
   it("requires a subscription for later lessons when the learner is not subscribed", async () => {

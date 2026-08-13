@@ -4,6 +4,7 @@ import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
+import { claimGenerationQuotaIfNeeded } from "@zoonk/core/generation-quotas/claim";
 import { getNextPreloadTargetResource } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
 import { getChapterGenerationAccess } from "@zoonk/core/workflows/chapter-generation-access";
 import { getLessonGenerationAccess } from "@zoonk/core/workflows/lesson-generation-access";
@@ -24,6 +25,16 @@ async function startPreloadGeneration(target: PreloadTarget) {
       return null;
     }
 
+    const quota = await claimGenerationQuotaIfNeeded({
+      resource: "chapter",
+      shouldClaimQuota: access.shouldClaimQuota,
+      targetId: target.chapterId,
+    });
+
+    if (quota.status === "limitReached") {
+      return null;
+    }
+
     const generation = await start(chapterGenerationWorkflow, [target.chapterId]);
 
     return { chapterId: target.chapterId, generationId: generation.runId, kind: target.kind };
@@ -32,6 +43,16 @@ async function startPreloadGeneration(target: PreloadTarget) {
   const access = await getLessonGenerationAccess(target.lessonId);
 
   if (access.status !== "ready") {
+    return null;
+  }
+
+  const quota = await claimGenerationQuotaIfNeeded({
+    resource: "lesson",
+    shouldClaimQuota: access.shouldClaimQuota,
+    targetId: target.lessonId,
+  });
+
+  if (quota.status === "limitReached") {
     return null;
   }
 

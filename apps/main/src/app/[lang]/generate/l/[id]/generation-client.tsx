@@ -1,5 +1,6 @@
 "use client";
 
+import { GenerationLimitCTA } from "@/components/generation/generation-limit-cta";
 import {
   GenerationProgressCompleted,
   GenerationTimeline,
@@ -47,6 +48,8 @@ export function GenerationClient({
   lessonTitle: string;
 }) {
   const t = useExtracted();
+  const backHref = `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}` as const;
+  const loginHref = `/login?next=${encodeURIComponent(`/generate/l/${lessonId}`)}` as const;
 
   const generation = useWorkflowGeneration<LessonStepName>({
     completionStep: LESSON_COMPLETION_STEP,
@@ -127,6 +130,17 @@ export function GenerationClient({
       <GenerationProgressCompleted subtitle={t("Taking you to your lesson...")}>
         {t("Your lesson is ready")}
       </GenerationProgressCompleted>
+    );
+  }
+
+  if (generation.status === "limitReached" && generation.limit) {
+    return (
+      <GenerationLimitCTA
+        backHref={backHref}
+        backLabel={t("Back to chapter")}
+        limit={generation.limit}
+        loginHref={loginHref}
+      />
     );
   }
 

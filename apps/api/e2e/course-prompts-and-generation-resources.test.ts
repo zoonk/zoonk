@@ -4,6 +4,7 @@ import {
   COURSE_LANGUAGE_MAX_LENGTH,
   COURSE_PROMPT_MAX_LENGTH,
 } from "@zoonk/core/courses/prompt-contract";
+import { GENERATION_VISITOR_ID_HEADER } from "@zoonk/core/generation-quotas/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
@@ -136,6 +137,48 @@ test.describe("Course prompt and generation resources API", () => {
       generationStatus: "running",
       status: "pending",
       title,
+    });
+
+    await apiContext.dispose();
+  });
+
+  test("returns a structured limit response instead of starting another generation", async () => {
+    const visitorId = randomUUID();
+    const now = new Date();
+
+    const periodStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+    );
+
+    await prisma.generationQuotaCounter.create({
+      data: {
+        actorKey: `guest:${visitorId}`,
+        count: 3,
+        period: "day",
+        periodStart,
+        resource: "course",
+      },
+    });
+
+    const coursePrompt = await coursePromptFixture();
+
+    const apiContext = await request.newContext({
+      baseURL,
+      extraHTTPHeaders: { [GENERATION_VISITOR_ID_HEADER]: visitorId },
+    });
+
+    const response = await apiContext.post("/v1/generations", {
+      data: { target: { id: coursePrompt.id, type: "coursePrompt" } },
+    });
+
+    expect(response.status()).toBe(429);
+
+    await expect(response.json()).resolves.toStrictEqual({
+      error: {
+        code: "GENERATION_LIMIT_REACHED",
+        details: { period: "day", resource: "course", viewer: "guest" },
+        message: "Generation limit reached",
+      },
     });
 
     await apiContext.dispose();

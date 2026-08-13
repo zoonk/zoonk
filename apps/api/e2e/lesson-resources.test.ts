@@ -347,6 +347,52 @@ test.describe("Lesson resources API", () => {
     await apiContext.dispose();
   });
 
+  test("skips derived generation when the learner has reached the lesson limit", async () => {
+    const { chapter, lesson, organization } = await createPublishedLesson({});
+
+    const nextLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      organizationId: organization.id,
+      position: 1,
+      title: `E2E Limited Preload ${randomUUID()}`,
+    });
+
+    const { apiContext, user } = await createBearerApiContext({
+      baseURL,
+      prefix: "lesson-preload-limit",
+    });
+
+    const now = new Date();
+
+    const periodStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+    );
+
+    await prisma.generationQuotaCounter.create({
+      data: {
+        actorKey: `user:${user.id}`,
+        count: 50,
+        period: "day",
+        periodStart,
+        resource: "lesson",
+      },
+    });
+
+    const response = await apiContext.post(`/v1/lessons/${lesson.id}/preloads`);
+
+    expect(response.status()).toBe(202);
+    await expect(response.json()).resolves.toStrictEqual({ generations: [] });
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: nextLesson.id } }),
+    ).resolves.toMatchObject({ generationRunId: null, generationStatus: "pending" });
+
+    await apiContext.dispose();
+  });
+
   test("requires authentication for learner mutations", async () => {
     const { lesson } = await createPublishedLesson({});
     const apiContext: APIRequestContext = await request.newContext({ baseURL });

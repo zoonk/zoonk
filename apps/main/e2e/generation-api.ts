@@ -1,8 +1,30 @@
+import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contract";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { isJsonObject } from "@zoonk/utils/json";
 
 type GenerationRouteHandler = (route: Route) => Promise<void>;
 type GenerationTargetType = "chapter" | "coursePrompt" | "lesson";
+
+export type GenerationTriggerResponse = {
+  body?: unknown;
+  error?: string;
+  id?: string;
+  status?: number;
+};
+
+/** Builds the public API error envelope that drives the reached-limit experience. */
+export function getGenerationLimitResponse(limit: GenerationQuotaLimit): GenerationTriggerResponse {
+  return {
+    body: {
+      error: {
+        code: "GENERATION_LIMIT_REACHED",
+        details: limit,
+        message: "Generation limit reached",
+      },
+    },
+    status: 429,
+  };
+}
 
 /**
  * Identifies a generation command for one target type. Inspecting the body is

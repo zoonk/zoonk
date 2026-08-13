@@ -9,7 +9,13 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
+import {
+  type GenerationTriggerResponse,
+  getGenerationLimitResponse,
+  isGenerationEvents,
+  isGenerationTrigger,
+  routeGenerationApis,
+} from "./generation-api";
 
 /**
  * Test Architecture for Lesson Generation Page
@@ -27,7 +33,7 @@ import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./
 const TEST_RUN_ID = "test-run-id-lesson-12345";
 
 type MockApiOptions = {
-  triggerResponse?: { id?: string; error?: string; status?: number };
+  triggerResponse?: GenerationTriggerResponse;
   streamMessages?: { reason?: string; step: string; status: string }[];
   streamError?: boolean;
   statusDelayMs?: number;
@@ -56,9 +62,9 @@ function createRouteHandler(options: MockApiOptions) {
 
     // Mock trigger API
     if (isGenerationTrigger({ request: route.request(), targetType: "lesson" })) {
-      if (triggerResponse.error) {
+      if (triggerResponse.error || (triggerResponse.status && triggerResponse.status >= 400)) {
         await route.fulfill({
-          body: JSON.stringify({ error: triggerResponse.error }),
+          body: JSON.stringify(triggerResponse.body ?? { error: triggerResponse.error }),
           contentType: "application/json",
           status: triggerResponse.status ?? 500,
         });
@@ -294,6 +300,23 @@ async function createTestSubscription(userId: string) {
 }
 
 test.describe("Generate Lesson Page - Unauthenticated", () => {
+  test("explains when the daily lesson generation limit is reached", async ({ page }) => {
+    const { lesson } = await createPendingLesson();
+
+    await setupMockApis(page, {
+      triggerResponse: getGenerationLimitResponse({
+        period: "day",
+        resource: "lesson",
+        viewer: "guest",
+      }),
+    });
+
+    await page.goto(`/generate/l/${lesson.id}`);
+
+    await expect(page.getByRole("heading", { name: "Daily lesson limit reached" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
+  });
+
   test("shows upgrade CTA for later chapter lessons", async ({ page }) => {
     const { lesson } = await createPendingLesson({ chapterPosition: 1 });
     await page.goto(`/generate/l/${lesson.id}`);

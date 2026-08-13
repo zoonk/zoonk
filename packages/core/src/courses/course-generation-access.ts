@@ -2,6 +2,11 @@ import { getSession } from "../users/get-session";
 import { getCoursePromptGenerationError } from "./course-prompt-generation";
 import { getCoursePromptById } from "./get-course-prompt";
 
+/** Charges only workflow states that can perform new AI work; active and completed runs are resumptions. */
+function shouldClaimCourseGenerationQuota(generationStatus: string | null): boolean {
+  return generationStatus === "pending" || generationStatus === "failed";
+}
+
 /**
  * Validates one persisted generation request and derives the optional learner
  * identity from the authenticated session before a delivery app starts the
@@ -29,6 +34,7 @@ export async function getCourseGenerationAccess(coursePromptId: string) {
 
   return {
     coursePromptId: coursePrompt.id,
+    shouldClaimQuota: shouldClaimCourseGenerationQuota(coursePrompt.generationStatus),
     status: "ready" as const,
     userId: session?.user.id ?? null,
   };

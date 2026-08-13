@@ -1,3 +1,4 @@
+import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contract";
 import { NextResponse } from "next/server";
 import { type z } from "zod";
 
@@ -8,6 +9,7 @@ export const httpStatus = {
   internalError: 500,
   notFound: 404,
   paymentRequired: 402,
+  tooManyRequests: 429,
   unauthorized: 401,
   unprocessableEntity: 422,
 } as const;
@@ -21,6 +23,13 @@ export const errors = {
   conflict: (msg = "Resource already exists") =>
     errorResponse("CONFLICT", msg, httpStatus.conflict),
   forbidden: (msg = "Access denied") => errorResponse("FORBIDDEN", msg, httpStatus.forbidden),
+  generationLimitReached: (limit: GenerationQuotaLimit) =>
+    errorResponse(
+      "GENERATION_LIMIT_REACHED",
+      "Generation limit reached",
+      httpStatus.tooManyRequests,
+      limit,
+    ),
   internal: (msg = "Internal server error") =>
     errorResponse("INTERNAL_ERROR", msg, httpStatus.internalError),
   notFound: (msg = "Resource not found") => errorResponse("NOT_FOUND", msg, httpStatus.notFound),

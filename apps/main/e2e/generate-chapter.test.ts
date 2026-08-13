@@ -8,7 +8,13 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
+import {
+  type GenerationTriggerResponse,
+  getGenerationLimitResponse,
+  isGenerationEvents,
+  isGenerationTrigger,
+  routeGenerationApis,
+} from "./generation-api";
 
 /**
  * Test Architecture for Chapter Generation Page
@@ -26,7 +32,7 @@ import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./
 const TEST_RUN_ID = "test-run-id-chapter-12345";
 
 type MockApiOptions = {
-  triggerResponse?: { id?: string; error?: string; status?: number };
+  triggerResponse?: GenerationTriggerResponse;
   streamMessages?: { reason?: string; step: string; status: string }[];
   streamError?: boolean;
   statusDelayMs?: number;
@@ -55,9 +61,9 @@ function createRouteHandler(options: MockApiOptions) {
 
     // Mock trigger API
     if (isGenerationTrigger({ request: route.request(), targetType: "chapter" })) {
-      if (triggerResponse.error) {
+      if (triggerResponse.error || (triggerResponse.status && triggerResponse.status >= 400)) {
         await route.fulfill({
-          body: JSON.stringify({ error: triggerResponse.error }),
+          body: JSON.stringify(triggerResponse.body ?? { error: triggerResponse.error }),
           contentType: "application/json",
           status: triggerResponse.status ?? 500,
         });
@@ -163,6 +169,23 @@ async function createTestSubscription(userId: string) {
 }
 
 test.describe("Generate Chapter Page - Unauthenticated", () => {
+  test("explains when the daily chapter generation limit is reached", async ({ page }) => {
+    const { chapter } = await createPendingChapter();
+
+    await setupMockApis(page, {
+      triggerResponse: getGenerationLimitResponse({
+        period: "day",
+        resource: "chapter",
+        viewer: "guest",
+      }),
+    });
+
+    await page.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(page.getByRole("heading", { name: "Daily chapter limit reached" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
+  });
+
   test("shows upgrade CTA for later chapters", async ({ page }) => {
     const { chapter } = await createPendingChapter(1);
     await page.goto(`/generate/ch/${chapter.id}`);

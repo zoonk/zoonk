@@ -5,6 +5,7 @@ import {
   forbiddenResponse,
   notFoundResponse,
   paymentRequiredResponse,
+  tooManyRequestsResponse,
   validationErrorResponse,
 } from "../schemas/responses";
 import {
@@ -19,7 +20,7 @@ export const generationPaths = {
   "/generations": {
     post: {
       description:
-        "Starts course, chapter, or lesson generation. Chapter and lesson targets require an active subscription when the free first-chapter rule does not apply.",
+        "Starts course, chapter, or lesson generation. Daily and monthly limits depend on the caller's entitlement. Chapter and lesson targets also require an active subscription when the free first-chapter rule does not apply.",
       operationId: "createGeneration",
       requestBody: {
         content: { "application/json": { schema: createGenerationRequestSchema } },
@@ -37,6 +38,7 @@ export const generationPaths = {
         "402": paymentRequiredResponse,
         "403": forbiddenResponse,
         "404": notFoundResponse,
+        "429": tooManyRequestsResponse,
       },
       security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Create a generation",
