@@ -126,4 +126,38 @@ describe(generateReadingAudioStep, () => {
       expect.objectContaining({ text: failedSentence }),
     );
   });
+
+  it("generates normalized duplicate sentences once and returns audio for every source text", async () => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const firstSentence = `文章${uniqueId} !`;
+    const duplicateSentence = `文章${uniqueId}!`;
+
+    const context = await createLessonContext({
+      kind: "reading",
+      organizationId,
+      targetLanguage: "ja",
+    });
+
+    const result = await generateReadingAudioStep({
+      context,
+      sentences: [
+        { explanation: "", sentence: firstSentence, translation: "first" },
+        { explanation: "", sentence: duplicateSentence, translation: "duplicate" },
+      ],
+    });
+
+    expect(result).toStrictEqual({
+      sentenceAudioUrls: {
+        [duplicateSentence]: `/audio/${firstSentence}.mp3`,
+        [firstSentence]: `/audio/${firstSentence}.mp3`,
+      },
+    });
+
+    expect(generateLanguageAudio).toHaveBeenCalledExactlyOnceWith({
+      language: "ja",
+      orgSlug: "ai",
+      text: firstSentence,
+      textType: "sentence",
+    });
+  });
 });

@@ -10,6 +10,24 @@ type WordAudioContext = {
 };
 
 /**
+ * Keeps the first spelling of a word so one audio clip can serve every
+ * case-insensitive spelling used by the lesson without starting duplicate TTS work.
+ */
+function deduplicateWordsCaseInsensitively(words: string[]): string[] {
+  const wordsByLower = new Map<string, string>();
+
+  for (const word of words) {
+    const lowerWord = word.toLowerCase();
+
+    if (!wordsByLower.has(lowerWord)) {
+      wordsByLower.set(lowerWord, word);
+    }
+  }
+
+  return [...wordsByLower.values()];
+}
+
+/**
  * Saves each successful clip immediately so a later workflow failure or manual
  * regeneration can reuse it instead of uploading the same word again.
  */
@@ -81,14 +99,9 @@ export async function generateWordAudioUrls(params: {
     ),
   );
 
-  const existingAudioUrls = Object.fromEntries(
-    words.flatMap((word) => {
-      const audioUrl = existingAudioByLower[word.toLowerCase()];
-      return audioUrl ? [[word, audioUrl]] : [];
-    }),
+  const wordsNeedingAudio = deduplicateWordsCaseInsensitively(
+    words.filter((word) => !existingAudioByLower[word.toLowerCase()]),
   );
-
-  const wordsNeedingAudio = words.filter((word) => !existingAudioByLower[word.toLowerCase()]);
 
   const context = { existingWordByLower, orgSlug, organizationId, targetLanguage };
 
@@ -98,14 +111,20 @@ export async function generateWordAudioUrls(params: {
 
   requireCompleteOptionalAudioBatch({ results, texts: wordsNeedingAudio });
 
-  return {
-    ...existingAudioUrls,
-    ...Object.fromEntries(
-      results.flatMap((result) =>
-        result.status === "fulfilled" && result.value
-          ? [[result.value.text, result.value.audioUrl]]
-          : [],
-      ),
+  const generatedAudioByLower = Object.fromEntries(
+    results.flatMap((result) =>
+      result.status === "fulfilled" && result.value
+        ? [[result.value.text.toLowerCase(), result.value.audioUrl]]
+        : [],
     ),
-  };
+  );
+
+  const audioByLower = { ...existingAudioByLower, ...generatedAudioByLower };
+
+  return Object.fromEntries(
+    words.flatMap((word) => {
+      const audioUrl = audioByLower[word.toLowerCase()];
+      return audioUrl ? [[word, audioUrl]] : [];
+    }),
+  );
 }

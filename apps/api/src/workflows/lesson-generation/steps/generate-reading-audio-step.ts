@@ -9,6 +9,44 @@ import { requireCompleteOptionalAudioBatch } from "./_utils/optional-audio-gener
 import { type LessonContext } from "./get-lesson-step";
 
 type SentenceAudioRequest = { sourceText: string; storedText: string };
+type SentenceAudioResult = { audioUrl: string; storedText: string };
+
+/**
+ * Keeps the first source text for each persisted sentence so punctuation variants
+ * share one TTS request while retaining a stable text for the generated voice clip.
+ */
+function deduplicateSentenceAudioRequests(
+  requests: SentenceAudioRequest[],
+): SentenceAudioRequest[] {
+  const requestsByStoredText = new Map<string, SentenceAudioRequest>();
+
+  for (const request of requests) {
+    if (!requestsByStoredText.has(request.storedText)) {
+      requestsByStoredText.set(request.storedText, request);
+    }
+  }
+
+  return [...requestsByStoredText.values()];
+}
+
+/**
+ * Fans the canonical stored sentence audio back to every source spelling used by
+ * lesson content because saving reads URLs through those original source strings.
+ */
+function mapSourceTextsToAudioUrls({
+  audioByStoredText,
+  requests,
+}: {
+  audioByStoredText: Record<string, string>;
+  requests: SentenceAudioRequest[];
+}): Record<string, string> {
+  return Object.fromEntries(
+    requests.flatMap((request) => {
+      const audioUrl = audioByStoredText[request.storedText];
+      return audioUrl ? [[request.sourceText, audioUrl]] : [];
+    }),
+  );
+}
 
 /**
  * Saves generated sentence audio under the same normalized sentence used by
@@ -24,7 +62,7 @@ async function generateAndPersistSentenceAudio({
   orgSlug: string;
   request: SentenceAudioRequest;
   targetLanguage: string;
-}): Promise<{ audioUrl: string; text: string } | null> {
+}): Promise<SentenceAudioResult | null> {
   const result = await generateAudioForText({
     language: targetLanguage,
     orgSlug,
@@ -47,7 +85,7 @@ async function generateAndPersistSentenceAudio({
     where: { orgSentence: { organizationId, sentence: request.storedText, targetLanguage } },
   });
 
-  return result;
+  return { audioUrl: result.audioUrl, storedText: request.storedText };
 }
 
 /**
@@ -99,15 +137,8 @@ export async function generateReadingAudioStep({
     ),
   );
 
-  const existingAudioUrls = Object.fromEntries(
-    requests.flatMap((request) => {
-      const audioUrl = existingAudioBySentence[request.storedText];
-      return audioUrl ? [[request.sourceText, audioUrl]] : [];
-    }),
-  );
-
-  const sentencesNeedingAudio = requests.filter(
-    (request) => !existingAudioBySentence[request.storedText],
+  const sentencesNeedingAudio = deduplicateSentenceAudioRequests(
+    requests.filter((request) => !existingAudioBySentence[request.storedText]),
   );
 
   const results = await Promise.allSettled(
@@ -126,18 +157,20 @@ export async function generateReadingAudioStep({
     texts: sentencesNeedingAudio.map((request) => request.sourceText),
   });
 
+  const generatedAudioBySentence = Object.fromEntries(
+    results.flatMap((result) =>
+      result.status === "fulfilled" && result.value
+        ? [[result.value.storedText, result.value.audioUrl]]
+        : [],
+    ),
+  );
+
   await stream.status({ status: "completed", step: "generateReadingAudio" });
 
   return {
-    sentenceAudioUrls: {
-      ...existingAudioUrls,
-      ...Object.fromEntries(
-        results.flatMap((result) =>
-          result.status === "fulfilled" && result.value
-            ? [[result.value.text, result.value.audioUrl]]
-            : [],
-        ),
-      ),
-    },
+    sentenceAudioUrls: mapSourceTextsToAudioUrls({
+      audioByStoredText: { ...existingAudioBySentence, ...generatedAudioBySentence },
+      requests,
+    }),
   };
 }

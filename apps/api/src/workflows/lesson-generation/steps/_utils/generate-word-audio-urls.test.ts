@@ -187,6 +187,28 @@ describe(generateWordAudioUrls, () => {
     expect(generateLanguageAudioMock).not.toHaveBeenCalled();
   });
 
+  it("generates case-insensitive duplicate words once and returns audio for every spelling", async () => {
+    const id = randomUUID().slice(0, 8);
+    const firstWord = `Hola-${id}`;
+    const duplicateWord = `hola-${id}`;
+
+    const result = await generateWordAudioUrls({
+      orgSlug,
+      organizationId,
+      targetLanguage: "es",
+      words: [firstWord, duplicateWord],
+    });
+
+    expect(result).toStrictEqual({
+      [duplicateWord]: `/audio/${firstWord}.mp3`,
+      [firstWord]: `/audio/${firstWord}.mp3`,
+    });
+
+    expect(generateLanguageAudioMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ text: firstWord }),
+    );
+  });
+
   it("returns empty object for empty word list", async () => {
     const result = await generateWordAudioUrls({
       orgSlug,
