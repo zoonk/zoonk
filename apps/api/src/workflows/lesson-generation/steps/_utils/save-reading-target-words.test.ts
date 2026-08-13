@@ -50,7 +50,7 @@ describe(saveReadingWordMetadata, () => {
     expect(words.map((entry) => entry.word)).toStrictEqual([translatedWord]);
   });
 
-  it("reuses existing word casing instead of creating lowercase duplicates", async () => {
+  it("preserves a lowercase sentence word separately from existing uppercase vocabulary", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `Gato${id}`;
     const lowercaseWord = existingWord.toLowerCase();
@@ -77,9 +77,11 @@ describe(saveReadingWordMetadata, () => {
       where: { organizationId, targetLanguage: "de", word: { in: [existingWord, lowercaseWord] } },
     });
 
-    expect(words).toHaveLength(1);
-    expect(words[0]?.word).toBe(existingWord);
-    expect(wordIds[lowercaseWord]).toBe(existingRecord.id);
+    expect(words.map((word) => word.word).toSorted()).toStrictEqual(
+      [existingWord, lowercaseWord].toSorted(),
+    );
+
+    expect(wordIds[lowercaseWord]).not.toBe(existingRecord.id);
   });
 
   it("saves distractor word metadata alongside canonical words", async () => {

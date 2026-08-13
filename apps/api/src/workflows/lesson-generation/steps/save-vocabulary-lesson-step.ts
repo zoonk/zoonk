@@ -6,6 +6,7 @@ import { type ChapterWord, type TransactionClient } from "@zoonk/db";
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation } from "@zoonk/utils/string";
 import { collectVocabularyTargetWords } from "./_utils/collect-vocabulary-target-words";
+import { deduplicateGeneratedItems } from "./_utils/deduplicate-generated-items";
 import {
   type GeneratedLessonGroup,
   persistGeneratedLessonGroups,
@@ -62,9 +63,10 @@ export async function saveVocabularyLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveVocabularyLesson" });
 
-  const wordGroups = splitLessonItems(words);
-  const allTargetWords = collectVocabularyTargetWords({ distractors, words });
-  const wordsToSave = [...new Set([...words.map((entry) => entry.word), ...allTargetWords])];
+  const uniqueWords = deduplicateGeneratedItems({ getKey: (entry) => entry.word, items: words });
+  const wordGroups = splitLessonItems(uniqueWords);
+  const allTargetWords = collectVocabularyTargetWords({ distractors, words: uniqueWords });
+  const wordsToSave = [...new Set([...uniqueWords.map((entry) => entry.word), ...allTargetWords])];
 
   const wordIds = await saveGeneratedWordMetadata({
     organizationId: course.organization.id,
@@ -113,7 +115,7 @@ function getVocabularyWordMetadata({
   };
 }
 
-/** Fails before scoped writes if reusable metadata omitted a canonical word. */
+/** Fails before scoped writes if reusable metadata omitted a generated word. */
 function getRequiredWordId({
   word,
   wordIds,
@@ -223,7 +225,7 @@ function getVocabularyResourceData({
   };
 }
 
-/** Deduplicates repeated generated words before the bulk chapter-resource insert. */
+/** Builds one lesson-scoped resource for every deduplicated vocabulary entry. */
 function getVocabularyResources({
   chapterId,
   distractors,
@@ -235,15 +237,9 @@ function getVocabularyResources({
   entries: VocabularyGroupEntry[];
   userLanguage: string;
 }) {
-  const resources = entries.map(
-    (entry) =>
-      [
-        getVocabularyResourceKey(entry),
-        getVocabularyResourceData({ chapterId, distractors, entry, userLanguage }),
-      ] as const,
+  return entries.map((entry) =>
+    getVocabularyResourceData({ chapterId, distractors, entry, userLanguage }),
   );
-
-  return [...new Map(resources).values()];
 }
 
 /** Resolves the chapter-word row created for one ordered vocabulary entry. */

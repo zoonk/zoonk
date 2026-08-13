@@ -90,4 +90,65 @@ describe(saveTranslationLessonStep, () => {
 
     await expect(saveTranslationLessonStep(context)).resolves.toBeUndefined();
   });
+
+  it("does not replace a running translation companion", async () => {
+    const context = await createLessonContext({
+      kind: "vocabulary",
+      organizationId,
+      position: 1,
+      targetLanguage: "pt",
+    });
+
+    const [translationLesson, sourceWord, sentinelWord] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationRunId: "active-translation-run",
+        generationStatus: "running",
+        isPublished: true,
+        kind: "translation",
+        organizationId,
+        position: 2,
+      }),
+      wordFixture({ organizationId, targetLanguage: "pt", word: `source-${randomUUID()}` }),
+      wordFixture({ organizationId, targetLanguage: "pt", word: `sentinel-${randomUUID()}` }),
+    ]);
+
+    const [sourceChapterWord, sentinelChapterWord] = await Promise.all([
+      chapterWordFixture({ sourceLessonId: context.id, wordId: sourceWord.id }),
+      chapterWordFixture({ sourceLessonId: context.id, wordId: sentinelWord.id }),
+    ]);
+
+    await Promise.all([
+      stepFixture({
+        chapterWordId: sourceChapterWord.id,
+        content: {},
+        kind: "vocabulary",
+        lessonId: context.id,
+        position: 0,
+        wordId: sourceWord.id,
+      }),
+      stepFixture({
+        chapterWordId: sentinelChapterWord.id,
+        content: {},
+        kind: "translation",
+        lessonId: translationLesson.id,
+        position: 0,
+        wordId: sentinelWord.id,
+      }),
+    ]);
+
+    await saveTranslationLessonStep(context);
+
+    const [savedLesson, steps] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: translationLesson.id } }),
+      prisma.step.findMany({ where: { lessonId: translationLesson.id } }),
+    ]);
+
+    expect(savedLesson).toMatchObject({
+      generationRunId: "active-translation-run",
+      generationStatus: "running",
+    });
+
+    expect(steps.map((step) => step.wordId)).toStrictEqual([sentinelWord.id]);
+  });
 });

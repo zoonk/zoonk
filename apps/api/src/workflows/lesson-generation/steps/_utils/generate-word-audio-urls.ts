@@ -2,29 +2,13 @@ import { prisma } from "@zoonk/db";
 import { generateAudioForText } from "./generate-audio-for-text";
 import { requireCompleteOptionalAudioBatch } from "./optional-audio-generation-error";
 
-type WordAudioContext = {
-  existingWordByLower: Record<string, string>;
-  organizationId: string;
-  orgSlug: string;
-  targetLanguage: string;
-};
+type WordAudioContext = { organizationId: string; orgSlug: string; targetLanguage: string };
 
 /**
- * Keeps the first spelling of a word so one audio clip can serve every
- * case-insensitive spelling used by the lesson without starting duplicate TTS work.
+ * Keeps the first exact word so repeated AI output does not start duplicate TTS work.
  */
-function deduplicateWordsCaseInsensitively(words: string[]): string[] {
-  const wordsByLower = new Map<string, string>();
-
-  for (const word of words) {
-    const lowerWord = word.toLowerCase();
-
-    if (!wordsByLower.has(lowerWord)) {
-      wordsByLower.set(lowerWord, word);
-    }
-  }
-
-  return [...wordsByLower.values()];
+function deduplicateWords(words: string[]): string[] {
+  return [...new Set(words)];
 }
 
 /**
@@ -48,21 +32,19 @@ async function generateAndPersistWordAudio({
     return null;
   }
 
-  const storedWord = context.existingWordByLower[word.toLowerCase()] ?? word;
-
   await prisma.word.upsert({
     create: {
       audioUrl: result.audioUrl,
       organizationId: context.organizationId,
       targetLanguage: context.targetLanguage,
-      word: storedWord,
+      word,
     },
     update: { audioUrl: result.audioUrl },
     where: {
       orgWord: {
         organizationId: context.organizationId,
         targetLanguage: context.targetLanguage,
-        word: storedWord,
+        word,
       },
     },
   });
@@ -74,8 +56,8 @@ async function generateAndPersistWordAudio({
  * Queries existing Word audio records and generates missing audio via TTS.
  *
  * This is the shared core for vocabulary and sentence-word audio steps. Both
- * need case-insensitive lookup, parallel missing-audio generation, and a result
- * keyed by the original word surface used by the caller.
+ * need exact lookup, parallel missing-audio generation, and a result keyed by
+ * the original word surface used by the caller.
  */
 export async function generateWordAudioUrls(params: {
   organizationId: string;
@@ -86,24 +68,16 @@ export async function generateWordAudioUrls(params: {
   const { organizationId, orgSlug, targetLanguage, words } = params;
 
   const existingWords = await prisma.word.findMany({
-    where: { organizationId, targetLanguage, word: { in: words, mode: "insensitive" } },
+    where: { organizationId, targetLanguage, word: { in: words } },
   });
 
-  const existingWordByLower = Object.fromEntries(
-    existingWords.map((record) => [record.word.toLowerCase(), record.word]),
+  const existingAudioByWord = Object.fromEntries(
+    existingWords.flatMap((record) => (record.audioUrl ? [[record.word, record.audioUrl]] : [])),
   );
 
-  const existingAudioByLower = Object.fromEntries(
-    existingWords.flatMap((record) =>
-      record.audioUrl ? [[record.word.toLowerCase(), record.audioUrl]] : [],
-    ),
-  );
+  const wordsNeedingAudio = deduplicateWords(words.filter((word) => !existingAudioByWord[word]));
 
-  const wordsNeedingAudio = deduplicateWordsCaseInsensitively(
-    words.filter((word) => !existingAudioByLower[word.toLowerCase()]),
-  );
-
-  const context = { existingWordByLower, orgSlug, organizationId, targetLanguage };
+  const context = { orgSlug, organizationId, targetLanguage };
 
   const results = await Promise.allSettled(
     wordsNeedingAudio.map((word) => generateAndPersistWordAudio({ context, word })),
@@ -111,19 +85,19 @@ export async function generateWordAudioUrls(params: {
 
   requireCompleteOptionalAudioBatch({ results, texts: wordsNeedingAudio });
 
-  const generatedAudioByLower = Object.fromEntries(
+  const generatedAudioByWord = Object.fromEntries(
     results.flatMap((result) =>
       result.status === "fulfilled" && result.value
-        ? [[result.value.text.toLowerCase(), result.value.audioUrl]]
+        ? [[result.value.text, result.value.audioUrl]]
         : [],
     ),
   );
 
-  const audioByLower = { ...existingAudioByLower, ...generatedAudioByLower };
+  const audioByWord = { ...existingAudioByWord, ...generatedAudioByWord };
 
   return Object.fromEntries(
     words.flatMap((word) => {
-      const audioUrl = audioByLower[word.toLowerCase()];
+      const audioUrl = audioByWord[word];
       return audioUrl ? [[word, audioUrl]] : [];
     }),
   );

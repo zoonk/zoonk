@@ -91,4 +91,65 @@ describe(saveListeningLessonStep, () => {
 
     await expect(saveListeningLessonStep(context)).resolves.toBeUndefined();
   });
+
+  it("does not replace a running listening companion", async () => {
+    const context = await createLessonContext({
+      kind: "reading",
+      organizationId,
+      position: 1,
+      targetLanguage: "de",
+    });
+
+    const [listeningLesson, sourceSentence, sentinelSentence] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationRunId: "active-listening-run",
+        generationStatus: "running",
+        isPublished: true,
+        kind: "listening",
+        organizationId,
+        position: 2,
+      }),
+      sentenceFixture({ organizationId, targetLanguage: "de" }),
+      sentenceFixture({ organizationId, targetLanguage: "de" }),
+    ]);
+
+    const [sourceChapterSentence, sentinelChapterSentence] = await Promise.all([
+      chapterSentenceFixture({ sentenceId: sourceSentence.id, sourceLessonId: context.id }),
+      chapterSentenceFixture({ sentenceId: sentinelSentence.id, sourceLessonId: context.id }),
+    ]);
+
+    await Promise.all([
+      stepFixture({
+        chapterSentenceId: sourceChapterSentence.id,
+        content: {},
+        kind: "reading",
+        lessonId: context.id,
+        position: 0,
+        sentenceId: sourceSentence.id,
+      }),
+      stepFixture({
+        chapterSentenceId: sentinelChapterSentence.id,
+        content: {},
+        kind: "listening",
+        lessonId: listeningLesson.id,
+        position: 0,
+        sentenceId: sentinelSentence.id,
+      }),
+    ]);
+
+    await saveListeningLessonStep(context);
+
+    const [savedLesson, steps] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: listeningLesson.id } }),
+      prisma.step.findMany({ where: { lessonId: listeningLesson.id } }),
+    ]);
+
+    expect(savedLesson).toMatchObject({
+      generationRunId: "active-listening-run",
+      generationStatus: "running",
+    });
+
+    expect(steps.map((step) => step.sentenceId)).toStrictEqual([sentinelSentence.id]);
+  });
 });

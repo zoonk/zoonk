@@ -4,6 +4,7 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
+import { isGeneratedCompanionRepairable } from "./_utils/is-generated-companion-repairable";
 import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -39,7 +40,7 @@ async function saveTranslationLesson({
 
   const translationLesson = await prisma.lesson.findUnique({ where: { id: translationLessonId } });
 
-  if (!translationLesson || translationLesson.generationStatus === "completed") {
+  if (!isGeneratedCompanionRepairable(translationLesson)) {
     await stream.status({ status: "completed", step: "saveTranslationLesson" });
     return;
   }

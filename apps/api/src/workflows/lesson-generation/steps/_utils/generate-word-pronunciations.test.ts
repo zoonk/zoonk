@@ -110,6 +110,39 @@ describe(generateWordPronunciations, () => {
     expect(generateLessonPronunciationMock).toHaveBeenCalledOnce();
   });
 
+  it("does not reuse a pronunciation from a case-distinct word", async () => {
+    const id = randomUUID().slice(0, 8);
+    const existingWordText = `Morgen${id}`;
+    const requestedWordText = `morgen${id}`;
+
+    const word = await wordFixture({
+      organizationId,
+      targetLanguage: "de",
+      word: existingWordText,
+    });
+
+    await wordPronunciationFixture({
+      pronunciation: "existing",
+      userLanguage: "en",
+      wordId: word.id,
+    });
+
+    generateLessonPronunciationMock.mockResolvedValue({ data: { pronunciation: "generated" } });
+
+    const result = await generateWordPronunciations({
+      organizationId,
+      targetLanguage: "de",
+      userLanguage: "en",
+      words: [requestedWordText],
+    });
+
+    expect(result[requestedWordText]).toBe("generated");
+
+    expect(generateLessonPronunciationMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ word: requestedWordText }),
+    );
+  });
+
   it("throws when an AI call fails", async () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `Fallo${id}`;

@@ -1,4 +1,3 @@
-import { fetchExistingWordCasing } from "./fetch-existing-word-casing";
 import { upsertWordWithPronunciation } from "./upsert-word-with-pronunciation";
 
 export type GeneratedWordMetadata = {
@@ -9,16 +8,14 @@ export type GeneratedWordMetadata = {
   word: string;
 };
 
-/** Saves one generated word while preserving any existing canonical casing. */
+/** Saves one generated word without collapsing case-sensitive vocabulary. */
 async function saveReusableWord({
   entry,
-  existingCasing,
   organizationId,
   targetLanguage,
   userLanguage,
 }: {
   entry: GeneratedWordMetadata;
-  existingCasing: Record<string, string>;
   organizationId: string;
   targetLanguage: string;
   userLanguage: string;
@@ -31,7 +28,7 @@ async function saveReusableWord({
     romanizationUpdate: entry.romanizationUpdate,
     targetLanguage,
     userLanguage,
-    word: existingCasing[entry.word.toLowerCase()] ?? entry.word,
+    word: entry.word,
   });
 
   return [entry.word, wordId] as const;
@@ -53,16 +50,8 @@ export async function saveGeneratedWordMetadata({
   userLanguage: string;
   words: GeneratedWordMetadata[];
 }): Promise<Record<string, string>> {
-  const existingCasing = await fetchExistingWordCasing({
-    organizationId,
-    targetLanguage,
-    words: words.map((entry) => entry.word),
-  });
-
   const savedWords = await Promise.all(
-    words.map((entry) =>
-      saveReusableWord({ entry, existingCasing, organizationId, targetLanguage, userLanguage }),
-    ),
+    words.map((entry) => saveReusableWord({ entry, organizationId, targetLanguage, userLanguage })),
   );
 
   return Object.fromEntries(savedWords);

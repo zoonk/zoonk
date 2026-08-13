@@ -4,6 +4,7 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
+import { isGeneratedCompanionRepairable } from "./_utils/is-generated-companion-repairable";
 import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -45,7 +46,7 @@ async function saveListeningLesson({
 
   const listeningLesson = await prisma.lesson.findUnique({ where: { id: listeningLessonId } });
 
-  if (!listeningLesson || listeningLesson.generationStatus === "completed") {
+  if (!isGeneratedCompanionRepairable(listeningLesson)) {
     await stream.status({ status: "completed", step: "saveListeningLesson" });
     return;
   }

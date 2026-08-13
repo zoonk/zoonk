@@ -124,5 +124,44 @@ describe(handleLessonFailureStep, () => {
     await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
     ).resolves.toMatchObject({ generationRunId: workflowRunId, generationStatus: "completed" });
+
+    expect(getStreamedEvents()).not.toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ status: "error", step: "workflowError" })]),
+    );
+  });
+
+  it("does not emit failure after a newer workflow claims the lesson", async () => {
+    const lesson = await createLessonContext({ generationStatus: "running", organizationId });
+
+    await prisma.lesson.update({
+      data: { generationRunId: "newer-run" },
+      where: { id: lesson.id },
+    });
+
+    await handleLessonFailureStep({ lessonId: lesson.id, workflowRunId: "stale-run" });
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ generationRunId: "newer-run", generationStatus: "running" });
+
+    expect(getStreamedEvents()).not.toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ status: "error", step: "workflowError" })]),
+    );
+  });
+
+  it("re-emits failure when the same durable step replays after persisting it", async () => {
+    const workflowRunId = "replayed-failure-run";
+    const lesson = await createLessonContext({ generationStatus: "failed", organizationId });
+
+    await prisma.lesson.update({
+      data: { generationRunId: workflowRunId },
+      where: { id: lesson.id },
+    });
+
+    await handleLessonFailureStep({ lessonId: lesson.id, workflowRunId });
+
+    expect(getStreamedEvents()).toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ status: "error", step: "workflowError" })]),
+    );
   });
 });

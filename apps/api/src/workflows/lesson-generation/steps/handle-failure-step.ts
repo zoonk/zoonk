@@ -6,6 +6,37 @@ import { prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 
 /**
+ * Persists failure only while this workflow owns the lesson. A same-run failed
+ * row is an idempotent replay after the database write committed, so it still
+ * needs the stream event that may have been lost with the earlier step result.
+ */
+async function persistLessonFailure({
+  lessonId,
+  workflowRunId,
+}: {
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<boolean> {
+  return prisma.$transaction(async (transaction) => {
+    const lesson = await transaction.lesson.updateMany({
+      data: { generationStatus: "failed" },
+      where: { generationRunId: workflowRunId, generationStatus: "running", id: lessonId },
+    });
+
+    if (lesson.count > 0) {
+      return true;
+    }
+
+    const persistedLesson = await transaction.lesson.findUnique({ where: { id: lessonId } });
+
+    return (
+      persistedLesson?.generationRunId === workflowRunId &&
+      persistedLesson.generationStatus === "failed"
+    );
+  });
+}
+
+/**
  * Marks a lesson-generation run as permanently failed after Workflow has
  * exhausted retries for the throwing step. The original error is passed in as
  * serializable data so logs preserve the real AI or database failure.
@@ -17,8 +48,6 @@ export async function handleLessonFailureStep(input: {
 }): Promise<void> {
   "use step";
 
-  await using stream = createStepStream();
-
   logError("[Lesson Workflow Failure]", { error: input.error, lessonId: input.lessonId });
 
   await captureWorkflowFailure({
@@ -28,14 +57,15 @@ export async function handleLessonFailureStep(input: {
     workflowName: "lessonGenerationWorkflow",
   });
 
-  await prisma.lesson.updateMany({
-    data: { generationStatus: "failed" },
-    where: {
-      generationRunId: input.workflowRunId,
-      generationStatus: "running",
-      id: input.lessonId,
-    },
+  const persisted = await persistLessonFailure({
+    lessonId: input.lessonId,
+    workflowRunId: input.workflowRunId,
   });
 
+  if (!persisted) {
+    return;
+  }
+
+  await using stream = createStepStream();
   await stream.error({ reason: "aiGenerationFailed", step: WORKFLOW_ERROR_STEP });
 }

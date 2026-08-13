@@ -1,5 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
+import { normalizePunctuation } from "@zoonk/utils/string";
+import { deduplicateGeneratedItems } from "./_utils/deduplicate-generated-items";
 import { type ReadingLessonContent } from "./_utils/generated-lesson-content";
 import { persistGeneratedLessonGroups } from "./_utils/persist-generated-lesson-groups";
 import {
@@ -41,14 +43,19 @@ export async function saveReadingLessonStep(params: SaveReadingLessonInput): Pro
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveReadingLesson" });
 
-  const sentenceGroups = splitLessonItems(params.sentences);
+  const sentences = deduplicateGeneratedItems({
+    getKey: (entry) => normalizePunctuation(entry.sentence).trim().toLowerCase(),
+    items: params.sentences,
+  });
+
+  const sentenceGroups = splitLessonItems(sentences);
 
   const [wordIds, sentenceIds] = await Promise.all([
     saveReadingWordMetadata({
       distractors: params.distractors,
       organizationId: course.organization.id,
       pronunciations: params.pronunciations,
-      sentences: params.sentences,
+      sentences,
       targetLanguage: course.targetLanguage,
       userLanguage: params.context.language,
       wordAudioUrls: params.wordAudioUrls,
@@ -58,7 +65,7 @@ export async function saveReadingLessonStep(params: SaveReadingLessonInput): Pro
       organizationId: course.organization.id,
       sentenceAudioUrls: params.sentenceAudioUrls,
       sentenceRomanizations: params.sentenceRomanizations,
-      sentences: params.sentences,
+      sentences,
       targetLanguage: course.targetLanguage,
     }),
   ]);

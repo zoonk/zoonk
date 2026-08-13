@@ -11,15 +11,17 @@ export function collectTargetWords({
   canonicalWords: string[];
   generatedWords: string[];
 }): string[] {
-  const seenTargetKeys = new Set<string>();
+  const seenCanonicalWords = new Set<string>();
+  const seenGeneratedKeys = new Set<string>();
   const targetWords: string[] = [];
 
   for (const word of canonicalWords) {
-    const key = getTargetKey(word);
+    const normalizedWord = normalizePunctuation(word).trim();
 
-    if (key && !seenTargetKeys.has(key)) {
-      seenTargetKeys.add(key);
-      targetWords.push(word);
+    if (normalizedWord && !seenCanonicalWords.has(normalizedWord)) {
+      seenCanonicalWords.add(normalizedWord);
+      seenGeneratedKeys.add(getTargetKey(normalizedWord));
+      targetWords.push(normalizedWord);
     }
   }
 
@@ -27,8 +29,8 @@ export function collectTargetWords({
     const normalizedWord = normalizePunctuation(word).trim();
     const key = getTargetKey(normalizedWord);
 
-    if (key && !seenTargetKeys.has(key)) {
-      seenTargetKeys.add(key);
+    if (key && !seenGeneratedKeys.has(key)) {
+      seenGeneratedKeys.add(key);
       targetWords.push(normalizedWord);
     }
   }

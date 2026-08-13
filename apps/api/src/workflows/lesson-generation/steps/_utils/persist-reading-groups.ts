@@ -142,7 +142,7 @@ function getReadingResourceData({
   };
 }
 
-/** Deduplicates repeated sentences before the bulk chapter-resource insert. */
+/** Builds one lesson-scoped resource for every deduplicated reading entry. */
 function getReadingResources({
   entries,
   params,
@@ -150,15 +150,9 @@ function getReadingResources({
   entries: ReadingGroupEntry[];
   params: ReadingGroupPersistenceInput;
 }) {
-  const resources = entries.map(
-    (entry) =>
-      [
-        getReadingResourceKey(entry),
-        getReadingResourceData({ chapterId: params.context.chapterId, entry, params }),
-      ] as const,
+  return entries.map((entry) =>
+    getReadingResourceData({ chapterId: params.context.chapterId, entry, params }),
   );
-
-  return [...new Map(resources).values()];
 }
 
 /** Resolves the chapter-sentence row created for one ordered reading entry. */

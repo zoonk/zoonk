@@ -23,9 +23,7 @@ export async function generateWordPronunciations(params: {
 
   const existingPronunciations = await fetchExistingPronunciations(params);
 
-  const wordsNeedingPronunciation = params.words.filter(
-    (word) => !existingPronunciations[word.toLowerCase()],
-  );
+  const wordsNeedingPronunciation = params.words.filter((word) => !existingPronunciations[word]);
 
   const generatedPronunciations = await generateMissingPronunciations({
     targetLanguage: params.targetLanguage,
@@ -36,7 +34,7 @@ export async function generateWordPronunciations(params: {
   return {
     ...Object.fromEntries(
       params.words.flatMap((word) => {
-        const pronunciation = existingPronunciations[word.toLowerCase()];
+        const pronunciation = existingPronunciations[word];
         return pronunciation ? [[word, pronunciation]] : [];
       }),
     ),
@@ -57,14 +55,14 @@ async function fetchExistingPronunciations(params: {
     where: {
       organizationId: params.organizationId,
       targetLanguage: params.targetLanguage,
-      word: { in: params.words, mode: "insensitive" },
+      word: { in: params.words },
     },
   });
 
   return Object.fromEntries(
     existingWords.flatMap((record) => {
       const pronunciation = record.pronunciations[0]?.pronunciation;
-      return pronunciation ? [[record.word.toLowerCase(), pronunciation]] : [];
+      return pronunciation ? [[record.word, pronunciation]] : [];
     }),
   );
 }

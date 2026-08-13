@@ -105,4 +105,39 @@ describe(saveVocabularyLessonStep, () => {
       wordId: lessonWords[0]?.wordId,
     });
   });
+
+  it("keeps the first duplicate word without failing the lesson", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const vocabularyWord = `banco ${id}`;
+
+    const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
+      kind: "vocabulary",
+      organizationId,
+      targetLanguage: "pt",
+    });
+
+    await saveVocabularyLessonStep({
+      context,
+      distractors: {},
+      pronunciations: {},
+      romanizations: {},
+      wordAudioUrls: {},
+      words: [
+        { translation: "bank", word: vocabularyWord },
+        { translation: "bench", word: vocabularyWord },
+      ],
+      workflowRunId: WORKFLOW_RUN_ID,
+    });
+
+    const [chapterWords, steps] = await Promise.all([
+      prisma.chapterWord.findMany({ where: { sourceLessonId: context.id } }),
+      prisma.step.findMany({ where: { lessonId: context.id } }),
+    ]);
+
+    expect(chapterWords).toHaveLength(1);
+    expect(chapterWords[0]?.translation).toBe("bank");
+    expect(steps).toHaveLength(1);
+  });
 });

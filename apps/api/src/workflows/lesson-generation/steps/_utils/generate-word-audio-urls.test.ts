@@ -165,7 +165,7 @@ describe(generateWordAudioUrls, () => {
     ).rejects.toBe(persistenceError);
   });
 
-  it("matches existing audio case-insensitively", async () => {
+  it("does not reuse audio from a case-distinct word", async () => {
     const id = randomUUID().slice(0, 8);
     const dbWord = `Hola-${id}`;
 
@@ -183,11 +183,14 @@ describe(generateWordAudioUrls, () => {
       words: [`hola-${id}`],
     });
 
-    expect(result[`hola-${id}`]).toBe("/audio/hola.mp3");
-    expect(generateLanguageAudioMock).not.toHaveBeenCalled();
+    expect(result[`hola-${id}`]).toBe(`/audio/hola-${id}.mp3`);
+
+    expect(generateLanguageAudioMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ text: `hola-${id}` }),
+    );
   });
 
-  it("generates case-insensitive duplicate words once and returns audio for every spelling", async () => {
+  it("generates separate audio for case-distinct words", async () => {
     const id = randomUUID().slice(0, 8);
     const firstWord = `Hola-${id}`;
     const duplicateWord = `hola-${id}`;
@@ -200,12 +203,18 @@ describe(generateWordAudioUrls, () => {
     });
 
     expect(result).toStrictEqual({
-      [duplicateWord]: `/audio/${firstWord}.mp3`,
+      [duplicateWord]: `/audio/${duplicateWord}.mp3`,
       [firstWord]: `/audio/${firstWord}.mp3`,
     });
 
-    expect(generateLanguageAudioMock).toHaveBeenCalledExactlyOnceWith(
+    expect(generateLanguageAudioMock).toHaveBeenCalledTimes(2);
+
+    expect(generateLanguageAudioMock).toHaveBeenCalledWith(
       expect.objectContaining({ text: firstWord }),
+    );
+
+    expect(generateLanguageAudioMock).toHaveBeenCalledWith(
+      expect.objectContaining({ text: duplicateWord }),
     );
   });
 
