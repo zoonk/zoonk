@@ -5,7 +5,6 @@ import { generateSentenceDistractorsStep } from "../steps/generate-sentence-dist
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { generateSentenceWordPronunciationStep } from "../steps/generate-sentence-word-pronunciation-step";
 import { type LessonContext } from "../steps/get-lesson-step";
-import { saveListeningLessonStep } from "../steps/save-listening-lesson-step";
 import { saveReadingLessonStep } from "../steps/save-reading-lesson-step";
 import {
   generateOptionalReadingAudio,
@@ -17,7 +16,13 @@ import {
  * lesson follows the vocabulary metadata group immediately before it without
  * depending on generated vocabulary rows.
  */
-export async function readingLessonWorkflow(context: LessonContext): Promise<void> {
+export async function readingLessonWorkflow({
+  context,
+  workflowRunId,
+}: {
+  context: LessonContext;
+  workflowRunId: string;
+}): Promise<void> {
   "use workflow";
 
   const content = await generateReadingContentStep(context);
@@ -55,7 +60,6 @@ export async function readingLessonWorkflow(context: LessonContext): Promise<voi
     translationDistractors,
     wordAudioUrls,
     wordMetadata,
+    workflowRunId,
   });
-
-  await saveListeningLessonStep(context);
 }

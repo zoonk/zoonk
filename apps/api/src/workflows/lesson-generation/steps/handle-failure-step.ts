@@ -13,6 +13,7 @@ import { logError } from "@zoonk/utils/logger";
 export async function handleLessonFailureStep(input: {
   error?: WorkflowErrorLog;
   lessonId: string;
+  workflowRunId: string;
 }): Promise<void> {
   "use step";
 
@@ -27,9 +28,13 @@ export async function handleLessonFailureStep(input: {
     workflowName: "lessonGenerationWorkflow",
   });
 
-  await prisma.lesson.update({
+  await prisma.lesson.updateMany({
     data: { generationStatus: "failed" },
-    where: { id: input.lessonId },
+    where: {
+      generationRunId: input.workflowRunId,
+      generationStatus: "running",
+      id: input.lessonId,
+    },
   });
 
   await stream.error({ reason: "aiGenerationFailed", step: WORKFLOW_ERROR_STEP });

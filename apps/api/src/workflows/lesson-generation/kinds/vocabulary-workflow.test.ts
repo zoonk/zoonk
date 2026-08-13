@@ -5,10 +5,13 @@ import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/rom
 import { generateLessonVocabulary } from "@zoonk/ai/tasks/lessons/language/vocabulary";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { vocabularyLessonWorkflow } from "./vocabulary-workflow";
+
+const WORKFLOW_RUN_ID = "vocabulary-workflow-test";
 
 const { logErrorMock } = vi.hoisted(() => ({ logErrorMock: vi.fn() }));
 
@@ -94,6 +97,8 @@ describe(vocabularyLessonWorkflow, () => {
     const allWords = [catWord, waterWord, dogWord, birdWord, fireWord, earthWord];
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "vocabulary",
       organizationId,
       targetLanguage: "ja",
@@ -109,7 +114,7 @@ describe(vocabularyLessonWorkflow, () => {
       [waterWord]: [fireWord, earthWord],
     };
 
-    await vocabularyLessonWorkflow(context);
+    await vocabularyLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
 
     expect(generateLessonVocabulary).toHaveBeenCalledOnce();
     expect(generateLessonDistractors).toHaveBeenCalledTimes(2);
@@ -172,11 +177,79 @@ describe(vocabularyLessonWorkflow, () => {
     );
   });
 
+  it("splits more than twenty words into balanced vocabulary and translation pairs", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
+      kind: "vocabulary",
+      organizationId,
+      targetLanguage: "ja",
+    });
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "translation",
+        organizationId,
+        position: context.position + 1,
+        title: `Translation ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "grammar",
+        organizationId,
+        position: context.position + 2,
+        title: `Following grammar ${uniqueId}`,
+      }),
+    ]);
+
+    vocabularyState.words = Array.from({ length: 21 }, (_, index) => ({
+      translation: `Translation ${uniqueId} ${index + 1}`,
+      word: `Word ${uniqueId} ${index + 1}`,
+    }));
+
+    await vocabularyLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
+
+    const lessons = await prisma.lesson.findMany({
+      include: { steps: { orderBy: { position: "asc" } } },
+      orderBy: { position: "asc" },
+      where: { chapterId: context.chapterId },
+    });
+
+    expect(lessons.map((lesson) => lesson.kind)).toStrictEqual([
+      "vocabulary",
+      "translation",
+      "vocabulary",
+      "translation",
+      "grammar",
+    ]);
+
+    const vocabularyLessons = lessons.filter((lesson) => lesson.kind === "vocabulary");
+    const translationLessons = lessons.filter((lesson) => lesson.kind === "translation");
+
+    expect(vocabularyLessons.map((lesson) => lesson.steps.length)).toStrictEqual([11, 10]);
+    expect(translationLessons.map((lesson) => lesson.steps.length)).toStrictEqual([11, 10]);
+
+    expect(
+      vocabularyLessons.map((lesson) => lesson.steps.map((step) => step.chapterWordId)),
+    ).toStrictEqual(
+      translationLessons.map((lesson) => lesson.steps.map((step) => step.chapterWordId)),
+    );
+  });
+
   it("saves the lesson after optional audio retries remain incomplete", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const word = `音声-${uniqueId}`;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "vocabulary",
       organizationId,
       targetLanguage: "ja",
@@ -189,7 +262,7 @@ describe(vocabularyLessonWorkflow, () => {
       error: new Error("No speech audio generated"),
     });
 
-    await expect(vocabularyLessonWorkflow(context)).resolves.toBeUndefined();
+    await vocabularyLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
 
     expect(logErrorMock).toHaveBeenCalledExactlyOnceWith(
       "[Lesson Audio Generation Permanently Failed]",
@@ -214,6 +287,8 @@ describe(vocabularyLessonWorkflow, () => {
     const validDistractor = `水-${uniqueId}`;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "vocabulary",
       organizationId,
       targetLanguage: "ja",
@@ -222,7 +297,7 @@ describe(vocabularyLessonWorkflow, () => {
     vocabularyState.words = [{ translation: `water ${uniqueId}`, word: canonicalWord }];
     vocabularyState.distractors = { [canonicalWord]: [duplicateDistractor, validDistractor] };
 
-    await vocabularyLessonWorkflow(context);
+    await vocabularyLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
 
     const [canonicalRecord, duplicateDistractorRecord, lessonWord] = await Promise.all([
       prisma.word.findUnique({

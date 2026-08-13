@@ -26,7 +26,11 @@ type LessonGenerationContext = Awaited<ReturnType<typeof getLessonStep>>;
 
 type GeneratedLessonContext = LessonGenerationContext & { kind: StandaloneGeneratedLessonKind };
 
-type GeneratedLessonCompletion = { description?: string; title?: string };
+type GeneratedLessonCompletion = {
+  description?: string;
+  lifecycle: "completed" | "needsCompletion";
+  title?: string;
+};
 
 type LessonGenerationResult = "filtered" | "ready";
 
@@ -67,49 +71,53 @@ function isGeneratedLessonContext(
  * Chapter generation has already planned the lesson kind, so this step should
  * only dispatch to the matching lesson workflow instead of reclassifying it.
  */
-async function generateLessonForKind(
-  context: GeneratedLessonContext,
-): Promise<GeneratedLessonCompletion> {
+async function generateLessonForKind({
+  context,
+  workflowRunId,
+}: {
+  context: GeneratedLessonContext;
+  workflowRunId: string;
+}): Promise<GeneratedLessonCompletion> {
   if (context.kind === "tutorial") {
     await tutorialLessonWorkflow(context);
-    return {};
+    return { lifecycle: "needsCompletion" };
   }
 
   if (context.kind === "explanation") {
     await explanationLessonWorkflow(context);
-    return {};
+    return { lifecycle: "needsCompletion" };
   }
 
   if (context.kind === "practice") {
     await practiceLessonWorkflow(context);
-    return {};
+    return { lifecycle: "needsCompletion" };
   }
 
   if (context.kind === "quiz") {
     await quizLessonWorkflow(context);
-    return {};
+    return { lifecycle: "needsCompletion" };
   }
 
   if (context.kind === "alphabet") {
-    await alphabetLessonWorkflow(context);
-    return {};
+    await alphabetLessonWorkflow({ context, workflowRunId });
+    return { lifecycle: "completed" };
   }
 
   if (context.kind === "vocabulary") {
-    await vocabularyLessonWorkflow(context);
-    return {};
+    await vocabularyLessonWorkflow({ context, workflowRunId });
+    return { lifecycle: "completed" };
   }
 
   if (context.kind === "reading") {
-    await readingLessonWorkflow(context);
-    return {};
+    await readingLessonWorkflow({ context, workflowRunId });
+    return { lifecycle: "completed" };
   }
 
   if (context.kind === "grammar") {
     await grammarLessonWorkflow(context);
   }
 
-  return {};
+  return { lifecycle: "needsCompletion" };
 }
 
 /**
@@ -126,6 +134,23 @@ async function saveGeneratedCompanionForSource(context: LessonGenerationContext)
   if (context.kind === "reading") {
     await saveListeningLessonStep(context);
   }
+}
+
+/**
+ * Preserves the generation stream contract after atomic language persistence.
+ * Companion content and lifecycle completion already committed with the source,
+ * so these events only let the generation page finish its existing phases.
+ */
+async function streamAtomicLanguagePersistence(context: GeneratedLessonContext): Promise<void> {
+  if (context.kind === "vocabulary") {
+    await streamSkipStep("saveTranslationLesson");
+  }
+
+  if (context.kind === "reading") {
+    await streamSkipStep("saveListeningLesson");
+  }
+
+  await streamSkipStep(LESSON_COMPLETION_STEP);
 }
 
 /**
@@ -174,22 +199,27 @@ async function runLessonGeneration(input: {
 
   try {
     const [completion, imageUrl] = await Promise.all([
-      generateLessonForKind(input.context),
+      generateLessonForKind({ context: input.context, workflowRunId: input.workflowRunId }),
       generateLessonImageStep(input.context),
     ]);
 
-    await setLessonAsCompletedStep({
-      context: input.context,
-      description: completion.description,
-      imageUrl,
-      title: completion.title,
-    });
+    if (completion.lifecycle === "needsCompletion") {
+      await setLessonAsCompletedStep({
+        context: input.context,
+        description: completion.description,
+        imageUrl,
+        title: completion.title,
+      });
+    } else {
+      await streamAtomicLanguagePersistence(input.context);
+    }
 
     return "ready";
   } catch (error) {
     await handleLessonFailureStep({
       error: serializeWorkflowError(error),
       lessonId: input.lessonId,
+      workflowRunId: input.workflowRunId,
     });
 
     throw error;

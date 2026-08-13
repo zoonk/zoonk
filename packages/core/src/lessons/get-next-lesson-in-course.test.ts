@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -48,6 +49,7 @@ describe(getNextLessonInCourse, () => {
   let chapter2Id: string;
   let chapter2Slug: string;
 
+  let lesson1Id: string;
   let lesson2Id: string;
   let lesson2Slug: string;
   let lesson3Id: string;
@@ -86,7 +88,9 @@ describe(getNextLessonInCourse, () => {
       }),
     ]);
 
+    const lesson1 = initialLessons[0];
     const lesson2 = initialLessons[1];
+    lesson1Id = lesson1.id;
     lesson2Id = lesson2.id;
     lesson2Slug = lesson2.slug;
 
@@ -103,12 +107,7 @@ describe(getNextLessonInCourse, () => {
   });
 
   it("returns next lesson in same chapter", async () => {
-    const result = await getNextLessonInCourse({
-      chapterId: chapter1Id,
-      chapterPosition: 0,
-      courseId,
-      lessonPosition: 0,
-    });
+    const result = await getNextLessonInCourse({ courseId, lessonId: lesson1Id });
 
     expect(result).toMatchObject({
       chapterId: chapter1Id,
@@ -120,13 +119,94 @@ describe(getNextLessonInCourse, () => {
     expect(cacheTag).toHaveBeenCalledWith(getCourseCurriculumCacheTag(courseId));
   });
 
-  it("returns first lesson of next chapter when at last lesson of current chapter", async () => {
-    const result = await getNextLessonInCourse({
-      chapterId: chapter1Id,
-      chapterPosition: 0,
-      courseId,
-      lessonPosition: 1,
+  it("locates the current lesson by ID after an earlier split shifts positions", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
     });
+
+    const [earlierLesson, currentLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    await prisma.lesson.updateMany({
+      data: { position: { increment: 2 } },
+      where: { chapterId: chapter.id, position: { gt: earlierLesson.position } },
+    });
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    await expect(
+      getNextLessonInCourse({ courseId: course.id, lessonId: currentLesson.id }),
+    ).resolves.toMatchObject({ lessonId: nextLesson.id });
+  });
+
+  it("uses an unpublished current lesson as the anchor for published successors", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const [currentLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: false,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    await expect(
+      getNextLessonInCourse({ courseId: course.id, lessonId: currentLesson.id }),
+    ).resolves.toMatchObject({ lessonId: nextLesson.id });
+  });
+
+  it("returns first lesson of next chapter when at last lesson of current chapter", async () => {
+    const result = await getNextLessonInCourse({ courseId, lessonId: lesson2Id });
 
     expect(result).toMatchObject({
       chapterId: chapter2Id,
@@ -137,34 +217,22 @@ describe(getNextLessonInCourse, () => {
   });
 
   it("returns null when at the last lesson of the course", async () => {
-    const result = await getNextLessonInCourse({
-      chapterId: chapter2Id,
-      chapterPosition: 1,
-      courseId,
-      lessonPosition: 0,
-    });
+    const result = await getNextLessonInCourse({ courseId, lessonId: lesson3Id });
 
     expect(result).toBeNull();
   });
 
   it("returns null for a non-existent course", async () => {
     const result = await getNextLessonInCourse({
-      chapterId: chapter1Id,
-      chapterPosition: 0,
       courseId: "missing-course-id",
-      lessonPosition: 0,
+      lessonId: lesson1Id,
     });
 
     expect(result).toBeNull();
   });
 
   it("includes lesson kind and title in result", async () => {
-    const result = await getNextLessonInCourse({
-      chapterId: chapter1Id,
-      chapterPosition: 0,
-      courseId,
-      lessonPosition: 0,
-    });
+    const result = await getNextLessonInCourse({ courseId, lessonId: lesson1Id });
 
     expect(result).toHaveProperty("lessonKind");
     expect(result).toHaveProperty("lessonTitle");
@@ -210,10 +278,8 @@ describe(getNextLessonInCourse, () => {
     const thirdLesson = lessons[2];
 
     const result = await getNextLessonInCourse({
-      chapterId: testChapter.id,
-      chapterPosition: 0,
       courseId: testCourse.id,
-      lessonPosition: 0,
+      lessonId: lessons[0]!.id,
     });
 
     expect(result).toMatchObject({
@@ -265,11 +331,9 @@ describe(getNextLessonInCourse, () => {
     const practiceLesson = lessons[2];
 
     const result = await getNextLessonInCourse({
-      chapterId: testChapter.id,
-      chapterPosition: 0,
       courseId: testCourse.id,
       excludedLessonKinds: ["quiz"],
-      lessonPosition: 0,
+      lessonId: lessons[0]!.id,
     });
 
     expect(result).toMatchObject({
@@ -319,10 +383,8 @@ describe(getNextLessonInCourse, () => {
     const pendingLesson = pendingLessons[1];
 
     const result = await getNextLessonInCourse({
-      chapterId: testChapter.id,
-      chapterPosition: 0,
       courseId: testCourse.id,
-      lessonPosition: 0,
+      lessonId: pendingLessons[0]!.id,
     });
 
     expect(result).toMatchObject({
@@ -368,10 +430,8 @@ describe(getNextLessonInCourse, () => {
     const nextPublishedLesson = lessons[2];
 
     const result = await getNextLessonInCourse({
-      chapterId: testChapter.id,
-      chapterPosition: 0,
       courseId: testCourse.id,
-      lessonPosition: 0,
+      lessonId: lessons[0]!.id,
     });
 
     expect(result).toMatchObject({
@@ -431,10 +491,8 @@ describe(getNextLessonInCourse, () => {
     const lesson3 = lessons[2];
 
     const result = await getNextLessonInCourse({
-      chapterId: publishedCh.id,
-      chapterPosition: 0,
       courseId: testCourse.id,
-      lessonPosition: 0,
+      lessonId: lessons[0]!.id,
     });
 
     expect(result).toMatchObject({

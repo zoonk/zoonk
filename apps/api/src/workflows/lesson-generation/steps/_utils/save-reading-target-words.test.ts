@@ -1,49 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, it } from "vitest";
-import { saveReadingTargetWords } from "./save-reading-target-words";
+import { saveReadingWordMetadata } from "./save-reading-target-words";
 
-/**
- * Reading target-word saves need a real lesson and language course so the
- * helper can prove it creates only learner-facing words, not distractor rows.
- */
-async function createLanguageLesson({
-  organizationId,
-  targetLanguage = "de",
-}: {
-  organizationId: string;
-  targetLanguage?: string;
-}) {
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId,
-    targetLanguage,
-    title: `Reading Target Course ${randomUUID()}`,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId,
-    title: `Reading Target Chapter ${randomUUID()}`,
-  });
-
-  return lessonFixture({
-    chapterId: chapter.id,
-    generationStatus: "pending",
-    isPublished: true,
-    kind: "reading",
-    organizationId,
-    title: `Reading Target Lesson ${randomUUID()}`,
-  });
-}
-
-describe(saveReadingTargetWords, () => {
+describe(saveReadingWordMetadata, () => {
   let organizationId: string;
 
   beforeAll(async () => {
@@ -51,14 +13,12 @@ describe(saveReadingTargetWords, () => {
     organizationId = organization.id;
   });
 
-  it("creates lesson words only for canonical words with translations", async () => {
+  it("saves only canonical words with translations", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const translatedWord = `gato${id}`;
     const untranslatedWord = `bonito${id}`;
-    const lesson = await createLanguageLesson({ organizationId });
 
-    await saveReadingTargetWords({
-      chapterId: lesson.chapterId,
+    const wordIds = await saveReadingWordMetadata({
       distractors: { [`${translatedWord} ${untranslatedWord}`]: [] },
       organizationId,
       pronunciations: {},
@@ -69,7 +29,6 @@ describe(saveReadingTargetWords, () => {
           translation: "pretty cat",
         },
       ],
-      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
@@ -79,12 +38,16 @@ describe(saveReadingTargetWords, () => {
       },
     });
 
-    const lessonWords = await prisma.chapterWord.findMany({
-      include: { word: true },
-      where: { sourceLessonId: lesson.id },
+    const words = await prisma.word.findMany({
+      where: {
+        organizationId,
+        targetLanguage: "de",
+        word: { in: [translatedWord, untranslatedWord] },
+      },
     });
 
-    expect(lessonWords.map((entry) => entry.word.word)).toStrictEqual([translatedWord]);
+    expect(Object.keys(wordIds)).toStrictEqual([translatedWord]);
+    expect(words.map((entry) => entry.word)).toStrictEqual([translatedWord]);
   });
 
   it("reuses existing word casing instead of creating lowercase duplicates", async () => {
@@ -92,63 +55,45 @@ describe(saveReadingTargetWords, () => {
     const existingWord = `Gato${id}`;
     const lowercaseWord = existingWord.toLowerCase();
 
-    const [lesson] = await Promise.all([
-      createLanguageLesson({ organizationId }),
-      wordFixture({
-        audioUrl: "/audio/gato.mp3",
-        organizationId,
-        targetLanguage: "de",
-        word: existingWord,
-      }),
-    ]);
+    const existingRecord = await wordFixture({
+      audioUrl: "/audio/gato.mp3",
+      organizationId,
+      targetLanguage: "de",
+      word: existingWord,
+    });
 
-    await saveReadingTargetWords({
-      chapterId: lesson.chapterId,
+    const wordIds = await saveReadingWordMetadata({
       distractors: { [lowercaseWord]: [] },
       organizationId,
       pronunciations: { [lowercaseWord]: "ga-to" },
       sentences: [{ explanation: "test explanation", sentence: lowercaseWord, translation: "cat" }],
-      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
       wordMetadata: { [lowercaseWord]: { romanization: null, translation: "cat" } },
     });
 
-    const [words, lessonWord] = await Promise.all([
-      prisma.word.findMany({
-        where: {
-          organizationId,
-          targetLanguage: "de",
-          word: { in: [existingWord, lowercaseWord] },
-        },
-      }),
-      prisma.chapterWord.findFirstOrThrow({
-        include: { word: true },
-        where: { sourceLessonId: lesson.id },
-      }),
-    ]);
+    const words = await prisma.word.findMany({
+      where: { organizationId, targetLanguage: "de", word: { in: [existingWord, lowercaseWord] } },
+    });
 
     expect(words).toHaveLength(1);
     expect(words[0]?.word).toBe(existingWord);
-    expect(lessonWord.word.word).toBe(existingWord);
+    expect(wordIds[lowercaseWord]).toBe(existingRecord.id);
   });
 
-  it("creates distractor word records without lesson-word rows", async () => {
+  it("saves distractor word metadata alongside canonical words", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const canonicalWord = `hallo${id}`;
     const distractorWord = `tschuss${id}`;
-    const lesson = await createLanguageLesson({ organizationId });
 
-    await saveReadingTargetWords({
-      chapterId: lesson.chapterId,
+    const wordIds = await saveReadingWordMetadata({
       distractors: { [canonicalWord]: [distractorWord] },
       organizationId,
       pronunciations: { [canonicalWord]: "ha-lo", [distractorWord]: "choos" },
       sentences: [
         { explanation: "test explanation", sentence: canonicalWord, translation: "hello" },
       ],
-      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {
@@ -161,51 +106,37 @@ describe(saveReadingTargetWords, () => {
       },
     });
 
-    const [distractorRecord, distractorLessonWords] = await Promise.all([
-      prisma.word.findFirstOrThrow({
-        where: { organizationId, targetLanguage: "de", word: distractorWord },
-      }),
-      prisma.chapterWord.findMany({
-        where: { sourceLessonId: lesson.id, word: { word: distractorWord } },
-      }),
-    ]);
+    const distractorRecord = await prisma.word.findFirstOrThrow({
+      where: { organizationId, targetLanguage: "de", word: distractorWord },
+    });
 
     expect(distractorRecord.audioUrl).toBe(`/audio/${distractorWord}.mp3`);
-    expect(distractorLessonWords).toStrictEqual([]);
+    expect(wordIds[distractorWord]).toBe(distractorRecord.id);
   });
 
   it("skips distractor variants that normalize to canonical words", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const canonicalWord = `água${id}`;
     const duplicateDistractor = `agua${id}`;
-    const lesson = await createLanguageLesson({ organizationId });
 
-    await saveReadingTargetWords({
-      chapterId: lesson.chapterId,
+    const wordIds = await saveReadingWordMetadata({
       distractors: { [canonicalWord]: [duplicateDistractor] },
       organizationId,
       pronunciations: { [canonicalWord]: "AH-gwah" },
       sentences: [
         { explanation: "test explanation", sentence: canonicalWord, translation: "water" },
       ],
-      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: { [canonicalWord]: `/audio/${canonicalWord}.mp3` },
       wordMetadata: { [canonicalWord]: { romanization: null, translation: "water" } },
     });
 
-    const [lessonWord, duplicateDistractorRecord] = await Promise.all([
-      prisma.chapterWord.findFirstOrThrow({
-        include: { word: true },
-        where: { sourceLessonId: lesson.id },
-      }),
-      prisma.word.findUnique({
-        where: { orgWord: { organizationId, targetLanguage: "de", word: duplicateDistractor } },
-      }),
-    ]);
+    const duplicateDistractorRecord = await prisma.word.findUnique({
+      where: { orgWord: { organizationId, targetLanguage: "de", word: duplicateDistractor } },
+    });
 
-    expect(lessonWord.word.word).toBe(canonicalWord);
+    expect(Object.keys(wordIds)).toStrictEqual([canonicalWord]);
     expect(duplicateDistractorRecord).toBeNull();
   });
 });

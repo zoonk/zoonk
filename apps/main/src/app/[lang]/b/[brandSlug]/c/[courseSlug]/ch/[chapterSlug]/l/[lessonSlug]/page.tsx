@@ -153,12 +153,7 @@ async function LessonContent({ params }: Pick<Props, "params">) {
   const [lessonContent, nextLesson, initialProgress, chapterLessons, courseChapters] =
     await Promise.all([
       getLessonContent(lessonShell.id),
-      getNextLessonInCourse({
-        chapterId: lessonShell.chapter.id,
-        chapterPosition: lessonShell.chapter.position,
-        courseId: lessonShell.chapter.course.id,
-        lessonPosition: lessonShell.position,
-      }),
+      getNextLessonInCourse({ courseId: lessonShell.chapter.course.id, lessonId: lessonShell.id }),
       loadOptionalData(getPlayerProgressSnapshot),
       listChapterLessons({ chapterId: lessonShell.chapter.id }),
       listCourseChapters({ courseId: lessonShell.chapter.course.id }),

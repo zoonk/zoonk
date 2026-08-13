@@ -5,6 +5,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveVocabularyLessonStep } from "./save-vocabulary-lesson-step";
 
+const WORKFLOW_RUN_ID = "save-vocabulary-test";
+
 describe(saveVocabularyLessonStep, () => {
   let organizationId: string;
 
@@ -19,6 +21,8 @@ describe(saveVocabularyLessonStep, () => {
     const distractorWords = [`boa tarde ${id}`, `bom dia ${id}`] as const;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "vocabulary",
       organizationId,
       targetLanguage: "pt",
@@ -39,6 +43,7 @@ describe(saveVocabularyLessonStep, () => {
         [distractorWords[1]]: `/audio/bom-dia-${id}.mp3`,
       },
       words: [{ translation: "good evening", word: vocabularyWord }],
+      workflowRunId: WORKFLOW_RUN_ID,
     });
 
     const [lessonWords, distractorLessonWords, words, pronunciations, steps] = await Promise.all([

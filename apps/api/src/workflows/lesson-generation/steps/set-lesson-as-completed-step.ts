@@ -3,6 +3,11 @@ import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Completes ordinary generated lessons after their independent save steps have
+ * finished. Split language lessons complete inside their atomic persistence
+ * transaction and therefore never call this step.
+ */
 export async function setLessonAsCompletedStep(input: {
   context: LessonContext;
   description?: string;

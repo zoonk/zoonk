@@ -1,8 +1,13 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
+import { type TransactionClient } from "@zoonk/db";
 import { type AlphabetLessonContent } from "./_utils/generated-lesson-content";
-import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
+import {
+  type GeneratedLessonGroup,
+  persistGeneratedLessonGroups,
+} from "./_utils/persist-generated-lesson-groups";
+import { splitLessonItems } from "./_utils/split-lesson-items";
 import { type LessonContext } from "./get-lesson-step";
 
 const MAX_MATCHING_PAIRS = 8;
@@ -109,6 +114,55 @@ function buildAlphabetLessonSteps({
 }
 
 /**
+ * Writes every alphabet part through the transaction that also creates and
+ * completes its lesson rows. Only the first part keeps the generated intro.
+ */
+async function persistAlphabetGroups({
+  audioUrls,
+  content,
+  groups,
+  symbolGroups,
+  transaction,
+}: {
+  audioUrls: Record<string, string>;
+  content: AlphabetLessonContent;
+  groups: GeneratedLessonGroup[];
+  symbolGroups: AlphabetLessonContent["symbols"][];
+  transaction: TransactionClient;
+}): Promise<void> {
+  if (groups.length !== symbolGroups.length) {
+    throw new Error("Alphabet groups do not match generated symbol groups");
+  }
+
+  await transaction.step.deleteMany({
+    where: { lessonId: { in: groups.map((group) => group.sourceLesson.id) } },
+  });
+
+  const data = groups.flatMap((group, groupIndex) => {
+    const symbols = symbolGroups[groupIndex];
+
+    if (!symbols) {
+      throw new Error("Alphabet lesson group has no symbols");
+    }
+
+    const steps = buildAlphabetLessonSteps({
+      audioUrls,
+      content: { intro: groupIndex === 0 ? content.intro : [], kind: "alphabet", symbols },
+    });
+
+    return steps.map((step, position) => ({
+      content: step.content,
+      isPublished: true,
+      kind: step.kind,
+      lessonId: group.sourceLesson.id,
+      position,
+    }));
+  });
+
+  await transaction.step.createMany({ data });
+}
+
+/**
  * Persists alphabet lessons as writing-system content instead of chapter words.
  *
  * The saved steps are still reviewable through their matching drill, but the
@@ -118,10 +172,12 @@ export async function saveAlphabetLessonStep({
   audioUrls,
   content,
   context,
+  workflowRunId,
 }: {
   audioUrls: Record<string, string>;
   content: AlphabetLessonContent;
   context: LessonContext;
+  workflowRunId: string;
 }): Promise<void> {
   "use step";
 
@@ -132,21 +188,15 @@ export async function saveAlphabetLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveAlphabetLesson" });
 
-  const steps = buildAlphabetLessonSteps({ audioUrls, content });
+  const symbolGroups = splitLessonItems(content.symbols);
 
-  await replaceLessonSteps({
+  await persistGeneratedLessonGroups({
+    chapterId: context.chapterId,
+    groupCount: symbolGroups.length,
     lessonId: context.id,
-    saveSteps: async (transaction) => {
-      await transaction.step.createMany({
-        data: steps.map((step, position) => ({
-          content: step.content,
-          isPublished: true,
-          kind: step.kind,
-          lessonId: context.id,
-          position,
-        })),
-      });
-    },
+    persistGroups: ({ groups, transaction }) =>
+      persistAlphabetGroups({ audioUrls, content, groups, symbolGroups, transaction }),
+    workflowRunId,
   });
 
   await stream.status({ status: "completed", step: "saveAlphabetLesson" });

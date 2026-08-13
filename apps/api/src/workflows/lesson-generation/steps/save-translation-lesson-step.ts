@@ -24,23 +24,22 @@ function getTranslationResource(step: {
 }
 
 /**
- * Translation steps reuse the exact chapter-word resources just created by the
- * vocabulary workflow. The translation lesson row is a companion view over the
- * vocabulary content, so this step also marks that row completed.
+ * Translation repair reuses the exact chapter-word resources already saved by
+ * its completed vocabulary source, then completes the companion row.
  */
-export async function saveTranslationLessonStep(context: LessonContext): Promise<void> {
-  "use step";
-
+async function saveTranslationLesson({
+  sourceLessonId,
+  translationLessonId,
+}: {
+  sourceLessonId: string;
+  translationLessonId: string;
+}): Promise<void> {
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveTranslationLesson" });
 
-  const translationLesson = await getGeneratedCompanionForSourceLesson(context);
+  const translationLesson = await prisma.lesson.findUnique({ where: { id: translationLessonId } });
 
-  if (
-    !translationLesson ||
-    (translationLesson.generationStatus !== "pending" &&
-      translationLesson.generationStatus !== "failed")
-  ) {
+  if (!translationLesson || translationLesson.generationStatus === "completed") {
     await stream.status({ status: "completed", step: "saveTranslationLesson" });
     return;
   }
@@ -50,7 +49,7 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
     where: {
       chapterWordId: { not: null },
       kind: "vocabulary",
-      lessonId: context.id,
+      lessonId: sourceLessonId,
       wordId: { not: null },
     },
   });
@@ -84,4 +83,27 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
   });
 
   await stream.status({ status: "completed", step: "saveTranslationLesson" });
+}
+
+/**
+ * Repairs the pending companion of an already-completed vocabulary lesson. This
+ * legacy repair path resolves the current pair and completes only that companion
+ * because the source workflow has already finished.
+ */
+export async function saveTranslationLessonStep(context: LessonContext): Promise<void> {
+  "use step";
+
+  const translationLesson = await getGeneratedCompanionForSourceLesson({
+    chapterId: context.chapterId,
+    lessonId: context.id,
+  });
+
+  if (!translationLesson) {
+    return;
+  }
+
+  await saveTranslationLesson({
+    sourceLessonId: context.id,
+    translationLessonId: translationLesson.id,
+  });
 }

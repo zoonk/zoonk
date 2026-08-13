@@ -12,6 +12,7 @@ import { type LessonContext } from "../get-lesson-step";
  * so each individual step test can focus on the behavior of one step module.
  */
 export async function createLessonContext({
+  generationRunId = null,
   generationStatus = "pending",
   kind = "explanation",
   organizationId,
@@ -19,6 +20,7 @@ export async function createLessonContext({
   targetLanguage = null,
   titlePrefix = "Lesson Generation",
 }: {
+  generationRunId?: string | null;
   generationStatus?: LessonContext["generationStatus"];
   kind?: LessonContext["kind"];
   organizationId: string;
@@ -42,6 +44,7 @@ export async function createLessonContext({
 
   const lesson = await lessonFixture({
     chapterId: chapter.id,
+    generationRunId,
     generationStatus,
     isPublished: true,
     kind,

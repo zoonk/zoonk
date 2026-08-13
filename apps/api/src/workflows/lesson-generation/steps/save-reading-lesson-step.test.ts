@@ -5,6 +5,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveReadingLessonStep } from "./save-reading-lesson-step";
 
+const WORKFLOW_RUN_ID = "save-reading-test";
+
 describe(saveReadingLessonStep, () => {
   let organizationId: string;
 
@@ -22,6 +24,8 @@ describe(saveReadingLessonStep, () => {
     const translation = `Good morning ${id}`;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "reading",
       organizationId,
       targetLanguage: "de",
@@ -55,6 +59,7 @@ describe(saveReadingLessonStep, () => {
         [normalizedCanonicalWords[1]!]: { romanization: null, translation: `morning-${id}` },
         [normalizedCanonicalWords[2]!]: { romanization: null, translation: canonicalWords[2] },
       },
+      workflowRunId: WORKFLOW_RUN_ID,
     });
 
     const savedSentence = await prisma.sentence.findFirstOrThrow({

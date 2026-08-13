@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/sentences";
+import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -91,5 +92,99 @@ describe(generateReadingContentStep, () => {
 
     expect(sentenceInput?.lessonTitle).toBe(context.title);
     expect(currentVocabularyLesson.generationStatus).toBe("pending");
+  });
+
+  it("uses current planned sources after earlier groups shift positions", async () => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+
+    const context = await createLessonContext({
+      kind: "reading",
+      organizationId,
+      position: 5,
+      targetLanguage: "ja",
+    });
+
+    const [firstVocabulary, secondVocabulary] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        description: `First description ${uniqueId}`,
+        generationRunId: "vocabulary-run",
+        generationStatus: "running",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 1,
+        title: `First vocabulary ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        description: `Second description ${uniqueId}`,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 3,
+        title: `Second vocabulary ${uniqueId}`,
+      }),
+    ]);
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "translation",
+        organizationId,
+        position: 2,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "translation",
+        organizationId,
+        position: 4,
+      }),
+    ]);
+
+    await prisma.lesson.updateMany({
+      data: { position: { increment: 2 } },
+      where: { chapterId: context.chapterId, position: { gte: secondVocabulary.position } },
+    });
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        description: null,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 3,
+        title: null,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        description: null,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "translation",
+        organizationId,
+        position: 4,
+        title: null,
+      }),
+    ]);
+
+    await generateReadingContentStep(context);
+
+    const sentenceInput = vi.mocked(generateLessonSentences).mock.calls[0]?.[0];
+
+    expect(sentenceInput?.sourceLessons).toStrictEqual([
+      { description: `First description ${uniqueId}`, title: `First vocabulary ${uniqueId}` },
+      { description: `Second description ${uniqueId}`, title: `Second vocabulary ${uniqueId}` },
+    ]);
+
+    expect(firstVocabulary.position).toBe(1);
+    expect(secondVocabulary.position).toBe(3);
   });
 });
