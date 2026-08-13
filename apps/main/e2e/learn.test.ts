@@ -170,13 +170,18 @@ async function cacheExistingCoursePrompt(rawPrompt: string) {
 }
 
 test.describe("Learn Form", () => {
-  test("shows form with auto-focused input", async ({ page }) => {
+  test("hydrates form with auto-focused input without errors", async ({ page }) => {
+    const pageErrors: Error[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error));
+
     await page.goto("/start/learn");
 
     await expect(page.getByRole("heading", { name: /what do you want to learn/iu })).toBeVisible();
 
     const input = page.getByRole("textbox");
     await expect(input).toBeFocused();
+    await page.waitForLoadState("networkidle");
+    expect(pageErrors).toEqual([]);
   });
 
   test("submits by button and shows its pending state while the prompt is routing", async ({
