@@ -4,7 +4,10 @@ import { collectTargetWords } from "./collect-target-words";
 describe(collectTargetWords, () => {
   it("preserves canonical formatting while normalizing generated distractors", () => {
     expect(
-      collectTargetWords({ canonicalWords: [" foo ! "], generatedWords: ["foo!", "bar !"] }),
+      collectTargetWords({
+        canonicalWords: [" foo ! ", "foo!"],
+        generatedWords: ["foo!", "bar !"],
+      }),
     ).toStrictEqual([" foo ! ", "bar!"]);
   });
 

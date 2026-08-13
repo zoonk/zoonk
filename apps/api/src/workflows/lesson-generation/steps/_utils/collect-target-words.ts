@@ -1,7 +1,15 @@
 import { normalizePunctuation, normalizeString } from "@zoonk/utils/string";
 
+/**
+ * Treats punctuation-spacing variants as the same generated word without
+ * collapsing case or accents, which can carry meaning in the target language.
+ */
+export function getCanonicalWordKey(text: string): string {
+  return normalizePunctuation(text).trim();
+}
+
 function getTargetKey(text: string): string {
-  return normalizeString(normalizePunctuation(text).trim());
+  return normalizeString(getCanonicalWordKey(text));
 }
 
 export function collectTargetWords({
@@ -16,8 +24,10 @@ export function collectTargetWords({
   const targetWords: string[] = [];
 
   for (const word of canonicalWords) {
-    if (word.trim() && !seenCanonicalWords.has(word)) {
-      seenCanonicalWords.add(word);
+    const canonicalWordKey = getCanonicalWordKey(word);
+
+    if (canonicalWordKey && !seenCanonicalWords.has(canonicalWordKey)) {
+      seenCanonicalWords.add(canonicalWordKey);
       seenGeneratedKeys.add(getTargetKey(word));
       targetWords.push(word);
     }

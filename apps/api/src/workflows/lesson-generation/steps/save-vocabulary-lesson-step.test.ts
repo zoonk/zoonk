@@ -106,9 +106,9 @@ describe(saveVocabularyLessonStep, () => {
     });
   });
 
-  it("keeps the first duplicate word without failing the lesson", async () => {
+  it("keeps the first formatting variant of a duplicate word", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
-    const vocabularyWord = `banco ${id}`;
+    const vocabularyWord = `banco ${id} !`;
 
     const context = await createLessonContext({
       generationRunId: WORKFLOW_RUN_ID,
@@ -126,7 +126,7 @@ describe(saveVocabularyLessonStep, () => {
       wordAudioUrls: {},
       words: [
         { translation: "bank", word: vocabularyWord },
-        { translation: "bench", word: vocabularyWord },
+        { translation: "bench", word: `banco ${id}!` },
       ],
       workflowRunId: WORKFLOW_RUN_ID,
     });

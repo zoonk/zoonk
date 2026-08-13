@@ -5,6 +5,7 @@ import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type ChapterWord, type TransactionClient } from "@zoonk/db";
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation } from "@zoonk/utils/string";
+import { getCanonicalWordKey } from "./_utils/collect-target-words";
 import { collectVocabularyTargetWords } from "./_utils/collect-vocabulary-target-words";
 import { deduplicateGeneratedItems } from "./_utils/deduplicate-generated-items";
 import {
@@ -63,7 +64,11 @@ export async function saveVocabularyLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveVocabularyLesson" });
 
-  const uniqueWords = deduplicateGeneratedItems({ getKey: (entry) => entry.word, items: words });
+  const uniqueWords = deduplicateGeneratedItems({
+    getKey: (entry) => getCanonicalWordKey(entry.word),
+    items: words,
+  });
+
   const wordGroups = splitLessonItems(uniqueWords);
   const allTargetWords = collectVocabularyTargetWords({ distractors, words: uniqueWords });
   const wordsToSave = [...new Set([...uniqueWords.map((entry) => entry.word), ...allTargetWords])];
