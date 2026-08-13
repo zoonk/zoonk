@@ -1,35 +1,29 @@
-import { type GenerationStatus } from "@zoonk/db";
+export const generatedLessonFilters = ["failed", "missingAudio", "completed"] as const;
 
-export const generatedLessonStatuses = [
-  "failed",
-  "completed",
-] as const satisfies readonly GenerationStatus[];
+export type GeneratedLessonFilter = (typeof generatedLessonFilters)[number];
 
-export type GeneratedLessonStatus = (typeof generatedLessonStatuses)[number];
-
-const defaultGeneratedLessonStatus: GeneratedLessonStatus = "failed";
+const defaultGeneratedLessonFilter: GeneratedLessonFilter = "failed";
 
 /**
- * Generated lesson logs intentionally expose only terminal states. Pending and
- * running lessons are still in the pipeline, while completed and failed are the
- * states admins need to review after generation finishes.
+ * Generated lesson logs expose terminal generation states plus a derived queue
+ * for completed lessons whose optional audio remains missing.
  */
-export function parseGeneratedLessonStatus(
+export function parseGeneratedLessonFilter(
   status: string | string[] | undefined,
-): GeneratedLessonStatus {
+): GeneratedLessonFilter {
   const value = Array.isArray(status) ? status[0] : status;
 
-  if (isGeneratedLessonStatus(value)) {
+  if (isGeneratedLessonFilter(value)) {
     return value;
   }
 
-  return defaultGeneratedLessonStatus;
+  return defaultGeneratedLessonFilter;
 }
 
 /**
  * Query params arrive as arbitrary strings, so the admin lesson list needs a
  * narrow runtime check before passing the status into Prisma.
  */
-function isGeneratedLessonStatus(value: string | undefined): value is GeneratedLessonStatus {
-  return generatedLessonStatuses.some((status) => status === value);
+function isGeneratedLessonFilter(value: string | undefined): value is GeneratedLessonFilter {
+  return generatedLessonFilters.some((filter) => filter === value);
 }

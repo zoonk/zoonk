@@ -1,4 +1,4 @@
-import { generateAlphabetAudioStep } from "../steps/generate-alphabet-audio-step";
+import { generateAlphabetAudio } from "../steps/generate-alphabet-audio";
 import { generateAlphabetContentStep } from "../steps/generate-alphabet-content-step";
 import { type LessonContext } from "../steps/get-lesson-step";
 import { saveAlphabetLessonStep } from "../steps/save-alphabet-lesson-step";
@@ -12,7 +12,7 @@ export async function alphabetLessonWorkflow(context: LessonContext): Promise<vo
 
   const content = await generateAlphabetContentStep(context);
 
-  const { audioUrls } = await generateAlphabetAudioStep({ context, symbols: content.symbols });
+  const { audioUrls } = await generateAlphabetAudio({ context, symbols: content.symbols });
 
   await saveAlphabetLessonStep({ audioUrls, content, context });
 }

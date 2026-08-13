@@ -118,6 +118,28 @@ describe("generation access", () => {
     });
   });
 
+  it("lets admins retry failed later lessons without claiming learner quota", async () => {
+    const [chapter, admin] = await Promise.all([
+      chapterFixture({ courseId, organizationId, position: 5 }),
+      userFixture({ role: "admin" }),
+    ]);
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "failed",
+      kind: "explanation",
+      organizationId,
+    });
+
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user: admin });
+
+    await expect(getLessonGenerationAccess(lesson.id)).resolves.toMatchObject({
+      lesson: { id: lesson.id },
+      shouldClaimQuota: false,
+      status: "ready",
+    });
+  });
+
   it("hides non-standalone and non-AI resources", async () => {
     const chapter = await chapterFixture({ courseId, organizationId, position: 4 });
 

@@ -1,10 +1,11 @@
-import { type GeneratedLessonStatus, generatedLessonStatuses } from "@/lib/generated-lesson-status";
+import { type GeneratedLessonFilter, generatedLessonFilters } from "@/lib/generated-lesson-status";
 import { Button } from "@zoonk/ui/components/button";
 import Link from "next/link";
 
-const statusLabels: Record<GeneratedLessonStatus, string> = {
+const statusLabels: Record<GeneratedLessonFilter, string> = {
   completed: "Completed",
   failed: "Failed",
+  missingAudio: "Missing audio",
 };
 
 type StatusQueryEntry = [string, string | undefined] | undefined;
@@ -19,11 +20,11 @@ export function GeneratedLessonStatusFilter({
   status,
 }: {
   search?: string;
-  status: GeneratedLessonStatus;
+  status: GeneratedLessonFilter;
 }) {
   return (
     <nav aria-label="Generation status filter" className="flex flex-wrap gap-1">
-      {generatedLessonStatuses.map((item) => (
+      {generatedLessonFilters.map((item) => (
         <Button
           key={item}
           nativeButton={false}
@@ -53,7 +54,7 @@ function buildStatusHref({
   status,
 }: {
   search?: string;
-  status: GeneratedLessonStatus;
+  status: GeneratedLessonFilter;
 }): `/lessons?${string}` {
   const entries: StatusQueryEntry[] = [["status", status], search ? ["search", search] : undefined];
 
