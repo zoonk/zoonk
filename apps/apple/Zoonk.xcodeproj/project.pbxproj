@@ -22,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		5A0A00400000000000000001 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
+		5A0A00410000000000000001 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
 		BEB8AB5E3022709A00E0E150 /* Zoonk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zoonk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -75,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				5A0A00400000000000000001 /* Debug.xcconfig */,
+				5A0A00410000000000000001 /* Release.xcconfig */,
 				BEB8AB603022709A00E0E150 /* Zoonk */,
 				BEB8AB7A3022709B00E0E150 /* ZoonkUITests */,
 				BEB8AB5F3022709A00E0E150 /* Products */,
@@ -374,7 +376,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.Zoonk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -391,6 +392,7 @@
 		};
 		BEB8AB833022709B00E0E150 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5A0A00410000000000000001 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Zoonk/Zoonk.entitlements;
@@ -414,7 +416,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.Zoonk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -438,7 +439,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.ZoonkUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.dev.ZoonkUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

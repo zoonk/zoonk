@@ -44,7 +44,7 @@ vi.mock("jose", () => ({
 describe("Apple provider profile mapping", () => {
   beforeEach(() => {
     vi.resetModules();
-    vi.stubEnv("APPLE_APP_BUNDLE_IDENTIFIER", "com.zoonk.Zoonk");
+    vi.stubEnv("APPLE_APP_BUNDLE_IDENTIFIER", "com.zoonk.dev");
     vi.stubEnv("APPLE_CLIENT_ID", "com.zoonk.web");
     vi.stubEnv("APPLE_KEY_ID", "apple-key-id");
     vi.stubEnv("APPLE_PRIVATE_KEY", "apple-private-key");
@@ -81,7 +81,7 @@ describe("Apple provider profile mapping", () => {
     const { getNativeAppleProvider } = await import("./apple");
 
     expect(getNativeAppleProvider().apple).toMatchObject({
-      appBundleIdentifier: "com.zoonk.Zoonk",
+      appBundleIdentifier: "com.zoonk.dev",
       clientId: "com.zoonk.web",
     });
 

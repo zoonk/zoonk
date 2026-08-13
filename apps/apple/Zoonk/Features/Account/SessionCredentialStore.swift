@@ -14,7 +14,7 @@ enum SessionCredentialStoreError: Error {
 
 struct SessionCredentialStore: SessionCredentialStoring {
   private let account = "session"
-  private let service = "com.zoonk.Zoonk.authentication"
+  private let service = "com.zoonk.authentication"
 
   /// Removes the shared session credential so iCloud Keychain can propagate sign-out to the user's other Apple devices.
   func delete() throws {

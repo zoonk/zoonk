@@ -6,7 +6,7 @@ import {
 } from "./apple-rest";
 
 const configuration = {
-  appBundleIdentifier: "com.zoonk.Zoonk",
+  appBundleIdentifier: "com.zoonk.dev",
   clientId: "com.zoonk.web",
   keyId: "APPLE_KEY_ID",
   privateKey: "APPLE_PRIVATE_KEY",

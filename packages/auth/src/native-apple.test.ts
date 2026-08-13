@@ -38,7 +38,7 @@ vi.mock("./providers/apple-rest", () => ({
 
 vi.mock("./providers/apple", () => ({
   getAppleConfiguration: () => ({
-    appBundleIdentifier: "com.zoonk.Zoonk",
+    appBundleIdentifier: "com.zoonk.dev",
     clientId: "com.zoonk.web",
   }),
 }));
@@ -126,7 +126,7 @@ describe(signInWithNativeApple, () => {
     });
 
     expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.Zoonk",
+      clientIdentifier: "com.zoonk.dev",
       token: authorization.refreshToken,
       tokenType: "refresh_token",
     });
@@ -152,7 +152,7 @@ describe(signInWithNativeApple, () => {
     });
 
     expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.Zoonk",
+      clientIdentifier: "com.zoonk.dev",
       token: authorization.refreshToken,
       tokenType: "refresh_token",
     });
@@ -195,7 +195,7 @@ describe(reauthorizeAppleForAccountDeletion, () => {
     });
 
     expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.Zoonk",
+      clientIdentifier: "com.zoonk.dev",
       token: authorization.refreshToken,
       tokenType: "refresh_token",
     });
@@ -217,7 +217,7 @@ describe(reauthorizeAppleForAccountDeletion, () => {
     expect(mocks.deleteSession).not.toHaveBeenCalled();
 
     expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.Zoonk",
+      clientIdentifier: "com.zoonk.dev",
       token: authorization.refreshToken,
       tokenType: "refresh_token",
     });
@@ -259,7 +259,7 @@ describe(reauthorizeAppleForAccountDeletion, () => {
     });
 
     expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.Zoonk",
+      clientIdentifier: "com.zoonk.dev",
       token: authorization.refreshToken,
       tokenType: "refresh_token",
     });

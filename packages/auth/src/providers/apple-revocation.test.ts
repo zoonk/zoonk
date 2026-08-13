@@ -5,7 +5,7 @@ const mocks = vi.hoisted(() => ({ revokeToken: vi.fn() }));
 
 vi.mock("./apple", () => ({
   getAppleConfiguration: () => ({
-    appBundleIdentifier: "com.zoonk.Zoonk",
+    appBundleIdentifier: "com.zoonk.dev",
     clientId: "com.zoonk.web",
   }),
 }));
@@ -27,13 +27,13 @@ describe(revokeStoredAppleAuthorization, () => {
   it("revokes a stored native grant with its bundle identifier", async () => {
     await expect(
       revokeStoredAppleAuthorization({
-        idToken: storedAppleIdToken("com.zoonk.Zoonk"),
+        idToken: storedAppleIdToken("com.zoonk.dev"),
         refreshToken: "stored-refresh-token",
       }),
     ).resolves.toBe(true);
 
     expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.Zoonk",
+      clientIdentifier: "com.zoonk.dev",
       token: "stored-refresh-token",
       tokenType: "refresh_token",
     });
