@@ -1,10 +1,11 @@
 import "server-only";
-import { type GenerationStatus, type LessonKind, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import { type GenerationStatus, type LessonKind, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getCourseCurriculumCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
-import { type LessonKindExclusion, getLessonKindExclusionWhere } from "./lesson-kind-exclusions";
+import { type LessonKindExclusion } from "./lesson-kind-exclusions";
+import { getPublishedLessonsAfter } from "./ordered-course-lessons";
 import { getReadableLessonWhere } from "./read-access";
 
 export type NextLessonInCourse = {
@@ -22,11 +23,9 @@ export type NextLessonInCourse = {
 };
 
 type NextLessonInCourseInput = {
-  chapterId: string;
-  chapterPosition: number;
   courseId: string;
   excludedLessonKinds?: LessonKindExclusion["excludedLessonKinds"];
-  lessonPosition: number;
+  lessonId: string;
 };
 
 /**
@@ -44,24 +43,17 @@ async function getCachedNextLessonInCourse(
   "use cache";
   cacheTag(getCourseCurriculumCacheTag(input.courseId));
 
-  if (!isUuid(input.chapterId) || !isUuid(input.courseId)) {
+  if (!isUuid(input.courseId) || !isUuid(input.lessonId)) {
     return null;
   }
 
-  const lesson = await prisma.lesson.findFirst({
-    include: { chapter: true },
-    orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-    where: getPublishedLessonWhere({
-      courseWhere: { id: input.courseId },
-      lessonWhere: {
-        ...getLessonKindExclusionWhere({ excludedLessonKinds: input.excludedLessonKinds }),
-        OR: [
-          { chapter: { id: input.chapterId }, position: { gt: input.lessonPosition } },
-          { chapter: { position: { gt: input.chapterPosition } } },
-        ],
-      },
-    }),
+  const lessons = await getPublishedLessonsAfter({
+    courseId: input.courseId,
+    excludedLessonKinds: input.excludedLessonKinds,
+    lessonId: input.lessonId,
   });
+
+  const lesson = lessons?.at(0);
 
   if (!lesson) {
     return null;
@@ -83,8 +75,8 @@ async function getCachedNextLessonInCourse(
 }
 
 /**
- * Finds the next published lesson in course order using structural position.
- * Visibility exclusions are normalized before crossing the cached boundary.
+ * Finds the next published lesson after a stable lesson ID. Visibility
+ * exclusions are normalized before crossing the cached boundary.
  */
 export async function getNextLessonInCourse(
   input: NextLessonInCourseInput,
@@ -114,10 +106,8 @@ export async function getNextLessonAfter({ lessonId }: { lessonId: string }) {
   }
 
   const nextLesson = await getNextLessonInCourse({
-    chapterId: lesson.chapterId,
-    chapterPosition: lesson.chapter.position,
     courseId: lesson.chapter.courseId,
-    lessonPosition: lesson.position,
+    lessonId: lesson.id,
   });
 
   return { lesson: nextLesson, status: "ready" as const };

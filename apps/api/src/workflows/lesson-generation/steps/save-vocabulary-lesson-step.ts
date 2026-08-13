@@ -2,20 +2,35 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type VocabularyWord } from "@zoonk/ai/tasks/lessons/language/vocabulary";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
+import { type ChapterWord, type TransactionClient } from "@zoonk/db";
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation } from "@zoonk/utils/string";
+import { getCanonicalWordKey } from "./_utils/collect-target-words";
 import { collectVocabularyTargetWords } from "./_utils/collect-vocabulary-target-words";
-import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
-import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
+import { deduplicateGeneratedItems } from "./_utils/deduplicate-generated-items";
+import {
+  type GeneratedLessonGroup,
+  persistGeneratedLessonGroups,
+} from "./_utils/persist-generated-lesson-groups";
+import {
+  type GeneratedWordMetadata,
+  saveGeneratedWordMetadata,
+} from "./_utils/save-generated-word-metadata";
 import { type StepRecord } from "./_utils/save-lesson-content-helpers";
-import { upsertWordWithPronunciation } from "./_utils/upsert-word-with-pronunciation";
+import { splitLessonItems } from "./_utils/split-lesson-items";
 import { type LessonContext } from "./get-lesson-step";
 
+type VocabularyGroupEntry = {
+  companionLessonId: string | null;
+  position: number;
+  sourceLessonId: string;
+  word: VocabularyWord;
+  wordId: string;
+};
+
 /**
- * Vocabulary persistence owns both chapter-scoped translations/distractors and
- * reusable target-language word metadata. Saving them together keeps the later
- * translation lesson linked to the exact words this vocabulary lesson taught.
+ * Vocabulary persistence saves reusable word metadata before one short atomic
+ * write creates every balanced vocabulary/translation lesson pair.
  */
 export async function saveVocabularyLessonStep({
   context,
@@ -24,6 +39,7 @@ export async function saveVocabularyLessonStep({
   romanizations,
   wordAudioUrls,
   words,
+  workflowRunId,
 }: {
   context: LessonContext;
   distractors: Record<string, string[]>;
@@ -31,6 +47,7 @@ export async function saveVocabularyLessonStep({
   romanizations: Record<string, string>;
   wordAudioUrls: Record<string, string>;
   words: VocabularyWord[];
+  workflowRunId: string;
 }): Promise<void> {
   "use step";
 
@@ -44,129 +61,293 @@ export async function saveVocabularyLessonStep({
     throw new Error("Vocabulary save step needs course language and organization data");
   }
 
-  const organizationId = course.organization.id;
-  const targetLanguage = course.targetLanguage;
-
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveVocabularyLesson" });
 
-  const allTargetWords = collectVocabularyTargetWords({ distractors, words });
-
-  const existingCasing = await fetchExistingWordCasing({
-    organizationId,
-    targetLanguage,
-    words: allTargetWords,
+  const uniqueWords = deduplicateGeneratedItems({
+    getKey: (entry) => getCanonicalWordKey(entry.word),
+    items: words,
   });
 
-  const canonicalWords = new Set(words.map((word) => word.word));
-  const distractorWords = allTargetWords.filter((word) => !canonicalWords.has(word));
+  const wordGroups = splitLessonItems(uniqueWords);
+  const allTargetWords = collectVocabularyTargetWords({ distractors, words: uniqueWords });
+  const wordsToSave = [...new Set([...uniqueWords.map((entry) => entry.word), ...allTargetWords])];
 
-  const wordSteps = await Promise.all(
-    words.map((word, position) =>
-      saveOneVocabularyWord({
-        context,
-        distractors,
-        existingCasing,
-        organizationId,
-        position,
-        pronunciations,
-        romanizations,
-        targetLanguage,
-        userLanguage: context.language,
-        word,
-        wordAudioUrls,
-      }),
+  const wordIds = await saveGeneratedWordMetadata({
+    organizationId: course.organization.id,
+    targetLanguage: course.targetLanguage,
+    userLanguage: context.language,
+    words: wordsToSave.map((word) =>
+      getVocabularyWordMetadata({ pronunciations, romanizations, word, wordAudioUrls }),
     ),
-  );
+  });
 
-  await Promise.all(
-    distractorWords.map((word) => {
-      const romanization = romanizations[word] ?? null;
-
-      return upsertWordWithPronunciation({
-        audioUrl: wordAudioUrls[word] ?? null,
-        organizationId,
-        pronunciation: pronunciations[word] ?? null,
-        romanization,
-        romanizationUpdate: romanization ? { romanization } : {},
-        targetLanguage,
-        userLanguage: context.language,
-        word: existingCasing[word.toLowerCase()] ?? word,
-      });
-    }),
-  );
-
-  await replaceLessonSteps({
+  await persistGeneratedLessonGroups({
+    chapterId: context.chapterId,
+    groupCount: wordGroups.length,
     lessonId: context.id,
-    saveSteps: async (transaction) => {
-      await transaction.step.createMany({ data: wordSteps });
-    },
+    persistGroups: ({ groups, transaction }) =>
+      persistVocabularyGroups({ context, distractors, groups, transaction, wordGroups, wordIds }),
+    workflowRunId,
   });
 
   await stream.status({ status: "completed", step: "saveVocabularyLesson" });
 }
 
 /**
- * The same surface word can appear in different chapter contexts with
- * different translations or distractors, so the reusable Word row and the
- * chapter-scoped resource row must be written together.
+ * Converts one enriched target word into reusable metadata. Canonical words and
+ * distractors share the same global Word and pronunciation representation.
  */
-async function saveOneVocabularyWord(params: {
-  context: LessonContext;
-  distractors: Record<string, string[]>;
-  existingCasing: Record<string, string>;
-  organizationId: string;
-  position: number;
+function getVocabularyWordMetadata({
+  pronunciations,
+  romanizations,
+  word,
+  wordAudioUrls,
+}: {
   pronunciations: Record<string, string>;
   romanizations: Record<string, string>;
-  targetLanguage: string;
-  userLanguage: string;
-  word: VocabularyWord;
+  word: string;
   wordAudioUrls: Record<string, string>;
-}): Promise<StepRecord> {
-  const dbWord = params.existingCasing[params.word.word.toLowerCase()] ?? params.word.word;
-  const romanization = params.romanizations[params.word.word] ?? null;
-
-  const wordDistractors = sanitizeDistractors({
-    distractors: params.distractors[params.word.word] ?? [],
-    input: params.word.word,
-    shape: "any",
-  });
-
-  const wordId = await upsertWordWithPronunciation({
-    audioUrl: params.wordAudioUrls[params.word.word] ?? null,
-    organizationId: params.organizationId,
-    pronunciation: params.pronunciations[params.word.word] ?? null,
-    romanization,
-    romanizationUpdate: romanization ? { romanization } : {},
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.userLanguage,
-    word: dbWord,
-  });
-
-  const chapterWord = await prisma.chapterWord.upsert({
-    create: {
-      chapterId: params.context.chapterId,
-      distractors: wordDistractors,
-      sourceLessonId: params.context.id,
-      translation: normalizePunctuation(params.word.translation),
-      userLanguage: params.userLanguage,
-      wordId,
-    },
-    update: {
-      distractors: wordDistractors,
-      translation: normalizePunctuation(params.word.translation),
-    },
-    where: { chapterWordSource: { sourceLessonId: params.context.id, wordId } },
-  });
+}): GeneratedWordMetadata {
+  const romanization = romanizations[word] ?? null;
 
   return {
-    chapterWordId: chapterWord.id,
+    audioUrl: wordAudioUrls[word] ?? null,
+    pronunciation: pronunciations[word] ?? null,
+    romanization,
+    romanizationUpdate: romanization ? { romanization } : {},
+    word,
+  };
+}
+
+/** Fails before scoped writes if reusable metadata omitted a generated word. */
+function getRequiredWordId({
+  word,
+  wordIds,
+}: {
+  word: string;
+  wordIds: Record<string, string>;
+}): string {
+  const wordId = wordIds[word];
+
+  if (!wordId) {
+    throw new Error(`Vocabulary word metadata is missing for ${word}`);
+  }
+
+  return wordId;
+}
+
+/** Builds ordered persistence entries for one exact vocabulary/translation pair. */
+function getVocabularyGroupEntries({
+  group,
+  words,
+  wordIds,
+}: {
+  group: GeneratedLessonGroup;
+  words: VocabularyWord[];
+  wordIds: Record<string, string>;
+}): VocabularyGroupEntry[] {
+  return words.map((word, position) => ({
+    companionLessonId: group.companionLesson?.id ?? null,
+    position,
+    sourceLessonId: group.sourceLesson.id,
+    word,
+    wordId: getRequiredWordId({ word: word.word, wordIds }),
+  }));
+}
+
+/** Returns the word slice that must correspond to one prepared lesson group. */
+function getRequiredWordGroup({
+  groupIndex,
+  wordGroups,
+}: {
+  groupIndex: number;
+  wordGroups: VocabularyWord[][];
+}): VocabularyWord[] {
+  const words = wordGroups[groupIndex];
+
+  if (!words) {
+    throw new Error("Vocabulary lesson group has no words");
+  }
+
+  return words;
+}
+
+/** Zips every balanced word slice with the lesson pair created for that slice. */
+function getVocabularyEntries({
+  groups,
+  wordGroups,
+  wordIds,
+}: {
+  groups: GeneratedLessonGroup[];
+  wordGroups: VocabularyWord[][];
+  wordIds: Record<string, string>;
+}): VocabularyGroupEntry[] {
+  if (groups.length !== wordGroups.length) {
+    throw new Error("Vocabulary groups do not match generated word groups");
+  }
+
+  return groups.flatMap((group, groupIndex) =>
+    getVocabularyGroupEntries({
+      group,
+      wordIds,
+      words: getRequiredWordGroup({ groupIndex, wordGroups }),
+    }),
+  );
+}
+
+/** One chapter-word row is shared by vocabulary and translation steps. */
+function getVocabularyResourceKey({
+  sourceLessonId,
+  wordId,
+}: Pick<VocabularyGroupEntry, "sourceLessonId" | "wordId">): string {
+  return `${sourceLessonId}:${wordId}`;
+}
+
+/** Converts one generated word into its lesson-scoped translation resource. */
+function getVocabularyResourceData({
+  chapterId,
+  distractors,
+  entry,
+  userLanguage,
+}: {
+  chapterId: string;
+  distractors: Record<string, string[]>;
+  entry: VocabularyGroupEntry;
+  userLanguage: string;
+}) {
+  return {
+    chapterId,
+    distractors: sanitizeDistractors({
+      distractors: distractors[entry.word.word] ?? [],
+      input: entry.word.word,
+      shape: "any",
+    }),
+    sourceLessonId: entry.sourceLessonId,
+    translation: normalizePunctuation(entry.word.translation),
+    userLanguage,
+    wordId: entry.wordId,
+  };
+}
+
+/** Builds one lesson-scoped resource for every deduplicated vocabulary entry. */
+function getVocabularyResources({
+  chapterId,
+  distractors,
+  entries,
+  userLanguage,
+}: {
+  chapterId: string;
+  distractors: Record<string, string[]>;
+  entries: VocabularyGroupEntry[];
+  userLanguage: string;
+}) {
+  return entries.map((entry) =>
+    getVocabularyResourceData({ chapterId, distractors, entry, userLanguage }),
+  );
+}
+
+/** Resolves the chapter-word row created for one ordered vocabulary entry. */
+function getVocabularyResource({
+  entry,
+  resources,
+}: {
+  entry: VocabularyGroupEntry;
+  resources: Map<string, ChapterWord>;
+}): ChapterWord {
+  const resource = resources.get(getVocabularyResourceKey(entry));
+
+  if (!resource) {
+    throw new Error("Vocabulary chapter resource was not created");
+  }
+
+  return resource;
+}
+
+/** Creates the source step and its optional translation step from one resource. */
+function getVocabularySteps({
+  entry,
+  resource,
+}: {
+  entry: VocabularyGroupEntry;
+  resource: ChapterWord;
+}): StepRecord[] {
+  const vocabularyStep = {
+    chapterWordId: resource.id,
     content: assertStepContent("vocabulary", {}),
     isPublished: true,
-    kind: "vocabulary",
-    lessonId: params.context.id,
-    position: params.position,
-    wordId,
+    kind: "vocabulary" as const,
+    lessonId: entry.sourceLessonId,
+    position: entry.position,
+    wordId: entry.wordId,
   };
+
+  if (!entry.companionLessonId) {
+    return [vocabularyStep];
+  }
+
+  return [
+    vocabularyStep,
+    {
+      chapterWordId: resource.id,
+      content: assertStepContent("translation", {}),
+      isPublished: true,
+      kind: "translation",
+      lessonId: entry.companionLessonId,
+      position: entry.position,
+      wordId: entry.wordId,
+    },
+  ];
+}
+
+/**
+ * Bulk-writes lesson-scoped vocabulary resources and paired steps while the
+ * chapter order is locked. Query count stays constant as AI output grows.
+ */
+async function persistVocabularyGroups({
+  context,
+  distractors,
+  groups,
+  transaction,
+  wordGroups,
+  wordIds,
+}: {
+  context: LessonContext;
+  distractors: Record<string, string[]>;
+  groups: GeneratedLessonGroup[];
+  transaction: TransactionClient;
+  wordGroups: VocabularyWord[][];
+  wordIds: Record<string, string>;
+}): Promise<void> {
+  const entries = getVocabularyEntries({ groups, wordGroups, wordIds });
+  const sourceLessonIds = groups.map((group) => group.sourceLesson.id);
+
+  const lessonIds = groups.flatMap((group) => [
+    group.sourceLesson.id,
+    ...(group.companionLesson ? [group.companionLesson.id] : []),
+  ]);
+
+  await Promise.all([
+    transaction.step.deleteMany({ where: { lessonId: { in: lessonIds } } }),
+    transaction.chapterWord.deleteMany({ where: { sourceLessonId: { in: sourceLessonIds } } }),
+  ]);
+
+  const chapterWords = await transaction.chapterWord.createManyAndReturn({
+    data: getVocabularyResources({
+      chapterId: context.chapterId,
+      distractors,
+      entries,
+      userLanguage: context.language,
+    }),
+  });
+
+  const resources = new Map(
+    chapterWords.map((resource) => [getVocabularyResourceKey(resource), resource]),
+  );
+
+  const steps = entries.flatMap((entry) =>
+    getVocabularySteps({ entry, resource: getVocabularyResource({ entry, resources }) }),
+  );
+
+  await transaction.step.createMany({ data: steps });
 }

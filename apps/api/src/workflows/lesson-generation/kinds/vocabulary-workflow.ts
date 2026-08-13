@@ -4,7 +4,6 @@ import { generateVocabularyDistractorsStep } from "../steps/generate-vocabulary-
 import { generateVocabularyPronunciationStep } from "../steps/generate-vocabulary-pronunciation-step";
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonContext } from "../steps/get-lesson-step";
-import { saveTranslationLessonStep } from "../steps/save-translation-lesson-step";
 import { saveVocabularyLessonStep } from "../steps/save-vocabulary-lesson-step";
 import { generateOptionalVocabularyAudio } from "./_utils/generate-optional-audio";
 
@@ -13,7 +12,13 @@ import { generateOptionalVocabularyAudio } from "./_utils/generate-optional-audi
  * every target-language word the player may render must be enriched before the
  * lesson is saved.
  */
-export async function vocabularyLessonWorkflow(context: LessonContext): Promise<void> {
+export async function vocabularyLessonWorkflow({
+  context,
+  workflowRunId,
+}: {
+  context: LessonContext;
+  workflowRunId: string;
+}): Promise<void> {
   "use workflow";
 
   const content = await generateVocabularyContentStep(context);
@@ -38,7 +43,6 @@ export async function vocabularyLessonWorkflow(context: LessonContext): Promise<
     romanizations,
     wordAudioUrls,
     words: content.words,
+    workflowRunId,
   });
-
-  await saveTranslationLessonStep(context);
 }

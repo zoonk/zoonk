@@ -1,5 +1,3 @@
-import { type LessonKind, prisma } from "@zoonk/db";
-
 export type SourceLessonMetadata = { description: string; title: string };
 
 /**
@@ -31,25 +29,12 @@ function sourceLessonForPrompt(lesson: {
 }
 
 /**
- * Returns prompt-ready metadata for planned source lessons in a structural
- * range. Generation status is intentionally ignored because generated lessons
- * can use title and description before the source content itself exists.
+ * Converts ordered planned lesson rows into prompt metadata. Generation status
+ * is intentionally ignored because titles and descriptions define scope before
+ * generated content exists.
  */
-export async function getSourceLessonMetadataInRange({
-  afterPosition,
-  beforePosition,
-  chapterId,
-  kinds,
-}: {
-  afterPosition: number;
-  beforePosition: number;
-  chapterId: string;
-  kinds: LessonKind[];
-}): Promise<SourceLessonMetadata[]> {
-  const lessons = await prisma.lesson.findMany({
-    orderBy: { position: "asc" },
-    where: { chapterId, kind: { in: kinds }, position: { gt: afterPosition, lt: beforePosition } },
-  });
-
+export function getSourceLessonMetadataList(
+  lessons: { description: string | null; title: string | null }[],
+): SourceLessonMetadata[] {
   return lessons.flatMap((lesson) => sourceLessonForPrompt(lesson));
 }

@@ -843,6 +843,81 @@ describe(lessonGenerationWorkflow, () => {
     expect(dbTranslationLesson.generationStatus).toBe("completed");
   });
 
+  it("completes every split vocabulary and translation pair together", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    languageMockState.words.splice(
+      0,
+      languageMockState.words.length,
+      ...Array.from({ length: 21 }, (_, index) => ({
+        translation: `Translation ${uniqueId} ${index + 1}`,
+        word: `Word ${uniqueId} ${index + 1}`,
+      })),
+    );
+
+    languageMockState.distractors = {};
+
+    const { chapter } = await createLanguageWorkflowTree({ organizationId });
+
+    const sourceLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId,
+      position: 0,
+    });
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "translation",
+        organizationId,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "grammar",
+        organizationId,
+        position: 2,
+      }),
+    ]);
+
+    await lessonGenerationWorkflow(sourceLesson.id);
+
+    const lessons = await prisma.lesson.findMany({
+      include: { steps: { orderBy: { position: "asc" } } },
+      orderBy: { position: "asc" },
+      where: { chapterId: chapter.id },
+    });
+
+    expect(lessons.map((lesson) => lesson.kind)).toStrictEqual([
+      "vocabulary",
+      "translation",
+      "vocabulary",
+      "translation",
+      "grammar",
+    ]);
+
+    const generatedLessons = lessons.slice(0, 4);
+    const vocabularyLessons = generatedLessons.filter((lesson) => lesson.kind === "vocabulary");
+    const translationLessons = generatedLessons.filter((lesson) => lesson.kind === "translation");
+
+    expect(generatedLessons.every((lesson) => lesson.generationStatus === "completed")).toBe(true);
+    expect(generatedLessons.every((lesson) => lesson.isPublished)).toBe(true);
+    expect(vocabularyLessons.map((lesson) => lesson.steps.length)).toStrictEqual([11, 10]);
+
+    expect(
+      vocabularyLessons.map((lesson) => lesson.steps.map((step) => step.chapterWordId)),
+    ).toStrictEqual(
+      translationLessons.map((lesson) => lesson.steps.map((step) => step.chapterWordId)),
+    );
+  });
+
   it("alphabet generation saves writing-system cards and a final matching drill without vocabulary rows", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });

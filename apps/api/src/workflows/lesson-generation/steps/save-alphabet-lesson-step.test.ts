@@ -5,6 +5,8 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { type AlphabetLessonContent } from "./_utils/generated-lesson-content";
 import { saveAlphabetLessonStep } from "./save-alphabet-lesson-step";
 
+const WORKFLOW_RUN_ID = "save-alphabet-test";
+
 /**
  * Keeps Japanese glyphs as string data instead of object identifiers so linting
  * does not treat one-character symbols as variable-style property names.
@@ -56,6 +58,8 @@ describe(saveAlphabetLessonStep, () => {
 
   it("saves intro, symbol cards, and a final matching drill", async () => {
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "alphabet",
       organizationId,
       targetLanguage: "ja",
@@ -65,6 +69,7 @@ describe(saveAlphabetLessonStep, () => {
       audioUrls: alphabetAudioUrls(),
       content: alphabetContent(),
       context,
+      workflowRunId: WORKFLOW_RUN_ID,
     });
 
     const [steps, lessonWords] = await Promise.all([

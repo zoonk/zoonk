@@ -181,6 +181,63 @@ describe(listSitemapLessons, () => {
     }
   });
 
+  it("excludes split continuations with copied metadata", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const rootVocabulary = await lessonFixture({
+      chapterId: chapter.id,
+      description: "Everyday Cyrillic vocabulary",
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId: organization.id,
+      position: 0,
+      title: "Everyday Cyrillic words",
+    });
+
+    const splitLessons = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        description: rootVocabulary.description,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId: organization.id,
+        position: 1,
+        slug: `${rootVocabulary.slug}--split--${rootVocabulary.id}--2`,
+        title: "Everyday Cyrillic words 2",
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "translation",
+        organizationId: organization.id,
+        position: 2,
+        slug: `translation--split--${rootVocabulary.id}--2`,
+      }),
+    ]);
+
+    const count = await countSitemapLessons();
+    const sitemapLessons = await listLatestSitemapLessons(count);
+    const sitemapSlugs = sitemapLessons.map((lesson) => lesson.lessonSlug);
+
+    expect(sitemapSlugs).toContain(rootVocabulary.slug);
+
+    for (const lesson of splitLessons) {
+      expect(sitemapSlugs).not.toContain(lesson.slug);
+    }
+  });
+
   it("excludes lessons outside the published brand catalog", async () => {
     const [brandOrganization, personalOrganization] = await Promise.all([
       organizationFixture({ kind: "brand" }),

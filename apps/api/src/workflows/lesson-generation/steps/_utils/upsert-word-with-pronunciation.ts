@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 
+/** Saves exact word metadata and its user-language pronunciation together. */
 export async function upsertWordWithPronunciation(params: {
   audioUrl: string | null;
   organizationId: string;

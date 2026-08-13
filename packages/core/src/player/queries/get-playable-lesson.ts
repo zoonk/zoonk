@@ -49,7 +49,10 @@ async function getNotGeneratedLessonTarget(lesson: PlayerLesson) {
     return null;
   }
 
-  const sourceLesson = await getSourceLessonForGeneratedCompanion(generationLesson);
+  const sourceLesson = await getSourceLessonForGeneratedCompanion({
+    chapterId: generationLesson.chapterId,
+    lessonId: generationLesson.id,
+  });
 
   return sourceLesson
     ? { kind: "sourceLesson" as const, lessonId: sourceLesson.id, lessonSlug: sourceLesson.slug }

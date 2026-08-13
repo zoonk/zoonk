@@ -77,6 +77,33 @@ describe(setLessonAsRunningStep, () => {
     expect(remainingSteps).toHaveLength(1);
   });
 
+  it("resumes the same workflow owner without clearing steps again", async () => {
+    const workflowRunId = "workflow-running-replay";
+
+    const lesson = await createLessonContext({
+      generationRunId: workflowRunId,
+      generationStatus: "running",
+      organizationId,
+    });
+
+    await stepFixture({
+      content: { text: "keep", title: "Keep", variant: "text" },
+      kind: "static",
+      lessonId: lesson.id,
+    });
+
+    const result = await setLessonAsRunningStep({
+      lessonId: lesson.id,
+      resetExistingSteps: true,
+      workflowRunId,
+    });
+
+    const remainingSteps = await prisma.step.findMany({ where: { lessonId: lesson.id } });
+
+    expect(result).toBe("claimed");
+    expect(remainingSteps).toHaveLength(1);
+  });
+
   it("returns completed when another workflow already finished the lesson", async () => {
     const lesson = await createLessonContext({ generationStatus: "completed", organizationId });
 

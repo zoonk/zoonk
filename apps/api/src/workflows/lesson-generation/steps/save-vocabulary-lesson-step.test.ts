@@ -5,6 +5,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveVocabularyLessonStep } from "./save-vocabulary-lesson-step";
 
+const WORKFLOW_RUN_ID = "save-vocabulary-test";
+
 describe(saveVocabularyLessonStep, () => {
   let organizationId: string;
 
@@ -19,6 +21,8 @@ describe(saveVocabularyLessonStep, () => {
     const distractorWords = [`boa tarde ${id}`, `bom dia ${id}`] as const;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "vocabulary",
       organizationId,
       targetLanguage: "pt",
@@ -39,6 +43,7 @@ describe(saveVocabularyLessonStep, () => {
         [distractorWords[1]]: `/audio/bom-dia-${id}.mp3`,
       },
       words: [{ translation: "good evening", word: vocabularyWord }],
+      workflowRunId: WORKFLOW_RUN_ID,
     });
 
     const [lessonWords, distractorLessonWords, words, pronunciations, steps] = await Promise.all([
@@ -99,5 +104,40 @@ describe(saveVocabularyLessonStep, () => {
       position: 0,
       wordId: lessonWords[0]?.wordId,
     });
+  });
+
+  it("keeps the first formatting variant of a duplicate word", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const vocabularyWord = `banco ${id} !`;
+
+    const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
+      kind: "vocabulary",
+      organizationId,
+      targetLanguage: "pt",
+    });
+
+    await saveVocabularyLessonStep({
+      context,
+      distractors: {},
+      pronunciations: {},
+      romanizations: {},
+      wordAudioUrls: {},
+      words: [
+        { translation: "bank", word: vocabularyWord },
+        { translation: "bench", word: `banco ${id}!` },
+      ],
+      workflowRunId: WORKFLOW_RUN_ID,
+    });
+
+    const [chapterWords, steps] = await Promise.all([
+      prisma.chapterWord.findMany({ where: { sourceLessonId: context.id } }),
+      prisma.step.findMany({ where: { lessonId: context.id } }),
+    ]);
+
+    expect(chapterWords).toHaveLength(1);
+    expect(chapterWords[0]?.translation).toBe("bank");
+    expect(steps).toHaveLength(1);
   });
 });

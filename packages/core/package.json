@@ -51,6 +51,7 @@
     "./lessons/list-by-chapter": "./src/lessons/list-chapter-lessons.ts",
     "./lessons/next-in-course": "./src/lessons/get-next-lesson-in-course.ts",
     "./lessons/scope": "./src/lessons/lesson-scope.ts",
+    "./lessons/split-lessons": "./src/lessons/split-lessons.ts",
     "./lessons/visibility": "./src/lessons/lesson-visibility.ts",
     "./navigation/external-redirect": "./src/navigation/external-redirect.ts",
     "./player/commands/get-next-lesson-preload-target": "./src/player/commands/get-next-lesson-preload-target.ts",

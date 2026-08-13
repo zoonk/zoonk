@@ -32,7 +32,10 @@ export async function getLessonGenerationView(lessonId: string) {
   }
 
   if (lesson.generationStatus !== "completed" && isGeneratedCompanionLessonKind(lesson.kind)) {
-    const sourceLesson = await getSourceLessonForGeneratedCompanion(lesson);
+    const sourceLesson = await getSourceLessonForGeneratedCompanion({
+      chapterId: lesson.chapterId,
+      lessonId: lesson.id,
+    });
 
     if (!sourceLesson) {
       return { status: "notFound" as const };
@@ -46,7 +49,10 @@ export async function getLessonGenerationView(lessonId: string) {
     };
   }
 
-  const companionLesson = await getGeneratedCompanionForSourceLesson(lesson);
+  const companionLesson = await getGeneratedCompanionForSourceLesson({
+    chapterId: lesson.chapterId,
+    lessonId: lesson.id,
+  });
 
   const companionNeedsRepair =
     companionLesson?.generationStatus === "pending" ||

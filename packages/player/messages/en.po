@@ -179,14 +179,14 @@ msgid "Back to course"
 msgstr "Back to course"
 
 #: src/components/completion-milestone-actions.tsx
-msgctxt "_N8rYN"
-msgid "Back to chapter"
-msgstr "Back to chapter"
-
-#: src/components/completion-milestone-actions.tsx
 msgctxt "DiIkZH"
 msgid "Next Chapter"
 msgstr "Next Chapter"
+
+#: src/components/completion-milestone-actions.tsx
+msgctxt "_N8rYN"
+msgid "Back to chapter"
+msgstr "Back to chapter"
 
 #: src/components/completion-patterns-milestone.tsx
 msgctxt "e6_3Ke"

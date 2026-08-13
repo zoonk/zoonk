@@ -11,9 +11,12 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { readingLessonWorkflow } from "./reading-workflow";
 
+const WORKFLOW_RUN_ID = "reading-workflow-test";
+
 const readingState = vi.hoisted(() => ({
   distractors: {} as Record<string, string[]>,
   sentence: "",
+  sentences: [] as { explanation: string; sentence: string; translation: string }[],
   translation: "",
 }));
 
@@ -22,13 +25,16 @@ vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
     .fn()
     .mockImplementation(() => ({
       data: {
-        sentences: [
-          {
-            explanation: "Greeting sentence.",
-            sentence: readingState.sentence,
-            translation: readingState.translation,
-          },
-        ],
+        sentences:
+          readingState.sentences.length > 0
+            ? readingState.sentences
+            : [
+                {
+                  explanation: "Greeting sentence.",
+                  sentence: readingState.sentence,
+                  translation: readingState.translation,
+                },
+              ],
       },
     })),
 }));
@@ -80,6 +86,7 @@ describe(readingLessonWorkflow, () => {
     vi.clearAllMocks();
     readingState.distractors = {};
     readingState.sentence = "";
+    readingState.sentences = [];
     readingState.translation = "";
 
     vi.mocked(generateLanguageAudio).mockImplementation(({ text }) =>
@@ -97,6 +104,8 @@ describe(readingLessonWorkflow, () => {
     const translation = `good morning ${uniqueId}`;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "reading",
       organizationId,
       position: 2,
@@ -122,7 +131,7 @@ describe(readingLessonWorkflow, () => {
       [translation]: [`hello-${uniqueId}`, `bye-${uniqueId}`],
     };
 
-    await readingLessonWorkflow(context);
+    await readingLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
 
     expect(generateLessonSentences).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -183,11 +192,102 @@ describe(readingLessonWorkflow, () => {
     ]);
   });
 
+  it("splits more than twenty sentences into balanced reading and listening pairs", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
+      kind: "reading",
+      organizationId,
+      position: 2,
+      targetLanguage: "de",
+    });
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        description: `German source ${uniqueId}`,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 1,
+        title: `German Vocabulary ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "listening",
+        organizationId,
+        position: 3,
+        title: `Listening ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "grammar",
+        organizationId,
+        position: 4,
+        title: `Following grammar ${uniqueId}`,
+      }),
+    ]);
+
+    readingState.sentences = Array.from({ length: 21 }, (_, index) => ({
+      explanation: `Explanation ${index + 1}`,
+      sentence: `Satz${uniqueId}${index + 1}`,
+      translation: `Sentence ${uniqueId} ${index + 1}`,
+    }));
+
+    await readingLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
+
+    const lessons = await prisma.lesson.findMany({
+      include: { steps: { orderBy: { position: "asc" } } },
+      orderBy: { position: "asc" },
+      where: { chapterId: context.chapterId },
+    });
+
+    expect(lessons.map((lesson) => lesson.kind)).toStrictEqual([
+      "vocabulary",
+      "reading",
+      "listening",
+      "reading",
+      "listening",
+      "grammar",
+    ]);
+
+    const readingLessons = lessons.filter((lesson) => lesson.kind === "reading");
+    const listeningLessons = lessons.filter((lesson) => lesson.kind === "listening");
+
+    expect(readingLessons.map((lesson) => lesson.steps.length)).toStrictEqual([11, 10]);
+    expect(listeningLessons.map((lesson) => lesson.steps.length)).toStrictEqual([11, 10]);
+
+    expect(
+      readingLessons.map((lesson) => lesson.steps.map((step) => step.chapterSentenceId)),
+    ).toStrictEqual(
+      listeningLessons.map((lesson) => lesson.steps.map((step) => step.chapterSentenceId)),
+    );
+
+    await expect(
+      Promise.all(
+        readingLessons.map((lesson) =>
+          prisma.chapterWord.count({ where: { sourceLessonId: lesson.id } }),
+        ),
+      ),
+    ).resolves.toStrictEqual([11, 10]);
+
+    await expect(prisma.lesson.count({ where: { chapterId: context.chapterId } })).resolves.toBe(6);
+  });
+
   it("saves the lesson after optional sentence audio retries remain incomplete", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const sentence = `satz${uniqueId}`;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "reading",
       organizationId,
       position: 2,
@@ -216,7 +316,7 @@ describe(readingLessonWorkflow, () => {
       ),
     );
 
-    await expect(readingLessonWorkflow(context)).resolves.toBeUndefined();
+    await readingLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
 
     await expect(
       prisma.sentence.findFirstOrThrow({
@@ -233,6 +333,8 @@ describe(readingLessonWorkflow, () => {
     const translation = `water ${uniqueId}`;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "reading",
       organizationId,
       position: 2,
@@ -254,7 +356,7 @@ describe(readingLessonWorkflow, () => {
     readingState.translation = translation;
     readingState.distractors = { [canonicalWord]: [duplicateDistractor, validDistractor] };
 
-    await readingLessonWorkflow(context);
+    await readingLessonWorkflow({ context, workflowRunId: WORKFLOW_RUN_ID });
 
     const [canonicalRecord, duplicateDistractorRecord, validDistractorRecord, lessonWord] =
       await Promise.all([

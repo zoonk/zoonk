@@ -1,10 +1,11 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/sentences";
+import { isSplitLessonSlug } from "@zoonk/core/lessons/split-lessons";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { type ReadingLessonContent } from "./_utils/generated-lesson-content";
-import { getSourceLessonMetadataInRange } from "./_utils/source-lesson-metadata";
+import { getSourceLessonMetadataList } from "./_utils/source-lesson-metadata";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
@@ -12,17 +13,27 @@ import { type LessonContext } from "./get-lesson-step";
  * already been consumed by an earlier reading lesson in the same chapter.
  */
 async function getVocabularySourceLessonsSincePreviousReading(context: LessonContext) {
-  const previousReading = await prisma.lesson.findFirst({
-    orderBy: { position: "desc" },
-    where: { chapterId: context.chapterId, kind: "reading", position: { lt: context.position } },
+  const lessons = await prisma.lesson.findMany({
+    orderBy: { position: "asc" },
+    where: { chapterId: context.chapterId, kind: { in: ["reading", "vocabulary"] } },
   });
 
-  return getSourceLessonMetadataInRange({
-    afterPosition: previousReading?.position ?? -1,
-    beforePosition: context.position,
-    chapterId: context.chapterId,
-    kinds: ["vocabulary"],
-  });
+  const authoredLessons = lessons.filter((lesson) => !isSplitLessonSlug(lesson.slug));
+  const readingIndex = authoredLessons.findIndex((lesson) => lesson.id === context.id);
+
+  if (readingIndex === -1) {
+    throw new FatalError("Reading lesson is missing from its chapter order");
+  }
+
+  const previousReadingIndex = authoredLessons
+    .slice(0, readingIndex)
+    .findLastIndex((lesson) => lesson.kind === "reading");
+
+  const vocabularyLessons = authoredLessons
+    .slice(previousReadingIndex + 1, readingIndex)
+    .filter((lesson) => lesson.kind === "vocabulary");
+
+  return getSourceLessonMetadataList(vocabularyLessons);
 }
 
 /**
@@ -39,11 +50,12 @@ export async function generateReadingContentStep(
   await stream.status({ status: "started", step: "generateReadingContent" });
 
   const targetLanguage = context.chapter.course.targetLanguage;
-  const sourceLessons = await getVocabularySourceLessonsSincePreviousReading(context);
 
   if (!targetLanguage) {
     throw new FatalError("Reading generation needs a target language");
   }
+
+  const sourceLessons = await getVocabularySourceLessonsSincePreviousReading(context);
 
   if (sourceLessons.length === 0) {
     throw new FatalError("Reading generation needs vocabulary lesson metadata");

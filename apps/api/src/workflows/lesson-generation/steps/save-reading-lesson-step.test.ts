@@ -5,6 +5,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveReadingLessonStep } from "./save-reading-lesson-step";
 
+const WORKFLOW_RUN_ID = "save-reading-test";
+
 describe(saveReadingLessonStep, () => {
   let organizationId: string;
 
@@ -22,6 +24,8 @@ describe(saveReadingLessonStep, () => {
     const translation = `Good morning ${id}`;
 
     const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
       kind: "reading",
       organizationId,
       targetLanguage: "de",
@@ -55,6 +59,7 @@ describe(saveReadingLessonStep, () => {
         [normalizedCanonicalWords[1]!]: { romanization: null, translation: `morning-${id}` },
         [normalizedCanonicalWords[2]!]: { romanization: null, translation: canonicalWords[2] },
       },
+      workflowRunId: WORKFLOW_RUN_ID,
     });
 
     const savedSentence = await prisma.sentence.findFirstOrThrow({
@@ -122,5 +127,43 @@ describe(saveReadingLessonStep, () => {
 
     expect(distractorLessonWords).toStrictEqual([]);
     expect(pronunciations).toHaveLength(5);
+  });
+
+  it("keeps the first duplicate sentence without failing the lesson", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const sentence = `Hallo ${id}`;
+
+    const context = await createLessonContext({
+      generationRunId: WORKFLOW_RUN_ID,
+      generationStatus: "running",
+      kind: "reading",
+      organizationId,
+      targetLanguage: "de",
+    });
+
+    await saveReadingLessonStep({
+      context,
+      distractors: {},
+      pronunciations: {},
+      sentenceAudioUrls: {},
+      sentenceRomanizations: {},
+      sentences: [
+        { explanation: "Greeting", sentence, translation: "Hello" },
+        { explanation: "Repeated greeting", sentence, translation: "Hi" },
+      ],
+      translationDistractors: {},
+      wordAudioUrls: {},
+      wordMetadata: {},
+      workflowRunId: WORKFLOW_RUN_ID,
+    });
+
+    const [chapterSentences, steps] = await Promise.all([
+      prisma.chapterSentence.findMany({ where: { sourceLessonId: context.id } }),
+      prisma.step.findMany({ where: { lessonId: context.id } }),
+    ]);
+
+    expect(chapterSentences).toHaveLength(1);
+    expect(chapterSentences[0]).toMatchObject({ explanation: "Greeting", translation: "Hello" });
+    expect(steps).toHaveLength(1);
   });
 });

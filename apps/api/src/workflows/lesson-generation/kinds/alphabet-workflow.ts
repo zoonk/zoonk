@@ -4,15 +4,21 @@ import { type LessonContext } from "../steps/get-lesson-step";
 import { saveAlphabetLessonStep } from "../steps/save-alphabet-lesson-step";
 
 /**
- * Alphabet lesson generation writes the focused lesson content first, then adds
- * media enrichment and saves the player-facing steps.
+ * Alphabet lesson generation enriches the full AI result once, then saves each
+ * balanced symbol group directly to its final lesson row.
  */
-export async function alphabetLessonWorkflow(context: LessonContext): Promise<void> {
+export async function alphabetLessonWorkflow({
+  context,
+  workflowRunId,
+}: {
+  context: LessonContext;
+  workflowRunId: string;
+}): Promise<void> {
   "use workflow";
 
   const content = await generateAlphabetContentStep(context);
 
   const { audioUrls } = await generateAlphabetAudio({ context, symbols: content.symbols });
 
-  await saveAlphabetLessonStep({ audioUrls, content, context });
+  await saveAlphabetLessonStep({ audioUrls, content, context, workflowRunId });
 }

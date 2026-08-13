@@ -1,13 +1,9 @@
-import {
-  type GenerationStatus,
-  getPublishedChapterWhere,
-  getPublishedLessonWhere,
-  prisma,
-} from "@zoonk/db";
+import { type GenerationStatus, getPublishedChapterWhere, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { hasActiveSubscription } from "../../auth/subscription";
 import { getLessonAccessRequirement } from "../../lessons/access";
 import { NON_STANDALONE_GENERATED_LESSON_KINDS } from "../../lessons/generated-companion-kinds";
+import { getPublishedLessonsAfter } from "../../lessons/ordered-course-lessons";
 import { getSession } from "../../users/get-session";
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
 
@@ -20,12 +16,7 @@ export type NextPreloadTarget =
 
 type PreloadTargetCandidate = { requiresSubscription: boolean; target: NextPreloadTarget };
 
-type LessonPreloadCursor = {
-  chapterId: string;
-  chapterPosition: number;
-  courseId: string;
-  lessonPosition: number;
-};
+type LessonPreloadCursor = { chapterPosition: number; courseId: string; lessonId: string };
 
 /**
  * Chapter generation should only be preloaded when the next chapter is still
@@ -62,27 +53,14 @@ type NextLessonPreloadCandidate = Awaited<
  * rows are skipped because vocabulary and reading generation create translation
  * and listening content.
  */
-async function getNextLessonPreloadCandidates({
-  chapterId,
-  chapterPosition,
-  courseId,
-  lessonPosition,
-}: LessonPreloadCursor) {
-  return prisma.lesson.findMany({
-    include: { chapter: true },
-    orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-    take: maxPreloadTargets,
-    where: getPublishedLessonWhere({
-      courseWhere: { id: courseId },
-      lessonWhere: {
-        OR: [
-          { chapter: { id: chapterId }, position: { gt: lessonPosition } },
-          { chapter: { position: { gt: chapterPosition } } },
-        ],
-        kind: { notIn: [...NON_STANDALONE_GENERATED_LESSON_KINDS] },
-      },
-    }),
+async function getNextLessonPreloadCandidates({ courseId, lessonId }: LessonPreloadCursor) {
+  const lessons = await getPublishedLessonsAfter({
+    courseId,
+    excludedLessonKinds: [...NON_STANDALONE_GENERATED_LESSON_KINDS],
+    lessonId,
   });
+
+  return lessons?.slice(0, maxPreloadTargets) ?? [];
 }
 
 /**
@@ -204,7 +182,7 @@ function getPreloadTargets({
  * next three standalone lesson rows, generate the ones that need work, and ask
  * for the next empty chapter only when fewer than three rows already exist.
  */
-async function getNextPreloadTargetsAfterLessonPosition(
+async function getNextPreloadTargetsAfterLesson(
   cursor: LessonPreloadCursor,
 ): Promise<PreloadTargetCandidate[]> {
   const nextLessons = await getNextLessonPreloadCandidates(cursor);
@@ -267,11 +245,10 @@ export async function getNextPreloadTargetResource({ lessonId }: { lessonId: str
     return { status: "notFound" as const };
   }
 
-  const candidates = await getNextPreloadTargetsAfterLessonPosition({
-    chapterId: lesson.chapterId,
+  const candidates = await getNextPreloadTargetsAfterLesson({
     chapterPosition: lesson.chapter.position,
     courseId: lesson.chapter.courseId,
-    lessonPosition: lesson.position,
+    lessonId: lesson.id,
   });
 
   const targets = await getAuthorizedPreloadTargets({ candidates });

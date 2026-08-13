@@ -1,119 +1,37 @@
-import { prisma } from "@zoonk/db";
-import { emptyToNull, extractUniqueSentenceWords } from "@zoonk/utils/string";
+import { emptyToNull } from "@zoonk/utils/string";
 import { type WordMetadataEntry } from "../generate-sentence-word-metadata-step";
+import { collectTranslatedReadingWords } from "./collect-reading-target-words";
 import { collectTargetWords } from "./collect-target-words";
-import { fetchExistingWordCasing } from "./fetch-existing-word-casing";
 import { type ReadingLessonContent } from "./generated-lesson-content";
-import { upsertWordWithPronunciation } from "./upsert-word-with-pronunciation";
+import {
+  type GeneratedWordMetadata,
+  saveGeneratedWordMetadata,
+} from "./save-generated-word-metadata";
 
 type ReadingSentence = ReadingLessonContent["sentences"][number];
 
-/**
- * Reading lessons need two kinds of saved target-language words: canonical
- * sentence tokens, which become lesson vocabulary with lesson-scoped
- * translations, and distractor words, which only need reusable render metadata.
- *
- * Keeping both persistence rules here avoids duplicating the casing lookup,
- * word extraction, and pronunciation save logic in the workflow step itself.
- */
-export async function saveReadingTargetWords(params: {
-  chapterId: string;
+type ReadingWordMetadataInput = {
   distractors: Record<string, string[]>;
   organizationId: string;
   pronunciations: Record<string, string>;
   sentences: ReadingSentence[];
-  sourceLessonId: string;
   targetLanguage: string;
   userLanguage: string;
   wordAudioUrls: Record<string, string>;
   wordMetadata: Record<string, WordMetadataEntry>;
-}): Promise<void> {
-  const canonicalWords = extractCanonicalWords(params.sentences, params.wordMetadata);
+};
 
-  const allTargetWords = collectTargetWords({
-    canonicalWords,
-    generatedWords: extractDistractorWords(params.sentences, params.distractors),
-  });
-
-  if (allTargetWords.length === 0) {
-    return;
-  }
-
-  const existingCasing = await fetchExistingWordCasing({
-    organizationId: params.organizationId,
-    targetLanguage: params.targetLanguage,
-    words: allTargetWords,
-  });
-
-  const canonicalWordSet = new Set(canonicalWords);
-  const distractorOnlyWords = allTargetWords.filter((word) => !canonicalWordSet.has(word));
-
-  await Promise.all(
-    canonicalWords.map((word) =>
-      saveCanonicalSentenceWord({
-        chapterId: params.chapterId,
-        existingCasing,
-        organizationId: params.organizationId,
-        pronunciations: params.pronunciations,
-        sourceLessonId: params.sourceLessonId,
-        targetLanguage: params.targetLanguage,
-        userLanguage: params.userLanguage,
-        word,
-        wordAudioUrls: params.wordAudioUrls,
-        wordMetadata: params.wordMetadata,
-      }),
-    ),
-  );
-
-  await Promise.all(
-    distractorOnlyWords.map((word) => {
-      const metadata = params.wordMetadata[word];
-      const romanization = emptyToNull(metadata?.romanization ?? null);
-
-      return upsertWordWithPronunciation({
-        audioUrl: params.wordAudioUrls[word] ?? null,
-        organizationId: params.organizationId,
-        pronunciation: params.pronunciations[word] ?? null,
-        romanization,
-        romanizationUpdate: getRomanizationUpdate(metadata),
-        targetLanguage: params.targetLanguage,
-        userLanguage: params.userLanguage,
-        word: existingCasing[word.toLowerCase()] ?? word,
-      });
-    }),
-  );
-}
-
-/**
- * Canonical sentence words are only saved when we have a lesson-scoped
- * translation for them. That keeps filler punctuation or unsupported tokens out
- * of the lesson vocabulary.
- */
-function extractCanonicalWords(
-  sentences: ReadingSentence[],
-  wordMetadata: Record<string, WordMetadataEntry>,
-): string[] {
-  return extractUniqueSentenceWords(sentences.map((entry) => entry.sentence)).filter(
-    (word) => wordMetadata[word]?.translation,
-  );
-}
-
-/**
- * Reading distractors are stored per sentence, but word metadata is generated
- * once per unique normalized surface form across the whole lesson.
- */
-function extractDistractorWords(
-  sentences: ReadingSentence[],
-  distractors: Record<string, string[]>,
-): string[] {
+/** Extracts unique distractor words from each generated sentence. */
+function getReadingDistractorWords({
+  distractors,
+  sentences,
+}: Pick<ReadingWordMetadataInput, "distractors" | "sentences">): string[] {
   return sentences.flatMap((sentence) => distractors[sentence.sentence] ?? []);
 }
 
 /**
- * A missing metadata entry means the caller has no new romanization information
- * for this word. Preserve the existing DB value in that case, but still allow
- * explicit null or empty strings to clear stale romanization when the metadata
- * entry is present.
+ * A missing metadata entry preserves an existing romanization, while an
+ * explicit null or empty result clears stale reusable metadata.
  */
 function getRomanizationUpdate(metadata?: WordMetadataEntry): { romanization?: string | null } {
   if (metadata === undefined) {
@@ -123,50 +41,53 @@ function getRomanizationUpdate(metadata?: WordMetadataEntry): { romanization?: s
   return { romanization: emptyToNull(metadata.romanization ?? null) };
 }
 
-/**
- * Reading still needs chapter-word rows for canonical sentence tokens because
- * the same surface word can mean different things in different contexts. We
- * intentionally keep distractors empty here so vocabulary-owned distractors
- * stay attached only to vocabulary resources.
- */
-async function saveCanonicalSentenceWord(params: {
-  chapterId: string;
-  existingCasing: Record<string, string>;
-  organizationId: string;
-  pronunciations: Record<string, string>;
-  sourceLessonId: string;
-  targetLanguage: string;
-  userLanguage: string;
+/** Converts one reading target word into its reusable persistence shape. */
+function getReadingWordMetadata({
+  isCanonical,
+  params,
+  word,
+}: {
+  isCanonical: boolean;
+  params: ReadingWordMetadataInput;
   word: string;
-  wordAudioUrls: Record<string, string>;
-  wordMetadata: Record<string, WordMetadataEntry>;
-}): Promise<void> {
-  const metadata = params.wordMetadata[params.word];
-  const translation = metadata?.translation ?? "";
+}): GeneratedWordMetadata {
+  const metadata = params.wordMetadata[word];
   const romanization = emptyToNull(metadata?.romanization ?? null);
-  const dbWord = params.existingCasing[params.word.toLowerCase()] ?? params.word;
 
-  const wordId = await upsertWordWithPronunciation({
-    audioUrl: params.wordAudioUrls[params.word] ?? null,
-    organizationId: params.organizationId,
-    pronunciation: params.pronunciations[params.word] ?? null,
+  return {
+    audioUrl: params.wordAudioUrls[word] ?? null,
+    pronunciation: params.pronunciations[word] ?? null,
     romanization,
-    romanizationUpdate: { romanization },
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.userLanguage,
-    word: dbWord,
+    romanizationUpdate: isCanonical ? { romanization } : getRomanizationUpdate(metadata),
+    word,
+  };
+}
+
+/**
+ * Persists reusable word/audio/pronunciation metadata outside the structural
+ * lesson transaction so its duration does not grow with sentence word count.
+ */
+export async function saveReadingWordMetadata(
+  params: ReadingWordMetadataInput,
+): Promise<Record<string, string>> {
+  const translatedWords = collectTranslatedReadingWords({
+    sentences: params.sentences,
+    wordMetadata: params.wordMetadata,
   });
 
-  await prisma.chapterWord.upsert({
-    create: {
-      chapterId: params.chapterId,
-      distractors: [],
-      sourceLessonId: params.sourceLessonId,
-      translation,
-      userLanguage: params.userLanguage,
-      wordId,
-    },
-    update: { translation },
-    where: { chapterWordSource: { sourceLessonId: params.sourceLessonId, wordId } },
+  const allTargetWords = collectTargetWords({
+    canonicalWords: translatedWords,
+    generatedWords: getReadingDistractorWords(params),
+  });
+
+  const canonicalWords = new Set(translatedWords);
+
+  return saveGeneratedWordMetadata({
+    organizationId: params.organizationId,
+    targetLanguage: params.targetLanguage,
+    userLanguage: params.userLanguage,
+    words: allTargetWords.map((word) =>
+      getReadingWordMetadata({ isCanonical: canonicalWords.has(word), params, word }),
+    ),
   });
 }

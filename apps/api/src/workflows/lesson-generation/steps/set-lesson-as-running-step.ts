@@ -19,21 +19,27 @@ function getClaimableGenerationStatus(input: SetLessonAsRunningInput) {
 }
 
 /**
- * A failed claim means another workflow changed the lesson first. Completed
- * lessons need a distinct result so the losing workflow can mirror the
- * completion event into the stream its client is watching.
+ * Distinguishes a retry of this workflow's committed claim from a competing
+ * owner. Completed lessons also need a distinct result so the losing workflow
+ * can mirror the completion event into the stream its client is watching.
  */
-async function getSkippedLessonGenerationClaimResult({
+async function getExistingLessonGenerationClaimResult({
   lessonId,
   tx,
+  workflowRunId,
 }: {
   lessonId: string;
   tx: TransactionClient;
-}): Promise<Exclude<LessonGenerationClaimResult, "claimed">> {
+  workflowRunId: string;
+}): Promise<LessonGenerationClaimResult> {
   const lesson = await tx.lesson.findUnique({ where: { id: lessonId } });
 
   if (lesson?.generationStatus === "completed") {
     return "completed";
+  }
+
+  if (lesson?.generationStatus === "running" && lesson.generationRunId === workflowRunId) {
+    return "claimed";
   }
 
   return "skipped";
@@ -54,7 +60,11 @@ async function claimLessonGeneration(
     });
 
     if (claim.count === 0) {
-      return getSkippedLessonGenerationClaimResult({ lessonId: input.lessonId, tx });
+      return getExistingLessonGenerationClaimResult({
+        lessonId: input.lessonId,
+        tx,
+        workflowRunId: input.workflowRunId,
+      });
     }
 
     if (input.resetExistingSteps) {
