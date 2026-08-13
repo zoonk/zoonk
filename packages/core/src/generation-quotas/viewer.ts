@@ -6,16 +6,17 @@ import { hasActiveSubscription } from "../auth/subscription";
 import { getSession } from "../users/get-session";
 import { GENERATION_VISITOR_ID_HEADER, type GenerationQuotaViewer } from "./contract";
 
-type GenerationQuotaViewerContext = { actorKey: string; viewer: GenerationQuotaViewer };
+type GenerationQuotaViewerContext = { actorKeys: string[]; viewer: GenerationQuotaViewer };
 
 /** Selects the original client address while keeping proxy header parsing out of the stored quota key. */
 function getClientAddress(requestHeaders: Headers): string {
   const forwardedAddress = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
 
   return (
-    requestHeaders.get("cf-connecting-ip") ??
-    requestHeaders.get("x-real-ip") ??
+    requestHeaders.get("x-vercel-forwarded-for") ??
     forwardedAddress ??
+    requestHeaders.get("x-real-ip") ??
+    requestHeaders.get("cf-connecting-ip") ??
     "unknown"
   );
 }
@@ -35,15 +36,20 @@ function getRequestFingerprint(requestHeaders: Headers): string {
   return createHash("sha256").update(fingerprintParts.join("\n")).digest("hex");
 }
 
-/** Prefers the browser's durable random ID so unrelated learners on one shared network keep separate quotas. */
-function getGuestActorKey(requestHeaders: Headers): string {
+/**
+ * Enforces both a durable browser quota and a request-fingerprint quota. A
+ * private window can replace browser storage, but it still shares the second
+ * identity while the browser and connection signals remain the same.
+ */
+function getGuestActorKeys(requestHeaders: Headers): string[] {
   const visitorId = requestHeaders.get(GENERATION_VISITOR_ID_HEADER);
+  const requestActorKey = `request:${getRequestFingerprint(requestHeaders)}`;
 
   if (visitorId && isUuid(visitorId)) {
-    return `guest:${visitorId}`;
+    return [`guest:${visitorId}`, requestActorKey];
   }
 
-  return `request:${getRequestFingerprint(requestHeaders)}`;
+  return [requestActorKey];
 }
 
 /** Derives identity and entitlement from the request instead of trusting a caller-selected user or plan. */
@@ -51,10 +57,10 @@ export async function getGenerationQuotaViewer(): Promise<GenerationQuotaViewerC
   const [requestHeaders, session] = await Promise.all([headers(), getSession()]);
 
   if (!session) {
-    return { actorKey: getGuestActorKey(requestHeaders), viewer: "guest" };
+    return { actorKeys: getGuestActorKeys(requestHeaders), viewer: "guest" };
   }
 
   const viewer = (await hasActiveSubscription()) ? "subscriber" : "authenticated";
 
-  return { actorKey: `user:${session.user.id}`, viewer };
+  return { actorKeys: [`user:${session.user.id}`], viewer };
 }

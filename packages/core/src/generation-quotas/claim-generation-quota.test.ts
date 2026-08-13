@@ -10,10 +10,33 @@ import { GENERATION_VISITOR_ID_HEADER, type GenerationQuotaPeriod } from "./cont
 vi.mock("next/headers", () => ({ headers: vi.fn() }));
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
+/** Creates a valid documentation-range address so repeated test runs never reuse a request quota. */
+function getUniqueNetworkAddress(): string {
+  const addressId = randomUUID().replaceAll("-", "");
+
+  return [
+    "2001",
+    "db8",
+    addressId.slice(0, 4),
+    addressId.slice(4, 8),
+    addressId.slice(8, 12),
+    addressId.slice(12, 16),
+    addressId.slice(16, 20),
+    addressId.slice(20, 24),
+  ].join(":");
+}
+
 /** Gives one test a distinct durable browser identity without sharing quota state with another test. */
 function useGuestViewer(): string {
   const visitorId = randomUUID();
-  vi.mocked(headers).mockResolvedValue(new Headers({ [GENERATION_VISITOR_ID_HEADER]: visitorId }));
+
+  vi.mocked(headers).mockResolvedValue(
+    new Headers({
+      [GENERATION_VISITOR_ID_HEADER]: visitorId,
+      "x-vercel-forwarded-for": getUniqueNetworkAddress(),
+    }),
+  );
+
   vi.mocked(getSession).mockResolvedValue(null);
   return visitorId;
 }
@@ -260,13 +283,13 @@ describe(claimGenerationQuotaIfNeeded, () => {
     },
   );
 
-  it("keeps anonymous visitors on one network in separate quota buckets", async () => {
-    const networkAddress = "203.0.113.10";
+  it("does not reset a guest quota when a private window creates a new visitor ID", async () => {
+    const networkAddress = getUniqueNetworkAddress();
 
     vi.mocked(headers).mockResolvedValue(
       new Headers({
         [GENERATION_VISITOR_ID_HEADER]: randomUUID(),
-        "x-forwarded-for": networkAddress,
+        "x-vercel-forwarded-for": networkAddress,
       }),
     );
 
@@ -281,13 +304,51 @@ describe(claimGenerationQuotaIfNeeded, () => {
     vi.mocked(headers).mockResolvedValue(
       new Headers({
         [GENERATION_VISITOR_ID_HEADER]: randomUUID(),
-        "x-forwarded-for": networkAddress,
+        "x-vercel-forwarded-for": networkAddress,
       }),
     );
 
     await expect(
       claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({ status: "ready" });
+    ).resolves.toStrictEqual({
+      limit: { period: "day", resource: "course", viewer: "guest" },
+      status: "limitReached",
+    });
+  });
+
+  it("does not reset a guest quota when the same browser changes networks", async () => {
+    const visitorId = randomUUID();
+    const firstNetworkAddress = getUniqueNetworkAddress();
+    const secondNetworkAddress = getUniqueNetworkAddress();
+
+    vi.mocked(headers).mockResolvedValue(
+      new Headers({
+        [GENERATION_VISITOR_ID_HEADER]: visitorId,
+        "x-vercel-forwarded-for": firstNetworkAddress,
+      }),
+    );
+
+    const firstNetworkResults = await Promise.all(
+      Array.from({ length: 3 }, () =>
+        claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
+      ),
+    );
+
+    expect(firstNetworkResults.every((result) => result.status === "ready")).toBe(true);
+
+    vi.mocked(headers).mockResolvedValue(
+      new Headers({
+        [GENERATION_VISITOR_ID_HEADER]: visitorId,
+        "x-vercel-forwarded-for": secondNetworkAddress,
+      }),
+    );
+
+    await expect(
+      claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
+    ).resolves.toStrictEqual({
+      limit: { period: "day", resource: "course", viewer: "guest" },
+      status: "limitReached",
+    });
   });
 
   it("does not charge duplicate requests for the same target twice", async () => {
