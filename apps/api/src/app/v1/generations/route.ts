@@ -7,6 +7,7 @@ import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapte
 import { courseGenerationWorkflow } from "@/workflows/course-generation/course-generation-workflow";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { getCourseGenerationAccess } from "@zoonk/core/courses/generation-access";
+import { claimGenerationQuotaIfNeeded } from "@zoonk/core/generation-quotas/claim";
 import { getChapterGenerationAccess } from "@zoonk/core/workflows/chapter-generation-access";
 import { getLessonGenerationAccess } from "@zoonk/core/workflows/lesson-generation-access";
 import { type NextRequest, NextResponse } from "next/server";
@@ -25,6 +26,96 @@ async function acceptedGeneration(run: Run<unknown>) {
   });
 }
 
+/** Returns the public quota response while keeping accepted workflow creation on the happy path. */
+function reachedGenerationLimit(result: Awaited<ReturnType<typeof claimGenerationQuotaIfNeeded>>) {
+  return result.status === "limitReached" ? errors.generationLimitReached(result.limit) : null;
+}
+
+/** Starts a course workflow after the course prompt and its quota claim are accepted. */
+async function createCourseGeneration(coursePromptId: string) {
+  const access = await getCourseGenerationAccess(coursePromptId);
+
+  if (access.status === "notFound") {
+    return errors.notFound();
+  }
+
+  if (access.status === "invalid") {
+    return errors.badRequest(access.error);
+  }
+
+  const quotaResponse = reachedGenerationLimit(
+    await claimGenerationQuotaIfNeeded({
+      resource: "course",
+      shouldClaimQuota: access.shouldClaimQuota,
+      targetId: coursePromptId,
+    }),
+  );
+
+  if (quotaResponse) {
+    return quotaResponse;
+  }
+
+  const run = await start(courseGenerationWorkflow, [
+    { coursePromptId: access.coursePromptId, userId: access.userId },
+  ]);
+
+  return acceptedGeneration(run);
+}
+
+/** Starts a chapter workflow after its subscription gate and quota claim are accepted. */
+async function createChapterGeneration(chapterId: string) {
+  const access = await getChapterGenerationAccess(chapterId);
+
+  if (access.status === "notFound") {
+    return errors.notFound();
+  }
+
+  if (access.status === "subscriptionRequired") {
+    return errors.paymentRequired();
+  }
+
+  const quotaResponse = reachedGenerationLimit(
+    await claimGenerationQuotaIfNeeded({
+      resource: "chapter",
+      shouldClaimQuota: access.shouldClaimQuota,
+      targetId: chapterId,
+    }),
+  );
+
+  if (quotaResponse) {
+    return quotaResponse;
+  }
+
+  return acceptedGeneration(await start(chapterGenerationWorkflow, [chapterId]));
+}
+
+/** Starts a lesson workflow after its subscription gate and quota claim are accepted. */
+async function createLessonGeneration(lessonId: string) {
+  const access = await getLessonGenerationAccess(lessonId);
+
+  if (access.status === "notFound") {
+    return errors.notFound();
+  }
+
+  if (access.status === "subscriptionRequired") {
+    return errors.paymentRequired();
+  }
+
+  const quotaResponse = reachedGenerationLimit(
+    await claimGenerationQuotaIfNeeded({
+      resource: "lesson",
+      shouldClaimQuota: access.shouldClaimQuota,
+      targetId: lessonId,
+    }),
+  );
+
+  if (quotaResponse) {
+    return quotaResponse;
+  }
+
+  return acceptedGeneration(await start(lessonGenerationWorkflow, [lessonId]));
+}
+
 /**
  * Starts the workflow selected by a validated generation target while keeping
  * every existing authorization and subscription decision in Core.
@@ -37,48 +128,14 @@ async function createGeneration(request: NextRequest) {
   }
 
   if (parsed.data.target.type === "coursePrompt") {
-    const access = await getCourseGenerationAccess(parsed.data.target.id);
-
-    if (access.status === "notFound") {
-      return errors.notFound();
-    }
-
-    if (access.status === "invalid") {
-      return errors.badRequest(access.error);
-    }
-
-    const run = await start(courseGenerationWorkflow, [
-      { coursePromptId: access.coursePromptId, userId: access.userId },
-    ]);
-
-    return acceptedGeneration(run);
+    return createCourseGeneration(parsed.data.target.id);
   }
 
   if (parsed.data.target.type === "chapter") {
-    const access = await getChapterGenerationAccess(parsed.data.target.id);
-
-    if (access.status === "notFound") {
-      return errors.notFound();
-    }
-
-    if (access.status === "subscriptionRequired") {
-      return errors.paymentRequired();
-    }
-
-    return acceptedGeneration(await start(chapterGenerationWorkflow, [parsed.data.target.id]));
+    return createChapterGeneration(parsed.data.target.id);
   }
 
-  const access = await getLessonGenerationAccess(parsed.data.target.id);
-
-  if (access.status === "notFound") {
-    return errors.notFound();
-  }
-
-  if (access.status === "subscriptionRequired") {
-    return errors.paymentRequired();
-  }
-
-  return acceptedGeneration(await start(lessonGenerationWorkflow, [parsed.data.target.id]));
+  return createLessonGeneration(parsed.data.target.id);
 }
 
 export const POST = withApiErrorBoundary(createGeneration);

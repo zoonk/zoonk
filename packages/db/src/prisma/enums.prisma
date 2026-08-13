@@ -5,6 +5,17 @@ enum GenerationStatus {
   failed
 }
 
+enum GenerationQuotaPeriod {
+  day
+  month
+}
+
+enum GenerationQuotaResource {
+  course
+  chapter
+  lesson
+}
+
 enum LessonKind {
   alphabet
   custom

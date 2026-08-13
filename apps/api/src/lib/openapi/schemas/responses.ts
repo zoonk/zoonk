@@ -40,6 +40,11 @@ export const paymentRequiredResponse = {
   description: "Subscription required",
 } as const;
 
+export const tooManyRequestsResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Generation limit reached",
+} as const;
+
 export const unprocessableEntityResponse = {
   content: { "application/json": { schema: errorSchema } },
   description: "The request is valid but cannot be applied to the resource",

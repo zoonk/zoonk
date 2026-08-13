@@ -1,0 +1,26 @@
+model GenerationQuotaCounter {
+  id          String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  actorKey    String                  @map("actor_key") @db.VarChar(80)
+  resource    GenerationQuotaResource
+  period      GenerationQuotaPeriod
+  periodStart DateTime                @map("period_start")
+  count       Int                     @default(0)
+  createdAt   DateTime                @default(now()) @map("created_at")
+  updatedAt   DateTime                @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([actorKey, resource, period, periodStart], name: "generationQuotaCounter")
+  @@index([periodStart])
+  @@map("generation_quota_counters")
+}
+
+model GenerationQuotaClaim {
+  id        String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  actorKey  String                  @map("actor_key") @db.VarChar(80)
+  resource  GenerationQuotaResource
+  targetId  String                  @map("target_id") @db.Uuid
+  createdAt DateTime                @default(now()) @map("created_at")
+
+  @@unique([resource, targetId], name: "generationQuotaClaim")
+  @@index([actorKey, createdAt])
+  @@map("generation_quota_claims")
+}

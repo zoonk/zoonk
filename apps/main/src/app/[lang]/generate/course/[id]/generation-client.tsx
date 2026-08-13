@@ -1,5 +1,6 @@
 "use client";
 
+import { GenerationLimitCTA } from "@/components/generation/generation-limit-cta";
 import {
   GenerationProgressCompleted,
   GenerationTimeline,
@@ -113,6 +114,8 @@ export function GenerationClient({
     ? t("Taking you to your course...")
     : t("Taking you to your first lesson…");
 
+  const loginHref = `/login?next=${encodeURIComponent(`/generate/course/${requestId}`)}` as const;
+
   useCompletionRedirect({
     beforeRedirect: () => invalidateGeneratedCourse(redirectHref),
     status: generation.status,
@@ -157,6 +160,17 @@ export function GenerationClient({
       <GenerationProgressCompleted subtitle={completedSubtitle}>
         {completedTitle}
       </GenerationProgressCompleted>
+    );
+  }
+
+  if (generation.status === "limitReached" && generation.limit) {
+    return (
+      <GenerationLimitCTA
+        backHref="/"
+        backLabel={t("Back home")}
+        limit={generation.limit}
+        loginHref={loginHref}
+      />
     );
   }
 

@@ -1,10 +1,13 @@
 "use client";
 
+import { GENERATION_VISITOR_ID_HEADER } from "@zoonk/core/generation-quotas/contract";
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
+import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
 import { API_URL } from "@zoonk/utils/url";
 import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
 import { getGenerationEventsUrl } from "./_utils/generation-events-url";
+import { getGenerationLimit } from "./_utils/generation-limit";
 import { getWorkflowAuthHeaders } from "./auth-headers";
 import {
   type GenerationAction,
@@ -15,6 +18,7 @@ import {
   initialGenerationState,
 } from "./generation-store";
 import { type GenerationTarget } from "./generation-target";
+import { getGenerationVisitorId } from "./generation-visitor";
 import { useSSE } from "./use-sse";
 
 const MAX_STREAM_RECONNECTS = 5;
@@ -30,9 +34,15 @@ function getGenerationTriggerRequest({
   authHeaders: Awaited<ReturnType<typeof getWorkflowAuthHeaders>>;
   target: GenerationTarget;
 }): RequestInit {
+  const visitorId = getGenerationVisitorId();
+
   return {
     body: JSON.stringify({ target }),
-    headers: { ...authHeaders, "Content-Type": "application/json" },
+    headers: {
+      ...authHeaders,
+      ...(visitorId ? { [GENERATION_VISITOR_ID_HEADER]: visitorId } : {}),
+      "Content-Type": "application/json",
+    },
     method: "POST",
   };
 }
@@ -151,6 +161,14 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
       );
 
       if (!response.ok) {
+        const { data } = await safeAsync<unknown>(() => response.json());
+        const limit = getGenerationLimit(data);
+
+        if (limit) {
+          dispatch({ limit, type: "limitReached" });
+          return;
+        }
+
         throw new Error("Failed to start generation");
       }
 
@@ -196,6 +214,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     currentStep: state.currentStep,
     error: state.error,
     errorKind: state.errorKind,
+    limit: state.limit,
     retry,
     startedSteps: state.startedSteps,
     status: state.status,

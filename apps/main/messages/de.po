@@ -342,6 +342,7 @@ msgstr "Kapitel erstellen"
 
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 #: src/app/[lang]/generate/ch/[id]/generate-chapter-content.tsx
+#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
 msgctxt "qrEiLa"
 msgid "Back to course"
 msgstr "Zurück zum Kurs"
@@ -546,6 +547,7 @@ msgid "Keep your courses and progress in one place by logging in to your account
 msgstr "Melde dich an, um deine Kurse und Fortschritte an einem Ort zu verwalten."
 
 #: src/app/[lang]/(catalog)/my/page.tsx
+#: src/components/generation/generation-limit-cta.tsx
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Anmelden"
@@ -1399,6 +1401,7 @@ msgid "This subscription is managed by Zoonk. Contact support if you need help c
 msgstr "Dieses Abonnement wird von Zoonk verwaltet. Kontaktiere den Support, wenn du Hilfe beim Ändern oder Kündigen brauchst."
 
 #: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
+#: src/components/generation/generation-limit-cta.tsx
 msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "Support kontaktieren"
@@ -1689,6 +1692,7 @@ msgstr "Lektion erstellen"
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 #: src/app/[lang]/generate/l/[id]/generate-lesson-content.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "_N8rYN"
 msgid "Back to chapter"
 msgstr "Zurück zum Kapitel"
@@ -1806,6 +1810,7 @@ msgid "Finishing up..."
 msgstr "Abschließen..."
 
 #: src/app/[lang]/generate/course/[id]/generate-course-prompt-content.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "rPgekg"
 msgid "Back home"
 msgstr "Zurück zur Startseite"
@@ -2680,6 +2685,22 @@ msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Sende Feedback, Fragen oder Vorschläge an uns. Fülle das Formular aus oder schreibe uns direkt an hello@zoonk.com."
 
+#: src/components/generation/generation-limit-cta.tsx
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "LeTnGY"
+msgid "Get Zoonk Plus"
+msgstr "Zoonk Plus holen"
+
+#: src/components/generation/generation-limit-cta.tsx
+msgctxt "GLlr0C"
+msgid "{period, select, day {Daily} month {Monthly} other {Generation}} {resource, select, course {course} chapter {chapter} lesson {lesson} other {generation}} limit reached"
+msgstr "{resource, select, course {Kurse} chapter {Kapitel} lesson {Lektionen} other {Generierung}}: {period, select, day {Tageslimit erreicht} month {Monatslimit erreicht} other {Limit erreicht}}"
+
+#: src/components/generation/generation-limit-cta.tsx
+msgctxt "xMbHsD"
+msgid "{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated."
+msgstr "{period, select, day {Du hast das heutige Limit} month {Du hast das Limit für diesen Monat} other {Du hast das Limit}} für das Erstellen von {resource, select, course {Kursen} chapter {Kapiteln} lesson {Lektionen} other {Inhalten}} erreicht. Du kannst mit allen bereits erstellten Inhalten weiterlernen."
+
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "ctqXbT"
 msgid "We lost the progress connection. Your content may still be generating."
@@ -2754,11 +2775,6 @@ msgstr "Mit Plus weiterlernen"
 msgctxt "X4sblx"
 msgid "Plus gives you unlimited courses and lessons for whatever you want to learn."
 msgstr "Mit Plus erhältst du unbegrenzten Zugriff auf Kurse und Lektionen zu allem, was du lernen möchtest."
-
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "LeTnGY"
-msgid "Get Zoonk Plus"
-msgstr "Zoonk Plus holen"
 
 #: src/lib/belt-colors.ts
 msgctxt "znY9eW"

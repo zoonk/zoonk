@@ -24,6 +24,7 @@ describe(isGenerationInProgress, () => {
     expect(isGenerationInProgress("streaming")).toBe(true);
     expect(isGenerationInProgress("completed")).toBe(false);
     expect(isGenerationInProgress("error")).toBe(false);
+    expect(isGenerationInProgress("limitReached")).toBe(false);
   });
 });
 
@@ -129,6 +130,20 @@ describe(generationReducer, () => {
 
       expect(state.status).toBe("error");
       expect(state.errorKind).toBe("generation");
+    });
+  });
+
+  describe("limitReached", () => {
+    it("keeps structured quota context for the reached-limit CTA", () => {
+      const limit = { period: "day", resource: "course", viewer: "guest" } as const;
+
+      const state = generationReducer(initialGenerationState({ status: "triggering" }), {
+        limit,
+        type: "limitReached",
+      });
+
+      expect(state.status).toBe("limitReached");
+      expect(state.limit).toStrictEqual(limit);
     });
   });
 

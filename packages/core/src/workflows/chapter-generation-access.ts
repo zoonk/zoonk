@@ -2,6 +2,16 @@ import "server-only";
 import { hasActiveSubscription } from "../auth/subscription";
 import { getChapterForGeneration } from "../chapters/get-chapter-for-generation";
 
+/** A pending row with saved lessons is a status repair, while running and completed rows are resumptions. */
+function shouldClaimChapterGenerationQuota(
+  chapter: NonNullable<Awaited<ReturnType<typeof getChapterForGeneration>>>,
+): boolean {
+  const canGenerate =
+    chapter.generationStatus === "pending" || chapter.generationStatus === "failed";
+
+  return canGenerate && chapter._count.lessons === 0;
+}
+
 /**
  * Applies the existing first-chapter subscription rule to an AI-owned chapter
  * before a delivery app starts its generation workflow.
@@ -17,7 +27,11 @@ export async function getChapterGenerationAccess(chapterId: string) {
     return { chapter, status: "subscriptionRequired" as const };
   }
 
-  return { chapter, status: "ready" as const };
+  return {
+    chapter,
+    shouldClaimQuota: shouldClaimChapterGenerationQuota(chapter),
+    status: "ready" as const,
+  };
 }
 
 /**

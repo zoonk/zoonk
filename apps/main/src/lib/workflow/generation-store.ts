@@ -1,6 +1,13 @@
+import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contract";
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 
-export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed" | "error";
+export type GenerationStatus =
+  | "idle"
+  | "triggering"
+  | "streaming"
+  | "completed"
+  | "error"
+  | "limitReached";
 
 export type GenerationErrorKind = "connection" | "generation";
 
@@ -19,6 +26,7 @@ export type GenerationState<TStep extends string = string> = {
   currentStep: TStep | null;
   error: string | null;
   errorKind: GenerationErrorKind | null;
+  limit: GenerationQuotaLimit | null;
   completionEntityId: string | null;
   reconnectCount: number;
   runId: string | null;
@@ -29,6 +37,7 @@ export type GenerationState<TStep extends string = string> = {
 export type GenerationAction<TStep extends string = string> =
   | { type: "reconnect" }
   | { type: "reset" }
+  | { type: "limitReached"; limit: GenerationQuotaLimit }
   | { type: "setError"; error: string | null; errorKind?: GenerationErrorKind }
   | { type: "stepCompleted"; step: TStep }
   | { type: "stepStarted"; step: TStep }
@@ -45,6 +54,7 @@ export function initialGenerationState<TStep extends string = string>(
     currentStep: null,
     error: null,
     errorKind: null,
+    limit: null,
     reconnectCount: 0,
     runId: null,
     startedSteps: [] as TStep[],
@@ -62,6 +72,14 @@ export function generationReducer<TStep extends string>(
       return { ...state, reconnectCount: state.reconnectCount + 1 };
     case "reset":
       return initialGenerationState<TStep>();
+    case "limitReached":
+      return {
+        ...state,
+        error: null,
+        errorKind: null,
+        limit: action.limit,
+        status: "limitReached",
+      };
     case "setError":
       return {
         ...state,
@@ -86,7 +104,11 @@ export function generationReducer<TStep extends string>(
           : [...state.startedSteps, action.step],
       };
     case "streamEnded":
-      if (state.status === "completed" || state.status === "error") {
+      if (
+        state.status === "completed" ||
+        state.status === "error" ||
+        state.status === "limitReached"
+      ) {
         return state;
       }
 
@@ -101,7 +123,7 @@ export function generationReducer<TStep extends string>(
       return { ...state, completionEntityId: action.entityId ?? null, status: "completed" };
 
     case "triggerStart":
-      return { ...state, error: null, errorKind: null, status: "triggering" };
+      return { ...state, error: null, errorKind: null, limit: null, status: "triggering" };
     case "triggerSuccess":
       return { ...state, runId: action.runId, status: "streaming" };
     default: {

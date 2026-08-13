@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { GENERATION_VISITOR_ID_HEADER } from "@zoonk/core/generation-quotas/contract";
 import {
   COURSE_COMPLETION_STEP,
   INTRODUCTION_LESSON_COMPLETION_STEP,
@@ -11,7 +12,13 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
+import {
+  type GenerationTriggerResponse,
+  getGenerationLimitResponse,
+  isGenerationEvents,
+  isGenerationTrigger,
+  routeGenerationApis,
+} from "./generation-api";
 
 /**
  * Test Architecture for Course Generation Page
@@ -39,7 +46,7 @@ const TEST_RUN_ID = "test-run-id-12345";
 type MockApiOptions = {
   assertBearerAuth?: boolean;
   triggerResponseGate?: Promise<unknown>;
-  triggerResponse?: { id?: string; error?: string; status?: number };
+  triggerResponse?: GenerationTriggerResponse;
   streamMessages?: { entityId?: string; reason?: string; step: string; status: string }[];
   streamError?: boolean;
   statusDelayMs?: number;
@@ -89,9 +96,9 @@ function createRouteHandler(options: MockApiOptions) {
 
       await triggerResponseGate;
 
-      if (triggerResponse.error) {
+      if (triggerResponse.status && triggerResponse.status >= 400) {
         await route.fulfill({
-          body: JSON.stringify({ error: triggerResponse.error }),
+          body: JSON.stringify(triggerResponse.body ?? { error: triggerResponse.error }),
           contentType: "application/json",
           status: triggerResponse.status ?? 500,
         });
@@ -211,7 +218,7 @@ function getIntroLessonCompletionTarget({
 
 test.describe("Generate Course Page", () => {
   test("starts course generation for unauthenticated users", async ({ page }) => {
-    const request = await coursePromptFixture({
+    const coursePrompt = await coursePromptFixture({
       canonicalTitle: "E2E Unauth Course Generation",
       generationStatus: "pending",
       language: "en",
@@ -222,11 +229,115 @@ test.describe("Generate Course Page", () => {
       streamMessages: [{ status: "started", step: "getCoursePrompt" }],
     });
 
-    await page.goto(`/generate/course/${request.id}`);
+    const generationRequest = page.waitForRequest(
+      (pageRequest) =>
+        pageRequest.method() === "POST" &&
+        isGenerationTrigger({ request: pageRequest, targetType: "coursePrompt" }),
+    );
+
+    await page.goto(`/generate/course/${coursePrompt.id}`);
+
+    const generationTriggerRequest = await generationRequest;
+    const requestHeaders = generationTriggerRequest.headers();
+
+    expect(requestHeaders[GENERATION_VISITOR_ID_HEADER.toLowerCase()]).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u,
+    );
 
     await expect(
       page.getByRole("heading", { name: "Creating the E2E Unauth Course Generation course" }),
     ).toBeVisible({ timeout: 10_000 });
+  });
+
+  test("explains a daily guest limit and offers login without hiding existing learning", async ({
+    page,
+  }) => {
+    const request = await coursePromptFixture({
+      canonicalTitle: "E2E Limited Course Generation",
+      generationStatus: "pending",
+      language: "en",
+    });
+
+    await setupMockApis(page, {
+      triggerResponse: getGenerationLimitResponse({
+        period: "day",
+        resource: "course",
+        viewer: "guest",
+      }),
+    });
+
+    await page.goto(`/generate/course/${request.id}`);
+
+    await expect(page.getByRole("heading", { name: "Daily course limit reached" })).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "You've reached today's limit for generating courses. You can keep learning from anything already generated.",
+      ),
+    ).toBeVisible();
+
+    const loginLink = page.getByRole("link", { name: "Log in" });
+
+    await expect(loginLink).toHaveAttribute(
+      "href",
+      `/login?next=%2Fgenerate%2Fcourse%2F${request.id}`,
+    );
+  });
+
+  test("offers a subscription when an authenticated user reaches a monthly limit", async ({
+    authenticatedPage,
+  }) => {
+    const request = await coursePromptFixture({
+      canonicalTitle: "E2E Authenticated Course Limit",
+      generationStatus: "pending",
+      language: "en",
+    });
+
+    await setupMockApis(authenticatedPage, {
+      triggerResponse: getGenerationLimitResponse({
+        period: "month",
+        resource: "course",
+        viewer: "authenticated",
+      }),
+    });
+
+    await authenticatedPage.goto(`/generate/course/${request.id}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: "Monthly course limit reached" }),
+    ).toBeVisible();
+
+    await expect(authenticatedPage.getByRole("link", { name: "Get Zoonk Plus" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+  });
+
+  test("offers support when a subscriber reaches a daily limit", async ({ authenticatedPage }) => {
+    const request = await coursePromptFixture({
+      canonicalTitle: "E2E Subscriber Course Limit",
+      generationStatus: "pending",
+      language: "en",
+    });
+
+    await setupMockApis(authenticatedPage, {
+      triggerResponse: getGenerationLimitResponse({
+        period: "day",
+        resource: "course",
+        viewer: "subscriber",
+      }),
+    });
+
+    await authenticatedPage.goto(`/generate/course/${request.id}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: "Daily course limit reached" }),
+    ).toBeVisible();
+
+    await expect(authenticatedPage.getByRole("link", { name: "Contact support" })).toHaveAttribute(
+      "href",
+      "/support",
+    );
   });
 
   test.describe("Initial triggering state", () => {
