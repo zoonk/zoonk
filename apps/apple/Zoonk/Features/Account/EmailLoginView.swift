@@ -23,6 +23,8 @@ struct EmailLoginView: View {
         .keyboardType(.emailAddress)
         .autocorrectionDisabled()
         .textContentType(.emailAddress)
+        .submitLabel(.continue)
+        .onSubmit(sendEmailCode)
         .accessibilityLabel(
           Text("Email", tableName: "Account", comment: "Email sign-in field label")
         )
@@ -43,6 +45,7 @@ struct EmailLoginView: View {
           }
           .keyboardType(.numberPad)
           .textContentType(.oneTimeCode)
+          .onSubmit(signIn)
           .accessibilityLabel(
             Text(
               "Verification code",
@@ -62,13 +65,7 @@ struct EmailLoginView: View {
 
       Section {
         if hasSentCode {
-          Button {
-            Task {
-              await session.signInWithEmailCode(
-                email: normalizedEmail,
-                code: normalizedCode)
-            }
-          } label: {
+          Button(action: signIn) {
             submitLabel(
               title: Text(
                 "Sign in",
@@ -89,11 +86,7 @@ struct EmailLoginView: View {
           }
           .disabled(session.isWorking)
         } else {
-          Button {
-            Task {
-              hasSentCode = await session.sendEmailCode(email: normalizedEmail)
-            }
-          } label: {
+          Button(action: sendEmailCode) {
             submitLabel(
               title: Text(
                 "Send code",
@@ -107,6 +100,21 @@ struct EmailLoginView: View {
       if session.failure != nil {
         Section {
           AccountFailureMessage(failure: session.failure)
+        }
+      }
+    }
+    .toolbar {
+      if hasSentCode {
+        ToolbarItemGroup(placement: .keyboard) {
+          Spacer()
+
+          Button(action: signIn) {
+            Text(
+              "Sign in",
+              tableName: "Account",
+              comment: "Button that verifies an email code")
+          }
+          .disabled(!isCodeValid || session.isWorking)
         }
       }
     }
@@ -134,6 +142,30 @@ struct EmailLoginView: View {
 
   private var isCodeValid: Bool {
     normalizedCode.count == 6
+  }
+
+  /// Sends a valid email from either the form button or the keyboard's Continue key while preserving the same disabled-state rules for both entry points.
+  private func sendEmailCode() {
+    guard isEmailValid, !session.isWorking else {
+      return
+    }
+
+    Task {
+      hasSentCode = await session.sendEmailCode(email: normalizedEmail)
+    }
+  }
+
+  /// Verifies a complete code from either the form button or the keyboard's Go key so hardware and software keyboards behave consistently.
+  private func signIn() {
+    guard isCodeValid, !session.isWorking else {
+      return
+    }
+
+    Task {
+      await session.signInWithEmailCode(
+        email: normalizedEmail,
+        code: normalizedCode)
+    }
   }
 
   /// Pops the nested email form after authentication so the account sheet can reveal profile setup or the signed-in account overview immediately.

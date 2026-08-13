@@ -85,12 +85,13 @@ final class ZoonkUITests: XCTestCase {
       "Expected the sign-in sheet to avoid a redundant Account title")
   }
 
-  /// Proves the accessible email field uses the email keyboard and accepts lowercase input without changing what the user typed.
+  /// Proves the accessible email field uses the email keyboard, preserves lowercase input, and submits through the keyboard action.
   @MainActor
   func testEmailSignInUsesAccessibleEmailKeyboard() {
     continueAfterFailure = false
 
     let app = makeApp()
+    app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     app.launch()
 
     let accountButton = app.buttons["Account"]
@@ -116,6 +117,13 @@ final class ZoonkUITests: XCTestCase {
 
     emailField.typeText("test@example.com")
     XCTAssertEqual(emailField.value as? String, "test@example.com")
+
+    emailField.typeText("\n")
+
+    XCTAssertTrue(
+      app.staticTexts["Zoonk couldn't connect. Check your connection and try again."]
+        .waitForExistence(timeout: 5),
+      "Expected the keyboard action to submit the email code request")
   }
 
   /// Proves required profile setup cannot be dismissed from its toolbar before the user saves a valid profile.
