@@ -9,8 +9,8 @@ import { LEARN_TITLE_ID } from "./learn-title";
 const VISIBLE_SUGGESTIONS = 5;
 
 /**
- * Streams request-time suggestions without rendering a visible fallback set
- * that would reflow when the shuffled links replace it.
+ * Streams request-time suggestions into a navigation region that reserves its
+ * responsive row count without rendering a visible fallback set.
  */
 async function RandomSuggestionLinks({ suggestions }: { suggestions: string[] }) {
   await io();
@@ -81,7 +81,7 @@ export async function LearnContent() {
 
       <nav
         aria-label={t("Suggested subjects")}
-        className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2"
+        className="flex min-h-19 flex-wrap items-center justify-center gap-x-4 gap-y-2 min-[390px]:min-h-12 min-[672px]:min-h-5"
       >
         <Suspense fallback={null}>
           <RandomSuggestionLinks suggestions={allSuggestions} />
