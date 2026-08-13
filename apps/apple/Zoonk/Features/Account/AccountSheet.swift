@@ -13,6 +13,7 @@ private struct AccountDeletionDestination: Hashable {
 
 struct AccountSheet: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(SessionStore.self) private var session
   @State private var path = [AccountDestination]()
 
@@ -70,6 +71,10 @@ struct AccountSheet: View {
     return account.needsProfileSetup
   }
 
+  private var accountTitleDisplayMode: ToolbarTitleDisplayMode {
+    horizontalSizeClass == .regular ? .inline : .inlineLarge
+  }
+
   @ViewBuilder
   private var accountContent: some View {
     switch session.state {
@@ -92,6 +97,7 @@ struct AccountSheet: View {
         .navigationTitle(
           Text("Account", tableName: "Account", comment: "Account sheet navigation title")
         )
+        .toolbarTitleDisplayMode(accountTitleDisplayMode)
       }
     case .unavailable:
       ContentUnavailableView {
@@ -122,6 +128,7 @@ struct AccountSheet: View {
       .navigationTitle(
         Text("Account", tableName: "Account", comment: "Account sheet navigation title")
       )
+      .toolbarTitleDisplayMode(accountTitleDisplayMode)
     }
   }
 
@@ -245,6 +252,7 @@ private struct SignedInAccountView: View {
         }
       }
     }
+    .tint(.primary)
   }
 }
 
