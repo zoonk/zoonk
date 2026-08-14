@@ -32,4 +32,35 @@ describe(proxy, () => {
       error: { code: "FORBIDDEN", message: "Same-origin request required" },
     });
   });
+
+  it("blocks cookie-authenticated API requests even with a bearer authorization header", async () => {
+    const request = new NextRequest(`${INTERNAL_API_ORIGIN}/v1/me`, {
+      headers: {
+        authorization: "Bearer invalid",
+        cookie: "better-auth.session_token=test",
+        origin: PORTLESS_API_ORIGIN,
+      },
+      method: "DELETE",
+    });
+
+    const response = proxy(request);
+
+    expect(response.status).toBe(403);
+
+    await expect(response.json()).resolves.toStrictEqual({
+      error: { code: "FORBIDDEN", message: "Same-origin request required" },
+    });
+  });
+
+  it("passes cookie-free bearer requests without an origin", () => {
+    const request = new NextRequest(`${INTERNAL_API_ORIGIN}/v1/me`, {
+      headers: { authorization: "Bearer test" },
+      method: "DELETE",
+    });
+
+    const response = proxy(request);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+  });
 });

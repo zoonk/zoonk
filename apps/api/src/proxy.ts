@@ -26,24 +26,9 @@ function isAuthPageRequest(request: NextRequest): boolean {
 }
 
 /**
- * Distinguishes token-authenticated native and CLI requests from browser
- * requests that rely on automatically attached cookies.
- */
-function hasBearerToken(request: NextRequest): boolean {
-  const authorization = request.headers.get("authorization")?.trim();
-
-  if (!authorization) {
-    return false;
-  }
-
-  const [scheme, token] = authorization.split(/\s+/u, 2);
-  return scheme?.toLowerCase() === "bearer" && Boolean(token);
-}
-
-/**
  * Identifies unsafe custom API requests whose authentication cookies could
  * otherwise be replayed by another site. Better Auth validates its own routes,
- * while guest requests and explicit bearer clients do not need this guard.
+ * while requests without cookies do not expose cookie auth to cross-site replay.
  */
 function requiresSameOrigin(request: NextRequest): boolean {
   const pathname = request.nextUrl.pathname;
@@ -51,12 +36,7 @@ function requiresSameOrigin(request: NextRequest): boolean {
   const isBetterAuthRoute =
     pathname === BETTER_AUTH_PATH || pathname.startsWith(`${BETTER_AUTH_PATH}/`);
 
-  return (
-    !isBetterAuthRoute &&
-    !SAFE_METHODS.has(request.method) &&
-    request.headers.has("cookie") &&
-    !hasBearerToken(request)
-  );
+  return !isBetterAuthRoute && !SAFE_METHODS.has(request.method) && request.headers.has("cookie");
 }
 
 /**
@@ -94,7 +74,7 @@ export function proxy(request: NextRequest) {
     return errors.forbidden("Same-origin request required");
   }
 
-  // Remaining requests without an origin are guests or explicit bearer clients.
+  // Requests that reach here without an origin use a safe method, guest auth, or cookie-free bearer auth.
   // We rate-limit requests in our Vercel config
   if (!origin) {
     return createPassThroughResponse(request);

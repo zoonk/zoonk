@@ -7,10 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BEB8AB8A3022709B00E0E150 /* Zoonk Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5A0A00010000000000000001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00200000000000000001 /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5A0A01080000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BEB8AB563022709A00E0E150 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BEB8AB5D3022709A00E0E150;
+			remoteInfo = Zoonk;
+		};
 		BEB8AB783022709B00E0E150 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BEB8AB563022709A00E0E150 /* Project object */;
@@ -18,38 +25,37 @@
 			remoteGlobalIDString = BEB8AB5D3022709A00E0E150;
 			remoteInfo = Zoonk;
 		};
-		BEB8AB8B3022709B00E0E150 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BEB8AB563022709A00E0E150 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BEB8AB903022709B00E0E150;
-			remoteInfo = "Zoonk Watch App";
-		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		BEB8AB933022709B00E0E150 /* Embed Watch Content */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
-			files = (
-				BEB8AB8A3022709B00E0E150 /* Zoonk Watch App.app in Embed Watch Content */,
-			);
-			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		5A0A00400000000000000001 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
+		5A0A00410000000000000001 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
+		5A0A01000000000000000001 /* ZoonkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB5E3022709A00E0E150 /* Zoonk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zoonk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zoonk Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5A0A00300000000000000001 /* Exceptions for "Zoonk" folder in "Zoonk" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5A0A01010000000000000001 /* ZoonkTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ZoonkTests;
+			sourceTree = "<group>";
+		};
 		BEB8AB603022709A00E0E150 /* Zoonk */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5A0A00300000000000000001 /* Exceptions for "Zoonk" folder in "Zoonk" target */,
+			);
 			path = Zoonk;
 			sourceTree = "<group>";
 		};
@@ -58,34 +64,25 @@
 			path = ZoonkUITests;
 			sourceTree = "<group>";
 		};
-		BEB8AB8D3022709B00E0E150 /* Shared */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		BEB8AB8E3022709B00E0E150 /* ZoonkWatch */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ZoonkWatch;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5A0A01050000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BEB8AB5B3022709A00E0E150 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A0A00010000000000000001 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BEB8AB743022709B00E0E150 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BEB8AB8F3022709B00E0E150 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -98,9 +95,10 @@
 		BEB8AB553022709A00E0E150 = {
 			isa = PBXGroup;
 			children = (
+				5A0A00400000000000000001 /* Debug.xcconfig */,
+				5A0A00410000000000000001 /* Release.xcconfig */,
 				BEB8AB603022709A00E0E150 /* Zoonk */,
-				BEB8AB8D3022709B00E0E150 /* Shared */,
-				BEB8AB8E3022709B00E0E150 /* ZoonkWatch */,
+				5A0A01010000000000000001 /* ZoonkTests */,
 				BEB8AB7A3022709B00E0E150 /* ZoonkUITests */,
 				BEB8AB5F3022709A00E0E150 /* Products */,
 			);
@@ -110,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				BEB8AB5E3022709A00E0E150 /* Zoonk.app */,
-				BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */,
+				5A0A01000000000000000001 /* ZoonkTests.xctest */,
 				BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */,
 			);
 			name = Products;
@@ -119,6 +117,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5A0A01030000000000000001 /* ZoonkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A0A01020000000000000001 /* Build configuration list for PBXNativeTarget "ZoonkTests" */;
+			buildPhases = (
+				5A0A01040000000000000001 /* Sources */,
+				5A0A01050000000000000001 /* Frameworks */,
+				5A0A01060000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5A0A01070000000000000001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5A0A01010000000000000001 /* ZoonkTests */,
+			);
+			name = ZoonkTests;
+			packageProductDependencies = (
+			);
+			productName = ZoonkTests;
+			productReference = 5A0A01000000000000000001 /* ZoonkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		BEB8AB5D3022709A00E0E150 /* Zoonk */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BEB8AB813022709B00E0E150 /* Build configuration list for PBXNativeTarget "Zoonk" */;
@@ -126,19 +147,17 @@
 				BEB8AB5A3022709A00E0E150 /* Sources */,
 				BEB8AB5B3022709A00E0E150 /* Frameworks */,
 				BEB8AB5C3022709A00E0E150 /* Resources */,
-				BEB8AB933022709B00E0E150 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				BEB8AB943022709B00E0E150 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				BEB8AB603022709A00E0E150 /* Zoonk */,
-				BEB8AB8D3022709B00E0E150 /* Shared */,
 			);
 			name = Zoonk;
 			packageProductDependencies = (
+				5A0A00200000000000000001 /* GoogleSignIn */,
 			);
 			productName = Zoonk;
 			productReference = BEB8AB5E3022709A00E0E150 /* Zoonk.app */;
@@ -167,29 +186,6 @@
 			productReference = BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		BEB8AB903022709B00E0E150 /* Zoonk Watch App */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BEB8AB973022709B00E0E150 /* Build configuration list for PBXNativeTarget "Zoonk Watch App" */;
-			buildPhases = (
-				BEB8AB913022709B00E0E150 /* Sources */,
-				BEB8AB8F3022709B00E0E150 /* Frameworks */,
-				BEB8AB923022709B00E0E150 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				BEB8AB8E3022709B00E0E150 /* ZoonkWatch */,
-				BEB8AB8D3022709B00E0E150 /* Shared */,
-			);
-			name = "Zoonk Watch App";
-			packageProductDependencies = (
-			);
-			productName = "Zoonk Watch App";
-			productReference = BEB8AB8C3022709B00E0E150 /* Zoonk Watch App.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -200,15 +196,16 @@
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
+					5A0A01030000000000000001 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = BEB8AB5D3022709A00E0E150;
+					};
 					BEB8AB5D3022709A00E0E150 = {
 						CreatedOnToolsVersion = 26.6;
 					};
 					BEB8AB763022709B00E0E150 = {
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = BEB8AB5D3022709A00E0E150;
-					};
-					BEB8AB903022709B00E0E150 = {
-						CreatedOnToolsVersion = 26.6;
 					};
 				};
 			};
@@ -227,17 +224,27 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BEB8AB5F3022709A00E0E150 /* Products */;
+			packageReferences = (
+				5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				BEB8AB5D3022709A00E0E150 /* Zoonk */,
-				BEB8AB903022709B00E0E150 /* Zoonk Watch App */,
+				5A0A01030000000000000001 /* ZoonkTests */,
 				BEB8AB763022709B00E0E150 /* ZoonkUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5A0A01060000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BEB8AB5C3022709A00E0E150 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -252,16 +259,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BEB8AB923022709B00E0E150 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5A0A01040000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
 		BEB8AB5A3022709A00E0E150 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -276,30 +283,70 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BEB8AB913022709B00E0E150 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5A0A01070000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
+			targetProxy = 5A0A01080000000000000001 /* PBXContainerItemProxy */;
+		};
 		BEB8AB793022709B00E0E150 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
 			targetProxy = BEB8AB783022709B00E0E150 /* PBXContainerItemProxy */;
 		};
-		BEB8AB943022709B00E0E150 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = BEB8AB903022709B00E0E150 /* Zoonk Watch App */;
-			targetProxy = BEB8AB8B3022709B00E0E150 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		5A0A01090000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGXYKAQUT9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.dev.ZoonkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zoonk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Zoonk";
+			};
+			name = Debug;
+		};
+		5A0A010A0000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGXYKAQUT9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.ZoonkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zoonk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Zoonk";
+			};
+			name = Release;
+		};
 		BEB8AB7F3022709B00E0E150 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -418,17 +465,16 @@
 		};
 		BEB8AB823022709B00E0E150 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5A0A00400000000000000001 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				CODE_SIGN_ENTITLEMENTS = Zoonk/Zoonk.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CGXYKAQUT9;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zoonk/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -439,41 +485,40 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_PREPROCESS = YES;
+				INFOPLIST_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"ZOONK_DEBUG_ALLOW_INSECURE_HTTP=1",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.Zoonk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,7";
-				TVOS_DEPLOYMENT_TARGET = 18.0;
-				XROS_DEPLOYMENT_TARGET = 2.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				ZOONK_API_BASE_URL = "$(ZOONK_DEVELOPMENT_API_BASE_URL)";
 			};
 			name = Debug;
 		};
 		BEB8AB833022709B00E0E150 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5A0A00410000000000000001 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				CODE_SIGN_ENTITLEMENTS = Zoonk/Zoonk.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CGXYKAQUT9;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zoonk/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -484,25 +529,21 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.Zoonk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,7";
-				TVOS_DEPLOYMENT_TARGET = 18.0;
-				XROS_DEPLOYMENT_TARGET = 2.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				ZOONK_API_BASE_URL = "https://api.zoonk.com";
 			};
 			name = Release;
 		};
@@ -515,9 +556,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.ZoonkUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.dev.ZoonkUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -540,7 +581,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.ZoonkUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -552,69 +593,18 @@
 			};
 			name = Release;
 		};
-		BEB8AB953022709B00E0E150 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CGXYKAQUT9;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Zoonk;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.zoonk.Zoonk;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.Zoonk.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "watchos watchsimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = Debug;
-		};
-		BEB8AB963022709B00E0E150 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CGXYKAQUT9;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Zoonk;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.zoonk.Zoonk;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.Zoonk.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "watchos watchsimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5A0A01020000000000000001 /* Build configuration list for PBXNativeTarget "ZoonkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5A0A01090000000000000001 /* Debug */,
+				5A0A010A0000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BEB8AB593022709A00E0E150 /* Build configuration list for PBXProject "Zoonk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -642,16 +632,26 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BEB8AB973022709B00E0E150 /* Build configuration list for PBXNativeTarget "Zoonk Watch App" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BEB8AB953022709B00E0E150 /* Debug */,
-				BEB8AB963022709B00E0E150 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
-	};
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5A0A00200000000000000001 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductDependency section */
+};
 	rootObject = BEB8AB563022709A00E0E150 /* Project object */;
 }

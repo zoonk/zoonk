@@ -90,6 +90,8 @@
     "./steps/contract/image": "./src/steps/contract/image.ts",
     "./steps/image": "./src/steps/step-image.ts",
     "./users/current": "./src/users/current-user.ts",
+    "./users/delete-current": "./src/users/delete-current-user.ts",
+    "./users/has-apple-account": "./src/users/get-current-user-has-apple-account.ts",
     "./users/lesson-visibility": "./src/users/lesson-visibility.ts",
     "./users/otp/send": "./src/users/send-otp.ts",
     "./users/session": "./src/users/get-session.ts",

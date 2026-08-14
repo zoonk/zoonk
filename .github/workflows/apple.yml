@@ -32,23 +32,9 @@ jobs:
   build:
     runs-on: macos-26
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: iOS
-            target: build-ios
-          - platform: macOS
-            target: build-macos
-          - platform: tvOS
-            target: build-tvos
-          - platform: visionOS
-            target: build-visionos
-          - platform: watchOS
-            target: build-watchos
     steps:
       - name: Check out code
         uses: actions/checkout@v7
 
-      - name: Build ${{ matrix.platform }}
-        run: make -C apps/apple ${{ matrix.target }}
+      - name: Build iPhone and iPad app
+        run: make -C apps/apple build

@@ -6,13 +6,13 @@ import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
   bearer,
-  emailOTP,
   jwt,
   oneTimeToken,
   organization,
   username,
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
+import { deleteUserDependenciesBeforeAuthDelete } from "./account-deletion";
 import {
   AUTH_MEMBERSHIP_LIMIT,
   AUTH_ORGANIZATION_LIMIT,
@@ -22,8 +22,8 @@ import {
   SESSION_EXPIRES_IN_DAYS,
 } from "./config";
 import { ensureUserProgressAfterAuthCreate } from "./db-hooks";
+import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { ac, admin, member, owner } from "./permissions";
-import { sendVerificationOTP } from "./plugins/otp";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
@@ -53,6 +53,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
   trustedOrigins: ["https://appleid.apple.com", ...getDevelopmentTrustedOrigins()],
+  user: { deleteUser: { beforeDelete: deleteUserDependenciesBeforeAuthDelete, enabled: true } },
 };
 
 export const baseAuthPlugins = [
@@ -81,7 +82,7 @@ export const baseAuthPlugins = [
 ] as const;
 
 export const fullPlugins = [
-  emailOTP({ overrideDefaultEmailVerification: true, sendVerificationOTP, storeOTP: "hashed" }),
+  createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   jwt(),
   bearer(),

@@ -1,0 +1,12 @@
+{
+  "fill": { "solid": "extended-srgb:0.09020,0.09020,0.09020,1.00000" },
+  "groups": [
+    {
+      "layers": [{ "image-name": "zoonk-app-icon-foreground.svg", "name": "Zoonk Mark" }],
+      "name": "Mark",
+      "shadow": { "kind": "neutral", "opacity": 0.5 },
+      "translucency": { "enabled": true, "value": 0.5 }
+    }
+  ],
+  "supported-platforms": { "squares": "shared" }
+}

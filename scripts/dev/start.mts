@@ -12,6 +12,7 @@ import {
   getPnpmCommand,
   runForegroundCommand,
 } from "./process.mts";
+import { writeAppleDevelopmentConfiguration } from "./write-apple-configuration.mts";
 
 const currentDirectory = process.cwd();
 const directMode = process.argv.includes("--direct");
@@ -64,6 +65,8 @@ function getServiceUrl({
 
 /** Runs the preserved fixed-port topology when Portless needs to be bypassed during the trial. */
 async function startDirectDevelopment(): Promise<CommandResult> {
+  writeAppleDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
+
   return runDevelopmentCommand({ args: ["exec", "turbo", "dev:direct"], environment: process.env });
 }
 
@@ -79,6 +82,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   const apiUrl = getServiceUrl({ environment, projectName, serviceName: "api" });
   const mailboxUrl = getServiceUrl({ environment, projectName, serviceName: "mailbox" });
 
+  writeAppleDevelopmentConfiguration({ apiUrl, currentDirectory });
   process.stdout.write(`Main: ${mainUrl}\nAPI: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
 
   return runDevelopmentCommand({

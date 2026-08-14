@@ -1,0 +1,4 @@
+PRODUCT_BUNDLE_IDENTIFIER = com.zoonk
+GOOGLE_IOS_CLIENT_ID = 435450998434-n3v02l6stkphliv8kllem0baihb60kff.apps.googleusercontent.com
+GOOGLE_REVERSED_IOS_CLIENT_ID = com.googleusercontent.apps.435450998434-n3v02l6stkphliv8kllem0baihb60kff
+GOOGLE_SERVER_CLIENT_ID = 435450998434-lq6s9h44sblhhv2c0kegend6np3j2kat.apps.googleusercontent.com
