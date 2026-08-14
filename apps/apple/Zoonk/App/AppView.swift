@@ -15,7 +15,13 @@ struct AppView: View {
       ForEach(AppSection.allCases) { section in
         Tab(value: section, role: section.tabRole) {
           NavigationStack {
-            sectionRoot(section)
+            section.tabContent
+              .navigationTitle(Text(section.title))
+              .toolbarTitleDisplayMode(.inlineLarge)
+              .modifier(AdaptiveNavigationTitle())
+              .toolbar {
+                accountToolbarItem
+              }
           }
         } label: {
           Label {
@@ -40,6 +46,20 @@ struct AppView: View {
     }
   }
 
+  @ToolbarContentBuilder
+  private var accountToolbarItem: some ToolbarContent {
+    if #available(iOS 26.0, *) {
+      ToolbarItem(placement: .topBarTrailing) {
+        accountButton
+      }
+      .sharedBackgroundVisibility(.hidden)
+    } else {
+      ToolbarItem(placement: .topBarTrailing) {
+        accountButton
+      }
+    }
+  }
+
   private var accountButton: some View {
     AccountToolbarButton {
       isAccountPresented = true
@@ -56,24 +76,13 @@ struct AppView: View {
       await session.reconcileSynchronizedCredential()
     }
   }
+}
 
-  /// Keeps the App Store-style account affordance beside the large screen title on both iPhone and iPad.
-  private func sectionRoot(_ section: AppSection) -> some View {
-    section.tabContent
-      .safeAreaInset(edge: .top, spacing: 0) {
-        HStack {
-          Text(section.title)
-            .font(.largeTitle.bold())
-            .accessibilityAddTraits(.isHeader)
+private struct AdaptiveNavigationTitle: ViewModifier {
+  @Environment(\.tabBarPlacement) private var tabBarPlacement
 
-          Spacer()
-
-          accountButton
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(.background)
-      }
+  func body(content: Content) -> some View {
+    content.toolbar(removing: tabBarPlacement == .topBar ? .title : nil)
   }
 }
 

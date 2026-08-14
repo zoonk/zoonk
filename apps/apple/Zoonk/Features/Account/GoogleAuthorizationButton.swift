@@ -1,16 +1,24 @@
 import SwiftUI
+import UIKit
 
 private let googleButtonLogoSize: CGFloat = 20
 
 /// Uses Google's official multicolor mark and current button metrics while keeping the action text in Zoonk's native String Catalog so it follows the app language.
 struct GoogleAuthorizationButton: View {
   @Environment(\.colorScheme) private var colorScheme
+  @State private var presentationContext = GoogleAuthenticationPresentationContext()
 
   let isDisabled: Bool
-  let action: () -> Void
+  let action: (GoogleAuthenticationAnchor) -> Void
 
   var body: some View {
-    Button(action: action) {
+    Button {
+      guard let viewController = presentationContext.viewController else {
+        return
+      }
+
+      action(GoogleAuthenticationAnchor(viewController: viewController))
+    } label: {
       HStack(spacing: 12) {
         Image("GoogleSignInLogo")
           .resizable()
@@ -47,6 +55,11 @@ struct GoogleAuthorizationButton: View {
       )
     )
     .disabled(isDisabled)
+    .background {
+      GoogleAuthenticationPresentationReader(presentationContext: presentationContext)
+        .frame(width: 0, height: 0)
+        .accessibilityHidden(true)
+    }
   }
 
   private var backgroundColor: Color {
@@ -68,7 +81,29 @@ struct GoogleAuthorizationButton: View {
   }
 }
 
+@MainActor
+private final class GoogleAuthenticationPresentationContext {
+  weak var viewController: UIViewController?
+}
+
+/// Captures a controller attached to this button's window so iPad multiwindow sign-in cannot open from another scene.
+private struct GoogleAuthenticationPresentationReader: UIViewControllerRepresentable {
+  let presentationContext: GoogleAuthenticationPresentationContext
+
+  func makeUIViewController(context: Context) -> UIViewController {
+    let viewController = UIViewController()
+    viewController.view.backgroundColor = .clear
+    viewController.view.isUserInteractionEnabled = false
+    presentationContext.viewController = viewController
+    return viewController
+  }
+
+  func updateUIViewController(_ viewController: UIViewController, context: Context) {
+    presentationContext.viewController = viewController
+  }
+}
+
 #Preview("Google sign-in") {
-  GoogleAuthorizationButton(isDisabled: false, action: {})
+  GoogleAuthorizationButton(isDisabled: false, action: { _ in })
     .padding()
 }

@@ -63,6 +63,26 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testSignOutDoesNotReportSignedOutWhenCredentialDeletionFails() async {
+    let account = makeAccount()
+    let credentialStore = SessionCredentialStoreSpy(token: "stored-session")
+    let session = makeSession(
+      api: SessionStoreAPIStub(
+        currentAccountResult: .success(account),
+        signOutResult: .success(())),
+      credentialStore: credentialStore)
+
+    await session.restore()
+    credentialStore.deleteError = SessionCredentialStoreSpyError.deletionFailed
+    await session.signOut()
+
+    XCTAssertEqual(session.state, .unavailable)
+    XCTAssertEqual(session.failure, .network)
+    XCTAssertEqual(credentialStore.token, "stored-session")
+    XCTAssertEqual(credentialStore.deleteCallCount, 1)
+  }
+
+  @MainActor
   func testEmailSignInValidatesAndStoresSession() async {
     let account = makeAccount()
     let credentialStore = SessionCredentialStoreSpy()
@@ -112,6 +132,7 @@ final class SessionStoreTests: XCTestCase {
 private struct SessionStoreAPIStub: AccountAPIClient {
   var currentAccountResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
+  var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
 
   func getCurrentAccount(token: String) async throws -> CurrentAccount {
     try currentAccountResult.get()
@@ -119,6 +140,10 @@ private struct SessionStoreAPIStub: AccountAPIClient {
 
   func signInWithEmailCode(email: String, code: String) async throws -> String {
     try emailSignInResult.get()
+  }
+
+  func signOut(token: String) async throws {
+    try signOutResult.get()
   }
 }
 
@@ -144,10 +169,6 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func signOut(token: String) async throws {
-    throw AccountAPIError.invalidResponse
-  }
-
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
     throw AccountAPIError.invalidResponse
   }
@@ -160,7 +181,7 @@ private final class GoogleAuthenticationSpy: GoogleAuthenticating {
 
   func handle(_ url: URL) {}
 
-  func signIn() async throws -> String {
+  func signIn(from anchor: GoogleAuthenticationAnchor) async throws -> String {
     throw GoogleAuthenticationError.unavailable
   }
 
@@ -169,10 +190,15 @@ private final class GoogleAuthenticationSpy: GoogleAuthenticating {
   }
 }
 
+private enum SessionCredentialStoreSpyError: Error {
+  case deletionFailed
+}
+
 @MainActor
 private final class SessionCredentialStoreSpy: SessionCredentialStoring {
   private(set) var deleteCallCount = 0
   private(set) var savedTokens = [String]()
+  var deleteError: Error?
   var token: String?
 
   init(token: String? = nil) {
@@ -181,6 +207,11 @@ private final class SessionCredentialStoreSpy: SessionCredentialStoring {
 
   func delete() throws {
     deleteCallCount += 1
+
+    if let deleteError {
+      throw deleteError
+    }
+
     token = nil
   }
 

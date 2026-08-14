@@ -13,8 +13,16 @@ protocol GoogleAuthenticating {
   var isAvailable: Bool { get }
 
   func handle(_ url: URL)
-  func signIn() async throws -> String
+  func signIn(from anchor: GoogleAuthenticationAnchor) async throws -> String
   func signOut()
+}
+
+struct GoogleAuthenticationAnchor {
+  fileprivate let viewController: UIViewController
+
+  init(viewController: UIViewController) {
+    self.viewController = viewController
+  }
 }
 
 @MainActor
@@ -24,13 +32,13 @@ struct GoogleAuthenticationClient: GoogleAuthenticating {
   }
 
   /// Presents Google's supported native authorization flow and returns the signed ID token that Better Auth verifies on the server.
-  func signIn() async throws -> String {
+  func signIn(from anchor: GoogleAuthenticationAnchor) async throws -> String {
     guard isAvailable else {
       throw GoogleAuthenticationError.unavailable
     }
 
     do {
-      let result = try await providerSignInResult()
+      let result = try await providerSignInResult(from: anchor)
 
       guard let identityToken = result.user.idToken?.tokenString else {
         throw GoogleAuthenticationError.invalidToken
@@ -91,24 +99,17 @@ struct GoogleAuthenticationClient: GoogleAuthenticating {
   }
 
   /// Starts the iOS flow from the controller currently presenting the account sheet.
-  private func providerSignInResult() async throws -> GIDSignInResult {
-    guard let presentingViewController = presentingViewController() else {
+  private func providerSignInResult(from anchor: GoogleAuthenticationAnchor) async throws
+    -> GIDSignInResult
+  {
+    guard
+      let rootViewController = anchor.viewController.viewIfLoaded?.window?.rootViewController
+    else {
       throw GoogleAuthenticationError.unavailable
     }
 
-    return try await GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController)
-  }
-
-  /// Locates the foreground view controller without fabricating an unattached window that cannot present an authentication session.
-  private func presentingViewController() -> UIViewController? {
-    let windowScenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-    let keyWindow =
-      windowScenes
-      .filter { $0.activationState == .foregroundActive }
-      .flatMap(\.windows)
-      .first { $0.isKeyWindow }
-
-    return keyWindow?.rootViewController?.topPresentedViewController
+    return try await GIDSignIn.sharedInstance.signIn(
+      withPresenting: rootViewController.topPresentedViewController)
   }
 }
 

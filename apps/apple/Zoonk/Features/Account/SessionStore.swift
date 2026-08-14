@@ -173,14 +173,14 @@ final class SessionStore {
   }
 
   /// Uses Google's native SDK to obtain a signed ID token, then asks Better Auth to verify it and create the Zoonk session.
-  func signInWithGoogle() async {
+  func signInWithGoogle(from anchor: GoogleAuthenticationAnchor) async {
     markInteractiveOperationStarted()
     isWorking = true
     failure = nil
     defer { isWorking = false }
 
     do {
-      let identityToken = try await googleAuthentication.signIn()
+      let identityToken = try await googleAuthentication.signIn(from: anchor)
       let token = try await api.signInWithGoogle(idToken: identityToken)
       try await completeSignIn(token: token)
     } catch GoogleAuthenticationError.canceled {
@@ -213,7 +213,7 @@ final class SessionStore {
         try await api.updateProfile(token: token, name: name, username: username))
       return true
     } catch AccountAPIError.unauthorized {
-      clearLocalSession()
+      _ = clearLocalSession()
       return false
     } catch {
       failure = getFailure(error)
@@ -224,7 +224,7 @@ final class SessionStore {
   /// Revokes the shared bearer session before clearing local state so a failed request can be retried and another running Apple device never keeps an unrevoked credential.
   func signOut() async {
     guard let token else {
-      clearLocalSession()
+      _ = clearLocalSession()
       return
     }
 
@@ -236,14 +236,14 @@ final class SessionStore {
     do {
       try await api.signOut(token: token)
     } catch AccountAPIError.unauthorized {
-      clearLocalSession()
+      _ = clearLocalSession()
       return
     } catch {
       failure = getFailure(error)
       return
     }
 
-    clearLocalSession()
+    _ = clearLocalSession()
   }
 
   /// Attempts immediate deletion for non-Apple accounts and reports when Better Auth requires a newer proof of identity instead of weakening its freshness check.
@@ -263,8 +263,7 @@ final class SessionStore {
     } catch AccountAPIError.reauthenticationRequired {
       return .emailReauthenticationRequired
     } catch AccountAPIError.unauthorized {
-      clearLocalSession()
-      return .signedOut
+      return clearLocalSession() ? .signedOut : .failed
     } catch {
       let reconciliation = await reconcileAmbiguousDeletion(after: error, token: token)
 
@@ -298,8 +297,7 @@ final class SessionStore {
     } catch AccountAPIError.reauthenticationRequired {
       return .emailReauthenticationRequired
     } catch AccountAPIError.unauthorized {
-      clearLocalSession()
-      return .signedOut
+      return clearLocalSession() ? .signedOut : .failed
     } catch {
       let reconciliation = await reconcileAmbiguousDeletion(after: error, token: token)
 
@@ -340,8 +338,7 @@ final class SessionStore {
       failure = .accountMismatch
       return .failed
     } catch AccountAPIError.unauthorized {
-      clearLocalSession()
-      return .signedOut
+      return clearLocalSession() ? .signedOut : .failed
     } catch {
       let reconciliation = await reconcileAmbiguousDeletion(after: error, token: token)
 
@@ -373,19 +370,30 @@ final class SessionStore {
     state = .signedIn(account)
   }
 
-  /// Clears Zoonk and Google credentials once the server session is gone or local authentication can no longer represent a usable account.
-  private func clearLocalSession() {
+  /// Refuses to report a signed-out state until the synchronizable bearer token is gone, preventing a failed Keychain write from restoring a stale session later.
+  private func clearLocalSession() -> Bool {
     googleAuthentication.signOut()
-    try? credentialStore.delete()
+
+    do {
+      try credentialStore.delete()
+    } catch {
+      failure = .network
+      state = .unavailable
+      return false
+    }
+
     token = nil
     state = .signedOut
+    return true
   }
 
   /// Clears local credentials after server deletion and preserves Apple's manual fallback when the API cannot confirm that Sign in with Apple authorization was revoked.
   private func completeAccountDeletion(_ response: AccountDeletionResponse)
     -> AccountDeletionResult
   {
-    clearLocalSession()
+    guard clearLocalSession() else {
+      return .failed
+    }
 
     return response.appleAuthorizationRevoked == false
       ? .deletedWithManualAppleRevocation
@@ -407,8 +415,7 @@ final class SessionStore {
       state = .signedIn(try await api.getCurrentAccount(token: token))
       return .accountExists
     } catch AccountAPIError.unauthorized {
-      clearLocalSession()
-      return .signedOut
+      return clearLocalSession() ? .signedOut : .unavailable
     } catch {
       return .unavailable
     }
@@ -469,8 +476,9 @@ final class SessionStore {
       failure = nil
       state = .signedIn(account)
     case .unauthorized:
-      clearLocalSession()
-      failure = nil
+      if clearLocalSession() {
+        failure = nil
+      }
     case .unavailable:
       failure = .network
 

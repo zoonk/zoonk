@@ -30,6 +30,18 @@ function getCachedApplePublicKey(keyIdentifier: string) {
 }
 
 /**
+ * Keeps a temporary failure to load Apple's signing keys distinct from a bad
+ * user credential so clients can retry instead of treating the login as invalid.
+ */
+async function getAvailableApplePublicKey(keyIdentifier: string) {
+  try {
+    return await getCachedApplePublicKey(keyIdentifier);
+  } catch {
+    throw new AppleAuthorizationError("unavailable");
+  }
+}
+
+/**
  * Authentication Services hashes the raw nonce before adding it to Apple's
  * request. Accepting both representations also matches Better Auth's Apple
  * verifier, which keeps this explicit verification aligned with sign-in.
@@ -78,12 +90,16 @@ export async function verifyNativeAppleIdentityToken({
       throw new AppleAuthorizationError("invalidCredential");
     }
 
-    const { payload } = await jwtVerify(token, await getCachedApplePublicKey(protectedHeader.kid), {
-      algorithms: ["RS256"],
-      audience: configuration.appBundleIdentifier,
-      issuer: APPLE_ISSUER,
-      maxTokenAge: "1h",
-    });
+    const { payload } = await jwtVerify(
+      token,
+      await getAvailableApplePublicKey(protectedHeader.kid),
+      {
+        algorithms: ["RS256"],
+        audience: configuration.appBundleIdentifier,
+        issuer: APPLE_ISSUER,
+        maxTokenAge: "1h",
+      },
+    );
 
     const validNonce = nonce ? await nonceMatches({ claim: payload.nonce, nonce }) : true;
 

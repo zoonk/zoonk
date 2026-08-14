@@ -40,9 +40,9 @@ struct LoginView: View {
             onFailure: session.reportSignInFailure)
 
           if session.isGoogleSignInAvailable {
-            GoogleAuthorizationButton(isDisabled: session.isWorking) {
+            GoogleAuthorizationButton(isDisabled: session.isWorking) { anchor in
               Task {
-                await session.signInWithGoogle()
+                await session.signInWithGoogle(from: anchor)
               }
             }
           }

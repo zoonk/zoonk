@@ -19,6 +19,7 @@ struct AccountDeletionView: View {
   @State private var code = ""
   @State private var hasSentCode = false
   @State private var isConfirmingDeletion = false
+  @State private var isPerformingDeletion = false
   @State private var pendingDeletion: PendingAccountDeletion?
   @State private var phase = AccountDeletionPhase.ready
 
@@ -360,7 +361,11 @@ struct AccountDeletionView: View {
 
   /// Closes a deletion flow whose account was removed through synchronized credentials, without hiding the result of the deletion currently running on this device.
   private func dismissStaleDeletion(accountId: String?) {
-    guard accountId == nil, !session.isWorking else {
+    guard accountId == nil, !session.isWorking, !isPerformingDeletion else {
+      return
+    }
+
+    guard phase == .ready || phase == .emailReauthentication else {
       return
     }
 
@@ -434,6 +439,9 @@ struct AccountDeletionView: View {
       return
     }
 
+    isPerformingDeletion = true
+    defer { isPerformingDeletion = false }
+
     let result: AccountDeletionResult
 
     switch pendingDeletion {
@@ -447,8 +455,8 @@ struct AccountDeletionView: View {
         code: normalizedCode)
     }
 
-    self.pendingDeletion = nil
     apply(result)
+    self.pendingDeletion = nil
   }
 
   /// Requests the initial or replacement proof without discarding a still-usable code when the mail request itself fails.

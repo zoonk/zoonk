@@ -86,21 +86,18 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
-  func testPrimaryHeaderAlignsTitleAndAccount() {
+  func testPrimaryScreenShowsTitleAndAccountAction() {
     continueAfterFailure = false
 
     let app = makeApp()
     app.launch()
 
-    let title = app.staticTexts["Home"]
+    let navigationBar = app.navigationBars["Home"]
     let accountButton = app.buttons["Account"]
 
-    XCTAssertTrue(title.waitForExistence(timeout: 5), "Expected the screen heading to exist")
+    XCTAssertTrue(
+      navigationBar.waitForExistence(timeout: 5), "Expected the native screen title to exist")
     XCTAssertTrue(accountButton.exists, "Expected the account button to exist")
-    XCTAssertLessThan(
-      abs(title.frame.midY - accountButton.frame.midY),
-      10,
-      "Expected the title and account button to be vertically aligned")
   }
 
   @MainActor
@@ -285,7 +282,7 @@ final class ZoonkUITests: XCTestCase {
         "Expected the \(destination.tabTitle) tab to become selected")
 
       XCTAssertTrue(
-        app.staticTexts[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
+        app.navigationBars[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
         "Expected the \(destination.screenTitle) screen heading to exist")
     }
   }
