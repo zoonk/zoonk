@@ -9,7 +9,16 @@ enum GoogleAuthenticationError: Error {
 }
 
 @MainActor
-struct GoogleAuthenticationClient {
+protocol GoogleAuthenticating {
+  var isAvailable: Bool { get }
+
+  func handle(_ url: URL)
+  func signIn() async throws -> String
+  func signOut()
+}
+
+@MainActor
+struct GoogleAuthenticationClient: GoogleAuthenticating {
   var isAvailable: Bool {
     hasRequiredConfiguration
   }

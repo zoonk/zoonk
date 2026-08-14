@@ -13,6 +13,47 @@ enum AccountAPIError: Error, Equatable {
   case validation
 }
 
+protocol AccountAPIClient {
+  func deleteAccount(
+    token: String,
+    appleCredentials: AppleSignInCredentials?,
+    emailCredentials: EmailReauthenticationCredentials?
+  ) async throws -> AccountDeletionResponse
+  func getCurrentAccount(token: String) async throws -> CurrentAccount
+  func sendEmailCode(email: String) async throws
+  func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String
+  func signInWithEmailCode(email: String, code: String) async throws -> String
+  func signInWithGoogle(idToken: String) async throws -> String
+  func signOut(token: String) async throws
+  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount
+}
+
+extension AccountAPIClient {
+  func deleteAccount(token: String) async throws -> AccountDeletionResponse {
+    try await deleteAccount(token: token, appleCredentials: nil, emailCredentials: nil)
+  }
+
+  func deleteAccount(
+    token: String,
+    appleCredentials: AppleSignInCredentials
+  ) async throws -> AccountDeletionResponse {
+    try await deleteAccount(
+      token: token,
+      appleCredentials: appleCredentials,
+      emailCredentials: nil)
+  }
+
+  func deleteAccount(
+    token: String,
+    emailCredentials: EmailReauthenticationCredentials
+  ) async throws -> AccountDeletionResponse {
+    try await deleteAccount(
+      token: token,
+      appleCredentials: nil,
+      emailCredentials: emailCredentials)
+  }
+}
+
 struct AccountAPI {
   let baseURL: URL
   private let session: URLSession
@@ -249,6 +290,8 @@ struct AccountAPI {
       user: user)
   }
 }
+
+extension AccountAPI: AccountAPIClient {}
 
 private struct EmailCodeRequest: Encodable {
   let email: String

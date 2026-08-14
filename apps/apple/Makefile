@@ -1,6 +1,6 @@
 PROJECT := Zoonk.xcodeproj
 APP_SCHEME := Zoonk
-SWIFT_SOURCES := Zoonk ZoonkUITests
+SWIFT_SOURCES := Zoonk ZoonkTests ZoonkUITests
 CONFIGURATION ?= Release
 TEST_DESTINATION ?= platform=iOS Simulator,name=iPhone 17,OS=latest
 TEST_ARGUMENTS ?=

@@ -50,25 +50,33 @@ struct LoginView: View {
           NavigationLink {
             EmailLoginView()
           } label: {
-            Text(
-              "Continue with email",
-              tableName: "Account",
-              comment: "Email sign-in button label"
-            )
-            .lineLimit(1)
-            .minimumScaleFactor(0.8)
-            .frame(maxWidth: .infinity)
+            HStack(spacing: 12) {
+              Image(systemName: "envelope")
+                .accessibilityHidden(true)
+
+              Text(
+                "Continue with email",
+                tableName: "Account",
+                comment: "Email sign-in button label"
+              )
+              .fixedSize(horizontal: false, vertical: true)
+              .multilineTextAlignment(.center)
+            }
+            .font(.body.weight(.medium))
+            .padding(.horizontal, 16)
+            .authenticationButtonFrame()
+            .foregroundStyle(.tint)
+            .background(.background)
+            .overlay {
+              RoundedRectangle(cornerRadius: authenticationButtonCornerRadius)
+                .strokeBorder(.secondary, lineWidth: 1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
+            .contentShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
           }
-          .buttonStyle(.bordered)
-          .buttonBorderShape(
-            .roundedRectangle(radius: authenticationButtonCornerRadius)
-          )
-          .controlSize(.large)
-          .frame(
-            width: authenticationButtonSize.width,
-            height: authenticationButtonSize.height
-          )
+          .buttonStyle(AuthenticationButtonStyle())
         }
+        .frame(maxWidth: authenticationButtonMaximumWidth)
         .disabled(session.isWorking)
 
         if session.isWorking {

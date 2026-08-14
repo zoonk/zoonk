@@ -24,15 +24,11 @@ struct GoogleAuthorizationButton: View {
           tableName: "Account",
           comment: "Visible label on the Google sign-in button"
         )
-        .font(.system(size: 14, weight: .medium))
-        .lineLimit(1)
+        .font(.body.weight(.medium))
+        .fixedSize(horizontal: false, vertical: true)
       }
       .padding(.horizontal, 16)
-      .frame(
-        width: authenticationButtonSize.width,
-        height: authenticationButtonSize.height,
-        alignment: .leading
-      )
+      .authenticationButtonFrame()
       .foregroundStyle(foregroundColor)
       .background(backgroundColor)
       .overlay {
@@ -42,7 +38,7 @@ struct GoogleAuthorizationButton: View {
       .clipShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
       .contentShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
     }
-    .buttonStyle(GoogleAuthorizationButtonStyle())
+    .buttonStyle(AuthenticationButtonStyle())
     .accessibilityLabel(
       Text(
         "Sign in with Google",
@@ -69,25 +65,6 @@ struct GoogleAuthorizationButton: View {
     colorScheme == .dark
       ? Color(red: 227 / 255, green: 227 / 255, blue: 227 / 255)
       : Color(red: 31 / 255, green: 31 / 255, blue: 31 / 255)
-  }
-}
-
-private struct GoogleAuthorizationButtonStyle: ButtonStyle {
-  @Environment(\.isEnabled) private var isEnabled
-
-  /// Adds the press and disabled feedback required for a custom button without changing Google's approved colors or geometry.
-  func makeBody(configuration: Configuration) -> some View {
-    configuration.label
-      .opacity(opacity(isPressed: configuration.isPressed))
-  }
-
-  /// Keeps disabled and pressed states visually distinct while preserving the button's branded appearance.
-  private func opacity(isPressed: Bool) -> Double {
-    if !isEnabled {
-      return 0.45
-    }
-
-    return isPressed ? 0.72 : 1
   }
 }
 

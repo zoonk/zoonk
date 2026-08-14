@@ -85,6 +85,44 @@ final class ZoonkUITests: XCTestCase {
       "Expected the sign-in sheet to avoid a redundant Account title")
   }
 
+  @MainActor
+  func testPrimaryHeaderAlignsTitleAndAccount() {
+    continueAfterFailure = false
+
+    let app = makeApp()
+    app.launch()
+
+    let title = app.staticTexts["Home"]
+    let accountButton = app.buttons["Account"]
+
+    XCTAssertTrue(title.waitForExistence(timeout: 5), "Expected the screen heading to exist")
+    XCTAssertTrue(accountButton.exists, "Expected the account button to exist")
+    XCTAssertLessThan(
+      abs(title.frame.midY - accountButton.frame.midY),
+      10,
+      "Expected the title and account button to be vertically aligned")
+  }
+
+  @MainActor
+  func testSignInMethodsUseConsistentGeometry() {
+    continueAfterFailure = false
+
+    let app = makeApp()
+    app.launch()
+    app.buttons["Account"].tap()
+
+    let appleButton = app.buttons["Continue with Apple"]
+    let googleButton = app.buttons["Sign in with Google"]
+    let emailButton = app.buttons["Continue with email"]
+
+    for button in [appleButton, googleButton, emailButton] {
+      XCTAssertTrue(button.waitForExistence(timeout: 5))
+    }
+
+    XCTAssertEqual(googleButton.frame.height, appleButton.frame.height, accuracy: 1)
+    XCTAssertEqual(emailButton.frame.height, appleButton.frame.height, accuracy: 1)
+  }
+
   /// Proves the accessible email field uses the email keyboard, preserves lowercase input, and submits through the keyboard action.
   @MainActor
   func testEmailSignInUsesAccessibleEmailKeyboard() {
@@ -126,7 +164,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected the keyboard action to submit the email code request")
   }
 
-  /// Proves required profile setup cannot be dismissed from its toolbar before the user saves a valid profile.
+  /// Proves required profile setup cannot be dismissed before the user saves a valid profile.
   @MainActor
   func testRequiredProfileSetupOnlyOffersSave() {
     continueAfterFailure = false
@@ -134,8 +172,9 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .requiredSetup)
     app.launch()
 
+    let setupNavigationBar = app.navigationBars["Finish setup"]
     XCTAssertTrue(
-      app.navigationBars["Finish setup"].waitForExistence(timeout: 5),
+      setupNavigationBar.waitForExistence(timeout: 5),
       "Expected required profile setup to open directly")
     XCTAssertTrue(
       app.buttons["Save"].exists,
@@ -143,6 +182,12 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertFalse(
       app.buttons["Close"].exists,
       "Expected required profile setup to omit the account sheet close action")
+
+    setupNavigationBar.swipeDown(velocity: .fast)
+
+    XCTAssertTrue(
+      setupNavigationBar.waitForExistence(timeout: 2),
+      "Expected required profile setup to reject interactive dismissal")
   }
 
   /// Proves that account deletion is a deliberate native flow: the account option opens a dedicated screen and the irreversible request still requires confirmation.
@@ -208,7 +253,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected tapping sign out to start the API request immediately")
   }
 
-  /// Proves that every primary destination is reachable through the native tab bar and presents the matching screen title.
+  /// Proves that every primary destination is reachable through the native tab bar and presents the matching screen heading.
   @MainActor
   func testPrimaryTabsNavigateToTheirScreens() {
     continueAfterFailure = false
@@ -241,7 +286,7 @@ final class ZoonkUITests: XCTestCase {
 
       XCTAssertTrue(
         app.staticTexts[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
-        "Expected the \(destination.screenTitle) screen title to exist")
+        "Expected the \(destination.screenTitle) screen heading to exist")
     }
   }
 

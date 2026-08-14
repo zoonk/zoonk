@@ -9,6 +9,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Design for touch and adaptive layouts across compact iPhone screens, regular-width iPad layouts, multitasking, and resizable iPad windows.
 - Prefer system colors, semantic colors, system materials, system typography, native controls, and SF Symbols. Add custom colors, symbols, or controls only when a system component cannot express the product need.
 - Preserve Dynamic Type, VoiceOver semantics, sufficient contrast, system spacing, safe areas, keyboard behavior, focus behavior, and reduced-motion settings by relying on native components and avoiding fixed-size assumptions.
+- Keep grouped controls visually consistent in height, alignment, typography, shape, and prominence while still allowing localized labels and Dynamic Type to expand when needed.
 
 ## Platform Architecture
 
@@ -24,6 +25,8 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Use `TabView` and `NavigationStack` for the primary navigation shell, allowing SwiftUI to adapt between iPhone and iPad.
 - A tab represents a persistent top-level destination, never an immediate action. Use toolbars, menus, sheets, or confirmation dialogs for actions according to the conventions of the current platform.
 - Let iPad adopt its native sidebar-style tab presentation instead of forcing an iPhone-style bottom tab bar at regular widths.
+- Put screen titles and navigation actions in `NavigationStack` navigation titles and toolbars. Do not recreate navigation bars with safe-area insets or fixed top headers.
+- When completing a modal flow is required, disable interactive dismissal and hide every dismissal affordance until completion; hiding only a close button is insufficient.
 
 ## Localization
 
@@ -37,4 +40,5 @@ These instructions apply to the native iPhone and iPad app in this directory and
 
 - Build the iOS target and inspect both iPhone and iPad destinations because one binary can still render differently across size classes and multitasking widths.
 - Prefer UI tests for user flows and unit tests for non-trivial pure domain logic. Do not test SwiftUI implementation details or static catalog contents.
-- Inspect the rendered result on the relevant simulator or device and verify accessibility, localization, focus, window sizing, and input behavior in proportion to the change.
+- Give asynchronous observable stores direct unit coverage for their success, authentication-expiry, and transient-failure transitions; UI tests alone are not sufficient state-machine coverage.
+- Never call Apple UI work complete based only on builds or automated tests. Inspect the rendered result on relevant iPhone and iPad simulators, compare neighboring controls for alignment and visual consistency, and verify accessibility, localization, focus, window sizing, and input behavior in proportion to the change.

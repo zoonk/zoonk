@@ -8,9 +8,9 @@ final class SessionStore {
   private(set) var isWorking = false
   private(set) var state = AccountSessionState.restoring
 
-  private let api: AccountAPI
+  private let api: any AccountAPIClient
   private let credentialStore: any SessionCredentialStoring
-  private let googleAuthentication: GoogleAuthenticationClient
+  private let googleAuthentication: any GoogleAuthenticating
   private let skipsCredentialReconciliation: Bool
   private var interactiveOperationRevision = UUID()
   private var isReconciling = false
@@ -31,9 +31,9 @@ final class SessionStore {
   }
 
   init(
-    api: AccountAPI,
+    api: any AccountAPIClient,
     credentialStore: any SessionCredentialStoring,
-    googleAuthentication: GoogleAuthenticationClient,
+    googleAuthentication: any GoogleAuthenticating,
     skipsCredentialReconciliation: Bool = false
   ) {
     self.api = api

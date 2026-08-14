@@ -1,9 +1,6 @@
 import AuthenticationServices
 import SwiftUI
 
-let authenticationButtonSize = CGSize(width: 214, height: 50)
-let authenticationButtonCornerRadius: CGFloat = 6
-
 struct AppleAuthorizationButton: View {
   @Environment(\.colorScheme) private var colorScheme
   @State private var nonce: String?
@@ -20,10 +17,7 @@ struct AppleAuthorizationButton: View {
       onCompletion: handleCompletion
     )
     .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .whiteOutline)
-    .frame(
-      width: authenticationButtonSize.width,
-      height: authenticationButtonSize.height
-    )
+    .authenticationButtonFrame()
     .disabled(isDisabled)
   }
 

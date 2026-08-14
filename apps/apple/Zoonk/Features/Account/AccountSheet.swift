@@ -46,8 +46,9 @@ struct AccountSheet: View {
           reconcileNavigation(state)
         }
     }
+    .interactiveDismissDisabled(requiresProfileSetup)
     .presentationDetents([.large])
-    .presentationDragIndicator(.visible)
+    .presentationDragIndicator(requiresProfileSetup ? .hidden : .visible)
     .presentationSizing(.page)
     .task {
       await session.reconcileSynchronizedCredential()

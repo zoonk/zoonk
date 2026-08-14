@@ -11,6 +11,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5A0A01080000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BEB8AB563022709A00E0E150 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BEB8AB5D3022709A00E0E150;
+			remoteInfo = Zoonk;
+		};
 		BEB8AB783022709B00E0E150 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BEB8AB563022709A00E0E150 /* Project object */;
@@ -23,6 +30,7 @@
 /* Begin PBXFileReference section */
 		5A0A00400000000000000001 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
 		5A0A00410000000000000001 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
+		5A0A01000000000000000001 /* ZoonkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB5E3022709A00E0E150 /* Zoonk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zoonk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -38,6 +46,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5A0A01010000000000000001 /* ZoonkTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ZoonkTests;
+			sourceTree = "<group>";
+		};
 		BEB8AB603022709A00E0E150 /* Zoonk */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -54,6 +67,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5A0A01050000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BEB8AB5B3022709A00E0E150 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -78,6 +98,7 @@
 				5A0A00400000000000000001 /* Debug.xcconfig */,
 				5A0A00410000000000000001 /* Release.xcconfig */,
 				BEB8AB603022709A00E0E150 /* Zoonk */,
+				5A0A01010000000000000001 /* ZoonkTests */,
 				BEB8AB7A3022709B00E0E150 /* ZoonkUITests */,
 				BEB8AB5F3022709A00E0E150 /* Products */,
 			);
@@ -87,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				BEB8AB5E3022709A00E0E150 /* Zoonk.app */,
+				5A0A01000000000000000001 /* ZoonkTests.xctest */,
 				BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */,
 			);
 			name = Products;
@@ -95,6 +117,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5A0A01030000000000000001 /* ZoonkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A0A01020000000000000001 /* Build configuration list for PBXNativeTarget "ZoonkTests" */;
+			buildPhases = (
+				5A0A01040000000000000001 /* Sources */,
+				5A0A01050000000000000001 /* Frameworks */,
+				5A0A01060000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5A0A01070000000000000001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5A0A01010000000000000001 /* ZoonkTests */,
+			);
+			name = ZoonkTests;
+			packageProductDependencies = (
+			);
+			productName = ZoonkTests;
+			productReference = 5A0A01000000000000000001 /* ZoonkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		BEB8AB5D3022709A00E0E150 /* Zoonk */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BEB8AB813022709B00E0E150 /* Build configuration list for PBXNativeTarget "Zoonk" */;
@@ -151,6 +196,10 @@
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
+					5A0A01030000000000000001 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = BEB8AB5D3022709A00E0E150;
+					};
 					BEB8AB5D3022709A00E0E150 = {
 						CreatedOnToolsVersion = 26.6;
 					};
@@ -182,12 +231,20 @@
 			projectRoot = "";
 			targets = (
 				BEB8AB5D3022709A00E0E150 /* Zoonk */,
+				5A0A01030000000000000001 /* ZoonkTests */,
 				BEB8AB763022709B00E0E150 /* ZoonkUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5A0A01060000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BEB8AB5C3022709A00E0E150 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -205,6 +262,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5A0A01040000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BEB8AB5A3022709A00E0E150 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -222,6 +286,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5A0A01070000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
+			targetProxy = 5A0A01080000000000000001 /* PBXContainerItemProxy */;
+		};
 		BEB8AB793022709B00E0E150 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
@@ -230,6 +299,54 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		5A0A01090000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGXYKAQUT9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.dev.ZoonkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zoonk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Zoonk";
+			};
+			name = Debug;
+		};
+		5A0A010A0000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGXYKAQUT9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.ZoonkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zoonk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Zoonk";
+			};
+			name = Release;
+		};
 		BEB8AB7F3022709B00E0E150 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -479,6 +596,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5A0A01020000000000000001 /* Build configuration list for PBXNativeTarget "ZoonkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5A0A01090000000000000001 /* Debug */,
+				5A0A010A0000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BEB8AB593022709A00E0E150 /* Build configuration list for PBXProject "Zoonk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
