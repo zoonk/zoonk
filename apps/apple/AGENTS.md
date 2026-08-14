@@ -5,6 +5,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 ## Required Apple Guidance
 
 - Before changing code for iOS or iPadOS, read `../../.agents/skills/apple-human-interface-guidelines/SKILL.md` and follow Apple's current Human Interface Guidelines and official platform documentation.
+- Before adding custom view hierarchies, state synchronization, platform branches, or animation workarounds, inspect current semantic SwiftUI APIs and official Apple examples for a system-owned solution. When behavior is uncertain, validate the smallest equivalent implementation across supported form factors. Do not call an approach the simplest or best-practice solution until native alternatives have been checked; prefer the least code that lets the system own adaptation and behavior.
 - Treat Apple platform conventions as product requirements. The `main` web app can define product intent, copy, business behavior, and API contracts, but it must never be copied as the UI, layout, navigation, interaction, or visual design template for this app.
 - Design for touch and adaptive layouts across compact iPhone screens, regular-width iPad layouts, multitasking, and resizable iPad windows.
 - Prefer system colors, semantic colors, system materials, system typography, native controls, and SF Symbols. Add custom colors, symbols, or controls only when a system component cannot express the product need.
