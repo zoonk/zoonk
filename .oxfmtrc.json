@@ -33,6 +33,7 @@
     "dist",
     "build",
     "**/generated/**",
+    "apps/apple/Zoonk/openapi.json",
     "**/messages/**",
     ".turbo",
     "pnpm-lock.yaml"

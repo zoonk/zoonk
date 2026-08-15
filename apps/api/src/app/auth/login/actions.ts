@@ -1,6 +1,6 @@
 "use server";
 
-import { getBetterAuthError } from "@/lib/better-auth-errors";
+import { getAuthError } from "@zoonk/auth/errors";
 import { sendVerificationOTP } from "@zoonk/core/users/otp/send";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
@@ -16,7 +16,7 @@ type VerificationOTPState = { status: "idle" | "invalidEmail" | "error" };
  * rejects, so the login form needs a normal recoverable state for that case.
  */
 function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPState | null {
-  const authError = getBetterAuthError(error);
+  const authError = getAuthError(error);
 
   if (authError?.code === "INVALID_EMAIL" || authError?.message === "Invalid email") {
     return { status: "invalidEmail" };

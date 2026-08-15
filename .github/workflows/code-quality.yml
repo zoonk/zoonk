@@ -66,6 +66,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Check generated OpenAPI artifact
+        run: pnpm openapi:check
+
       - name: Run database migrations
         run: pnpm --filter @zoonk/db db:deploy
 

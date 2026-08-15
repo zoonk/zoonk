@@ -22,7 +22,7 @@
       "ignoreDependencies": ["@eloqnt/format-apple-xcstrings"]
     },
     "apps/api": {
-      "entry": [".eloqnt/config.ts"],
+      "entry": [".eloqnt/config.ts", "scripts/*.ts"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },

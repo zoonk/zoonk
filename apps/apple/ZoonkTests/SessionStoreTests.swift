@@ -63,6 +63,28 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testCancelledRestoreCanRestartWithoutPublishingFailure() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub()
+    api.currentAccountError = CancellationError()
+    let credentialStore = SessionCredentialStoreSpy(token: "stored-session")
+    let session = makeSession(api: api, credentialStore: credentialStore)
+
+    await session.restore()
+
+    XCTAssertEqual(session.state, .restoring)
+    XCTAssertNil(session.failure)
+    XCTAssertEqual(credentialStore.token, "stored-session")
+
+    api.currentAccountError = nil
+    api.currentAccountResult = .success(account)
+    await session.restore()
+
+    XCTAssertEqual(session.state, .signedIn(account))
+    XCTAssertNil(session.failure)
+  }
+
+  @MainActor
   func testSignOutDoesNotReportSignedOutWhenCredentialDeletionFails() async {
     let account = makeAccount()
     let credentialStore = SessionCredentialStoreSpy(token: "stored-session")
@@ -101,6 +123,18 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testEmailSignInSurfacesRateLimitRecovery() async {
+    let session = makeSession(
+      api: SessionStoreAPIStub(emailSignInResult: .failure(.rateLimited)),
+      credentialStore: SessionCredentialStoreSpy())
+
+    await session.signInWithEmailCode(email: "learner@zoonk.test", code: "123456")
+
+    XCTAssertEqual(session.state, .restoring)
+    XCTAssertEqual(session.failure, .rateLimited)
+  }
+
+  @MainActor
   private func makeSession(
     api: any AccountAPIClient = SessionStoreAPIStub(),
     credentialStore: SessionCredentialStoreSpy,
@@ -128,14 +162,28 @@ final class SessionStoreTests: XCTestCase {
   }
 }
 
-@MainActor
-private struct SessionStoreAPIStub: AccountAPIClient {
+private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
+  var currentAccountError: Error?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
 
+  init(
+    currentAccountResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse),
+    emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse),
+    signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
+  ) {
+    self.currentAccountResult = currentAccountResult
+    self.emailSignInResult = emailSignInResult
+    self.signOutResult = signOutResult
+  }
+
   func getCurrentAccount(token: String) async throws -> CurrentAccount {
-    try currentAccountResult.get()
+    if let currentAccountError {
+      throw currentAccountError
+    }
+
+    return try currentAccountResult.get()
   }
 
   func signInWithEmailCode(email: String, code: String) async throws -> String {

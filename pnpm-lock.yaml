@@ -307,6 +307,9 @@ importers:
       raw-loader:
         specifier: 'catalog:'
         version: 4.0.2(webpack@5.109.2(@swc/core@1.15.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26))
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.12
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

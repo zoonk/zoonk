@@ -13,6 +13,7 @@ import {
 import { type BetterAuthOptions } from "better-auth/types";
 import { deleteUserDependenciesBeforeAuthDelete } from "./account-deletion";
 import {
+  AUTH_ADVANCED_OPTIONS,
   AUTH_MEMBERSHIP_LIMIT,
   AUTH_ORGANIZATION_LIMIT,
   BETTER_AUTH_BASE_PATH,
@@ -36,7 +37,7 @@ import { isUsernameAllowed } from "./username-validator";
  */
 export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   account: { accountLinking: { enabled: true } },
-  advanced: { database: { generateId: "uuid" } },
+  advanced: AUTH_ADVANCED_OPTIONS,
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
   baseURL: {

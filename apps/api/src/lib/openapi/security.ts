@@ -1,3 +1,4 @@
+import { getSessionCookieName } from "@zoonk/auth/cookies";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
 
 type SecurityRequirement = Record<string, string[]>;
@@ -14,18 +15,22 @@ export const OPTIONAL_AUTHENTICATION_SECURITY: SecurityRequirement[] = [
   ...AUTHENTICATED_SECURITY,
 ];
 
-export const SECURITY_SCHEMES = {
-  bearerAuth: {
-    description: "Bearer token accepted by the deployed Better Auth bearer plugin.",
-    scheme: "bearer",
-    type: "http",
-  },
-  cookieAuth: {
-    description: "Better Auth session cookie for the documented deployment environment.",
-    in: "cookie",
-    name: isLocalhostSupported()
-      ? "better-auth.session_token"
-      : "__Secure-better-auth.session_token",
-    type: "apiKey",
-  },
-} as const;
+export function createSecuritySchemes({ cookieName }: { cookieName: string }) {
+  return {
+    bearerAuth: {
+      description: "Zoonk session token sent in the Authorization header.",
+      scheme: "bearer",
+      type: "http",
+    },
+    cookieAuth: {
+      description: "Zoonk browser session cookie.",
+      in: "cookie",
+      name: cookieName,
+      type: "apiKey",
+    },
+  } as const;
+}
+
+export const SECURITY_SCHEMES = createSecuritySchemes({
+  cookieName: getSessionCookieName({ secure: !isLocalhostSupported() }),
+});

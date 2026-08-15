@@ -51,7 +51,8 @@ const nextLessonEmptyResponseSchema = z
     hasStarted: z.literal(false).meta({ description: "Whether the user has started" }),
     type: z.literal("empty").meta({ description: "No next-learning target is available" }),
   })
-  .strict();
+  .strict()
+  .meta({ id: "NextLessonEmptyResponse" });
 
 const nextLessonChapterResponseSchema = z
   .object({
@@ -67,7 +68,8 @@ const nextLessonChapterResponseSchema = z
     organizationSlug: z.string().meta({ description: "Organization slug" }),
     type: z.literal("chapter").meta({ description: "Continue at a chapter awaiting lessons" }),
   })
-  .strict();
+  .strict()
+  .meta({ id: "NextLessonChapterResponse" });
 
 const nextLessonLessonResponseSchema = z
   .object({
@@ -84,7 +86,8 @@ const nextLessonLessonResponseSchema = z
     organizationSlug: z.string().meta({ description: "Organization slug" }),
     type: z.literal("lesson").meta({ description: "Continue at a concrete lesson" }),
   })
-  .strict();
+  .strict()
+  .meta({ id: "NextLessonLessonResponse" });
 
 export const nextLessonResponseSchema = z
   .discriminatedUnion("type", [
@@ -95,6 +98,13 @@ export const nextLessonResponseSchema = z
   .meta({
     id: "NextLessonResponse",
     override: ({ jsonSchema }) => {
-      jsonSchema.discriminator = { propertyName: "type" };
+      jsonSchema.discriminator = {
+        mapping: {
+          chapter: "#/components/schemas/NextLessonChapterResponse",
+          empty: "#/components/schemas/NextLessonEmptyResponse",
+          lesson: "#/components/schemas/NextLessonLessonResponse",
+        },
+        propertyName: "type",
+      };
     },
   });

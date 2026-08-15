@@ -14,7 +14,7 @@ struct ZoonkApp: App {
       }
     #endif
 
-    _session = State(initialValue: SessionStore.live())
+    _session = State(initialValue: AppDependencies.live().sessionStore)
     initiallyPresentsAccount = false
   }
 

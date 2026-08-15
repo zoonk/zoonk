@@ -42,7 +42,7 @@ export const paymentRequiredResponse = {
 
 export const tooManyRequestsResponse = {
   content: { "application/json": { schema: errorSchema } },
-  description: "Generation limit reached",
+  description: "Too many requests",
 } as const;
 
 export const unprocessableEntityResponse = {

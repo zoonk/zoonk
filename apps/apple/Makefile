@@ -4,7 +4,7 @@ SWIFT_SOURCES := Zoonk ZoonkTests ZoonkUITests
 CONFIGURATION ?= Release
 TEST_DESTINATION ?= platform=iOS Simulator,name=iPhone 17,OS=latest
 TEST_ARGUMENTS ?=
-XCODEBUILD := xcodebuild -quiet -project "$(PROJECT)"
+XCODEBUILD := xcodebuild -quiet -skipPackagePluginValidation -project "$(PROJECT)"
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 
 .PHONY: build build-ios test format format-check check

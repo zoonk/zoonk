@@ -176,6 +176,11 @@ struct AccountFailureMessage: View {
         "Zoonk couldn't connect. Check your connection and try again.",
         tableName: "Account",
         comment: "Error shown when an account request cannot reach the service")
+    case .rateLimited:
+      Text(
+        "Too many attempts. Wait a moment, then try again.",
+        tableName: "Account",
+        comment: "Error shown when sign-in attempts are temporarily rate limited")
     case .usernameTaken:
       Text(
         "That username is already taken.",

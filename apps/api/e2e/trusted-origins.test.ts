@@ -56,6 +56,9 @@ test.describe("Trusted Origin Validation", () => {
       storageState,
     });
 
+    const productResponse = await trustedOriginContext.delete("/v1/sessions/current");
+    expect(productResponse.status()).toBe(403);
+
     const trustedResponse = await trustedOriginContext.post("/v1/auth/sign-out", { data: {} });
     expect(trustedResponse.status()).toBe(200);
 
