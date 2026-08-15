@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
@@ -16,6 +17,7 @@ describe(getCourseGenerationAccess, () => {
 
     await expect(getCourseGenerationAccess(prompt.id)).resolves.toStrictEqual({
       coursePromptId: prompt.id,
+      courseSlug: null,
       shouldClaimQuota: true,
       status: "ready",
       userId: user.id,
@@ -27,9 +29,21 @@ describe(getCourseGenerationAccess, () => {
 
     await expect(getCourseGenerationAccess(prompt.id)).resolves.toStrictEqual({
       coursePromptId: prompt.id,
+      courseSlug: null,
       shouldClaimQuota: true,
       status: "ready",
       userId: null,
+    });
+  });
+
+  it("returns the existing course slug without another generation lookup", async () => {
+    const course = await courseFixture();
+    const prompt = await coursePromptFixture({ courseId: course.id, generationStatus: "failed" });
+
+    await expect(getCourseGenerationAccess(prompt.id)).resolves.toMatchObject({
+      courseSlug: course.slug,
+      shouldClaimQuota: true,
+      status: "ready",
     });
   });
 

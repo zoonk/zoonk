@@ -5,7 +5,12 @@ import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
 import { claimGenerationQuotaIfNeeded } from "./claim-generation-quota";
-import { GENERATION_VISITOR_ID_HEADER, type GenerationQuotaPeriod } from "./contract";
+import {
+  GENERATION_VISITOR_ID_HEADER,
+  type GenerationQuotaPeriod,
+  type GenerationQuotaResource,
+  type GenerationQuotaViewer,
+} from "./contract";
 
 vi.mock("next/headers", () => ({ headers: vi.fn() }));
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
@@ -43,7 +48,13 @@ function useGuestViewer(): string {
 
 /** Uses the real subscription query while replacing only the request session boundary. */
 async function useAuthenticatedViewer({ subscriber }: { subscriber: boolean }) {
-  const user = await userFixture();
+  const fixture = await userFixture();
+
+  const user = await prisma.user.update({
+    data: { username: `rate-limit-${randomUUID()}` },
+    where: { id: fixture.id },
+  });
+
   vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
   if (subscriber) {
@@ -53,6 +64,19 @@ async function useAuthenticatedViewer({ subscriber }: { subscriber: boolean }) {
   }
 
   return user;
+}
+
+/** Keeps quota assertions focused on the rejected resource and entitlement. */
+function getReachedLimitResult({
+  period,
+  resource,
+  viewer,
+}: {
+  period: GenerationQuotaPeriod;
+  resource: GenerationQuotaResource;
+  viewer: GenerationQuotaViewer;
+}) {
+  return { limit: { period, resource, viewer }, status: "limitReached" };
 }
 
 /** Moves the counter created by a real claim near a boundary without issuing hundreds of requests. */
@@ -116,8 +140,8 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     expect(results.filter((result) => result.status === "ready")).toHaveLength(3);
 
-    expect(results.filter((result) => result.status === "limitReached")).toStrictEqual([
-      { limit: { period: "day", resource: "course", viewer: "guest" }, status: "limitReached" },
+    expect(results.filter((result) => result.status === "limitReached")).toMatchObject([
+      getReachedLimitResult({ period: "day", resource: "course", viewer: "guest" }),
     ]);
   });
 
@@ -138,10 +162,9 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     await expect(
       claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { period: "month", resource: "course", viewer: "guest" },
-      status: "limitReached",
-    });
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "month", resource: "course", viewer: "guest" }),
+    );
   });
 
   it("limits authenticated learners to five courses per day", async () => {
@@ -156,10 +179,9 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     await expect(
       claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { period: "day", resource: "course", viewer: "authenticated" },
-      status: "limitReached",
-    });
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "day", resource: "course", viewer: "authenticated" }),
+    );
   });
 
   it("limits subscribers to twenty courses per day", async () => {
@@ -180,10 +202,9 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     await expect(
       claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { period: "day", resource: "course", viewer: "subscriber" },
-      status: "limitReached",
-    });
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "day", resource: "course", viewer: "subscriber" }),
+    );
   });
 
   it("limits chapter generation to fifty per day", async () => {
@@ -204,10 +225,9 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     await expect(
       claimGenerationQuota({ resource: "chapter", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { period: "day", resource: "chapter", viewer: "subscriber" },
-      status: "limitReached",
-    });
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "day", resource: "chapter", viewer: "subscriber" }),
+    );
   });
 
   it.each([
@@ -235,10 +255,7 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     await expect(
       claimGenerationQuota({ resource: "lesson", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { period: "day", resource: "lesson", viewer },
-      status: "limitReached",
-    });
+    ).resolves.toMatchObject(getReachedLimitResult({ period: "day", resource: "lesson", viewer }));
   });
 
   it.each([
@@ -276,10 +293,7 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
       await expect(
         claimGenerationQuota({ resource, targetId: randomUUID() }),
-      ).resolves.toStrictEqual({
-        limit: { period: "month", resource, viewer },
-        status: "limitReached",
-      });
+      ).resolves.toMatchObject(getReachedLimitResult({ period: "month", resource, viewer }));
     },
   );
 
@@ -310,10 +324,9 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     await expect(
       claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { period: "day", resource: "course", viewer: "guest" },
-      status: "limitReached",
-    });
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "day", resource: "course", viewer: "guest" }),
+    );
   });
 
   it("does not reset a guest quota when the same browser changes networks", async () => {
@@ -345,10 +358,9 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
     await expect(
       claimGenerationQuota({ resource: "course", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { period: "day", resource: "course", viewer: "guest" },
-      status: "limitReached",
-    });
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "day", resource: "course", viewer: "guest" }),
+    );
   });
 
   it("does not charge duplicate requests for the same target twice", async () => {

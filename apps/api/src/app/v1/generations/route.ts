@@ -1,13 +1,13 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
+import { claimGenerationQuotaIfNeeded } from "@/lib/generation-quota";
 import { toGenerationResource } from "@/lib/generation-resource";
 import { createGenerationRequestSchema } from "@/lib/openapi/schemas/workflows";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { courseGenerationWorkflow } from "@/workflows/course-generation/course-generation-workflow";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { getCourseGenerationAccess } from "@zoonk/core/courses/generation-access";
-import { claimGenerationQuotaIfNeeded } from "@zoonk/core/generation-quotas/claim";
 import { getChapterGenerationAccess } from "@zoonk/core/workflows/chapter-generation-access";
 import { getLessonGenerationAccess } from "@zoonk/core/workflows/lesson-generation-access";
 import { type NextRequest, NextResponse } from "next/server";
@@ -47,6 +47,7 @@ async function createCourseGeneration(coursePromptId: string) {
     await claimGenerationQuotaIfNeeded({
       resource: "course",
       shouldClaimQuota: access.shouldClaimQuota,
+      target: { coursePromptId, courseSlug: access.courseSlug },
       targetId: coursePromptId,
     }),
   );
@@ -78,6 +79,7 @@ async function createChapterGeneration(chapterId: string) {
     await claimGenerationQuotaIfNeeded({
       resource: "chapter",
       shouldClaimQuota: access.shouldClaimQuota,
+      target: { chapterSlug: access.chapter.slug, courseSlug: access.chapter.course.slug },
       targetId: chapterId,
     }),
   );
@@ -105,6 +107,11 @@ async function createLessonGeneration(lessonId: string) {
     await claimGenerationQuotaIfNeeded({
       resource: "lesson",
       shouldClaimQuota: access.shouldClaimQuota,
+      target: {
+        chapterSlug: access.lesson.chapter.slug,
+        courseSlug: access.lesson.chapter.course.slug,
+        lessonSlug: access.lesson.slug,
+      },
       targetId: lessonId,
     }),
   );

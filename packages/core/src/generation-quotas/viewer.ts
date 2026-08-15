@@ -4,9 +4,17 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { headers } from "next/headers";
 import { hasActiveSubscription } from "../auth/subscription";
 import { getSession } from "../users/get-session";
-import { GENERATION_VISITOR_ID_HEADER, type GenerationQuotaViewer } from "./contract";
+import {
+  GENERATION_VISITOR_ID_HEADER,
+  type GenerationQuotaActor,
+  type GenerationQuotaViewer,
+} from "./contract";
 
-type GenerationQuotaViewerContext = { actorKeys: string[]; viewer: GenerationQuotaViewer };
+type GenerationQuotaViewerContext = {
+  actor: GenerationQuotaActor;
+  actorKeys: string[];
+  viewer: GenerationQuotaViewer;
+};
 
 /** Selects the original client address while keeping proxy header parsing out of the stored quota key. */
 function getClientAddress(requestHeaders: Headers): string {
@@ -52,15 +60,32 @@ function getGuestActorKeys(requestHeaders: Headers): string[] {
   return [requestActorKey];
 }
 
+/** Keeps anonymous analytics distinct without exposing the raw request fingerprint inputs. */
+function getGuestActor(actorKeys: string[]): GenerationQuotaActor {
+  const distinctId = actorKeys[0];
+
+  if (!distinctId) {
+    throw new Error("Generation quota requires at least one guest identity");
+  }
+
+  return { distinctId, username: "guest" };
+}
+
 /** Derives identity and entitlement from the request instead of trusting a caller-selected user or plan. */
 export async function getGenerationQuotaViewer(): Promise<GenerationQuotaViewerContext> {
   const [requestHeaders, session] = await Promise.all([headers(), getSession()]);
 
   if (!session) {
-    return { actorKeys: getGuestActorKeys(requestHeaders), viewer: "guest" };
+    const actorKeys = getGuestActorKeys(requestHeaders);
+
+    return { actor: getGuestActor(actorKeys), actorKeys, viewer: "guest" };
   }
 
   const viewer = (await hasActiveSubscription()) ? "subscriber" : "authenticated";
 
-  return { actorKeys: [`user:${session.user.id}`], viewer };
+  return {
+    actor: { distinctId: session.user.id, username: session.user.username ?? null },
+    actorKeys: [`user:${session.user.id}`],
+    viewer,
+  };
 }
