@@ -172,13 +172,3 @@ model RateLimit {
   @@index([key])
   @@map("rate_limits")
 }
-
-model Jwks {
-  id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  publicKey  String    @map("public_key")
-  privateKey String    @map("private_key")
-  createdAt  DateTime  @default(now()) @map("created_at")
-  expiresAt  DateTime? @map("expires_at")
-
-  @@map("jwks")
-}
