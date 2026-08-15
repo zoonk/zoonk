@@ -35,15 +35,15 @@ function getChannelCount({
  * represents the same non-empty timeline. Wrapping parser errors here gives
  * the retry layer one stable provider failure regardless of the malformed WAV.
  */
-async function decodeWavAudio({
+function decodeWavAudio({
   audio,
   model,
 }: {
   audio: Uint8Array;
   model: SpeechModelName;
-}): Promise<EncodableAudio> {
+}): EncodableAudio {
   try {
-    const decodedAudio = await decodeWav(audio);
+    const decodedAudio = decodeWav(audio);
     const channelCount = getChannelCount({ channelData: decodedAudio.channelData, model });
     const samplesDecoded = decodedAudio.channelData[0]?.length ?? 0;
 
@@ -91,7 +91,7 @@ export async function convertWavToMp3({
   audio: Uint8Array;
   model: SpeechModelName;
 }): Promise<Uint8Array> {
-  const decodedAudio = await decodeWavAudio({ audio, model });
+  const decodedAudio = decodeWavAudio({ audio, model });
   assertAudibleAudioSignal({ audio: decodedAudio, model });
 
   const encoder = await createMp3Encoder();

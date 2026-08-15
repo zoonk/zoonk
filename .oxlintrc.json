@@ -43,6 +43,7 @@
     "eslint/no-undefined": "off",
     "eslint/no-use-before-define": "off",
     "eslint/no-void": "off",
+    "eslint/one-var": "off",
     "eslint/prefer-destructuring": "off",
     "eslint/require-await": "off",
     "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],

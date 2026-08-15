@@ -46,10 +46,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "4.0.46",
-    "@ai-sdk/google": "4.0.39",
-    "@ai-sdk/openai": "4.0.36",
-    "@audio/decode-wav": "1.4.3",
+    "@ai-sdk/gateway": "4.0.52",
+    "@ai-sdk/google": "4.0.44",
+    "@ai-sdk/openai": "4.0.42",
+    "@audio/decode-wav": "1.5.0",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:",
     "wasm-media-encoders": "0.7.0"
