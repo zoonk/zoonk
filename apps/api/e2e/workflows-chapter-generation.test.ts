@@ -73,7 +73,7 @@ test.describe("Chapter Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("allows first chapter generation without a session", async () => {
+  test("requires authentication before generating the first chapter", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Chapter Public ${uniqueId}`;
 
@@ -109,16 +109,20 @@ test.describe("Chapter Generation Workflow API", () => {
       data: { target: { id: chapter.id, type: "chapter" } },
     });
 
-    expect(response.status()).toBe(202);
+    expect(response.status()).toBe(401);
 
-    const body = await response.json();
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
+    });
 
-    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
+    await expect(
+      prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } }),
+    ).resolves.toMatchObject({ generationRunId: null, generationStatus: "pending" });
 
     await apiContext.dispose();
   });
 
-  test("returns 402 when later chapter generation has no session", async () => {
+  test("requires authentication before checking later-chapter subscriptions", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Chapter Paid ${uniqueId}`;
 
@@ -154,12 +158,15 @@ test.describe("Chapter Generation Workflow API", () => {
       data: { target: { id: chapter.id, type: "chapter" } },
     });
 
-    expect(response.status()).toBe(402);
+    expect(response.status()).toBe(401);
 
-    const body = await response.json();
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
+    });
 
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("PAYMENT_REQUIRED");
+    await expect(
+      prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } }),
+    ).resolves.toMatchObject({ generationRunId: null, generationStatus: "pending" });
 
     await apiContext.dispose();
   });

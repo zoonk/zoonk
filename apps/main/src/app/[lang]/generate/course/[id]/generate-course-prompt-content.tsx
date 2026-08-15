@@ -1,6 +1,8 @@
+import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { redirect } from "@/i18n/navigation";
 import { getCoursePromptGeneration } from "@zoonk/core/courses/get-prompt-generation";
+import { getSession } from "@zoonk/core/users/session";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -15,7 +17,11 @@ export async function GenerateCoursePromptContent({
   params: Promise<{ id: string; lang: string }>;
 }) {
   const { id, lang: locale } = await params;
-  const generation = await getCoursePromptGeneration({ coursePromptId: id });
+
+  const [generation, session] = await Promise.all([
+    getCoursePromptGeneration({ coursePromptId: id }),
+    getSession(),
+  ]);
 
   if (generation.status === "notFound") {
     notFound();
@@ -30,6 +36,18 @@ export async function GenerateCoursePromptContent({
       href: `/b/${AI_ORG_SLUG}/c/${generation.target.courseSlug}/ch/${generation.target.chapterSlug}/l/${generation.target.lessonSlug}`,
       locale,
     });
+  }
+
+  if (!session) {
+    const loginHref = `/login?next=${encodeURIComponent(`/generate/course/${id}`)}` as const;
+
+    return (
+      <Container variant="narrow">
+        <ContainerBody>
+          <GenerationAuthenticationCTA loginHref={loginHref} />
+        </ContainerBody>
+      </Container>
+    );
   }
 
   const t = await getExtracted();

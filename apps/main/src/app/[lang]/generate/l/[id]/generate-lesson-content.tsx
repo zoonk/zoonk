@@ -1,3 +1,4 @@
+import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { redirect } from "@/i18n/navigation";
@@ -28,6 +29,18 @@ export async function GenerateLessonContent({
 
   if (view.status === "notFound") {
     notFound();
+  }
+
+  if (view.status === "unauthorized") {
+    const loginHref = `/login?next=${encodeURIComponent(`/generate/l/${id}`)}` as const;
+
+    return (
+      <Container variant="narrow">
+        <ContainerBody>
+          <GenerationAuthenticationCTA loginHref={loginHref} />
+        </ContainerBody>
+      </Container>
+    );
   }
 
   if (view.status === "redirectToSource") {

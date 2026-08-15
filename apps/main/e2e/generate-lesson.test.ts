@@ -11,7 +11,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 import {
   type GenerationTriggerResponse,
-  getGenerationLimitResponse,
+  getGenerationTriggerRequests,
   isGenerationEvents,
   isGenerationTrigger,
   routeGenerationApis,
@@ -114,6 +114,31 @@ function createRouteHandler(options: MockApiOptions) {
 async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<void> {
   const handler = createRouteHandler(options);
   await routeGenerationApis({ handler, page });
+}
+
+/** Confirms the server gate replaces every anonymous lesson-generation client. */
+async function expectLessonAuthenticationGate({
+  lessonId,
+  page,
+}: {
+  lessonId: string;
+  page: Page;
+}) {
+  await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
+
+  await expect(page.getByRole("link", { name: "Explore courses" })).toHaveAttribute(
+    "href",
+    "/courses",
+  );
+
+  await expect(page.getByRole("link", { name: "Log in" })).toHaveAttribute(
+    "href",
+    `/login?next=%2Fgenerate%2Fl%2F${lessonId}`,
+  );
+
+  await expect(getGenerationTriggerRequests({ page, targetType: "lesson" })).resolves.toHaveLength(
+    0,
+  );
 }
 
 /**
@@ -300,38 +325,49 @@ async function createTestSubscription(userId: string) {
 }
 
 test.describe("Generate Lesson Page - Unauthenticated", () => {
-  test("explains when the daily lesson generation limit is reached", async ({ page }) => {
+  test("requires login before first-chapter lesson generation", async ({ page }) => {
     const { lesson } = await createPendingLesson();
-
-    await setupMockApis(page, {
-      triggerResponse: getGenerationLimitResponse({
-        period: "day",
-        resource: "lesson",
-        viewer: "guest",
-      }),
-    });
 
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByRole("heading", { name: "Daily lesson limit reached" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
+    await expectLessonAuthenticationGate({ lessonId: lesson.id, page });
   });
 
-  test("shows upgrade CTA for later chapter lessons", async ({ page }) => {
+  test("requires login before checking a later lesson subscription", async ({ page }) => {
     const { lesson } = await createPendingLesson({ chapterPosition: 1 });
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByText(/^keep learning with plus$/iu)).toBeVisible();
+    await expectLessonAuthenticationGate({ lessonId: lesson.id, page });
+    await expect(page.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
+  });
+
+  test("redirects a completed first-chapter lesson to its public page", async ({ page }) => {
+    const { lesson } = await createPendingLesson();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    await Promise.all([
+      stepFixture({
+        content: {
+          text: `E2E Ready Public Lesson ${uniqueId}`,
+          title: `E2E Ready Public Lesson ${uniqueId}`,
+          variant: "text",
+        },
+        isPublished: true,
+        kind: "static",
+        lessonId: lesson.id,
+      }),
+      prisma.lesson.update({ data: { generationStatus: "completed" }, where: { id: lesson.id } }),
+    ]);
+
+    await page.goto(`/generate/l/${lesson.id}`);
+
+    await page.waitForURL(new RegExp(`/b/${AI_ORG_SLUG}/c/.+/ch/.+/l/${lesson.slug}`, "u"), {
+      timeout: 10_000,
+    });
 
     await expect(
-      page.getByText(
-        "Plus gives you unlimited courses and lessons for whatever you want to learn.",
-      ),
-    ).toBeVisible();
-
-    const upgradeLink = page.getByRole("link", { name: /get zoonk plus/iu });
-    await expect(upgradeLink).toBeVisible();
-    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
+      getGenerationTriggerRequests({ page, targetType: "lesson" }),
+    ).resolves.toHaveLength(0);
   });
 });
 
@@ -366,23 +402,6 @@ test.describe("Generate Lesson Page - No Subscription", () => {
 });
 
 test.describe("Generate Lesson Page - First Chapter Free", () => {
-  test("unauthenticated user sees generation UI for every first-chapter lesson", async ({
-    page,
-  }) => {
-    const { lesson } = await createPendingLesson({ chapterPosition: 0, lessonPosition: 99 });
-
-    await setupMockApis(page, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getLesson" }],
-    });
-
-    await page.goto(`/generate/l/${lesson.id}`);
-
-    await expect(page.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
-
-    await expect(page.getByRole("heading", { name: lesson.title ?? "" })).toBeVisible();
-  });
-
   test("authenticated user without subscription sees generation UI for every first-chapter lesson", async ({
     authenticatedPage,
   }) => {
@@ -426,37 +445,39 @@ test.describe("Generate Lesson Page - Independent Lessons", () => {
   });
 
   test("redirects pending translation generation to source vocabulary generation", async ({
-    page,
+    authenticatedPage,
   }) => {
     const { companionLesson, sourceLesson } = await createPendingCompanionLesson({
       sourceKind: "vocabulary",
       targetKind: "translation",
     });
 
-    await setupMockApis(page, {
+    await setupMockApis(authenticatedPage, {
       statusDelayMs: 2500,
       streamMessages: [{ status: "started", step: "getLesson" }],
     });
 
-    await page.goto(`/generate/l/${companionLesson.id}`);
+    await authenticatedPage.goto(`/generate/l/${companionLesson.id}`);
 
-    await expect(page).toHaveURL(new RegExp(`/generate/l/${sourceLesson.id}$`, "u"));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/generate/l/${sourceLesson.id}$`, "u"));
   });
 
-  test("redirects pending listening generation to source reading generation", async ({ page }) => {
+  test("redirects pending listening generation to source reading generation", async ({
+    authenticatedPage,
+  }) => {
     const { companionLesson, sourceLesson } = await createPendingCompanionLesson({
       sourceKind: "reading",
       targetKind: "listening",
     });
 
-    await setupMockApis(page, {
+    await setupMockApis(authenticatedPage, {
       statusDelayMs: 2500,
       streamMessages: [{ status: "started", step: "getLesson" }],
     });
 
-    await page.goto(`/generate/l/${companionLesson.id}`);
+    await authenticatedPage.goto(`/generate/l/${companionLesson.id}`);
 
-    await expect(page).toHaveURL(new RegExp(`/generate/l/${sourceLesson.id}$`, "u"));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/generate/l/${sourceLesson.id}$`, "u"));
   });
 });
 
@@ -590,7 +611,7 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 });
 
 test.describe("Generate Lesson Page - Running Later Lesson Requires Subscription", () => {
-  test("unauthenticated user sees upgrade CTA when status is running", async ({ page }) => {
+  test("unauthenticated user sees the login gate when status is running", async ({ page }) => {
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -628,7 +649,8 @@ test.describe("Generate Lesson Page - Running Later Lesson Requires Subscription
 
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByText(/^keep learning with plus$/iu)).toBeVisible();
+    await expectLessonAuthenticationGate({ lessonId: lesson.id, page });
+    await expect(page.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
   });
 });
 

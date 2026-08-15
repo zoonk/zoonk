@@ -47,6 +47,10 @@ async function createCoursePrompt(request: NextRequest) {
       prompt: parsed.data.prompt,
     });
 
+    if (result.kind === "unauthorized") {
+      return errors.unauthorized();
+    }
+
     if (result.kind === "invalid") {
       return errors.badRequest("Invalid course prompt");
     }
@@ -58,6 +62,10 @@ async function createCoursePrompt(request: NextRequest) {
     language: parsed.data.language,
     targetLanguage: parsed.data.targetLanguage,
   });
+
+  if (result.kind === "unauthorized") {
+    return errors.unauthorized();
+  }
 
   return NextResponse.json(
     result.kind === "course"

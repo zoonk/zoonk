@@ -22,12 +22,16 @@ function shouldClaimLessonGenerationQuota(
 export async function getLessonGenerationAccess(lessonId: string) {
   const [lesson, session] = await Promise.all([getLessonForGeneration(lessonId), getSession()]);
 
+  if (!session) {
+    return { status: "unauthorized" as const };
+  }
+
   if (!lesson || !isStandaloneGeneratedLessonKind(lesson.kind)) {
     return { status: "notFound" as const };
   }
 
   const requirement = getLessonAccessRequirement({ lesson });
-  const isAdmin = session?.user.role === "admin";
+  const isAdmin = session.user.role === "admin";
 
   if (requirement === "subscription" && !isAdmin && !(await hasActiveSubscription())) {
     return { status: "subscriptionRequired" as const };

@@ -35,6 +35,10 @@ function reachedGenerationLimit(result: Awaited<ReturnType<typeof claimGeneratio
 async function createCourseGeneration(coursePromptId: string) {
   const access = await getCourseGenerationAccess(coursePromptId);
 
+  if (access.status === "unauthorized") {
+    return errors.unauthorized();
+  }
+
   if (access.status === "notFound") {
     return errors.notFound();
   }
@@ -67,6 +71,10 @@ async function createCourseGeneration(coursePromptId: string) {
 async function createChapterGeneration(chapterId: string) {
   const access = await getChapterGenerationAccess(chapterId);
 
+  if (access.status === "unauthorized") {
+    return errors.unauthorized();
+  }
+
   if (access.status === "notFound") {
     return errors.notFound();
   }
@@ -94,6 +102,10 @@ async function createChapterGeneration(chapterId: string) {
 /** Starts a lesson workflow after its subscription gate and quota claim are accepted. */
 async function createLessonGeneration(lessonId: string) {
   const access = await getLessonGenerationAccess(lessonId);
+
+  if (access.status === "unauthorized") {
+    return errors.unauthorized();
+  }
 
   if (access.status === "notFound") {
     return errors.notFound();

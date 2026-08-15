@@ -3,10 +3,14 @@ import { prisma } from "@zoonk/db";
 import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { normalizeString } from "@zoonk/utils/string";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getSession } from "../users/get-session";
 import { listCompletedLanguageCourses, resolveLanguageCourse } from "./language-course";
 import { resolveCoursePrompt } from "./resolve-course-prompt";
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 /**
  * Creates a source-language value that no seeded course should use, so each
@@ -209,10 +213,35 @@ describe(listCompletedLanguageCourses, () => {
 });
 
 describe(resolveLanguageCourse, () => {
+  beforeEach(async () => {
+    const user = await userFixture();
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+  });
+
+  it("does not create a language course request without authentication", async () => {
+    const input = getLanguageCoursePromptInput();
+    vi.mocked(getSession).mockResolvedValue(null);
+
+    await expect(resolveLanguageCourse(input)).resolves.toStrictEqual({ kind: "unauthorized" });
+
+    await expect(
+      prisma.coursePrompt.findUnique({
+        where: {
+          languageNormalizedPrompt: {
+            language: input.language,
+            normalizedPrompt: normalizeString("Learn Spanish"),
+          },
+        },
+      }),
+    ).resolves.toBeNull();
+  });
+
   it("returns the newest completed course without creating a generation prompt", async () => {
     const organization = await aiOrganizationFixture();
     const language = getUniqueSourceLanguage();
     const newerSlug = getCourseSlug("resolution-newer");
+
+    vi.mocked(getSession).mockResolvedValue(null);
 
     await Promise.all([
       courseFixture({

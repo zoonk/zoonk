@@ -19,9 +19,34 @@ describe(getLessonGenerationView, () => {
     organizationId = organization.id;
   });
 
-  beforeEach(() => vi.mocked(getSession).mockResolvedValue(null));
+  beforeEach(async () => {
+    const user = await userFixture();
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+  });
 
-  it("returns the generated lesson and its completed-content readiness", async () => {
+  it("requires authentication before showing a pending generation", async () => {
+    const course = await courseFixture({
+      organizationId,
+      title: `Authentication generation view ${randomUUID()}`,
+    });
+
+    const chapter = await chapterFixture({ courseId: course.id, organizationId, position: 0 });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      kind: "explanation",
+      organizationId,
+    });
+
+    vi.mocked(getSession).mockResolvedValue(null);
+
+    await expect(getLessonGenerationView(lesson.id)).resolves.toStrictEqual({
+      status: "unauthorized",
+    });
+  });
+
+  it("lets guests continue from a completed lesson to its public page", async () => {
     const course = await courseFixture({
       generationStatus: "completed",
       organizationId,
@@ -37,13 +62,15 @@ describe(getLessonGenerationView, () => {
       organizationId,
     });
 
+    vi.mocked(getSession).mockResolvedValue(null);
+
     await expect(getLessonGenerationView(lesson.id)).resolves.toMatchObject({
       isReadyForRedirect: true,
       lesson: { id: lesson.id, kind: "explanation" },
       status: "ready",
     });
 
-    expect(getSession).not.toHaveBeenCalled();
+    expect(getSession).toHaveBeenCalledWith();
   });
 
   it("routes an incomplete generated companion through its source lesson", async () => {
@@ -219,7 +246,7 @@ describe(getLessonGenerationView, () => {
     });
   });
 
-  it("hides lesson kinds without a generation workflow", async () => {
+  it("hides lesson kinds without a generation workflow before asking guests to log in", async () => {
     const course = await courseFixture({
       organizationId,
       title: `Unsupported generation view ${randomUUID()}`,
@@ -228,6 +255,8 @@ describe(getLessonGenerationView, () => {
     const chapter = await chapterFixture({ courseId: course.id, organizationId, position: 0 });
 
     const lesson = await lessonFixture({ chapterId: chapter.id, kind: "custom", organizationId });
+
+    vi.mocked(getSession).mockResolvedValue(null);
 
     await expect(getLessonGenerationView(lesson.id)).resolves.toStrictEqual({ status: "notFound" });
   });

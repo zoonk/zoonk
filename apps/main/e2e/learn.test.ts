@@ -9,7 +9,12 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
+import {
+  getGenerationTriggerRequests,
+  isGenerationEvents,
+  isGenerationTrigger,
+  routeGenerationApis,
+} from "./generation-api";
 
 const TEST_RUN_ID = "test-run-id-learn-generate-link";
 
@@ -250,18 +255,40 @@ test.describe("Learn Form", () => {
     );
   });
 
-  test("submitting prompt starts topic course generation for unauthenticated users", async ({
+  test("submitting an uncached prompt requires login without starting generation", async ({
     page,
   }) => {
-    await mockCourseGenerationWorkflow(page);
-
-    const cached = await cacheTopicPrompt(`e2e guest topic ${randomUUID()}`);
+    const prompt = `e2e uncached guest topic ${randomUUID()}`;
+    const promptPath = `/start/learn/${encodeURIComponent(prompt)}`;
 
     await page.goto("/start/learn");
-    await page.getByRole("textbox").fill(cached.prompt);
+    await page.getByRole("textbox").fill(prompt);
     await page.keyboard.press("Enter");
 
-    await expect(page).toHaveURL(new RegExp(`/generate/course/${cached.request.id}$`, "u"));
+    await expect(page).toHaveURL(new RegExp(`${promptPath}$`, "u"));
+    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Explore courses" })).toHaveAttribute(
+      "href",
+      "/courses",
+    );
+
+    await expect(page.getByRole("link", { name: "Log in" })).toHaveAttribute(
+      "href",
+      `/login?next=${encodeURIComponent(promptPath)}`,
+    );
+
+    await expect(
+      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
+    ).resolves.toHaveLength(0);
+
+    await expect(
+      prisma.coursePrompt.findUnique({
+        where: {
+          languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+        },
+      }),
+    ).resolves.toBeNull();
   });
 });
 
@@ -275,14 +302,18 @@ test.describe("Course Start Routing", () => {
     await expect(page.getByRole("textbox")).toBeVisible();
   });
 
-  test("redirects cached topic prompts to the generation page", async ({ page }) => {
-    await mockCourseGenerationWorkflow(page);
+  test("redirects cached topic prompts to the generation page for signed-in users", async ({
+    authenticatedPage,
+  }) => {
+    await mockCourseGenerationWorkflow(authenticatedPage);
 
     const cached = await cacheTopicPrompt(`e2e direct Python 3.12 topic ${randomUUID()}`);
 
-    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
+    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 
-    await expect(page).toHaveURL(new RegExp(`/generate/course/${cached.request.id}$`, "u"));
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/generate/course/${cached.request.id}$`, "u"),
+    );
   });
 
   test("redirects cached topic prompts to existing reusable courses", async ({ page }) => {

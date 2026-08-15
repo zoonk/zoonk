@@ -8,7 +8,7 @@ function shouldClaimCourseGenerationQuota(generationStatus: string | null): bool
 }
 
 /**
- * Validates one persisted generation request and derives the optional learner
+ * Validates one persisted generation request and derives the learner
  * identity from the authenticated session before a delivery app starts the
  * workflow.
  *
@@ -21,6 +21,10 @@ export async function getCourseGenerationAccess(coursePromptId: string) {
     getCoursePromptById({ id: coursePromptId }),
     getSession(),
   ]);
+
+  if (!session) {
+    return { status: "unauthorized" as const };
+  }
 
   if (!coursePrompt) {
     return { status: "notFound" as const };
@@ -37,6 +41,6 @@ export async function getCourseGenerationAccess(coursePromptId: string) {
     courseSlug: coursePrompt.course?.slug ?? null,
     shouldClaimQuota: shouldClaimCourseGenerationQuota(coursePrompt.generationStatus),
     status: "ready" as const,
-    userId: session?.user.id ?? null,
+    userId: session.user.id,
   };
 }

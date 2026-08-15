@@ -24,21 +24,18 @@ describe(getCourseGenerationAccess, () => {
     });
   });
 
-  it("allows guest generation without inventing an acting user", async () => {
+  it("requires authentication before course generation", async () => {
     const prompt = await coursePromptFixture();
 
     await expect(getCourseGenerationAccess(prompt.id)).resolves.toStrictEqual({
-      coursePromptId: prompt.id,
-      courseSlug: null,
-      shouldClaimQuota: true,
-      status: "ready",
-      userId: null,
+      status: "unauthorized",
     });
   });
 
   it("returns the existing course slug without another generation lookup", async () => {
-    const course = await courseFixture();
+    const [course, user] = await Promise.all([courseFixture(), userFixture()]);
     const prompt = await coursePromptFixture({ courseId: course.id, generationStatus: "failed" });
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
     await expect(getCourseGenerationAccess(prompt.id)).resolves.toMatchObject({
       courseSlug: course.slug,
@@ -48,7 +45,12 @@ describe(getCourseGenerationAccess, () => {
   });
 
   it("does not claim quota when a course generation is already running", async () => {
-    const prompt = await coursePromptFixture({ generationStatus: "running" });
+    const [prompt, user] = await Promise.all([
+      coursePromptFixture({ generationStatus: "running" }),
+      userFixture(),
+    ]);
+
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
     await expect(getCourseGenerationAccess(prompt.id)).resolves.toMatchObject({
       shouldClaimQuota: false,
@@ -57,7 +59,12 @@ describe(getCourseGenerationAccess, () => {
   });
 
   it("distinguishes missing and invalid generation prompts", async () => {
-    const invalidPrompt = await coursePromptFixture({ intent: "question" });
+    const [invalidPrompt, user] = await Promise.all([
+      coursePromptFixture({ intent: "question" }),
+      userFixture(),
+    ]);
+
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
     const [missing, invalid] = await Promise.all([
       getCourseGenerationAccess(randomUUID()),

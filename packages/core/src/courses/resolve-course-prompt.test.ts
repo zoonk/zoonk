@@ -7,11 +7,15 @@ import { prisma } from "@zoonk/db";
 import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { normalizeString } from "@zoonk/utils/string";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getSession } from "../users/get-session";
 import { COURSE_LANGUAGE_MAX_LENGTH, COURSE_PROMPT_MAX_LENGTH } from "./course-prompt-contract";
 import { getCourseSlugForTitle } from "./course-slug";
 import { type CoursePromptResolution, resolveCoursePrompt } from "./resolve-course-prompt";
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 type GenerateCoursePromptResolution = Extract<CoursePromptResolution, { kind: "generate" }>;
 type CourseRedirectPromptResolution = Extract<CoursePromptResolution, { kind: "course" }>;
@@ -68,7 +72,7 @@ async function createCompletedAiCourse({ language, title }: { language: string; 
 /**
  * Mocks the model tasks with production-shaped return values so resolver tests
  * can prove the orchestration boundaries without making network calls. All
- * three model tasks run together for first-time prompts, even when the prompt
+ * four model tasks run together for first-time prompts, even when the prompt
  * ultimately redirects, waits for a future format, or blocks generation.
  */
 function mockPromptTasks({
@@ -100,6 +104,38 @@ function mockPromptTasks({
 }
 
 describe("course-prompt", () => {
+  beforeEach(async () => {
+    const user = await userFixture();
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+  });
+
+  it("rejects unauthenticated prompts before calling models or persistence", async () => {
+    const prompt = `anonymous topic ${randomUUID()}`;
+    const courseFormatSpy = vi.spyOn(formatTask, "classifyCourseFormat");
+    const intentSpy = vi.spyOn(intentTask, "classifyCourseIntent");
+    const personalizationSpy = vi.spyOn(personalizationTask, "classifyCoursePersonalization");
+    const titleSpy = vi.spyOn(canonicalTitleTask, "generateCanonicalCourseTitle");
+
+    vi.mocked(getSession).mockResolvedValue(null);
+
+    await expect(resolveCoursePrompt({ language: "en", prompt })).resolves.toStrictEqual({
+      kind: "unauthorized",
+    });
+
+    expect(intentSpy).not.toHaveBeenCalled();
+    expect(personalizationSpy).not.toHaveBeenCalled();
+    expect(courseFormatSpy).not.toHaveBeenCalled();
+    expect(titleSpy).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.coursePrompt.findUnique({
+        where: {
+          languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+        },
+      }),
+    ).resolves.toBeNull();
+  });
+
   it.each([
     { expectedReason: "prompt", language: "en", prompt: "a".repeat(COURSE_PROMPT_MAX_LENGTH + 1) },
     { expectedReason: "prompt", language: "en", prompt: "   " },
@@ -235,6 +271,28 @@ describe("course-prompt", () => {
     expect(titleSpy).not.toHaveBeenCalled();
   });
 
+  it("requires authentication before promoting a cached prompt to generation", async () => {
+    const prompt = `cached guest topic ${randomUUID()}`;
+
+    const cached = await coursePromptFixture({
+      canonicalTitle: `Cached Guest Course ${randomUUID()}`,
+      courseFormat: "coding",
+      generationStatus: null,
+      normalizedPrompt: normalizeString(prompt),
+      prompt,
+    });
+
+    vi.mocked(getSession).mockResolvedValue(null);
+
+    await expect(resolveCoursePrompt({ language: "en", prompt })).resolves.toStrictEqual({
+      kind: "unauthorized",
+    });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: cached.id } }),
+    ).resolves.toMatchObject({ generationStatus: null });
+  });
+
   it.each(["coding", "practical"] as const)(
     "enables generation for a cached %s prompt that was previously waitlisted",
     async (courseFormat) => {
@@ -304,7 +362,7 @@ describe("course-prompt", () => {
     expect(titleSpy).not.toHaveBeenCalled();
   });
 
-  it("redirects cached reusable prompts to an existing reusable course without model tasks", async () => {
+  it("redirects unauthenticated cached prompts to an existing course without model tasks", async () => {
     const prompt = `cached existing topic ${randomUUID()}`;
     const title = `Cached Existing Course ${randomUUID().slice(0, 8)}`;
     const course = await createCompletedAiCourse({ language: "en", title });
@@ -320,10 +378,13 @@ describe("course-prompt", () => {
     const courseFormatSpy = vi.spyOn(formatTask, "classifyCourseFormat");
     const titleSpy = vi.spyOn(canonicalTitleTask, "generateCanonicalCourseTitle");
 
+    vi.mocked(getSession).mockResolvedValue(null);
+
     const result = await resolveCoursePrompt({ language: "en", prompt });
 
     expectCourseResult(result);
     expect(result.course).toStrictEqual({ id: course.id, slug: course.slug });
+    expect(getSession).toHaveBeenCalledWith();
     expect(intentSpy).not.toHaveBeenCalled();
     expect(personalizationSpy).not.toHaveBeenCalled();
     expect(courseFormatSpy).not.toHaveBeenCalled();
