@@ -4,6 +4,8 @@ export type GenerationQuotaPeriod = "day" | "month";
 export type GenerationQuotaResource = "chapter" | "course" | "lesson";
 export type GenerationQuotaViewer = "authenticated" | "guest" | "subscriber";
 
+export type GenerationQuotaActor = { distinctId: string; username: string | null };
+
 export type GenerationQuotaLimit = {
   period: GenerationQuotaPeriod;
   resource: GenerationQuotaResource;
@@ -12,4 +14,4 @@ export type GenerationQuotaLimit = {
 
 export type GenerationQuotaResult =
   | { status: "ready" }
-  | { limit: GenerationQuotaLimit; status: "limitReached" };
+  | { actor: GenerationQuotaActor; limit: GenerationQuotaLimit; status: "limitReached" };

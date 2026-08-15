@@ -34,6 +34,7 @@ export async function getCourseGenerationAccess(coursePromptId: string) {
 
   return {
     coursePromptId: coursePrompt.id,
+    courseSlug: coursePrompt.course?.slug ?? null,
     shouldClaimQuota: shouldClaimCourseGenerationQuota(coursePrompt.generationStatus),
     status: "ready" as const,
     userId: session?.user.id ?? null,

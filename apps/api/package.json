@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@sentry/nextjs": "catalog:",
+    "@vercel/analytics": "catalog:",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",

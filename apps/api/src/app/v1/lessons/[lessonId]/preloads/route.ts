@@ -1,10 +1,10 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { claimGenerationQuotaIfNeeded } from "@/lib/generation-quota";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
-import { claimGenerationQuotaIfNeeded } from "@zoonk/core/generation-quotas/claim";
 import { getNextPreloadTargetResource } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
 import { getChapterGenerationAccess } from "@zoonk/core/workflows/chapter-generation-access";
 import { getLessonGenerationAccess } from "@zoonk/core/workflows/lesson-generation-access";
@@ -28,6 +28,7 @@ async function startPreloadGeneration(target: PreloadTarget) {
     const quota = await claimGenerationQuotaIfNeeded({
       resource: "chapter",
       shouldClaimQuota: access.shouldClaimQuota,
+      target: { chapterSlug: access.chapter.slug, courseSlug: access.chapter.course.slug },
       targetId: target.chapterId,
     });
 
@@ -49,6 +50,11 @@ async function startPreloadGeneration(target: PreloadTarget) {
   const quota = await claimGenerationQuotaIfNeeded({
     resource: "lesson",
     shouldClaimQuota: access.shouldClaimQuota,
+    target: {
+      chapterSlug: access.lesson.chapter.slug,
+      courseSlug: access.lesson.chapter.course.slug,
+      lessonSlug: access.lesson.slug,
+    },
     targetId: target.lessonId,
   });
 

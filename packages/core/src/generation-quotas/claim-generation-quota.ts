@@ -182,7 +182,7 @@ async function claimGenerationQuota({
   resource: GenerationQuotaResource;
   targetId: string;
 }): Promise<GenerationQuotaResult> {
-  const { actorKeys, viewer } = await getGenerationQuotaViewer();
+  const { actor, actorKeys, viewer } = await getGenerationQuotaViewer();
   const rules = getGenerationQuotaRules({ now, resource, viewer });
 
   try {
@@ -191,7 +191,7 @@ async function claimGenerationQuota({
     );
   } catch (error) {
     if (error instanceof Error && isReachedLimitSignal(error.cause)) {
-      return { limit: error.cause.limit, status: "limitReached" };
+      return { actor, limit: error.cause.limit, status: "limitReached" };
     }
 
     throw error;
