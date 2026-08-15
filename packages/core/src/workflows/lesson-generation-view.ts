@@ -56,8 +56,11 @@ export async function getLessonGenerationView(lessonId: string) {
 
   const requiresSubscription = getLessonAccessRequirement({ lesson }) === "subscription";
 
+  const isPubliclyVisible =
+    lesson.isPublished && lesson.chapter.isPublished && lesson.chapter.course.isPublished;
+
   if (!session) {
-    if (requiresSubscription || lesson.generationStatus !== "completed") {
+    if (requiresSubscription || lesson.generationStatus !== "completed" || !isPubliclyVisible) {
       return { status: "unauthorized" as const };
     }
 

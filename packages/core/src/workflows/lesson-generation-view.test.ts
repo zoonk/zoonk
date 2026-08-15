@@ -49,15 +49,22 @@ describe(getLessonGenerationView, () => {
   it("lets guests continue from a completed lesson to its public page", async () => {
     const course = await courseFixture({
       generationStatus: "completed",
+      isPublished: true,
       organizationId,
       title: `Generation view ${randomUUID()}`,
     });
 
-    const chapter = await chapterFixture({ courseId: course.id, organizationId, position: 0 });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId,
+      position: 0,
+    });
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationStatus: "completed",
+      isPublished: true,
       kind: "explanation",
       organizationId,
     });
@@ -72,6 +79,43 @@ describe(getLessonGenerationView, () => {
 
     expect(getSession).toHaveBeenCalledWith();
   });
+
+  it.each([
+    { chapterIsPublished: true, courseIsPublished: true, lessonIsPublished: false },
+    { chapterIsPublished: false, courseIsPublished: true, lessonIsPublished: true },
+    { chapterIsPublished: true, courseIsPublished: false, lessonIsPublished: true },
+  ])(
+    "requires authentication when a completed lesson is outside the public hierarchy",
+    async ({ chapterIsPublished, courseIsPublished, lessonIsPublished }) => {
+      const course = await courseFixture({
+        generationStatus: "completed",
+        isPublished: courseIsPublished,
+        organizationId,
+        title: `Private generation view ${randomUUID()}`,
+      });
+
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        isPublished: chapterIsPublished,
+        organizationId,
+        position: 0,
+      });
+
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: lessonIsPublished,
+        kind: "explanation",
+        organizationId,
+      });
+
+      vi.mocked(getSession).mockResolvedValue(null);
+
+      await expect(getLessonGenerationView(lesson.id)).resolves.toStrictEqual({
+        status: "unauthorized",
+      });
+    },
+  );
 
   it("routes an incomplete generated companion through its source lesson", async () => {
     const course = await courseFixture({
