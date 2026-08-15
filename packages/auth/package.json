@@ -22,14 +22,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@better-auth/prisma-adapter": "1.6.26",
-    "@better-auth/stripe": "1.6.26",
+    "@better-auth/prisma-adapter": "1.6.29",
+    "@better-auth/stripe": "1.6.29",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.6.26",
-    "jose": "6.2.8",
-    "stripe": "22.4.0",
+    "better-auth": "1.6.29",
+    "jose": "6.2.9",
+    "stripe": "22.5.0",
     "zod": "catalog:"
   },
   "devDependencies": {
