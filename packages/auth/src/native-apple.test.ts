@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { reauthorizeAppleForAccountDeletion, signInWithNativeApple } from "./native-apple";
 
 const mocks = vi.hoisted(() => ({
+  enforceSignInRateLimit: vi.fn(),
   exchangeAuthorizationCode: vi.fn(),
   revokeToken: vi.fn(),
   signInExistingAppleAccount: vi.fn(),
@@ -12,6 +13,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("./native-apple-session", () => ({
+  enforceNativeAppleSignInRateLimit: mocks.enforceSignInRateLimit,
   signInWithExistingAppleAccount: mocks.signInExistingAppleAccount,
   signInWithNativeAppleAccount: mocks.signInNativeAppleAccount,
 }));
@@ -44,6 +46,12 @@ const authorization = {
   expiresIn: 3600,
   idToken: "exchanged-identity-token",
   refreshToken: "apple-refresh-token",
+};
+
+const nativeSignInRequest = {
+  credentials,
+  headers: new Headers(),
+  requestURL: "http://localhost:4000/v1/sessions/apple",
 };
 
 /**
@@ -97,10 +105,30 @@ function verifySubject(subject: string) {
 describe(signInWithNativeApple, () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
+    mocks.enforceSignInRateLimit.mockResolvedValue(undefined);
     mocks.exchangeAuthorizationCode.mockResolvedValue(authorization);
 
     // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
     mocks.revokeToken.mockResolvedValue(undefined);
+  });
+
+  it("enforces the rate limit before using Apple's single-use credentials", async () => {
+    const rateLimitError = new Error("Too many requests");
+
+    mocks.enforceSignInRateLimit.mockRejectedValue(rateLimitError);
+
+    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toBe(rateLimitError);
+
+    expect(mocks.enforceSignInRateLimit).toHaveBeenCalledExactlyOnceWith({
+      headers: nativeSignInRequest.headers,
+      requestURL: nativeSignInRequest.requestURL,
+    });
+
+    expect(mocks.verifyIdentityToken).not.toHaveBeenCalled();
+    expect(mocks.exchangeAuthorizationCode).not.toHaveBeenCalled();
+    expect(mocks.signInNativeAppleAccount).not.toHaveBeenCalled();
   });
 
   it("persists Apple's exchanged tokens on the exact verified account", async () => {
@@ -120,7 +148,9 @@ describe(signInWithNativeApple, () => {
       success: true,
     });
 
-    await expect(signInWithNativeApple(credentials)).resolves.toStrictEqual(sessionResponse);
+    await expect(signInWithNativeApple(nativeSignInRequest)).resolves.toStrictEqual(
+      sessionResponse,
+    );
 
     const persistedAccount = await prisma.account.findUniqueOrThrow({ where: { id: account.id } });
     expect(persistedAccount.accessToken).toBe(authorization.accessToken);
@@ -128,7 +158,26 @@ describe(signInWithNativeApple, () => {
     expect(persistedAccount.refreshToken).toBe(authorization.refreshToken);
     expect(persistedAccount.accessTokenExpiresAt).toBeInstanceOf(Date);
     expect(mocks.revokeToken).not.toHaveBeenCalled();
-    expect(mocks.signInNativeAppleAccount).toHaveBeenCalledExactlyOnceWith(credentials);
+
+    expect(mocks.signInNativeAppleAccount).toHaveBeenCalledExactlyOnceWith({
+      credentials,
+      headers: nativeSignInRequest.headers,
+    });
+  });
+
+  it("treats a malformed Better Auth success response as an internal failure", async () => {
+    verifySubject(`apple-${randomUUID()}`);
+
+    mocks.signInNativeAppleAccount.mockResolvedValue({
+      changes: {},
+      response: { redirect: false },
+      success: true,
+    });
+
+    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toMatchObject({
+      message: "Native Apple sign-in did not create a session",
+      name: "Error",
+    });
   });
 
   it("rejects an Apple account that belongs to another Zoonk user", async () => {
@@ -148,7 +197,7 @@ describe(signInWithNativeApple, () => {
       success: true,
     });
 
-    await expect(signInWithNativeApple(credentials)).rejects.toThrow(
+    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow(
       "Apple account does not belong to the authenticated user",
     );
 
@@ -183,7 +232,7 @@ describe(signInWithNativeApple, () => {
       success: true,
     });
 
-    await expect(signInWithNativeApple(credentials)).rejects.toThrow();
+    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow();
 
     const [persistedUser, persistedAccount, persistedSession] = await Promise.all([
       prisma.user.findUnique({ where: { id: user.id } }),

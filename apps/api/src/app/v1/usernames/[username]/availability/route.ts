@@ -1,8 +1,8 @@
 import { errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { getBetterAuthError } from "@/lib/better-auth-errors";
 import { usernameAvailabilityPathSchema } from "@/lib/openapi/schemas/usernames";
 import { parsePathParams } from "@/lib/path-params";
+import { getAuthError } from "@zoonk/auth/errors";
 import { getUsernameAvailability } from "@zoonk/core/users/current";
 import { safeAsync } from "@zoonk/utils/error";
 import { NextResponse } from "next/server";
@@ -30,7 +30,7 @@ async function getUsernameAvailabilityRoute(
     return NextResponse.json(data);
   }
 
-  const authError = getBetterAuthError(error);
+  const authError = getAuthError(error);
 
   if (authError?.statusCode === httpStatus.unprocessableEntity) {
     return NextResponse.json({ isAvailable: false, username: parsed.data.username });

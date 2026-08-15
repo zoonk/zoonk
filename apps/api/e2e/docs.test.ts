@@ -60,8 +60,14 @@ test.describe("API Documentation", () => {
     expect(spec.paths).toHaveProperty("/generations/{generationId}");
     expect(spec.paths).toHaveProperty("/generations/{generationId}/events");
     expect(spec.paths).toHaveProperty("/feedback");
+    expect(spec.paths).toHaveProperty("/email-sign-in-codes");
     expect(spec.paths).toHaveProperty("/me");
+    expect(spec.paths).toHaveProperty("/sessions/apple");
+    expect(spec.paths).toHaveProperty("/sessions/current");
+    expect(spec.paths).toHaveProperty("/sessions/email-code");
+    expect(spec.paths).toHaveProperty("/sessions/google");
     expect(spec.paths["/courses"].get.operationId).toBe("listCourses");
+    expect(spec.paths["/sessions/apple"].post.operationId).toBe("createAppleSession");
 
     await apiContext.dispose();
   });
@@ -77,6 +83,7 @@ test.describe("API Documentation", () => {
     expect(spec.paths).not.toHaveProperty("/sign-in/email");
     expect(spec.paths).not.toHaveProperty("/sign-up/email");
     expect(spec.paths).not.toHaveProperty("/sign-out");
+    expect(spec.paths).not.toHaveProperty("/auth/sign-in/apple-native");
 
     expect(spec.components.securitySchemes).toMatchObject({
       bearerAuth: { scheme: "bearer", type: "http" },

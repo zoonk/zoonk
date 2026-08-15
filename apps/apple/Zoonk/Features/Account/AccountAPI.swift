@@ -1,12 +1,15 @@
 import Foundation
+import OpenAPIRuntime
 
 enum AccountAPIError: Error, Equatable {
+  case accountDisabled
   case accountMismatch
   case appleCredentialMismatch
   case invalidCode
   case invalidEmail
   case invalidResponse
   case network
+  case rateLimited
   case reauthenticationRequired
   case unauthorized
   case usernameTaken
@@ -55,87 +58,147 @@ extension AccountAPIClient {
 }
 
 struct AccountAPI {
-  let baseURL: URL
-  private let session: URLSession
+  private let clients: APIClientFactory
 
-  /// Creates a cookie-free client because native authentication is authorized only by the bearer token kept in Keychain.
-  static func live(baseURL: URL) -> AccountAPI {
-    let configuration = URLSessionConfiguration.ephemeral
-    configuration.httpCookieAcceptPolicy = .never
-    configuration.httpShouldSetCookies = false
-    configuration.timeoutIntervalForRequest = 30
-    configuration.timeoutIntervalForResource = 60
-
-    return AccountAPI(baseURL: baseURL, session: URLSession(configuration: configuration))
+  init(clients: APIClientFactory) {
+    self.clients = clients
   }
 
-  /// Loads the authenticated profile and subscription state used by the avatar and account sheet.
   func getCurrentAccount(token: String) async throws -> CurrentAccount {
-    let request = makeRequest(path: "/v1/me", token: token)
-    return try decode(CurrentAccount.self, from: await data(for: request))
+    let output = try await perform(token: token) { client in
+      try await client.getCurrentUser(.init())
+    }
+
+    switch output {
+    case .ok(let response):
+      return makeCurrentAccount(try response.body.json)
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
   }
 
   /// Asks the existing mailer to send the same localized six-digit sign-in code used by the web application.
   func sendEmailCode(email: String) async throws {
-    let body = EmailCodeRequest(email: email, type: "sign-in")
-    let request = try makeJSONRequest(
-      body: body,
-      method: "POST",
-      path: "/v1/auth/email-otp/send-verification-otp")
-    _ = try await data(for: request)
+    let output = try await perform { client in
+      try await client.createEmailSignInCode(
+        .init(body: .json(.init(email: email))))
+    }
+
+    switch output {
+    case .noContent:
+      return
+    case .badRequest:
+      throw AccountAPIError.invalidEmail
+    case .forbidden(let response):
+      throw getAPIError(statusCode: 403, payload: try response.body.json)
+    case .tooManyRequests:
+      throw AccountAPIError.rateLimited
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
   }
 
-  /// Exchanges a verified email code for a Zoonk session rather than treating the short-lived code as an API credential.
   func signInWithEmailCode(email: String, code: String) async throws -> String {
-    let body = EmailCodeSignInRequest(email: email, otp: code)
-    let request = try makeJSONRequest(
-      body: body,
-      method: "POST",
-      path: "/v1/auth/sign-in/email-otp")
-    let response = try decode(SessionTokenResponse.self, from: await data(for: request))
-    return response.token
+    let output = try await perform { client in
+      try await client.createEmailCodeSession(
+        .init(body: .json(.init(code: code, email: email))))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.token
+    case .badRequest(let response):
+      throw getAPIError(statusCode: 400, payload: try response.body.json)
+    case .forbidden(let response):
+      throw getAPIError(statusCode: 403, payload: try response.body.json)
+    case .tooManyRequests:
+      throw AccountAPIError.rateLimited
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
   }
 
   /// Sends Apple's single-use code and signed identity assertion so the server owns token exchange, verification, and account linking.
   func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String {
-    let request = try makeJSONRequest(
-      body: makeAppleRequestBody(credentials),
-      method: "POST",
-      path: "/v1/auth/sign-in/apple-native")
-    let response = try decode(SessionTokenResponse.self, from: await data(for: request))
-    return response.token
+    let output = try await perform { client in
+      try await client.createAppleSession(
+        .init(body: .json(makeAppleRequestBody(credentials))))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.token
+    case .badRequest(let response):
+      throw getAPIError(statusCode: 400, payload: try response.body.json)
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .forbidden(let response):
+      throw getAPIError(statusCode: 403, payload: try response.body.json)
+    case .tooManyRequests:
+      throw AccountAPIError.rateLimited
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
   }
 
-  /// Sends Google's native ID token to Better Auth so the server verifies the provider assertion and returns a Zoonk session.
   func signInWithGoogle(idToken: String) async throws -> String {
-    let request = try makeJSONRequest(
-      body: GoogleSignInRequest(
-        idToken: GoogleIdentityToken(token: idToken),
-        provider: "google"),
-      method: "POST",
-      path: "/v1/auth/sign-in/social")
-    let response = try decode(SessionTokenResponse.self, from: await data(for: request))
-    return response.token
+    let output = try await perform { client in
+      try await client.createGoogleSession(
+        .init(body: .json(.init(idToken: idToken))))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.token
+    case .badRequest(let response):
+      throw getAPIError(statusCode: 400, payload: try response.body.json)
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .forbidden(let response):
+      throw getAPIError(statusCode: 403, payload: try response.body.json)
+    case .tooManyRequests:
+      throw AccountAPIError.rateLimited
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
   }
 
-  /// Updates the public profile through the documented product API so first-time setup and later edits share one server contract.
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
-    let request = try makeJSONRequest(
-      body: ProfileUpdateRequest(name: name, username: username),
-      method: "PATCH",
-      path: "/v1/me",
-      token: token)
-    return try decode(CurrentAccount.self, from: await data(for: request))
+    let output = try await perform(token: token) { client in
+      try await client.updateCurrentUser(
+        .init(body: .json(.init(name: name, username: username))))
+    }
+
+    switch output {
+    case .ok(let response):
+      return makeCurrentAccount(try response.body.json)
+    case .badRequest(let response):
+      throw getAPIError(statusCode: 400, payload: try response.body.json)
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .forbidden(let response):
+      throw getAPIError(statusCode: 403, payload: try response.body.json)
+    case .conflict(let response):
+      throw getAPIError(statusCode: 409, payload: try response.body.json)
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
   }
 
   /// Revokes the shared server-side bearer session before the native client clears its local authenticated state.
   func signOut(token: String) async throws {
-    let request = try makeJSONRequest(
-      body: EmptyRequest(),
-      method: "POST",
-      path: "/v1/auth/sign-out",
-      token: token)
-    _ = try await data(for: request)
+    let output = try await perform(token: token) { client in
+      try await client.deleteCurrentSession(.init())
+    }
+
+    switch output {
+    case .noContent:
+      return
+    case .forbidden, .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
   }
 
   /// Sends one atomic deletion request so the server owns any required Apple reauthorization, provider revocation, and permanent data cleanup.
@@ -144,89 +207,85 @@ struct AccountAPI {
     appleCredentials: AppleSignInCredentials? = nil,
     emailCredentials: EmailReauthenticationCredentials? = nil
   ) async throws -> AccountDeletionResponse {
-    let request = try makeJSONRequest(
-      body: AccountDeletionRequest(
-        appleCredentials: appleCredentials.map { makeAppleRequestBody($0) },
-        emailCredentials: emailCredentials),
-      method: "DELETE",
-      path: "/v1/me",
-      token: token)
-    return try decode(
-      AccountDeletionResponse.self,
-      from: await data(for: request, forbiddenError: .reauthenticationRequired))
-  }
-
-  /// Builds a request with the locale and optional bearer credential applied consistently to every native API call.
-  private func makeRequest(path: String, token: String? = nil) -> URLRequest {
-    var request = URLRequest(url: baseURL.appending(path: path))
-    request.setValue(Locale.preferredLanguages.first ?? "en", forHTTPHeaderField: "Accept-Language")
-
-    if let token {
-      request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+    let body = try makeAccountDeletionBody(
+      appleCredentials: appleCredentials,
+      emailCredentials: emailCredentials)
+    let output = try await perform(token: token) { client in
+      try await client.deleteCurrentUser(.init(body: .json(body)))
     }
 
-    return request
-  }
-
-  /// Encodes a typed JSON body without enabling URLSession's cookie storage or adding browser-only origin headers.
-  private func makeJSONRequest<Body: Encodable>(
-    body: Body,
-    method: String,
-    path: String,
-    token: String? = nil
-  ) throws -> URLRequest {
-    var request = makeRequest(path: path, token: token)
-    request.httpBody = try JSONEncoder().encode(body)
-    request.httpMethod = method
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    return request
-  }
-
-  /// Converts transport and API failures into the small set of recovery states the native interface can act on.
-  private func data(
-    for request: URLRequest,
-    forbiddenError: AccountAPIError? = nil
-  ) async throws -> Data {
-    let result: (Data, URLResponse)
-
-    do {
-      result = try await session.data(for: request)
-    } catch {
-      throw AccountAPIError.network
-    }
-
-    guard let response = result.1 as? HTTPURLResponse else {
-      throw AccountAPIError.invalidResponse
-    }
-
-    guard 200..<300 ~= response.statusCode else {
+    switch output {
+    case .ok(let response):
+      return AccountDeletionResponse(
+        appleAuthorizationRevoked: try response.body.json.appleAuthorizationRevoked)
+    case .badRequest(let response):
+      throw getAPIError(statusCode: 400, payload: try response.body.json)
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .forbidden(let response):
       throw getAPIError(
-        statusCode: response.statusCode,
-        data: result.0,
-        forbiddenError: forbiddenError)
-    }
-
-    return result.0
-  }
-
-  /// Decodes successful responses in one place so malformed server payloads never become a partially authenticated UI state.
-  private func decode<Value: Decodable>(_ type: Value.Type, from data: Data) throws -> Value {
-    do {
-      return try JSONDecoder().decode(type, from: data)
-    } catch {
+        statusCode: 403,
+        payload: try response.body.json,
+        forbiddenError: .reauthenticationRequired)
+    case .internalServerError, .undocumented:
       throw AccountAPIError.invalidResponse
     }
   }
 
-  /// Maps both Better Auth and product API envelopes without exposing upstream error prose directly to users.
+  /// Keeps generated transport and decoding details behind the account feature's stable recovery states.
+  private func perform<Output: Sendable>(
+    token: String? = nil,
+    operation: @Sendable (Client) async throws -> Output
+  ) async throws -> Output {
+    do {
+      return try await operation(clients.makeClient(token: token))
+    } catch {
+      if isRequestCancellation(error) {
+        throw CancellationError()
+      }
+
+      if let error = error as? ClientError {
+        if error.underlyingError is URLError {
+          throw AccountAPIError.network
+        }
+
+        throw AccountAPIError.invalidResponse
+      }
+
+      if error is URLError {
+        throw AccountAPIError.network
+      }
+
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
+  private func isRequestCancellation(_ error: Error) -> Bool {
+    if error is CancellationError {
+      return true
+    }
+
+    if let urlError = error as? URLError {
+      return urlError.code == .cancelled
+    }
+
+    if let clientError = error as? ClientError {
+      return isRequestCancellation(clientError.underlyingError)
+    }
+
+    return false
+  }
+
   private func getAPIError(
     statusCode: Int,
-    data: Data,
-    forbiddenError: AccountAPIError?
+    payload: Components.Schemas._Error,
+    forbiddenError: AccountAPIError? = nil
   ) -> AccountAPIError {
-    let payload = try? JSONDecoder().decode(AccountErrorResponse.self, from: data)
-    let code = payload?.code ?? payload?.error?.code
-    let message = payload?.message ?? payload?.error?.message
+    let code = payload.error.code
+
+    if code == "ACCOUNT_DISABLED" {
+      return .accountDisabled
+    }
 
     if code == "ACCOUNT_DELETION_APPLE_MISMATCH" {
       return .appleCredentialMismatch
@@ -236,13 +295,14 @@ struct AccountAPI {
       return .accountMismatch
     }
 
-    if let code,
-      [
-        "ACCOUNT_DELETION_INVALID_OTP",
-        "ACCOUNT_DELETION_OTP_EXPIRED",
-        "ACCOUNT_DELETION_OTP_LOCKED",
-      ].contains(code)
-    {
+    if [
+      "ACCOUNT_DELETION_INVALID_OTP",
+      "ACCOUNT_DELETION_OTP_EXPIRED",
+      "ACCOUNT_DELETION_OTP_LOCKED",
+      "EMAIL_SIGN_IN_CODE_EXPIRED",
+      "EMAIL_SIGN_IN_CODE_INVALID",
+      "EMAIL_SIGN_IN_CODE_LOCKED",
+    ].contains(code) {
       return .invalidCode
     }
 
@@ -258,10 +318,6 @@ struct AccountAPI {
       return .invalidEmail
     }
 
-    if code == "INVALID_OTP" || code == "OTP_EXPIRED" || message == "Invalid OTP" {
-      return .invalidCode
-    }
-
     if statusCode == 409 || code == "USERNAME_IS_ALREADY_TAKEN" {
       return .usernameTaken
     }
@@ -273,85 +329,66 @@ struct AccountAPI {
     return .invalidResponse
   }
 
-  /// Builds the provider payload once so sign-in and sensitive-action reauthorization send exactly the same native Apple credential shape.
-  private func makeAppleRequestBody(_ credentials: AppleSignInCredentials) -> AppleSignInRequest {
+  private func makeAppleRequestBody(_ credentials: AppleSignInCredentials)
+    -> Components.Schemas.AppleSessionRequest
+  {
     let user = credentials.email.map {
-      AppleIdentityUser(
+      Components.Schemas.AppleSessionRequest.UserPayload(
         email: $0,
-        name: AppleIdentityName(
-          firstName: credentials.firstName ?? "",
-          lastName: credentials.lastName ?? ""))
+        name: .init(
+          firstName: credentials.firstName,
+          lastName: credentials.lastName))
     }
 
-    return AppleSignInRequest(
+    return Components.Schemas.AppleSessionRequest(
       authorizationCode: credentials.authorizationCode,
       idToken: credentials.identityToken,
       nonce: credentials.nonce,
       user: user)
   }
+
+  /// Converts the public mutually exclusive deletion contract into its generated Swift case.
+  private func makeAccountDeletionBody(
+    appleCredentials: AppleSignInCredentials?,
+    emailCredentials: EmailReauthenticationCredentials?
+  ) throws -> Components.Schemas.MeDeletion {
+    switch (appleCredentials, emailCredentials) {
+    case (.none, .none):
+      return .case1(.init())
+    case (.some(let credentials), .none):
+      return .case2(.init(appleCredentials: makeAppleRequestBody(credentials)))
+    case (.none, .some(let credentials)):
+      return .case3(
+        .init(
+          emailCredentials: .init(
+            email: credentials.email,
+            otp: credentials.otp)))
+    case (.some, .some):
+      throw AccountAPIError.validation
+    }
+  }
+
+  private func makeCurrentAccount(_ response: Components.Schemas.MeResponse) -> CurrentAccount {
+    let subscription = response.account.subscription?.value1
+
+    return CurrentAccount(
+      account: AccountAccess(
+        deletion: AccountDeletionRequirements(
+          hasAppleAccount: response.account.deletion.hasAppleAccount),
+        subscription: subscription.map {
+          AccountSubscription(
+            plan: $0.plan,
+            provider: $0.provider,
+            status: $0.status)
+        }),
+      user: AccountUser(
+        displayUsername: response.user.displayUsername,
+        email: response.user.email,
+        id: response.user.id,
+        image: response.user.image,
+        name: response.user.name,
+        username: response.user.username))
+  }
 }
 
 extension AccountAPI: AccountAPIClient {}
-
-private struct EmailCodeRequest: Encodable {
-  let email: String
-  let type: String
-}
-
-private struct EmailCodeSignInRequest: Encodable {
-  let email: String
-  let otp: String
-}
-
-private struct AppleSignInRequest: Encodable {
-  let authorizationCode: String
-  let idToken: String
-  let nonce: String
-  let user: AppleIdentityUser?
-}
-
-private struct AccountDeletionRequest: Encodable {
-  let appleCredentials: AppleSignInRequest?
-  let emailCredentials: EmailReauthenticationCredentials?
-}
-
-private struct AppleIdentityUser: Encodable {
-  let email: String
-  let name: AppleIdentityName
-}
-
-private struct AppleIdentityName: Encodable {
-  let firstName: String
-  let lastName: String
-}
-
-private struct GoogleSignInRequest: Encodable {
-  let idToken: GoogleIdentityToken
-  let provider: String
-}
-
-private struct GoogleIdentityToken: Encodable {
-  let token: String
-}
-
-private struct SessionTokenResponse: Decodable {
-  let token: String
-}
-
-private struct ProfileUpdateRequest: Encodable {
-  let name: String
-  let username: String
-}
-
-private struct EmptyRequest: Encodable {}
-
-private struct AccountErrorResponse: Decodable {
-  let code: String?
-  let error: AccountErrorDetails?
-  let message: String?
-}
-
-private struct AccountErrorDetails: Decodable {
-  let code: String?
-  let message: String?
-}

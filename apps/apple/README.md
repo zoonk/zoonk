@@ -37,6 +37,18 @@ Run one test or test class by passing an Xcode test identifier:
 make test TEST_ARGUMENTS='-only-testing:ZoonkUITests/ZoonkUITests/testPrimaryTabsNavigateToTheirScreens'
 ```
 
+## API client
+
+Xcode generates the internal Swift API client automatically during a normal build. A fresh clone does not need a separate SDK setup or generation command, and generated Swift files are not committed.
+
+The committed `Zoonk/openapi.json` file is an OpenAPI 3.0 compatibility projection generated from the same schemas as the public OpenAPI 3.1 contract. It must not be edited by hand. After changing the contract, run one command from the repository root:
+
+```sh
+pnpm openapi:generate
+```
+
+CI checks the file byte-for-byte against the source contract, so a stale artifact cannot merge. Feature code should continue to call small hand-written clients such as `AccountAPIClient`; generated transport types stay behind those feature boundaries, while `APIClientFactory` owns shared transport and middleware configuration.
+
 ## Local authentication
 
 Start the repository with `pnpm dev`. The development launcher writes the printed clone-specific API URL to an ignored Xcode configuration file, so the next Debug build connects to the correct local API automatically. For a physical Apple device, run `pnpm dev:lan` instead so the generated configuration uses the reachable `.local` API URL. Open the printed Mailbox URL after requesting an email code to read the local OTP. Debug builds fall back to `http://localhost:4000` when no generated configuration exists, which matches `pnpm dev:direct`; `ZOONK_API_BASE_URL` remains available as a one-off Xcode scheme override.

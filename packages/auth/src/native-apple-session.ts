@@ -1,7 +1,11 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { type BetterAuthPlugin } from "better-auth";
+import { createAuthEndpoint } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { type BetterAuthOptions } from "better-auth/types";
+import { z } from "zod";
 import { type NativeAppleCredentials } from "./native-apple-contract";
+import { callNativeAuthHandler } from "./native-auth-handler";
 import { getNativeAppleProvider } from "./providers/apple";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 import { stripePlugin } from "./stripe/plugin";
@@ -10,6 +14,19 @@ export type NativeAppleAuthChanges = { accountId?: string; sessionToken?: string
 
 const nativeAppleAuthChanges = new AsyncLocalStorage<NativeAppleAuthChanges>();
 const baseUserCreateAfter = baseAuthConfig.databaseHooks?.user?.create?.after;
+
+function nativeAppleRateLimitPlugin() {
+  return {
+    endpoints: {
+      checkNativeAppleRateLimit: createAuthEndpoint(
+        "/sign-in/native-apple",
+        { body: z.object({}).strict(), method: "POST" },
+        (context) => context.json({ allowed: true }),
+      ),
+    },
+    id: "native-apple-rate-limit",
+  } satisfies BetterAuthPlugin;
+}
 
 const nativeAppleDatabaseHooks = {
   ...baseAuthConfig.databaseHooks,
@@ -76,7 +93,11 @@ function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   return betterAuth({
     ...baseAuthConfig,
     databaseHooks: nativeAppleDatabaseHooks,
-    plugins: [...baseAuthPlugins, stripePlugin({ createCustomerOnSignUp: false })],
+    plugins: [
+      ...baseAuthPlugins,
+      stripePlugin({ createCustomerOnSignUp: false }),
+      nativeAppleRateLimitPlugin(),
+    ],
     rateLimit: { enabled: true, storage: "database" },
     socialProviders: nativeAppleProvider,
   });
@@ -85,11 +106,15 @@ function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
 const nativeAppleAuth = createNativeAppleAuth({ disableSignUp: false });
 const existingAppleAccountAuth = createNativeAppleAuth({ disableSignUp: true });
 
-type NativeAppleAuthResponse = Awaited<ReturnType<typeof nativeAppleAuth.api.signInSocial>>;
-
 export type NativeAppleAuthAttempt =
-  | { changes: NativeAppleAuthChanges; response: NativeAppleAuthResponse; success: true }
+  | { changes: NativeAppleAuthChanges; response: unknown; success: true }
   | { changes: NativeAppleAuthChanges; error: unknown; success: false };
+
+export type NativeAppleSessionRequest = {
+  credentials: NativeAppleCredentials;
+  headers: Headers;
+  requestURL: string;
+};
 
 /**
  * Runs one provider assertion inside request-local change tracking. If Better
@@ -97,22 +122,15 @@ export type NativeAppleAuthAttempt =
  * exact IDs so it can roll back only this sign-in attempt.
  */
 async function attemptNativeAppleSignIn({
-  auth,
-  credentials,
+  signIn,
 }: {
-  auth: typeof nativeAppleAuth;
-  credentials: NativeAppleCredentials;
+  signIn: () => Promise<unknown>;
 }): Promise<NativeAppleAuthAttempt> {
   const changes: NativeAppleAuthChanges = {};
 
   return nativeAppleAuthChanges.run(changes, async () => {
     try {
-      const response = await auth.api.signInSocial({
-        body: {
-          idToken: { nonce: credentials.nonce, token: credentials.idToken, user: credentials.user },
-          provider: "apple",
-        },
-      });
+      const response = await signIn();
 
       return { changes: { ...changes }, response, success: true };
     } catch (error) {
@@ -121,12 +139,42 @@ async function attemptNativeAppleSignIn({
   });
 }
 
-/** Runs normal native Apple login with signup enabled and rollback metadata captured. */
-export function signInWithNativeAppleAccount(credentials: NativeAppleCredentials) {
-  return attemptNativeAppleSignIn({ auth: nativeAppleAuth, credentials });
+function getNativeAppleSignInBody(credentials: NativeAppleCredentials) {
+  return {
+    idToken: { nonce: credentials.nonce, token: credentials.idToken, user: credentials.user },
+    provider: "apple",
+  } as const;
+}
+
+/** Rejects over-limit Apple attempts before consuming their single-use provider grant. */
+export async function enforceNativeAppleSignInRateLimit({
+  headers,
+  requestURL,
+}: Omit<NativeAppleSessionRequest, "credentials">) {
+  await callNativeAuthHandler({
+    body: {},
+    handler: nativeAppleAuth.handler,
+    headers,
+    path: "/sign-in/native-apple",
+    requestURL,
+  });
+}
+
+/** Creates the normal native Apple session after the request has passed its rate-limit gate. */
+export function signInWithNativeAppleAccount({
+  credentials,
+  headers,
+}: Pick<NativeAppleSessionRequest, "credentials" | "headers">) {
+  return attemptNativeAppleSignIn({
+    signIn: () =>
+      nativeAppleAuth.api.signInSocial({ body: getNativeAppleSignInBody(credentials), headers }),
+  });
 }
 
 /** Creates a fresh session for a linked Apple account without permitting signup. */
 export function signInWithExistingAppleAccount(credentials: NativeAppleCredentials) {
-  return attemptNativeAppleSignIn({ auth: existingAppleAccountAuth, credentials });
+  return attemptNativeAppleSignIn({
+    signIn: () =>
+      existingAppleAccountAuth.api.signInSocial({ body: getNativeAppleSignInBody(credentials) }),
+  });
 }

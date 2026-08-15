@@ -1,4 +1,3 @@
-import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
 import { z } from "zod";
 import {
   meDeletionResponseSchema,
@@ -28,27 +27,6 @@ export const accountPaths = {
       security: PUBLIC_SECURITY,
       summary: "Health check",
       tags: ["Health"],
-    },
-  },
-  "/auth/sign-in/apple-native": {
-    post: {
-      operationId: "signInWithNativeApple",
-      requestBody: {
-        content: { "application/json": { schema: nativeAppleCredentialsSchema } },
-        required: true,
-      },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: z.object({ token: z.string().min(1) }) } },
-          description: "Native Apple authorization exchanged for a Zoonk session",
-        },
-        "400": badRequestResponse,
-        "401": unauthorizedResponse,
-        "500": internalErrorResponse,
-      },
-      security: PUBLIC_SECURITY,
-      summary: "Sign in with native Apple authorization",
-      tags: ["Account"],
     },
   },
   "/me": {

@@ -1,8 +1,11 @@
 import { prisma } from "@zoonk/db";
 import { type NativeAppleCredentials } from "./native-apple-contract";
+import { type NativeAppleSession, isNativeAppleSession } from "./native-apple-response";
 import {
   type NativeAppleAuthAttempt,
   type NativeAppleAuthChanges,
+  type NativeAppleSessionRequest,
+  enforceNativeAppleSignInRateLimit,
   signInWithExistingAppleAccount,
   signInWithNativeAppleAccount,
 } from "./native-apple-session";
@@ -24,8 +27,6 @@ export class NativeAppleAccountError extends Error {
     this.name = "NativeAppleAccountError";
   }
 }
-
-type NativeAppleSession = { token: string; user: { id: string } };
 
 type AppleSessionCreator = (credentials: NativeAppleCredentials) => Promise<NativeAppleAuthAttempt>;
 
@@ -218,11 +219,11 @@ async function exchangeVerifiedAuthorization(
  */
 async function createVerifiedSession({
   credentials,
-  createSession = signInWithNativeAppleAccount,
+  createSession,
   verifiedAuthorization,
 }: {
   credentials: NativeAppleCredentials;
-  createSession?: AppleSessionCreator;
+  createSession: AppleSessionCreator;
   verifiedAuthorization: VerifiedAppleAuthorization;
 }) {
   const attempt = await createSession(credentials);
@@ -237,11 +238,11 @@ async function createVerifiedSession({
 
   const { changes, response } = attempt;
 
-  if (!("token" in response) || !("user" in response) || !response.token) {
+  if (!isNativeAppleSession(response)) {
     return throwAfterSessionCleanup({
       ...verifiedAuthorization,
       changes,
-      error: new NativeAppleAccountError("Native Apple sign-in did not create a session"),
+      error: new Error("Native Apple sign-in did not create a session"),
     });
   }
 
@@ -264,7 +265,7 @@ async function createVerifiedSession({
     });
   }
 
-  return { account, changes, session: response as NativeAppleSession };
+  return { account, changes, session: response };
 }
 
 /**
@@ -334,10 +335,19 @@ async function persistAppleAuthorization({
  * is plaintext, so this deliberately stays compatible with all existing OAuth
  * accounts until token encryption receives its own migration plan.
  */
-export async function signInWithNativeApple(credentials: NativeAppleCredentials) {
+export async function signInWithNativeApple(request: NativeAppleSessionRequest) {
+  const { credentials } = request;
+
+  await enforceNativeAppleSignInRateLimit({
+    headers: request.headers,
+    requestURL: request.requestURL,
+  });
+
   const verifiedAuthorization = await exchangeVerifiedAuthorization(credentials);
 
   const { account, changes, session } = await createVerifiedSession({
+    createSession: (nativeCredentials) =>
+      signInWithNativeAppleAccount({ credentials: nativeCredentials, headers: request.headers }),
     credentials,
     verifiedAuthorization,
   });

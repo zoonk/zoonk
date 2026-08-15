@@ -1,6 +1,6 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
-import { getBetterAuthError } from "@/lib/better-auth-errors";
 import { EmailAccountDeletionError } from "@zoonk/auth/email-deletion-contract";
+import { getAuthError } from "@zoonk/auth/errors";
 import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/native-apple";
 
 /**
@@ -60,7 +60,7 @@ export function getAccountDeletionErrorResponse(error: unknown) {
     });
   }
 
-  const authError = getBetterAuthError(error);
+  const authError = getAuthError(error);
 
   if (!authError) {
     return null;

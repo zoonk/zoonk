@@ -1567,6 +1567,35 @@
         }
       }
     },
+    "Too many attempts. Wait a moment, then try again." : {
+      "comment" : "Error shown when sign-in attempts are temporarily rate limited",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu viele Versuche. Warte einen Moment und versuche es dann erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demasiados intentos. Espera un momento y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trop de tentatives. Attends un instant, puis réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muitas tentativas. Espere um pouco e tente de novo."
+          }
+        }
+      }
+    },
     "Try again" : {
       "comment" : "Retries loading the saved account",
       "localizations" : {

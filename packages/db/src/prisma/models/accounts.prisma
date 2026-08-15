@@ -164,11 +164,10 @@ model Subscription {
 }
 
 model RateLimit {
-  id          String  @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  key         String?
-  count       Int?
-  lastRequest BigInt? @map("last_request")
+  id          String @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  key         String @unique
+  count       Int
+  lastRequest BigInt @map("last_request")
 
-  @@index([key])
   @@map("rate_limits")
 }

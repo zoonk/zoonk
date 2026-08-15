@@ -21,6 +21,8 @@
     "knip": "knip",
     "lint": "oxlint --deny-warnings .",
     "lint:fix": "oxlint --fix --deny-warnings .",
+    "openapi:check": "pnpm --filter api openapi:check",
+    "openapi:generate": "pnpm --filter api openapi:generate",
     "start": "turbo start",
     "stripe:listen": "node scripts/dev/stripe-listen.mts",
     "stripe:listen:lan": "node scripts/dev/stripe-listen.mts --lan",

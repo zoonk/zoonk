@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		5A0A00010000000000000001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00200000000000000001 /* GoogleSignIn */; };
+		5A0A00020000000000000001 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00210000000000000001 /* OpenAPIRuntime */; };
+		5A0A00030000000000000001 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00220000000000000001 /* OpenAPIURLSession */; };
+		5A0A00040000000000000001 /* HTTPTypes in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00230000000000000001 /* HTTPTypes */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +82,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A0A00010000000000000001 /* GoogleSignIn in Frameworks */,
+				5A0A00040000000000000001 /* HTTPTypes in Frameworks */,
+				5A0A00020000000000000001 /* OpenAPIRuntime in Frameworks */,
+				5A0A00030000000000000001 /* OpenAPIURLSession in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,6 +157,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5A0A010B0000000000000001 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				BEB8AB603022709A00E0E150 /* Zoonk */,
@@ -158,6 +165,9 @@
 			name = Zoonk;
 			packageProductDependencies = (
 				5A0A00200000000000000001 /* GoogleSignIn */,
+				5A0A00230000000000000001 /* HTTPTypes */,
+				5A0A00210000000000000001 /* OpenAPIRuntime */,
+				5A0A00220000000000000001 /* OpenAPIURLSession */,
 			);
 			productName = Zoonk;
 			productReference = BEB8AB5E3022709A00E0E150 /* Zoonk.app */;
@@ -226,6 +236,10 @@
 			productRefGroup = BEB8AB5F3022709A00E0E150 /* Products */;
 			packageReferences = (
 				5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				5A0A00110000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
+				5A0A00120000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
+				5A0A00130000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
+				5A0A00140000000000000001 /* XCRemoteSwiftPackageReference "swift-http-types" */,
 			);
 			projectDirPath = "";
 			projectRoot = "";
@@ -286,6 +300,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5A0A010B0000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 5A0A00240000000000000001 /* OpenAPIGenerator */;
+		};
 		5A0A01070000000000000001 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
@@ -498,7 +516,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
@@ -538,7 +556,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
@@ -643,6 +661,38 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		5A0A00110000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-generator";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.13.0;
+			};
+		};
+		5A0A00120000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-runtime";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.12.0;
+			};
+		};
+		5A0A00130000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-urlsession";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.1;
+			};
+		};
+		5A0A00140000000000000001 /* XCRemoteSwiftPackageReference "swift-http-types" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-http-types";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -650,6 +700,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		5A0A00210000000000000001 /* OpenAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A0A00120000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */;
+			productName = OpenAPIRuntime;
+		};
+		5A0A00220000000000000001 /* OpenAPIURLSession */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A0A00130000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */;
+			productName = OpenAPIURLSession;
+		};
+		5A0A00230000000000000001 /* HTTPTypes */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A0A00140000000000000001 /* XCRemoteSwiftPackageReference "swift-http-types" */;
+			productName = HTTPTypes;
+		};
+		5A0A00240000000000000001 /* OpenAPIGenerator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A0A00110000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;
+			productName = "plugin:OpenAPIGenerator";
 		};
 /* End XCSwiftPackageProductDependency section */
 };

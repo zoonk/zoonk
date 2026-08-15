@@ -14,6 +14,8 @@
     "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
     "i18n:lint": "eloqnt lint --strict",
     "i18n": "eloqnt translate",
+    "openapi:check": "tsx scripts/openapi.ts --check",
+    "openapi:generate": "tsx scripts/openapi.ts",
     "start": "next start -p 4000",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -51,6 +53,7 @@
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "raw-loader": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "zod-openapi": "6.0.1"

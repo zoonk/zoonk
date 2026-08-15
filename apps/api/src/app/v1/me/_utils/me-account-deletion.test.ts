@@ -1,4 +1,5 @@
 import { EmailAccountDeletionError } from "@zoonk/auth/email-deletion-contract";
+import { NativeAuthResponseError } from "@zoonk/auth/errors";
 import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/native-apple";
 import { describe, expect, it } from "vitest";
 import { getAccountDeletionErrorResponse } from "./me-account-deletion";
@@ -57,11 +58,12 @@ describe(getAccountDeletionErrorResponse, () => {
   ])(
     "maps Better Auth $authCode failures to an actionable product response",
     async ({ authCode, code, message, status }) => {
-      const response = getAccountDeletionErrorResponse({
-        body: { code: authCode, message: "Invalid OTP" },
-        name: "APIError",
-        statusCode: status,
-      });
+      const response = getAccountDeletionErrorResponse(
+        new NativeAuthResponseError({
+          body: { code: authCode, message: "Invalid OTP" },
+          statusCode: status,
+        }),
+      );
 
       await expect(response?.json()).resolves.toStrictEqual({ error: { code, message } });
 
@@ -70,11 +72,12 @@ describe(getAccountDeletionErrorResponse, () => {
   );
 
   it("keeps a missing or expired base session distinct from credential mismatch", async () => {
-    const response = getAccountDeletionErrorResponse({
-      body: { code: "INVALID_TOKEN", message: "Invalid token" },
-      name: "APIError",
-      statusCode: 401,
-    });
+    const response = getAccountDeletionErrorResponse(
+      new NativeAuthResponseError({
+        body: { code: "INVALID_TOKEN", message: "Invalid token" },
+        statusCode: 401,
+      }),
+    );
 
     await expect(response?.json()).resolves.toStrictEqual({
       error: { code: "UNAUTHORIZED", message: "Authentication required" },

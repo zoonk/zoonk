@@ -77,6 +77,7 @@ enum AccountFailure: Equatable {
   case invalidCode
   case invalidEmail
   case network
+  case rateLimited
   case signIn
   case usernameTaken
   case validation

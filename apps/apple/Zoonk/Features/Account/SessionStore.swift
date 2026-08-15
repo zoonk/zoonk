@@ -19,6 +19,7 @@ final class SessionStore {
 
   private enum StoredCredentialValidation {
     case active(CurrentAccount)
+    case cancelled
     case unauthorized
     case unavailable
   }
@@ -54,17 +55,10 @@ final class SessionStore {
     googleAuthentication.isAvailable
   }
 
-  /// Composes the live API and Keychain dependencies once at the application boundary.
-  static func live(configuration: AppConfiguration = .current) -> SessionStore {
-    SessionStore(
-      api: AccountAPI.live(baseURL: configuration.apiBaseURL),
-      credentialStore: SessionCredentialStore(),
-      googleAuthentication: GoogleAuthenticationClient())
-  }
-
   /// Supplies isolated session state to SwiftUI previews and Debug UI runs without reading the user's Keychain.
   static func preview(account: CurrentAccount? = nil) -> SessionStore {
-    let api = AccountAPI.live(baseURL: AppConfiguration.current.apiBaseURL)
+    let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+    let api = AccountAPI(clients: clients)
     let store = SessionStore(
       api: api,
       credentialStore: InMemorySessionCredentialStore(),
@@ -94,7 +88,9 @@ final class SessionStore {
     failure = nil
     defer { isReconciling = false }
 
-    await loadLatestCredential()
+    if !(await loadLatestCredential()) {
+      didRestore = false
+    }
   }
 
   /// Retries validation after a temporary service or connectivity failure without discarding the still-valid Keychain token.
@@ -111,7 +107,7 @@ final class SessionStore {
       isWorking = false
     }
 
-    await loadLatestCredential()
+    _ = await loadLatestCredential()
   }
 
   /// Reconciles the in-memory account with iCloud Keychain after another Apple device adds, replaces, or removes the shared session credential.
@@ -123,7 +119,7 @@ final class SessionStore {
     isReconciling = true
     defer { isReconciling = false }
 
-    await loadLatestCredential()
+    _ = await loadLatestCredential()
   }
 
   /// Begins the localized email flow without changing the session until the user proves ownership with the received code.
@@ -422,35 +418,41 @@ final class SessionStore {
   }
 
   /// Reads and validates one Keychain snapshot, then starts again if iCloud synchronized a newer credential while the request was in flight.
-  private func loadLatestCredential() async {
+  private func loadLatestCredential() async -> Bool {
     do {
       guard let storedToken = try credentialStore.read() else {
         googleAuthentication.signOut()
         token = nil
         failure = nil
         state = .signedOut
-        return
+        return true
       }
 
       let validationRevision = interactiveOperationRevision
       let validation = await validateStoredCredential(storedToken)
 
+      if case .cancelled = validation {
+        return false
+      }
+
       guard validationRevision == interactiveOperationRevision else {
-        return
+        return true
       }
 
       guard try credentialStore.read() == storedToken else {
-        await loadLatestCredential()
-        return
+        return await loadLatestCredential()
       }
 
       applyStoredCredentialValidation(validation, token: storedToken)
+      return true
     } catch {
       failure = .network
 
       if token == nil {
         state = .unavailable
       }
+
+      return true
     }
   }
 
@@ -458,6 +460,8 @@ final class SessionStore {
   private func validateStoredCredential(_ token: String) async -> StoredCredentialValidation {
     do {
       return .active(try await api.getCurrentAccount(token: token))
+    } catch is CancellationError {
+      return .cancelled
     } catch AccountAPIError.unauthorized {
       return .unauthorized
     } catch {
@@ -485,6 +489,8 @@ final class SessionStore {
       if self.token == nil {
         state = .unavailable
       }
+    case .cancelled:
+      break
     }
   }
 
@@ -500,7 +506,7 @@ final class SessionStore {
     }
 
     switch apiError {
-    case .accountMismatch, .appleCredentialMismatch:
+    case .accountDisabled, .accountMismatch, .appleCredentialMismatch:
       return .signIn
     case .invalidCode:
       return .invalidCode
@@ -508,6 +514,8 @@ final class SessionStore {
       return .invalidEmail
     case .network:
       return .network
+    case .rateLimited:
+      return .rateLimited
     case .reauthenticationRequired:
       return .accountDeletion
     case .usernameTaken:
@@ -528,7 +536,7 @@ final class SessionStore {
     switch apiError {
     case .accountMismatch:
       return .accountMismatch
-    case .appleCredentialMismatch:
+    case .accountDisabled, .appleCredentialMismatch:
       return .accountDeletion
     case .invalidCode:
       return .invalidCode
@@ -536,6 +544,8 @@ final class SessionStore {
       return .invalidEmail
     case .network:
       return .network
+    case .rateLimited:
+      return .rateLimited
     case .invalidResponse, .reauthenticationRequired, .unauthorized, .usernameTaken, .validation:
       return .accountDeletion
     }

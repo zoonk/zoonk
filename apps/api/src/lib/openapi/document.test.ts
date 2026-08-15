@@ -10,6 +10,7 @@ import {
 import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import { createOpenAPIDocument } from "./create-document";
 import { openAPIDocument } from "./document";
 import { courseResultSchema } from "./schemas/courses";
 import { courseContinuationListResponseSchema } from "./schemas/current-learning";
@@ -26,7 +27,11 @@ const ISO_DATE = "2026-07-25T12:00:00.000Z";
 const DOCUMENTED_METHODS = ["delete", "get", "patch", "post"] as const;
 
 const CANONICAL_OPERATIONS = [
-  { method: "post", operationId: "signInWithNativeApple", path: "/auth/sign-in/apple-native" },
+  { method: "post", operationId: "createEmailSignInCode", path: "/email-sign-in-codes" },
+  { method: "post", operationId: "createAppleSession", path: "/sessions/apple" },
+  { method: "delete", operationId: "deleteCurrentSession", path: "/sessions/current" },
+  { method: "post", operationId: "createEmailCodeSession", path: "/sessions/email-code" },
+  { method: "post", operationId: "createGoogleSession", path: "/sessions/google" },
   { method: "get", operationId: "searchCatalog", path: "/catalog/search" },
   { method: "get", operationId: "listCourses", path: "/courses" },
   { method: "get", operationId: "getCourse", path: "/courses/{courseId}" },
@@ -88,11 +93,13 @@ const CANONICAL_OPERATIONS = [
   },
 ] as const;
 
+const responseContractSchema = z.object({ description: z.string() }).loose();
+
 const operationContractSchema = z
   .object({
     deprecated: z.boolean().optional(),
     operationId: z.string().min(1),
-    responses: z.record(z.string(), z.unknown()),
+    responses: z.record(z.string(), responseContractSchema),
     security: z.array(z.record(z.string(), z.array(z.string()))),
   })
   .loose();
@@ -128,6 +135,24 @@ const documentContractSchema = z
   .loose();
 
 describe("OpenAPI document", () => {
+  it("keeps the public contract on OpenAPI 3.1", () => {
+    expect(openAPIDocument.openapi).toBe("3.1.0");
+  });
+
+  it("creates an OpenAPI 3.0 compatibility document for Swift generation", () => {
+    const swiftDocument = createOpenAPIDocument({
+      cookieName: "__Secure-better-auth.session_token",
+      openapi: "3.0.3",
+    });
+
+    expect(swiftDocument.openapi).toBe("3.0.3");
+    expect(JSON.stringify(swiftDocument)).not.toContain('"examples"');
+
+    expect(swiftDocument.components?.securitySchemes?.cookieAuth).toMatchObject({
+      name: "__Secure-better-auth.session_token",
+    });
+  });
+
   it("owns its authentication schemes without publishing Better Auth internals", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
@@ -139,6 +164,13 @@ describe("OpenAPI document", () => {
     expect(document.paths).not.toHaveProperty("/sign-in/email");
     expect(document.paths).not.toHaveProperty("/sign-up/email");
     expect(document.paths).not.toHaveProperty("/sign-out");
+    expect(document.paths).not.toHaveProperty("/auth/sign-in/apple-native");
+
+    expect(
+      Object.keys(document.paths)
+        .filter((path) => path !== "/auth/health")
+        .every((path) => !path.startsWith("/auth/")),
+    ).toBe(true);
   });
 
   it("gives every public operation a unique ID and an explicit security contract", () => {
@@ -200,6 +232,59 @@ describe("OpenAPI document", () => {
     expect(document.paths["/generations"]?.post?.security).toStrictEqual(authenticated);
     expect(document.paths["/me"]?.get?.security).toStrictEqual(authenticated);
     expect(document.paths["/me"]?.patch?.security).toStrictEqual(authenticated);
+  });
+
+  it("documents native session endpoint security", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+
+    expect(document.paths["/email-sign-in-codes"]?.post?.security).toStrictEqual([]);
+    expect(document.paths["/email-sign-in-codes"]?.post?.responses).toHaveProperty("403");
+    expect(document.paths["/sessions/apple"]?.post?.security).toStrictEqual([]);
+    expect(document.paths["/sessions/apple"]?.post?.responses).toHaveProperty("403");
+    expect(document.paths["/sessions/email-code"]?.post?.security).toStrictEqual([]);
+    expect(document.paths["/sessions/email-code"]?.post?.responses).toHaveProperty("403");
+    expect(document.paths["/sessions/google"]?.post?.security).toStrictEqual([]);
+    expect(document.paths["/sessions/google"]?.post?.responses).toHaveProperty("403");
+  });
+
+  it("documents idempotent sign-out with authenticated client generation", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+    const authenticated = [{ bearerAuth: [] }, { cookieAuth: [] }];
+
+    expect(document.paths["/sessions/current"]?.delete?.security).toStrictEqual(authenticated);
+    expect(document.paths["/sessions/current"]?.delete?.responses).not.toHaveProperty("401");
+  });
+
+  it("documents stable native session error codes without closing the error code set", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+
+    expect(document.paths["/sessions/email-code"]?.post?.responses["400"]?.description).toContain(
+      "EMAIL_SIGN_IN_CODE_INVALID",
+    );
+
+    expect(document.paths["/sessions/apple"]?.post?.responses["401"]?.description).toContain(
+      "APPLE_AUTHORIZATION_INVALID",
+    );
+
+    expect(document.paths["/sessions/google"]?.post?.responses["401"]?.description).toContain(
+      "GOOGLE_AUTHORIZATION_INVALID",
+    );
+
+    expect(document.paths["/sessions/google"]?.post?.responses["429"]?.description).toContain(
+      "RATE_LIMIT_EXCEEDED",
+    );
+
+    expect(document.components.schemas.Error).toMatchObject({
+      properties: { error: { properties: { code: { type: "string" } } } },
+    });
+  });
+
+  it("documents retry timing for native session rate limits", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+
+    expect(document.paths["/sessions/apple"]?.post?.responses["429"]).toMatchObject({
+      headers: { "Retry-After": { schema: { minimum: 0, type: "integer" } } },
+    });
   });
 
   it("documents the course collection as a browse-only resource", () => {
@@ -305,11 +390,20 @@ describe("OpenAPI document", () => {
     expect(document.paths["/course-prompts"]?.post?.responses).toHaveProperty("401");
     expect(document.paths["/course-prompts"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("500");
-    expect(document.paths["/auth/sign-in/apple-native"]?.post?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.delete?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.patch?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.patch?.responses).toHaveProperty("403");
     expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("403");
+  });
+
+  it("documents unexpected errors for native session routes", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+
+    expect(document.paths["/email-sign-in-codes"]?.post?.responses).toHaveProperty("500");
+    expect(document.paths["/sessions/apple"]?.post?.responses).toHaveProperty("500");
+    expect(document.paths["/sessions/current"]?.delete?.responses).toHaveProperty("500");
+    expect(document.paths["/sessions/email-code"]?.post?.responses).toHaveProperty("500");
+    expect(document.paths["/sessions/google"]?.post?.responses).toHaveProperty("500");
   });
 
   it("documents every response status returned by generation routes", () => {
@@ -433,23 +527,24 @@ describe("OpenAPI document", () => {
 
     const nextLessonSchema = z
       .object({
-        discriminator: z.object({ propertyName: z.literal("type") }),
-        oneOf: z.array(
-          z
-            .object({
-              properties: z.object({ type: z.object({ const: z.string() }).loose() }).loose(),
-            })
-            .loose(),
-        ),
+        discriminator: z.object({
+          mapping: z.record(z.string(), z.string()),
+          propertyName: z.literal("type"),
+        }),
+        oneOf: z.array(z.object({ $ref: z.string() })),
       })
       .parse(document.components.schemas.NextLessonResponse);
 
-    expect(nextLessonSchema.discriminator.propertyName).toBe("type");
+    expect(nextLessonSchema.discriminator.mapping).toStrictEqual({
+      chapter: "#/components/schemas/NextLessonChapterResponse",
+      empty: "#/components/schemas/NextLessonEmptyResponse",
+      lesson: "#/components/schemas/NextLessonLessonResponse",
+    });
 
-    expect(nextLessonSchema.oneOf.map((variant) => variant.properties.type.const)).toStrictEqual([
-      "empty",
-      "chapter",
-      "lesson",
+    expect(nextLessonSchema.oneOf.map((variant) => variant.$ref)).toStrictEqual([
+      "#/components/schemas/NextLessonEmptyResponse",
+      "#/components/schemas/NextLessonChapterResponse",
+      "#/components/schemas/NextLessonLessonResponse",
     ]);
 
     expect(document.paths["/courses/{courseId}/next-lesson"]?.get).toMatchObject({
