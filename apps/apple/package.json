@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "i18n:lint": "eloqnt lint --strict",
+    "i18n:lint": "bash ./scripts/lint-xcstrings.sh && eloqnt lint --strict",
     "i18n": "eloqnt translate",
     "typecheck": "tsc --noEmit"
   },
