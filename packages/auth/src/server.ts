@@ -6,7 +6,6 @@ import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
   bearer,
-  jwt,
   oneTimeToken,
   organization,
   username,
@@ -84,7 +83,6 @@ export const baseAuthPlugins = [
 export const fullPlugins = [
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
-  jwt(),
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
