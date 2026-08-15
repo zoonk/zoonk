@@ -62,4 +62,5 @@ minimumReleaseAge: 0
 overrides:
   "ai-sdk-provider-codex-cli>@openai/codex": "-"
   "next-intl>@swc/core": 1.15.47
+  "@eloqnt/sdk>@swc/core": 1.15.47
   nanoid@>=4.0.0 <5.1.16: ^5.1.16

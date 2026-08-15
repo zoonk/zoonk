@@ -127,6 +127,7 @@ catalogs:
 overrides:
   ai-sdk-provider-codex-cli>@openai/codex: '-'
   next-intl>@swc/core: 1.15.47
+  '@eloqnt/sdk>@swc/core': 1.15.47
   nanoid@>=4.0.0 <5.1.16: ^5.1.16
 
 importers:
@@ -8250,7 +8251,7 @@ snapshots:
   '@eloqnt/sdk@0.6.8(@swc/helpers@0.5.23)':
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.16
-      '@swc/core': 1.16.0(@swc/helpers@0.5.23)
+      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
       ai: 7.0.66(zod@4.4.3)
       jiti: 2.7.0
       magic-string: 0.30.21
@@ -10033,6 +10034,7 @@ snapshots:
       '@swc/core-win32-ia32-msvc': 1.16.0
       '@swc/core-win32-x64-msvc': 1.16.0
       '@swc/helpers': 0.5.23
+    optional: true
 
   '@swc/counter@0.1.3': {}
 
