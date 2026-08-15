@@ -43,7 +43,7 @@ export function ProgressHeadlineValue({
 }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-5xl font-bold tracking-tight tabular-nums", className)}
+      className={cn("text-5xl font-bold tracking-tight wrap-break-word tabular-nums", className)}
       data-slot="progress-headline-value"
       {...props}
     >
