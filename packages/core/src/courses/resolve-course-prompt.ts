@@ -7,6 +7,7 @@ import { type CourseIntent, classifyCourseIntent } from "@zoonk/ai/tasks/courses
 import { classifyCoursePersonalization } from "@zoonk/ai/tasks/courses/personalization";
 import { type CoursePrompt, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
+import { getSession } from "../users/get-session";
 import { getReusableCourseForCoursePrompt } from "./_utils/course-prompt-reusable-course";
 import { type CoursePromptWithCourse } from "./_utils/course-prompt-types";
 import { COURSE_LANGUAGE_MAX_LENGTH, COURSE_PROMPT_MAX_LENGTH } from "./course-prompt-contract";
@@ -30,6 +31,7 @@ export type CoursePromptResolution =
     }
   | { kind: "invalid"; reason: "language" | "prompt" }
   | { kind: "language" }
+  | { kind: "unauthorized" }
   | { kind: "unsafe" }
   | { kind: "unsupported"; prompt: UnsupportedCoursePrompt; title: string };
 
@@ -125,9 +127,13 @@ async function enableCoursePromptGeneration(prompt: CoursePrompt): Promise<void>
  * reused for cached and new prompts so first submissions and repeat visits
  * cannot drift while each delivery layer remains free to choose its own route.
  */
-async function getCoursePromptResolution(
-  prompt: CoursePromptWithCourse,
-): Promise<CoursePromptResolution> {
+async function getCoursePromptResolution({
+  canCreateGeneration,
+  prompt,
+}: {
+  canCreateGeneration: boolean;
+  prompt: CoursePromptWithCourse;
+}): Promise<CoursePromptResolution> {
   if (prompt.intent === "learn" && isRegularCourseFormat(prompt.courseFormat)) {
     const course = await getReusableCourseForCoursePrompt(prompt);
 
@@ -137,6 +143,10 @@ async function getCoursePromptResolution(
   }
 
   if (canGenerateCoursePrompt(prompt)) {
+    if (!canCreateGeneration) {
+      return { kind: "unauthorized" };
+    }
+
     await enableCoursePromptGeneration(prompt);
 
     return {
@@ -302,9 +312,11 @@ function getClassifiedCoursePromptInput({
 
 /**
  * Resolves a learner's free-text goal into the next domain capability.
- * First-time prompts run intent, personalization, format, and title tasks in one
- * model wave so every delivery layer can use the same persisted decision
- * without adding a waterfall.
+ * Cached existing-course and classification outcomes remain public because
+ * they cannot create generation work. New and cached generatable prompts
+ * require a trusted session before mutation or model work. First-time prompts
+ * run intent, personalization, format, and title tasks in one model wave so
+ * every delivery layer can use the same persisted decision without a waterfall.
  */
 export async function resolveCoursePrompt({
   language,
@@ -319,10 +331,20 @@ export async function resolveCoursePrompt({
     return { kind: "invalid", reason: inputError };
   }
 
-  const cachedPrompt = await findCachedCoursePrompt({ language, prompt });
+  const [cachedPrompt, session] = await Promise.all([
+    findCachedCoursePrompt({ language, prompt }),
+    getSession(),
+  ]);
 
   if (cachedPrompt) {
-    return getCoursePromptResolution(cachedPrompt);
+    return getCoursePromptResolution({
+      canCreateGeneration: Boolean(session),
+      prompt: cachedPrompt,
+    });
+  }
+
+  if (!session) {
+    return { kind: "unauthorized" };
   }
 
   // Start every independent task in one model wave to minimize routing latency.
@@ -351,5 +373,5 @@ export async function resolveCoursePrompt({
     }),
   });
 
-  return getCoursePromptResolution(coursePrompt);
+  return getCoursePromptResolution({ canCreateGeneration: true, prompt: coursePrompt });
 }

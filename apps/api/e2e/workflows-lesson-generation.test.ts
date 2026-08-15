@@ -67,7 +67,7 @@ test.describe("Lesson Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("allows unauthenticated generation for every first-chapter lesson", async () => {
+  test("requires authentication before generating a first-chapter lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForWorkflow({
@@ -83,16 +83,20 @@ test.describe("Lesson Generation Workflow API", () => {
       data: { target: { id: lesson.id, type: "lesson" } },
     });
 
-    expect(response.status()).toBe(202);
+    expect(response.status()).toBe(401);
 
-    const body = await response.json();
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
+    });
 
-    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ generationRunId: null, generationStatus: "completed" });
 
     await apiContext.dispose();
   });
 
-  test("returns 402 when unauthenticated generation is outside the first chapter", async () => {
+  test("requires authentication before checking later-lesson subscriptions", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 1, uniqueId });
@@ -103,12 +107,15 @@ test.describe("Lesson Generation Workflow API", () => {
       data: { target: { id: lesson.id, type: "lesson" } },
     });
 
-    expect(response.status()).toBe(402);
+    expect(response.status()).toBe(401);
 
-    const body = await response.json();
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
+    });
 
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("PAYMENT_REQUIRED");
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ generationRunId: null, generationStatus: "completed" });
 
     await apiContext.dispose();
   });

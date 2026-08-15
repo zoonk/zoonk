@@ -10,7 +10,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 import {
   type GenerationTriggerResponse,
-  getGenerationLimitResponse,
+  getGenerationTriggerRequests,
   isGenerationEvents,
   isGenerationTrigger,
   routeGenerationApis,
@@ -20,7 +20,7 @@ import {
  * Test Architecture for Chapter Generation Page
  *
  * The generation page has 3 access states:
- * 1. First chapter - Shows generation UI without login
+ * 1. Unauthenticated - Shows the login gate
  * 2. Authenticated without subscription - Shows upgrade CTA
  * 3. Authenticated with subscription - Shows generation UI
  *
@@ -115,6 +115,31 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
   await routeGenerationApis({ handler, page });
 }
 
+/** Confirms the server gate replaces every anonymous chapter-generation client. */
+async function expectChapterAuthenticationGate({
+  chapterId,
+  page,
+}: {
+  chapterId: string;
+  page: Page;
+}) {
+  await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
+
+  await expect(page.getByRole("link", { name: "Explore courses" })).toHaveAttribute(
+    "href",
+    "/courses",
+  );
+
+  await expect(page.getByRole("link", { name: "Log in" })).toHaveAttribute(
+    "href",
+    `/login?next=%2Fgenerate%2Fch%2F${chapterId}`,
+  );
+
+  await expect(getGenerationTriggerRequests({ page, targetType: "chapter" })).resolves.toHaveLength(
+    0,
+  );
+}
+
 /**
  * Creates a chapter with pending generation status for testing the generation workflow.
  */
@@ -169,32 +194,46 @@ async function createTestSubscription(userId: string) {
 }
 
 test.describe("Generate Chapter Page - Unauthenticated", () => {
-  test("explains when the daily chapter generation limit is reached", async ({ page }) => {
+  test("requires login before first-chapter generation", async ({ page }) => {
     const { chapter } = await createPendingChapter();
-
-    await setupMockApis(page, {
-      triggerResponse: getGenerationLimitResponse({
-        period: "day",
-        resource: "chapter",
-        viewer: "guest",
-      }),
-    });
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("heading", { name: "Daily chapter limit reached" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
+    await expectChapterAuthenticationGate({ chapterId: chapter.id, page });
   });
 
-  test("shows upgrade CTA for later chapters", async ({ page }) => {
+  test("requires login before checking a later chapter subscription", async ({ page }) => {
     const { chapter } = await createPendingChapter(1);
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByText(/^keep learning with plus$/iu)).toBeVisible();
+    await expectChapterAuthenticationGate({ chapterId: chapter.id, page });
+    await expect(page.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
+  });
 
-    const upgradeLink = page.getByRole("link", { name: /get zoonk plus/iu });
-    await expect(upgradeLink).toBeVisible();
-    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
+  test("redirects a completed first chapter to its public page", async ({ page }) => {
+    const { chapter, course, organizationId } = await createPendingChapter();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId,
+        slug: `e2e-ready-public-lesson-${uniqueId}`,
+        title: `E2E Ready Public Lesson ${uniqueId}`,
+      }),
+      prisma.chapter.update({ data: { generationStatus: "completed" }, where: { id: chapter.id } }),
+    ]);
+
+    await page.goto(`/generate/ch/${chapter.id}`);
+
+    await page.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
+      timeout: 10_000,
+    });
+
+    await expect(
+      getGenerationTriggerRequests({ page, targetType: "chapter" }),
+    ).resolves.toHaveLength(0);
   });
 });
 
@@ -545,20 +584,6 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 });
 
 test.describe("Generate Chapter Page - First Chapter Free", () => {
-  test("unauthenticated user sees generation UI for first chapter", async ({ page }) => {
-    const { chapter } = await createPendingChapter(0);
-
-    await setupMockApis(page, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getChapter" }],
-    });
-
-    await page.goto(`/generate/ch/${chapter.id}`);
-
-    await expect(page.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
-  });
-
   test("authenticated user without subscription sees generation UI for first chapter", async ({
     authenticatedPage,
   }) => {
@@ -577,9 +602,7 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
 });
 
 test.describe("Generate Chapter Page - Running Later Chapter Requires Subscription", () => {
-  test("unauthenticated user sees upgrade CTA for non-first chapter when status is running", async ({
-    page,
-  }) => {
+  test("unauthenticated user sees the login gate when status is running", async ({ page }) => {
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -606,13 +629,8 @@ test.describe("Generate Chapter Page - Running Later Chapter Requires Subscripti
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByText(/^keep learning with plus$/iu)).toBeVisible();
-
-    await expect(
-      page.getByText(
-        "Plus gives you unlimited courses and lessons for whatever you want to learn.",
-      ),
-    ).toBeVisible();
+    await expectChapterAuthenticationGate({ chapterId: chapter.id, page });
+    await expect(page.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
   });
 });
 

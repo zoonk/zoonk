@@ -53,6 +53,18 @@ export function isGenerationEvents(url: string) {
   return /^\/v1\/generations\/[^/]+\/events$/u.test(new URL(url).pathname);
 }
 
+/** Returns the generation commands observed by the browser for one target type. */
+export async function getGenerationTriggerRequests({
+  page,
+  targetType,
+}: {
+  page: Page;
+  targetType: GenerationTargetType;
+}) {
+  const requests = await page.requests();
+  return requests.filter((request) => isGenerationTrigger({ request, targetType }));
+}
+
 /**
  * Intercepts the generation collection and its child resources with one
  * handler, matching the single public resource exposed by the API.

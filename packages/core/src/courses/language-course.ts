@@ -9,6 +9,7 @@ import {
 import { normalizeString } from "@zoonk/utils/string";
 import { cacheTag } from "next/cache";
 import { LANGUAGE_COURSE_LIST_CACHE_TAG } from "../cache/tags";
+import { getSession } from "../users/get-session";
 
 type LanguageCourseInput = { language: string; targetLanguage: string };
 
@@ -19,7 +20,8 @@ type LanguageCoursePromptInput = LanguageCourseInput & { title: string };
 export type LanguageCourseTarget = { course: Course; targetLanguage: TTSSupportedLanguageCode };
 export type LanguageCourseResolution =
   | { course: Course; kind: "course" }
-  | { coursePrompt: CoursePrompt; kind: "generation" };
+  | { coursePrompt: CoursePrompt; kind: "generation" }
+  | { kind: "unauthorized" };
 
 /**
  * Rechecks course target languages after Prisma returns rows because the query
@@ -185,8 +187,10 @@ async function getOrCreateStoredLanguageCoursePrompt({
 /**
  * Resolves the complete reuse-or-generate decision for a language course in
  * core so every delivery app follows the same ordering and prompt rules. The
- * result deliberately contains domain resources rather than URLs or redirects,
- * leaving each app to map the outcome to its own navigation model.
+ * completed-course lookup remains public, but storing a new generation request
+ * requires a trusted session. The result deliberately contains domain
+ * resources rather than URLs or redirects, leaving each app to map the outcome
+ * to its own navigation model.
  */
 export async function resolveLanguageCourse({
   language,
@@ -196,10 +200,17 @@ export async function resolveLanguageCourse({
     throw new Error(`Unsupported TTS language: ${targetLanguage}`);
   }
 
-  const course = await getCompletedLanguageCourse({ language, targetLanguage });
+  const [course, session] = await Promise.all([
+    getCompletedLanguageCourse({ language, targetLanguage }),
+    getSession(),
+  ]);
 
   if (course) {
     return { course, kind: "course" };
+  }
+
+  if (!session) {
+    return { kind: "unauthorized" };
   }
 
   const title = getLanguageName({ targetLanguage, userLanguage: language });

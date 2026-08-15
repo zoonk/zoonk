@@ -4,7 +4,6 @@ import {
   COURSE_LANGUAGE_MAX_LENGTH,
   COURSE_PROMPT_MAX_LENGTH,
 } from "@zoonk/core/courses/prompt-contract";
-import { GENERATION_VISITOR_ID_HEADER } from "@zoonk/core/generation-quotas/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
@@ -13,6 +12,7 @@ import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { normalizeString } from "@zoonk/utils/string";
+import { createAuthenticatedApiContext } from "./helpers/auth";
 
 test.describe("Course prompt and generation resources API", () => {
   let baseURL: string;
@@ -25,7 +25,94 @@ test.describe("Course prompt and generation resources API", () => {
     await prisma.$disconnect();
   });
 
-  test("resolves a cached coding prompt into a route-neutral generation target", async () => {
+  test("requires authentication before resolving a new course prompt", async () => {
+    const prompt = `Anonymous API course prompt ${randomUUID()}`;
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/course-prompts", {
+      data: { kind: "topic", language: "en", prompt },
+    });
+
+    expect(response.status()).toBe(401);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
+    });
+
+    await expect(
+      prisma.coursePrompt.findUnique({
+        where: {
+          languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+        },
+      }),
+    ).resolves.toBeNull();
+
+    await apiContext.dispose();
+  });
+
+  test("requires authentication before creating a language course prompt", async () => {
+    const language = `en-x-${randomUUID().slice(0, 5)}`;
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/course-prompts", {
+      data: { kind: "language", language, targetLanguage: "es" },
+    });
+
+    expect(response.status()).toBe(401);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
+    });
+
+    await expect(
+      prisma.coursePrompt.findUnique({
+        where: {
+          languageNormalizedPrompt: {
+            language,
+            normalizedPrompt: normalizeString("Learn Spanish"),
+          },
+        },
+      }),
+    ).resolves.toBeNull();
+
+    await apiContext.dispose();
+  });
+
+  test("creates a language course prompt for an authenticated caller", async () => {
+    const language = `en-x-${randomUUID().slice(0, 5)}`;
+
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-course-prompt",
+    });
+
+    const response = await apiContext.post("/v1/course-prompts", {
+      data: { kind: "language", language, targetLanguage: "es" },
+    });
+
+    expect(response.status()).toBe(200);
+
+    const responseBody = await response.json();
+
+    const coursePrompt = await prisma.coursePrompt.findUniqueOrThrow({
+      where: {
+        languageNormalizedPrompt: { language, normalizedPrompt: normalizeString("Learn Spanish") },
+      },
+    });
+
+    expect(responseBody).toStrictEqual({ coursePromptId: coursePrompt.id, kind: "generation" });
+
+    expect(coursePrompt).toMatchObject({
+      courseFormat: "language",
+      generationRunId: null,
+      generationStatus: "pending",
+      targetLanguage: "es",
+    });
+
+    await apiContext.dispose();
+  });
+
+  test("requires authentication before promoting a cached prompt to generation", async () => {
     const uniqueId = randomUUID();
     const prompt = `Learn focused API design ${uniqueId}`;
 
@@ -44,16 +131,15 @@ test.describe("Course prompt and generation resources API", () => {
       data: { kind: "topic", language: "en", prompt },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(401);
 
-    await expect(response.json()).resolves.toStrictEqual({
-      coursePromptId: coursePrompt.id,
-      kind: "generation",
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
     });
 
     await expect(
       prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
-    ).resolves.toMatchObject({ courseFormat: "coding", generationStatus: "pending" });
+    ).resolves.toMatchObject({ courseFormat: "coding", generationStatus: null });
 
     await apiContext.dispose();
   });
@@ -143,17 +229,21 @@ test.describe("Course prompt and generation resources API", () => {
   });
 
   test("returns a structured limit response instead of starting another generation", async () => {
-    const visitorId = randomUUID();
     const now = new Date();
 
     const periodStart = new Date(
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
     );
 
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-generation-limit",
+    });
+
     await prisma.generationQuotaCounter.create({
       data: {
-        actorKey: `guest:${visitorId}`,
-        count: 3,
+        actorKey: `user:${user.id}`,
+        count: 5,
         period: "day",
         periodStart,
         resource: "course",
@@ -161,11 +251,6 @@ test.describe("Course prompt and generation resources API", () => {
     });
 
     const coursePrompt = await coursePromptFixture();
-
-    const apiContext = await request.newContext({
-      baseURL,
-      extraHTTPHeaders: { [GENERATION_VISITOR_ID_HEADER]: visitorId },
-    });
 
     const response = await apiContext.post("/v1/generations", {
       data: { target: { id: coursePrompt.id, type: "coursePrompt" } },
@@ -176,10 +261,27 @@ test.describe("Course prompt and generation resources API", () => {
     await expect(response.json()).resolves.toStrictEqual({
       error: {
         code: "GENERATION_LIMIT_REACHED",
-        details: { period: "day", resource: "course", viewer: "guest" },
+        details: { period: "day", resource: "course", viewer: "authenticated" },
         message: "Generation limit reached",
       },
     });
+
+    const [persistedCounter, persistedPrompt] = await Promise.all([
+      prisma.generationQuotaCounter.findUniqueOrThrow({
+        where: {
+          generationQuotaCounter: {
+            actorKey: `user:${user.id}`,
+            period: "day",
+            periodStart,
+            resource: "course",
+          },
+        },
+      }),
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
+    ]);
+
+    expect(persistedCounter.count).toBe(5);
+    expect(persistedPrompt).toMatchObject({ generationRunId: null, generationStatus: "pending" });
 
     await apiContext.dispose();
   });

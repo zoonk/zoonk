@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { GENERATION_VISITOR_ID_HEADER } from "@zoonk/core/generation-quotas/contract";
 import {
   COURSE_COMPLETION_STEP,
   INTRODUCTION_LESSON_COMPLETION_STEP,
@@ -15,6 +14,7 @@ import { expect, test } from "./fixtures";
 import {
   type GenerationTriggerResponse,
   getGenerationLimitResponse,
+  getGenerationTriggerRequests,
   isGenerationEvents,
   isGenerationTrigger,
   routeGenerationApis,
@@ -217,71 +217,41 @@ function getIntroLessonCompletionTarget({
 }
 
 test.describe("Generate Course Page", () => {
-  test("starts course generation for unauthenticated users", async ({ page }) => {
+  test("asks unauthenticated users to log in without starting generation", async ({ page }) => {
     const coursePrompt = await coursePromptFixture({
       canonicalTitle: "E2E Unauth Course Generation",
       generationStatus: "pending",
       language: "en",
     });
 
-    await setupMockApis(page, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getCoursePrompt" }],
-    });
-
-    const generationRequest = page.waitForRequest(
-      (pageRequest) =>
-        pageRequest.method() === "POST" &&
-        isGenerationTrigger({ request: pageRequest, targetType: "coursePrompt" }),
-    );
-
     await page.goto(`/generate/course/${coursePrompt.id}`);
 
-    const generationTriggerRequest = await generationRequest;
-    const requestHeaders = generationTriggerRequest.headers();
-
-    expect(requestHeaders[GENERATION_VISITOR_ID_HEADER.toLowerCase()]).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u,
-    );
-
-    await expect(
-      page.getByRole("heading", { name: "Creating the E2E Unauth Course Generation course" }),
-    ).toBeVisible({ timeout: 10_000 });
-  });
-
-  test("explains a daily guest limit and offers login without hiding existing learning", async ({
-    page,
-  }) => {
-    const request = await coursePromptFixture({
-      canonicalTitle: "E2E Limited Course Generation",
-      generationStatus: "pending",
-      language: "en",
-    });
-
-    await setupMockApis(page, {
-      triggerResponse: getGenerationLimitResponse({
-        period: "day",
-        resource: "course",
-        viewer: "guest",
-      }),
-    });
-
-    await page.goto(`/generate/course/${request.id}`);
-
-    await expect(page.getByRole("heading", { name: "Daily course limit reached" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
 
     await expect(
       page.getByText(
-        "You've reached today's limit for generating courses. You can keep learning from anything already generated.",
+        "You need to log in to create new courses and lessons with AI. You can explore existing courses without logging in.",
       ),
     ).toBeVisible();
+
+    const exploreCoursesLink = page.getByRole("link", { name: "Explore courses" });
+
+    await expect(exploreCoursesLink).toHaveAttribute("href", "/courses");
 
     const loginLink = page.getByRole("link", { name: "Log in" });
 
     await expect(loginLink).toHaveAttribute(
       "href",
-      `/login?next=%2Fgenerate%2Fcourse%2F${request.id}`,
+      `/login?next=%2Fgenerate%2Fcourse%2F${coursePrompt.id}`,
     );
+
+    await expect(
+      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
+    ).resolves.toHaveLength(0);
+
+    await exploreCoursesLink.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/courses$/u);
   });
 
   test("offers a subscription when an authenticated user reaches a monthly limit", async ({
@@ -341,14 +311,21 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Initial triggering state", () => {
-    test("hydrates localized progress values consistently", async ({ browser }) => {
+    test("hydrates localized progress values consistently", async ({
+      browser,
+      withProgressUser,
+    }) => {
       const request = await coursePromptFixture({
         canonicalTitle: "E2E Localized Progress",
         generationStatus: "pending",
         language: "de",
       });
 
-      const browserContext = await browser.newContext({ locale: "de-DE" });
+      const browserContext = await browser.newContext({
+        locale: "de-DE",
+        storageState: withProgressUser.storageState,
+      });
+
       const localizedPage = await browserContext.newPage();
       const hydrationErrors: Error[] = [];
 

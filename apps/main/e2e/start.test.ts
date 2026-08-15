@@ -7,7 +7,12 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { mockFeedbackSubmission } from "./feedback";
 import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
+import {
+  getGenerationTriggerRequests,
+  isGenerationEvents,
+  isGenerationTrigger,
+  routeGenerationApis,
+} from "./generation-api";
 
 const TEST_RUN_ID = "test-run-id-start-language";
 
@@ -96,32 +101,34 @@ test.describe("Start page", () => {
 });
 
 test.describe("Start language path", () => {
-  test("filters languages and creates a controlled language request", async ({ page }) => {
-    await mockCourseGenerationWorkflow(page);
-    await page.goto("/start/speak");
+  test("filters languages and creates a controlled language request", async ({
+    authenticatedPage,
+  }) => {
+    await mockCourseGenerationWorkflow(authenticatedPage);
+    await authenticatedPage.goto("/start/speak");
 
     await expect(
-      page.getByRole("heading", { name: /what language do you want to learn/iu }),
+      authenticatedPage.getByRole("heading", { name: /what language do you want to learn/iu }),
     ).toBeVisible();
 
-    await expect(page.getByRole("button", { name: "Português" })).not.toBeVisible();
-    await expect(page.getByRole("link", { name: /^english/iu })).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: "Português" })).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /^english/iu })).not.toBeVisible();
 
-    await page.getByRole("searchbox", { name: /search languages/iu }).fill("Javanese");
+    await authenticatedPage.getByRole("searchbox", { name: /search languages/iu }).fill("Javanese");
 
-    await expect(page.getByRole("link", { name: /javanese/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /^english/iu })).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /javanese/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /^english/iu })).not.toBeVisible();
 
-    const javaneseLink = page.getByRole("link", { name: /javanese/iu });
+    const javaneseLink = authenticatedPage.getByRole("link", { name: /javanese/iu });
 
     await expect(javaneseLink).toHaveAttribute("href", "/start/speak/jv");
     await expect(javaneseLink).toHaveAttribute("rel", "nofollow");
 
     await javaneseLink.click();
 
-    await expect(page).toHaveURL(/\/generate\/course\/[-a-f0-9]+$/u);
+    await expect(authenticatedPage).toHaveURL(/\/generate\/course\/[-a-f0-9]+$/u);
 
-    const requestId = page.url().split("/").at(-1);
+    const requestId = authenticatedPage.url().split("/").at(-1);
 
     if (!requestId) {
       throw new Error("Missing generated request id in URL");
@@ -130,6 +137,34 @@ test.describe("Start language path", () => {
     const request = await prisma.coursePrompt.findUnique({ where: { id: requestId } });
 
     expect(request?.targetLanguage).toBe("jv");
+  });
+
+  test("requires login before creating a missing language course", async ({ page }) => {
+    const normalizedPrompt = normalizeString("Learn Amharic");
+    const promptWhere = { languageNormalizedPrompt: { language: "en", normalizedPrompt } };
+    const promptBeforeVisit = await prisma.coursePrompt.findUnique({ where: promptWhere });
+
+    await page.goto("/start/speak/am");
+
+    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Explore courses" })).toHaveAttribute(
+      "href",
+      "/courses",
+    );
+
+    await expect(page.getByRole("link", { name: "Log in" })).toHaveAttribute(
+      "href",
+      "/login?next=%2Fstart%2Fspeak%2Fam",
+    );
+
+    await expect(
+      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
+    ).resolves.toHaveLength(0);
+
+    await expect(prisma.coursePrompt.findUnique({ where: promptWhere })).resolves.toStrictEqual(
+      promptBeforeVisit,
+    );
   });
 
   test("does not generate a course for the current app language", async ({ page }) => {

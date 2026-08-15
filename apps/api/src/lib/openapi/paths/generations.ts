@@ -6,6 +6,7 @@ import {
   notFoundResponse,
   paymentRequiredResponse,
   tooManyRequestsResponse,
+  unauthorizedResponse,
   validationErrorResponse,
 } from "../schemas/responses";
 import {
@@ -14,13 +15,13 @@ import {
   generationResourceSchema,
   workflowEventsQuerySchema,
 } from "../schemas/workflows";
-import { OPTIONAL_AUTHENTICATION_SECURITY, PUBLIC_SECURITY } from "../security";
+import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
 
 export const generationPaths = {
   "/generations": {
     post: {
       description:
-        "Starts course, chapter, or lesson generation. Daily and monthly limits depend on the caller's entitlement. Chapter and lesson targets also require an active subscription when the free first-chapter rule does not apply.",
+        "Starts authenticated course, chapter, or lesson generation. Daily and monthly limits depend on the caller's entitlement. Chapter and lesson targets also require an active subscription when the free first-chapter rule does not apply.",
       operationId: "createGeneration",
       requestBody: {
         content: { "application/json": { schema: createGenerationRequestSchema } },
@@ -35,12 +36,13 @@ export const generationPaths = {
           }),
         },
         "400": badRequestResponse,
+        "401": unauthorizedResponse,
         "402": paymentRequiredResponse,
         "403": forbiddenResponse,
         "404": notFoundResponse,
         "429": tooManyRequestsResponse,
       },
-      security: OPTIONAL_AUTHENTICATION_SECURITY,
+      security: AUTHENTICATED_SECURITY,
       summary: "Create a generation",
       tags: ["Workflows"],
     },

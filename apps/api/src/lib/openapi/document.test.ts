@@ -191,10 +191,13 @@ describe("OpenAPI document", () => {
   it("documents public and user-authenticated endpoint security", () => {
     const document = documentContractSchema.parse(openAPIDocument);
     const authenticated = [{ bearerAuth: [] }, { cookieAuth: [] }];
+    const optionalAuthentication = [{}, ...authenticated];
 
     expect(document.paths["/auth/health"]?.get?.security).toStrictEqual([]);
     expect(document.paths["/courses"]?.get?.security).toStrictEqual([]);
     expect(document.paths["/feedback"]?.post?.security).toStrictEqual([]);
+    expect(document.paths["/course-prompts"]?.post?.security).toStrictEqual(optionalAuthentication);
+    expect(document.paths["/generations"]?.post?.security).toStrictEqual(authenticated);
     expect(document.paths["/me"]?.get?.security).toStrictEqual(authenticated);
     expect(document.paths["/me"]?.patch?.security).toStrictEqual(authenticated);
   });
@@ -280,7 +283,7 @@ describe("OpenAPI document", () => {
     });
   });
 
-  it("documents optional authentication and public event streams", () => {
+  it("documents optional reads and public generation status", () => {
     const document = documentContractSchema.parse(openAPIDocument);
     const optionalAuthentication = [{}, { bearerAuth: [] }, { cookieAuth: [] }];
 
@@ -292,8 +295,6 @@ describe("OpenAPI document", () => {
       optionalAuthentication,
     );
 
-    expect(document.paths["/generations"]?.post?.security).toStrictEqual(optionalAuthentication);
-
     expect(document.paths["/generations/{generationId}"]?.get?.security).toStrictEqual([]);
     expect(document.paths["/generations/{generationId}/events"]?.get?.security).toStrictEqual([]);
   });
@@ -301,6 +302,7 @@ describe("OpenAPI document", () => {
   it("documents every response status returned by account and feedback routes", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
+    expect(document.paths["/course-prompts"]?.post?.responses).toHaveProperty("401");
     expect(document.paths["/course-prompts"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("500");
     expect(document.paths["/auth/sign-in/apple-native"]?.post?.responses).toHaveProperty("500");
@@ -313,6 +315,7 @@ describe("OpenAPI document", () => {
   it("documents every response status returned by generation routes", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
+    expect(document.paths["/generations"]?.post?.responses).toHaveProperty("401");
     expect(document.paths["/generations"]?.post?.responses).toHaveProperty("402");
     expect(document.paths["/generations"]?.post?.responses).toHaveProperty("404");
     expect(document.paths["/generations"]?.post?.responses).toHaveProperty("403");

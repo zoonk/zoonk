@@ -5,7 +5,12 @@ import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
+import {
+  getGenerationTriggerRequests,
+  isGenerationEvents,
+  isGenerationTrigger,
+  routeGenerationApis,
+} from "./generation-api";
 
 const TEST_RUN_ID = "test-run-id-redirect";
 
@@ -77,7 +82,7 @@ test.describe("Generate Course Redirect", () => {
     ).toBeVisible({ timeout: 10_000 });
   });
 
-  test("redirects unauthenticated users to generate/course/[id]", async ({ page }) => {
+  test("shows the login gate after resolving an unauthenticated prompt route", async ({ page }) => {
     const slug = `e2e-redirect-unauth-${randomUUID().slice(0, 8)}`;
     const org = await getAiOrganization();
     const title = "E2E Redirect Unauth Test";
@@ -99,15 +104,25 @@ test.describe("Generate Course Redirect", () => {
       prompt: `Generate ${title} ${slug}`,
     });
 
-    await routeGenerationApis({ handler: mockCourseGenerationApis, page });
-
     await page.goto(`/generate/c/${slug}`);
 
     await page.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
 
-    await expect(page.getByRole("heading", { name: `Creating the ${title} course` })).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Explore courses" })).toHaveAttribute(
+      "href",
+      "/courses",
+    );
+
+    await expect(page.getByRole("link", { name: "Log in" })).toHaveAttribute(
+      "href",
+      `/login?next=%2Fgenerate%2Fcourse%2F${request.id}`,
+    );
+
+    await expect(
+      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
+    ).resolves.toHaveLength(0);
   });
 
   test("shows 404 when course request does not exist", async ({ authenticatedPage }) => {

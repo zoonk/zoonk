@@ -517,6 +517,7 @@ msgid "Online Courses using AI"
 msgstr "Cursos en línea con IA"
 
 #: src/app/[lang]/(catalog)/courses/page.tsx
+#: src/components/generation/generation-authentication-cta.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Explorar cursos"
@@ -547,6 +548,7 @@ msgid "Keep your courses and progress in one place by logging in to your account
 msgstr "Inicia sesión en tu cuenta para tener tus cursos y tu progreso en un solo lugar."
 
 #: src/app/[lang]/(catalog)/my/page.tsx
+#: src/components/generation/generation-authentication-cta.tsx
 #: src/components/generation/generation-limit-cta.tsx
 msgctxt "odXlk8"
 msgid "Log in"
@@ -2684,6 +2686,16 @@ msgstr "Comentarios"
 msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Envíanos comentarios, preguntas o sugerencias. Completa el formulario de abajo o escríbenos directamente a contacto@zoonk.com."
+
+#: src/components/generation/generation-authentication-cta.tsx
+msgctxt "kGkxlG"
+msgid "Log in to create with AI"
+msgstr "Inicia sesión para crear con IA"
+
+#: src/components/generation/generation-authentication-cta.tsx
+msgctxt "Jjw_0c"
+msgid "You need to log in to create new courses and lessons with AI. You can explore existing courses without logging in."
+msgstr "Debes iniciar sesión para crear nuevos cursos y lecciones con IA. Puedes explorar los cursos existentes sin iniciar sesión."
 
 #: src/components/generation/generation-limit-cta.tsx
 #: src/components/subscription/upgrade-cta.tsx

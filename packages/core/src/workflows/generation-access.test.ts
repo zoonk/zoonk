@@ -6,7 +6,7 @@ import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtu
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
-import { getChapterGenerationAccess } from "./chapter-generation-access";
+import { getChapterGenerationAccess, getChapterGenerationView } from "./chapter-generation-access";
 import { getLessonGenerationAccess } from "./lesson-generation-access";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
@@ -24,7 +24,7 @@ describe("generation access", () => {
 
   beforeEach(() => vi.mocked(getSession).mockResolvedValue(null));
 
-  it("allows guests to generate the free first chapter", async () => {
+  it("requires authentication before generating the first chapter", async () => {
     const chapter = await chapterFixture({
       courseId,
       generationStatus: "pending",
@@ -32,21 +32,40 @@ describe("generation access", () => {
       position: 0,
     });
 
-    const result = await getChapterGenerationAccess(chapter.id);
+    await expect(getChapterGenerationAccess(chapter.id)).resolves.toStrictEqual({
+      status: "unauthorized",
+    });
+  });
 
-    expect(result).toMatchObject({
+  it("requires authentication before checking later-chapter subscriptions", async () => {
+    const chapter = await chapterFixture({ courseId, organizationId, position: 1 });
+
+    await expect(getChapterGenerationAccess(chapter.id)).resolves.toStrictEqual({
+      status: "unauthorized",
+    });
+  });
+
+  it("lets guests continue from a completed first chapter to its public page", async () => {
+    const completedCourse = await courseFixture({ organizationId });
+
+    const chapter = await chapterFixture({
+      courseId: completedCourse.id,
+      generationStatus: "completed",
+      organizationId,
+      position: 0,
+    });
+
+    await lessonFixture({ chapterId: chapter.id, organizationId });
+
+    await expect(getChapterGenerationView(chapter.id)).resolves.toMatchObject({
       chapter: { id: chapter.id },
-      shouldClaimQuota: true,
       status: "ready",
     });
   });
 
-  it("requires a subscription for later chapters", async () => {
-    const chapter = await chapterFixture({ courseId, organizationId, position: 1 });
-
-    await expect(getChapterGenerationAccess(chapter.id)).resolves.toMatchObject({
-      chapter: { id: chapter.id },
-      status: "subscriptionRequired",
+  it("returns not found for missing chapter views before asking guests to log in", async () => {
+    await expect(getChapterGenerationView("999999999")).resolves.toStrictEqual({
+      status: "notFound",
     });
   });
 
@@ -79,7 +98,12 @@ describe("generation access", () => {
   });
 
   it("does not claim quota for chapter and lesson no-op repairs", async () => {
-    const repairCourse = await courseFixture({ organizationId });
+    const [repairCourse, user] = await Promise.all([
+      courseFixture({ organizationId }),
+      userFixture(),
+    ]);
+
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
     const chapter = await chapterFixture({
       courseId: repairCourse.id,
@@ -105,7 +129,12 @@ describe("generation access", () => {
   });
 
   it("requires a subscription for later lessons when the learner is not subscribed", async () => {
-    const chapter = await chapterFixture({ courseId, organizationId, position: 3 });
+    const [chapter, user] = await Promise.all([
+      chapterFixture({ courseId, organizationId, position: 3 }),
+      userFixture(),
+    ]);
+
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -141,7 +170,12 @@ describe("generation access", () => {
   });
 
   it("hides non-standalone and non-AI resources", async () => {
-    const chapter = await chapterFixture({ courseId, organizationId, position: 4 });
+    const [chapter, user] = await Promise.all([
+      chapterFixture({ courseId, organizationId, position: 4 }),
+      userFixture(),
+    ]);
+
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
     const companionLesson = await lessonFixture({
       chapterId: chapter.id,

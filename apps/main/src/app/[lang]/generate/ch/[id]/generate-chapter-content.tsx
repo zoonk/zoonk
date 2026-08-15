@@ -1,3 +1,4 @@
+import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
@@ -22,6 +23,18 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
 
   if (access.status === "notFound") {
     notFound();
+  }
+
+  if (access.status === "unauthorized") {
+    const loginHref = `/login?next=${encodeURIComponent(`/generate/ch/${id}`)}` as const;
+
+    return (
+      <Container variant="narrow">
+        <ContainerBody>
+          <GenerationAuthenticationCTA loginHref={loginHref} />
+        </ContainerBody>
+      </Container>
+    );
   }
 
   const { chapter } = access;

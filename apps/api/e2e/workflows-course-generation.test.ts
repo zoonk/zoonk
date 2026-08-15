@@ -31,7 +31,7 @@ test.describe("Course Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("starts workflow without a session", async () => {
+  test("requires authentication without changing the course prompt", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const startRequest = await createCompletedCoursePrompt(`E2E Public Course ${uniqueId}`);
@@ -42,15 +42,15 @@ test.describe("Course Generation Workflow API", () => {
       data: { target: { id: startRequest.id, type: "coursePrompt" } },
     });
 
-    expect(response.status()).toBe(202);
+    expect(response.status()).toBe(401);
 
-    const body = await response.json();
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED", message: "Authentication required" },
+    });
 
-    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
-
-    expect(response.headers().location).toBe(
-      `/v1/generations/${encodeURIComponent(String(body.id))}`,
-    );
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: startRequest.id } }),
+    ).resolves.toMatchObject({ generationRunId: null, generationStatus: "completed" });
 
     await apiContext.dispose();
   });
@@ -66,7 +66,10 @@ test.describe("Course Generation Workflow API", () => {
       targetLanguage: "en",
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-same-language",
+    });
 
     const response = await apiContext.post("/v1/generations", {
       data: { target: { id: startRequest.id, type: "coursePrompt" } },

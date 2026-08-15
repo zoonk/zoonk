@@ -1,3 +1,4 @@
+import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { getAiCourseHref } from "@/data/courses/course-href";
 import { redirect } from "@/i18n/navigation";
 import { resolveLanguageCourse } from "@zoonk/core/courses/language";
@@ -37,6 +38,17 @@ async function StartSpeakLanguageRedirect({ params }: { params: StartSpeakLangua
 
   if (resolution.kind === "course") {
     return redirect({ href: getAiCourseHref(resolution.course), locale });
+  }
+
+  if (resolution.kind === "unauthorized") {
+    const loginHref =
+      `/login?next=${encodeURIComponent(`/start/speak/${targetLanguage}`)}` as const;
+
+    return (
+      <StartSurface>
+        <GenerationAuthenticationCTA loginHref={loginHref} />
+      </StartSurface>
+    );
   }
 
   return redirect({ href: `/generate/course/${resolution.coursePrompt.id}`, locale });

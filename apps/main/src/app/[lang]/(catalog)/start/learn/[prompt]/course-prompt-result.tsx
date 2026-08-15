@@ -1,3 +1,4 @@
+import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { resolveCoursePrompt } from "@/data/courses/course-prompt";
 import { Link, redirect } from "@/i18n/navigation";
 import { type UnsupportedCoursePrompt } from "@zoonk/core/courses/resolve-prompt";
@@ -117,6 +118,17 @@ export async function CourseStartResult({ prompt }: { prompt: string }) {
 
   if (result.kind === "generate") {
     return redirect({ href: `/generate/course/${result.prompt.id}`, locale });
+  }
+
+  if (result.kind === "unauthorized") {
+    const loginHref =
+      `/login?next=${encodeURIComponent(`/start/learn/${encodeURIComponent(prompt)}`)}` as const;
+
+    return (
+      <StartSurface>
+        <GenerationAuthenticationCTA loginHref={loginHref} />
+      </StartSurface>
+    );
   }
 
   if (result.kind === "unsafe") {
