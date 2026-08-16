@@ -32,13 +32,6 @@ jobs:
   build:
     runs-on: macos-26
     timeout-minutes: 30
-    env:
-      XCODEBUILD_ARGUMENTS: >-
-        -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
-        -onlyUsePackageVersionsFromResolvedFile
-        -skipPackageUpdates
-        COMPILATION_CACHE_ENABLE_CACHING=YES
-        COMPILER_INDEX_STORE_ENABLE=NO
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -60,4 +53,11 @@ jobs:
             ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-26.6-
 
       - name: Build iPhone and iPad app
+        env:
+          XCODEBUILD_ARGUMENTS: >-
+            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
+            -onlyUsePackageVersionsFromResolvedFile
+            -skipPackageUpdates
+            COMPILATION_CACHE_ENABLE_CACHING=YES
+            COMPILER_INDEX_STORE_ENABLE=NO
         run: make -C apps/apple build
