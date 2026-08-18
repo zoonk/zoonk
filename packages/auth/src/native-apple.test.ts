@@ -3,6 +3,9 @@ import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { reauthorizeAppleForAccountDeletion, signInWithNativeApple } from "./native-apple";
 
+const APPLE_ISSUER = "https://appleid.apple.com";
+const APPLE_PROVIDER_ID = "apple";
+
 const mocks = vi.hoisted(() => ({
   enforceSignInRateLimit: vi.fn(),
   exchangeAuthorizationCode: vi.fn(),
@@ -71,7 +74,9 @@ function createTestUser() {
  * native orchestration verifies ownership and stores provider credentials.
  */
 function createAppleAccount({ subject, userId }: { subject: string; userId: string }) {
-  return prisma.account.create({ data: { accountId: subject, providerId: "apple", userId } });
+  return prisma.account.create({
+    data: { accountId: subject, issuer: APPLE_ISSUER, providerId: APPLE_PROVIDER_ID, userId },
+  });
 }
 
 /**
@@ -99,7 +104,7 @@ async function createSessionResponse({ userId }: { userId: string }) {
  * accounts left by other integration tests cannot affect exact-owner lookup.
  */
 function verifySubject(subject: string) {
-  mocks.verifyIdentityToken.mockResolvedValue({ subject });
+  mocks.verifyIdentityToken.mockResolvedValue({ issuer: APPLE_ISSUER, subject });
 }
 
 describe(signInWithNativeApple, () => {
@@ -163,6 +168,44 @@ describe(signInWithNativeApple, () => {
       credentials,
       headers: nativeSignInRequest.headers,
     });
+  });
+
+  it("selects the verified Apple identity by issuer and subject", async () => {
+    const subject = `apple-${randomUUID()}`;
+    const [sessionUser, otherIssuerUser] = await Promise.all([createTestUser(), createTestUser()]);
+
+    const [account, otherIssuerAccount, sessionResponse] = await Promise.all([
+      createAppleAccount({ subject, userId: sessionUser.id }),
+      prisma.account.create({
+        data: {
+          accountId: subject,
+          issuer: "local:oauth:apple",
+          providerId: APPLE_PROVIDER_ID,
+          userId: otherIssuerUser.id,
+        },
+      }),
+      createSessionResponse({ userId: sessionUser.id }),
+    ]);
+
+    verifySubject(subject);
+
+    mocks.signInNativeAppleAccount.mockResolvedValue({
+      changes: { sessionToken: sessionResponse.token },
+      response: sessionResponse,
+      success: true,
+    });
+
+    await expect(signInWithNativeApple(nativeSignInRequest)).resolves.toStrictEqual(
+      sessionResponse,
+    );
+
+    const [persistedAccount, persistedOtherIssuerAccount] = await Promise.all([
+      prisma.account.findUniqueOrThrow({ where: { id: account.id } }),
+      prisma.account.findUniqueOrThrow({ where: { id: otherIssuerAccount.id } }),
+    ]);
+
+    expect(persistedAccount.refreshToken).toBe(authorization.refreshToken);
+    expect(persistedOtherIssuerAccount.refreshToken).toBeNull();
   });
 
   it("treats a malformed Better Auth success response as an internal failure", async () => {

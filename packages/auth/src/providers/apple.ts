@@ -1,4 +1,4 @@
-import { type AppleProfile } from "better-auth/social-providers";
+import { type AppleProfile, apple } from "better-auth/social-providers";
 import { SignJWT, importPKCS8 } from "jose";
 
 const cachedClientSecrets = new Map<string, { token: string; exp: number }>();
@@ -103,6 +103,16 @@ export const appleProvider = appleSigningConfiguration
       },
     }
   : {};
+
+const configuredAppleProvider = appleProvider.apple ? apple(appleProvider.apple) : null;
+
+/**
+ * Uses Better Auth's built-in provider metadata as the source of truth for the
+ * canonical issuer persisted with Apple accounts.
+ */
+export function getAppleAccountIssuer() {
+  return configuredAppleProvider?.accountIssuer;
+}
 
 /**
  * Gives the private native auth boundary an Apple provider that validates the

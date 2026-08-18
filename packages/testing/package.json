@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./fixtures/accounts": "./src/fixtures/accounts.ts",
     "./fixtures/auth": "./src/fixtures/auth.ts",
     "./fixtures/chapters": "./src/fixtures/chapters.ts",
     "./fixtures/course-prompts": "./src/fixtures/course-prompts.ts",

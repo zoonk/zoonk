@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { appleAccountFixture } from "@zoonk/testing/fixtures/accounts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { deleteCurrentUser } from "./delete-current-user";
@@ -37,16 +38,6 @@ const appleCredentials = {
 };
 
 const emailCredentials = { email: "learner@example.com", otp: "123456" };
-
-/**
- * Adds the provider row that changes deletion reauthentication behavior while
- * leaving the account lookup itself on the real Prisma client.
- */
-function createAppleAccount(userId: string) {
-  return prisma.account.create({
-    data: { accountId: `apple-${randomUUID()}`, providerId: "apple", userId },
-  });
-}
 
 describe(deleteCurrentUser, () => {
   let currentUserId: string;
@@ -88,7 +79,7 @@ describe(deleteCurrentUser, () => {
   });
 
   it("keeps deletion available without fresh Apple credentials", async () => {
-    await createAppleAccount(currentUserId);
+    await appleAccountFixture({ userId: currentUserId });
 
     mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
       appleAuthorizationRevoked: true,
@@ -102,7 +93,7 @@ describe(deleteCurrentUser, () => {
   });
 
   it("deletes with the fresh session returned after native Apple revocation", async () => {
-    await createAppleAccount(currentUserId);
+    await appleAccountFixture({ userId: currentUserId });
 
     mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
       appleAuthorizationRevoked: true,
@@ -139,7 +130,7 @@ describe(deleteCurrentUser, () => {
   });
 
   it("reports stored Apple revocation failure after email reauthentication", async () => {
-    await createAppleAccount(currentUserId);
+    await appleAccountFixture({ userId: currentUserId });
 
     mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
       appleAuthorizationRevoked: false,
@@ -152,7 +143,7 @@ describe(deleteCurrentUser, () => {
   });
 
   it("reports failure when either fresh or stored Apple revocation is unavailable", async () => {
-    await createAppleAccount(currentUserId);
+    await appleAccountFixture({ userId: currentUserId });
 
     mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
       appleAuthorizationRevoked: false,
@@ -172,7 +163,7 @@ describe(deleteCurrentUser, () => {
     const temporarySessionToken = `${provider.toLowerCase()}-${randomUUID()}`;
 
     if (provider === "Apple") {
-      await createAppleAccount(currentUserId);
+      await appleAccountFixture({ userId: currentUserId });
 
       mocks.reauthorizeApple.mockResolvedValue({
         appleAuthorizationRevoked: true,

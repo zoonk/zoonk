@@ -6,6 +6,9 @@ import {
   deleteUserDependenciesBeforeAuthDelete,
 } from "./account-deletion";
 
+const APPLE_ISSUER = "https://appleid.apple.com";
+const APPLE_PROVIDER_ID = "apple";
+
 const mocks = vi.hoisted(() => ({
   cancelStripeSubscription: vi.fn(),
   revokeStoredAppleAuthorization: vi.fn(),
@@ -157,7 +160,8 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
         data: {
           accountId: `apple-${randomUUID()}`,
           idToken: "stored-id-token",
-          providerId: "apple",
+          issuer: APPLE_ISSUER,
+          providerId: APPLE_PROVIDER_ID,
           refreshToken: "stored-refresh-token",
           userId: user.id,
         },

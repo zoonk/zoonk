@@ -3,6 +3,9 @@ import { prisma } from "@zoonk/db";
 
 type UserAttrs = { email: string; name: string; role: "user" | "admin"; password: string };
 
+const CREDENTIAL_ISSUER = "local:credential";
+const CREDENTIAL_PROVIDER_ID = "credential";
+
 function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   return {
     email: attrs?.email || `testuser${randomUUID()}@example.test`,
@@ -23,19 +26,21 @@ function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
  */
 export async function userFixture(attrs?: Partial<UserAttrs>) {
   const params = userAttrs(attrs);
+  const userId = randomUUID();
 
   const user = await prisma.user.create({
     data: {
       accounts: {
         create: {
-          accountId: params.email,
+          accountId: userId,
           id: randomUUID(),
+          issuer: CREDENTIAL_ISSUER,
           password: params.password,
-          providerId: "credential",
+          providerId: CREDENTIAL_PROVIDER_ID,
         },
       },
       email: params.email,
-      id: randomUUID(),
+      id: userId,
       name: params.name,
       role: params.role,
     },

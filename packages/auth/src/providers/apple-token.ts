@@ -1,9 +1,8 @@
 import { getApplePublicKey } from "better-auth/social-providers";
 import { decodeProtectedHeader, jwtVerify } from "jose";
-import { getAppleConfiguration } from "./apple";
+import { getAppleAccountIssuer, getAppleConfiguration } from "./apple";
 import { AppleAuthorizationError } from "./apple-rest";
 
-const APPLE_ISSUER = "https://appleid.apple.com";
 const HEX_RADIX = 16;
 const publicKeyPromises = new Map<string, ReturnType<typeof getApplePublicKey>>();
 
@@ -67,8 +66,8 @@ async function nonceMatches({ claim, nonce }: { claim: unknown; nonce: string })
 
 /**
  * Validates that an identity token was signed by Apple for this native app and
- * returns only its stable Apple subject. The subject is the value that must be
- * matched against Better Auth's existing Apple Account row.
+ * returns its trusted issuer and stable Apple subject. Together they form the
+ * Better Auth 1.7 identity that must match the existing Apple Account row.
  */
 export async function verifyNativeAppleIdentityToken({
   nonce,
@@ -78,8 +77,9 @@ export async function verifyNativeAppleIdentityToken({
   token: string;
 }) {
   const configuration = getAppleConfiguration();
+  const accountIssuer = getAppleAccountIssuer();
 
-  if (!configuration) {
+  if (!configuration || !accountIssuer) {
     throw new AppleAuthorizationError("configuration");
   }
 
@@ -96,18 +96,18 @@ export async function verifyNativeAppleIdentityToken({
       {
         algorithms: ["RS256"],
         audience: configuration.appBundleIdentifier,
-        issuer: APPLE_ISSUER,
+        issuer: accountIssuer,
         maxTokenAge: "1h",
       },
     );
 
     const validNonce = nonce ? await nonceMatches({ claim: payload.nonce, nonce }) : true;
 
-    if (!payload.sub || !validNonce) {
+    if (!payload.iss || !payload.sub || !validNonce) {
       throw new AppleAuthorizationError("invalidCredential");
     }
 
-    return { subject: payload.sub };
+    return { issuer: payload.iss, subject: payload.sub };
   } catch (error) {
     if (error instanceof AppleAuthorizationError) {
       throw error;
