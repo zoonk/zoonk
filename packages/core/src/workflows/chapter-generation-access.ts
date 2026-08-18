@@ -66,7 +66,11 @@ export async function getChapterGenerationView(chapterId: string) {
       chapter._count.lessons > 0;
 
     if (!canRedirectToPublicChapter) {
-      return { status: "unauthorized" as const };
+      return {
+        chapterSlug: chapter.slug,
+        courseSlug: chapter.course.slug,
+        status: "unauthorized" as const,
+      };
     }
 
     return { chapter, shouldClaimQuota: false, status: "ready" as const };

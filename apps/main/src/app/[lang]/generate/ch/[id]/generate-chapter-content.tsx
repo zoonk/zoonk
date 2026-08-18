@@ -31,7 +31,14 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
     return (
       <Container variant="narrow">
         <ContainerBody>
-          <GenerationAuthenticationCTA loginHref={loginHref} />
+          <GenerationAuthenticationCTA
+            loginHref={loginHref}
+            target={{
+              chapterSlug: access.chapterSlug,
+              courseSlug: access.courseSlug,
+              resource: "chapter",
+            }}
+          />
         </ContainerBody>
       </Container>
     );

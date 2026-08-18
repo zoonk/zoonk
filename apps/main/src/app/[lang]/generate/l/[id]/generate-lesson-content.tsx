@@ -37,7 +37,15 @@ export async function GenerateLessonContent({
     return (
       <Container variant="narrow">
         <ContainerBody>
-          <GenerationAuthenticationCTA loginHref={loginHref} />
+          <GenerationAuthenticationCTA
+            loginHref={loginHref}
+            target={{
+              chapterSlug: view.chapterSlug,
+              courseSlug: view.courseSlug,
+              lessonSlug: view.lessonSlug,
+              resource: "lesson",
+            }}
+          />
         </ContainerBody>
       </Container>
     );

@@ -44,7 +44,10 @@ export async function GenerateCoursePromptContent({
     return (
       <Container variant="narrow">
         <ContainerBody>
-          <GenerationAuthenticationCTA loginHref={loginHref} />
+          <GenerationAuthenticationCTA
+            loginHref={loginHref}
+            target={{ courseSlug: generation.courseSlug, resource: "course" }}
+          />
         </ContainerBody>
       </Container>
     );

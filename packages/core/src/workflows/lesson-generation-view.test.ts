@@ -42,6 +42,9 @@ describe(getLessonGenerationView, () => {
     vi.mocked(getSession).mockResolvedValue(null);
 
     await expect(getLessonGenerationView(lesson.id)).resolves.toStrictEqual({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
+      lessonSlug: lesson.slug,
       status: "unauthorized",
     });
   });
@@ -112,6 +115,9 @@ describe(getLessonGenerationView, () => {
       vi.mocked(getSession).mockResolvedValue(null);
 
       await expect(getLessonGenerationView(lesson.id)).resolves.toStrictEqual({
+        chapterSlug: chapter.slug,
+        courseSlug: course.slug,
+        lessonSlug: lesson.slug,
         status: "unauthorized",
       });
     },

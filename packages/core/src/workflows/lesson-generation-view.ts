@@ -13,6 +13,18 @@ import {
 import { getLessonForGeneration } from "../lessons/get-lesson-for-generation";
 import { getSession } from "../users/get-session";
 
+/** Keeps every login gate filterable without exposing the full unpublished lesson row. */
+function getUnauthorizedLessonGenerationView(
+  lesson: NonNullable<Awaited<ReturnType<typeof getLessonForGeneration>>>,
+) {
+  return {
+    chapterSlug: lesson.chapter.slug,
+    courseSlug: lesson.chapter.course.slug,
+    lessonSlug: lesson.slug,
+    status: "unauthorized" as const,
+  };
+}
+
 /** Resolves whether persisted lesson content can safely redirect without starting AI work. */
 async function getReadyLessonGenerationView({
   lesson,
@@ -61,12 +73,12 @@ export async function getLessonGenerationView(lessonId: string) {
 
   if (!session) {
     if (requiresSubscription || lesson.generationStatus !== "completed" || !isPubliclyVisible) {
-      return { status: "unauthorized" as const };
+      return getUnauthorizedLessonGenerationView(lesson);
     }
 
     const readyView = await getReadyLessonGenerationView({ lesson, lessonKind: lesson.kind });
 
-    return readyView.isReadyForRedirect ? readyView : { status: "unauthorized" as const };
+    return readyView.isReadyForRedirect ? readyView : getUnauthorizedLessonGenerationView(lesson);
   }
 
   if (requiresSubscription && !(await hasActiveSubscription())) {
