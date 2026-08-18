@@ -5,14 +5,33 @@ import { findUserActiveSubscription } from "@/data/users/find-active-subscriptio
 import { prisma } from "@zoonk/db";
 
 export const getUserSubscriptions = cacheAdminData(async (userId: string) => {
-  const subscriptions = await prisma.subscription.findMany({
-    orderBy: getSubscriptionOrderBy(),
-    where: { referenceId: userId },
-  });
+  const [activeSubscriptions, canceled, incomplete] = await Promise.all([
+    prisma.subscription.findMany({
+      where: { referenceId: userId, status: { in: ["active", "trialing"] } },
+    }),
+    prisma.subscription.findFirst({
+      orderBy: getCanceledSubscriptionOrderBy(),
+      where: { referenceId: userId, status: "canceled" },
+    }),
+    prisma.subscription.findFirst({
+      orderBy: getSubscriptionOrderBy(),
+      where: { referenceId: userId, status: "incomplete" },
+    }),
+  ]);
 
-  return {
-    active: findUserActiveSubscription(subscriptions),
-    canceled: subscriptions.find((subscription) => subscription.status === "canceled") ?? null,
-    incomplete: subscriptions.find((subscription) => subscription.status === "incomplete") ?? null,
-  };
+  return { active: findUserActiveSubscription(activeSubscriptions), canceled, incomplete };
 });
+
+/**
+ * "Last cancellation" follows the cancellation event, not the subscription's
+ * original billing start. End dates only break ties for legacy rows that have
+ * no recorded cancellation timestamp.
+ */
+function getCanceledSubscriptionOrderBy() {
+  return [
+    { canceledAt: { nulls: "last" as const, sort: "desc" as const } },
+    { endedAt: { nulls: "last" as const, sort: "desc" as const } },
+    { periodEnd: { nulls: "last" as const, sort: "desc" as const } },
+    { id: "desc" as const },
+  ];
+}

@@ -1,33 +1,33 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { getSubscriptionOrderBy } from "@/data/subscriptions/_utils/subscription-order";
 import { type SubscriptionFilter } from "@/lib/subscription";
-import { type Subscription, prisma } from "@zoonk/db";
+import { type Subscription, prisma, sql } from "@zoonk/db";
 
 type SubscriptionUser = Awaited<ReturnType<typeof findSubscriptionUsers>>[number];
 type SubscriptionWithUser = Subscription & { user: SubscriptionUser };
+type SubscriptionPageReference = Pick<Subscription, "id" | "referenceId">;
 
 const cachedListSubscriptions = cacheAdminData(
   async (filter: SubscriptionFilter, limit: number, offset: number) => {
-    const existingUserIds = await findExistingSubscriptionUserIds(filter);
-
-    if (existingUserIds.length === 0) {
-      return { subscriptions: [], total: 0 };
-    }
-
-    const where = getSubscriptionWhere({ existingUserIds, filter });
-
-    const [subscriptions, total] = await Promise.all([
-      prisma.subscription.findMany({
-        orderBy: getSubscriptionOrderBy(),
-        skip: offset,
-        take: limit,
-        where,
-      }),
-      prisma.subscription.count({ where }),
+    const [pageReferences, total] = await Promise.all([
+      findSubscriptionPageReferences({ filter, limit, offset }),
+      countUserSubscriptions(filter),
     ]);
 
-    const users = await findSubscriptionUsers({ subscriptions });
+    if (pageReferences.length === 0) {
+      return { subscriptions: [], total };
+    }
+
+    const [subscriptionRows, users] = await Promise.all([
+      prisma.subscription.findMany({ where: { id: { in: getSubscriptionIds(pageReferences) } } }),
+      findSubscriptionUsers({ subscriptions: pageReferences }),
+    ]);
+
+    const subscriptions = orderSubscriptionsByPage({
+      pageReferences,
+      subscriptions: subscriptionRows,
+    });
+
     const usersById = new Map(users.map((user) => [user.id, user]));
 
     const subscriptionsWithUsers = subscriptions
@@ -58,37 +58,85 @@ export async function listSubscriptions({
   return cachedListSubscriptions(filter, limit, offset);
 }
 
-function getSubscriptionWhere({
-  existingUserIds,
+/**
+ * The subscriptions table intentionally has no Prisma user relation. Joining
+ * only for page references preserves orphan-safe totals without loading every
+ * subscription and user into application memory before pagination.
+ */
+async function findSubscriptionPageReferences({
   filter,
+  limit,
+  offset,
 }: {
-  existingUserIds: string[];
   filter: SubscriptionFilter;
+  limit: number;
+  offset: number;
 }) {
-  const status = filter === "all" ? {} : { status: filter };
-  return { referenceId: { in: existingUserIds }, ...status };
+  const statusCondition = getSubscriptionStatusCondition(filter);
+
+  return prisma.$queryRaw<SubscriptionPageReference[]>`
+    SELECT subscriptions.id, subscriptions.reference_id AS "referenceId"
+    FROM subscriptions
+    INNER JOIN users ON users.id = subscriptions.reference_id
+    WHERE ${statusCondition}
+    ORDER BY
+      subscriptions.period_start DESC NULLS LAST,
+      subscriptions.period_end DESC NULLS LAST,
+      subscriptions.id DESC
+    LIMIT ${limit}
+    OFFSET ${offset}
+  `;
 }
 
 /**
- * Pagination must run after orphan subscription rows are excluded. Because the
- * Better Auth table does not define a Prisma relation to users, referenced
- * accounts are resolved before the page query and count.
+ * Count and page queries share the same user join and status condition so an
+ * orphaned Better Auth row cannot inflate pagination or create a short page.
  */
-async function findExistingSubscriptionUserIds(filter: SubscriptionFilter) {
-  const subscriptionReferences = await prisma.subscription.findMany({
-    distinct: ["referenceId"],
-    select: { referenceId: true },
-    where: filter === "all" ? undefined : { status: filter },
-  });
+async function countUserSubscriptions(filter: SubscriptionFilter) {
+  const statusCondition = getSubscriptionStatusCondition(filter);
 
-  const users = await findSubscriptionUsers({ subscriptions: subscriptionReferences });
+  const result = await prisma.$queryRaw<[{ count: bigint }]>`
+    SELECT COUNT(*) AS count
+    FROM subscriptions
+    INNER JOIN users ON users.id = subscriptions.reference_id
+    WHERE ${statusCondition}
+  `;
 
-  return users.map((user) => user.id);
+  return Number(result[0].count);
+}
+
+function getSubscriptionStatusCondition(filter: SubscriptionFilter) {
+  return filter === "all" ? sql`TRUE` : sql`subscriptions.status = ${filter}`;
+}
+
+function getSubscriptionIds(pageReferences: SubscriptionPageReference[]) {
+  return pageReferences.map((subscription) => subscription.id);
+}
+
+/** Restores the SQL page order after Prisma loads the complete subscription models by id. */
+function orderSubscriptionsByPage({
+  pageReferences,
+  subscriptions,
+}: {
+  pageReferences: SubscriptionPageReference[];
+  subscriptions: Subscription[];
+}) {
+  const subscriptionsById = new Map(
+    subscriptions.map((subscription) => [subscription.id, subscription]),
+  );
+
+  return pageReferences
+    .map((subscription) => subscriptionsById.get(subscription.id))
+    .filter((subscription) => isSubscription(subscription));
+}
+
+function isSubscription(subscription: Subscription | undefined): subscription is Subscription {
+  return subscription !== undefined;
 }
 
 /**
  * Better Auth stores the user id as `referenceId` instead of a Prisma relation,
- * so subscription rows need one batched account lookup before rendering.
+ * so the bounded page references need one batched account lookup before rendering.
  */
 async function findSubscriptionUsers<T extends { referenceId: string }>({
   subscriptions,
