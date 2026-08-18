@@ -1,10 +1,14 @@
 import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
-import {
-  type IncompleteSubscription,
-  listIncompleteSubscriptions,
-} from "@/data/subscriptions/list-incomplete-subscriptions";
+import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
+import { type AdminSubscription, listSubscriptions } from "@/data/subscriptions/list-subscriptions";
 import { parseSearchParams } from "@/lib/parse-search-params";
+import {
+  getSubscriptionProviderLabel,
+  getSubscriptionStatusLabel,
+  parseSubscriptionFilter,
+  subscriptionFilterLabels,
+} from "@/lib/subscription";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
@@ -20,55 +24,54 @@ import Link from "next/link";
 const TABLE_COLUMN_COUNT = 7;
 
 /**
- * The paginated list keeps subscription triage server-rendered while preserving
- * URL pagination, so admins can refresh or share a specific queue page.
+ * Subscription filters and pagination are URL state, so the complete log stays
+ * server-rendered and can be refreshed or shared without losing its context.
  */
-export async function IncompleteSubscriptionList({
+export async function SubscriptionList({
   searchParams,
 }: {
   searchParams: PageProps<"/subscriptions">["searchParams"];
 }) {
   const params = await searchParams;
   const { limit, offset, page } = parseSearchParams(params);
+  const filter = parseSubscriptionFilter(params.status);
 
-  return <CachedIncompleteSubscriptionList limit={limit} offset={offset} page={page} />;
+  return <CachedSubscriptionList filter={filter} limit={limit} offset={offset} page={page} />;
 }
 
-/**
- * Pagination primitives form a stable cache key so runtime prefetching can
- * resolve the support queue before its link is clicked.
- */
-async function CachedIncompleteSubscriptionList({
+async function CachedSubscriptionList({
+  filter,
   limit,
   offset,
   page,
 }: {
+  filter: ReturnType<typeof parseSubscriptionFilter>;
   limit: number;
   offset: number;
   page: number;
 }) {
   "use cache: private";
 
-  const { subscriptions, total } = await listIncompleteSubscriptions({ limit, offset });
+  const { subscriptions, total } = await listSubscriptions({ filter, limit, offset });
   const totalPages = Math.ceil(total / limit);
 
   return (
     <>
       <p className="text-muted-foreground text-sm">
-        {total.toLocaleString()} incomplete subscriptions.
+        {getSubscriptionCountLabel({ filter, total })}
       </p>
 
       <div className="overflow-x-auto rounded-lg border">
         <Table>
-          <IncompleteSubscriptionTableHeader />
+          <SubscriptionTableHeader />
 
           <TableBody>
             {subscriptions.length > 0 ? (
               subscriptions.map((subscription) => (
-                <IncompleteSubscriptionRow key={subscription.id} subscription={subscription} />
+                <SubscriptionRow key={subscription.id} subscription={subscription} />
               ))
             ) : (
-              <IncompleteSubscriptionEmptyRow />
+              <SubscriptionEmptyRow filter={filter} />
             )}
           </TableBody>
         </Table>
@@ -78,27 +81,25 @@ async function CachedIncompleteSubscriptionList({
         basePath="/subscriptions"
         limit={limit}
         page={page}
+        queryParams={{ status: filter === "all" ? undefined : filter }}
         totalPages={totalPages}
       />
     </>
   );
 }
 
-/**
- * The fallback matches the loaded table dimensions closely enough that the
- * page does not jump when the subscription query finishes streaming in.
- */
-export function IncompleteSubscriptionListSkeleton() {
+/** The fallback shares the real table header so loading and loaded columns cannot drift. */
+export function SubscriptionListSkeleton() {
   return (
     <div className="flex flex-col gap-4">
-      <Skeleton className="h-4 w-44" />
+      <Skeleton className="h-4 w-36" />
 
       <AdminTableSkeleton className="overflow-x-auto">
         <Table>
-          <IncompleteSubscriptionTableHeader />
+          <SubscriptionTableHeader />
 
           <AdminTableSkeletonRows>
-            <IncompleteSubscriptionSkeletonRow />
+            <SubscriptionSkeletonRow />
           </AdminTableSkeletonRows>
         </Table>
       </AdminTableSkeleton>
@@ -106,11 +107,7 @@ export function IncompleteSubscriptionListSkeleton() {
   );
 }
 
-/**
- * The loaded table and skeleton share one header because the column labels are
- * part of the support workflow and should not drift between states.
- */
-function IncompleteSubscriptionTableHeader() {
+function SubscriptionTableHeader() {
   return (
     <TableHeader>
       <TableRow>
@@ -126,25 +123,22 @@ function IncompleteSubscriptionTableHeader() {
   );
 }
 
-/**
- * Empty rows stay inside the table so the page keeps the same visual structure
- * whether the queue has work or is clear.
- */
-function IncompleteSubscriptionEmptyRow() {
+function SubscriptionEmptyRow({ filter }: { filter: ReturnType<typeof parseSubscriptionFilter> }) {
+  const filterLabel = subscriptionFilterLabels[filter].toLowerCase();
+
+  const message =
+    filter === "all" ? "No subscriptions found." : `No ${filterLabel} subscriptions found.`;
+
   return (
     <TableRow>
       <TableCell className="text-muted-foreground" colSpan={TABLE_COLUMN_COUNT}>
-        No incomplete subscriptions found.
+        {message}
       </TableCell>
     </TableRow>
   );
 }
 
-/**
- * A separate skeleton row keeps placeholder sizing readable and avoids hiding
- * the actual table structure behind one large generic loading block.
- */
-function IncompleteSubscriptionSkeletonRow() {
+function SubscriptionSkeletonRow() {
   return (
     <TableRow>
       <TableCell>
@@ -175,11 +169,8 @@ function IncompleteSubscriptionSkeletonRow() {
   );
 }
 
-/**
- * Each row makes the account identity the primary action because the next step
- * after spotting a stuck subscription is usually account-level support work.
- */
-function IncompleteSubscriptionRow({ subscription }: { subscription: IncompleteSubscription }) {
+/** User identity remains the primary action because subscription review usually leads to support work. */
+function SubscriptionRow({ subscription }: { subscription: AdminSubscription }) {
   return (
     <TableRow>
       <TableCell>
@@ -194,11 +185,11 @@ function IncompleteSubscriptionRow({ subscription }: { subscription: IncompleteS
           {subscription.plan}
         </Badge>
       </TableCell>
-      <TableCell className="capitalize">{getProviderLabel(subscription.provider)}</TableCell>
+      <TableCell>{getSubscriptionProviderLabel(subscription.provider)}</TableCell>
       <TableCell>
-        <Badge className="capitalize" variant="secondary">
-          {subscription.status ?? "—"}
-        </Badge>
+        <SubscriptionStatusBadge className="capitalize" status={subscription.status}>
+          {getSubscriptionStatusLabel(subscription.status)}
+        </SubscriptionStatusBadge>
       </TableCell>
       <TableCell className="capitalize">{subscription.billingInterval ?? "—"}</TableCell>
       <TableCell className="text-muted-foreground">
@@ -211,31 +202,19 @@ function IncompleteSubscriptionRow({ subscription }: { subscription: IncompleteS
   );
 }
 
-/**
- * Provider labels use product names instead of raw enum casing so the table can
- * be scanned quickly by a human doing support triage.
- */
-function getProviderLabel(provider: string) {
-  if (provider === "apple") {
-    return "Apple";
-  }
+function getSubscriptionCountLabel({
+  filter,
+  total,
+}: {
+  filter: ReturnType<typeof parseSubscriptionFilter>;
+  total: number;
+}) {
+  const status = filter === "all" ? "" : `${subscriptionFilterLabels[filter].toLowerCase()} `;
+  const subscriptionLabel = total === 1 ? "subscription" : "subscriptions";
 
-  if (provider === "google") {
-    return "Google";
-  }
-
-  if (provider === "stripe") {
-    return "Stripe";
-  }
-
-  return "Zoonk";
+  return `${total.toLocaleString()} ${status}${subscriptionLabel}.`;
 }
 
-/**
- * Incomplete checkout rows can exist before Stripe or manual records have a
- * billing period, so missing dates should read as empty data rather than an
- * invalid or misleading timestamp.
- */
 function formatOptionalDate(date: Date | null) {
   return date ? new Date(date).toLocaleDateString() : "—";
 }
