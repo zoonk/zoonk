@@ -1565,19 +1565,16 @@ msgid "Investing in your future is cheaper than"
 msgstr "Investing in your future is cheaper than"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "5MmaRi"
-msgid "Log in to unlock unlimited learning"
-msgstr "Log in to unlock unlimited learning"
+msgctxt "NYTy1D"
+msgid "Log in to subscribe"
+msgstr "Log in to subscribe"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "tuK7B0"
-msgid "Unlock unlimited learning with Zoonk Plus"
-msgstr "Unlock unlimited learning with Zoonk Plus"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "nzee-0"
-msgid "Unlock unlimited learning"
-msgstr "Unlock unlimited learning"
+#: src/components/generation/generation-limit-cta.tsx
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Subscribe"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "pTtXdP"
@@ -2696,12 +2693,6 @@ msgstr "Log in to create with AI"
 msgctxt "Jjw_0c"
 msgid "You need to log in to create new courses and lessons with AI. You can explore existing courses without logging in."
 msgstr "You need to log in to create new courses and lessons with AI. You can explore existing courses without logging in."
-
-#: src/components/generation/generation-limit-cta.tsx
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "LeTnGY"
-msgid "Get Zoonk Plus"
-msgstr "Get Zoonk Plus"
 
 #: src/components/generation/generation-limit-cta.tsx
 msgctxt "GLlr0C"

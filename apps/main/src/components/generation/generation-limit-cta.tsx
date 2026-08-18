@@ -31,7 +31,7 @@ function GenerationLimitAction<Href extends string>({
   if (viewer === "authenticated") {
     return (
       <GenerationShortcutLink href="/subscription" prefetch>
-        {t("Get Zoonk Plus")}
+        {t("Subscribe")}
       </GenerationShortcutLink>
     );
   }

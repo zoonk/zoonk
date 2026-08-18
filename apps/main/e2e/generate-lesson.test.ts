@@ -378,7 +378,7 @@ test.describe("Generate Lesson Page - No Subscription", () => {
 
     await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toBeVisible();
 
-    const upgradeLink = authenticatedPage.getByRole("link", { name: /get zoonk plus/iu });
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /^subscribe$/iu });
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });

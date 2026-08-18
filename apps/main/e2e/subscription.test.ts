@@ -120,7 +120,7 @@ async function captureStripeActionRequest({
 async function requestPlusCheckout({ page }: { page: Page }) {
   const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
 
-  await page.getByRole("button", { name: /zoonk plus/iu }).click();
+  await page.getByRole("button", { name: /^subscribe$/iu }).click();
 
   return requestBody;
 }
@@ -138,7 +138,7 @@ test.describe("Subscription Page - Unauthenticated", () => {
       page.getByRole("heading", { name: /keep learning until you get there/iu }),
     ).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /log in to unlock unlimited learning/iu });
+    const loginLink = page.getByRole("link", { name: /log in to subscribe/iu });
     await expect(loginLink).toHaveAttribute("href", "/login?next=%2Fsubscription");
     await expect(page.getByRole("button", { name: /monthly/iu })).toBeVisible();
     await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
@@ -154,9 +154,7 @@ test.describe("Subscription Page - No Subscription", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: /learn anything/iu }),
     ).toBeVisible();
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /unlock unlimited learning/iu }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();
 
     await expect(authenticatedPage.getByRole("button", { name: /monthly/iu })).toHaveAttribute(
       "aria-pressed",

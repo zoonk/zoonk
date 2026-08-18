@@ -641,7 +641,7 @@ test.describe("Lesson Player Page", () => {
     await expect(authenticatedPage.getByText("This lesson is included with Plus.")).toBeVisible();
 
     const backLink = authenticatedPage.getByRole("link", { name: /back to chapter/iu });
-    const upgradeLink = authenticatedPage.getByRole("link", { name: /get zoonk plus/iu });
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /^subscribe$/iu });
 
     await expect(backLink).toBeVisible();
     await expect(backLink.getByText(/^Esc$/u)).toBeVisible();
@@ -661,7 +661,7 @@ test.describe("Lesson Player Page", () => {
 
     await authenticatedPage.goto(lessonHref);
 
-    await expect(authenticatedPage.getByRole("link", { name: /get zoonk plus/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /^subscribe$/iu })).toBeVisible();
 
     await pressShortcutAndWaitForUrl({
       expectedUrl: "/subscription",

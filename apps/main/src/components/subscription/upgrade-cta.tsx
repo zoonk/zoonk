@@ -51,7 +51,7 @@ export async function UpgradeCTA<Href extends string>({
         </GenerationShortcutLink>
 
         <GenerationShortcutLink href="/subscription" prefetch shortcut="Enter">
-          {t("Get Zoonk Plus")}
+          {t("Subscribe")}
         </GenerationShortcutLink>
       </EmptyContent>
     </Empty>
