@@ -12,6 +12,13 @@ The iPad app also remains available in Apple's Designed for iPad compatibility m
 
 ## Commands
 
+Build and run the Debug app from the repository root:
+
+| Command       | Purpose                                                    |
+| ------------- | ---------------------------------------------------------- |
+| `pnpm iphone` | Build, install, and launch the app on an iPhone simulator. |
+| `pnpm ipad`   | Build, install, and launch the app on an iPad simulator.   |
+
 Run commands from this directory:
 
 | Command             | Purpose                                                       |

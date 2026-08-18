@@ -1,5 +1,5 @@
 {
   "exclude": ["node_modules"],
   "extends": "@zoonk/tsconfig/base.json",
-  "include": [".eloqnt/**/*.ts"]
+  "include": [".eloqnt/**/*.ts", "scripts/**/*.mts"]
 }
