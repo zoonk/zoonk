@@ -18,7 +18,7 @@
   "workspaces": {
     ".": { "project": ["scripts/dev/**/*.mts"] },
     "apps/apple": {
-      "entry": [".eloqnt/config.ts"],
+      "entry": [".eloqnt/config.ts", "scripts/run-simulator.mts"],
       "ignoreDependencies": ["@eloqnt/format-apple-xcstrings"]
     },
     "apps/api": {

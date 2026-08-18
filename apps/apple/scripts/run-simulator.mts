@@ -167,7 +167,7 @@ function getRuntimeName(runtimeIdentifier: string) {
 }
 
 function bootSimulator(device: Simulator) {
-  if (device.state !== "Booted") {
+  if (device.state === "Shutdown") {
     runCommand({ arguments: ["simctl", "boot", device.udid], command: "xcrun" });
   }
 
