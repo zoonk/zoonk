@@ -33,6 +33,7 @@ type AppleSessionCreator = (credentials: NativeAppleCredentials) => Promise<Nati
 type VerifiedAppleAuthorization = {
   authorization: AppleAuthorization;
   clientIdentifier: string;
+  issuer: string;
   subject: string;
 };
 
@@ -51,20 +52,11 @@ function getNativeClientIdentifier() {
 }
 
 /**
- * Finds exactly one Apple account for the verified provider subject. Treating
- * duplicates as invalid avoids choosing an arbitrary owner when legacy data is
- * inconsistent.
+ * Resolves the canonical Apple identity using the trusted issuer and verified
+ * provider subject required by Better Auth 1.7.
  */
-async function getExactAppleAccount(subject: string) {
-  const accounts = await prisma.account.findMany({
-    where: { accountId: subject, providerId: "apple" },
-  });
-
-  if (accounts.length !== 1) {
-    return null;
-  }
-
-  return accounts[0];
+async function getExactAppleAccount({ issuer, subject }: { issuer: string; subject: string }) {
+  return prisma.account.findUnique({ where: { issuer_accountId: { accountId: subject, issuer } } });
 }
 
 /**
@@ -196,16 +188,20 @@ async function exchangeVerifiedAuthorization(
       token: authorization.idToken,
     });
 
-    if (originalIdentity.subject !== exchangedIdentity.subject) {
+    if (
+      originalIdentity.issuer !== exchangedIdentity.issuer ||
+      originalIdentity.subject !== exchangedIdentity.subject
+    ) {
       throw new NativeAppleAccountError("Apple authorization identities do not match");
     }
 
-    return { authorization, clientIdentifier, subject: originalIdentity.subject };
+    return { ...originalIdentity, authorization, clientIdentifier };
   } catch (error) {
     return throwAfterAppleRevocation({
       authorization,
       clientIdentifier,
       error,
+      issuer: originalIdentity.issuer,
       subject: originalIdentity.subject,
     });
   }
@@ -246,14 +242,13 @@ async function createVerifiedSession({
     });
   }
 
-  const account = await getExactAppleAccount(verifiedAuthorization.subject).catch(
-    (error: unknown) =>
-      throwAfterSessionCleanup({
-        ...verifiedAuthorization,
-        changes,
-        error,
-        responseSessionToken: response.token,
-      }),
+  const account = await getExactAppleAccount(verifiedAuthorization).catch((error: unknown) =>
+    throwAfterSessionCleanup({
+      ...verifiedAuthorization,
+      changes,
+      error,
+      responseSessionToken: response.token,
+    }),
   );
 
   if (!account || account.userId !== response.user.id) {
@@ -280,8 +275,8 @@ async function requireExpectedAppleAccount({
   expectedUserId: string;
   verifiedAuthorization: VerifiedAppleAuthorization;
 }) {
-  const account = await getExactAppleAccount(verifiedAuthorization.subject).catch(
-    (error: unknown) => throwAfterAppleRevocation({ ...verifiedAuthorization, error }),
+  const account = await getExactAppleAccount(verifiedAuthorization).catch((error: unknown) =>
+    throwAfterAppleRevocation({ ...verifiedAuthorization, error }),
   );
 
   if (!account || account.userId !== expectedUserId) {

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type APIResponse, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { appleAccountFixture } from "@zoonk/testing/fixtures/accounts";
 import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -10,16 +11,6 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 import { getOTPForEmail } from "./helpers/db";
 
 const PASSWORD = "password123";
-
-/**
- * Links an Apple identity to the test user so the public account response can
- * prove that Apple provider state comes from durable account data.
- */
-function appleAccountFixture({ userId }: { userId: string }) {
-  return prisma.account.create({
-    data: { accountId: `e2e-apple-${randomUUID()}`, id: randomUUID(), providerId: "apple", userId },
-  });
-}
 
 /**
  * Verifies the public API error envelope so tests assert the client contract
