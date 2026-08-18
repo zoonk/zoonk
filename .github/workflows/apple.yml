@@ -36,5 +36,34 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
+      - name: Identify Xcode toolchain
+        id: xcode
+        run: |
+          set -o pipefail
+          xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
+
+      - name: Cache Swift packages
+        uses: actions/cache@v6
+        with:
+          path: ${{ runner.temp }}/apple-source-packages
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-
+
+      - name: Cache Xcode compilations
+        uses: actions/cache@v6
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.pbxproj', 'apps/apple/Makefile') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-
+
       - name: Build iPhone and iPad app
+        env:
+          XCODEBUILD_ARGUMENTS: >-
+            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
+            -onlyUsePackageVersionsFromResolvedFile
+            -skipPackageUpdates
+            COMPILATION_CACHE_ENABLE_CACHING=YES
+            COMPILER_INDEX_STORE_ENABLE=NO
         run: make -C apps/apple build
