@@ -16,11 +16,11 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     '@eloqnt/cli':
-      specifier: 0.6.9
-      version: 0.6.9
+      specifier: 0.6.12
+      version: 0.6.12
     '@eloqnt/format-apple-xcstrings':
-      specifier: 0.0.3
-      version: 0.0.3
+      specifier: 0.0.4
+      version: 0.0.4
     '@mdx-js/loader':
       specifier: 3.1.1
       version: 3.1.1
@@ -79,8 +79,8 @@ catalogs:
       specifier: 16.3.1
       version: 16.3.1
     next-intl:
-      specifier: 4.13.6
-      version: 4.13.6
+      specifier: 4.13.7
+      version: 4.13.7
     nuqs:
       specifier: 2.9.5
       version: 2.9.5
@@ -126,8 +126,6 @@ catalogs:
 
 overrides:
   ai-sdk-provider-codex-cli>@openai/codex: '-'
-  next-intl>@swc/core: 1.15.47
-  '@eloqnt/sdk>@swc/core': 1.15.47
   nanoid@>=4.0.0 <5.1.16: ^5.1.16
 
 importers:
@@ -136,7 +134,7 @@ importers:
     devDependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.6.9(@swc/helpers@0.5.23)
+        version: 0.6.12(@swc/helpers@0.5.23)
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.62.1
@@ -257,7 +255,7 @@ importers:
         version: 16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.6(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.7(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       posthog-js:
         specifier: 'catalog:'
         version: 1.417.1
@@ -324,10 +322,10 @@ importers:
     devDependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.6.9(@swc/helpers@0.5.23)
+        version: 0.6.12(@swc/helpers@0.5.23)
       '@eloqnt/format-apple-xcstrings':
         specifier: 'catalog:'
-        version: 0.0.3(@swc/helpers@0.5.23)
+        version: 0.0.4(@swc/helpers@0.5.23)
       '@types/node':
         specifier: 'catalog:'
         version: 26.2.0
@@ -528,7 +526,7 @@ importers:
         version: 16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.6(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.7(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       nuqs:
         specifier: 'catalog:'
         version: 2.9.5(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -822,13 +820,13 @@ importers:
     dependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.6.9(@swc/helpers@0.5.23)
+        version: 0.6.12(@swc/helpers@0.5.23)
       ai-sdk-provider-codex-cli:
         specifier: 2.1.2
         version: 2.1.2(zod@4.4.3)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.6(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.7(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       po-parser:
         specifier: 2.2.0
         version: 2.2.0
@@ -905,7 +903,7 @@ importers:
         version: 16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.6(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.7(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -1465,15 +1463,15 @@ packages:
   '@electric-sql/pglite@0.4.3':
     resolution: {integrity: sha512-ichuWTgtd4mOM1G4SpyGJa5trT03lWbMypDV0fUXUCXg5hiHqVAz/bZyV68NqmkLB7WcYmj1RMJVSp8HV/v/ZQ==}
 
-  '@eloqnt/cli@0.6.9':
-    resolution: {integrity: sha512-lGxJ48tSzxMD+zwUJ7zPV1tajA1BDpAQQkF2dKoXAupRi5in4xqnzsCSsKY8kZ5nRu6hR1EcP0KdB/JU7JQvWw==}
+  '@eloqnt/cli@0.6.12':
+    resolution: {integrity: sha512-26pH2WrA7/69pFf6/fA35Q++8zl+cPvLXrC5sf+c/NlkgPqeqo1XDVAWNv1ORRYYdS0RkGXJ7Fl+e2c4RsTYSQ==}
     hasBin: true
 
-  '@eloqnt/format-apple-xcstrings@0.0.3':
-    resolution: {integrity: sha512-Zf/fQK6TkVbBDr4mmSdTWW7Gh7eEgNCPS9/ujeLmuWxdGw89zWfWMbENYTi5pAUlZW24wU3u3/3K5It/ysYqhQ==}
+  '@eloqnt/format-apple-xcstrings@0.0.4':
+    resolution: {integrity: sha512-+AZaRid59hlJwWmdD55WSNg8NAmlNY3BdhmLl2rBt9RVrUhauU+dNmU48EzoeLQfoTnlUXWhocZhUwYUqsYsPg==}
 
-  '@eloqnt/sdk@0.6.8':
-    resolution: {integrity: sha512-HFznFIBioIKqO9lQZvLIp//LN8VqNo5FfryU4biy72+xo0lQbDTo8HPO2UZlyscqhERVNgGbdrHwiYVYH8p9wg==}
+  '@eloqnt/sdk@0.6.11':
+    resolution: {integrity: sha512-2c8lELyDTDdsEvD2DsUxC3euhZScYEsEZBs8hzDCYLXneh4XBPIEbRJXf8512/MGI/iO3xWgnOIcycYu+ZqkSw==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -5549,8 +5547,8 @@ packages:
     resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
     engines: {node: '>=0.10.0'}
 
-  icu-minify@4.13.6:
-    resolution: {integrity: sha512-iYZGCJZ+kX6o7GrxpVe2sOSdW86AvEqh8RQBvWeBd9jqmuABsMc2B6xongACfItLOogyIWH6GuBslNHr79OU8Q==}
+  icu-minify@4.13.7:
+    resolution: {integrity: sha512-X9gLFtipsP4HHbmy9urh+palImTR9P6lyhvmgbP6iym8i0IwhcsS4Z6KMjkEoCU6O16OJT5JIZkd8xfDROYo/A==}
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -6278,14 +6276,14 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  next-intl-swc-plugin-extractor@0.0.0-canary-ada417e:
-    resolution: {integrity: sha512-o+uoeOwqWIqf6113dtBbXG59up3BUqnJhus/aY3QtD2mYTJjLSEDbt3yT0xjTIEuYkreKAdfp0VNI2L4Bxioiw==}
+  next-intl-swc-plugin-extractor@0.0.0-canary-0f4e882:
+    resolution: {integrity: sha512-bTATea8m1A/huIuFFT2hm7QLIFL0yVBVs1d5yjsrzpx8NWRF6Y1RAmDOhp2PGOj0SZ2Y24AvXANBUThe9bTADQ==}
 
-  next-intl-swc-plugin-extractor@4.13.6:
-    resolution: {integrity: sha512-M2L8jtPEAXj0CPmXbiW66THdr3OnDqA9IsU1hqv3CdxtVow3Bl9eXPdT9Opeji7L4AFrUZ016dJOs+CoTw66OA==}
+  next-intl-swc-plugin-extractor@4.13.7:
+    resolution: {integrity: sha512-MxOUMGKncc/D6rofu0O80I6Ebr3gqlH8XiEb0Uu5TZmX7DqY3NVHs70Uy4bvtgWmHeDwsra6KU8EBtfRVGRv7Q==}
 
-  next-intl@4.13.6:
-    resolution: {integrity: sha512-loS6tjWWkr/IP+EV1yXUm9URB54QmZOp4+ZsMZNmeYxY8IZxLvO2esUegnXIDxj5DpK/4BsxwDGfGhlqodpkCQ==}
+  next-intl@4.13.7:
+    resolution: {integrity: sha512-j7KnGWt4Ih6TnW1x714R8bX3H+DYP25fqLTYTfUzAFXh0Od57WuQYM/Sf58yalvIXhE6y8sBYHlrCFmr0jPy3g==}
     peerDependencies:
       next: ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
@@ -7431,8 +7429,8 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  use-intl@4.13.6:
-    resolution: {integrity: sha512-RLej84qL6PGTDp/PSG3tqRpwr7IvJfOu4Qfv/uyy8CrnYn1oEOQb6osNJb++jZ7FQxqN3aQ5BI7wTIerUgrgMA==}
+  use-intl@4.13.7:
+    resolution: {integrity: sha512-vWapep/2GESovKEmkxaG1Bkt6AWwANCWrM4kwOYbMmvQ4IsBGJFx9l66h8DNCcU0jSOzNtSFyRXFcYvgAak/Cg==}
     peerDependencies:
       react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
@@ -8237,31 +8235,31 @@ snapshots:
 
   '@electric-sql/pglite@0.4.3': {}
 
-  '@eloqnt/cli@0.6.9(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.6.12(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.7.0
-      '@eloqnt/sdk': 0.6.8(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.6.11(@swc/helpers@0.5.23)
       citty: 0.1.6
       open: 11.0.1
       picocolors: 1.1.1
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@eloqnt/format-apple-xcstrings@0.0.3(@swc/helpers@0.5.23)':
+  '@eloqnt/format-apple-xcstrings@0.0.4(@swc/helpers@0.5.23)':
     dependencies:
-      '@eloqnt/sdk': 0.6.8(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.6.11(@swc/helpers@0.5.23)
       '@formatjs/icu-messageformat-parser': 3.5.16
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@eloqnt/sdk@0.6.8(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.6.11(@swc/helpers@0.5.23)':
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.16
-      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
+      '@swc/core': 1.16.0(@swc/helpers@0.5.23)
       ai: 7.0.66(zod@4.4.3)
       jiti: 2.7.0
       magic-string: 0.30.21
-      next-intl-swc-plugin-extractor: 0.0.0-canary-ada417e
+      next-intl-swc-plugin-extractor: 0.0.0-canary-0f4e882
       po-parser: 2.2.0
       tinyglobby: 0.2.17
       yaml: 2.9.0
@@ -10040,7 +10038,6 @@ snapshots:
       '@swc/core-win32-ia32-msvc': 1.16.0
       '@swc/core-win32-x64-msvc': 1.16.0
       '@swc/helpers': 0.5.23
-    optional: true
 
   '@swc/counter@0.1.3': {}
 
@@ -12169,7 +12166,7 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  icu-minify@4.13.6:
+  icu-minify@4.13.7:
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.16
 
@@ -12949,39 +12946,39 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next-intl-swc-plugin-extractor@0.0.0-canary-ada417e: {}
+  next-intl-swc-plugin-extractor@0.0.0-canary-0f4e882: {}
 
-  next-intl-swc-plugin-extractor@4.13.6: {}
+  next-intl-swc-plugin-extractor@4.13.7: {}
 
-  next-intl@4.13.6(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
+  next-intl@4.13.7(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
     dependencies:
       '@formatjs/intl-localematcher': 0.8.13
       '@parcel/watcher': 2.6.0
       '@swc/core': 1.15.47(@swc/helpers@0.5.23)
-      icu-minify: 4.13.6
+      icu-minify: 4.13.7
       negotiator: 1.0.0
       next: 16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      next-intl-swc-plugin-extractor: 4.13.6
+      next-intl-swc-plugin-extractor: 4.13.7
       po-parser: 2.2.0
       react: 19.2.8
-      use-intl: 4.13.6(react@19.2.8)
+      use-intl: 4.13.7(react@19.2.8)
     optionalDependencies:
       typescript: 7.0.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  next-intl@4.13.6(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
+  next-intl@4.13.7(@swc/helpers@0.5.23)(next@16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
     dependencies:
       '@formatjs/intl-localematcher': 0.8.13
       '@parcel/watcher': 2.6.0
       '@swc/core': 1.15.47(@swc/helpers@0.5.23)
-      icu-minify: 4.13.6
+      icu-minify: 4.13.7
       negotiator: 1.0.0
       next: 16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      next-intl-swc-plugin-extractor: 4.13.6
+      next-intl-swc-plugin-extractor: 4.13.7
       po-parser: 2.2.0
       react: 19.2.8
-      use-intl: 4.13.6(react@19.2.8)
+      use-intl: 4.13.7(react@19.2.8)
     optionalDependencies:
       typescript: 7.0.2
     transitivePeerDependencies:
@@ -14308,11 +14305,11 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-intl@4.13.6(react@19.2.8):
+  use-intl@4.13.7(react@19.2.8):
     dependencies:
       '@formatjs/fast-memoize': 3.1.7
       '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.13.6
+      icu-minify: 4.13.7
       intl-messageformat: 11.2.13
       react: 19.2.8
 
