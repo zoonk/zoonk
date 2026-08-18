@@ -1,5 +1,6 @@
 import { GenerationShortcutLink } from "@/components/generation/generation-shortcut-link";
 import { type AppRoute } from "@/i18n/navigation";
+import { type GenerationAuthenticationGateTarget } from "@/lib/track-events";
 import {
   Empty,
   EmptyContent,
@@ -10,17 +11,22 @@ import {
 } from "@zoonk/ui/components/empty";
 import { LogInIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
+import { GenerationAuthenticationGateTracker } from "./generation-authentication-gate-tracker";
 
 /** Explains why AI creation is unavailable while keeping the public course catalog accessible. */
 export async function GenerationAuthenticationCTA<Href extends string>({
   loginHref,
+  target,
 }: {
   loginHref: AppRoute<Href>;
+  target: GenerationAuthenticationGateTarget;
 }) {
   const t = await getExtracted();
 
   return (
     <Empty className="border-0">
+      <GenerationAuthenticationGateTracker {...target} />
+
       <EmptyHeader align="start">
         <EmptyMedia variant="icon">
           <LogInIcon />

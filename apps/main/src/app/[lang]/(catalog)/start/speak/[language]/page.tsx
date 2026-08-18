@@ -46,7 +46,10 @@ async function StartSpeakLanguageRedirect({ params }: { params: StartSpeakLangua
 
     return (
       <StartSurface>
-        <GenerationAuthenticationCTA loginHref={loginHref} />
+        <GenerationAuthenticationCTA
+          loginHref={loginHref}
+          target={{ resource: "course", targetLanguage }}
+        />
       </StartSurface>
     );
   }

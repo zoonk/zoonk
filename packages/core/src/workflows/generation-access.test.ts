@@ -63,6 +63,23 @@ describe("generation access", () => {
     });
   });
 
+  it("returns chapter slugs when the generation view requires authentication", async () => {
+    const course = await courseFixture({ organizationId });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "pending",
+      organizationId,
+      position: 0,
+    });
+
+    await expect(getChapterGenerationView(chapter.id)).resolves.toStrictEqual({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
+      status: "unauthorized",
+    });
+  });
+
   it("returns not found for missing chapter views before asking guests to log in", async () => {
     await expect(getChapterGenerationView("999999999")).resolves.toStrictEqual({
       status: "notFound",

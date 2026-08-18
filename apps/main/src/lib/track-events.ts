@@ -22,6 +22,14 @@ type ChapterCompletionEventInput = {
 
 type SubscriptionBillingPeriod = "monthly" | "yearly";
 
+export type GenerationAuthenticationGateTarget = {
+  chapterSlug?: string;
+  courseSlug?: string;
+  lessonSlug?: string;
+  resource: "chapter" | "course" | "lesson";
+  targetLanguage?: string;
+};
+
 export type FeedbackValue = "upvote" | "downvote";
 
 export type FeedbackTarget =
@@ -143,6 +151,14 @@ export function trackSubscriptionCheckoutStarted({
  */
 export function trackSubscriptionGateShown() {
   trackEvent({ name: "Subscription Gate Shown" });
+}
+
+/**
+ * Counts guests blocked from starting AI work and keeps durable generation
+ * targets filterable without treating a free-text prompt as a course slug.
+ */
+export function trackGenerationAuthenticationGateShown(target: GenerationAuthenticationGateTarget) {
+  trackEvent({ name: "Generation Authentication Gate Shown", properties: target });
 }
 
 /**

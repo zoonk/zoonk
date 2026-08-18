@@ -126,7 +126,7 @@ export async function CourseStartResult({ prompt }: { prompt: string }) {
 
     return (
       <StartSurface>
-        <GenerationAuthenticationCTA loginHref={loginHref} />
+        <GenerationAuthenticationCTA loginHref={loginHref} target={{ resource: "course" }} />
       </StartSurface>
     );
   }
