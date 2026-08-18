@@ -18,6 +18,8 @@
     "format:fix": "oxfmt .",
     "i18n": "turbo i18n",
     "i18n:lint": "turbo i18n:lint",
+    "ipad": "node apps/apple/scripts/run-simulator.mts ipad",
+    "iphone": "node apps/apple/scripts/run-simulator.mts iphone",
     "knip": "knip",
     "lint": "oxlint --deny-warnings .",
     "lint:fix": "oxlint --fix --deny-warnings .",
