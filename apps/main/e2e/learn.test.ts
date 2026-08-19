@@ -57,7 +57,13 @@ async function handleCourseGenerationRoute(route: Route): Promise<void> {
  * Seeds one already-routed topic request so E2E can exercise the public page
  * without making an AI Gateway request, which is intentionally disabled in E2E.
  */
-async function cacheTopicPrompt(rawPrompt: string) {
+async function cacheTopicPrompt({
+  generationStatus = "pending",
+  rawPrompt,
+}: {
+  generationStatus?: "pending" | null;
+  rawPrompt: string;
+}) {
   const uniqueId = randomUUID().slice(0, 8);
   const language = "en";
   const title = `E2E Topic ${uniqueId}`;
@@ -67,7 +73,7 @@ async function cacheTopicPrompt(rawPrompt: string) {
     create: {
       canonicalTitle: title,
       courseFormat: "core",
-      generationStatus: "pending",
+      generationStatus,
       intent: "learn",
       language,
       normalizedPrompt,
@@ -76,7 +82,7 @@ async function cacheTopicPrompt(rawPrompt: string) {
     update: {
       canonicalTitle: title,
       courseFormat: "core",
-      generationStatus: "pending",
+      generationStatus,
       intent: "learn",
       prompt: rawPrompt,
       targetLanguage: null,
@@ -95,11 +101,11 @@ async function cacheWaitlistedPrompt({
   courseFormat = "question",
   rawPrompt,
 }: {
-  courseFormat?: "instrument" | "question";
+  courseFormat?: "instrument" | "personalized" | "question";
   rawPrompt: string;
 }) {
   const language = "en";
-  const intent = courseFormat === "instrument" ? "learn" : "question";
+  const intent = courseFormat === "question" ? "question" : "learn";
   const normalizedPrompt = normalizeString(rawPrompt);
 
   const request = await prisma.coursePrompt.upsert({
@@ -230,7 +236,7 @@ test.describe("Learn Form", () => {
       throw new Error("No subject link text found");
     }
 
-    const cached = await cacheTopicPrompt(subject);
+    const cached = await cacheTopicPrompt({ rawPrompt: subject });
 
     await suggestions.getByRole("link", { exact: true, name: subject }).click();
 
@@ -244,7 +250,7 @@ test.describe("Learn Form", () => {
   }) => {
     await mockCourseGenerationWorkflow(authenticatedPage);
 
-    const cached = await cacheTopicPrompt(`e2e signed-in topic ${randomUUID()}`);
+    const cached = await cacheTopicPrompt({ rawPrompt: `e2e signed-in topic ${randomUUID()}` });
 
     await authenticatedPage.goto("/start/learn");
     await authenticatedPage.getByRole("textbox").fill(cached.prompt);
@@ -255,10 +261,15 @@ test.describe("Learn Form", () => {
     );
   });
 
-  test("submitting an uncached prompt requires login without starting generation", async ({
+  test("requires login for classified guest prompts without starting generation", async ({
     page,
   }) => {
-    const prompt = `e2e uncached guest topic ${randomUUID()}`;
+    const cached = await cacheTopicPrompt({
+      generationStatus: null,
+      rawPrompt: `e2e classified guest topic ${randomUUID()}`,
+    });
+
+    const prompt = cached.prompt;
     const promptPath = `/start/learn/${encodeURIComponent(prompt)}`;
 
     await page.goto("/start/learn");
@@ -283,12 +294,8 @@ test.describe("Learn Form", () => {
     ).resolves.toHaveLength(0);
 
     await expect(
-      prisma.coursePrompt.findUnique({
-        where: {
-          languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
-        },
-      }),
-    ).resolves.toBeNull();
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: cached.request.id } }),
+    ).resolves.toMatchObject({ generationStatus: null });
   });
 });
 
@@ -302,27 +309,53 @@ test.describe("Course Start Routing", () => {
     await expect(page.getByRole("textbox")).toBeVisible();
   });
 
-  test("redirects cached topic prompts to the generation page for signed-in users", async ({
+  test("promotes classified topic prompts to generation for signed-in users", async ({
     authenticatedPage,
   }) => {
     await mockCourseGenerationWorkflow(authenticatedPage);
 
-    const cached = await cacheTopicPrompt(`e2e direct Python 3.12 topic ${randomUUID()}`);
+    const cached = await cacheTopicPrompt({
+      generationStatus: null,
+      rawPrompt: `e2e direct Python 3.12 topic ${randomUUID()}`,
+    });
 
     await authenticatedPage.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 
     await expect(authenticatedPage).toHaveURL(
       new RegExp(`/generate/course/${cached.request.id}$`, "u"),
     );
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: cached.request.id } }),
+    ).resolves.toMatchObject({ generationStatus: "pending" });
   });
 
-  test("redirects cached topic prompts to existing reusable courses", async ({ page }) => {
+  test("redirects classified guest prompts to existing reusable courses", async ({ page }) => {
     const cached = await cacheExistingCoursePrompt(`e2e existing topic ${randomUUID()}`);
 
     await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 
     await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${cached.course.slug}$`, "u"));
     await expect(page.getByRole("heading", { level: 1, name: cached.course.title })).toBeVisible();
+  });
+
+  test("shows the waitlist for personalized guest prompts without requiring login", async ({
+    page,
+  }) => {
+    const cached = await cacheWaitlistedPrompt({
+      courseFormat: "personalized",
+      rawPrompt: `e2e personalized guest goal ${randomUUID()}`,
+    });
+
+    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
+
+    await expect(
+      page.getByRole("heading", { name: /this option isn't available yet/iu }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("button", { name: /notify me/iu })).toBeVisible();
+    await expect(page.getByText(cached.prompt, { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toHaveCount(0);
   });
 
   test("shows the waitlist for cached instrument prompts", async ({ page }) => {

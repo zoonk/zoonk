@@ -16,7 +16,7 @@ export const coursePromptPaths = {
   "/course-prompts": {
     post: {
       description:
-        "Returns existing courses and side-effect-free cached classifications publicly. Authentication is required before a prompt can use AI or create a generation request.",
+        "Classifies and stores topic prompts publicly, returning existing courses and unsupported outcomes without authentication. Authentication is required before a prompt can create a generation request.",
       operationId: "createCoursePrompt",
       requestBody: {
         content: { "application/json": { schema: resolveCoursePromptRequestSchema } },

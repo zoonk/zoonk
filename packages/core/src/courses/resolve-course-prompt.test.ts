@@ -109,12 +109,9 @@ describe("course-prompt", () => {
     vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
   });
 
-  it("rejects unauthenticated prompts before calling models or persistence", async () => {
+  it("stores unauthenticated generatable classifications and promotes them after login", async () => {
     const prompt = `anonymous topic ${randomUUID()}`;
-    const courseFormatSpy = vi.spyOn(formatTask, "classifyCourseFormat");
-    const intentSpy = vi.spyOn(intentTask, "classifyCourseIntent");
-    const personalizationSpy = vi.spyOn(personalizationTask, "classifyCoursePersonalization");
-    const titleSpy = vi.spyOn(canonicalTitleTask, "generateCanonicalCourseTitle");
+    const { courseFormatSpy, intentSpy, personalizationSpy, titleSpy } = mockPromptTasks({});
 
     vi.mocked(getSession).mockResolvedValue(null);
 
@@ -122,18 +119,90 @@ describe("course-prompt", () => {
       kind: "unauthorized",
     });
 
-    expect(intentSpy).not.toHaveBeenCalled();
-    expect(personalizationSpy).not.toHaveBeenCalled();
-    expect(courseFormatSpy).not.toHaveBeenCalled();
-    expect(titleSpy).not.toHaveBeenCalled();
+    expect(intentSpy).toHaveBeenCalledOnce();
+    expect(personalizationSpy).toHaveBeenCalledOnce();
+    expect(courseFormatSpy).toHaveBeenCalledOnce();
+    expect(titleSpy).toHaveBeenCalledOnce();
+
+    const storedPrompt = await prisma.coursePrompt.findUniqueOrThrow({
+      where: {
+        languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+      },
+    });
+
+    expect(storedPrompt).toMatchObject({
+      canonicalTitle: "Canonical Test Course",
+      courseFormat: "core",
+      generationStatus: null,
+      intent: "learn",
+    });
+
+    const user = await userFixture();
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+
+    const authenticatedResult = await resolveCoursePrompt({ language: "en", prompt });
+
+    expectGenerateResult(authenticatedResult);
+    expect(authenticatedResult.prompt.id).toBe(storedPrompt.id);
 
     await expect(
-      prisma.coursePrompt.findUnique({
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: storedPrompt.id } }),
+    ).resolves.toMatchObject({ generationStatus: "pending" });
+  });
+
+  it("stores unauthenticated personalized prompts and returns them for the waitlist", async () => {
+    const prompt = `anonymous personalized topic ${randomUUID()}`;
+    const title = `Anonymous personalized ${randomUUID()}`;
+    mockPromptTasks({ requiresPersonalization: true, title });
+
+    vi.mocked(getSession).mockResolvedValue(null);
+
+    await expect(resolveCoursePrompt({ language: "en", prompt })).resolves.toStrictEqual({
+      kind: "unsupported",
+      prompt: { courseFormat: "personalized", intent: "learn" },
+      title,
+    });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({
         where: {
           languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
         },
       }),
-    ).resolves.toBeNull();
+    ).resolves.toMatchObject({
+      canonicalTitle: title,
+      courseFormat: "personalized",
+      generationStatus: null,
+      intent: "learn",
+    });
+  });
+
+  it("redirects unauthenticated classified prompts to an existing reusable course", async () => {
+    const prompt = `anonymous existing topic ${randomUUID()}`;
+    const title = `Anonymous Existing Biology ${randomUUID().slice(0, 8)}`;
+    const course = await createCompletedAiCourse({ language: "en", title });
+    mockPromptTasks({ title });
+
+    vi.mocked(getSession).mockResolvedValue(null);
+
+    await expect(resolveCoursePrompt({ language: "en", prompt })).resolves.toStrictEqual({
+      course: { id: course.id, slug: course.slug },
+      kind: "course",
+    });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({
+        where: {
+          languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+        },
+      }),
+    ).resolves.toMatchObject({
+      canonicalTitle: title,
+      courseFormat: "core",
+      courseId: course.id,
+      generationStatus: "completed",
+      intent: "learn",
+    });
   });
 
   it.each([

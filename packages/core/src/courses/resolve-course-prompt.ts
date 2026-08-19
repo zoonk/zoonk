@@ -285,9 +285,9 @@ async function upsertCoursePrompt({
 }
 
 /**
- * Builds the persisted prompt fields for a newly classified prompt. Keeping the
- * mapper separate makes the generation boundary explicit: shared regular
- * formats and concrete language prompts are sent to generation today.
+ * Builds the fields for a newly classified prompt, including the generation
+ * status an authenticated request should receive. Guest persistence clears
+ * that status separately so classification never starts generation by itself.
  */
 function getClassifiedCoursePromptInput({
   courseFormat,
@@ -311,12 +311,61 @@ function getClassifiedCoursePromptInput({
 }
 
 /**
+ * Stores guest classifications without marking them ready for generation. An
+ * authenticated revisit promotes the same row to pending at the generation
+ * boundary, preserving guest demand data without starting course work.
+ */
+function getPersistedCoursePromptInput({
+  canCreateGeneration,
+  prompt,
+}: {
+  canCreateGeneration: boolean;
+  prompt: CoursePromptInput;
+}): CoursePromptInput {
+  return { ...prompt, generationStatus: canCreateGeneration ? prompt.generationStatus : null };
+}
+
+/**
+ * Runs every independent classification task in one model wave. Persistence is
+ * handled separately so the same decision can be stored for every learner
+ * without coupling classification to generation access.
+ */
+async function classifyNewCoursePrompt({
+  language,
+  prompt,
+}: {
+  language: string;
+  prompt: string;
+}): Promise<CoursePromptInput> {
+  const [intent, personalization, formatClassification, canonicalTitle] = await Promise.all([
+    classifyCourseIntent({ prompt }),
+    classifyCoursePersonalization({ prompt }),
+    classifyCourseFormat({ prompt }),
+    generateCanonicalCourseTitle({ language, prompt }),
+  ]);
+
+  const courseFormat = getCourseFormatForPrompt({
+    courseFormat: formatClassification.data.courseFormat,
+    intent: intent.data.intent,
+    requiresPersonalization: personalization.data.requiresPersonalization,
+  });
+
+  return getClassifiedCoursePromptInput({
+    courseFormat,
+    intent: intent.data.intent,
+    prompt,
+    title: canonicalTitle.data.title,
+  });
+}
+
+/**
  * Resolves a learner's free-text goal into the next domain capability.
  * Cached existing-course and classification outcomes remain public because
- * they cannot create generation work. New and cached generatable prompts
- * require a trusted session before mutation or model work. First-time prompts
- * run intent, personalization, format, and title tasks in one model wave so
- * every delivery layer can use the same persisted decision without a waterfall.
+ * they cannot create generation work. First-time prompts run classification in
+ * memory for every learner so public redirects and waitlists remain available.
+ * Every valid classification is persisted for demand analysis, while new or
+ * cached prompts still require a trusted session before course generation can
+ * be marked pending or begin.
  */
 export async function resolveCoursePrompt({
   language,
@@ -343,35 +392,14 @@ export async function resolveCoursePrompt({
     });
   }
 
-  if (!session) {
-    return { kind: "unauthorized" };
-  }
-
-  // Start every independent task in one model wave to minimize routing latency.
-  // Some results are intentionally discarded after intent determines the route.
-  const [intent, personalization, formatClassification, canonicalTitle] = await Promise.all([
-    classifyCourseIntent({ prompt }),
-    classifyCoursePersonalization({ prompt }),
-    classifyCourseFormat({ prompt }),
-    generateCanonicalCourseTitle({ language, prompt }),
-  ]);
-
-  const courseFormat = getCourseFormatForPrompt({
-    courseFormat: formatClassification.data.courseFormat,
-    intent: intent.data.intent,
-    requiresPersonalization: personalization.data.requiresPersonalization,
-  });
+  const classifiedPrompt = await classifyNewCoursePrompt({ language, prompt });
+  const canCreateGeneration = Boolean(session);
 
   const coursePrompt = await upsertCoursePrompt({
     language,
     prompt,
-    request: getClassifiedCoursePromptInput({
-      courseFormat,
-      intent: intent.data.intent,
-      prompt,
-      title: canonicalTitle.data.title,
-    }),
+    request: getPersistedCoursePromptInput({ canCreateGeneration, prompt: classifiedPrompt }),
   });
 
-  return getCoursePromptResolution({ canCreateGeneration: true, prompt: coursePrompt });
+  return getCoursePromptResolution({ canCreateGeneration, prompt: coursePrompt });
 }

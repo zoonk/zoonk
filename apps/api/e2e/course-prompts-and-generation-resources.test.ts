@@ -25,31 +25,6 @@ test.describe("Course prompt and generation resources API", () => {
     await prisma.$disconnect();
   });
 
-  test("requires authentication before resolving a new course prompt", async () => {
-    const prompt = `Anonymous API course prompt ${randomUUID()}`;
-    const apiContext = await request.newContext({ baseURL });
-
-    const response = await apiContext.post("/v1/course-prompts", {
-      data: { kind: "topic", language: "en", prompt },
-    });
-
-    expect(response.status()).toBe(401);
-
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: "UNAUTHORIZED", message: "Authentication required" },
-    });
-
-    await expect(
-      prisma.coursePrompt.findUnique({
-        where: {
-          languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
-        },
-      }),
-    ).resolves.toBeNull();
-
-    await apiContext.dispose();
-  });
-
   test("requires authentication before creating a language course prompt", async () => {
     const language = `en-x-${randomUUID().slice(0, 5)}`;
     const apiContext = await request.newContext({ baseURL });
@@ -112,7 +87,7 @@ test.describe("Course prompt and generation resources API", () => {
     await apiContext.dispose();
   });
 
-  test("requires authentication before promoting a cached prompt to generation", async () => {
+  test("requires authentication before promoting a classified prompt to generation", async () => {
     const uniqueId = randomUUID();
     const prompt = `Learn focused API design ${uniqueId}`;
 
@@ -125,21 +100,112 @@ test.describe("Course prompt and generation resources API", () => {
       prompt,
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const guestApiContext = await request.newContext({ baseURL });
 
-    const response = await apiContext.post("/v1/course-prompts", {
+    const guestResponse = await guestApiContext.post("/v1/course-prompts", {
       data: { kind: "topic", language: "en", prompt },
     });
 
-    expect(response.status()).toBe(401);
+    expect(guestResponse.status()).toBe(401);
 
-    await expect(response.json()).resolves.toMatchObject({
+    await expect(guestResponse.json()).resolves.toMatchObject({
       error: { code: "UNAUTHORIZED", message: "Authentication required" },
     });
 
     await expect(
       prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
     ).resolves.toMatchObject({ courseFormat: "coding", generationStatus: null });
+
+    const { apiContext: authenticatedApiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-prompt-promotion",
+    });
+
+    const authenticatedResponse = await authenticatedApiContext.post("/v1/course-prompts", {
+      data: { kind: "topic", language: "en", prompt },
+    });
+
+    expect(authenticatedResponse.status()).toBe(200);
+
+    await expect(authenticatedResponse.json()).resolves.toStrictEqual({
+      coursePromptId: coursePrompt.id,
+      kind: "generation",
+    });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
+    ).resolves.toMatchObject({ generationStatus: "pending" });
+
+    await Promise.all([guestApiContext.dispose(), authenticatedApiContext.dispose()]);
+  });
+
+  test("returns personalized classifications without requiring authentication", async () => {
+    const prompt = `Personalized API course ${randomUUID()}`;
+    const title = `Personalized API title ${randomUUID()}`;
+
+    const coursePrompt = await coursePromptFixture({
+      canonicalTitle: title,
+      courseFormat: "personalized",
+      generationStatus: null,
+      intent: "learn",
+      language: "en",
+      normalizedPrompt: normalizeString(prompt),
+      prompt,
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/course-prompts", {
+      data: { kind: "topic", language: "en", prompt },
+    });
+
+    expect(response.status()).toBe(200);
+
+    await expect(response.json()).resolves.toStrictEqual({
+      courseFormat: "personalized",
+      intent: "learn",
+      kind: "unsupported",
+      title,
+    });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
+    ).resolves.toMatchObject({ generationStatus: null });
+
+    await apiContext.dispose();
+  });
+
+  test("returns existing courses for classified guest prompts", async () => {
+    const organization = await getAiOrganization();
+    const prompt = `Existing API course ${randomUUID()}`;
+
+    const course = await courseFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      organizationId: organization.id,
+      title: `Existing API course ${randomUUID()}`,
+    });
+
+    const coursePrompt = await coursePromptFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      language: "en",
+      normalizedPrompt: normalizeString(prompt),
+      prompt,
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/course-prompts", {
+      data: { kind: "topic", language: "en", prompt },
+    });
+
+    expect(response.status()).toBe(200);
+    await expect(response.json()).resolves.toStrictEqual({ courseId: course.id, kind: "course" });
+
+    await expect(
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
+    ).resolves.toMatchObject({ generationStatus: "completed" });
 
     await apiContext.dispose();
   });
