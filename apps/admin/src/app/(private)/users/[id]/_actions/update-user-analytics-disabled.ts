@@ -48,8 +48,8 @@ function parseAnalyticsDisabled(value: string | null) {
 }
 
 /**
- * Updating the flag changes both the user detail page and aggregate admin
- * analytics, so the common dashboard and stats routes should refresh together.
+ * Updating the flag changes the user detail page, subscriptions, and aggregate
+ * analytics, so every admin surface that excludes internal users must refresh.
  */
 function revalidateUserAnalyticsPaths({ userId }: { userId: string }) {
   revalidatePath(`/users/${userId}`);
@@ -57,4 +57,5 @@ function revalidateUserAnalyticsPaths({ userId }: { userId: string }) {
   revalidatePath("/stats");
   revalidatePath("/stats/growth");
   revalidatePath("/stats/engagement");
+  revalidatePath("/subscriptions");
 }

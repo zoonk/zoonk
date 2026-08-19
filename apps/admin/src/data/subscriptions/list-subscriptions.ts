@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filter";
 import { type SubscriptionFilter } from "@/lib/subscription";
 import { type Subscription, prisma, sql } from "@zoonk/db";
 
@@ -72,13 +73,13 @@ async function findSubscriptionPageReferences({
   limit: number;
   offset: number;
 }) {
-  const statusCondition = getSubscriptionStatusCondition(filter);
+  const whereCondition = getSubscriptionWhereCondition(filter);
 
   return prisma.$queryRaw<SubscriptionPageReference[]>`
     SELECT subscriptions.id, subscriptions.reference_id AS "referenceId"
     FROM subscriptions
     INNER JOIN users ON users.id = subscriptions.reference_id
-    WHERE ${statusCondition}
+    WHERE ${whereCondition}
     ORDER BY
       subscriptions.period_start DESC NULLS LAST,
       subscriptions.period_end DESC NULLS LAST,
@@ -89,20 +90,25 @@ async function findSubscriptionPageReferences({
 }
 
 /**
- * Count and page queries share the same user join and status condition so an
- * orphaned Better Auth row cannot inflate pagination or create a short page.
+ * Count and page queries share the same user eligibility and status conditions,
+ * so orphaned subscription rows or analytics-excluded users cannot inflate
+ * pagination or create a short page.
  */
 async function countUserSubscriptions(filter: SubscriptionFilter) {
-  const statusCondition = getSubscriptionStatusCondition(filter);
+  const whereCondition = getSubscriptionWhereCondition(filter);
 
   const result = await prisma.$queryRaw<[{ count: bigint }]>`
     SELECT COUNT(*) AS count
     FROM subscriptions
     INNER JOIN users ON users.id = subscriptions.reference_id
-    WHERE ${statusCondition}
+    WHERE ${whereCondition}
   `;
 
   return Number(result[0].count);
+}
+
+function getSubscriptionWhereCondition(filter: SubscriptionFilter) {
+  return sql`${trackedAnalyticsUserSql} AND ${getSubscriptionStatusCondition(filter)}`;
 }
 
 function getSubscriptionStatusCondition(filter: SubscriptionFilter) {
