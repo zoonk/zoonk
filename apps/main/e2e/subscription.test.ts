@@ -117,10 +117,16 @@ async function captureStripeActionRequest({
  * Drive checkout through the single visible Plus action because the locale is
  * added by the client-side Better Auth call, not by the server-rendered page.
  */
-async function requestPlusCheckout({ page }: { page: Page }) {
+async function requestPlusCheckout({
+  page,
+  subscribeLabel,
+}: {
+  page: Page;
+  subscribeLabel: string;
+}) {
   const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
 
-  await page.getByRole("button", { name: /^subscribe$/iu }).click();
+  await page.getByRole("button", { exact: true, name: subscribeLabel }).click();
 
   return requestBody;
 }
@@ -171,9 +177,9 @@ test.describe("Subscription Page - Stripe Locale", () => {
     await setLocale(authenticatedPage, "es");
     await authenticatedPage.goto("/subscription");
 
-    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
-      locale: "es",
-    });
+    await expect(
+      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "Suscríbete" }),
+    ).resolves.toMatchObject({ locale: "es" });
   });
 
   test("passes Portuguese locale as Brazilian Portuguese to Stripe checkout", async ({
@@ -182,34 +188,37 @@ test.describe("Subscription Page - Stripe Locale", () => {
     await setLocale(authenticatedPage, "pt");
     await authenticatedPage.goto("/subscription");
 
-    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
-      locale: "pt-BR",
-    });
+    await expect(
+      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "Assinar" }),
+    ).resolves.toMatchObject({ locale: "pt-BR" });
   });
 
   test("passes French locale to Stripe checkout", async ({ authenticatedPage }) => {
     await setLocale(authenticatedPage, "fr");
     await authenticatedPage.goto("/subscription");
 
-    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
-      locale: "fr",
-    });
+    await expect(
+      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "S’abonner" }),
+    ).resolves.toMatchObject({ locale: "fr" });
   });
 
   test("passes German locale to Stripe checkout", async ({ authenticatedPage }) => {
     await setLocale(authenticatedPage, "de");
     await authenticatedPage.goto("/subscription");
 
-    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
-      locale: "de",
-    });
+    await expect(
+      requestPlusCheckout({ page: authenticatedPage, subscribeLabel: "Abonnieren" }),
+    ).resolves.toMatchObject({ locale: "de" });
   });
 
   test("keeps English Stripe checkout locale unset", async ({ authenticatedPage }) => {
     await setLocale(authenticatedPage, "en");
     await authenticatedPage.goto("/subscription");
 
-    const requestBody = await requestPlusCheckout({ page: authenticatedPage });
+    const requestBody = await requestPlusCheckout({
+      page: authenticatedPage,
+      subscribeLabel: "Subscribe",
+    });
 
     expect(requestBody).not.toHaveProperty("locale");
   });
