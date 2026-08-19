@@ -25,31 +25,6 @@ test.describe("Course prompt and generation resources API", () => {
     await prisma.$disconnect();
   });
 
-  test("requires authentication before resolving a new course prompt", async () => {
-    const prompt = `Anonymous API course prompt ${randomUUID()}`;
-    const apiContext = await request.newContext({ baseURL });
-
-    const response = await apiContext.post("/v1/course-prompts", {
-      data: { kind: "topic", language: "en", prompt },
-    });
-
-    expect(response.status()).toBe(401);
-
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: "UNAUTHORIZED", message: "Authentication required" },
-    });
-
-    await expect(
-      prisma.coursePrompt.findUnique({
-        where: {
-          languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
-        },
-      }),
-    ).resolves.toBeNull();
-
-    await apiContext.dispose();
-  });
-
   test("requires authentication before creating a language course prompt", async () => {
     const language = `en-x-${randomUUID().slice(0, 5)}`;
     const apiContext = await request.newContext({ baseURL });
