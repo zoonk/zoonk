@@ -246,5 +246,3 @@ export async function getAppleSubscriptionFromNotification({
     throw toAppleStoreError(error);
   }
 }
-
-export { AppleStoreError } from "./apple-store-error";

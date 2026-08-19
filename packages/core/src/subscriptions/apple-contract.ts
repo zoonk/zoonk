@@ -11,6 +11,3 @@ export const appleSubscriptionNotificationSchema = z
   .object({ signedPayload: z.string().min(1).max(APPLE_SIGNED_DATA_MAX_LENGTH) })
   .strict()
   .meta({ id: "AppleSubscriptionNotification" });
-
-export type AppleSubscriptionRequest = z.infer<typeof appleSubscriptionRequestSchema>;
-export type AppleSubscriptionNotification = z.infer<typeof appleSubscriptionNotificationSchema>;
