@@ -277,7 +277,7 @@ test.describe("Generate Course Page", () => {
       authenticatedPage.getByRole("heading", { name: "Monthly course limit reached" }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("link", { name: "Get Zoonk Plus" })).toHaveAttribute(
+    await expect(authenticatedPage.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
       "href",
       "/subscription",
     );

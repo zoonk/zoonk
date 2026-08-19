@@ -231,11 +231,10 @@ function AvailablePlusPurchase({
             href="/login?next=%2Fsubscription"
             prefetch={false}
           >
-            {t("Log in to unlock unlimited learning")}
+            {t("Log in to subscribe")}
           </Link>
         ) : (
           <Button
-            aria-label={t("Unlock unlimited learning with Zoonk Plus")}
             aria-busy={isLoading}
             className="w-full"
             disabled={isLoading}
@@ -244,7 +243,7 @@ function AvailablePlusPurchase({
             type="button"
           >
             {isLoading && <Loader2Icon aria-hidden="true" className="animate-spin" />}
-            {t("Unlock unlimited learning")}
+            {t("Subscribe")}
           </Button>
         )}
 
