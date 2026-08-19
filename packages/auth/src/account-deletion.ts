@@ -114,9 +114,11 @@ async function removeCourseMemberships(userId: string) {
 }
 
 /**
- * Removes every non-relational local dependency before the User cascade runs.
- * These independent deletes are idempotent, so a later Better Auth failure can
- * be retried without retaining subscriptions or email OTP identifiers.
+ * Removes local dependencies that must be gone before the User cascade runs.
+ * The explicit subscription cleanup closes the normal deletion path promptly;
+ * user-owned store rows also have a cascade so a concurrent notification cannot
+ * survive the later User deletion. These independent deletes are idempotent, so
+ * a later Better Auth failure can be retried safely.
  */
 async function deleteLocalUserDependencies({ email, userId }: { email: string; userId: string }) {
   await Promise.all([
@@ -148,9 +150,10 @@ async function cancelStripeSubscriptions(userId: string) {
 }
 
 /**
- * Cleans up records that cannot rely on the User foreign-key cascade. Better
- * Auth invokes this hook only after it validates the authoritative session and
- * its freshness, so stale credentials cannot revoke Apple access or remove data.
+ * Cleans provider state and local records that need work before the User
+ * foreign-key cascade. Better Auth invokes this hook only after it validates the
+ * authoritative session and its freshness, so stale credentials cannot revoke
+ * Apple access or remove data.
  */
 export async function deleteUserDependenciesBeforeAuthDelete(user: { email: string; id: string }) {
   const appleAuthorizationRevoked = await revokeAppleAuthorizations(user.id);

@@ -56,6 +56,18 @@ pnpm openapi:generate
 
 CI checks the file byte-for-byte against the source contract, so a stale artifact cannot merge. Feature code should continue to call small hand-written clients such as `AccountAPIClient`; generated transport types stay behind those feature boundaries, while `APIClientFactory` owns shared transport and middleware configuration.
 
+## StoreKit testing
+
+The shared `Zoonk` scheme activates `Zoonk/Resources/StoreKit/Subscriptions.storekit` when the app runs from Xcode. This test-only file contains the Plus monthly and yearly products and is excluded from the app bundle. The `pnpm iphone` and `pnpm ipad` launchers install the built app directly and therefore do not attach the scheme's StoreKit configuration; use Xcode Run when local product data is required.
+
+Set `APPLE_IAP_ALLOW_XCODE_TRANSACTIONS=true` in `apps/api/.env.local` before testing an end-to-end purchase from Xcode. This opt-in is accepted only outside production, and the Xcode transaction verifier defaults to the Debug bundle identifier `com.zoonk.dev`.
+
+Production product availability, storefront prices, currencies, and localized App Store metadata remain owned by App Store Connect. The app requests the matching product IDs and lets `SubscriptionStoreView` display StoreKit's localized merchandising; never copy prices from the local configuration into SwiftUI.
+
+The API uses [Apple's official App Store Server library](https://github.com/apple/app-store-server-library-node) to validate signed transactions and notifications. Its committed G2 and G3 root certificates are public trust anchors from [Apple PKI](https://www.apple.com/certificateauthority/), not private credentials.
+
+Production and sandbox synchronization require `APPLE_IAP_APP_ID`, `APPLE_IAP_ISSUER_ID`, `APPLE_IAP_KEY_ID`, and `APPLE_IAP_PRIVATE_KEY` on the API so every transaction is reconciled against Apple's current subscription chain. Find the numeric Apple ID and bundle ID under [App Information](https://developer.apple.com/help/app-store-connect/reference/app-information/app-information), then [generate a separate In-App Purchase key](https://developer.apple.com/help/app-store-connect/configure-in-app-purchase-settings/generate-keys-for-in-app-purchases/) under Users and Access > Integrations > In-App Purchase. Keep `APPLE_IAP_ALLOW_XCODE_TRANSACTIONS` disabled, and register `/v1/subscriptions/apple/notifications` as the App Store Server Notifications V2 URL.
+
 ## Local authentication
 
 Start the repository with `pnpm dev`. The development launcher writes the printed clone-specific API URL to an ignored Xcode configuration file, so the next Debug build connects to the correct local API automatically. For a physical Apple device, run `pnpm dev:lan` instead so the generated configuration uses the reachable `.local` API URL. Open the printed Mailbox URL after requesting an email code to read the local OTP. Debug builds fall back to `http://localhost:4000` when no generated configuration exists, which matches `pnpm dev:direct`; `ZOONK_API_BASE_URL` remains available as a one-off Xcode scheme override.

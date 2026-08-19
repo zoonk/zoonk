@@ -1,8 +1,10 @@
+import StoreKit
 import SwiftUI
 
 private enum AccountDestination: Hashable {
   case deleteAccount(AccountDeletionDestination)
   case profile
+  case subscription(UUID)
 }
 
 private struct AccountDeletionDestination: Hashable {
@@ -14,6 +16,8 @@ private struct AccountDeletionDestination: Hashable {
 struct AccountSheet: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
+  @State private var isAppStoreSubscriptionManagementPresented = false
+  @State private var isGooglePlayManagementPresented = false
   @State private var path = [AccountDestination]()
 
   let openCourses: () -> Void
@@ -40,6 +44,8 @@ struct AccountSheet: View {
               ProfileEditorView(account: account, isRequiredSetup: false)
                 .id(account.user.id)
             }
+          case .subscription(let appAccountToken):
+            SubscriptionView(appAccountToken: appAccountToken)
           }
         }
         .onChange(of: session.state) { _, state in
@@ -50,6 +56,26 @@ struct AccountSheet: View {
     .presentationDetents([.large])
     .presentationDragIndicator(requiresProfileSetup ? .hidden : .visible)
     .presentationSizing(.page)
+    .manageSubscriptionsSheet(isPresented: $isAppStoreSubscriptionManagementPresented)
+    .alert(
+      Text(
+        "Managed on Google Play",
+        tableName: "Account",
+        comment: "Title explaining where a Google-owned subscription is managed"),
+      isPresented: $isGooglePlayManagementPresented
+    ) {
+      Button(role: .cancel) {
+      } label: {
+        Text("OK", tableName: "Account", comment: "Dismisses subscription management guidance")
+      }
+    } message: {
+      Text(
+        "Use Google Play on an Android device to change or cancel this subscription.",
+        tableName: "Account",
+        comment:
+          "Explains how to manage a Google-owned subscription without linking to external purchasing"
+      )
+    }
     .task {
       await session.reconcileSynchronizedCredential()
     }
@@ -88,7 +114,10 @@ struct AccountSheet: View {
           account: account,
           deleteAccount: { path.append(.deleteAccount(makeDeletionDestination(account))) },
           editProfile: { path.append(.profile) },
-          openCourses: showCourses
+          manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
+          openCourses: showCourses,
+          openSubscription: { showSubscription(for: account) },
+          showGooglePlayManagement: { isGooglePlayManagementPresented = true }
         )
         .navigationTitle(
           Text("Account", tableName: "Account", comment: "Account sheet navigation title")
@@ -134,8 +163,11 @@ struct AccountSheet: View {
     case .signedIn:
       path.removeAll()
     case .signedOut, .unavailable:
-      if path.last == .profile {
+      switch path.last {
+      case .profile, .subscription:
         path.removeAll()
+      case .deleteAccount, nil:
+        break
       }
     case .restoring:
       break
@@ -148,6 +180,14 @@ struct AccountSheet: View {
     openCourses()
   }
 
+  private func showSubscription(for account: CurrentAccount) {
+    guard let appAccountToken = UUID(uuidString: account.user.id) else {
+      return
+    }
+
+    path.append(.subscription(appAccountToken))
+  }
+
 }
 
 private struct SignedInAccountView: View {
@@ -156,7 +196,10 @@ private struct SignedInAccountView: View {
   let account: CurrentAccount
   let deleteAccount: () -> Void
   let editProfile: () -> Void
+  let manageAppStoreSubscription: () -> Void
   let openCourses: () -> Void
+  let openSubscription: () -> Void
+  let showGooglePlayManagement: () -> Void
 
   var body: some View {
     List {
@@ -195,7 +238,11 @@ private struct SignedInAccountView: View {
             systemImage: "person")
         }
 
-        AccountSubscriptionRow(access: account.account)
+        AccountSubscriptionRow(
+          access: account.account,
+          manageAppStoreSubscription: manageAppStoreSubscription,
+          openSubscription: openSubscription,
+          showGooglePlayManagement: showGooglePlayManagement)
       }
 
       Section {
@@ -264,29 +311,66 @@ private func makeDeletionDestination(_ account: CurrentAccount) -> AccountDeleti
 
 private struct AccountSubscriptionRow: View {
   let access: AccountAccess
+  let manageAppStoreSubscription: () -> Void
+  let openSubscription: () -> Void
+  let showGooglePlayManagement: () -> Void
 
   @ViewBuilder
   var body: some View {
-    if let destination {
-      Link(destination: destination) {
+    switch access.subscriptionAction {
+    case .subscribe:
+      Button(action: openSubscription) {
+        rowLabel(status: freeStatus)
+      }
+      .accessibilityLabel(subscriptionLabel)
+      .accessibilityValue(freeStatus)
+    case .manageAppStore:
+      Button(action: manageAppStoreSubscription) {
+        rowLabel(status: appStoreStatus)
+      }
+      .accessibilityLabel(subscriptionLabel)
+      .accessibilityValue(appStoreStatus)
+    case .explainGooglePlayManagement:
+      Button(action: showGooglePlayManagement) {
+        rowLabel(status: googlePlayStatus)
+      }
+      .accessibilityLabel(subscriptionLabel)
+      .accessibilityValue(googlePlayStatus)
+    case .contactSupport:
+      Link(destination: AccountLinks.support) {
         rowLabel(status: activeStatus)
       }
-    } else {
-      rowLabel(
-        status: Text(
-          "Free",
-          tableName: "Account",
-          comment: "Status shown when the account has no active subscription"))
+      .accessibilityLabel(subscriptionLabel)
+      .accessibilityValue(activeStatus)
     }
   }
 
-  private var destination: URL? {
-    guard let subscription = access.subscription else {
-      return nil
-    }
+  private var subscriptionLabel: Text {
+    Text(
+      "Subscription",
+      tableName: "Account",
+      comment: "Account option for subscription")
+  }
 
-    return StoreSubscriptionProvider(rawValue: subscription.provider)?.managementURL
-      ?? AccountLinks.support
+  private var freeStatus: Text {
+    Text(
+      "Free",
+      tableName: "Account",
+      comment: "Status shown when the account has no active subscription")
+  }
+
+  private var appStoreStatus: Text {
+    Text(
+      "App Store",
+      tableName: "Account",
+      comment: "Status shown when an active subscription is managed by the App Store")
+  }
+
+  private var googlePlayStatus: Text {
+    Text(
+      "Google Play",
+      tableName: "Account",
+      comment: "Status shown when an active subscription is managed by Google Play")
   }
 
   private var activeStatus: Text {
@@ -296,14 +380,10 @@ private struct AccountSubscriptionRow: View {
       comment: "Status for an active subscription")
   }
 
-  /// Keeps the subscription option visually consistent while routing only App Store-owned billing to Apple's management surface.
   private func rowLabel(status: Text) -> some View {
     HStack {
       AccountRowLabel(
-        title: Text(
-          "Subscription",
-          tableName: "Account",
-          comment: "Account option for subscription"),
+        title: subscriptionLabel,
         systemImage: "sparkles")
 
       Spacer()
@@ -331,4 +411,5 @@ private struct AccountRowLabel: View {
 #Preview {
   AccountSheet {}
     .environment(SessionStore.preview())
+    .environment(AppStoreSubscriptionStore.live())
 }

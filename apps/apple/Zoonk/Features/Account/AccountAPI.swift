@@ -7,6 +7,7 @@ enum AccountAPIError: Error, Equatable {
   case appleCredentialMismatch
   case invalidCode
   case invalidEmail
+  case invalidAppStorePurchase
   case invalidResponse
   case network
   case rateLimited
@@ -28,6 +29,10 @@ protocol AccountAPIClient {
   func signInWithEmailCode(email: String, code: String) async throws -> String
   func signInWithGoogle(idToken: String) async throws -> String
   func signOut(token: String) async throws
+  func synchronizeAppleSubscription(
+    token: String,
+    signedTransaction: String
+  ) async throws -> AppleSubscriptionSynchronization
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount
 }
 
@@ -187,6 +192,32 @@ struct AccountAPI {
     }
   }
 
+  func synchronizeAppleSubscription(
+    token: String,
+    signedTransaction: String
+  ) async throws -> AppleSubscriptionSynchronization {
+    let output = try await perform(token: token) { client in
+      try await client.createAppleSubscription(
+        .init(body: .json(.init(signedTransaction: signedTransaction))))
+    }
+
+    switch output {
+    case .ok(let response):
+      let synchronization = try response.body.json
+      return AppleSubscriptionSynchronization(
+        account: makeCurrentAccount(synchronization.currentAccount),
+        isActive: synchronization.isActive)
+    case .badRequest(let response):
+      throw getAppleSubscriptionError(try response.body.json)
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    case .conflict:
+      throw AccountAPIError.accountMismatch
+    case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
   /// Revokes the shared server-side bearer session before the native client clears its local authenticated state.
   func signOut(token: String) async throws {
     let output = try await perform(token: token) { client in
@@ -327,6 +358,16 @@ struct AccountAPI {
     }
 
     return .invalidResponse
+  }
+
+  private func getAppleSubscriptionError(
+    _ payload: Components.Schemas._Error
+  ) -> AccountAPIError {
+    if ["APPLE_PRODUCT_UNSUPPORTED", "APPLE_TRANSACTION_INVALID"].contains(payload.error.code) {
+      return .invalidAppStorePurchase
+    }
+
+    return getAPIError(statusCode: 400, payload: payload)
   }
 
   private func makeAppleRequestBody(_ credentials: AppleSignInCredentials)

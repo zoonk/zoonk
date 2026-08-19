@@ -3192,6 +3192,130 @@
           }
         }
       }
+    },
+    "/me/subscriptions/apple": {
+      "post": {
+        "operationId": "createAppleSubscription",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Reconcile an App Store subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppleSubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Current account state after durable App Store reconciliation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppleSubscriptionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/apple/notifications": {
+      "post": {
+        "operationId": "createAppleSubscriptionNotification",
+        "security": [],
+        "summary": "Receive an App Store Server Notification",
+        "tags": [
+          "Subscriptions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppleSubscriptionNotification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Notification reconciled or acknowledged"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3805,6 +3929,34 @@
         },
         "required": [
           "idToken"
+        ],
+        "additionalProperties": false
+      },
+      "AppleSubscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "signedTransaction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000
+          }
+        },
+        "required": [
+          "signedTransaction"
+        ],
+        "additionalProperties": false
+      },
+      "AppleSubscriptionNotification": {
+        "type": "object",
+        "properties": {
+          "signedPayload": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000
+          }
+        },
+        "required": [
+          "signedPayload"
         ],
         "additionalProperties": false
       },
@@ -7915,6 +8067,23 @@
         },
         "required": [
           "token"
+        ],
+        "additionalProperties": false
+      },
+      "AppleSubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "currentAccount": {
+            "$ref": "#/components/schemas/MeResponse"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the reconciled App Store subscription currently grants access"
+          }
+        },
+        "required": [
+          "currentAccount",
+          "isActive"
         ],
         "additionalProperties": false
       },

@@ -32,6 +32,38 @@ final class AccountAPITests: XCTestCase {
     }
   }
 
+  func testAppleSubscriptionUsesAuthenticatedGeneratedAPI() async throws {
+    let clients = APIClientFactory(
+      baseURL: URL(string: "https://api.zoonk.test")!,
+      transport: AppleSubscriptionTransport())
+    let api = AccountAPI(clients: clients)
+
+    let synchronization = try await api.synchronizeAppleSubscription(
+      token: "test-session",
+      signedTransaction: "signed-transaction")
+
+    XCTAssertTrue(synchronization.isActive)
+    XCTAssertEqual(synchronization.account.account.subscription?.provider, "apple")
+  }
+
+  func testInvalidAppleSubscriptionResponseRemainsDistinct() async {
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: InvalidAppleSubscriptionTransport()))
+
+    do {
+      _ = try await api.synchronizeAppleSubscription(
+        token: "test-session",
+        signedTransaction: "invalid-transaction")
+      XCTFail("Expected the invalid transaction response to throw")
+    } catch let error as AccountAPIError {
+      XCTAssertEqual(error, .invalidAppStorePurchase)
+    } catch {
+      XCTFail("Unexpected error: \(error)")
+    }
+  }
+
   func testCancellationErrorIsPreserved() async {
     let api = AccountAPI(
       clients: APIClientFactory(
@@ -111,6 +143,61 @@ private struct RateLimitedTransport: ClientTransport {
     return (
       HTTPResponse(status: .tooManyRequests, headerFields: headerFields),
       HTTPBody(#"{"error":{"code":"RATE_LIMIT_EXCEEDED","message":"Try again later"}}"#)
+    )
+  }
+}
+
+/// Verifies the hand-written account boundary uses the authenticated generated operation and exact signed-transaction request contract without a live server.
+private struct AppleSubscriptionTransport: ClientTransport {
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    XCTAssertEqual(baseURL, URL(string: "https://api.zoonk.test/v1"))
+    XCTAssertEqual(operationID, "createAppleSubscription")
+    XCTAssertEqual(request.method, .post)
+    XCTAssertEqual(request.path, "/me/subscriptions/apple")
+    XCTAssertEqual(request.headerFields[.authorization], "Bearer test-session")
+
+    guard let body else {
+      XCTFail("Expected the generated operation to send a JSON request body")
+      throw CurrentAccountTransportError.invalidRequest
+    }
+
+    let requestBody = try await String(collecting: body, upTo: 1_024)
+    let requestPayload = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(requestBody.utf8)) as? [String: String])
+    XCTAssertEqual(requestPayload, ["signedTransaction": "signed-transaction"])
+
+    var headerFields = HTTPFields()
+    headerFields[.contentType] = "application/json"
+
+    return (
+      HTTPResponse(status: .ok, headerFields: headerFields),
+      HTTPBody(
+        #"{"currentAccount":{"account":{"deletion":{"hasAppleAccount":false},"hasActiveSubscription":true,"subscription":{"id":"subscription-id","plan":"plus","provider":"apple","status":"active"}},"user":{"analyticsDisabled":false,"createdAt":"2026-08-15T12:34:56.000Z","displayUsername":null,"email":"learner@zoonk.test","emailVerified":true,"id":"test-user","image":null,"name":"Learner","updatedAt":"2026-08-15T12:34:56.000Z","username":null}},"isActive":true}"#
+      )
+    )
+  }
+}
+
+private struct InvalidAppleSubscriptionTransport: ClientTransport {
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    var headerFields = HTTPFields()
+    headerFields[.contentType] = "application/json"
+
+    return (
+      HTTPResponse(status: .badRequest, headerFields: headerFields),
+      HTTPBody(
+        #"{"error":{"code":"APPLE_TRANSACTION_INVALID","message":"The App Store transaction could not be verified"}}"#
+      )
     )
   }
 }

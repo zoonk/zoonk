@@ -1,3 +1,4 @@
+import StoreKit
 import SwiftUI
 
 private enum AccountDeletionPhase: Equatable {
@@ -18,6 +19,7 @@ struct AccountDeletionView: View {
   @Environment(SessionStore.self) private var session
   @State private var code = ""
   @State private var hasSentCode = false
+  @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isConfirmingDeletion = false
   @State private var isPerformingDeletion = false
   @State private var pendingDeletion: PendingAccountDeletion?
@@ -72,6 +74,7 @@ struct AccountDeletionView: View {
       .onChange(of: session.account?.user.id) { _, accountId in
         dismissStaleDeletion(accountId: accountId)
       }
+      .manageSubscriptionsSheet(isPresented: $isAppStoreSubscriptionManagementPresented)
   }
 
   @ViewBuilder
@@ -129,18 +132,12 @@ struct AccountDeletionView: View {
 
       if let storeSubscriptionProvider {
         Section {
-          Link(destination: storeSubscriptionProvider.managementURL) {
-            Label {
-              subscriptionManagementTitle(for: storeSubscriptionProvider)
-            } icon: {
-              Image(systemName: "arrow.up.right.square")
-            }
-          }
+          subscriptionManagementControl(for: storeSubscriptionProvider)
         } header: {
           Text(
             "Subscription",
             tableName: "Account",
-            comment: "Heading for App Store billing guidance during account deletion")
+            comment: "Heading for mobile-store billing guidance during account deletion")
         } footer: {
           subscriptionDeletionMessage(for: storeSubscriptionProvider)
         }
@@ -372,19 +369,31 @@ struct AccountDeletionView: View {
     dismiss()
   }
 
-  /// Names the store that owns billing so users can distinguish Apple's and Google's external subscription controls.
-  private func subscriptionManagementTitle(for provider: StoreSubscriptionProvider) -> Text {
+  @ViewBuilder
+  private func subscriptionManagementControl(for provider: StoreSubscriptionProvider) -> some View {
     switch provider {
     case .apple:
-      Text(
-        "Manage App Store subscription",
-        tableName: "Account",
-        comment: "Opens Apple's subscription management before account deletion")
+      Button {
+        isAppStoreSubscriptionManagementPresented = true
+      } label: {
+        Label {
+          Text(
+            "Manage App Store subscription",
+            tableName: "Account",
+            comment: "Opens Apple's subscription management before account deletion")
+        } icon: {
+          Image(systemName: "gearshape")
+        }
+      }
     case .google:
-      Text(
-        "Manage Google Play subscription",
-        tableName: "Account",
-        comment: "Opens Google Play subscription management before account deletion")
+      Label {
+        Text(
+          "Managed on Google Play",
+          tableName: "Account",
+          comment: "Identifies Google Play as the owner of subscription billing")
+      } icon: {
+        Image(systemName: "info.circle")
+      }
     }
   }
 
@@ -399,7 +408,7 @@ struct AccountDeletionView: View {
           "Warns that App Store billing continues independently of Zoonk account deletion")
     case .google:
       Text(
-        "Deleting your Zoonk account doesn't cancel Google Play billing. Cancel the subscription first if you don't want it to renew.",
+        "Deleting your Zoonk account doesn't cancel Google Play billing. Use Google Play on an Android device to cancel it first if you don't want it to renew.",
         tableName: "Account",
         comment:
           "Warns that Google Play billing continues independently of Zoonk account deletion")

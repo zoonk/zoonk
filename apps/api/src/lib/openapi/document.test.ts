@@ -64,6 +64,12 @@ const CANONICAL_OPERATIONS = [
     path: "/me/progress/score/patterns",
   },
   { method: "get", operationId: "getCurrentUserProgressSnapshot", path: "/me/progress/snapshot" },
+  { method: "post", operationId: "createAppleSubscription", path: "/me/subscriptions/apple" },
+  {
+    method: "post",
+    operationId: "createAppleSubscriptionNotification",
+    path: "/subscriptions/apple/notifications",
+  },
   {
     method: "get",
     operationId: "getUsernameAvailability",
@@ -232,6 +238,8 @@ describe("OpenAPI document", () => {
     expect(document.paths["/generations"]?.post?.security).toStrictEqual(authenticated);
     expect(document.paths["/me"]?.get?.security).toStrictEqual(authenticated);
     expect(document.paths["/me"]?.patch?.security).toStrictEqual(authenticated);
+    expect(document.paths["/me/subscriptions/apple"]?.post?.security).toStrictEqual(authenticated);
+    expect(document.paths["/subscriptions/apple/notifications"]?.post?.security).toStrictEqual([]);
   });
 
   it("documents native session endpoint security", () => {

@@ -29,6 +29,7 @@ model User {
   stepAttempts       StepAttempt[]
   progress           UserProgress?
   dailyProgress      DailyProgress[]
+  subscriptions      Subscription[]
 
   @@unique([email])
   @@unique([username])
@@ -141,26 +142,43 @@ model Invitation {
 }
 
 model Subscription {
-  id                   String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  plan                 String
-  provider             SubscriptionProvider @default(stripe)
-  referenceId          String               @map("reference_id") @db.Uuid
-  stripeCustomerId     String?              @map("stripe_customer_id")
-  stripeSubscriptionId String?              @map("stripe_subscription_id")
-  status               String?              @default("incomplete")
-  periodStart          DateTime?            @map("period_start")
-  periodEnd            DateTime?            @map("period_end")
-  trialStart           DateTime?            @map("trial_start")
-  trialEnd             DateTime?            @map("trial_end")
-  cancelAtPeriodEnd    Boolean?             @default(false) @map("cancel_at_period_end")
-  cancelAt             DateTime?            @map("cancel_at")
-  canceledAt           DateTime?            @map("canceled_at")
-  endedAt              DateTime?            @map("ended_at")
-  seats                Int?
-  billingInterval      String?              @map("billing_interval")
-  stripeScheduleId     String?              @map("stripe_schedule_id")
+  id                     String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  plan                   String
+  provider               SubscriptionProvider @default(stripe)
+  referenceId            String               @map("reference_id") @db.Uuid
+  stripeCustomerId       String?              @map("stripe_customer_id")
+  stripeSubscriptionId   String?              @map("stripe_subscription_id")
+  status                 String?              @default("incomplete")
+  periodStart            DateTime?            @map("period_start")
+  periodEnd              DateTime?            @map("period_end")
+  trialStart             DateTime?            @map("trial_start")
+  trialEnd               DateTime?            @map("trial_end")
+  cancelAtPeriodEnd      Boolean?             @default(false) @map("cancel_at_period_end")
+  cancelAt               DateTime?            @map("cancel_at")
+  canceledAt             DateTime?            @map("canceled_at")
+  endedAt                DateTime?            @map("ended_at")
+  seats                  Int?
+  billingInterval        String?              @map("billing_interval")
+  stripeScheduleId       String?              @map("stripe_schedule_id")
+  /// Stable provider chain ID. For Apple this is originalTransactionId, which enforces one Zoonk owner per renewable subscription.
+  providerSubscriptionId String?              @map("provider_subscription_id")
+  /// Latest provider transaction ID retained to correlate App Store support cases without storing the signed JWS.
+  providerTransactionId  String?              @map("provider_transaction_id")
+  /// Exact external SKU retained because plan and billingInterval are projections that can change as Plus and Pro catalogs evolve.
+  providerProductId      String?              @map("provider_product_id")
+  /// Issuing environment retained to distinguish production purchases from TestFlight sandbox and local Xcode transactions.
+  providerEnvironment    String?              @map("provider_environment")
+  /// Provider-signed event time used to reject delayed notifications and concurrent stale updates.
+  providerSignedAt       DateTime?            @map("provider_signed_at")
+  /// Provider event ID retained for notification traceability and exact replay recognition without storing the signed payload.
+  providerEventId        String?              @map("provider_event_id")
+  /// User FK for store subscriptions. referenceId stays polymorphic for Better Auth user and future organization billing, while database checks keep both IDs equal for Apple and the cascade closes notification races during account deletion.
+  userId                 String?              @map("user_id") @db.Uuid
+  user                   User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([provider, providerSubscriptionId])
   @@index([referenceId])
+  @@index([userId])
   @@index([status])
   @@map("subscriptions")
 }

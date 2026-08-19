@@ -204,6 +204,35 @@
         }
       }
     },
+    "App Store" : {
+      "comment" : "Status shown when an active subscription is managed by the App Store",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store"
+          }
+        }
+      }
+    },
     "Blog" : {
       "comment" : "Account option for the blog",
       "localizations" : {
@@ -316,6 +345,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confira as informações e tente de novo."
+          }
+        }
+      }
+    },
+    "Check your App Store purchase history, then contact support for help." : {
+      "comment" : "Recovery guidance when Zoonk cannot accept a verified App Store purchase",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfe deinen Einkaufsverlauf im App Store und wende dich dann an den Support."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisa tu historial de compras del App Store y luego contacta con soporte para obtener ayuda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulte l’historique de tes achats dans l’App Store, puis contacte l’assistance pour obtenir de l’aide."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira seu histórico de compras na App Store e depois fale com o suporte para receber ajuda."
+          }
+        }
+      }
+    },
+    "Check your App Store purchase history, then contact support if you need help." : {
+      "comment" : "Recovery guidance after StoreKit transaction verification fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfe deinen Einkaufsverlauf im App Store und wende dich an den Support, wenn du Hilfe brauchst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisa tu historial de compras del App Store y luego contacta con soporte si necesitas ayuda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulte l’historique de tes achats dans l’App Store, puis contacte l’assistance si tu as besoin d’aide."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira seu histórico de compras na App Store e depois fale com o suporte se precisar de ajuda."
+          }
+        }
+      }
+    },
+    "Check your connection and try restoring again." : {
+      "comment" : "Recovery guidance after restoring App Store purchases fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfe deine Internetverbindung und versuche erneut, deine Käufe wiederherzustellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprueba tu conexión e intenta restaurar las compras de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifie ta connexion, puis réessaie de restaurer tes achats."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira sua conexão e tente restaurar as compras novamente."
           }
         }
       }
@@ -436,6 +552,64 @@
         }
       }
     },
+    "Couldn't restore purchases" : {
+      "comment" : "Title shown when restoring App Store purchases fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käufe konnten nicht wiederhergestellt werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron restaurar las compras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de restaurer les achats"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível restaurar as compras"
+          }
+        }
+      }
+    },
+    "Couldn't update your account" : {
+      "comment" : "Title shown when a verified App Store transaction could not reach Zoonk",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Konto konnte nicht aktualisiert werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo actualizar tu cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de mettre à jour ton compte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível atualizar sua conta"
+          }
+        }
+      }
+    },
     "Course progress" : {
       "comment" : "Learning data removed during account deletion",
       "localizations" : {
@@ -552,31 +726,31 @@
         }
       }
     },
-    "Deleting your Zoonk account doesn't cancel Google Play billing. Cancel the subscription first if you don't want it to renew." : {
+    "Deleting your Zoonk account doesn't cancel Google Play billing. Use Google Play on an Android device to cancel it first if you don't want it to renew." : {
       "comment" : "Warns that Google Play billing continues independently of Zoonk account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Durch das Löschen deines Zoonk-Kontos wird die Abrechnung bei Google Play nicht beendet. Kündige zuerst das Abonnement, wenn es nicht verlängert werden soll."
+            "value" : "Wenn du dein Zoonk-Konto löschst, endet dein über Google Play abgerechnetes Abo nicht. Kündige es zuerst über Google Play auf einem Android-Gerät, wenn es sich nicht verlängern soll."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de Google Play. Cancela primero la suscripción si no quieres que se renueve."
+            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de Google Play. Si no quieres que se renueve, cancela primero la suscripción desde Google Play en un dispositivo Android."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer ton compte Zoonk n’annule pas la facturation via Google Play. Résilie d’abord l’abonnement si tu ne veux pas qu’il soit renouvelé."
+            "value" : "La suppression de ton compte Zoonk n’annule pas la facturation Google Play. Si tu ne veux pas que ton abonnement soit renouvelé, annule-le d’abord dans Google Play sur un appareil Android."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir sua conta do Zoonk não cancela a cobrança do Google Play. Cancele primeiro a assinatura se não quiser que ela seja renovada."
+            "value" : "Excluir sua conta do Zoonk não cancela a cobrança do Google Play. Se você não quiser renovar, cancele primeiro pelo Google Play em um dispositivo Android."
           }
         }
       }
@@ -813,6 +987,35 @@
         }
       }
     },
+    "Google Play" : {
+      "comment" : "Status shown when an active subscription is managed by Google Play",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Play"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Play"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Play"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Play"
+          }
+        }
+      }
+    },
     "Keep your courses and progress available on all your devices." : {
       "comment" : "Explains the benefit of signing in",
       "localizations" : {
@@ -838,6 +1041,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Acesse seus cursos e seu progresso em todos os seus dispositivos."
+          }
+        }
+      }
+    },
+    "Learn anything. It’s all included." : {
+      "comment" : "Headline on the Zoonk Plus subscription screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lerne, was du willst. Alles ist dabei."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprende lo que quieras. Todo está incluido."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apprends ce que tu veux. Tout est inclus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprenda qualquer coisa. Está tudo incluído."
+          }
+        }
+      }
+    },
+    "Learning built around your goals" : {
+      "comment" : "Zoonk Plus benefit describing personalized learning",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernen passend zu deinen Zielen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudio adaptado a tus objetivos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un apprentissage adapté à tes objectifs"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudo pensado para seus objetivos"
+          }
+        }
+      }
+    },
+    "Make sure you're signed in with the Apple Account used for the purchase, then try again." : {
+      "comment" : "Recovery guidance when restore finds no eligible App Store purchases",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stelle sicher, dass du mit dem Apple Account angemeldet bist, den du für den Kauf verwendet hast, und versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asegúrate de haber iniciado sesión con la Cuenta de Apple que usaste para la compra e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifie que tu es connecté au compte Apple utilisé pour l’achat, puis réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira se você entrou com a Conta Apple usada na compra e tente novamente."
           }
         }
       }
@@ -871,35 +1161,6 @@
         }
       }
     },
-    "Manage Google Play subscription" : {
-      "comment" : "Opens Google Play subscription management before account deletion",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google-Play-Abonnement verwalten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestionar suscripción de Google Play"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gérer l’abonnement Google Play"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerenciar assinatura do Google Play"
-          }
-        }
-      }
-    },
     "Manage Sign in with Apple" : {
       "comment" : "Opens Apple account authorization management after deletion",
       "localizations" : {
@@ -925,6 +1186,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gerenciar Iniciar Sessão com a Apple"
+          }
+        }
+      }
+    },
+    "Managed on Google Play" : {
+      "comment" : "Identifies Google Play as the owner of subscription billing\nTitle explaining where a Google-owned subscription is managed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über Google Play verwaltet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestionada en Google Play"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Géré sur Google Play"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerenciada pelo Google Play"
           }
         }
       }
@@ -987,6 +1277,93 @@
         }
       }
     },
+    "No active subscription found" : {
+      "comment" : "Title shown when restored App Store purchases do not currently provide Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein aktives Abo gefunden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró ninguna suscripción activa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun abonnement actif trouvé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma assinatura ativa encontrada"
+          }
+        }
+      }
+    },
+    "No purchases found" : {
+      "comment" : "Title shown when restore finds no eligible App Store purchases",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Käufe gefunden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontraron compras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun achat trouvé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma compra encontrada"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "comment" : "Dismisses a subscription status message\nDismisses subscription management guidance",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceptar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
     "Permanently deleted" : {
       "comment" : "Heading above the data removed during account deletion",
       "localizations" : {
@@ -1041,6 +1418,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cursos personalizados"
+          }
+        }
+      }
+    },
+    "Plus gives you unlimited courses and lessons for whatever you want to learn." : {
+      "comment" : "Summary of the Zoonk Plus subscription",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Plus bekommst du unbegrenzt viele Kurse und Lektionen zu allem, was du lernen möchtest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus te ofrece cursos y lecciones ilimitados sobre todo lo que quieras aprender."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec Plus, suis autant de cours et de leçons que tu veux, sur tout ce que tu souhaites apprendre."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Plus oferece cursos e aulas ilimitados sobre o que você quiser aprender."
           }
         }
       }
@@ -1128,6 +1534,180 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Informações do perfil e da conta"
+          }
+        }
+      }
+    },
+    "Purchase couldn't be linked" : {
+      "comment" : "Title shown when Zoonk cannot accept a verified App Store purchase",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kauf konnte nicht verknüpft werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo vincular la compra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’associer l’achat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível vincular a compra"
+          }
+        }
+      }
+    },
+    "Purchase couldn't be verified" : {
+      "comment" : "Title shown when StoreKit cannot verify a purchase",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kauf konnte nicht überprüft werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo verificar la compra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de vérifier l’achat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível verificar a compra"
+          }
+        }
+      }
+    },
+    "Purchase linked to another account" : {
+      "comment" : "Title shown when an App Store purchase belongs to another Zoonk account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kauf ist mit einem anderen Konto verknüpft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compra vinculada a otra cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achat associé à un autre compte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compra vinculada a outra conta"
+          }
+        }
+      }
+    },
+    "Purchase not completed" : {
+      "comment" : "Title shown when an App Store purchase fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kauf nicht abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compra no completada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achat non finalisé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compra não concluída"
+          }
+        }
+      }
+    },
+    "Purchases restored" : {
+      "comment" : "Title shown when App Store purchases were restored",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käufe wiederhergestellt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compras restauradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achats restaurés"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compras restauradas"
+          }
+        }
+      }
+    },
+    "Restore Purchases" : {
+      "comment" : "Restores App Store purchases and synchronizes them with the Zoonk account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käufe wiederherstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar compras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurer les achats"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar compras"
           }
         }
       }
@@ -1278,7 +1858,7 @@
       }
     },
     "Sign in again" : {
-      "comment" : "Heading for email reauthentication before account deletion",
+      "comment" : "Heading for email reauthentication before account deletion\nTitle shown when subscription synchronization requires authentication",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1302,6 +1882,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Entrar novamente"
+          }
+        }
+      }
+    },
+    "Sign in to the Zoonk account that owns this App Store purchase, or contact support for help." : {
+      "comment" : "Recovery guidance when an App Store purchase belongs to another Zoonk account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich bei dem Zoonk-Konto an, mit dem dieser Kauf im App Store verknüpft ist, oder wende dich an den Support."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión en la cuenta de Zoonk vinculada a esta compra del App Store o contacta con soporte para obtener ayuda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi au compte Zoonk auquel cet achat de l’App Store est associé, ou contacte l’assistance pour obtenir de l’aide."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre na conta do Zoonk vinculada a esta compra da App Store ou fale com o suporte para receber ajuda."
           }
         }
       }
@@ -1394,7 +2003,7 @@
       }
     },
     "Subscription" : {
-      "comment" : "Account option for subscription\nHeading for App Store billing guidance during account deletion",
+      "comment" : "Account option for subscription\nHeading for mobile-store billing guidance during account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1538,6 +2147,35 @@
         }
       }
     },
+    "The App Store couldn't complete this purchase. Check your connection and try again." : {
+      "comment" : "Recovery guidance after an App Store purchase fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der App Store konnte diesen Kauf nicht abschließen. Prüfe deine Internetverbindung und versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El App Store no pudo completar esta compra. Comprueba tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’App Store n’a pas pu finaliser cet achat. Vérifie ta connexion, puis réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A App Store não conseguiu concluir esta compra. Confira sua conexão e tente novamente."
+          }
+        }
+      }
+    },
     "This permanently deletes your profile, progress, and personalized courses. This can't be undone." : {
       "comment" : "Explains the consequences of confirming permanent account deletion",
       "localizations" : {
@@ -1621,6 +2259,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
+    "Unlimited courses and lessons" : {
+      "comment" : "Zoonk Plus benefit describing unlimited learning content",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unbegrenzt viele Kurse und Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cursos y lecciones ilimitados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cours et leçons en illimité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cursos e aulas ilimitados"
           }
         }
       }
@@ -1712,31 +2379,31 @@
         }
       }
     },
-    "username" : {
-      "comment" : "Placeholder for the username field",
+    "Use Google Play on an Android device to change or cancel this subscription." : {
+      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "benutzername"
+            "value" : "Verwende Google Play auf einem Android-Gerät, um dieses Abo zu ändern oder zu kündigen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nombre de usuario"
+            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nom d’utilisateur"
+            "value" : "Utilise Google Play sur un appareil Android pour modifier ou annuler cet abonnement."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nome de usuário"
+            "value" : "Use o Google Play em um dispositivo Android para alterar ou cancelar esta assinatura."
           }
         }
       }
@@ -1766,6 +2433,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nome de usuário"
+          }
+        }
+      }
+    },
+    "username" : {
+      "comment" : "Placeholder for the username field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "benutzername"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nom d’utilisateur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome de usuário"
           }
         }
       }
@@ -1886,6 +2582,35 @@
         }
       }
     },
+    "Your App Store purchases are now available on this Zoonk account." : {
+      "comment" : "Confirms restored purchases were synchronized with Zoonk",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Käufe im App Store sind jetzt für dieses Zoonk-Konto verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus compras del App Store ya están disponibles en esta cuenta de Zoonk."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes achats sur l’App Store sont maintenant disponibles sur ce compte Zoonk."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas compras da App Store agora estão disponíveis nesta conta do Zoonk."
+          }
+        }
+      }
+    },
     "Your name" : {
       "comment" : "Placeholder for the profile name field",
       "localizations" : {
@@ -1911,6 +2636,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu nome"
+          }
+        }
+      }
+    },
+    "Your purchase is safe and hasn't been finished yet. Restore purchases when you're back online." : {
+      "comment" : "Explains that a transaction remains available after server synchronization fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kauf geht nicht verloren und ist noch nicht abgeschlossen. Stelle deine Käufe wieder her, sobald du wieder online bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu compra está segura y todavía no se ha completado. Restaura las compras cuando vuelvas a tener conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton achat est bien enregistré, mais il n’est pas encore finalisé. Restaure tes achats quand tu seras de nouveau en ligne."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua compra está segura e ainda não foi concluída. Restaure as compras quando estiver online novamente."
+          }
+        }
+      }
+    },
+    "Your purchase is safe. Sign in, then restore purchases to add Plus to your Zoonk account." : {
+      "comment" : "Explains how to recover a purchase after the Zoonk session expires",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kauf geht nicht verloren. Melde dich an und stelle dann deine Käufe wieder her, um Plus für dein Zoonk-Konto zu aktivieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu compra está segura. Inicia sesión y restaura las compras para añadir Plus a tu cuenta de Zoonk."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton achat est bien enregistré. Connecte-toi, puis restaure tes achats pour ajouter Plus à ton compte Zoonk."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua compra está segura. Entre na sua conta e depois restaure as compras para ativar o Plus na sua conta do Zoonk."
           }
         }
       }
@@ -1969,6 +2752,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar Sessão com a Apple para concluir."
+          }
+        }
+      }
+    },
+    "Zoonk checked your App Store purchases, but none currently provide Plus." : {
+      "comment" : "Explains that restored App Store purchases do not grant an active subscription",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk hat deine App-Store-Käufe geprüft, aber derzeit enthält keiner davon Plus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk revisó tus compras en App Store, pero actualmente ninguna te da acceso a Plus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk a vérifié tes achats sur l’App Store, mais aucun ne donne actuellement accès à Plus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk verificou suas compras na App Store, mas nenhuma delas dá acesso ao Plus no momento."
           }
         }
       }
@@ -2085,6 +2897,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível entrar no Zoonk. Tente de novo ou fale com hello@zoonk.com."
+          }
+        }
+      }
+    },
+    "Zoonk Plus" : {
+      "comment" : "Title of the native Zoonk Plus subscription screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk Plus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk Plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk Plus"
           }
         }
       }

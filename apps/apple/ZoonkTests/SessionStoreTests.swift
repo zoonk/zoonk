@@ -135,6 +135,205 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testAppleSubscriptionSynchronizationUpdatesTheCurrentAccount() async {
+    let subscribedAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: subscribedAccount, isActive: true)),
+      currentAccountResult: .success(makeAccount()))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction")
+
+    XCTAssertEqual(result, .synchronizedActive)
+    XCTAssertEqual(api.appleSignedTransactions, ["signed-transaction"])
+    XCTAssertEqual(session.state, .signedIn(subscribedAccount))
+  }
+
+  @MainActor
+  func testInactiveAppleSubscriptionSynchronizationIsDurablyRecordedWithoutGrantingAccess() async {
+    let freeAccount = makeAccount()
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: freeAccount, isActive: false)),
+      currentAccountResult: .success(freeAccount))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "expired-signed-transaction")
+
+    XCTAssertEqual(result, .synchronizedInactive)
+    XCTAssertEqual(api.appleSignedTransactions, ["expired-signed-transaction"])
+    XCTAssertEqual(session.state, .signedIn(freeAccount))
+  }
+
+  @MainActor
+  func testAppleSynchronizationDoesNotTreatAnotherProviderAsAnActiveAppStorePurchase() async {
+    let googleAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "google", status: "active"))
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: googleAccount, isActive: false)),
+      currentAccountResult: .success(googleAccount))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "expired-signed-transaction")
+
+    XCTAssertEqual(result, .synchronizedInactive)
+    XCTAssertEqual(session.state, .signedIn(googleAccount))
+  }
+
+  @MainActor
+  func testUnauthorizedAppleSubscriptionSynchronizationClearsTheSession() async {
+    let credentialStore = SessionCredentialStoreSpy(token: "stored-session")
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .failure(.unauthorized),
+      currentAccountResult: .success(makeAccount()))
+    let session = makeSession(api: api, credentialStore: credentialStore)
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction")
+
+    XCTAssertEqual(result, .authenticationRequired)
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertNil(credentialStore.token)
+  }
+
+  @MainActor
+  func testFailedAppleSubscriptionSynchronizationKeepsTheSignedInAccount() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .failure(.network),
+      currentAccountResult: .success(account))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction")
+
+    XCTAssertEqual(result, .failed)
+    XCTAssertEqual(session.state, .signedIn(account))
+  }
+
+  @MainActor
+  func testAppleSubscriptionAccountMismatchKeepsTheSignedInAccount() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .failure(.accountMismatch),
+      currentAccountResult: .success(account))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction")
+
+    XCTAssertEqual(result, .accountMismatch)
+    XCTAssertEqual(session.state, .signedIn(account))
+  }
+
+  @MainActor
+  func testInvalidAppleSubscriptionPurchaseKeepsTheSignedInAccount() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .failure(.invalidAppStorePurchase),
+      currentAccountResult: .success(account))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction")
+
+    XCTAssertEqual(result, .invalidPurchase)
+    XCTAssertEqual(session.state, .signedIn(account))
+  }
+
+  @MainActor
+  func testAppleSubscriptionSynchronizationWinsAgainstAnEarlierCredentialRefresh() async {
+    let freeAccount = makeAccount()
+    let subscribedAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: subscribedAccount, isActive: true)),
+      currentAccountResult: .success(freeAccount))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let credentialRefresh = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in
+      await credentialRefresh.load()
+    }
+    let refreshTask = Task {
+      await session.reconcileSynchronizedCredential()
+    }
+    await credentialRefresh.waitUntilStarted()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction")
+    credentialRefresh.resume(returning: freeAccount)
+    await refreshTask.value
+
+    XCTAssertEqual(result, .synchronizedActive)
+    XCTAssertEqual(session.state, .signedIn(subscribedAccount))
+  }
+
+  @MainActor
+  func testNewKeychainAccountWinsAgainstAppleSynchronizationForThePreviousAccount() async {
+    let accountA = makeAccount(userID: "account-a")
+    let accountASubscription = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"),
+      userID: "account-a")
+    let accountB = makeAccount(userID: "account-b")
+    let credentialStore = SessionCredentialStoreSpy(token: "account-a-session")
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: accountASubscription, isActive: true)),
+      currentAccountResult: .success(accountA))
+    let session = makeSession(api: api, credentialStore: credentialStore)
+    await session.restore()
+
+    let credentialRefresh = CurrentAccountRequestGate()
+    credentialStore.token = "account-b-session"
+    api.currentAccountHandler = { token in
+      XCTAssertEqual(token, "account-b-session")
+      return await credentialRefresh.load()
+    }
+    let refreshTask = Task {
+      await session.reconcileSynchronizedCredential()
+    }
+    await credentialRefresh.waitUntilStarted()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "account-a-signed-transaction")
+    credentialRefresh.resume(returning: accountB)
+    await refreshTask.value
+
+    XCTAssertEqual(result, .synchronizedActive)
+    XCTAssertEqual(session.state, .signedIn(accountB))
+  }
+
+  @MainActor
   private func makeSession(
     api: any AccountAPIClient = SessionStoreAPIStub(),
     credentialStore: SessionCredentialStoreSpy,
@@ -147,15 +346,18 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
-  private func makeAccount() -> CurrentAccount {
+  private func makeAccount(
+    subscription: AccountSubscription? = nil,
+    userID: String = "session-store-test-user"
+  ) -> CurrentAccount {
     CurrentAccount(
       account: AccountAccess(
         deletion: AccountDeletionRequirements(hasAppleAccount: false),
-        subscription: nil),
+        subscription: subscription),
       user: AccountUser(
         displayUsername: "learner",
         email: "learner@zoonk.test",
-        id: "session-store-test-user",
+        id: userID,
         image: nil,
         name: "Learner",
         username: "learner"))
@@ -163,22 +365,41 @@ final class SessionStoreTests: XCTestCase {
 }
 
 private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
+  private(set) var appleSignedTransactions = [String]()
+  var appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
+    .invalidResponse)
   var currentAccountResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
   var currentAccountError: Error?
+  var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
 
   init(
+    appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
+      .invalidResponse),
     currentAccountResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse),
     emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse),
     signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   ) {
+    self.appleSubscriptionResult = appleSubscriptionResult
     self.currentAccountResult = currentAccountResult
     self.emailSignInResult = emailSignInResult
     self.signOutResult = signOutResult
   }
 
+  func synchronizeAppleSubscription(
+    token: String,
+    signedTransaction: String
+  ) async throws -> AppleSubscriptionSynchronization {
+    appleSignedTransactions.append(signedTransaction)
+    return try appleSubscriptionResult.get()
+  }
+
   func getCurrentAccount(token: String) async throws -> CurrentAccount {
+    if let currentAccountHandler {
+      return try await currentAccountHandler(token)
+    }
+
     if let currentAccountError {
       throw currentAccountError
     }
@@ -192,6 +413,35 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
 
   func signOut(token: String) async throws {
     try signOutResult.get()
+  }
+}
+
+@MainActor
+private final class CurrentAccountRequestGate {
+  private var requestContinuation: CheckedContinuation<CurrentAccount, Never>?
+  private var startedContinuation: CheckedContinuation<Void, Never>?
+
+  func load() async -> CurrentAccount {
+    await withCheckedContinuation { continuation in
+      requestContinuation = continuation
+      startedContinuation?.resume()
+      startedContinuation = nil
+    }
+  }
+
+  func waitUntilStarted() async {
+    guard requestContinuation == nil else {
+      return
+    }
+
+    await withCheckedContinuation { continuation in
+      startedContinuation = continuation
+    }
+  }
+
+  func resume(returning account: CurrentAccount) {
+    requestContinuation?.resume(returning: account)
+    requestContinuation = nil
   }
 }
 

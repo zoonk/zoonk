@@ -1,16 +1,23 @@
+import StoreKitTest
 import XCTest
 
 private enum UITestScenario: Equatable {
+  case appleSubscription
+  case freeSubscription
+  case googleSubscription
   case requiredSetup
-  case signedIn
   case signedOut
 
   var accountJSON: String? {
     switch self {
     case .requiredSetup:
       requiredSetupAccountJSON
-    case .signedIn:
-      signedInAccountJSON
+    case .appleSubscription:
+      accountJSON(provider: "apple")
+    case .freeSubscription:
+      accountJSON(provider: nil)
+    case .googleSubscription:
+      accountJSON(provider: "google")
     case .signedOut:
       nil
     }
@@ -22,45 +29,59 @@ private enum UITestScenario: Equatable {
   }
 
   private var requiredSetupAccountJSON: String {
-    """
-    {
-      "account": {
-        "deletion": { "hasAppleAccount": false },
-        "subscription": { "plan": "plus", "provider": "google", "status": "active" }
-      },
-      "user": {
-        "displayUsername": null,
-        "email": "ui-test@zoonk.test",
-        "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
-        "image": null,
-        "name": "",
-        "username": null
+    return """
+      {
+        "account": {
+          "deletion": { "hasAppleAccount": false },
+          "subscription": { "plan": "plus", "provider": "google", "status": "active" }
+        },
+        "user": {
+          "displayUsername": null,
+          "email": "ui-test@zoonk.test",
+          "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
+          "image": null,
+          "name": "",
+          "username": null
+        }
       }
-    }
-    """
+      """
   }
 
-  private var signedInAccountJSON: String {
-    """
-    {
-      "account": {
-        "deletion": { "hasAppleAccount": false },
-        "subscription": { "plan": "plus", "provider": "google", "status": "active" }
-      },
-      "user": {
-        "displayUsername": "ui_test_user",
-        "email": "ui-test@zoonk.test",
-        "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
-        "image": null,
-        "name": "UI Test User",
-        "username": "ui_test_user"
+  private func accountJSON(provider: String?) -> String {
+    let subscription =
+      provider.map {
+        #"{ "plan": "plus", "provider": "\#($0)", "status": "active" }"#
+      } ?? "null"
+
+    return """
+      {
+        "account": {
+          "deletion": { "hasAppleAccount": false },
+          "subscription": \(subscription)
+        },
+        "user": {
+          "displayUsername": "ui_test_user",
+          "email": "ui-test@zoonk.test",
+          "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
+          "image": null,
+          "name": "UI Test User",
+          "username": "ui_test_user"
+        }
       }
-    }
-    """
+      """
   }
 }
 
 final class ZoonkUITests: XCTestCase {
+  private var storeKitSession: SKTestSession?
+
+  override func tearDown() {
+    storeKitSession?.clearTransactions()
+    storeKitSession?.resetToDefaultState()
+    storeKitSession = nil
+    super.tearDown()
+  }
+
   /// Proves that the account affordance opens directly to the sign-in methods configured in this test build without an extra navigation step.
   @MainActor
   func testAccountSheetOffersEverySignInMethod() {
@@ -187,12 +208,88 @@ final class ZoonkUITests: XCTestCase {
       "Expected required profile setup to reject interactive dismissal")
   }
 
+  /// Proves a free account reaches Apple's localized subscription store instead of an external checkout.
+  @MainActor
+  func testFreeAccountOpensNativeSubscriptionStore() throws {
+    continueAfterFailure = false
+    storeKitSession = try makeStoreKitSession()
+
+    let app = makeApp(for: .freeSubscription)
+    addTeardownBlock {
+      app.terminate()
+    }
+    app.launch()
+    openAccount(in: app)
+
+    let subscription = app.buttons["Subscription"]
+    XCTAssertTrue(subscription.waitForExistence(timeout: 5))
+    XCTAssertEqual(subscription.value as? String, "Free")
+    subscription.tap()
+
+    XCTAssertTrue(
+      app.navigationBars["Zoonk Plus"].waitForExistence(timeout: 5),
+      "Expected the free account to reach the native subscription screen")
+    XCTAssertTrue(
+      app.staticTexts["Learn anything. It’s all included."].waitForExistence(timeout: 5),
+      "Expected the subscription screen to use the product's Plus value proposition")
+    XCTAssertTrue(
+      app.staticTexts["Plus Monthly"].waitForExistence(timeout: 5),
+      "Expected StoreKit to load the localized monthly subscription")
+    XCTAssertTrue(
+      app.staticTexts["Plus Yearly"].waitForExistence(timeout: 5),
+      "Expected StoreKit to load the localized yearly subscription")
+    XCTAssertTrue(
+      app.buttons["Restore Purchases"].waitForExistence(timeout: 5),
+      "Expected a semantic App Store restore action")
+    XCTAssertFalse(
+      app.buttons["Close"].exists,
+      "Expected navigation Back to be the only way out of the pushed subscription screen")
+  }
+
+  /// Proves App Store ownership is visible before the native subscription-management sheet opens.
+  @MainActor
+  func testAppleSubscriptionShowsAppStoreManagement() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .appleSubscription)
+    app.launch()
+    openAccount(in: app)
+
+    let subscription = app.buttons["Subscription"]
+    XCTAssertTrue(subscription.waitForExistence(timeout: 5))
+    XCTAssertEqual(subscription.value as? String, "App Store")
+  }
+
+  /// Proves a Google-owned subscription remains visible while iOS explains management without linking to an external purchase surface.
+  @MainActor
+  func testGoogleSubscriptionShowsInformationalManagement() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .googleSubscription)
+    app.launch()
+    openAccount(in: app)
+
+    let subscription = app.buttons["Subscription"]
+    XCTAssertTrue(subscription.waitForExistence(timeout: 5))
+    XCTAssertEqual(subscription.value as? String, "Google Play")
+    subscription.tap()
+
+    XCTAssertTrue(
+      app.alerts["Managed on Google Play"].waitForExistence(timeout: 5),
+      "Expected informational Google Play management guidance")
+    XCTAssertTrue(
+      app.staticTexts[
+        "Use Google Play on an Android device to change or cancel this subscription."
+      ].exists,
+      "Expected guidance without an external Google Play purchase link")
+  }
+
   /// Proves that account deletion is a deliberate native flow: the account option opens a dedicated screen and the irreversible request still requires confirmation.
   @MainActor
   func testAccountDeletionRequiresConfirmation() {
     continueAfterFailure = false
 
-    let app = makeApp(for: .signedIn)
+    let app = makeApp(for: .googleSubscription)
     app.launch()
 
     let accountButton = app.buttons["Account"]
@@ -210,8 +307,8 @@ final class ZoonkUITests: XCTestCase {
       app.navigationBars["Delete account"].waitForExistence(timeout: 5),
       "Expected account deletion to open a dedicated screen")
     XCTAssertTrue(
-      app.buttons["Manage Google Play subscription"].waitForExistence(timeout: 5),
-      "Expected deletion to preserve management access for store-owned billing")
+      app.staticTexts["Managed on Google Play"].waitForExistence(timeout: 5),
+      "Expected deletion to explain which store still owns billing")
 
     app.buttons["Delete account"].tap()
 
@@ -229,7 +326,7 @@ final class ZoonkUITests: XCTestCase {
   func testSignOutStartsImmediately() {
     continueAfterFailure = false
 
-    let app = makeApp(for: .signedIn)
+    let app = makeApp(for: .googleSubscription)
     app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     app.launch()
 
@@ -298,5 +395,25 @@ final class ZoonkUITests: XCTestCase {
     }
 
     return app
+  }
+
+  @MainActor
+  private func openAccount(in app: XCUIApplication) {
+    let accountButton = app.buttons["Account"]
+    XCTAssertTrue(
+      accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
+    accountButton.tap()
+  }
+
+  private func makeStoreKitSession() throws -> SKTestSession {
+    let configurationURL = try XCTUnwrap(
+      Bundle(for: ZoonkUITests.self).url(
+        forResource: "Subscriptions", withExtension: "storekit"),
+      "Expected the UI-test bundle to contain Subscriptions.storekit")
+    let session = try SKTestSession(contentsOf: configurationURL)
+    session.resetToDefaultState()
+    session.clearTransactions()
+    session.disableDialogs = true
+    return session
   }
 }

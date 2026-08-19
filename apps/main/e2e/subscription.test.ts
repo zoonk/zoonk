@@ -43,7 +43,11 @@ async function createUserWithSubscription(
       provider: options?.provider ?? "stripe",
       referenceId: user.id,
       status: "active",
-      ...getStripeSubscriptionFields({ provider: options?.provider ?? "stripe", uniqueId }),
+      ...getProviderSubscriptionFields({
+        provider: options?.provider ?? "stripe",
+        uniqueId,
+        userId: user.id,
+      }),
     },
   });
 
@@ -64,17 +68,27 @@ async function createAuthenticatedPage(browser: Browser, baseURL: string, email:
   return { browserContext, page };
 }
 
-/**
- * Only Stripe-backed test subscriptions should carry Stripe identifiers.
- * Store-managed and Zoonk-managed rows need to look like non-Stripe records.
- */
-function getStripeSubscriptionFields({
+/** Apple access is period-bounded, while Stripe fixtures need provider identifiers for web billing controls. */
+function getProviderSubscriptionFields({
   provider,
   uniqueId,
+  userId,
 }: {
   provider: TestSubscriptionProvider;
   uniqueId: string;
+  userId: string;
 }) {
+  if (provider === "apple") {
+    return {
+      billingInterval: "month",
+      periodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      periodStart: new Date(),
+      providerProductId: "com.zoonk.plus.monthly",
+      providerSubscriptionId: `apple_test_e2e_${uniqueId}`,
+      userId,
+    };
+  }
+
   if (provider !== "stripe") {
     return {};
   }
@@ -256,7 +270,7 @@ test.describe("Subscription Page - With Plus Subscription", () => {
 });
 
 test.describe("Subscription Page - Provider Managed", () => {
-  test("Apple subscriptions direct users to App Store support instead of Stripe controls", async ({
+  test("Apple subscriptions direct users to App Store settings instead of Stripe controls", async ({
     browser,
     baseURL,
   }) => {
@@ -270,7 +284,7 @@ test.describe("Subscription Page - Provider Managed", () => {
 
     await expect(page.getByRole("link", { name: /manage in app store/iu })).toHaveAttribute(
       "href",
-      "https://support.apple.com/billing",
+      "https://apps.apple.com/account/subscriptions",
     );
 
     await expect(page.getByRole("link", { name: /contact support/iu })).toHaveAttribute(
@@ -278,8 +292,35 @@ test.describe("Subscription Page - Provider Managed", () => {
       "/support",
     );
 
-    await expect(page.getByRole("radio", { name: /free/iu })).not.toBeVisible();
-    await expect(page.getByRole("button", { name: /manage/iu })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /cancel subscription/iu })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /^subscribe$/iu })).not.toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("Google subscriptions direct users to Google Play instead of Stripe controls", async ({
+    browser,
+    baseURL,
+  }) => {
+    const email = await createUserWithSubscription(baseURL!, "plus", { provider: "google" });
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    await page.goto("/subscription");
+
+    await expect(page.getByText(/managed through google play/iu)).toBeVisible();
+
+    await expect(page.getByRole("link", { name: /manage in google play/iu })).toHaveAttribute(
+      "href",
+      "https://play.google.com/store/account/subscriptions",
+    );
+
+    await expect(page.getByRole("link", { name: /contact support/iu })).toHaveAttribute(
+      "href",
+      "/support",
+    );
+
+    await expect(page.getByRole("button", { name: /cancel subscription/iu })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /^subscribe$/iu })).not.toBeVisible();
 
     await browserContext.close();
   });

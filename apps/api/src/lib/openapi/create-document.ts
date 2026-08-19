@@ -17,6 +17,7 @@ import { generationPaths } from "./paths/generations";
 import { lessonResourcePaths } from "./paths/lesson-resources";
 import { progressPaths } from "./paths/progress";
 import { sessionPaths } from "./paths/sessions";
+import { subscriptionPaths } from "./paths/subscriptions";
 import { usernamePaths } from "./paths/usernames";
 import { internalErrorResponse } from "./schemas/responses";
 import { SECURITY_SCHEMES, createSecuritySchemes } from "./security";
@@ -77,6 +78,7 @@ const paths = withInternalErrorResponses({
   ...feedbackPaths,
   ...progressPaths,
   ...sessionPaths,
+  ...subscriptionPaths,
 });
 
 /** OpenAPI 3.0 uses singular `example`, while the canonical 3.1 schemas use JSON Schema's `examples` array. */

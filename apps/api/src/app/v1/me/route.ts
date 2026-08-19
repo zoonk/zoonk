@@ -3,32 +3,15 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { type MeDeletionInput, meDeletionSchema, meUpdateSchema } from "@/lib/openapi/schemas/me";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
-import { getCurrentUser, updateCurrentUser } from "@zoonk/core/users/current";
+import { updateCurrentUser } from "@zoonk/core/users/current";
 import { deleteCurrentUser } from "@zoonk/core/users/delete-current";
 import { getCurrentUserHasAppleAccount } from "@zoonk/core/users/has-apple-account";
 import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest, NextResponse } from "next/server";
+import { getMeResponse } from "./_utils/get-me-response";
 import { getAccountDeletionErrorResponse } from "./_utils/me-account-deletion";
 import { getProfileUpdateErrorResponse } from "./_utils/me-profile-update";
 import { createMeResponse } from "./_utils/me-response";
-
-/**
- * Combines independently reusable account resources while their shared private
- * session resolver joins repeated authentication calls.
- */
-async function getMeResponse() {
-  const [hasAppleAccount, subscription, user] = await Promise.all([
-    getCurrentUserHasAppleAccount(),
-    getActiveSubscription(),
-    getCurrentUser(),
-  ]);
-
-  if (hasAppleAccount === null || !user) {
-    return errors.unauthorized();
-  }
-
-  return NextResponse.json(createMeResponse({ hasAppleAccount, subscription, user }));
-}
 
 /**
  * Exposes the signed-in user's profile and account state to native clients.

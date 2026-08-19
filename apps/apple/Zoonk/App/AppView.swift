@@ -3,6 +3,7 @@ import SwiftUI
 struct AppView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(SessionStore.self) private var session
+  @Environment(AppStoreSubscriptionStore.self) private var subscriptions
   @State private var isAccountPresented: Bool
   @State private var selectedSection = AppSection.home
 
@@ -40,6 +41,24 @@ struct AppView: View {
     }
     .task {
       await session.restore()
+    }
+    .task {
+      await subscriptions.observeTransactionUpdates(
+        synchronizationScope: { session.account?.user.id },
+        synchronize: { signedTransaction in
+          await session.synchronizeAppleSubscription(signedTransaction: signedTransaction)
+        })
+    }
+    .task(id: session.account?.user.id) {
+      guard session.account != nil else {
+        return
+      }
+
+      await subscriptions.reconcileCurrentEntitlements(
+        synchronizationScope: session.account?.user.id
+      ) { signedTransaction in
+        await session.synchronizeAppleSubscription(signedTransaction: signedTransaction)
+      }
     }
     .onChange(of: scenePhase) { _, scenePhase in
       reconcileSessionWhenActive(scenePhase)
@@ -89,4 +108,5 @@ private struct AdaptiveNavigationTitle: ViewModifier {
 #Preview {
   AppView()
     .environment(SessionStore.preview())
+    .environment(AppStoreSubscriptionStore.live())
 }
