@@ -95,6 +95,53 @@ ${SHARED_EXPECTATIONS}
   },
   {
     expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about tracing depth-first and breadth-first traversals in trees. Penalize if:
+   - DFS is described as visiting every node on one level before descending, or BFS as following one branch before returning
+   - Pre-order, in-order, and post-order do not process the node respectively before, between, or after its child subtrees; in-order should not be generalized beyond the left-node-right structure of a binary tree
+   - DFS is disconnected from recursion or an explicit stack, or BFS is disconnected from the FIFO behavior of a queue
+
+2. BOUNDARY CHECK: The core arc should trace pre-order, in-order, post-order, and level-order traversal on a concrete tree while explaining when each node is processed and why a stack or queue produces that order. Brief uses or complexity notes are fine when they clarify the comparison. Penalize if the lesson becomes mainly about binary-search-tree operations, tree representation, recursion syntax, graph traversal with visited sets, balancing, heaps, or a catalog of applications.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ciencia-computacao-percursos-arvores",
+    userInput: {
+      chapterTitle: "Estruturas de dados",
+      courseTitle: "Ciência da Computação",
+      language: "pt",
+      lessonDescription:
+        "Rastreie percursos em pré-ordem, em ordem, pós-ordem e por níveis, observando quando cada nó é processado. Relacione percursos em profundidade a recursão ou pilhas e percursos em largura ao uso de filas.",
+      lessonTitle: "Percursos em árvores: DFS e BFS",
+      otherLessonTitles: [
+        "Tipos abstratos de dados e invariantes",
+        "Arrays (vetores) e memória contígua",
+        "Arrays dinâmicos e redimensionamento",
+        "Listas simplesmente ligadas",
+        "Listas duplamente ligadas e circulares",
+        "Localidade de memória e overhead de referências",
+        "Pilhas (stacks)",
+        "Filas e buffers circulares",
+        "Filas de duas pontas (deques)",
+        "Funções hash, igualdade e buckets",
+        "Tratamento de colisões em tabelas hash",
+        "Fator de carga e redimensionamento de tabelas hash",
+        "Anatomia e representação de árvores",
+        "Árvores binárias de busca: busca e inserção",
+        "Remoção em árvores binárias de busca",
+        "Árvores balanceadas: AVL e rubro-negras",
+        "Heap binário: propriedade e representação",
+        "Filas de prioridade com heaps",
+        "Grafos: vértices, arestas e tipos",
+        "Representações de grafos",
+      ],
+    },
+  },
+  {
+    expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: This lesson is about raids, captives, and what conflict was trying to achieve. Penalize if:
@@ -146,6 +193,103 @@ ${SHARED_EXPECTATIONS}
         "Devido processo legal",
         "Direito de ação e acesso à Justiça",
         "Igualdade processual",
+      ],
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about reading mRNA in codons while preserving the correct reading frame. Penalize if:
+   - DNA bases are read directly from an mRNA codon table without first producing the corresponding mRNA sequence
+   - The reading frame is treated as optional or as changing one codon without changing the triplet grouping that follows
+   - The degeneracy of the genetic code is described as one codon routinely specifying several different amino acids
+
+2. BOUNDARY CHECK: The core arc should stay on codons, the start and stop signals, using the genetic-code table, and why the reading frame matters. Brief context about transcription, tRNA, or translation is fine when it helps the learner follow that decoding move. Penalize if the explanation turns into a broad survey of DNA structure, RNA processing, ribosome stages, or mutation types.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biologia-codigo-genetico",
+    userInput: {
+      chapterTitle: "DNA, RNA e expressão gênica",
+      courseTitle: "Biologia",
+      language: "pt",
+      lessonDescription:
+        "Leia o mRNA em trincas e use uma tabela do código genético para converter códons em aminoácidos. Reconheça o códon de início, os códons de parada, a degeneração do código e a importância do quadro de leitura.",
+      lessonTitle: "Código genético, códons e quadro de leitura",
+      otherLessonTitles: [
+        "Dogma central e transcrição reversa",
+        "Transcrição e RNA polimerase",
+        "Processamento do RNA mensageiro",
+        "mRNA, tRNA, rRNA e aminoacil-tRNA sintetases",
+        "Iniciação da tradução",
+        "Elongação da tradução e sítios A, P e E",
+      ],
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about measuring two different intervals in a workflow. Penalize if:
+   - Lead time does not run from request to delivery, or cycle time does not run from work start to completion
+   - The two metrics are treated as interchangeable or calculated with incompatible time conventions
+   - A shorter cycle time is claimed to prove a short lead time without accounting for the time spent waiting before work starts
+
+2. BOUNDARY CHECK: The core arc should stay on defining, calculating, comparing, and using lead time and cycle time. Brief mentions of waiting, timestamps, or a board are useful when they make the two clocks concrete. Penalize if the lesson becomes mainly about throughput, WIP, work item age, forecasting, or general Kanban management.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-kanban-lead-cycle-time",
+    userInput: {
+      chapterTitle: "Métricas de fluxo",
+      courseTitle: "Kanban",
+      language: "pt",
+      lessonDescription:
+        "Calcule o lead time entre solicitação e entrega e o cycle time entre início e conclusão de um item. Compare os dois intervalos para reconhecer o tempo anterior ao início do trabalho sem confundir suas fronteiras.",
+      lessonTitle: "Lead time e cycle time",
+      otherLessonTitles: [
+        "Limites de medição e eventos do fluxo",
+        "Throughput e janela de medição",
+        "WIP — trabalho em andamento",
+        "Work item age — idade do item",
+        "Taxa de chegada e taxa de saída",
+        "Média, mediana e valores extremos",
+      ],
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about separating profit, cash, and financial position. Penalize if:
+   - Profit is treated as the amount of money currently available in the bank account
+   - A sale on credit is treated as immediate cash receipt, or money received from a loan is treated as revenue or profit
+   - Result, cash movement, and the assets, obligations, and equity held at a point in time are collapsed into one interchangeable measure
+
+2. BOUNDARY CHECK: The core arc should stay on why a profitable company can still lack cash and how result, cash, and financial position answer different questions. Brief mentions of accrual accounting, receivables, payables, inventory, loans, or financial statements are useful when they make the timing difference concrete. Penalize if the lesson becomes mainly a survey of accounting reports, bookkeeping entries, the accounting equation, financial ratios, or cash-flow management.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-contabilidade-lucro-caixa",
+    userInput: {
+      chapterTitle: "Contabilidade: a linguagem das decisões",
+      courseTitle: "Contabilidade",
+      language: "pt",
+      lessonDescription:
+        "Uma empresa pode apresentar lucro e, ainda assim, ficar sem dinheiro para pagar as contas. Relatórios contábeis ajudam a distinguir resultado, caixa e patrimônio — três perspectivas diferentes sobre a saúde de uma organização.",
+      lessonTitle: "Por que lucro e dinheiro em caixa não são a mesma coisa",
+      otherLessonTitles: [
+        "Como a contabilidade transforma fatos em informação",
+        "A balança contábil entre bens, dívidas e patrimônio",
+        "Onde a contabilidade orienta decisões e carreiras",
+        "Como a contabilidade cria confiança na sociedade",
       ],
     },
   },
@@ -234,6 +378,93 @@ ${SHARED_EXPECTATIONS}
         "Initialization and normalization",
         "Learning-rate schedules",
         "Dropout and regularization",
+      ],
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about why the Pythagorean identity follows from an area rearrangement. Penalize if:
+   - The identity is applied to triangles that are not right triangles
+   - The side lengths are confused with the areas of the squares built on those sides
+   - Rearranging the same congruent triangles is treated as changing their total area
+
+2. BOUNDARY CHECK: The main arc should stay on seeing why the two smaller square areas equal the largest square area. Brief algebra is fine when it records the area comparison. Penalize if the lesson becomes mainly about the distance formula, coordinate proofs, trigonometry, Pythagorean triples, or the converse theorem.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-geometry-pythagorean-area",
+    userInput: {
+      chapterTitle: "Right triangles and distance",
+      courseTitle: "Geometry",
+      language: "en",
+      lessonDescription:
+        "Use the areas of squares built on the three sides and a rearrangement of congruent right triangles to explain why the two smaller square areas add to the largest. Connect the picture to a² + b² = c² without treating the equation as a rule to memorize.",
+      lessonTitle: "Why the Pythagorean theorem works",
+      otherLessonTitles: [
+        "Using the Pythagorean theorem",
+        "The converse of the Pythagorean theorem",
+        "Distance on a coordinate plane",
+        "Pythagorean triples",
+      ],
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about distinguishing necessary conditions from sufficient conditions. Penalize if:
+   - A necessary condition is treated as guaranteeing the result rather than merely being required for it
+   - A sufficient condition is treated as the only possible way to reach the result rather than one condition that guarantees it
+   - “If A, then B” is freely reversed into “if B, then A” without establishing the converse
+
+2. BOUNDARY CHECK: The main arc should stay on recognizing which condition is required, which is enough, and why the direction of an implication matters. Concrete contrasting cases are useful. Penalize if the lesson becomes mainly about truth tables, formal proof notation, contraposition, logical validity, or a catalog of named fallacies.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-logic-necessary-sufficient",
+    userInput: {
+      chapterTitle: "Conditional reasoning",
+      courseTitle: "Logic",
+      language: "en",
+      lessonDescription:
+        "Distinguish necessary conditions from sufficient conditions by asking whether something is required and whether it is enough to guarantee the result. Use contrasting cases to read one-way implications without accidentally reversing them.",
+      lessonTitle: "Necessary and sufficient conditions",
+      otherLessonTitles: [
+        "Converse, inverse, and contrapositive",
+        "Biconditional statements",
+        "Truth tables",
+        "Validity and soundness",
+      ],
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: This lesson is about using textual evidence to recognize and interpret an unreliable narrator. Penalize if:
+   - The narrator is confused with the author
+   - Unreliability is treated as proof that every narrated detail is false or that the narrator must be deliberately lying
+   - A reader's suspicion is presented as sufficient without contradictions, omissions, reactions, or other evidence from the work
+
+2. BOUNDARY CHECK: The main arc should stay on how readers notice a gap between a narrator's version and what the text supports. Brief examples of bias, self-deception, limited knowledge, or deliberate deceit are useful. Penalize if the lesson becomes mainly a catalog of narrator types, point-of-view terminology, or general literary-analysis advice.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-literature-unreliable-narrator",
+    userInput: {
+      chapterTitle: "Narrators and point of view",
+      courseTitle: "Literature",
+      language: "en",
+      lessonDescription:
+        "Use contradictions, gaps, self-justification, other characters' reactions, and later events to recognize when a narrator's account cannot be accepted at face value. Build an interpretation from textual clues while allowing reasonable uncertainty about what really happened.",
+      lessonTitle: "Reading an unreliable narrator",
+      otherLessonTitles: [
+        "First-person and third-person narration",
+        "Limited and omniscient points of view",
+        "Narrative distance",
+        "Writing a close-reading argument",
       ],
     },
   },
