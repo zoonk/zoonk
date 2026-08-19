@@ -6,7 +6,7 @@ import { ShortcutKbd, type ShortcutKbdTone } from "@zoonk/ui/components/kbd";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 
-type GenerationShortcutLinkVariant = "default" | "outline";
+type GenerationShortcutLinkVariant = "default" | "ghost" | "outline";
 type GenerationShortcut = "Enter" | "Esc" | "N";
 
 /**

@@ -69,7 +69,50 @@ async function createTestLesson(options?: {
     );
   }
 
-  return { chapter, course, lesson, lessonTitle, uniqueId };
+  return { chapter, course, lesson, lessonTitle, organizationId: org.id, uniqueId };
+}
+
+/** Creates the access-policy free target so gate tests prove navigation reaches playable content. */
+async function freeFirstLessonFixture({
+  courseId,
+  organizationId,
+  uniqueId,
+}: {
+  courseId: string;
+  organizationId: string;
+  uniqueId: string;
+}) {
+  const chapter = await chapterFixture({
+    courseId,
+    isPublished: true,
+    organizationId,
+    position: 0,
+    slug: `e2e-free-chapter-${uniqueId}`,
+    title: `E2E Free Chapter ${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    generationStatus: "completed",
+    isPublished: true,
+    kind: "explanation",
+    organizationId,
+    position: 0,
+    slug: `e2e-free-lesson-${uniqueId}`,
+    title: `E2E Free Lesson ${uniqueId}`,
+  });
+
+  await stepFixture({
+    content: {
+      text: `Free lesson content ${uniqueId}`,
+      title: `Free lesson step ${uniqueId}`,
+      variant: "text",
+    },
+    isPublished: true,
+    lessonId: lesson.id,
+  });
+
+  return { chapter, lesson };
 }
 
 /**
@@ -618,17 +661,25 @@ test.describe("Lesson Player Page", () => {
     }
   });
 
-  test("authenticated users without subscription see upgrade CTA for later chapters", async ({
+  test("subscription gate offers the free first chapter for later lessons", async ({
     authenticatedPage,
   }) => {
-    const { chapter, course, lesson, lessonTitle, uniqueId } = await createTestLesson({
-      chapterPosition: 1,
-      generationStatus: "completed",
-      lessonPosition: 0,
+    const { chapter, course, lesson, lessonTitle, organizationId, uniqueId } =
+      await createTestLesson({
+        chapterPosition: 1,
+        generationStatus: "completed",
+        lessonPosition: 0,
+      });
+
+    const { chapter: freeChapter, lesson: freeLesson } = await freeFirstLessonFixture({
+      courseId: course.id,
+      organizationId,
+      uniqueId,
     });
 
     const lessonHref = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
     const chapterHref = `/b/ai/c/${course.slug}/ch/${chapter.slug}`;
+    const freeLessonHref = `/b/ai/c/${course.slug}/ch/${freeChapter.slug}/l/${freeLesson.slug}`;
 
     await authenticatedPage.goto(lessonHref);
 
@@ -641,6 +692,7 @@ test.describe("Lesson Player Page", () => {
     await expect(authenticatedPage.getByText("This lesson is included with Plus.")).toBeVisible();
 
     const backLink = authenticatedPage.getByRole("link", { name: /back to chapter/iu });
+    const freeChapterLink = authenticatedPage.getByRole("link", { name: /^try free chapter$/iu });
     const upgradeLink = authenticatedPage.getByRole("link", { name: /^subscribe$/iu });
 
     await expect(backLink).toBeVisible();
@@ -648,10 +700,22 @@ test.describe("Lesson Player Page", () => {
     await expect(backLink).toHaveAttribute("aria-keyshortcuts", "Escape");
     await expect(backLink).toHaveAttribute("href", chapterHref);
 
+    await expect(freeChapterLink).toBeVisible();
+    await expect(freeChapterLink).toHaveAttribute("href", freeLessonHref);
+
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink.getByText(/^Enter$/u)).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("aria-keyshortcuts", "Enter");
     await expect(upgradeLink).toHaveAttribute("href", "/subscription");
+
+    await freeChapterLink.click();
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: `Free lesson step ${uniqueId}` }),
+    ).toBeVisible();
+
+    await authenticatedPage.goto(lessonHref);
+    await expect(backLink).toBeVisible();
 
     await pressShortcutAndWaitForUrl({
       expectedUrl: chapterHref,
