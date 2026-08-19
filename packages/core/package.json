@@ -22,6 +22,7 @@
     "./courses/generation-access": "./src/courses/course-generation-access.ts",
     "./courses/get-by-id": "./src/courses/get-course-by-id.ts",
     "./courses/get-by-slug": "./src/courses/get-course-by-slug.ts",
+    "./courses/get-first-lesson": "./src/courses/get-first-course-lesson.ts",
     "./courses/get-generation-status": "./src/courses/get-course-generation-status.ts",
     "./courses/get-prompt-generation": "./src/courses/get-course-prompt-generation.ts",
     "./courses/get-prompt-by-course": "./src/courses/get-course-prompt-by-course.ts",

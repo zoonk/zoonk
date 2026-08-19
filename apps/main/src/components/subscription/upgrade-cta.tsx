@@ -16,14 +16,16 @@ import { SubscriptionGateTracker } from "./subscription-gate-tracker";
  * Preserves one tracked subscription action while allowing a calling page to
  * provide durable context that is more useful than the generic Plus message.
  */
-export async function UpgradeCTA<Href extends string>({
+export async function UpgradeCTA<BackHref extends string, FreeLessonHref extends string = string>({
   backHref,
   backLabel,
   children,
+  freeLessonHref,
 }: {
-  backHref: AppRoute<Href>;
+  backHref: AppRoute<BackHref>;
   backLabel: string;
   children?: React.ReactNode;
+  freeLessonHref?: AppRoute<FreeLessonHref>;
 }) {
   const t = await getExtracted();
 
@@ -45,13 +47,25 @@ export async function UpgradeCTA<Href extends string>({
         </EmptyHeader>
       )}
 
-      <EmptyContent align="stretch">
-        <GenerationShortcutLink href={backHref} prefetch shortcut="Esc" variant="outline">
-          {backLabel}
-        </GenerationShortcutLink>
-
+      <EmptyContent align="stretch" className="gap-2">
         <GenerationShortcutLink href="/subscription" prefetch shortcut="Enter">
           {t("Subscribe")}
+        </GenerationShortcutLink>
+
+        {freeLessonHref && (
+          <GenerationShortcutLink href={freeLessonHref} prefetch variant="outline">
+            {t("Try free chapter")}
+          </GenerationShortcutLink>
+        )}
+
+        <GenerationShortcutLink
+          className="text-muted-foreground mt-1 w-fit max-w-full self-center px-2"
+          href={backHref}
+          prefetch
+          shortcut="Esc"
+          variant="ghost"
+        >
+          {backLabel}
         </GenerationShortcutLink>
       </EmptyContent>
     </Empty>

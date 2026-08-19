@@ -2779,6 +2779,11 @@ msgctxt "X4sblx"
 msgid "Plus gives you unlimited courses and lessons for whatever you want to learn."
 msgstr "Com o Plus, você tem cursos e aulas ilimitados sobre o que quiser aprender."
 
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "Y9LULP"
+msgid "Try free chapter"
+msgstr "Experimente um capítulo grátis"
+
 #: src/lib/belt-colors.ts
 msgctxt "znY9eW"
 msgid "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}"

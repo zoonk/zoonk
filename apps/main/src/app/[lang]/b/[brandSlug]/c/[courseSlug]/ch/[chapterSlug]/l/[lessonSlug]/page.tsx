@@ -7,6 +7,7 @@ import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { isLessonSeoIndexable } from "@/lib/lessons/seo";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { listCourseChapters } from "@zoonk/core/chapters/list-by-course";
+import { getFirstCourseLesson } from "@zoonk/core/courses/get-first-lesson";
 import { type CatalogLesson, getLesson as getCatalogLesson } from "@zoonk/core/lessons/get-by-slug";
 import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
@@ -73,12 +74,22 @@ async function getSubscriptionRequiredContent({
   lesson: CatalogLesson;
 }) {
   const backHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
+  const firstLesson = await getFirstCourseLesson({ courseId: lesson.chapter.course.id });
+
+  const freeLessonHref = firstLesson
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${firstLesson.chapterSlug}/l/${firstLesson.lessonSlug}` as const)
+    : undefined;
+
   const t = await getExtracted();
 
   return (
     <Container className="min-h-dvh" variant="narrow">
       <ContainerBody className="justify-center sm:flex-1">
-        <UpgradeCTA backHref={backHref} backLabel={t("Back to chapter")}>
+        <UpgradeCTA
+          backHref={backHref}
+          backLabel={t("Back to chapter")}
+          freeLessonHref={freeLessonHref}
+        >
           <LessonPageSummary lesson={lesson} />
 
           <LessonSummaryStatus>{t("This lesson is included with Plus.")}</LessonSummaryStatus>
