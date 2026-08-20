@@ -7,5 +7,7 @@ const APPLE_SUBSCRIPTION_PRODUCTS: Record<string, AppleSubscriptionProduct> = {
 
 /** Rejects valid Apple transactions for products Zoonk does not intentionally map to an entitlement. */
 export function getAppleSubscriptionProduct(productId: string) {
-  return APPLE_SUBSCRIPTION_PRODUCTS[productId] ?? null;
+  return Object.hasOwn(APPLE_SUBSCRIPTION_PRODUCTS, productId)
+    ? APPLE_SUBSCRIPTION_PRODUCTS[productId]
+    : null;
 }

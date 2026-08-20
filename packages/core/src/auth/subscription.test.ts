@@ -70,6 +70,7 @@ describe(getActiveSubscription, () => {
         periodEnd: new Date(Date.now() - 60_000),
         plan: "plus",
         provider: "apple",
+        providerSubscriptionId: `expired-apple-${user.id}`,
         referenceId: user.id,
         status: "active",
         userId: user.id,

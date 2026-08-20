@@ -141,8 +141,8 @@ function isSubscription(subscription: Subscription | undefined): subscription is
 }
 
 /**
- * Better Auth uses `referenceId` for either a user or organization. The bounded
- * page references therefore need one batched user lookup before rendering.
+ * The page query excludes organization-owned references, so its bounded user
+ * references need one batched lookup before rendering.
  */
 async function findSubscriptionUsers<T extends { referenceId: string }>({
   subscriptions,

@@ -1,14 +1,13 @@
-import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { AppleStoreError } from "@zoonk/core/subscriptions/apple-store-error";
 
+/**
+ * A permanently invalid Apple payload or app identity cannot succeed on retry, so acknowledge it
+ * while allowing configuration and provider failures to surface as retryable 5xx responses.
+ */
 export function getAppleNotificationErrorResponse(error: unknown) {
   if (!(error instanceof AppleStoreError) || error.reason !== "invalidTransaction") {
     return null;
   }
 
-  return createErrorResponse({
-    code: "APPLE_NOTIFICATION_INVALID",
-    message: "The App Store notification could not be verified",
-    status: httpStatus.badRequest,
-  });
+  return new Response(null, { status: 204 });
 }

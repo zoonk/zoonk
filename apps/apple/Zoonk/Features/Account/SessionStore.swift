@@ -219,11 +219,20 @@ final class SessionStore {
 
   /// Keeps App Store access available on every Zoonk client by recording Apple's signed transaction on the authenticated server account before StoreKit finishes it.
   func synchronizeAppleSubscription(
-    signedTransaction: String
+    signedTransaction: String,
+    expectedAccountID: String?
   ) async -> AccountSubscriptionSynchronizationResult {
-    guard let token else {
+    guard let expectedAccountID else {
+      return .authenticationRequired
+    }
+
+    guard let account, let token else {
       state = .signedOut
       return .authenticationRequired
+    }
+
+    guard account.user.id == expectedAccountID else {
+      return .accountMismatch
     }
 
     markInteractiveOperationStarted()
@@ -234,6 +243,9 @@ final class SessionStore {
         signedTransaction: signedTransaction)
 
       if self.token == token {
+        // A same-session refresh may have started while the server recorded this purchase. Its
+        // older account snapshot must not replace the subscription state returned here.
+        markInteractiveOperationStarted()
         state = .signedIn(synchronization.account)
       }
 

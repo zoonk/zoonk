@@ -52,7 +52,7 @@ final class AppStoreSubscriptionStore {
     _ outcome: AppStoreSubscriptionPurchaseOutcome,
     synchronizationScope: String?,
     synchronize:
-      @escaping @MainActor @Sendable (String) async
+      @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
   ) async -> Bool {
     switch outcome {
@@ -78,7 +78,7 @@ final class AppStoreSubscriptionStore {
     synchronizationScope:
       @escaping @MainActor @Sendable () -> String?,
     synchronize:
-      @escaping @MainActor @Sendable (String) async
+      @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
   ) async {
     let synchronizationCoordinator = synchronizationCoordinator
@@ -95,7 +95,7 @@ final class AppStoreSubscriptionStore {
   func reconcileCurrentEntitlements(
     synchronizationScope: String?,
     synchronize:
-      @escaping @MainActor @Sendable (String) async
+      @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
   ) async {
     _ = await synchronizeCurrentEntitlements(
@@ -106,7 +106,7 @@ final class AppStoreSubscriptionStore {
   func restorePurchases(
     synchronizationScope: String?,
     synchronize:
-      @escaping @MainActor @Sendable (String) async
+      @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
   ) async {
     guard !isRestoring else {
@@ -135,7 +135,7 @@ final class AppStoreSubscriptionStore {
   private func synchronizeCurrentEntitlements(
     synchronizationScope: String?,
     using synchronize:
-      @escaping @MainActor @Sendable (String) async
+      @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
   ) async -> [AccountSubscriptionSynchronizationResult] {
     let transactions = await client.currentEntitlements()
@@ -203,12 +203,19 @@ private func synchronizeTransactions(
   with coordinator: AppStoreSubscriptionSynchronizationCoordinator,
   synchronizationScope: String?,
   using synchronize:
-    @escaping @MainActor @Sendable (String) async
+    @escaping @MainActor @Sendable (String, String?) async
     -> AccountSubscriptionSynchronizationResult
 ) async -> [AccountSubscriptionSynchronizationResult] {
   var results = [AccountSubscriptionSynchronizationResult]()
+  var synchronizedVersions = Set<AppStoreSubscriptionTransactionVersion>()
 
   for transaction in transactions {
+    // StoreKit can expose the same active transaction through both unfinished and current
+    // entitlements. Reconcile each signed version once so restore cannot submit it twice.
+    guard synchronizedVersions.insert(transaction.version).inserted else {
+      continue
+    }
+
     results.append(
       await coordinator.process(
         transaction: transaction,
@@ -237,7 +244,7 @@ private actor AppStoreSubscriptionSynchronizationCoordinator {
     transaction: AppStoreSubscriptionTransaction,
     synchronizationScope: String?,
     synchronize:
-      @escaping @MainActor @Sendable (String) async
+      @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
   ) async -> AccountSubscriptionSynchronizationResult {
     let synchronizationKey = AppStoreSubscriptionSynchronizationKey(
@@ -251,7 +258,7 @@ private actor AppStoreSubscriptionSynchronizationCoordinator {
     let previousSynchronization = synchronizationTail
     let synchronization = Task {
       await previousSynchronization?.value
-      let result = await synchronize(transaction.signedTransaction)
+      let result = await synchronize(transaction.signedTransaction, synchronizationScope)
 
       // Keep failed deliveries unfinished so StoreKit can offer them again after authentication
       // or network recovery.

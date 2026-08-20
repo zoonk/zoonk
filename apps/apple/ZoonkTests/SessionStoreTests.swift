@@ -148,7 +148,8 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "signed-transaction")
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .synchronizedActive)
     XCTAssertEqual(api.appleSignedTransactions, ["signed-transaction"])
@@ -168,7 +169,8 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "expired-signed-transaction")
+      signedTransaction: "expired-signed-transaction",
+      expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .synchronizedInactive)
     XCTAssertEqual(api.appleSignedTransactions, ["expired-signed-transaction"])
@@ -189,7 +191,8 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "expired-signed-transaction")
+      signedTransaction: "expired-signed-transaction",
+      expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .synchronizedInactive)
     XCTAssertEqual(session.state, .signedIn(googleAccount))
@@ -205,7 +208,8 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "signed-transaction")
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .authenticationRequired)
     XCTAssertEqual(session.state, .signedOut)
@@ -224,7 +228,8 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "signed-transaction")
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .failed)
     XCTAssertEqual(session.state, .signedIn(account))
@@ -242,9 +247,28 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "signed-transaction")
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .accountMismatch)
+    XCTAssertEqual(session.state, .signedIn(account))
+  }
+
+  @MainActor
+  func testAppleSubscriptionSynchronizationDoesNotUseAnotherAccountsSession() async {
+    let account = makeAccount(userID: "account-b")
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "account-b-session"))
+    await session.restore()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "account-a-signed-transaction",
+      expectedAccountID: "account-a")
+
+    XCTAssertEqual(result, .accountMismatch)
+    XCTAssertEqual(api.appleSignedTransactions, [])
     XCTAssertEqual(session.state, .signedIn(account))
   }
 
@@ -260,7 +284,8 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "signed-transaction")
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .invalidPurchase)
     XCTAssertEqual(session.state, .signedIn(account))
@@ -290,7 +315,51 @@ final class SessionStoreTests: XCTestCase {
     await credentialRefresh.waitUntilStarted()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "signed-transaction")
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
+    credentialRefresh.resume(returning: freeAccount)
+    await refreshTask.value
+
+    XCTAssertEqual(result, .synchronizedActive)
+    XCTAssertEqual(session.state, .signedIn(subscribedAccount))
+  }
+
+  @MainActor
+  func testAppleSubscriptionSynchronizationWinsAgainstALaterCredentialRefresh() async {
+    let freeAccount = makeAccount()
+    let subscribedAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
+    let appleSynchronization = AppleSubscriptionRequestGate()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(freeAccount))
+    api.appleSubscriptionHandler = { _, _ in
+      await appleSynchronization.load()
+    }
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let synchronizationTask = Task {
+      await session.synchronizeAppleSubscription(
+        signedTransaction: "signed-transaction",
+        expectedAccountID: "session-store-test-user")
+    }
+    await appleSynchronization.waitUntilStarted()
+
+    let credentialRefresh = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in
+      await credentialRefresh.load()
+    }
+    let refreshTask = Task {
+      await session.reconcileSynchronizedCredential()
+    }
+    await credentialRefresh.waitUntilStarted()
+
+    appleSynchronization.resume(
+      returning: AppleSubscriptionSynchronization(
+        account: subscribedAccount,
+        isActive: true))
+    let result = await synchronizationTask.value
     credentialRefresh.resume(returning: freeAccount)
     await refreshTask.value
 
@@ -325,7 +394,8 @@ final class SessionStoreTests: XCTestCase {
     await credentialRefresh.waitUntilStarted()
 
     let result = await session.synchronizeAppleSubscription(
-      signedTransaction: "account-a-signed-transaction")
+      signedTransaction: "account-a-signed-transaction",
+      expectedAccountID: "account-a")
     credentialRefresh.resume(returning: accountB)
     await refreshTask.value
 
@@ -368,6 +438,8 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   private(set) var appleSignedTransactions = [String]()
   var appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
     .invalidResponse)
+  var appleSubscriptionHandler:
+    (@MainActor (String, String) async throws -> AppleSubscriptionSynchronization)?
   var currentAccountResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
   var currentAccountError: Error?
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
@@ -392,6 +464,11 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     signedTransaction: String
   ) async throws -> AppleSubscriptionSynchronization {
     appleSignedTransactions.append(signedTransaction)
+
+    if let appleSubscriptionHandler {
+      return try await appleSubscriptionHandler(token, signedTransaction)
+    }
+
     return try appleSubscriptionResult.get()
   }
 
@@ -441,6 +518,35 @@ private final class CurrentAccountRequestGate {
 
   func resume(returning account: CurrentAccount) {
     requestContinuation?.resume(returning: account)
+    requestContinuation = nil
+  }
+}
+
+@MainActor
+private final class AppleSubscriptionRequestGate {
+  private var requestContinuation: CheckedContinuation<AppleSubscriptionSynchronization, Never>?
+  private var startedContinuation: CheckedContinuation<Void, Never>?
+
+  func load() async -> AppleSubscriptionSynchronization {
+    await withCheckedContinuation { continuation in
+      requestContinuation = continuation
+      startedContinuation?.resume()
+      startedContinuation = nil
+    }
+  }
+
+  func waitUntilStarted() async {
+    guard requestContinuation == nil else {
+      return
+    }
+
+    await withCheckedContinuation { continuation in
+      startedContinuation = continuation
+    }
+  }
+
+  func resume(returning synchronization: AppleSubscriptionSynchronization) {
+    requestContinuation?.resume(returning: synchronization)
     requestContinuation = nil
   }
 }

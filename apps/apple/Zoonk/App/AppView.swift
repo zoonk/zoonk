@@ -45,8 +45,10 @@ struct AppView: View {
     .task {
       await subscriptions.observeTransactionUpdates(
         synchronizationScope: { session.account?.user.id },
-        synchronize: { signedTransaction in
-          await session.synchronizeAppleSubscription(signedTransaction: signedTransaction)
+        synchronize: { signedTransaction, expectedAccountID in
+          await session.synchronizeAppleSubscription(
+            signedTransaction: signedTransaction,
+            expectedAccountID: expectedAccountID)
         })
     }
     .task(id: session.account?.user.id) {
@@ -56,8 +58,10 @@ struct AppView: View {
 
       await subscriptions.reconcileCurrentEntitlements(
         synchronizationScope: session.account?.user.id
-      ) { signedTransaction in
-        await session.synchronizeAppleSubscription(signedTransaction: signedTransaction)
+      ) { signedTransaction, expectedAccountID in
+        await session.synchronizeAppleSubscription(
+          signedTransaction: signedTransaction,
+          expectedAccountID: expectedAccountID)
       }
     }
     .onChange(of: scenePhase) { _, scenePhase in

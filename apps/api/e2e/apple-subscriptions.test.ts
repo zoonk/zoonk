@@ -197,20 +197,15 @@ test.describe("Apple subscription API", () => {
     await apiContext.dispose();
   });
 
-  test("rejects invalid notifications and acknowledges verified test notifications", async ({
-    baseURL,
-  }) => {
+  test("acknowledges invalid and verified test notifications", async ({ baseURL }) => {
     const apiContext = await request.newContext({ baseURL: baseURL ?? "" });
 
     const invalidResponse = await apiContext.post("/v1/subscriptions/apple/notifications", {
       data: { signedPayload: "not-a-jws" },
     });
 
-    await expectApiError({
-      code: "APPLE_NOTIFICATION_INVALID",
-      response: invalidResponse,
-      status: 400,
-    });
+    expect(invalidResponse.status()).toBe(204);
+    expect(await invalidResponse.text()).toBe("");
 
     const signedPayload = makeUnsignedXcodePayload({
       data: { bundleId: "com.zoonk.dev", environment: "Xcode" },

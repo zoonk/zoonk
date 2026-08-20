@@ -25,8 +25,10 @@ struct SubscriptionView: View {
       _ = await subscriptions.handlePurchase(
         StoreKitSubscriptionClient.purchaseOutcome(from: result),
         synchronizationScope: session.account?.user.id
-      ) { signedTransaction in
-        await session.synchronizeAppleSubscription(signedTransaction: signedTransaction)
+      ) { signedTransaction, expectedAccountID in
+        await session.synchronizeAppleSubscription(
+          signedTransaction: signedTransaction,
+          expectedAccountID: expectedAccountID)
       }
     }
     .navigationTitle(
@@ -71,8 +73,10 @@ struct SubscriptionView: View {
       Task {
         await subscriptions.restorePurchases(
           synchronizationScope: session.account?.user.id
-        ) { signedTransaction in
-          await session.synchronizeAppleSubscription(signedTransaction: signedTransaction)
+        ) { signedTransaction, expectedAccountID in
+          await session.synchronizeAppleSubscription(
+            signedTransaction: signedTransaction,
+            expectedAccountID: expectedAccountID)
         }
       }
     } label: {

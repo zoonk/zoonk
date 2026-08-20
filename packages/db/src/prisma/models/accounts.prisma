@@ -160,7 +160,7 @@ model Subscription {
   seats                  Int?
   billingInterval        String?              @map("billing_interval")
   stripeScheduleId       String?              @map("stripe_schedule_id")
-  /// Stable provider chain ID. For Apple this is originalTransactionId, which enforces one Zoonk owner per renewable subscription.
+  /// Stable provider chain ID. For Apple this is required by a database check and stores originalTransactionId, which enforces one Zoonk owner per renewable subscription.
   providerSubscriptionId String?              @map("provider_subscription_id")
   /// Latest provider transaction ID retained to correlate App Store support cases without storing the signed JWS.
   providerTransactionId  String?              @map("provider_transaction_id")
