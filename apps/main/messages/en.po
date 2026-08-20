@@ -1377,6 +1377,26 @@ msgctxt "X0ha1a"
 msgid "Save changes"
 msgstr "Save changes"
 
+#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
+msgctxt "1qALXt"
+msgid "{amount} billed yearly"
+msgstr "{amount} billed yearly"
+
+#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
+msgctxt "g_N8_Z"
+msgid "From <original>{originalAmount}</original> to <discounted>{discountedAmount}</discounted> per year"
+msgstr "From <original>{originalAmount}</original> to <discounted>{discountedAmount}</discounted> per year"
+
+#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
+msgctxt "Rw82_V"
+msgid "per month"
+msgstr "per month"
+
+#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
+msgctxt "Lxn0Fm"
+msgid "Price shown at checkout"
+msgstr "Price shown at checkout"
+
 #: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
 msgid "Manage in App Store"
@@ -1514,11 +1534,6 @@ msgid "a planner you'll definitely use"
 msgstr "a planner you'll definitely use"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "1qALXt"
-msgid "{amount} billed yearly"
-msgstr "{amount} billed yearly"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "h9kFux"
 msgid "Save {amount} every year"
 msgstr "Save {amount} every year"
@@ -1548,16 +1563,6 @@ msgstr "Monthly"
 msgctxt "dqD39h"
 msgid "Yearly"
 msgstr "Yearly"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "Rw82_V"
-msgid "per month"
-msgstr "per month"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "Lxn0Fm"
-msgid "Price shown at checkout"
-msgstr "Price shown at checkout"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "DWdUaF"

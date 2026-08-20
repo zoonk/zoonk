@@ -79,11 +79,12 @@ const ZERO_DECIMAL_CURRENCIES = new Set([
 export function formatPrice(amount: number, currency: string, locale = "en-US"): string {
   const normalizedCurrency = currency.toLowerCase();
   const value = ZERO_DECIMAL_CURRENCIES.has(normalizedCurrency) ? amount : amount / 100;
+  const fractionDigits = Number.isInteger(value) ? 0 : 2;
 
   return new Intl.NumberFormat(locale, {
     currency: currency.toUpperCase(),
-    maximumFractionDigits: Number.isInteger(value) ? 0 : 2,
-    minimumFractionDigits: 0,
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: fractionDigits,
     style: "currency",
   }).format(value);
 }

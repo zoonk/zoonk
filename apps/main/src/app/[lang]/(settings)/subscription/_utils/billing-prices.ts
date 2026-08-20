@@ -28,7 +28,7 @@ export function getMonthlyEquivalent({
  * that its monthly and yearly prices use the same currency and the annual total
  * is genuinely lower. Missing or incomparable prices produce no claim.
  */
-export function getYearlySavings({ monthlyPrice, yearlyPrice }: PlanPrices): PriceInfo | null {
+export function getYearlyPriceComparison({ monthlyPrice, yearlyPrice }: PlanPrices) {
   if (!monthlyPrice || !yearlyPrice) {
     return null;
   }
@@ -37,11 +37,16 @@ export function getYearlySavings({ monthlyPrice, yearlyPrice }: PlanPrices): Pri
     return null;
   }
 
-  const savedAmount = monthlyPrice.amount * MONTHS_PER_YEAR - yearlyPrice.amount;
+  const originalAmount = monthlyPrice.amount * MONTHS_PER_YEAR;
+  const savedAmount = originalAmount - yearlyPrice.amount;
 
   if (savedAmount <= 0) {
     return null;
   }
 
-  return { amount: savedAmount, currency: yearlyPrice.currency };
+  return {
+    discountedPrice: yearlyPrice,
+    originalPrice: { amount: originalAmount, currency: monthlyPrice.currency },
+    savings: { amount: savedAmount, currency: yearlyPrice.currency },
+  };
 }

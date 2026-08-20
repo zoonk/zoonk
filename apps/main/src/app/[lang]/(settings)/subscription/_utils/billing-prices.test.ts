@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getMonthlyEquivalent, getYearlySavings } from "./billing-prices";
+import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
 
 describe(getMonthlyEquivalent, () => {
   it("returns the yearly price divided across twelve months", () => {
@@ -23,37 +23,41 @@ describe(getMonthlyEquivalent, () => {
   });
 });
 
-describe(getYearlySavings, () => {
-  it("returns the proven yearly savings for Plus", () => {
-    const savings = getYearlySavings({
+describe(getYearlyPriceComparison, () => {
+  it("returns the monthly total, yearly price, and proven savings", () => {
+    const comparison = getYearlyPriceComparison({
       monthlyPrice: { amount: 2000, currency: "usd" },
       yearlyPrice: { amount: 18_000, currency: "usd" },
     });
 
-    expect(savings).toStrictEqual({ amount: 6000, currency: "usd" });
+    expect(comparison).toStrictEqual({
+      discountedPrice: { amount: 18_000, currency: "usd" },
+      originalPrice: { amount: 24_000, currency: "usd" },
+      savings: { amount: 6000, currency: "usd" },
+    });
   });
 
   it("returns null when either price is missing", () => {
-    const savings = getYearlySavings({ monthlyPrice: null, yearlyPrice: null });
+    const comparison = getYearlyPriceComparison({ monthlyPrice: null, yearlyPrice: null });
 
-    expect(savings).toBeNull();
+    expect(comparison).toBeNull();
   });
 
   it("does not compare prices in different currencies", () => {
-    const savings = getYearlySavings({
+    const comparison = getYearlyPriceComparison({
       monthlyPrice: { amount: 1000, currency: "usd" },
       yearlyPrice: { amount: 8000, currency: "brl" },
     });
 
-    expect(savings).toBeNull();
+    expect(comparison).toBeNull();
   });
 
   it("does not claim savings when yearly billing is not cheaper", () => {
-    const savings = getYearlySavings({
+    const comparison = getYearlyPriceComparison({
       monthlyPrice: { amount: 1000, currency: "usd" },
       yearlyPrice: { amount: 12_000, currency: "usd" },
     });
 
-    expect(savings).toBeNull();
+    expect(comparison).toBeNull();
   });
 });
