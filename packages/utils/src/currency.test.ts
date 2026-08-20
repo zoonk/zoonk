@@ -35,6 +35,7 @@ describe(formatPrice, () => {
   it("formats USD prices correctly", () => {
     expect(formatPrice(999, "usd")).toBe("$9.99");
     expect(formatPrice(1000, "usd")).toBe("$10");
+    expect(formatPrice(1050, "usd")).toBe("$10.50");
     expect(formatPrice(2499, "usd")).toBe("$24.99");
   });
 
@@ -49,7 +50,7 @@ describe(formatPrice, () => {
 
   it("formats BRL", () => {
     const result = formatPrice(4990, "brl", "pt-BR");
-    expect(result).toContain("49,9");
+    expect(result).toContain("49,90");
   });
 
   it("omits decimals for whole amounts", () => {
