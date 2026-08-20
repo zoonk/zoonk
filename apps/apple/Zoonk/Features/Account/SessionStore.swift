@@ -236,16 +236,18 @@ final class SessionStore {
     }
 
     markInteractiveOperationStarted()
+    let synchronizationRevision = interactiveOperationRevision
 
     do {
       let synchronization = try await api.synchronizeAppleSubscription(
         token: token,
         signedTransaction: signedTransaction)
 
-      if self.token == token {
+      if self.token == token, interactiveOperationRevision == synchronizationRevision {
         // A same-session refresh may have started while the server recorded this purchase. Its
         // older account snapshot must not replace the subscription state returned here.
         markInteractiveOperationStarted()
+        failure = nil
         state = .signedIn(synchronization.account)
       }
 

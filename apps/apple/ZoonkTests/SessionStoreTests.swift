@@ -157,6 +157,28 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testSuccessfulAppleSubscriptionSynchronizationClearsAnEarlierFailure() async {
+    let subscribedAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(account: subscribedAccount, isActive: true)),
+      currentAccountResult: .success(makeAccount()))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    session.reportSignInFailure()
+
+    let result = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
+
+    XCTAssertEqual(result, .synchronizedActive)
+    XCTAssertNil(session.failure)
+  }
+
+  @MainActor
   func testInactiveAppleSubscriptionSynchronizationIsDurablyRecordedWithoutGrantingAccess() async {
     let freeAccount = makeAccount()
     let api = SessionStoreAPIStub(
@@ -368,6 +390,45 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testProfileUpdateWinsAgainstAnEarlierAppleSubscriptionSynchronization() async {
+    let freeAccount = makeAccount()
+    let subscribedAccount = makeAccount(
+      subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
+    let updatedAccount = makeAccount(name: "Updated learner")
+    let appleSynchronization = AppleSubscriptionRequestGate()
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(freeAccount),
+      updateProfileResult: .success(updatedAccount))
+    api.appleSubscriptionHandler = { _, _ in
+      await appleSynchronization.load()
+    }
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let synchronizationTask = Task {
+      await session.synchronizeAppleSubscription(
+        signedTransaction: "signed-transaction",
+        expectedAccountID: "session-store-test-user")
+    }
+    await appleSynchronization.waitUntilStarted()
+
+    let didUpdateProfile = await session.updateProfile(
+      name: "Updated learner",
+      username: "learner")
+    appleSynchronization.resume(
+      returning: AppleSubscriptionSynchronization(
+        account: subscribedAccount,
+        isActive: true))
+    let result = await synchronizationTask.value
+
+    XCTAssertTrue(didUpdateProfile)
+    XCTAssertEqual(result, .synchronizedActive)
+    XCTAssertEqual(session.state, .signedIn(updatedAccount))
+  }
+
+  @MainActor
   func testNewKeychainAccountWinsAgainstAppleSynchronizationForThePreviousAccount() async {
     let accountA = makeAccount(userID: "account-a")
     let accountASubscription = makeAccount(
@@ -417,6 +478,7 @@ final class SessionStoreTests: XCTestCase {
 
   @MainActor
   private func makeAccount(
+    name: String = "Learner",
     subscription: AccountSubscription? = nil,
     userID: String = "session-store-test-user"
   ) -> CurrentAccount {
@@ -429,7 +491,7 @@ final class SessionStoreTests: XCTestCase {
         email: "learner@zoonk.test",
         id: userID,
         image: nil,
-        name: "Learner",
+        name: name,
         username: "learner"))
   }
 }
@@ -445,18 +507,21 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
+  var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
 
   init(
     appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
       .invalidResponse),
     currentAccountResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse),
     emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse),
-    signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
+    signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse),
+    updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
   ) {
     self.appleSubscriptionResult = appleSubscriptionResult
     self.currentAccountResult = currentAccountResult
     self.emailSignInResult = emailSignInResult
     self.signOutResult = signOutResult
+    self.updateProfileResult = updateProfileResult
   }
 
   func synchronizeAppleSubscription(
@@ -490,6 +555,10 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
 
   func signOut(token: String) async throws {
     try signOutResult.get()
+  }
+
+  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
+    try updateProfileResult.get()
   }
 }
 
