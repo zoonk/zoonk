@@ -62,6 +62,25 @@ describe(getActiveSubscription, () => {
     await expect(hasActiveSubscription()).resolves.toBe(true);
   });
 
+  it("does not grant access after an Apple entitlement period expires", async () => {
+    const user = await authenticateFixtureUser();
+
+    await prisma.subscription.create({
+      data: {
+        periodEnd: new Date(Date.now() - 60_000),
+        plan: "plus",
+        provider: "apple",
+        providerSubscriptionId: `expired-apple-${user.id}`,
+        referenceId: user.id,
+        status: "active",
+        userId: user.id,
+      },
+    });
+
+    await expect(getActiveSubscription()).resolves.toBeNull();
+    await expect(hasActiveSubscription()).resolves.toBe(false);
+  });
+
   it("never returns another learner's subscription", async () => {
     const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
     vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });

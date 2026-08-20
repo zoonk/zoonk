@@ -1,4 +1,6 @@
 import { prisma } from "@zoonk/db";
+import { cacheTag } from "next/cache";
+import { getUserSubscriptionCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 
 /**
@@ -7,9 +9,18 @@ import { getSession } from "../users/get-session";
  * check.
  */
 function findActiveSubscription(userId: string) {
+  const now = new Date();
+
   return prisma.subscription.findFirst({
     orderBy: { id: "desc" },
-    where: { referenceId: userId, status: { in: ["active", "trialing"] } },
+    where: {
+      OR: [
+        { provider: { not: "apple" } },
+        { endedAt: null, periodEnd: { gt: now }, provider: "apple" },
+      ],
+      referenceId: userId,
+      status: { in: ["active", "trialing"] },
+    },
   });
 }
 
@@ -28,6 +39,7 @@ export async function getActiveSubscription() {
     return null;
   }
 
+  cacheTag(getUserSubscriptionCacheTag(session.user.id));
   return findActiveSubscription(session.user.id);
 }
 

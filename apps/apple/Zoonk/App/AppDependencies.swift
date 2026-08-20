@@ -1,6 +1,7 @@
 @MainActor
 struct AppDependencies {
   let sessionStore: SessionStore
+  let subscriptionStore: AppStoreSubscriptionStore
 
   static func live(configuration: AppConfiguration = .current) -> AppDependencies {
     let clients = APIClientFactory.live(baseURL: configuration.apiBaseURL)
@@ -10,6 +11,7 @@ struct AppDependencies {
       sessionStore: SessionStore(
         api: accountAPI,
         credentialStore: SessionCredentialStore(),
-        googleAuthentication: GoogleAuthenticationClient()))
+        googleAuthentication: GoogleAuthenticationClient()),
+      subscriptionStore: .live())
   }
 }

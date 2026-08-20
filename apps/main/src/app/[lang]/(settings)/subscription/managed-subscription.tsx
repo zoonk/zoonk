@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type SubscriptionProvider, isStoreSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted } from "next-intl/server";
 
-const APPLE_SUBSCRIPTION_MANAGEMENT_URL = "https://support.apple.com/billing";
+const APPLE_SUBSCRIPTION_MANAGEMENT_URL = "https://apps.apple.com/account/subscriptions";
 const GOOGLE_SUBSCRIPTION_MANAGEMENT_URL = "https://play.google.com/store/account/subscriptions";
 
 type ManagedSubscriptionProps = {

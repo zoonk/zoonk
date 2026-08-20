@@ -64,3 +64,8 @@ export function getUserProgressCacheTag(userId: string): string {
 export function getUserSessionCacheTag(userId: string): string {
   return `user-session:${userId}`;
 }
+
+/** Identifies private billing reads whose entitlement changes after provider reconciliation. */
+export function getUserSubscriptionCacheTag(userId: string): string {
+  return `user-subscription:${userId}`;
+}

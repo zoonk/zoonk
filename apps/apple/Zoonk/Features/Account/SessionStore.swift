@@ -217,6 +217,57 @@ final class SessionStore {
     }
   }
 
+  /// Keeps App Store access available on every Zoonk client by recording Apple's signed transaction on the authenticated server account before StoreKit finishes it.
+  func synchronizeAppleSubscription(
+    signedTransaction: String,
+    expectedAccountID: String?
+  ) async -> AccountSubscriptionSynchronizationResult {
+    guard let expectedAccountID else {
+      return .authenticationRequired
+    }
+
+    guard let account, let token else {
+      state = .signedOut
+      return .authenticationRequired
+    }
+
+    guard account.user.id == expectedAccountID else {
+      return .accountMismatch
+    }
+
+    markInteractiveOperationStarted()
+    let synchronizationRevision = interactiveOperationRevision
+
+    do {
+      let synchronization = try await api.synchronizeAppleSubscription(
+        token: token,
+        signedTransaction: signedTransaction)
+
+      if self.token == token, interactiveOperationRevision == synchronizationRevision {
+        // A same-session refresh may have started while the server recorded this purchase. Its
+        // older account snapshot must not replace the subscription state returned here.
+        markInteractiveOperationStarted()
+        failure = nil
+        state = .signedIn(synchronization.account)
+      }
+
+      return synchronization.isActive ? .synchronizedActive : .synchronizedInactive
+    } catch AccountAPIError.accountMismatch {
+      return .accountMismatch
+    } catch AccountAPIError.invalidAppStorePurchase {
+      return .invalidPurchase
+    } catch AccountAPIError.unauthorized {
+      guard self.token == token else {
+        return .authenticationRequired
+      }
+
+      _ = clearLocalSession()
+      return .authenticationRequired
+    } catch {
+      return .failed
+    }
+  }
+
   /// Revokes the shared bearer session before clearing local state so a failed request can be retried and another running Apple device never keeps an unrevoked credential.
   func signOut() async {
     guard let token else {
@@ -435,12 +486,12 @@ final class SessionStore {
         return false
       }
 
-      guard validationRevision == interactiveOperationRevision else {
-        return true
-      }
-
       guard try credentialStore.read() == storedToken else {
         return await loadLatestCredential()
+      }
+
+      if validationRevision != interactiveOperationRevision, self.token == storedToken {
+        return true
       }
 
       applyStoredCredentialValidation(validation, token: storedToken)
@@ -494,7 +545,7 @@ final class SessionStore {
     }
   }
 
-  /// Invalidates any background credential result that started before the user's latest sign-in, profile, or sign-out action.
+  /// Invalidates any background credential result that started before the user's latest account mutation.
   private func markInteractiveOperationStarted() {
     interactiveOperationRevision = UUID()
   }
@@ -510,6 +561,8 @@ final class SessionStore {
       return .signIn
     case .invalidCode:
       return .invalidCode
+    case .invalidAppStorePurchase:
+      return .signIn
     case .invalidEmail:
       return .invalidEmail
     case .network:
@@ -540,6 +593,8 @@ final class SessionStore {
       return .accountDeletion
     case .invalidCode:
       return .invalidCode
+    case .invalidAppStorePurchase:
+      return .accountDeletion
     case .invalidEmail:
       return .invalidEmail
     case .network:

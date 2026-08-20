@@ -1,0 +1,102 @@
+{
+  "identifier" : "9EB158F7-274F-4DAF-90C5-CBF25B6A13A1",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "C0DFAEF4-6AA4-4C9E-93AE-A5D81DB7A632",
+      "localizations" : [
+        {
+          "description" : "Unlimited courses and lessons for whatever you want to learn.",
+          "displayName" : "Zoonk Plus",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "Zoonk Plus",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.90",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "3DB4914F-8A45-46C5-96E0-12C4415A929F",
+          "introductoryOffers" : [
+
+          ],
+          "localizations" : [
+            {
+              "description" : "Zoonk Plus, billed monthly.",
+              "displayName" : "Plus Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.zoonk.plus.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Plus Monthly",
+          "subscriptionGroupID" : "C0DFAEF4-6AA4-4C9E-93AE-A5D81DB7A632",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99.00",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1684BD63-4BD2-4D15-A929-508764EFFC9E",
+          "introductoryOffers" : [
+
+          ],
+          "localizations" : [
+            {
+              "description" : "Zoonk Plus, billed yearly.",
+              "displayName" : "Plus Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.zoonk.plus.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Plus Yearly",
+          "subscriptionGroupID" : "C0DFAEF4-6AA4-4C9E-93AE-A5D81DB7A632",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 6,
+    "minor" : 3
+  }
+}

@@ -11,6 +11,7 @@
 		5A0A00020000000000000001 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00210000000000000001 /* OpenAPIRuntime */; };
 		5A0A00030000000000000001 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00220000000000000001 /* OpenAPIURLSession */; };
 		5A0A00040000000000000001 /* HTTPTypes in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00230000000000000001 /* HTTPTypes */; };
+		5A0A00510000000000000001 /* Subscriptions.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 5A0A00500000000000000001 /* Subscriptions.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +34,7 @@
 /* Begin PBXFileReference section */
 		5A0A00400000000000000001 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
 		5A0A00410000000000000001 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
+		5A0A00500000000000000001 /* Subscriptions.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Zoonk/Resources/StoreKit/Subscriptions.storekit; sourceTree = "<group>"; };
 		5A0A01000000000000000001 /* ZoonkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB5E3022709A00E0E150 /* Zoonk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zoonk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -43,6 +45,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Resources/StoreKit/Subscriptions.storekit,
 			);
 			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
 		};
@@ -103,6 +106,7 @@
 			children = (
 				5A0A00400000000000000001 /* Debug.xcconfig */,
 				5A0A00410000000000000001 /* Release.xcconfig */,
+				5A0A00520000000000000001 /* UI Test Resources */,
 				BEB8AB603022709A00E0E150 /* Zoonk */,
 				5A0A01010000000000000001 /* ZoonkTests */,
 				BEB8AB7A3022709B00E0E150 /* ZoonkUITests */,
@@ -118,6 +122,14 @@
 				BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5A0A00520000000000000001 /* UI Test Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5A0A00500000000000000001 /* Subscriptions.storekit */,
+			);
+			name = "UI Test Resources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -270,6 +282,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A0A00510000000000000001 /* Subscriptions.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

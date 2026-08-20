@@ -141,8 +141,8 @@ function isSubscription(subscription: Subscription | undefined): subscription is
 }
 
 /**
- * Better Auth stores the user id as `referenceId` instead of a Prisma relation,
- * so the bounded page references need one batched account lookup before rendering.
+ * The page query excludes organization-owned references, so its bounded user
+ * references need one batched lookup before rendering.
  */
 async function findSubscriptionUsers<T extends { referenceId: string }>({
   subscriptions,
