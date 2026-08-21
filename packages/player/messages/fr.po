@@ -426,7 +426,7 @@ msgstr "La progression ne sera pas sauvegardée"
 #: src/components/unauthenticated-progress-prompt.tsx
 msgctxt "JDumQX"
 msgid "You can try this lesson without an account, but your score, course progress, levels, and Energy won't be saved."
-msgstr "Tu peux essayer cette leçon sans compte, mais ton score, ta progression dans le cours, tes niveaux et ton Énergie ne seront pas sauvegardés."
+msgstr "Tu peux essayer cette leçon sans compte, mais ton score, ta progression dans le cours, tes niveaux et ton Énergie ne seront pas enregistrés."
 
 #: src/components/verdict-label.tsx
 msgctxt "xmF49T"

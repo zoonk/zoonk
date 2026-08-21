@@ -5,8 +5,9 @@ extension AppSection {
     self == .search ? .search : nil
   }
 
+  @MainActor
   @ViewBuilder
-  var tabContent: some View {
+  func tabContent(onPresentAccount: @escaping () -> Void) -> some View {
     switch self {
     case .home:
       HomeView()
@@ -15,7 +16,7 @@ extension AppSection {
     case .courses:
       CoursesView()
     case .progress:
-      ProgressOverviewView()
+      ProgressOverviewView(onSignIn: onPresentAccount)
     case .search:
       SearchView()
     }

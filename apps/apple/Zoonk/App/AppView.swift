@@ -5,6 +5,7 @@ struct AppView: View {
   @Environment(SessionStore.self) private var session
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
   @State private var isAccountPresented: Bool
+  @State private var navigationPaths: [AppSection: NavigationPath] = [:]
   @State private var selectedSection = AppSection.home
 
   init(initiallyPresentsAccount: Bool = false) {
@@ -15,14 +16,16 @@ struct AppView: View {
     TabView(selection: $selectedSection) {
       ForEach(AppSection.allCases) { section in
         Tab(value: section, role: section.tabRole) {
-          NavigationStack {
-            section.tabContent
-              .navigationTitle(Text(section.title))
-              .toolbarTitleDisplayMode(.inlineLarge)
-              .modifier(AdaptiveNavigationTitle())
-              .toolbar {
-                accountToolbarItem
-              }
+          NavigationStack(path: navigationPath(for: section)) {
+            section.tabContent {
+              isAccountPresented = true
+            }
+            .navigationTitle(Text(section.title))
+            .toolbarTitleDisplayMode(.inlineLarge)
+            .modifier(AdaptiveNavigationTitle())
+            .toolbar {
+              accountToolbarItem
+            }
           }
         } label: {
           Label {
@@ -67,6 +70,13 @@ struct AppView: View {
     .onChange(of: scenePhase) { _, scenePhase in
       reconcileSessionWhenActive(scenePhase)
     }
+    .onChange(of: session.authenticatedSession) { previousSession, currentSession in
+      guard previousSession != nil, currentSession == nil else {
+        return
+      }
+
+      navigationPaths[.progress] = NavigationPath()
+    }
   }
 
   @ToolbarContentBuilder
@@ -87,6 +97,12 @@ struct AppView: View {
     AccountToolbarButton {
       isAccountPresented = true
     }
+  }
+
+  private func navigationPath(for section: AppSection) -> Binding<NavigationPath> {
+    Binding(
+      get: { navigationPaths[section] ?? NavigationPath() },
+      set: { navigationPaths[section] = $0 })
   }
 
   /// Rechecks iCloud Keychain whenever the app returns to the foreground so a login or logout from another Apple device updates this UI without a process restart.
@@ -110,7 +126,11 @@ private struct AdaptiveNavigationTitle: ViewModifier {
 }
 
 #Preview {
+  let session = SessionStore.preview()
+  let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+
   AppView()
-    .environment(SessionStore.preview())
+    .environment(ProgressStore(api: ProgressAPI(clients: clients), session: session))
+    .environment(session)
     .environment(AppStoreSubscriptionStore.live())
 }

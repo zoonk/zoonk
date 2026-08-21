@@ -1264,7 +1264,7 @@ msgstr "Veja com que precisão você responde às perguntas"
 #: src/app/[lang]/(progress)/score/score-chart-client.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
-msgstr "Tendência semanal da pontuação"
+msgstr "Evolução semanal da Pontuação"
 
 #: src/app/[lang]/(progress)/score/score-chart-client.tsx
 msgctxt "22eTjk"
@@ -1290,12 +1290,12 @@ msgstr "O que é Pontuação?"
 #: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "TiNLLD"
 msgid "Score is the percentage of questions you answered correctly over the past 90 days. Every answer counts equally, so harder lessons can lower your Score for a while. That’s part of learning."
-msgstr "A pontuação é a porcentagem de perguntas que você respondeu corretamente nos últimos 90 dias. Todas as respostas têm o mesmo peso, então aulas mais difíceis podem diminuir sua pontuação por um tempo. Isso faz parte do estudo."
+msgstr "A Pontuação é a porcentagem de perguntas que você respondeu corretamente nos últimos 90 dias. Cada resposta tem o mesmo peso, então aulas mais difíceis podem diminuir sua Pontuação por um tempo. Isso faz parte de aprender."
 
 #: src/app/[lang]/(progress)/score/score-stats.tsx
 msgctxt "b-bOob"
 msgid "Score summary"
-msgstr "Resumo da pontuação"
+msgstr "Resumo da Pontuação"
 
 #: src/app/[lang]/(progress)/score/score-stats.tsx
 msgctxt "WCq9Lo"

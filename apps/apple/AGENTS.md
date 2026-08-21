@@ -11,6 +11,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Prefer system colors, semantic colors, system materials, system typography, native controls, and SF Symbols. Add custom colors, symbols, or controls only when a system component cannot express the product need.
 - Preserve Dynamic Type, VoiceOver semantics, sufficient contrast, system spacing, safe areas, keyboard behavior, focus behavior, and reduced-motion settings by relying on native components and avoiding fixed-size assumptions.
 - Keep grouped controls visually consistent in height, alignment, typography, shape, and prominence while still allowing localized labels and Dynamic Type to expand when needed.
+- For dense visualizations, separate visible mark size from the interaction surface. Make data explorable with simple touch, pointer, keyboard, and VoiceOver interactions instead of turning tiny marks into tiny controls.
 
 ## Platform Architecture
 
@@ -20,6 +21,8 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Keep UI-test fixtures in `ZoonkUITests` and limit app-side launch decoding to the Debug-only `Zoonk/Testing` boundary. Inject ordinary initial state through the app composition root; never parse test arguments or embed fixture data in product views, stores, or clients.
 - Extract stable, independently owned domains or sufficiently large features into local Swift packages when real module boundaries emerge.
 - Use Swift concurrency and value types by default. Keep observable state at the narrowest owning feature boundary and avoid introducing view models that only relay data without adding domain behavior.
+- Scope every asynchronous result and credential mutation to the full session identity that started it. Before publishing or deleting state, confirm that identity is still current and test meaningful request-order races.
+- Treat initial loading and refresh as different experiences. Deduplicate only in-flight work, preserve valid content during revalidation, and make authentication loss lead to a recoverable screen rather than stranded loading UI.
 
 ## Navigation and Presentation
 
@@ -36,6 +39,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Keep String Catalogs together in `Zoonk/Resources/Localization`, named by their owning feature or app surface, such as `Account.xcstrings` and `Navigation.xcstrings`. Keep catalog basenames unique and stable within the target; Eloqnt discovers every catalog in this directory automatically.
 - After building to extract changed strings, run `pnpm --filter apple i18n` from the repository root to translate them and `pnpm --filter apple i18n:lint` to validate the catalogs. Never edit generated translations in `.xcstrings` files manually.
 - Reuse the main app's established wording when it fits native Apple UI, but prefer concise platform-standard terminology when the web wording is not appropriate for a native control.
+- Treat dates, times, durations, and measurements as semantic values. Choose calendar and time-zone behavior intentionally, use native formatters, and test meaningful boundaries across locales.
 
 ## Verification
 

@@ -11,6 +11,7 @@
 - "Brain Power": "Poder Mental"
 - "BP": "PM"
 - "Energy": "Energía"
+- "score": "Puntuación"
 - "learning": "estudio" (eg "learning days" = "días de estudio")
 - "listening": "escucha"
 

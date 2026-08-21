@@ -1,6 +1,11 @@
 import Foundation
 import Observation
 
+struct AuthenticatedSession: Hashable, Sendable {
+  let accountID: String
+  let bearerToken: String
+}
+
 @MainActor
 @Observable
 final class SessionStore {
@@ -49,6 +54,42 @@ final class SessionStore {
     }
 
     return account
+  }
+
+  var authenticatedSession: AuthenticatedSession? {
+    guard let account, let token else {
+      return nil
+    }
+
+    return AuthenticatedSession(accountID: account.user.id, bearerToken: token)
+  }
+
+  /// Clears an expired bearer token only when both memory and the synchronized Keychain still contain that session, preventing a late response from deleting a newer credential from another device.
+  func expire(_ authenticatedSession: AuthenticatedSession) async {
+    guard self.authenticatedSession == authenticatedSession else {
+      return
+    }
+
+    do {
+      guard try credentialStore.read() == authenticatedSession.bearerToken else {
+        guard !isReconciling else {
+          return
+        }
+
+        isReconciling = true
+        defer { isReconciling = false }
+        _ = await loadLatestCredential()
+        return
+      }
+    } catch {
+      failure = .network
+      state = .unavailable
+      return
+    }
+
+    markInteractiveOperationStarted()
+    failure = nil
+    _ = clearLocalSession()
   }
 
   var isGoogleSignInAvailable: Bool {
@@ -194,24 +235,43 @@ final class SessionStore {
 
   /// Saves first-time setup and later profile edits through the same authenticated product API.
   func updateProfile(name: String, username: String) async -> Bool {
-    guard let token else {
+    guard let authenticatedSession else {
       state = .signedOut
       return false
     }
 
     markInteractiveOperationStarted()
+    let profileRevision = interactiveOperationRevision
     isWorking = true
     failure = nil
     defer { isWorking = false }
 
     do {
-      state = .signedIn(
-        try await api.updateProfile(token: token, name: name, username: username))
+      let updatedAccount = try await api.updateProfile(
+        token: authenticatedSession.bearerToken,
+        name: name,
+        username: username)
+
+      guard
+        self.authenticatedSession == authenticatedSession,
+        interactiveOperationRevision == profileRevision
+      else {
+        return false
+      }
+
+      state = .signedIn(updatedAccount)
       return true
     } catch AccountAPIError.unauthorized {
-      _ = clearLocalSession()
+      await expire(authenticatedSession)
       return false
     } catch {
+      guard
+        self.authenticatedSession == authenticatedSession,
+        interactiveOperationRevision == profileRevision
+      else {
+        return false
+      }
+
       failure = getFailure(error)
       return false
     }

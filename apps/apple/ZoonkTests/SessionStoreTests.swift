@@ -429,6 +429,54 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testExpiringAnOldSessionPreservesANewerSynchronizedCredential() async throws {
+    let accountA = makeAccount(userID: "account-a")
+    let accountB = makeAccount(userID: "account-b")
+    let credentialStore = SessionCredentialStoreSpy(token: "account-a-session")
+    let api = SessionStoreAPIStub(currentAccountResult: .success(accountA))
+    let session = makeSession(api: api, credentialStore: credentialStore)
+    await session.restore()
+    let expiredSession = try XCTUnwrap(session.authenticatedSession)
+
+    credentialStore.token = "account-b-session"
+    api.currentAccountResult = .success(accountB)
+    await session.expire(expiredSession)
+
+    XCTAssertEqual(credentialStore.token, "account-b-session")
+    XCTAssertEqual(credentialStore.deleteCallCount, 0)
+    XCTAssertEqual(session.authenticatedSession?.accountID, "account-b")
+    XCTAssertEqual(session.authenticatedSession?.bearerToken, "account-b-session")
+  }
+
+  @MainActor
+  func testExpiredSessionWinsAgainstALateProfileResponse() async throws {
+    let account = makeAccount()
+    let updatedAccount = makeAccount(name: "Updated learner")
+    let profileUpdate = CurrentAccountRequestGate()
+    let credentialStore = SessionCredentialStoreSpy(token: "stored-session")
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    api.updateProfileHandler = { _, _, _ in
+      await profileUpdate.load()
+    }
+    let session = makeSession(api: api, credentialStore: credentialStore)
+    await session.restore()
+    let expiredSession = try XCTUnwrap(session.authenticatedSession)
+
+    let updateTask = Task {
+      await session.updateProfile(name: "Updated learner", username: "learner")
+    }
+    await profileUpdate.waitUntilStarted()
+    await session.expire(expiredSession)
+    profileUpdate.resume(returning: updatedAccount)
+
+    let didUpdateProfile = await updateTask.value
+
+    XCTAssertFalse(didUpdateProfile)
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertNil(session.authenticatedSession)
+  }
+
+  @MainActor
   func testNewKeychainAccountWinsAgainstAppleSynchronizationForThePreviousAccount() async {
     let accountA = makeAccount(userID: "account-a")
     let accountASubscription = makeAccount(
@@ -507,6 +555,7 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
+  var updateProfileHandler: (@MainActor (String, String, String) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
 
   init(
@@ -558,7 +607,11 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   }
 
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
-    try updateProfileResult.get()
+    if let updateProfileHandler {
+      return try await updateProfileHandler(token, name, username)
+    }
+
+    return try updateProfileResult.get()
   }
 }
 

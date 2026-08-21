@@ -1290,7 +1290,7 @@ msgstr "¿Qué es la puntuación?"
 #: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "TiNLLD"
 msgid "Score is the percentage of questions you answered correctly over the past 90 days. Every answer counts equally, so harder lessons can lower your Score for a while. That’s part of learning."
-msgstr "La puntuación es el porcentaje de preguntas que respondiste correctamente en los últimos 90 días. Todas las respuestas cuentan por igual, así que las lecciones más difíciles pueden reducir tu puntuación durante un tiempo. Es parte del aprendizaje."
+msgstr "La puntuación es el porcentaje de preguntas que has respondido correctamente en los últimos 90 días. Todas las respuestas cuentan por igual, así que las lecciones más difíciles pueden bajar tu puntuación durante un tiempo. Eso es parte de aprender."
 
 #: src/app/[lang]/(progress)/score/score-stats.tsx
 msgctxt "b-bOob"

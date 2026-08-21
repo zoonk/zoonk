@@ -318,7 +318,7 @@ msgstr "Fortschritt"
 #: src/app/[lang]/(progress)/score/page.tsx
 msgctxt "oLkLww"
 msgid "Score"
-msgstr "Punktestand"
+msgstr "Score"
 
 #: src/app/[lang]/(catalog)/(home)/score.tsx
 msgctxt "_lCW0j"
@@ -1264,12 +1264,12 @@ msgstr "Sieh, wie viele Fragen du richtig beantwortest"
 #: src/app/[lang]/(progress)/score/score-chart-client.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
-msgstr "Wöchentlicher Punktetrend"
+msgstr "Wöchentliche Score-Entwicklung"
 
 #: src/app/[lang]/(progress)/score/score-chart-client.tsx
 msgctxt "22eTjk"
 msgid "Weekly score"
-msgstr "Wöchentliche Punktzahl"
+msgstr "Wöchentlicher Score"
 
 #: src/app/[lang]/(progress)/score/score-chart-client.tsx
 #: src/app/[lang]/(progress)/score/score-stats.tsx
@@ -1285,17 +1285,17 @@ msgstr "{label}: {score} bei {count, plural, one {# Antwort} other {# Antworten}
 #: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "bIZaXJ"
 msgid "What is Score?"
-msgstr "Was ist die Punktzahl?"
+msgstr "Was ist der Score?"
 
 #: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "TiNLLD"
 msgid "Score is the percentage of questions you answered correctly over the past 90 days. Every answer counts equally, so harder lessons can lower your Score for a while. That’s part of learning."
-msgstr "Deine Punktzahl zeigt, wie viel Prozent der Fragen du in den letzten 90 Tagen richtig beantwortet hast. Jede Antwort zählt gleich viel. Deshalb können schwierigere Lektionen deine Punktzahl eine Zeit lang senken. Das gehört zum Lernen dazu."
+msgstr "Der Score ist der Prozentsatz der Fragen, die du in den letzten 90 Tagen richtig beantwortet hast. Jede Antwort zählt gleich viel. Deshalb kann dein Score durch schwierigere Lektionen eine Zeit lang sinken. Das gehört zum Lernen dazu."
 
 #: src/app/[lang]/(progress)/score/score-stats.tsx
 msgctxt "b-bOob"
 msgid "Score summary"
-msgstr "Punktzahl im Überblick"
+msgstr "Score-Übersicht"
 
 #: src/app/[lang]/(progress)/score/score-stats.tsx
 msgctxt "WCq9Lo"
