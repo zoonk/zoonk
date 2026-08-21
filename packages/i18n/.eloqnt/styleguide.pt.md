@@ -30,6 +30,7 @@
 - "we": "a gente"
 - "quiz": "quiz"
 - "language": "idioma"
+- "score": "Pontuação"
 
 ## Special Cases
 

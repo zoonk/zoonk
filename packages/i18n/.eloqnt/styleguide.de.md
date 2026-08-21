@@ -12,6 +12,7 @@
 - "Brain Power": "Brain Power"
 - "BP": "BP"
 - "Energy": "Energie"
+- "score": "Score"
 - "listening": "Hören"
 - "level": "Level"
 

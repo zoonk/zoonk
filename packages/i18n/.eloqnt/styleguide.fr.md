@@ -13,6 +13,7 @@
 - "Brain Power": "Puissance Mentale"
 - "BP": "PM"
 - "Energy": "Énergie"
+- "score": "Score"
 - "listening": "écoute"
 
 ## Special Cases

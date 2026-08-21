@@ -426,7 +426,7 @@ msgstr "O progresso não será salvo"
 #: src/components/unauthenticated-progress-prompt.tsx
 msgctxt "JDumQX"
 msgid "You can try this lesson without an account, but your score, course progress, levels, and Energy won't be saved."
-msgstr "Você pode testar esta aula sem uma conta, mas sua pontuação, progresso no curso, níveis e Energia não serão salvos."
+msgstr "Você pode experimentar esta aula sem criar uma conta, mas sua Pontuação, progresso no curso, níveis e Energia não serão salvos."
 
 #: src/components/verdict-label.tsx
 msgctxt "xmF49T"

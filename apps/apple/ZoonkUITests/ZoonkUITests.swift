@@ -1,10 +1,16 @@
 import StoreKitTest
+import UIKit
 import XCTest
 
 private enum UITestScenario: Equatable {
   case appleSubscription
   case freeSubscription
   case googleSubscription
+  case progress
+  case progressActivityUnauthorized
+  case progressDaypartOnly
+  case progressEmpty
+  case progressOverviewFailure
   case requiredSetup
   case signedOut
 
@@ -18,6 +24,9 @@ private enum UITestScenario: Equatable {
       accountJSON(provider: nil)
     case .googleSubscription:
       accountJSON(provider: "google")
+    case .progress, .progressActivityUnauthorized, .progressDaypartOnly, .progressEmpty,
+      .progressOverviewFailure:
+      accountJSON(provider: nil)
     case .signedOut:
       nil
     }
@@ -26,6 +35,31 @@ private enum UITestScenario: Equatable {
   var launchArguments: [String] {
     ["-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing"]
       + (self == .requiredSetup ? ["--ui-testing-account-sheet"] : [])
+  }
+
+  var progressJSON: String? {
+    switch self {
+    case .progress, .progressActivityUnauthorized, .progressOverviewFailure:
+      progressUITestSnapshotJSON
+    case .progressDaypartOnly:
+      progressDaypartOnlyUITestSnapshotJSON
+    case .progressEmpty:
+      progressEmptyUITestSnapshotJSON
+    case .appleSubscription, .freeSubscription, .googleSubscription, .requiredSetup, .signedOut:
+      nil
+    }
+  }
+
+  var progressFailure: String? {
+    switch self {
+    case .progressActivityUnauthorized:
+      "activity-unauthorized"
+    case .progressOverviewFailure:
+      "overview-network"
+    case .appleSubscription, .freeSubscription, .googleSubscription, .progress,
+      .progressDaypartOnly, .progressEmpty, .requiredSetup, .signedOut:
+      nil
+    }
   }
 
   private var requiredSetupAccountJSON: String {
@@ -384,6 +418,149 @@ final class ZoonkUITests: XCTestCase {
     }
   }
 
+  @MainActor
+  func testProgressSignInActionPresentsTheAccountSheet() {
+    continueAfterFailure = false
+
+    let app = makeApp()
+    app.launch()
+    app.buttons["Progress"].firstMatch.tap()
+    app.buttons["Sign in"].tap()
+
+    XCTAssertTrue(
+      app.buttons["Continue with Apple"].waitForExistence(timeout: 5),
+      "Expected Progress sign-in to present the account sheet")
+  }
+
+  @MainActor
+  func testProgressOverviewPresentsAnAvailableDaypartWithoutAWeekday() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .progressDaypartOnly)
+    app.launch()
+    app.buttons["Progress"].firstMatch.tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Morning"].waitForExistence(timeout: 5),
+      "Expected the overview to preserve an available strongest time")
+    XCTAssertFalse(
+      app.staticTexts["Keep answering to discover your strongest learning patterns."].exists,
+      "Expected valid daypart data to avoid the missing-pattern state")
+  }
+
+  @MainActor
+  func testProgressOverviewPresentsEmptyAndFailureRecoveryStates() {
+    continueAfterFailure = false
+
+    let emptyApp = makeApp(for: .progressEmpty)
+    emptyApp.launch()
+    emptyApp.buttons["Progress"].firstMatch.tap()
+    XCTAssertTrue(
+      emptyApp.staticTexts["Your progress starts here"].waitForExistence(timeout: 5),
+      "Expected an empty learner to receive progress guidance")
+    emptyApp.terminate()
+
+    let failedApp = makeApp(for: .progressOverviewFailure)
+    failedApp.launch()
+    failedApp.buttons["Progress"].firstMatch.tap()
+    XCTAssertTrue(
+      failedApp.staticTexts["You're offline"].waitForExistence(timeout: 5),
+      "Expected a network failure to show a recoverable state")
+    XCTAssertTrue(failedApp.buttons["Try again"].exists, "Expected an explicit retry action")
+  }
+
+  @MainActor
+  func testProgressAuthenticationLossReturnsToSignInRecovery() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .progressActivityUnauthorized)
+    app.launch()
+    app.buttons["Progress"].firstMatch.tap()
+    XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
+    app.staticTexts["Activity"].firstMatch.tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Sign in to see your progress"].waitForExistence(timeout: 5),
+      "Expected authentication loss to leave the loading detail and return to recovery")
+  }
+
+  @MainActor
+  func testProgressDetailTitleAdaptsToTheDevice() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .progress)
+    app.launch()
+    app.buttons["Progress"].firstMatch.tap()
+    XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
+    app.staticTexts["Level"].firstMatch.tap()
+    XCTAssertTrue(app.staticTexts["Belt journey"].waitForExistence(timeout: 5))
+
+    let title = app.navigationBars.firstMatch.staticTexts["Level"]
+
+    if UIDevice.current.userInterfaceIdiom == .pad {
+      XCTAssertFalse(title.exists, "Expected iPad to omit the centered detail title")
+    } else {
+      XCTAssertTrue(title.exists, "Expected iPhone to keep the title aligned with its back action")
+    }
+  }
+
+  /// Proves that the native Progress summary exposes every metric and pushes details within the existing tab's navigation stack.
+  @MainActor
+  func testProgressOverviewNavigatesToEveryMetric() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .progress)
+    app.launch()
+
+    app.buttons["Progress"].firstMatch.tap()
+    XCTAssertTrue(
+      app.staticTexts["At a glance"].waitForExistence(timeout: 5),
+      "Expected the loaded Progress summary to appear")
+
+    let destinations = [
+      (title: "Activity", loadedContent: "Learning activity"),
+      (title: "Score", loadedContent: "Weekly trend"),
+      (title: "Patterns", loadedContent: "Weekly rhythm"),
+      (title: "Level", loadedContent: "Belt journey"),
+      (title: "Energy", loadedContent: "Energy history"),
+    ]
+
+    for destination in destinations {
+      let destinationTitle = app.staticTexts[destination.title].firstMatch
+      XCTAssertTrue(
+        destinationTitle.waitForExistence(timeout: 5),
+        "Expected the Progress summary to include \(destination.title)")
+      destinationTitle.tap()
+
+      XCTAssertTrue(
+        app.navigationBars.firstMatch.waitForExistence(timeout: 5),
+        "Expected \(destination.title) to open in the native navigation stack")
+      XCTAssertTrue(
+        app.staticTexts[destination.loadedContent].waitForExistence(timeout: 5),
+        "Expected \(destination.title) to finish loading its fixture content")
+      let backButton = app.navigationBars.firstMatch.buttons["Progress"]
+      XCTAssertTrue(
+        backButton.exists,
+        "Expected \(destination.title) to retain the native Progress back action")
+      backButton.tap()
+    }
+  }
+
+  /// Proves contribution days expose their exact date and value through the same tap interaction on both progress calendars.
+  @MainActor
+  func testProgressContributionCalendarsRevealSelectedDayDetails() {
+    continueAfterFailure = false
+
+    assertContributionDetails(
+      destination: "Activity",
+      date: "August 20, 2026",
+      details: "Lessons completed: 9")
+    assertContributionDetails(
+      destination: "Energy",
+      date: "August 20, 2026",
+      details: "Energy: 82%")
+  }
+
   /// Creates one isolated app process from scenario data owned by the UI-test target rather than the distributable app.
   @MainActor
   private func makeApp(for scenario: UITestScenario = .signedOut) -> XCUIApplication {
@@ -394,7 +571,39 @@ final class ZoonkUITests: XCTestCase {
       app.launchEnvironment["ZOONK_UI_TEST_ACCOUNT"] = accountJSON
     }
 
+    if let progressJSON = scenario.progressJSON {
+      app.launchEnvironment["ZOONK_UI_TEST_PROGRESS"] = progressJSON
+    }
+
+    if let progressFailure = scenario.progressFailure {
+      app.launchEnvironment["ZOONK_UI_TEST_PROGRESS_FAILURE"] = progressFailure
+    }
+
     return app
+  }
+
+  @MainActor
+  private func assertContributionDetails(destination: String, date: String, details: String) {
+    let app = makeApp(for: .progress)
+    app.launch()
+
+    app.buttons["Progress"].firstMatch.tap()
+    XCTAssertTrue(
+      app.staticTexts["At a glance"].waitForExistence(timeout: 5),
+      "Expected the loaded Progress summary to appear")
+    app.staticTexts[destination].firstMatch.tap()
+
+    let contributionDay = app.buttons[date]
+    XCTAssertTrue(
+      contributionDay.waitForExistence(timeout: 5),
+      "Expected the \(destination) calendar to expose \(date) as an interactive day")
+    contributionDay.tap()
+
+    XCTAssertTrue(
+      app.staticTexts[details].waitForExistence(timeout: 5),
+      "Expected the selected \(destination) day to reveal its exact value")
+
+    app.terminate()
   }
 
   @MainActor
