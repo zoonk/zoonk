@@ -32,8 +32,8 @@ const cachedListBrainPowerLeaders = cacheAdminData(
 
 /**
  * The leaderboard ranks users by Brain Power earned on or after the supplied
- * date. The start date stays explicit so the route owns what “past 7 days”
- * means and the cached database helper remains deterministic.
+ * date. The start date stays explicit so the route owns the selected period
+ * and the cached database helper remains deterministic.
  */
 export function listBrainPowerLeaders({
   limit,

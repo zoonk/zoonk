@@ -1,3 +1,4 @@
+import { ButtonSkeleton } from "@zoonk/ui/components/button";
 import {
   Container,
   ContainerBody,
@@ -9,6 +10,8 @@ import {
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { BrainPowerLeaderboard, BrainPowerLeaderboardSkeleton } from "./brain-power-leaderboard";
+import { parseLeaderboardPeriod } from "./leaderboard-period";
+import { LeaderboardPeriodFilter } from "./leaderboard-period-filter";
 
 export const metadata: Metadata = { title: "Brain Power Leaderboard" };
 
@@ -23,16 +26,39 @@ export default function LeaderboardPage({ searchParams }: PageProps<"/leaderboar
         <ContainerHeaderGroup>
           <ContainerTitle>Brain Power Leaderboard</ContainerTitle>
           <ContainerDescription>
-            Users who earned the most Brain Power in the past 7 days.
+            Users who earned the most Brain Power during the selected period.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
+        <Suspense fallback={<LeaderboardPeriodFilterSkeleton />}>
+          <LeaderboardFilters searchParams={searchParams} />
+        </Suspense>
+
         <Suspense fallback={<BrainPowerLeaderboardSkeleton />}>
           <BrainPowerLeaderboard searchParams={searchParams} />
         </Suspense>
       </ContainerBody>
     </Container>
+  );
+}
+
+async function LeaderboardFilters({
+  searchParams,
+}: Pick<PageProps<"/leaderboard">, "searchParams">) {
+  const params = await searchParams;
+  const period = parseLeaderboardPeriod(params.period);
+
+  return <LeaderboardPeriodFilter period={period} />;
+}
+
+function LeaderboardPeriodFilterSkeleton() {
+  return (
+    <div className="flex gap-1">
+      <ButtonSkeleton size="sm">Today</ButtonSkeleton>
+      <ButtonSkeleton size="sm">7 days</ButtonSkeleton>
+      <ButtonSkeleton size="sm">30 days</ButtonSkeleton>
+    </div>
   );
 }
