@@ -17,8 +17,13 @@ import {
   TableRow,
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
+import {
+  type LeaderboardPeriod,
+  getLeaderboardPeriodDays,
+  leaderboardPeriodDescriptions,
+  parseLeaderboardPeriod,
+} from "./leaderboard-period";
 
-const LEADERBOARD_DAYS = 7;
 const TABLE_COLUMN_COUNT = 4;
 
 /**
@@ -32,8 +37,9 @@ export async function BrainPowerLeaderboard({
 }) {
   const params = await searchParams;
   const { limit, offset, page } = parseSearchParams(params);
+  const period = parseLeaderboardPeriod(params.period);
 
-  return <CachedBrainPowerLeaderboard limit={limit} offset={offset} page={page} />;
+  return <CachedBrainPowerLeaderboard limit={limit} offset={offset} page={page} period={period} />;
 }
 
 /**
@@ -44,15 +50,17 @@ async function CachedBrainPowerLeaderboard({
   limit,
   offset,
   page,
+  period,
 }: {
   limit: number;
   offset: number;
   page: number;
+  period: LeaderboardPeriod;
 }) {
   "use cache: private";
 
   const { currentPeriodStart } = getRollingUtcDateWindowStarts({
-    days: LEADERBOARD_DAYS,
+    days: getLeaderboardPeriodDays(period),
     now: new Date(),
   });
 
@@ -63,17 +71,19 @@ async function CachedBrainPowerLeaderboard({
   });
 
   const totalPages = Math.ceil(total / limit);
+  const periodDescription = leaderboardPeriodDescriptions[period];
+  const userCountLabel = getLeaderboardUserCountLabel(total);
 
   return (
     <>
       <p className="text-muted-foreground text-sm">
-        {total.toLocaleString()} users earned Brain Power in the past 7 days.
+        {total.toLocaleString()} {userCountLabel} earned Brain Power {periodDescription}.
       </p>
 
       <div className="overflow-x-auto rounded-lg border">
         <Table>
           <TableCaption className="sr-only">
-            Brain Power leaderboard for the past 7 days
+            Brain Power leaderboard {periodDescription}
           </TableCaption>
           <BrainPowerLeaderboardHeader />
 
@@ -83,15 +93,25 @@ async function CachedBrainPowerLeaderboard({
                 <BrainPowerLeaderboardRow key={leader.user.id} leader={leader} />
               ))
             ) : (
-              <BrainPowerLeaderboardEmptyRow />
+              <BrainPowerLeaderboardEmptyRow periodDescription={periodDescription} />
             )}
           </TableBody>
         </Table>
       </div>
 
-      <AdminPagination basePath="/leaderboard" limit={limit} page={page} totalPages={totalPages} />
+      <AdminPagination
+        basePath="/leaderboard"
+        limit={limit}
+        page={page}
+        queryParams={{ period: period === "today" ? undefined : period }}
+        totalPages={totalPages}
+      />
     </>
   );
+}
+
+function getLeaderboardUserCountLabel(total: number): "user" | "users" {
+  return total === 1 ? "user" : "users";
 }
 
 /**
@@ -137,11 +157,11 @@ function BrainPowerLeaderboardHeader() {
  * An empty row keeps the table visible when no one earned Brain Power during
  * the rolling window, making the absence of activity explicit.
  */
-function BrainPowerLeaderboardEmptyRow() {
+function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescription: string }) {
   return (
     <TableRow>
       <TableCell className="text-muted-foreground" colSpan={TABLE_COLUMN_COUNT}>
-        No Brain Power earned in the past 7 days.
+        No Brain Power earned {periodDescription}.
       </TableCell>
     </TableRow>
   );
