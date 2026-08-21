@@ -98,7 +98,7 @@ private struct LevelProgressContent: View {
             .tint(level.belt.progressColor)
             .accessibilityLabel(
               Text(
-                "Progress to the next level",
+                level.isMaxLevel ? "Level progress" : "Progress to the next level",
                 tableName: "Progress",
                 comment: "Accessibility label for level progress")
             )

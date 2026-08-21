@@ -94,6 +94,71 @@ final class ProgressStoreTests: XCTestCase {
     XCTAssertEqual(store.overviewState, .idle)
   }
 
+  func testCancelledOverviewRefreshPreservesLoadedProgress() async {
+    let overview = ProgressOverview.testFixture
+    let store = makeStore(
+      overviewResults: [
+        .success(overview),
+        .failure(CancellationError()),
+      ])
+
+    await store.loadOverview()
+    await store.loadOverview(force: true)
+
+    XCTAssertEqual(store.overviewState, .loaded(overview))
+  }
+
+  func testCancelledForcedOverviewLoadDoesNotRemainLoading() async {
+    let firstRequestStarted = expectation(description: "First overview request started")
+    let secondRequestStarted = expectation(description: "Second overview request started")
+    let api = SuspendedOverviewAPIStub { requestCount in
+      if requestCount == 1 {
+        firstRequestStarted.fulfill()
+      } else if requestCount == 2 {
+        secondRequestStarted.fulfill()
+      }
+    }
+    let store = ProgressStore(
+      api: api,
+      session: .preview(account: .progressTestFixture))
+
+    let firstRequest = Task { await store.loadOverview() }
+    await fulfillment(of: [firstRequestStarted], timeout: 1)
+
+    let firstRequestCount = await api.requestCount
+
+    guard firstRequestCount == 1 else {
+      XCTFail("Expected 1 overview request, received \(firstRequestCount)")
+      firstRequest.cancel()
+      await api.cancelAllRequests()
+      await firstRequest.value
+      return
+    }
+
+    let secondRequest = Task { await store.loadOverview(force: true) }
+    await fulfillment(of: [secondRequestStarted], timeout: 1)
+
+    let secondRequestCount = await api.requestCount
+
+    guard secondRequestCount == 2 else {
+      XCTFail("Expected 2 overview requests, received \(secondRequestCount)")
+      firstRequest.cancel()
+      secondRequest.cancel()
+      await api.cancelAllRequests()
+      await firstRequest.value
+      await secondRequest.value
+      return
+    }
+
+    secondRequest.cancel()
+    await secondRequest.value
+
+    XCTAssertEqual(store.overviewState, .idle)
+
+    firstRequest.cancel()
+    await firstRequest.value
+  }
+
   func testMissingEnergyPublishesEmptyState() async {
     let store = ProgressStore(
       api: ProgressAPIStub(energyResult: .success(nil)),
@@ -121,7 +186,10 @@ final class ProgressStoreTests: XCTestCase {
     let firstRequest = Task { await store.loadOverview() }
     await fulfillment(of: [firstRequestStarted], timeout: 1)
 
-    guard await api.requestCount == 1 else {
+    let firstRequestCount = await api.requestCount
+
+    guard firstRequestCount == 1 else {
+      XCTFail("Expected 1 overview request, received \(firstRequestCount)")
       firstRequest.cancel()
       await api.cancelAllRequests()
       await firstRequest.value
@@ -131,7 +199,10 @@ final class ProgressStoreTests: XCTestCase {
     let secondRequest = Task { await store.loadOverview(force: true) }
     await fulfillment(of: [secondRequestStarted], timeout: 1)
 
-    guard await api.requestCount == 2 else {
+    let secondRequestCount = await api.requestCount
+
+    guard secondRequestCount == 2 else {
+      XCTFail("Expected 2 overview requests, received \(secondRequestCount)")
       firstRequest.cancel()
       secondRequest.cancel()
       await api.cancelAllRequests()
@@ -169,7 +240,10 @@ final class ProgressStoreTests: XCTestCase {
     let firstRequest = Task { await store.loadOverview() }
     await fulfillment(of: [firstRequestStarted], timeout: 1)
 
-    guard await api.requestCount == 1 else {
+    let firstRequestCount = await api.requestCount
+
+    guard firstRequestCount == 1 else {
+      XCTFail("Expected 1 overview request, received \(firstRequestCount)")
       firstRequest.cancel()
       await api.cancelAllRequests()
       await firstRequest.value
@@ -182,10 +256,10 @@ final class ProgressStoreTests: XCTestCase {
     let secondRequest = Task { await store.loadOverview() }
     await fulfillment(of: [secondRequestStarted], timeout: 1)
 
-    let requestCount = await api.requestCount
-    XCTAssertEqual(requestCount, 2)
+    let secondRequestCount = await api.requestCount
 
-    guard requestCount == 2 else {
+    guard secondRequestCount == 2 else {
+      XCTFail("Expected 2 overview requests, received \(secondRequestCount)")
       firstRequest.cancel()
       secondRequest.cancel()
       await api.cancelAllRequests()

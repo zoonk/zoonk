@@ -44,7 +44,7 @@ private struct EnergyProgressContent: View {
           tableName: "Progress",
           comment: "Label above the learner's current Energy value"),
         value: Text(
-          energy.currentEnergy / 100,
+          energy.displayedCurrentEnergy / 100,
           format: .percent.precision(.fractionLength(0))),
         description: energyDescription,
         systemImage: "bolt.fill",
@@ -59,7 +59,9 @@ private struct EnergyProgressContent: View {
             comment: "Accessibility label for the current Energy progress bar")
         )
         .accessibilityValue(
-          Text(energy.currentEnergy / 100, format: .percent.precision(.fractionLength(0))))
+          Text(
+            energy.displayedCurrentEnergy / 100,
+            format: .percent.precision(.fractionLength(0))))
 
       ProgressDetailSection(
         title: Text(
@@ -151,7 +153,7 @@ private struct EnergyProgressContent: View {
   }
 
   private var energyDescription: Text {
-    if energy.currentEnergy >= 100 {
+    if energy.displayedCurrentEnergy >= 100 {
       return Text(
         "You're fully energized.",
         tableName: "Progress",

@@ -62,7 +62,8 @@ final class ProgressStore {
     }
 
     let requestIdentity = beginRequest(for: .overview)
-    overviewState = loadingState(from: overviewState)
+    let previousState = overviewState
+    overviewState = loadingState(from: previousState)
     let state = await load(
       ProgressRequest(
         isEmpty: { $0.isEmpty },
@@ -72,7 +73,7 @@ final class ProgressStore {
       return
     }
 
-    overviewState = state
+    overviewState = state ?? stateAfterCancellation(from: previousState)
   }
 
   func loadActivity(force: Bool = false) async {
@@ -83,7 +84,8 @@ final class ProgressStore {
     }
 
     let requestIdentity = beginRequest(for: .activity)
-    activityState = loadingState(from: activityState)
+    let previousState = activityState
+    activityState = loadingState(from: previousState)
     let state = await load(
       ProgressRequest(
         isEmpty: { $0.isEmpty },
@@ -93,7 +95,7 @@ final class ProgressStore {
       return
     }
 
-    activityState = state
+    activityState = state ?? stateAfterCancellation(from: previousState)
   }
 
   func loadEnergy(force: Bool = false) async {
@@ -104,7 +106,8 @@ final class ProgressStore {
     }
 
     let requestIdentity = beginRequest(for: .energy)
-    energyState = loadingState(from: energyState)
+    let previousState = energyState
+    energyState = loadingState(from: previousState)
     let state = await load(
       ProgressRequest(
         isEmpty: { _ in false },
@@ -114,7 +117,7 @@ final class ProgressStore {
       return
     }
 
-    energyState = state
+    energyState = state ?? stateAfterCancellation(from: previousState)
   }
 
   func loadLevel(force: Bool = false) async {
@@ -125,7 +128,8 @@ final class ProgressStore {
     }
 
     let requestIdentity = beginRequest(for: .level)
-    levelState = loadingState(from: levelState)
+    let previousState = levelState
+    levelState = loadingState(from: previousState)
     let state = await load(
       ProgressRequest(
         isEmpty: { _ in false },
@@ -135,7 +139,7 @@ final class ProgressStore {
       return
     }
 
-    levelState = state
+    levelState = state ?? stateAfterCancellation(from: previousState)
   }
 
   func loadScore(force: Bool = false) async {
@@ -146,7 +150,8 @@ final class ProgressStore {
     }
 
     let requestIdentity = beginRequest(for: .score)
-    scoreState = loadingState(from: scoreState)
+    let previousState = scoreState
+    scoreState = loadingState(from: previousState)
     let state = await load(
       ProgressRequest(
         isEmpty: { _ in false },
@@ -156,7 +161,7 @@ final class ProgressStore {
       return
     }
 
-    scoreState = state
+    scoreState = state ?? stateAfterCancellation(from: previousState)
   }
 
   func loadPatterns(force: Bool = false) async {
@@ -167,7 +172,8 @@ final class ProgressStore {
     }
 
     let requestIdentity = beginRequest(for: .patterns)
-    patternsState = loadingState(from: patternsState)
+    let previousState = patternsState
+    patternsState = loadingState(from: previousState)
     let state = await load(
       ProgressRequest(
         isEmpty: { _ in false },
@@ -177,7 +183,7 @@ final class ProgressStore {
       return
     }
 
-    patternsState = state
+    patternsState = state ?? stateAfterCancellation(from: previousState)
   }
 
   private func beginRequest(for resource: ProgressResource) -> ProgressRequestIdentity {
@@ -190,7 +196,7 @@ final class ProgressStore {
     requestRevisions[requestIdentity.resource] == requestIdentity.revision
   }
 
-  private func load<Value>(_ request: ProgressRequest<Value>) async -> ProgressLoadState<Value> {
+  private func load<Value>(_ request: ProgressRequest<Value>) async -> ProgressLoadState<Value>? {
     guard let authenticatedSession = session.authenticatedSession else {
       return .idle
     }
@@ -209,7 +215,7 @@ final class ProgressStore {
 
       return .loaded(value)
     } catch is CancellationError {
-      return .idle
+      return session.authenticatedSession == authenticatedSession ? nil : .idle
     } catch ProgressAPIError.unauthorized {
       await session.expire(authenticatedSession)
       synchronizeSession()
@@ -253,6 +259,17 @@ final class ProgressStore {
       state
     case .idle, .loading, .failed:
       .loading
+    }
+  }
+
+  private func stateAfterCancellation<Value>(
+    from state: ProgressLoadState<Value>
+  ) -> ProgressLoadState<Value> {
+    switch state {
+    case .empty, .failed, .loaded:
+      state
+    case .idle, .loading:
+      .idle
     }
   }
 }

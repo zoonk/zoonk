@@ -36,4 +36,26 @@ final class ProgressPresentationTests: XCTestCase {
     XCTAssertEqual(level.progressValue, 100_000)
     XCTAssertEqual(level.progressTotal, 100_000)
   }
+
+  func testDisplayedEnergyUsesTheSameWholePercentageAsTheHero() {
+    let belowFullEnergy = EnergyProgress(currentEnergy: 99.49, days: [], insights: nil)
+    let displayedAsFullEnergy = EnergyProgress(currentEnergy: 99.5, days: [], insights: nil)
+
+    XCTAssertEqual(belowFullEnergy.displayedCurrentEnergy, 99)
+    XCTAssertEqual(displayedAsFullEnergy.displayedCurrentEnergy, 100)
+  }
+
+  func testWeekdayOrderUsesTheCalendarsFirstWeekday() {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.firstWeekday = 2
+
+    let weekdays = ProgressWeekday.allCases.sorted {
+      $0.order(in: calendar) < $1.order(in: calendar)
+    }
+    let expectedWeekdays: [ProgressWeekday] = [
+      .monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday,
+    ]
+
+    XCTAssertEqual(weekdays, expectedWeekdays)
+  }
 }

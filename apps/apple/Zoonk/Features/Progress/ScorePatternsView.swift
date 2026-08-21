@@ -241,7 +241,7 @@ private struct WeekdayPatternChart: View {
       }
     }
     .chartXAxis {
-      AxisMarks(values: ProgressWeekday.allCases.map(\.rawValue)) { value in
+      AxisMarks(values: patterns.map(\.weekday.rawValue)) { value in
         AxisValueLabel {
           if let rawValue = value.as(String.self),
             let weekday = ProgressWeekday(rawValue: rawValue)

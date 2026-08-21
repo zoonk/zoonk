@@ -37,6 +37,12 @@ func progressLearningTime(
     .locale(locale))
 }
 
+extension EnergyProgress {
+  var displayedCurrentEnergy: Double {
+    currentEnergy.rounded()
+  }
+}
+
 extension LevelProgress {
   var progressTotal: Double {
     Double(max(bpPerLevel, 1))
@@ -273,6 +279,15 @@ extension ProgressWeekday {
   }
 
   var order: Int {
+    order(in: .autoupdatingCurrent)
+  }
+
+  func order(in calendar: Calendar) -> Int {
+    (foundationWeekdayIndex - (calendar.firstWeekday - 1) + Self.allCases.count)
+      % Self.allCases.count
+  }
+
+  private var foundationWeekdayIndex: Int {
     switch self {
     case .sunday:
       0
@@ -292,6 +307,7 @@ extension ProgressWeekday {
   }
 
   private func weekdayName(from names: [String]) -> String {
-    names.indices.contains(order) ? names[order] : rawValue.capitalized
+    names.indices.contains(foundationWeekdayIndex)
+      ? names[foundationWeekdayIndex] : rawValue.capitalized
   }
 }
