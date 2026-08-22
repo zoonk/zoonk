@@ -101,7 +101,7 @@ async function seedStepAttempts({
   users: SeedUsers;
 }) {
   const lesson = await prisma.lesson.findFirst({
-    where: { language: "en", organizationId: org.id, slug: "what-is-machine-learning" },
+    where: { language: "en", organizationId: org.id, slug: "verifying-nodejs-npm-and-path" },
   });
 
   if (!lesson) {

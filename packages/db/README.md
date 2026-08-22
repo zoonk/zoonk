@@ -62,6 +62,20 @@ Run the following commands to set up Prisma:
 - `pnpm db:generate` to generate Prisma client
 - `pnpm db:migrate` to run migrations and set up the database
 
+#### Local Curriculum Content
+
+The local `zoonk` database is the source of truth for development curriculum content. The regular Prisma seed only creates local users, accounts, subscriptions, organizations, enrollments, and progress; it does not create courses or lesson content.
+
+To refresh the local curriculum from a database copy, provide its connection string for this command:
+
+```sh
+pnpm --filter @zoonk/db db:seed
+CONTENT_SOURCE_DATABASE_URL='postgresql://...' pnpm --filter @zoonk/db db:sync-content
+pnpm --filter @zoonk/db db:seed
+```
+
+The content sync accepts only a local destination database named `zoonk`. It replaces the AI organization's courses, categories, chapters, lessons, vocabulary, sentences, pronunciations, resource links, and steps without importing source users or progress. Existing local prompt links, enrollments, completions, lesson progress, and attempts are mapped onto matching content in the replacement; the whole operation rolls back if any mapping is missing. Run the regular seed before the first sync to create the local AI organization, then run it afterward to initialize content-linked seed data on a new database.
+
 #### Useful Commands
 
 - `pnpm db:reset` to reset the database (this will erase all data)
