@@ -34,7 +34,7 @@
     },
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
-      "entry": ["prisma.config.ts"],
+      "entry": ["prisma.config.ts", "src/prisma/sync-content.{ts,mts}!"],
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "prisma": false
     },

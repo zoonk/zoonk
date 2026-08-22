@@ -1,32 +1,18 @@
 import { logError } from "@zoonk/utils/logger";
 import { prisma } from "../index";
 import { seedAccounts } from "./seed/accounts";
-import { seedCategories } from "./seed/categories";
-import { seedChapters } from "./seed/chapters";
 import { seedCourseUsers } from "./seed/course-users";
-import { seedCourses } from "./seed/courses";
-import { seedLessons } from "./seed/lessons";
 import { seedOrganizations } from "./seed/orgs";
 import { seedProgress } from "./seed/progress";
-import { seedSentences } from "./seed/sentences";
-import { seedSteps } from "./seed/steps";
 import { seedSubscriptions } from "./seed/subscriptions";
 import { seedUsers } from "./seed/users";
-import { seedWords } from "./seed/words";
 
 async function main() {
   const users = await seedUsers(prisma);
   await seedAccounts(prisma, users);
   await seedSubscriptions(prisma, users);
   const orgs = await seedOrganizations(prisma, users);
-  await seedCourses(prisma, orgs);
-  await seedCategories(prisma, orgs.ai);
-  await seedChapters(prisma, orgs.ai);
-  await seedLessons(prisma, orgs.ai);
-  await seedWords(prisma, orgs.ai);
-  await seedSentences(prisma, orgs.ai);
   await seedCourseUsers(prisma, orgs.ai, users);
-  await seedSteps(prisma, orgs.ai);
   await seedProgress(prisma, orgs.ai, users);
 }
 
