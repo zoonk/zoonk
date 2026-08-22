@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
 import { SELECT_IMAGE_PROPS } from "../image-config";
+import { usePlayerInteractionState } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { InlineFeedback } from "./inline-feedback";
@@ -195,6 +196,7 @@ export function SelectImageStep({
   step: SerializedStep;
 }) {
   const t = useExtracted();
+  const interactionState = usePlayerInteractionState();
   const content = parseStepContent("selectImage", step.content);
   const selectedOptionId = getSelectedOptionId(selectedAnswer);
   const hasResult = Boolean(result);
@@ -218,6 +220,7 @@ export function SelectImageStep({
 
   useOptionKeyboard({
     enabled: !result && (selectedAnswer === undefined || selectedAnswer.kind === "selectImage"),
+    interactionState,
     onSelect: handleSelect,
     optionCount: content.options.length,
   });

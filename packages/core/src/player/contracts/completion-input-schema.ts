@@ -1,61 +1,13 @@
 import { type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
+import { createSelectedAnswerSchema } from "./_utils/selected-answer-schema";
 
 const MAX_DAY_OF_WEEK = 6;
 const MAX_HOUR_OF_DAY = 23;
 
-const fillBlankAnswerSchema = z.object({
-  kind: z.literal("fillBlank"),
-  userAnswers: z.array(z.string()),
-});
-
-const listeningAnswerSchema = z.object({
-  arrangedWords: z.array(z.string()),
-  kind: z.literal("listening"),
-});
-
-const matchColumnsAnswerSchema = z.object({
-  kind: z.literal("matchColumns"),
-  mistakes: z.number(),
-  userPairs: z.array(z.object({ left: z.string(), right: z.string() })),
-});
-
-const multipleChoiceAnswerSchema = z.object({
-  kind: z.literal("multipleChoice"),
-  selectedOptionId: z.string(),
-});
-
-const readingAnswerSchema = z.object({
-  arrangedWords: z.array(z.string()),
-  kind: z.literal("reading"),
-});
-
-const selectImageAnswerSchema = z.object({
-  kind: z.literal("selectImage"),
-  selectedOptionId: z.string(),
-});
-
-const sortOrderAnswerSchema = z.object({
-  kind: z.literal("sortOrder"),
-  userOrder: z.array(z.string()),
-});
-
-const translationAnswerSchema = z.object({
-  kind: z.literal("translation"),
-  selectedOptionId: z.string(),
-});
-
-const selectedAnswerSchema = z.union([
-  fillBlankAnswerSchema,
-  listeningAnswerSchema,
-  matchColumnsAnswerSchema,
-  multipleChoiceAnswerSchema,
-  readingAnswerSchema,
-  selectImageAnswerSchema,
-  sortOrderAnswerSchema,
-  translationAnswerSchema,
-]);
+/** @public Player transports reuse this exact runtime schema for submitted answer shapes. */
+export const selectedAnswerSchema = createSelectedAnswerSchema();
 
 const stepTimingSchema = z.object({
   answeredAt: z.number(),

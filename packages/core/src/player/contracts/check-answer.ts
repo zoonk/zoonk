@@ -106,22 +106,24 @@ export function checkSortOrderAnswer(
   content: SortOrderStepContent,
   userOrder: string[],
 ): AnswerResult {
+  const correctAnswer = content.items.join(" → ");
   const isSameLength = content.items.length === userOrder.length;
   const isCorrect = isSameLength && content.items.every((item, index) => item === userOrder[index]);
-  return { correctAnswer: null, feedback: content.feedback, isCorrect };
+  return { correctAnswer, feedback: content.feedback, isCorrect };
 }
 
 export function checkSelectImageAnswer(
   content: SelectImageStepContent,
   selectedOptionId: string,
 ): AnswerResult {
+  const correctAnswer = content.options.find((option) => option.isCorrect)?.prompt ?? null;
   const option = content.options.find((item) => item.id === selectedOptionId);
 
   if (!option) {
-    return { correctAnswer: null, feedback: null, isCorrect: false };
+    return { correctAnswer, feedback: null, isCorrect: false };
   }
 
-  return { correctAnswer: null, feedback: option.feedback, isCorrect: option.isCorrect };
+  return { correctAnswer, feedback: option.feedback, isCorrect: option.isCorrect };
 }
 
 export function checkTranslationAnswer(

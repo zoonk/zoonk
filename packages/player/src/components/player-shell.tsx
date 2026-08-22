@@ -16,7 +16,7 @@ import { PlayAudioButton } from "./play-audio-button";
 import { PlayerBottomBar } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
-import { StepActionButton } from "./step-action-button";
+import { StepActionGroup } from "./step-action-group";
 import { StepImagePreloader } from "./step-image-preloader";
 import { PlayerContentFrame } from "./step-layouts";
 import { StepNavigationButtonGroup } from "./step-navigation-button-group";
@@ -42,7 +42,7 @@ function BottomBarContent() {
         />
       ) : (
         <div className="flex w-full gap-2">
-          <StepActionButton className="min-w-0 flex-1" />
+          <StepActionGroup className="min-w-0 flex-1" />
           {audioAction}
         </div>
       )}

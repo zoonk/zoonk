@@ -22,6 +22,7 @@ model Lesson {
   steps            Step[]
   sourceWords      ChapterWord[]
   sourceSentences  ChapterSentence[]
+  questionThreads  LessonQuestionThread[]
 
   @@unique([chapterId, slug], name: "chapterLessonSlug")
   @@index([organizationId, normalizedTitle])
@@ -49,6 +50,7 @@ model Step {
   createdAt         DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at")
   attempts          StepAttempt[]
+  questions         LessonQuestion[]
 
   @@unique([lessonId, position], name: "lessonStepPosition")
   @@index([lessonId, kind, position])

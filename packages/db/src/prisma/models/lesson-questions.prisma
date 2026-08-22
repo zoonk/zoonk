@@ -1,0 +1,44 @@
+model LessonQuestionThread {
+  id        String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String?          @map("lesson_id") @db.Uuid
+  lesson    Lesson?          @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @default(now()) @updatedAt @map("updated_at")
+  questions LessonQuestion[]
+
+  @@unique([userId, lessonId], name: "userLessonQuestionThread")
+  @@index([lessonId])
+  @@map("lesson_question_threads")
+}
+
+model LessonQuestion {
+  id                 String                    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  threadId           String                    @map("thread_id") @db.Uuid
+  thread             LessonQuestionThread      @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  requestId          String                    @map("request_id") @db.Uuid
+  requestFingerprint String                    @map("request_fingerprint")
+  stepId             String?                   @map("step_id") @db.Uuid
+  step               Step?                     @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  contextKind        LessonQuestionContextKind @map("context_kind")
+  contextSnapshot    Json                      @map("context_snapshot")
+  question           String
+  answer             String?
+  status             LessonQuestionStatus      @default(pending)
+  generationRevision Int                       @default(0) @map("generation_revision")
+  requestedModel     String?                   @map("requested_model")
+  model              String?
+  provider           String?
+  finishReason       String?                   @map("finish_reason")
+  inputTokens        Int?                      @map("input_tokens")
+  outputTokens       Int?                      @map("output_tokens")
+  totalTokens        Int?                      @map("total_tokens")
+  createdAt          DateTime                  @default(now()) @map("created_at")
+  updatedAt          DateTime                  @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([threadId, requestId], name: "threadLessonQuestionRequest")
+  @@index([threadId, createdAt])
+  @@index([stepId])
+  @@map("lesson_questions")
+}

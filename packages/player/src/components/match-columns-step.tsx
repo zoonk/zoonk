@@ -7,6 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
+import { usePlayerInteractionState } from "../player-context";
 import { type SelectedAnswer } from "../player-reducer";
 import { MAX_NUMBER_KEY_SHORTCUT, getNumberKeyShortcut } from "../player-shortcuts";
 import { useOptionKeyboard } from "../use-option-keyboard";
@@ -154,6 +155,7 @@ export function MatchColumnsStep({
 }) {
   const content = useMemo(() => parseStepContent("matchColumns", step.content), [step.content]);
   const t = useExtracted();
+  const interactionState = usePlayerInteractionState();
   const { trigger } = useWebHaptics();
 
   const leftItems = useMemo(() => buildLeftMatchItems(content.pairs), [content.pairs]);
@@ -230,6 +232,7 @@ export function MatchColumnsStep({
 
   useOptionKeyboard({
     enabled: !allMatched && flashingMatch === null,
+    interactionState,
     onSelect: (index) => {
       const item = keyboardItems[index];
 

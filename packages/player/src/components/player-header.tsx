@@ -11,10 +11,7 @@ import { PlayerLink } from "../player-link";
 export function PlayerHeader({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn(
-        "relative flex items-center justify-between px-3 py-1.5 sm:py-2.5 xl:p-4",
-        className,
-      )}
+      className={cn("relative grid items-center px-3 py-1.5 sm:py-2.5 xl:p-4", className)}
       data-slot="player-header"
       {...props}
     />

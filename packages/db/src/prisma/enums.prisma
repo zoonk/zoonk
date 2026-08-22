@@ -5,6 +5,20 @@ enum GenerationStatus {
   failed
 }
 
+enum LessonQuestionContextKind {
+  lesson
+  step
+  answer
+  mistake
+}
+
+enum LessonQuestionStatus {
+  pending
+  running
+  completed
+  failed
+}
+
 enum GenerationQuotaPeriod {
   day
   month
@@ -14,6 +28,7 @@ enum GenerationQuotaResource {
   course
   chapter
   lesson
+  lessonQuestion
 }
 
 enum LessonKind {

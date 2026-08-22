@@ -44,6 +44,11 @@ describe(trackGenerationRateLimited, () => {
       resource: "lesson" as const,
       target: { chapterSlug: "chapter-slug", courseSlug: "course-slug", lessonSlug: "lesson-slug" },
     },
+    {
+      expectedTarget: { questionId: "question-id" },
+      resource: "lessonQuestion" as const,
+      target: { questionId: "question-id" },
+    },
   ])("tracks a rate-limited $resource generation", async ({ expectedTarget, resource, target }) => {
     const properties = {
       period: "day",

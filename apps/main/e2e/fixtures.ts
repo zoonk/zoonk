@@ -2,10 +2,13 @@ import { type Page, test as base } from "@playwright/test";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 
-export const test = base.extend<
-  { authenticatedPage: Page; logoutPage: Page; userWithoutProgress: Page },
-  { noProgressUser: E2EUser; withProgressUser: E2EUser }
->({
+export const test = base.extend<{
+  authenticatedPage: Page;
+  logoutPage: Page;
+  noProgressUser: E2EUser;
+  userWithoutProgress: Page;
+  withProgressUser: E2EUser;
+}>({
   authenticatedPage: async ({ browser, withProgressUser }, use) => {
     const ctx = await browser.newContext({ storageState: withProgressUser.storageState });
     const page = await ctx.newPage();
@@ -26,14 +29,11 @@ export const test = base.extend<
     await ctx.close();
   },
 
-  noProgressUser: [
-    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
-    async ({}, use) => {
-      const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
-      await use(user);
-    },
-    { scope: "worker" },
-  ],
+  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+  noProgressUser: async ({}, use) => {
+    const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
+    await use(user);
+  },
 
   userWithoutProgress: async ({ browser, noProgressUser }, use) => {
     const ctx = await browser.newContext({ storageState: noProgressUser.storageState });
@@ -42,14 +42,11 @@ export const test = base.extend<
     await ctx.close();
   },
 
-  withProgressUser: [
-    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
-    async ({}, use) => {
-      const user = await createE2EUser(getBaseURL(), { orgRole: "member", withProgress: true });
-      await use(user);
-    },
-    { scope: "worker" },
-  ],
+  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+  withProgressUser: async ({}, use) => {
+    const user = await createE2EUser(getBaseURL(), { orgRole: "member", withProgress: true });
+    await use(user);
+  },
 });
 
 export { expect } from "@playwright/test";

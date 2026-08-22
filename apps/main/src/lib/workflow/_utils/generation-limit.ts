@@ -8,7 +8,12 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 
 const GENERATION_QUOTA_PERIODS = new Set<string>(["day", "month"]);
 
-const GENERATION_QUOTA_RESOURCES = new Set<string>(["chapter", "course", "lesson"]);
+const GENERATION_QUOTA_RESOURCES = new Set<string>([
+  "chapter",
+  "course",
+  "lesson",
+  "lessonQuestion",
+]);
 
 const GENERATION_QUOTA_VIEWERS = new Set<string>(["authenticated", "guest", "subscriber"]);
 

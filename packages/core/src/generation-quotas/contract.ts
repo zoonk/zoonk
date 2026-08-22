@@ -1,7 +1,7 @@
 export const GENERATION_VISITOR_ID_HEADER = "X-Generation-Visitor-Id";
 
 export type GenerationQuotaPeriod = "day" | "month";
-export type GenerationQuotaResource = "chapter" | "course" | "lesson";
+export type GenerationQuotaResource = "chapter" | "course" | "lesson" | "lessonQuestion";
 export type GenerationQuotaViewer = "authenticated" | "guest" | "subscriber";
 
 export type GenerationQuotaActor = { distinctId: string; username: string | null };

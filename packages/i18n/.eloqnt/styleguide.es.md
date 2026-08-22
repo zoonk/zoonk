@@ -14,6 +14,7 @@
 - "score": "Puntuación"
 - "learning": "estudio" (eg "learning days" = "días de estudio")
 - "listening": "escucha"
+- "step": "paso"
 
 ## Special Cases
 

@@ -4,7 +4,13 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { useOptionKeyboard } from "./use-option-keyboard";
 
 function buildOptions(overrides: Partial<Parameters<typeof useOptionKeyboard>[0]> = {}) {
-  return { enabled: true, onSelect: vi.fn(), optionCount: 4, ...overrides };
+  return {
+    enabled: true,
+    interactionState: "active" as const,
+    onSelect: vi.fn(),
+    optionCount: 4,
+    ...overrides,
+  };
 }
 
 function fireKey(key: string, modifiers: Partial<KeyboardEventInit> = {}) {
@@ -111,6 +117,15 @@ describe(useOptionKeyboard, () => {
 
   it("disabled state prevents selection", () => {
     const opts = buildOptions({ enabled: false });
+    renderHook(() => useOptionKeyboard(opts));
+
+    fireKey("1");
+
+    expect(opts.onSelect).not.toHaveBeenCalled();
+  });
+
+  it("paused player interaction prevents selection", () => {
+    const opts = buildOptions({ interactionState: "paused" });
     renderHook(() => useOptionKeyboard(opts));
 
     fireKey("1");

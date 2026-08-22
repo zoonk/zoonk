@@ -33,6 +33,10 @@ export type {
   Lesson,
   LessonProgress,
   LessonKind,
+  LessonQuestion,
+  LessonQuestionContextKind,
+  LessonQuestionStatus,
+  LessonQuestionThread,
   Member,
   Organization,
   Sentence,
@@ -57,6 +61,7 @@ export type {
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
 export type { LessonGetPayload } from "./generated/prisma/models/Lesson";
+export type { LessonQuestionThreadGetPayload } from "./generated/prisma/models/LessonQuestionThread";
 export type { StepGetPayload } from "./generated/prisma/models/Step";
 
 export { prisma };
