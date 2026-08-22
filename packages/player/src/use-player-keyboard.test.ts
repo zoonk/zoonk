@@ -6,6 +6,7 @@ import { usePlayerKeyboard } from "./use-player-keyboard";
 
 function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]> = {}) {
   return {
+    interactionState: "active" as const,
     keyboard: {
       canRestart: false,
       enterAction: null,

@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { usePlayerLessonMeta, usePlayerNavigation } from "../player-context";
 import { LessonOptionsPopover } from "./lesson-options-popover";
+import { HeaderQuestionAction } from "./lesson-question-actions";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 
@@ -29,7 +30,7 @@ function HeaderLessonTitle() {
         <span className="sm:hidden">{lessonProgress.currentLessonNumber}</span>
         <span className="hidden sm:inline">{fullPositionLabel}</span>
       </p>
-      <p className="text-foreground min-w-0 truncate text-sm leading-none font-medium sm:leading-normal">
+      <p className="text-foreground min-w-0 truncate text-sm leading-none font-medium sm:w-full sm:leading-normal">
         {lessonTitle}
       </p>
     </div>
@@ -47,12 +48,15 @@ export function InPlayStickyHeader({
 
   return (
     <div className="bg-background/95 sticky top-0 z-30 backdrop-blur-sm">
-      <PlayerHeader>
+      <PlayerHeader className="grid-cols-[5.5rem_minmax(0,1fr)_5.5rem] lg:grid-cols-[11rem_minmax(0,1fr)_11rem]">
         <PlayerCloseLink href={chapterHref} />
 
-        <div className="min-w-0 flex-1 text-center">{centerContent ?? <HeaderLessonTitle />}</div>
+        <div className="min-w-0 text-center">{centerContent ?? <HeaderLessonTitle />}</div>
 
-        <LessonOptionsPopover />
+        <div className="flex items-center gap-1 justify-self-end">
+          <HeaderQuestionAction />
+          <LessonOptionsPopover />
+        </div>
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

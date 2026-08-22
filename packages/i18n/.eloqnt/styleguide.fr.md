@@ -15,6 +15,7 @@
 - "Energy": "Énergie"
 - "score": "Score"
 - "listening": "écoute"
+- "step": "étape"
 
 ## Special Cases
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent } from "react";
+import { type PlayerQuestionSupport } from "./player-context";
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
@@ -16,10 +17,12 @@ function isEditableTarget(target: EventTarget | null): boolean {
 
 export function useOptionKeyboard({
   enabled,
+  interactionState,
   onSelect,
   optionCount,
 }: {
   enabled: boolean;
+  interactionState: PlayerQuestionSupport["interactionState"];
   onSelect: (index: number) => void;
   optionCount: number;
 }) {
@@ -28,7 +31,7 @@ export function useOptionKeyboard({
   });
 
   useEffect(() => {
-    if (!enabled) {
+    if (!enabled || interactionState === "paused") {
       return;
     }
 
@@ -52,5 +55,5 @@ export function useOptionKeyboard({
 
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [enabled, optionCount]);
+  }, [enabled, interactionState, optionCount]);
 }

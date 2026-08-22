@@ -1,9 +1,11 @@
 "use client";
 
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { type PlayerQuestionSupport } from "./player-context";
 import { type PlayerKeyboardModel } from "./player-screen";
 
 type PlayerKeyboardParams = {
+  interactionState: PlayerQuestionSupport["interactionState"];
   keyboard: PlayerKeyboardModel;
   onCheck: () => void;
   onContinue: () => void;
@@ -65,6 +67,7 @@ function runKeyboardAction({
 }
 
 export function usePlayerKeyboard({
+  interactionState,
   keyboard,
   onCheck,
   onContinue,
@@ -76,22 +79,27 @@ export function usePlayerKeyboard({
 }: PlayerKeyboardParams) {
   useKeyboardCallback(
     "Enter",
-    () =>
-      runKeyboardAction({
+    () => {
+      if (interactionState === "paused") {
+        return false;
+      }
+
+      return runKeyboardAction({
         action: keyboard.enterAction,
         onCheck,
         onContinue,
         onNavigateNext,
         onNavigatePrev,
         onNext,
-      }),
+      });
+    },
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "r",
     () => {
-      if (!keyboard.canRestart) {
+      if (interactionState === "paused" || !keyboard.canRestart) {
         return false;
       }
 
@@ -102,31 +110,51 @@ export function usePlayerKeyboard({
 
   useKeyboardCallback(
     "ArrowRight",
-    () =>
-      runKeyboardAction({
+    () => {
+      if (interactionState === "paused") {
+        return false;
+      }
+
+      return runKeyboardAction({
         action: keyboard.rightAction,
         onCheck,
         onContinue,
         onNavigateNext,
         onNavigatePrev,
         onNext,
-      }),
+      });
+    },
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "ArrowLeft",
-    () =>
-      runKeyboardAction({
+    () => {
+      if (interactionState === "paused") {
+        return false;
+      }
+
+      return runKeyboardAction({
         action: keyboard.leftAction,
         onCheck,
         onContinue,
         onNavigateNext,
         onNavigatePrev,
         onNext,
-      }),
+      });
+    },
     { mode: "none" },
   );
 
-  useKeyboardCallback("Escape", () => onEscape(), { mode: "none" });
+  useKeyboardCallback(
+    "Escape",
+    () => {
+      if (interactionState === "paused") {
+        return false;
+      }
+
+      onEscape();
+    },
+    { mode: "none" },
+  );
 }

@@ -301,6 +301,36 @@ msgctxt "YLFqnP"
 msgid "Skip lesson"
 msgstr "Pular aula"
 
+#: src/components/lesson-question-actions.tsx
+msgctxt "eT5ZfG"
+msgid "Ask a question about this step"
+msgstr "Faça uma pergunta sobre este passo"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "Perguntar"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "zB43NT"
+msgid "Explain why this answer is correct."
+msgstr "Explique por que essa resposta está correta."
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "pRsWNk"
+msgid "Explain why my answer was wrong and why the correct answer is correct."
+msgstr "Explique por que minha resposta estava errada e por que a resposta correta está certa."
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "95VNka"
+msgid "Explain answer"
+msgstr "Explicar resposta"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "fQciZq"
+msgid "Ask about this lesson"
+msgstr "Pergunte sobre esta aula"
+
 #: src/components/listening-step.tsx
 msgctxt "aAmWaS"
 msgid "What do you hear?"
@@ -396,12 +426,12 @@ msgstr "Anterior"
 #: src/components/swipe-navigable-step-layout.tsx
 msgctxt "aNzy1T"
 msgid "Previous step"
-msgstr "Etapa anterior"
+msgstr "Passo anterior"
 
 #: src/components/swipe-navigable-step-layout.tsx
 msgctxt "d-qgix"
 msgid "Next step"
-msgstr "Próxima etapa"
+msgstr "Próximo passo"
 
 #: src/components/translation-step.tsx
 msgctxt "MxLxkr"

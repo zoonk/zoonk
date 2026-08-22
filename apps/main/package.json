@@ -39,6 +39,7 @@
     "react-dom": "catalog:",
     "recharts": "catalog:",
     "server-only": "catalog:",
+    "streamdown": "2.5.0",
     "zod": "catalog:"
   },
   "devDependencies": {

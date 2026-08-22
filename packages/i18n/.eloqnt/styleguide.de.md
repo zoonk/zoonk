@@ -15,6 +15,7 @@
 - "score": "Score"
 - "listening": "Hören"
 - "level": "Level"
+- "step": "Schritt"
 
 ## Special Cases
 

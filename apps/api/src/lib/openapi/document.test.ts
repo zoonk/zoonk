@@ -83,6 +83,13 @@ const CANONICAL_OPERATIONS = [
     path: "/lessons/{lessonId}/completions",
   },
   { method: "post", operationId: "createLessonPreload", path: "/lessons/{lessonId}/preloads" },
+  { method: "get", operationId: "getLessonQuestionThread", path: "/lessons/{lessonId}/questions" },
+  { method: "post", operationId: "createLessonQuestion", path: "/lessons/{lessonId}/questions" },
+  {
+    method: "post",
+    operationId: "createLessonQuestionAnswer",
+    path: "/questions/{questionId}/answers",
+  },
   { method: "post", operationId: "createCoursePrompt", path: "/course-prompts" },
   { method: "get", operationId: "getCoursePrompt", path: "/course-prompts/{coursePromptId}" },
   { method: "get", operationId: "getCourseProgress", path: "/courses/{courseId}/progress" },
@@ -504,6 +511,91 @@ describe("OpenAPI document", () => {
     expect(document.paths).not.toHaveProperty("/chapters/{chapterId}/generations");
     expect(document.paths).not.toHaveProperty("/lessons/{lessonId}/generation");
     expect(document.paths).not.toHaveProperty("/lessons/{lessonId}/generations");
+  });
+
+  it("documents authenticated lesson questions and raw streamed answers", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+    const authenticated = [{ bearerAuth: [] }, { cookieAuth: [] }];
+    const questions = document.paths["/lessons/{lessonId}/questions"];
+    const answers = document.paths["/questions/{questionId}/answers"];
+
+    expect(questions?.get).toMatchObject({
+      operationId: "getLessonQuestionThread",
+      responses: {
+        "200": {
+          content: {
+            "application/json": {
+              schema: {
+                anyOf: [{ $ref: "#/components/schemas/LessonQuestionThread" }, { type: "null" }],
+              },
+            },
+          },
+        },
+      },
+      security: authenticated,
+    });
+
+    expect(questions?.get?.parameters).toContainEqual(
+      expect.objectContaining({
+        in: "query",
+        name: "cursor",
+        schema: expect.objectContaining({ format: "uuid" }),
+      }),
+    );
+
+    expect(questions?.post).toMatchObject({
+      operationId: "createLessonQuestion",
+      requestBody: { required: true },
+      responses: {
+        "201": expect.any(Object),
+        "402": expect.any(Object),
+        "403": expect.any(Object),
+        "409": expect.any(Object),
+        "422": expect.any(Object),
+      },
+      security: authenticated,
+    });
+
+    expect(answers?.post).toMatchObject({
+      operationId: "createLessonQuestionAnswer",
+      responses: {
+        "200": { content: { "text/plain": { schema: { type: "string" } } } },
+        "402": expect.any(Object),
+        "403": expect.any(Object),
+        "409": expect.any(Object),
+        "429": expect.any(Object),
+      },
+      security: authenticated,
+    });
+
+    expect(document.components.schemas.CreateLessonQuestionRequest).toMatchObject({
+      properties: {
+        context: { $ref: "#/components/schemas/LessonQuestionContextInput" },
+        question: { maxLength: 2000, minLength: 1, type: "string" },
+        requestId: { format: "uuid", type: "string" },
+      },
+      required: ["context", "question", "requestId"],
+      type: "object",
+    });
+
+    expect(document.components.schemas.LessonQuestion).toMatchObject({
+      properties: {
+        answer: { anyOf: [{ type: "string" }, { type: "null" }] },
+        id: { format: "uuid" },
+        status: { enum: ["pending", "running", "completed", "failed"] },
+      },
+      required: expect.arrayContaining(["id", "question", "answer", "status"]),
+      type: "object",
+    });
+
+    expect(document.components.schemas.LessonQuestionThread).toMatchObject({
+      properties: {
+        hasMore: { type: "boolean" },
+        nextCursor: { anyOf: [expect.objectContaining({ format: "uuid" }), { type: "null" }] },
+      },
+      required: expect.arrayContaining(["hasMore", "nextCursor", "questions"]),
+      type: "object",
+    });
   });
 
   it("emits client-visible formats and next-lesson variants", () => {

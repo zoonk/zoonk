@@ -301,6 +301,36 @@ msgctxt "YLFqnP"
 msgid "Skip lesson"
 msgstr "Lektion überspringen"
 
+#: src/components/lesson-question-actions.tsx
+msgctxt "eT5ZfG"
+msgid "Ask a question about this step"
+msgstr "Stell eine Frage zu diesem Schritt"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "Frage stellen"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "zB43NT"
+msgid "Explain why this answer is correct."
+msgstr "Erkläre, warum diese Antwort richtig ist."
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "pRsWNk"
+msgid "Explain why my answer was wrong and why the correct answer is correct."
+msgstr "Erkläre, warum meine Antwort falsch war und weshalb die richtige Antwort stimmt."
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "95VNka"
+msgid "Explain answer"
+msgstr "Antwort erklären"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "fQciZq"
+msgid "Ask about this lesson"
+msgstr "Stell eine Frage zu dieser Lektion"
+
 #: src/components/listening-step.tsx
 msgctxt "aAmWaS"
 msgid "What do you hear?"

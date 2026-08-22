@@ -12,6 +12,10 @@ export const lessonPathParamsSchema = z
   .object({ lessonId: z.uuid().meta({ description: "Lesson ID" }) })
   .meta({ id: "LessonPathParams" });
 
+export const lessonQuestionPathParamsSchema = z
+  .object({ questionId: z.uuid().meta({ description: "Lesson question ID" }) })
+  .meta({ id: "LessonQuestionPathParams" });
+
 export const generationPathParamsSchema = z
   .object({ generationId: z.string().trim().min(1).meta({ description: "Generation ID" }) })
   .meta({ id: "GenerationPathParams" });

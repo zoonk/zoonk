@@ -1,26 +1,19 @@
 "use client";
 
 import { Link, useRouter } from "@/i18n/navigation";
-import {
-  trackChapterCompleted,
-  trackLessonCompleted,
-  trackLessonSecondStep,
-} from "@/lib/track-events";
-import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
-import { PlayerProvider, type PlayerStepChangeEvent } from "@zoonk/player/provider";
+import { PlayerProvider } from "@zoonk/player/provider";
 import { PlayerShell } from "@zoonk/player/shell";
-import { useCallback, useEffect, useRef } from "react";
+import { LessonQuestionPanel } from "./_questions/lesson-question-panel";
+import { useLessonQuestions } from "./_questions/use-lesson-questions";
 import { getPlayerViewer } from "./get-player-viewer";
 import {
   type LessonProgressMeta,
   type NextChapterTarget,
   buildLessonPlayerModel,
 } from "./lesson-player-model";
-import { preloadNextLesson } from "./preload-next-lesson-action";
-import { submitCompletion } from "./submit-completion-action";
-import { useTrackLessonStarted } from "./use-track-lesson-started";
+import { useLessonPlayerHandlers } from "./use-lesson-player-handlers";
 
 type LessonPlayerClientProps = {
   lesson: SerializedLesson;
@@ -43,15 +36,6 @@ type LessonPlayerClientProps = {
   userName: string | null;
 };
 
-/**
- * Identifies the exact funnel moment where a learner has advanced from the
- * first player step to the second, regardless of whether the first step was
- * static or interactive.
- */
-function isSecondStepForwardEvent(event: PlayerStepChangeEvent) {
-  return event.direction === "next" && event.previousStepIndex === 0 && event.nextStepIndex === 1;
-}
-
 export function LessonPlayerClient({
   lesson,
   brandSlug,
@@ -73,8 +57,6 @@ export function LessonPlayerClient({
   userName,
 }: LessonPlayerClientProps) {
   const router = useRouter();
-  const hasRequestedNextLessonPreload = useRef(false);
-  const hasTrackedSecondStep = useRef(false);
 
   const model = buildLessonPlayerModel({
     brandSlug,
@@ -86,92 +68,25 @@ export function LessonPlayerClient({
     nextLesson,
   });
 
+  const questionController = useLessonQuestions({
+    isAuthenticated,
+    lessonId: lesson.id,
+    lessonSteps: lesson.steps,
+  });
+
   const onNextHref = model.onNextHref;
   const handleNext = onNextHref ? () => router.push(onNextHref) : undefined;
 
-  useEffect(() => {
-    hasRequestedNextLessonPreload.current = false;
-    hasTrackedSecondStep.current = false;
-  }, [lesson.id]);
-
-  useTrackLessonStarted({
+  const { handleComplete, handleStepChange } = useLessonPlayerHandlers({
     chapterPosition,
+    chapterSlug,
     courseSlug,
+    hasMilestone: Boolean(model.milestone),
     isAuthenticated,
     lesson,
     lessonPosition,
     lessonSlug,
   });
-
-  const handleComplete = useCallback(
-    (input: CompletionInput) => {
-      trackLessonCompleted({
-        chapterPosition,
-        courseSlug,
-        lessonKind: lesson.kind,
-        lessonPosition,
-        lessonSlug,
-      });
-
-      if (model.milestone) {
-        trackChapterCompleted({ chapterPosition, chapterSlug, courseSlug });
-      }
-
-      if (!isAuthenticated) {
-        return;
-      }
-
-      void submitCompletion(input);
-    },
-    [
-      chapterPosition,
-      chapterSlug,
-      courseSlug,
-      isAuthenticated,
-      lesson.kind,
-      lessonPosition,
-      lessonSlug,
-      model.milestone,
-    ],
-  );
-
-  const handleStepChange = useCallback(
-    (event: PlayerStepChangeEvent) => {
-      if (isSecondStepForwardEvent(event) && !hasTrackedSecondStep.current) {
-        hasTrackedSecondStep.current = true;
-
-        trackLessonSecondStep({
-          chapterPosition,
-          courseSlug,
-          lessonKind: lesson.kind,
-          lessonPosition,
-          lessonSlug,
-          stepCount: lesson.steps.length,
-        });
-      }
-
-      if (
-        !isAuthenticated ||
-        event.direction !== "next" ||
-        event.previousStepIndex !== 0 ||
-        hasRequestedNextLessonPreload.current
-      ) {
-        return;
-      }
-
-      hasRequestedNextLessonPreload.current = true;
-      void preloadNextLesson(event.lessonId);
-    },
-    [
-      chapterPosition,
-      courseSlug,
-      isAuthenticated,
-      lesson.kind,
-      lessonPosition,
-      lessonSlug,
-      lesson.steps.length,
-    ],
-  );
 
   return (
     <PlayerProvider
@@ -189,6 +104,7 @@ export function LessonPlayerClient({
       onNext={handleNext}
       onStepChange={handleStepChange}
       progressSnapshot={initialProgress?.progressSnapshot ?? null}
+      questionSupport={questionController.questionSupport}
       totalBrainPower={initialProgress?.totalBrainPower ?? 0}
       viewer={getPlayerViewer({
         chapterSlug,
@@ -200,6 +116,18 @@ export function LessonPlayerClient({
       })}
     >
       <PlayerShell />
+      <LessonQuestionPanel
+        controller={questionController}
+        isAuthenticated={isAuthenticated}
+        loginHref={model.navigation.loginHref ?? "/login"}
+        metadata={{
+          chapterTitle,
+          courseTitle,
+          lessonDescription,
+          lessonSteps: lesson.steps,
+          lessonTitle,
+        }}
+      />
     </PlayerProvider>
   );
 }

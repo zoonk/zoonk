@@ -223,7 +223,7 @@ describe(checkSortOrderAnswer, () => {
 
   it("returns correct for matching order", () => {
     expect(checkSortOrderAnswer(content, ["one", "two", "three"])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "one → two → three",
       feedback: "Correct order.",
       isCorrect: true,
     });
@@ -231,7 +231,7 @@ describe(checkSortOrderAnswer, () => {
 
   it("returns incorrect for wrong order", () => {
     expect(checkSortOrderAnswer(content, ["three", "two", "one"])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "one → two → three",
       feedback: "Correct order.",
       isCorrect: false,
     });
@@ -239,7 +239,7 @@ describe(checkSortOrderAnswer, () => {
 
   it("returns incorrect when user provides extra entries", () => {
     expect(checkSortOrderAnswer(content, ["one", "two", "three", "four"])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "one → two → three",
       feedback: "Correct order.",
       isCorrect: false,
     });
@@ -257,7 +257,7 @@ describe(checkSelectImageAnswer, () => {
 
   it("returns correct with feedback for correct option id", () => {
     expect(checkSelectImageAnswer(content, "cat")).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "A cat",
       feedback: "Yes, a cat!",
       isCorrect: true,
     });
@@ -265,7 +265,7 @@ describe(checkSelectImageAnswer, () => {
 
   it("returns incorrect with feedback for wrong option id", () => {
     expect(checkSelectImageAnswer(content, "dog")).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "A cat",
       feedback: "That's a dog.",
       isCorrect: false,
     });
@@ -273,7 +273,7 @@ describe(checkSelectImageAnswer, () => {
 
   it("returns incorrect with null feedback for unknown option id", () => {
     expect(checkSelectImageAnswer(content, "missing")).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "A cat",
       feedback: null,
       isCorrect: false,
     });

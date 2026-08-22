@@ -30,6 +30,7 @@ model User {
   progress           UserProgress?
   dailyProgress      DailyProgress[]
   subscriptions      Subscription[]
+  questionThreads    LessonQuestionThread[]
 
   @@unique([email])
   @@unique([username])
