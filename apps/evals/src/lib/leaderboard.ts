@@ -1,7 +1,8 @@
 import { getModelById, getReasoningLabel } from "@/lib/models";
 import { calculateScore } from "@/lib/score-calculation";
+import { summarizeCategoryScores } from "@/lib/score-categories";
 import { getStatsFromResults } from "@/lib/stats";
-import { type TaskEvalResults } from "@/lib/types";
+import { type CategoryScoreSummary, type TaskEvalResults } from "@/lib/types";
 
 function roundScoreToFixed(score: number): number {
   return Number(score.toFixed(2));
@@ -16,7 +17,11 @@ export function calculateAverageScore(results: TaskEvalResults): number {
     return 0;
   }
 
-  const totalScore = results.results.reduce((acc, result) => acc + calculateScore(result.steps), 0);
+  const totalScore = results.results.reduce(
+    (acc, result) =>
+      acc + calculateScore({ categoryScores: result.categoryScores, steps: result.steps }),
+    0,
+  );
 
   return totalScore / results.results.length;
 }
@@ -29,6 +34,7 @@ export type LeaderboardEntry = {
   averageScore: number;
   averageDuration: number;
   totalCost: number;
+  categoryScores: CategoryScoreSummary[];
 };
 
 export type SortKey =
@@ -58,6 +64,9 @@ export function getLeaderboardEntries(results: TaskEvalResults[]): LeaderboardEn
       {
         averageDuration: stats.averageDuration,
         averageScore: calculateAverageScore(result),
+        categoryScores: summarizeCategoryScores(
+          result.results.map((evalResult) => evalResult.categoryScores),
+        ),
         modelId: result.modelId,
         modelName: model.name,
         provider: result.modelId.split("/")[0] ?? result.modelId,

@@ -10,11 +10,13 @@ import {
   getModelsWithCompleteOutputs,
   getOutputForTestCase,
 } from "./output-loader";
+import { formatExpectationsWithCategories } from "./score-categories";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
   type BattleMatchup,
   type ModelOutputs,
   type RegisteredTask,
+  type ScoreCategory,
   type TestCase,
   getJudgeExpectations,
   supportsJudgeMode,
@@ -208,8 +210,9 @@ async function runJudge(params: {
   expectations: string;
   userPrompt: string;
   mapping: Mapping;
+  scoreCategories?: ScoreCategory[];
 }): Promise<BattleMatchup["judgments"][number]> {
-  const { judgeId, anonymizedOutputs, expectations, userPrompt, mapping } = params;
+  const { judgeId, anonymizedOutputs, expectations, userPrompt, mapping, scoreCategories } = params;
 
   return {
     judgeId,
@@ -218,6 +221,7 @@ async function runJudge(params: {
       expectations,
       judgeId,
       mapping,
+      scoreCategories,
       userPrompt,
     }),
   };
@@ -234,12 +238,14 @@ async function runJudges(params: {
   expectations: string;
   userPrompt: string;
   mapping: Mapping;
+  scoreCategories?: ScoreCategory[];
 }): Promise<JudgeRunResult> {
-  const { judgesToRun, anonymizedOutputs, expectations, userPrompt, mapping } = params;
+  const { judgesToRun, anonymizedOutputs, expectations, userPrompt, mapping, scoreCategories } =
+    params;
 
   const results = await Promise.allSettled(
     judgesToRun.map((judgeId) =>
-      runJudge({ anonymizedOutputs, expectations, judgeId, mapping, userPrompt }),
+      runJudge({ anonymizedOutputs, expectations, judgeId, mapping, scoreCategories, userPrompt }),
     ),
   );
 
@@ -297,6 +303,7 @@ async function runBattleForTestCase({
     expectations,
     judgesToRun,
     mapping,
+    scoreCategories: task.scoreCategories,
     userPrompt,
   });
 
@@ -305,7 +312,10 @@ async function runBattleForTestCase({
     : judgeResults.judgments;
 
   const matchup: BattleMatchup = {
-    expectations,
+    expectations: formatExpectationsWithCategories({
+      categories: task.scoreCategories,
+      expectations,
+    }),
     judgedAt: new Date().toISOString(),
     judgments: allJudgments,
     taskId: task.id,

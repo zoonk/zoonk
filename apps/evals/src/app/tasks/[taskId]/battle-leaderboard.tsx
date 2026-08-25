@@ -67,6 +67,7 @@ export function BattleLeaderboard({
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const sortedEntries = sortEntries(entries, sortKey, sortDirection);
+  const categories = entries[0]?.categoryScores ?? [];
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -108,6 +109,10 @@ export function BattleLeaderboard({
             Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
 
+          {categories.map((category) => (
+            <TableHead key={category.categoryId}>{category.label}</TableHead>
+          ))}
+
           <TableHead className="cursor-pointer" onClick={() => handleSort("averageDuration")}>
             Avg Duration {sortKey === "averageDuration" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
@@ -130,6 +135,17 @@ export function BattleLeaderboard({
             <TableCell>{entry.provider}</TableCell>
             <TableCell className="font-semibold">{entry.totalScore.toFixed(1)}</TableCell>
             <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
+            {categories.map((category) => {
+              const categoryScore = entry.categoryScores.find(
+                (score) => score.categoryId === category.categoryId,
+              );
+
+              return (
+                <TableCell key={category.categoryId}>
+                  {categoryScore?.score.toFixed(2) ?? "—"}
+                </TableCell>
+              );
+            })}
             <TableCell>{entry.averageDuration.toFixed(2)}s</TableCell>
             <TableCell>${entry.averageCost.toFixed(2)}</TableCell>
           </TableRow>

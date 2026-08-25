@@ -31,6 +31,17 @@ Use scores from 1 to 10:
 - 4: poor; significant issues
 - 1: unusable for the expectations
 
+When **Score Categories** are provided:
+
+- Return exactly one category score for every supplied category ID and every model.
+- Score each category independently from 1 to 10 using only that category's expectations and the relevant task-specific expectations.
+- Do not let a strength in one category offset a weakness in another category.
+- Before assigning a category score, identify every explicit cap that applies to that category and check each output for its trigger. Apply the lowest triggered cap literally; later strengths do not erase an earlier ordering, clarity, or grounding failure.
+- Compare learner effort directly: when two correct outputs differ, prefer the one that gives a beginner the meaning, reason, and concrete bridge at the point each idea is introduced. Extra detail, a stronger final synthesis, or a more complete late example does not compensate for making the learner decode earlier steps.
+- A score of 9 means the category has no meaningful weakness. A score of 10 means there is no concrete improvement to make. Do not give 9 or 10 while describing a failure named by that category's expectations.
+- Use category IDs exactly as supplied. The application calculates the weighted overall score.
+- Keep each category reasoning note concise and grounded in concrete output evidence.
+
 # Output
 
 Return rankings for each model, ordered from highest to lowest score. Keep each reasoning note to 2-3 concise sentences focused on the most important strengths and weaknesses.

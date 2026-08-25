@@ -39,6 +39,15 @@ Each step score is a number from 6 to 10.
 - Do not penalize JSON formatting; schema validation is handled separately.
 - Do not reward extra length, exhaustive lists, or confident wording by itself.
 
+When **Score categories** are provided, also return exactly one category score for every supplied category ID:
+
+- Score each category independently from 1 to 10 using only that category's expectations and the relevant task-specific expectations.
+- Do not let a strength in one category offset a weakness in another category.
+- Before assigning a category score, identify every explicit cap that applies to that category and check whether its trigger appears anywhere in the result. Apply the lowest triggered cap literally; correct material later in the result does not erase an earlier ordering, clarity, or grounding failure.
+- A score of 9 means the category has no meaningful weakness. A score of 10 means there is no concrete improvement to make. Do not give 9 or 10 while describing a failure named by that category's expectations.
+- Use the category ID exactly as supplied.
+- Explain the most important evidence for each category score in English.
+
 # Output
 
 Return valid JSON matching the provided schema. Always write conclusions in English, even when the result is in another language.

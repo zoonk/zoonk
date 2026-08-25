@@ -27,6 +27,7 @@ export function Leaderboard({ taskId, results }: { taskId: string; results: Task
 
   const entries: LeaderboardEntry[] = getLeaderboardEntries(results);
   const sortedEntries = sortLeaderboardEntries(entries, sortKey, sortDirection);
+  const categories = entries[0]?.categoryScores ?? [];
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -68,6 +69,10 @@ export function Leaderboard({ taskId, results }: { taskId: string; results: Task
               Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
 
+            {categories.map((category) => (
+              <TableHead key={category.categoryId}>{category.label}</TableHead>
+            ))}
+
             <TableHead className="cursor-pointer" onClick={() => handleSort("averageDuration")}>
               Avg Duration {sortKey === "averageDuration" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
@@ -89,6 +94,17 @@ export function Leaderboard({ taskId, results }: { taskId: string; results: Task
               <TableCell>{entry.provider}</TableCell>
               <TableCell>{entry.reasoning}</TableCell>
               <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
+              {categories.map((category) => {
+                const categoryScore = entry.categoryScores.find(
+                  (score) => score.categoryId === category.categoryId,
+                );
+
+                return (
+                  <TableCell key={category.categoryId}>
+                    {categoryScore?.score.toFixed(2) ?? "—"}
+                  </TableCell>
+                );
+              })}
               <TableCell>{entry.averageDuration.toFixed(2)}s</TableCell>
               <TableCell>${entry.totalCost.toFixed(2)}</TableCell>
             </TableRow>
