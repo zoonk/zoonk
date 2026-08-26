@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@eloqnt/cli": "catalog:",
+    "@eloqnt/format-po": "0.0.1",
     "ai-sdk-provider-codex-cli": "2.1.2",
-    "next-intl": "catalog:",
-    "po-parser": "2.2.0"
+    "next-intl": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

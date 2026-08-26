@@ -4,6 +4,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
+"X-Message-Key: msgctxt\n"
 
 #: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "xmcVZ0"
