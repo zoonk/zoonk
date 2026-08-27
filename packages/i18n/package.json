@@ -3,17 +3,13 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./define-eloqnt-config": "./src/define-eloqnt-config.ts",
-    "./next-intl/po-format": "./src/next-intl/po-format.ts"
+    "./define-eloqnt-config": "./src/define-eloqnt-config.ts"
   },
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@eloqnt/cli": "catalog:",
-    "@eloqnt/format-po": "0.0.1",
     "ai-sdk-provider-codex-cli": "2.1.2",
     "next-intl": "catalog:"
   },

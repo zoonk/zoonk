@@ -1,7 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@eloqnt/cli";
 import { codexCli } from "ai-sdk-provider-codex-cli";
-import { NEXT_INTL_PO_FORMAT } from "./next-intl/po-format";
 
 type EloqntMessages = Parameters<typeof defineConfig>[0]["messages"];
 
@@ -34,7 +33,7 @@ function getSrcPath(srcPath: EloqntProjectOptions["srcPath"]) {
 export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
   return defineConfig({
     messages: {
-      format: NEXT_INTL_PO_FORMAT,
+      format: "po",
       locales: "infer",
       path: "./messages",
       sourceLocale: "en",

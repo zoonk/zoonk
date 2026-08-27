@@ -1,6 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
-import { NEXT_INTL_PO_FORMAT } from "@zoonk/i18n/next-intl/po-format";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
@@ -39,7 +38,7 @@ const withNextIntl = createNextIntlPlugin({
   experimental: {
     extract: { path: "./messages" },
     messages: {
-      format: NEXT_INTL_PO_FORMAT,
+      format: "po",
       locales: "infer",
       path: ["./messages"],
       precompile: true,
