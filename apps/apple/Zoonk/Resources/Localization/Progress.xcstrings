@@ -2137,7 +2137,7 @@
       }
     },
     "Level progress" : {
-      "comment" : "Title above progress toward the next level",
+      "comment" : "Accessibility label for progress within the maximum level\nAccessibility label for progress within the maximum level.\nTitle above progress toward the next level",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2833,7 +2833,7 @@
       }
     },
     "Progress to the next level" : {
-      "comment" : "Accessibility label for level progress",
+      "comment" : "Accessibility label for progress toward the learner's next level\nAccessibility label for progress toward the learner's next level.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

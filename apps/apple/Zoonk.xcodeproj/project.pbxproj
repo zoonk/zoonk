@@ -11,7 +11,7 @@
 		5A0A00020000000000000001 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00210000000000000001 /* OpenAPIRuntime */; };
 		5A0A00030000000000000001 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00220000000000000001 /* OpenAPIURLSession */; };
 		5A0A00040000000000000001 /* HTTPTypes in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0A00230000000000000001 /* HTTPTypes */; };
-		5A0A00510000000000000001 /* Subscriptions.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 5A0A00500000000000000001 /* Subscriptions.storekit */; };
+		5A0A00510000000000000001 /* Zoonk/Resources/StoreKit/Subscriptions.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 5A0A00500000000000000001 /* Zoonk/Resources/StoreKit/Subscriptions.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,9 +32,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5A0A00400000000000000001 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
-		5A0A00410000000000000001 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
-		5A0A00500000000000000001 /* Subscriptions.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Zoonk/Resources/StoreKit/Subscriptions.storekit; sourceTree = "<group>"; };
+		5A0A00400000000000000001 /* Configuration/Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
+		5A0A00410000000000000001 /* Configuration/Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
+		5A0A00500000000000000001 /* Zoonk/Resources/StoreKit/Subscriptions.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Zoonk/Resources/StoreKit/Subscriptions.storekit; sourceTree = "<group>"; };
 		5A0A01000000000000000001 /* ZoonkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB5E3022709A00E0E150 /* Zoonk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zoonk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoonkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,11 +101,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5A0A00520000000000000001 /* UI Test Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5A0A00500000000000000001 /* Zoonk/Resources/StoreKit/Subscriptions.storekit */,
+			);
+			name = "UI Test Resources";
+			sourceTree = "<group>";
+		};
 		BEB8AB553022709A00E0E150 = {
 			isa = PBXGroup;
 			children = (
-				5A0A00400000000000000001 /* Debug.xcconfig */,
-				5A0A00410000000000000001 /* Release.xcconfig */,
+				5A0A00400000000000000001 /* Configuration/Debug.xcconfig */,
+				5A0A00410000000000000001 /* Configuration/Release.xcconfig */,
 				5A0A00520000000000000001 /* UI Test Resources */,
 				BEB8AB603022709A00E0E150 /* Zoonk */,
 				5A0A01010000000000000001 /* ZoonkTests */,
@@ -122,14 +130,6 @@
 				BEB8AB773022709B00E0E150 /* ZoonkUITests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		5A0A00520000000000000001 /* UI Test Resources */ = {
-			isa = PBXGroup;
-			children = (
-				5A0A00500000000000000001 /* Subscriptions.storekit */,
-			);
-			name = "UI Test Resources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,8 +244,6 @@
 			);
 			mainGroup = BEB8AB553022709A00E0E150;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
-			productRefGroup = BEB8AB5F3022709A00E0E150 /* Products */;
 			packageReferences = (
 				5A0A00100000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				5A0A00110000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
@@ -253,6 +251,8 @@
 				5A0A00130000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
 				5A0A00140000000000000001 /* XCRemoteSwiftPackageReference "swift-http-types" */,
 			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BEB8AB5F3022709A00E0E150 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -282,7 +282,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A0A00510000000000000001 /* Subscriptions.storekit in Resources */,
+				5A0A00510000000000000001 /* Zoonk/Resources/StoreKit/Subscriptions.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,14 +313,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5A0A010B0000000000000001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 5A0A00240000000000000001 /* OpenAPIGenerator */;
-		};
 		5A0A01070000000000000001 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BEB8AB5D3022709A00E0E150 /* Zoonk */;
 			targetProxy = 5A0A01080000000000000001 /* PBXContainerItemProxy */;
+		};
+		5A0A010B0000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 5A0A00240000000000000001 /* OpenAPIGenerator */;
 		};
 		BEB8AB793022709B00E0E150 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -496,7 +496,7 @@
 		};
 		BEB8AB823022709B00E0E150 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A0A00400000000000000001 /* Debug.xcconfig */;
+			baseConfigurationReference = 5A0A00400000000000000001 /* Configuration/Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Zoonk/Zoonk.entitlements;
@@ -540,7 +540,7 @@
 		};
 		BEB8AB833022709B00E0E150 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A0A00410000000000000001 /* Release.xcconfig */;
+			baseConfigurationReference = 5A0A00410000000000000001 /* Configuration/Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Zoonk/Zoonk.entitlements;
@@ -735,6 +735,6 @@
 			productName = "plugin:OpenAPIGenerator";
 		};
 /* End XCSwiftPackageProductDependency section */
-};
+	};
 	rootObject = BEB8AB563022709A00E0E150 /* Project object */;
 }

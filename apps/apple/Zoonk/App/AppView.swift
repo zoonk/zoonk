@@ -15,11 +15,13 @@ struct AppView: View {
   var body: some View {
     TabView(selection: $selectedSection) {
       ForEach(AppSection.allCases) { section in
-        Tab(value: section, role: section.tabRole) {
+        Tab(value: section) {
           NavigationStack(path: navigationPath(for: section)) {
-            section.tabContent {
-              isAccountPresented = true
-            }
+            section.tabContent(
+              actions: AppSectionActions(
+                presentAccount: { isAccountPresented = true },
+                selectSection: { selectedSection = $0 })
+            )
             .navigationTitle(Text(section.title))
             .toolbarTitleDisplayMode(.inlineLarge)
             .modifier(AdaptiveNavigationTitle())
@@ -130,6 +132,12 @@ private struct AdaptiveNavigationTitle: ViewModifier {
   let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
 
   AppView()
+    .environment(
+      CourseCatalogStore(
+        api: CourseCatalogAPI(clients: clients),
+        language: currentCourseCatalogLanguage(),
+        session: session)
+    )
     .environment(ProgressStore(api: ProgressAPI(clients: clients), session: session))
     .environment(session)
     .environment(AppStoreSubscriptionStore.live())

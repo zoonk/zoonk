@@ -20,7 +20,7 @@ struct AccountSheet: View {
   @State private var isGooglePlayManagementPresented = false
   @State private var path = [AccountDestination]()
 
-  let openCourses: () -> Void
+  let openCatalog: () -> Void
 
   var body: some View {
     NavigationStack(path: $path) {
@@ -115,7 +115,7 @@ struct AccountSheet: View {
           deleteAccount: { path.append(.deleteAccount(makeDeletionDestination(account))) },
           editProfile: { path.append(.profile) },
           manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
-          openCourses: showCourses,
+          openCatalog: showCatalog,
           openSubscription: { showSubscription(for: account) },
           showGooglePlayManagement: { isGooglePlayManagementPresented = true }
         )
@@ -174,10 +174,10 @@ struct AccountSheet: View {
     }
   }
 
-  /// Closes the modal before moving to the app's native courses section, matching the web account menu without opening a duplicate web surface.
-  private func showCourses() {
+  /// Closes the modal before moving to the app's native public catalog without opening a duplicate web surface.
+  private func showCatalog() {
     dismiss()
-    openCourses()
+    openCatalog()
   }
 
   private func showSubscription(for account: CurrentAccount) {
@@ -197,7 +197,7 @@ private struct SignedInAccountView: View {
   let deleteAccount: () -> Void
   let editProfile: () -> Void
   let manageAppStoreSubscription: () -> Void
-  let openCourses: () -> Void
+  let openCatalog: () -> Void
   let openSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
@@ -221,12 +221,12 @@ private struct SignedInAccountView: View {
       }
 
       Section {
-        Button(action: openCourses) {
+        Button(action: openCatalog) {
           AccountRowLabel(
             title: Text(
-              "My courses",
+              "Browse courses",
               tableName: "Account",
-              comment: "Account option that opens the learner's courses"),
+              comment: "Account option that opens the public course catalog"),
             systemImage: "square.grid.2x2")
         }
       }
