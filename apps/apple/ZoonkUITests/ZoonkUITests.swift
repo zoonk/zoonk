@@ -523,6 +523,16 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       courseContinue.waitForExistence(timeout: 2),
       "Expected the course action to use Main's continuation label and progress")
+
+    if app.frame.width > 600 {
+      let courseTitle = app.staticTexts["How Plants Grow"].firstMatch
+      XCTAssertEqual(
+        courseContinue.frame.minX,
+        courseTitle.frame.minX,
+        accuracy: 1,
+        "Expected the primary course action to align with the hero text on iPad")
+    }
+
     courseContinue.tap()
 
     XCTAssertTrue(
@@ -536,6 +546,9 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       chapter.waitForExistence(timeout: 5),
       "Expected the course to expose its first chapter")
+    XCTAssertTrue(
+      app.staticTexts["1. Roots and Water"].exists,
+      "Expected the chapter number to be part of the title instead of a separate leading column")
     XCTAssertTrue(
       chapter.label.contains("1/2 done"),
       "Expected the chapter row to expose learner progress instead of a lesson count")
@@ -575,9 +588,21 @@ final class ZoonkUITests: XCTestCase {
       chapterContinue.waitForExistence(timeout: 2),
       "Expected the chapter action to use Main's continuation label and progress")
 
+    if app.frame.width > 600 {
+      let chapterTitle = app.staticTexts["1. Roots and Water"].firstMatch
+      XCTAssertEqual(
+        chapterContinue.frame.minX,
+        chapterTitle.frame.minX,
+        accuracy: 1,
+        "Expected the primary chapter action to align with the hero text on iPad")
+    }
+
     let completedLesson = app.buttons.matching(
       NSPredicate(format: "label CONTAINS %@", "Meet the Roots")
     ).firstMatch
+    XCTAssertTrue(
+      app.staticTexts["1. Meet the Roots"].exists,
+      "Expected the lesson number to be part of the title instead of a separate leading column")
     XCTAssertTrue(completedLesson.label.contains("Completed"))
 
     let nextLesson = app.buttons.matching(
@@ -598,7 +623,7 @@ final class ZoonkUITests: XCTestCase {
     chapterBackButton.tap()
 
     XCTAssertTrue(
-      app.staticTexts["Follow the Water"].waitForExistence(timeout: 5),
+      app.staticTexts["2. Follow the Water"].waitForExistence(timeout: 5),
       "Expected Back to return to the chapter's lesson list")
   }
 
@@ -685,17 +710,23 @@ final class ZoonkUITests: XCTestCase {
     searchField.tap()
     searchField.typeText("leaves")
 
-    XCTAssertFalse(
-      app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Continue")).firstMatch
-        .exists,
+    let courseContinue = app.buttons.matching(
+      NSPredicate(format: "label BEGINSWITH %@", "Continue")
+    ).firstMatch
+    let hiddenCourseHeader = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "exists == false"),
+      object: courseContinue)
+    XCTAssertEqual(
+      XCTWaiter.wait(for: [hiddenCourseHeader], timeout: 5),
+      .completed,
       "Expected active search to remove the detail header between search and results")
     XCTAssertTrue(
-      app.staticTexts["Leaves and Light"].waitForExistence(timeout: 5),
+      app.staticTexts["2. Leaves and Light"].waitForExistence(timeout: 5),
       "Expected the matching chapter to remain visible above the keyboard")
     XCTAssertTrue(
-      app.staticTexts["Leaves and Light"].isHittable,
+      app.staticTexts["2. Leaves and Light"].isHittable,
       "Expected the filtered chapter to remain directly interactive during search")
-    XCTAssertFalse(app.staticTexts["Roots and Water"].exists)
+    XCTAssertFalse(app.staticTexts["1. Roots and Water"].exists)
   }
 
   /// Proves lesson filtering uses the same compact search hierarchy as chapter filtering.
@@ -706,7 +737,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .catalog)
     app.launch()
     openPlantsCourse(in: app)
-    app.staticTexts["Roots and Water"].firstMatch.tap()
+    app.staticTexts["1. Roots and Water"].firstMatch.tap()
 
     XCTAssertFalse(app.searchFields["Search lessons"].exists)
     app.buttons["Search"].tap()
@@ -715,17 +746,23 @@ final class ZoonkUITests: XCTestCase {
     searchField.tap()
     searchField.typeText("water")
 
-    XCTAssertFalse(
-      app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Continue")).firstMatch
-        .exists,
+    let chapterContinue = app.buttons.matching(
+      NSPredicate(format: "label BEGINSWITH %@", "Continue")
+    ).firstMatch
+    let hiddenChapterHeader = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "exists == false"),
+      object: chapterContinue)
+    XCTAssertEqual(
+      XCTWaiter.wait(for: [hiddenChapterHeader], timeout: 5),
+      .completed,
       "Expected active search to remove the detail header between search and results")
     XCTAssertTrue(
-      app.staticTexts["Follow the Water"].waitForExistence(timeout: 5),
+      app.staticTexts["2. Follow the Water"].waitForExistence(timeout: 5),
       "Expected the matching lesson to remain visible above the keyboard")
     XCTAssertTrue(
-      app.staticTexts["Follow the Water"].isHittable,
+      app.staticTexts["2. Follow the Water"].isHittable,
       "Expected the filtered lesson to remain directly interactive during search")
-    XCTAssertFalse(app.staticTexts["Meet the Roots"].exists)
+    XCTAssertFalse(app.staticTexts["1. Meet the Roots"].exists)
   }
 
   @MainActor

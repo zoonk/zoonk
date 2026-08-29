@@ -66,24 +66,49 @@ struct CatalogProgressLabel: View {
   let progress: CatalogCurriculumProgress
 
   var body: some View {
+    Group {
+      switch progress {
+      case .notStarted:
+        Text(
+          "Not started",
+          tableName: "Courses",
+          comment: "Progress state for a chapter or lesson with no completed lessons.")
+      case .inProgress(let completed, let total):
+        HStack(spacing: 4) {
+          Image(systemName: "circle.dashed")
+            .accessibilityHidden(true)
+
+          Text(
+            "\(completed)/\(total) done",
+            tableName: "Courses",
+            comment:
+              "Chapter progress. The first value is completed lessons and the second is total lessons."
+          )
+        }
+      case .completed:
+        HStack(spacing: 4) {
+          Image(systemName: "checkmark.circle.fill")
+            .accessibilityHidden(true)
+
+          Text(
+            "Completed",
+            tableName: "Courses",
+            comment: "Progress state for a completed chapter or lesson.")
+        }
+      }
+    }
+    .font(.caption.weight(.semibold))
+    .foregroundStyle(tint)
+    .padding(.horizontal, 8)
+    .padding(.vertical, 4)
+    .background(tint.opacity(0.12), in: Capsule())
+  }
+
+  private var tint: Color {
     switch progress {
-    case .notStarted:
-      Text(
-        "Not started",
-        tableName: "Courses",
-        comment: "Progress state for a chapter or lesson with no completed lessons.")
-    case .inProgress(let completed, let total):
-      Text(
-        "\(completed)/\(total) done",
-        tableName: "Courses",
-        comment:
-          "Chapter progress. The first value is completed lessons and the second is total lessons."
-      )
-    case .completed:
-      Text(
-        "Completed",
-        tableName: "Courses",
-        comment: "Progress state for a completed chapter or lesson.")
+    case .notStarted: Color(uiColor: .secondaryLabel)
+    case .inProgress: .blue
+    case .completed: .green
     }
   }
 }

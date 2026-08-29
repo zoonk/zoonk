@@ -3,6 +3,7 @@ import SwiftUI
 struct CourseArtwork: View {
   let imageURL: URL?
   var cornerRadius: CGFloat = 16
+  var symbolTint: Color?
   var systemImage = "book.closed.fill"
 
   var body: some View {
@@ -35,13 +36,17 @@ struct CourseArtwork: View {
 
   private var fallback: some View {
     ZStack {
-      Color(uiColor: .tertiarySystemFill)
+      fallbackBackground
 
       Image(systemName: systemImage)
         .font(.system(.largeTitle, design: .rounded, weight: .medium))
         .symbolRenderingMode(.hierarchical)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(symbolTint ?? Color(uiColor: .secondaryLabel))
     }
+  }
+
+  private var fallbackBackground: Color {
+    symbolTint?.opacity(0.12) ?? Color(uiColor: .tertiarySystemFill)
   }
 }
 

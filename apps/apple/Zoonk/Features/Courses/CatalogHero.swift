@@ -18,7 +18,10 @@ struct CatalogDetailHeader: View {
     if dynamicTypeSize.isAccessibilitySize {
       accessibilityLayout
     } else {
-      HStack(alignment: .top, spacing: horizontalSizeClass == .regular ? 20 : 12) {
+      HStack(
+        alignment: .top,
+        spacing: CatalogDetailLayout.heroSpacing(for: horizontalSizeClass)
+      ) {
         artwork
         textContent
       }
@@ -30,11 +33,9 @@ struct CatalogDetailHeader: View {
       imageURL: configuration.imageURL,
       systemImage: configuration.systemImage
     )
-    .frame(width: artworkSize, height: artworkSize)
-  }
-
-  private var artworkSize: CGFloat {
-    horizontalSizeClass == .regular ? 112 : 80
+    .frame(
+      width: CatalogDetailLayout.heroArtworkSize(for: horizontalSizeClass),
+      height: CatalogDetailLayout.heroArtworkSize(for: horizontalSizeClass))
   }
 
   private var accessibilityLayout: some View {

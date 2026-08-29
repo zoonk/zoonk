@@ -85,46 +85,46 @@ private struct CourseDetailList: View {
         detailHeader
       }
 
+      CatalogCurriculumHeader(
+        title: Text(
+          "Chapters",
+          tableName: "Courses",
+          comment: "Heading above the ordered chapter list on a course screen."))
+
       List {
-        Section {
-          if filteredChapters.isEmpty {
-            emptyChaptersView
-              .listRowSeparator(.hidden)
-          } else {
-            ForEach(filteredChapters) { chapter in
-              NavigationLink(
-                value: CourseDestination.chapter(
-                  ChapterReference((course: detail.course, chapter: chapter)))
+        if filteredChapters.isEmpty {
+          emptyChaptersView
+            .listRowSeparator(.hidden)
+        } else {
+          ForEach(filteredChapters) { chapter in
+            NavigationLink(
+              value: CourseDestination.chapter(
+                ChapterReference((course: detail.course, chapter: chapter)))
+            ) {
+              CatalogNumberedRow(
+                description: chapter.description,
+                imageURL: chapter.imageURL ?? detail.course.imageURL,
+                number: chapter.position + 1,
+                systemImage: "rectangle.stack.fill",
+                title: chapter.title
               ) {
-                CatalogNumberedRow(
-                  description: chapter.description,
-                  imageURL: chapter.imageURL ?? detail.course.imageURL,
-                  number: chapter.position + 1,
-                  systemImage: "rectangle.stack.fill",
-                  title: chapter.title
-                ) {
-                  if let progress = catalogChapterProgress(
-                    chapter: chapter,
-                    progress: detail.progress)
-                  {
-                    CatalogProgressLabel(progress: progress)
-                  }
+                if let progress = catalogChapterProgress(
+                  chapter: chapter,
+                  progress: detail.progress)
+                {
+                  CatalogProgressLabel(progress: progress)
                 }
               }
-              .listRowInsets(
-                EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
             }
+            .listRowInsets(
+              EdgeInsets(
+                top: CatalogDetailLayout.curriculumRowVerticalInset(
+                  for: horizontalSizeClass),
+                leading: 0,
+                bottom: CatalogDetailLayout.curriculumRowVerticalInset(
+                  for: horizontalSizeClass),
+                trailing: 0))
           }
-        } header: {
-          Text(
-            "Chapters",
-            tableName: "Courses",
-            comment: "Heading above the ordered chapter list on a course screen."
-          )
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-          .padding(
-            .leading,
-            CatalogDetailLayout.horizontalInset(for: horizontalSizeClass))
         }
       }
       .listStyle(.plain)
@@ -158,22 +158,11 @@ private struct CourseDetailList: View {
         .presentationCompactAdaptation(.sheet)
       }
 
-      HStack(spacing: 8) {
-        if let continuationDestination {
-          CatalogContinueLink(
-            continuation: detail.continuation,
-            destination: continuationDestination,
-            percentComplete: detail.progress?.percentComplete)
-        } else {
-          Spacer(minLength: 0)
-        }
-
-        CatalogActionsMenu(showFeedback: showFeedback)
-
-        if horizontalSizeClass == .regular, continuationDestination != nil {
-          Spacer(minLength: 0)
-        }
-      }
+      CatalogDetailActions(
+        continuation: detail.continuation,
+        destination: continuationDestination,
+        percentComplete: detail.progress?.percentComplete,
+        showFeedback: showFeedback)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, horizontalInset)
@@ -273,12 +262,13 @@ private struct CourseInformationView: View {
 }
 
 private struct CourseLoadingView: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let course: CourseReference
 
   var body: some View {
-    List {
+    VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: 16) {
         CatalogDetailHeader(
           configuration: CatalogDetailHeaderConfiguration(
@@ -294,10 +284,19 @@ private struct CourseLoadingView: View {
           Image(systemName: "ellipsis")
             .frame(width: 44, height: 44)
         }
+        .padding(
+          .leading,
+          CatalogDetailLayout.actionLeadingInset(
+            for: horizontalSizeClass,
+            dynamicTypeSize: dynamicTypeSize))
       }
-      .listRowSeparator(.hidden)
+      .padding(.horizontal, CatalogDetailLayout.horizontalInset(for: horizontalSizeClass))
+      .padding(.top, 16)
+      .padding(.bottom, 12)
 
-      Section {
+      CatalogCurriculumHeader(title: Text(verbatim: "Chapters"))
+
+      List {
         ForEach(0..<4, id: \.self) { index in
           CatalogNumberedRow(
             description: "A short chapter description",
@@ -309,17 +308,21 @@ private struct CourseLoadingView: View {
             Text(verbatim: "Not started")
           }
           .listRowInsets(
-            EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+            EdgeInsets(
+              top: CatalogDetailLayout.curriculumRowVerticalInset(
+                for: horizontalSizeClass),
+              leading: 0,
+              bottom: CatalogDetailLayout.curriculumRowVerticalInset(
+                for: horizontalSizeClass),
+              trailing: 0))
         }
-      } header: {
-        Text(verbatim: "Chapters")
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-          .padding(
-            .leading,
-            CatalogDetailLayout.horizontalInset(for: horizontalSizeClass))
       }
+      .listStyle(.plain)
+      .contentMargins(
+        .horizontal,
+        CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
+        for: .scrollContent)
     }
-    .listStyle(.plain)
     .frame(maxWidth: 900)
     .frame(maxWidth: .infinity)
     .redacted(reason: .placeholder)

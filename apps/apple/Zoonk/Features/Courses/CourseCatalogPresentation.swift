@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 struct CatalogSearchRequest<Item> {
   let items: [Item]
@@ -237,13 +238,30 @@ extension LessonKind {
     case .explanation: "lightbulb"
     case .grammar: "textformat"
     case .listening: "headphones"
-    case .practice: "figure.walk.motion"
+    case .practice: "pencil.and.scribble"
     case .quiz: "checkmark.circle"
     case .reading: "book.closed"
     case .review: "arrow.clockwise"
     case .translation: "character.bubble"
     case .tutorial: "list.number"
     case .vocabulary: "text.book.closed"
+    }
+  }
+
+  var symbolTint: Color {
+    switch self {
+    case .alphabet: .blue
+    case .custom: Color(uiColor: .secondaryLabel)
+    case .explanation: .blue
+    case .grammar: .purple
+    case .listening: .red
+    case .practice: .green
+    case .quiz: .yellow
+    case .reading: .yellow
+    case .review: .brown
+    case .translation: .orange
+    case .tutorial: .purple
+    case .vocabulary: .green
     }
   }
 }

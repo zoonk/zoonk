@@ -7,6 +7,7 @@ struct CatalogNumberedRow<Metadata: View>: View {
   let description: String?
   let imageURL: URL?
   let number: Int
+  let symbolTint: Color?
   let systemImage: String
   let title: String
   @ViewBuilder let metadata: Metadata
@@ -15,6 +16,7 @@ struct CatalogNumberedRow<Metadata: View>: View {
     description: String?,
     imageURL: URL?,
     number: Int,
+    symbolTint: Color? = nil,
     systemImage: String,
     title: String,
     @ViewBuilder metadata: () -> Metadata
@@ -22,29 +24,30 @@ struct CatalogNumberedRow<Metadata: View>: View {
     self.description = description
     self.imageURL = imageURL
     self.number = number
+    self.symbolTint = symbolTint
     self.systemImage = systemImage
     self.title = title
     self.metadata = metadata()
   }
 
   var body: some View {
-    HStack(alignment: .top, spacing: 12) {
-      Text(number.formatted())
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
-        .monospacedDigit()
-        .frame(width: 20, alignment: .trailing)
-        .padding(.top, 2)
-
+    HStack(
+      alignment: .top,
+      spacing: horizontalSizeClass == .regular ? 16 : 12
+    ) {
       CourseArtwork(
         imageURL: imageURL,
         cornerRadius: 12,
+        symbolTint: symbolTint,
         systemImage: systemImage
       )
       .frame(width: artworkSize, height: artworkSize)
 
-      VStack(alignment: .leading, spacing: 4) {
-        Text(title)
+      VStack(
+        alignment: .leading,
+        spacing: CatalogDetailLayout.curriculumContentSpacing(for: horizontalSizeClass)
+      ) {
+        Text(numberedTitle)
           .font(.headline)
           .foregroundStyle(.primary)
 
@@ -66,5 +69,9 @@ struct CatalogNumberedRow<Metadata: View>: View {
 
   private var artworkSize: CGFloat {
     horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize ? 64 : 56
+  }
+
+  private var numberedTitle: String {
+    "\(number.formatted()). \(title)"
   }
 }

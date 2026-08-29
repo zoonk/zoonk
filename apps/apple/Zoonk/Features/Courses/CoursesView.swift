@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CoursesView: View {
   @Environment(CourseCatalogStore.self) private var catalog
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @State private var isSearchPresented = false
   @State private var searchText = ""
   @State private var selectedCategory: CourseCategory?
@@ -52,7 +53,7 @@ struct CoursesView: View {
       }
       .frame(maxWidth: 1_180, alignment: .leading)
       .padding(.top, 4)
-      .padding(.bottom, 20)
+      .padding(.bottom, horizontalSizeClass == .regular ? 32 : 20)
       .frame(maxWidth: .infinity)
     }
     .scrollBounceBehavior(.basedOnSize)
