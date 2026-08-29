@@ -84,18 +84,8 @@ private struct CourseCatalogLoadingItem: View {
   let artworkSize: CGFloat
 
   var body: some View {
-    HStack(alignment: .top, spacing: 12) {
-      CourseArtwork(imageURL: nil)
-        .frame(width: artworkSize, height: artworkSize)
-
+    CourseCatalogRow(imageURL: nil, artworkSize: artworkSize) {
       textContent
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    .padding(.bottom, 14)
-    .overlay(alignment: .bottom) {
-      Color(uiColor: .separator)
-        .frame(height: 0.5)
-        .padding(.leading, artworkSize + 12)
     }
     .redacted(reason: .placeholder)
   }
@@ -118,18 +108,8 @@ private struct CourseCatalogItem: View {
 
   var body: some View {
     NavigationLink(value: CourseDestination.course(CourseReference(course))) {
-      HStack(alignment: .top, spacing: 12) {
-        CourseArtwork(imageURL: course.imageURL)
-          .frame(width: artworkSize, height: artworkSize)
-
+      CourseCatalogRow(imageURL: course.imageURL, artworkSize: artworkSize) {
         textContent
-          .frame(maxWidth: .infinity, alignment: .leading)
-      }
-      .padding(.bottom, 14)
-      .overlay(alignment: .bottom) {
-        Color(uiColor: .separator)
-          .frame(height: 0.5)
-          .padding(.leading, artworkSize + 12)
       }
       .contentShape(Rectangle())
     }
@@ -155,6 +135,36 @@ private struct CourseCatalogItem: View {
           .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
       }
     }
+  }
+}
+
+private struct CourseCatalogRow<Content: View>: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+  let imageURL: URL?
+  let artworkSize: CGFloat
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    HStack(alignment: usesBalancedRegularLayout ? .center : .top, spacing: 12) {
+      CourseArtwork(imageURL: imageURL)
+        .frame(width: artworkSize, height: artworkSize)
+
+      content
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    .padding(.top, usesBalancedRegularLayout ? 8 : 0)
+    .padding(.bottom, usesBalancedRegularLayout ? 8 : 14)
+    .overlay(alignment: .bottom) {
+      Color(uiColor: .separator)
+        .frame(height: 0.5)
+        .padding(.leading, artworkSize + 12)
+    }
+  }
+
+  private var usesBalancedRegularLayout: Bool {
+    horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize
   }
 }
 
