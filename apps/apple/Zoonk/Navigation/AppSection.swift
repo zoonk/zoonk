@@ -5,7 +5,6 @@ enum AppSection: CaseIterable, Hashable, Identifiable {
   case newCourse
   case courses
   case progress
-  case search
 
   var id: Self { self }
 
@@ -25,17 +24,12 @@ enum AppSection: CaseIterable, Hashable, Identifiable {
       LocalizedStringResource(
         "Courses",
         table: "Navigation",
-        comment: "Navigation title for the learner's courses.")
+        comment: "Navigation title for browsing the public course catalog.")
     case .progress:
       LocalizedStringResource(
         "Progress",
         table: "Navigation",
         comment: "Navigation title for the learner's progress overview.")
-    case .search:
-      LocalizedStringResource(
-        "Search",
-        table: "Navigation",
-        comment: "Navigation title for searching Zoonk.")
     }
   }
 
@@ -60,8 +54,6 @@ enum AppSection: CaseIterable, Hashable, Identifiable {
       "square.grid.2x2"
     case .progress:
       "chart.line.uptrend.xyaxis"
-    case .search:
-      "magnifyingglass"
     }
   }
 }

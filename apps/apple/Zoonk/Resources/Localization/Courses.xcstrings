@@ -1,791 +1,855 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "6-digit code" : {
-      "comment" : "Placeholder for the account deletion verification code\nPlaceholder for the email sign-in code",
+    "%lld/%lld done" : {
+      "comment" : "Chapter progress. The first value is completed lessons and the second is total lessons.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6-stelliger Code"
+            "value" : "%1$lld/%2$lld abgeschlossen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld done"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Código de 6 dígitos"
+            "value" : "%1$lld/%2$lld completadas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Code à 6 chiffres"
+            "value" : "%1$lld/%2$lld terminées"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Código de 6 dígitos"
+            "value" : "%1$lld/%2$lld concluídas"
           }
         }
       }
     },
-    "Account" : {
-      "comment" : "Accessibility label for the account button\nAccount sheet navigation title",
+    "All" : {
+      "comment" : "Category option that shows courses from every category.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konto"
+            "value" : "Alle"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuenta"
+            "value" : "Todos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compte"
+            "value" : "Tous"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conta"
+            "value" : "Todos"
           }
         }
       }
     },
-    "Account deleted" : {
-      "comment" : "Title shown after deletion when Apple authorization needs manual removal\nTitle shown after successful account deletion",
+    "Alphabet" : {
+      "comment" : "Fallback title for an alphabet lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konto gelöscht"
+            "value" : "Alphabet"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuenta eliminada"
+            "value" : "Alfabeto"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compte supprimé"
+            "value" : "Alphabet"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conta excluída"
+            "value" : "Alfabeto"
           }
         }
       }
     },
-    "Account deletion can't be undone." : {
-      "comment" : "Warns that account deletion is irreversible",
+    "Arts" : {
+      "comment" : "Course category for the arts.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Löschen des Kontos kann nicht rückgängig gemacht werden."
+            "value" : "Kunst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La eliminación de la cuenta no se puede deshacer."
+            "value" : "Arte"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La suppression du compte est irréversible."
+            "value" : "Arts"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A exclusão da conta não pode ser desfeita."
+            "value" : "Artes"
           }
         }
       }
     },
-    "Account email" : {
-      "comment" : "Section title above the read-only account email",
+    "Business" : {
+      "comment" : "Course category for business.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E-Mail-Adresse des Kontos"
+            "value" : "Betriebswirtschaft"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Correo de la cuenta"
+            "value" : "Negocios"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adresse e-mail du compte"
+            "value" : "Commerce"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Email da conta"
+            "value" : "Negócios"
           }
         }
       }
     },
-    "Account unavailable" : {
-      "comment" : "Title shown when the saved account cannot be loaded",
+    "Chapter" : {
+      "comment" : "Fallback title for a chapter continuation target.\nFallback title for the chapter containing a continuation lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konto nicht verfügbar"
+            "value" : "Kapitel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuenta no disponible"
+            "value" : "Capítulo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compte indisponible"
+            "value" : "Chapitre"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conta indisponível"
+            "value" : "Capítulo"
           }
         }
       }
     },
-    "Active" : {
-      "comment" : "Status for an active subscription",
+    "Chapter information" : {
+      "comment" : "Title for secondary information about a chapter.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktiv"
+            "value" : "Kapitelinformationen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activa"
+            "value" : "Información del capítulo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Actif"
+            "value" : "Informations sur le chapitre"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ativa"
+            "value" : "Informações do capítulo"
           }
         }
       }
     },
-    "App Store" : {
-      "comment" : "Status shown when an active subscription is managed by the App Store",
+    "Chapter not found" : {
+      "comment" : "Title when a chapter cannot be found.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store"
+            "value" : "Kapitel nicht gefunden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store"
+            "value" : "Capítulo no encontrado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store"
+            "value" : "Chapitre introuvable"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store"
+            "value" : "Capítulo não encontrado"
           }
         }
       }
     },
-    "Blog" : {
-      "comment" : "Account option for the blog",
+    "Chapter unavailable" : {
+      "comment" : "Title when a chapter cannot be loaded.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blog"
+            "value" : "Kapitel nicht verfügbar"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blog"
+            "value" : "Capítulo no disponible"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blog"
+            "value" : "Chapitre indisponible"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blog"
+            "value" : "Capítulo indisponível"
           }
         }
       }
     },
-    "Browse courses" : {
-      "comment" : "Account option that opens the public course catalog",
+    "Chapters" : {
+      "comment" : "Heading above matching chapter search results.\nHeading above the ordered chapter list on a course screen.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kurse entdecken"
+            "value" : "Kapitel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explorar cursos"
+            "value" : "Capítulos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parcourir les cours"
+            "value" : "Chapitres"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver cursos"
+            "value" : "Capítulos"
           }
         }
       }
     },
-    "By continuing, you agree to the Zoonk Terms of Service and Privacy Policy." : {
-      "comment" : "Legal agreement shown below sign-in methods",
+    "Check what you understood with a short quiz." : {
+      "comment" : "Fallback description for a quiz lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du fortfährst, stimmst du den Nutzungsbedingungen und der Datenschutzerklärung von Zoonk zu."
+            "value" : "Teste mit einem kurzen Quiz, was du verstanden hast."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al continuar, aceptas los Términos del Servicio y la Política de Privacidad de Zoonk."
+            "value" : "Comprueba lo que entendiste con un breve cuestionario."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En continuant, tu acceptes les Conditions d’utilisation et la Politique de confidentialité de Zoonk."
+            "value" : "Vérifie ce que tu as compris avec un petit quiz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ao continuar, você concorda com os Termos de Serviço e a Política de Privacidade do Zoonk."
+            "value" : "Confira o que você entendeu com um quiz rápido."
           }
         }
       }
     },
-    "Cancel" : {
-      "comment" : "Cancels permanent account deletion",
+    "Check your connection and try again." : {
+      "comment" : "Recovery guidance for an offline catalog request.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abbrechen"
+            "value" : "Prüfe deine Verbindung und versuche es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancelar"
+            "value" : "Comprueba tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annuler"
+            "value" : "Vérifie ta connexion et réessaie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancelar"
+            "value" : "Confira sua conexão e tente de novo."
           }
         }
       }
     },
-    "Check the information and try again." : {
-      "comment" : "Error shown when profile information is invalid",
+    "Communication" : {
+      "comment" : "Course category for communication.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überprüfe die Angaben und versuche es erneut."
+            "value" : "Kommunikation"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa la información e inténtalo de nuevo."
+            "value" : "Comunicación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérifie les informations et réessaie."
+            "value" : "Communication"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira as informações e tente de novo."
+            "value" : "Comunicação"
           }
         }
       }
     },
-    "Check your App Store purchase history, then contact support for help." : {
-      "comment" : "Recovery guidance when Zoonk cannot accept a verified App Store purchase",
+    "Completed" : {
+      "comment" : "Progress state for a completed chapter or lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deinen Einkaufsverlauf im App Store und wende dich dann an den Support."
+            "value" : "Abgeschlossen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa tu historial de compras del App Store y luego contacta con soporte para obtener ayuda."
+            "value" : "Completado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulte l’historique de tes achats dans l’App Store, puis contacte l’assistance pour obtenir de l’aide."
+            "value" : "Terminé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira seu histórico de compras na App Store e depois fale com o suporte para receber ajuda."
+            "value" : "Completou"
           }
         }
       }
     },
-    "Check your App Store purchase history, then contact support if you need help." : {
-      "comment" : "Recovery guidance after StoreKit transaction verification fails",
+    "Continue" : {
+      "comment" : "Continues a course or chapter from the learner's next lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deinen Einkaufsverlauf im App Store und wende dich an den Support, wenn du Hilfe brauchst."
+            "value" : "Fortsetzen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa tu historial de compras del App Store y luego contacta con soporte si necesitas ayuda."
+            "value" : "Continuar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulte l’historique de tes achats dans l’App Store, puis contacte l’assistance si tu as besoin d’aide."
+            "value" : "Continuer"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira seu histórico de compras na App Store e depois fale com o suporte se precisar de ajuda."
+            "value" : "Continuar"
           }
         }
       }
     },
-    "Check your connection and try restoring again." : {
-      "comment" : "Recovery guidance after restoring App Store purchases fails",
+    "Continue, %lld%% complete" : {
+      "comment" : "Accessible continue action followed by the course or chapter completion percent.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Internetverbindung und versuche erneut, deine Käufe wiederherzustellen."
+            "value" : "Fortsetzen, zu %lld %% abgeschlossen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu conexión e intenta restaurar las compras de nuevo."
+            "value" : "Continuar, %lld%% completado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérifie ta connexion, puis réessaie de restaurer tes achats."
+            "value" : "Continuer, progression à %lld %%"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira sua conexão e tente restaurar as compras novamente."
+            "value" : "Continuar, %lld%% concluído"
           }
         }
       }
     },
-    "Choose how your name appears before you continue." : {
-      "comment" : "Explains why first-time profile setup is required",
+    "Couldn't load more courses." : {
+      "comment" : "Message when another course page cannot be loaded.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lege fest, wie dein Name angezeigt werden soll, bevor du fortfährst."
+            "value" : "Weitere Kurse konnten nicht geladen werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige cómo aparecerá tu nombre antes de continuar."
+            "value" : "No se pudieron cargar más cursos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis comment ton nom apparaîtra avant de continuer."
+            "value" : "Impossible de charger plus de cours."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha como seu nome será exibido antes de continuar."
+            "value" : "Não foi possível carregar mais cursos."
           }
         }
       }
     },
-    "Close" : {
-      "comment" : "Closes the account sheet",
+    "Couldn't load more while offline." : {
+      "comment" : "Message when another course page cannot load because the device is offline.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schließen"
+            "value" : "Ohne Internet konnten keine weiteren Kurse geladen werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerrar"
+            "value" : "No se pudieron cargar más cursos sin conexión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fermer"
+            "value" : "Impossible de charger plus de cours sans connexion."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar"
+            "value" : "Não foi possível carregar mais cursos sem conexão."
           }
         }
       }
     },
-    "Continue with Apple to confirm that this account is yours before deleting it." : {
-      "comment" : "Explains why Apple reauthorization is required for deletion",
+    "Course categories" : {
+      "comment" : "Accessibility label for the horizontally scrolling course category selector.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fahre mit Apple fort, um vor dem Löschen zu bestätigen, dass dieses Konto dir gehört."
+            "value" : "Kurskategorien"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continúa con Apple para confirmar que esta cuenta es tuya antes de eliminarla."
+            "value" : "Categorías de cursos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continue avec Apple pour confirmer que ce compte t’appartient avant de le supprimer."
+            "value" : "Catégories de cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continue com a Apple para confirmar que esta conta é sua antes de excluí-la."
+            "value" : "Categorias de cursos"
           }
         }
       }
     },
-    "Continue with email" : {
-      "comment" : "Email sign-in button label",
+    "Course information" : {
+      "comment" : "Title for secondary information about a course.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiter mit E-Mail"
+            "value" : "Kursinformationen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar con correo electrónico"
+            "value" : "Información del curso"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuer avec un e-mail"
+            "value" : "Informations sur le cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar com email"
+            "value" : "Informações do curso"
           }
         }
       }
     },
-    "Couldn't restore purchases" : {
-      "comment" : "Title shown when restoring App Store purchases fails",
+    "Course not found" : {
+      "comment" : "Title when a course cannot be found.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käufe konnten nicht wiederhergestellt werden"
+            "value" : "Kurs nicht gefunden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudieron restaurar las compras"
+            "value" : "Curso no encontrado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de restaurer les achats"
+            "value" : "Cours introuvable"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível restaurar as compras"
+            "value" : "Curso não encontrado"
           }
         }
       }
     },
-    "Couldn't update your account" : {
-      "comment" : "Title shown when a verified App Store transaction could not reach Zoonk",
+    "Course unavailable" : {
+      "comment" : "Title when a course cannot be loaded.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Konto konnte nicht aktualisiert werden"
+            "value" : "Kurs nicht verfügbar"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo actualizar tu cuenta"
+            "value" : "Curso no disponible"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de mettre à jour ton compte"
+            "value" : "Cours indisponible"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível atualizar sua conta"
+            "value" : "Curso indisponível"
           }
         }
       }
     },
-    "Course progress" : {
-      "comment" : "Learning data removed during account deletion",
+    "Courses" : {
+      "comment" : "Heading above matching course search results.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kursfortschritt"
+            "value" : "Kurse"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progreso del curso"
+            "value" : "Cursos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progression du cours"
+            "value" : "Cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progresso do curso"
+            "value" : "Cursos"
           }
         }
       }
     },
-    "Delete account" : {
-      "comment" : "Account deletion navigation title\nAccount option that opens permanent account deletion\nConfirms permanent account deletion\nStarts permanent account deletion",
+    "Courses are unavailable" : {
+      "comment" : "Title when the public course catalog cannot be loaded.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konto löschen"
+            "value" : "Kurse sind nicht verfügbar"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar cuenta"
+            "value" : "Los cursos no están disponibles"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer le compte"
+            "value" : "Les cours sont indisponibles"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir conta"
+            "value" : "Os cursos estão indisponíveis"
           }
         }
       }
     },
-    "Delete your Zoonk account?" : {
-      "comment" : "Final confirmation title before permanent account deletion",
+    "Courses will appear here when they're available." : {
+      "comment" : "Guidance when no public courses are available.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zoonk-Konto löschen?"
+            "value" : "Verfügbare Kurse werden hier angezeigt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Eliminar tu cuenta de Zoonk?"
+            "value" : "Los cursos aparecerán aquí cuando estén disponibles."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer ton compte Zoonk ?"
+            "value" : "Les cours apparaîtront ici dès qu'ils seront disponibles."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir sua conta do Zoonk?"
+            "value" : "Os cursos vão aparecer aqui quando estiverem disponíveis."
           }
         }
       }
     },
-    "Deleting your Zoonk account doesn't cancel App Store billing. Cancel the subscription first if you don't want it to renew." : {
-      "comment" : "Warns that App Store billing continues independently of Zoonk account deletion",
+    "Create a course about %@" : {
+      "comment" : "Opens course creation from an empty category. The interpolated value is the category name.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Durch das Löschen deines Zoonk-Kontos wird die Abrechnung im App Store nicht beendet. Kündige zuerst das Abonnement, wenn es nicht verlängert werden soll."
+            "value" : "Kurs über %@ erstellen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación del App Store. Cancela primero la suscripción si no quieres que se renueve."
+            "value" : "Crear un curso sobre %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer ton compte Zoonk n’annule pas la facturation via l’App Store. Résilie d’abord l’abonnement si tu ne veux pas qu’il soit renouvelé."
+            "value" : "Créer un cours sur %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir sua conta do Zoonk não cancela a cobrança da App Store. Cancele primeiro a assinatura se não quiser que ela seja renovada."
+            "value" : "Crie um curso sobre %@"
           }
         }
       }
     },
-    "Deleting your Zoonk account doesn't cancel Google Play billing. Use Google Play on an Android device to cancel it first if you don't want it to renew." : {
-      "comment" : "Warns that Google Play billing continues independently of Zoonk account deletion",
+    "Created with AI" : {
+      "comment" : "Disclosure that a public course or chapter was created with AI.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du dein Zoonk-Konto löschst, endet dein über Google Play abgerechnetes Abo nicht. Kündige es zuerst über Google Play auf einem Android-Gerät, wenn es sich nicht verlängern soll."
+            "value" : "Mit KI erstellt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de Google Play. Si no quieres que se renueve, cancela primero la suscripción desde Google Play en un dispositivo Android."
+            "value" : "Creado con IA"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La suppression de ton compte Zoonk n’annule pas la facturation Google Play. Si tu ne veux pas que ton abonnement soit renouvelé, annule-le d’abord dans Google Play sur un appareil Android."
+            "value" : "Créé avec l'IA"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir sua conta do Zoonk não cancela a cobrança do Google Play. Se você não quiser renovar, cancele primeiro pelo Google Play em um dispositivo Android."
+            "value" : "Criado com IA"
+          }
+        }
+      }
+    },
+    "Culture" : {
+      "comment" : "Course category for culture.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kultur"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cultura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Culture"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cultura"
+          }
+        }
+      }
+    },
+    "Custom lesson" : {
+      "comment" : "Fallback title for a custom lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eigene Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lección personalizada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçon personnalisée"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aula personalizada"
           }
         }
       }
     },
     "Done" : {
-      "comment" : "Closes successful account deletion\nCloses the Apple revocation outcome",
+      "comment" : "Closes catalog information presented in a popover or sheet.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -808,1434 +872,1666 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluído"
-          }
-        }
-      }
-    },
-    "Email" : {
-      "comment" : "Email sign-in field label\nFixed account email used to reauthorize deletion\nRead-only profile email label",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E-Mail"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Correo electrónico"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E-mail"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email"
-          }
-        }
-      }
-    },
-    "Email sign-in" : {
-      "comment" : "Email login navigation title",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit E-Mail anmelden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicio de sesión con correo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connexion par e-mail"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrar com email"
-          }
-        }
-      }
-    },
-    "Enter a valid email address." : {
-      "comment" : "Error shown when an email address is invalid",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gib eine gültige E-Mail-Adresse ein."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresa un correo electrónico válido."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saisis une adresse e-mail valide."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite um email válido."
-          }
-        }
-      }
-    },
-    "Feedback & Support" : {
-      "comment" : "Account option for feedback and support",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feedback & Support"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comentarios y ayuda"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avis et aide"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sugestões e Suporte"
-          }
-        }
-      }
-    },
-    "Finish setup" : {
-      "comment" : "Navigation title for required first-time profile setup",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einrichtung abschließen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar configuración"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminer la configuration"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concluir configuração"
-          }
-        }
-      }
-    },
-    "For your security, enter a new code sent to the email on this account." : {
-      "comment" : "Explains the email reauthentication requirement for account deletion",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gib zu deiner Sicherheit einen neuen Code ein, der an die E-Mail-Adresse dieses Kontos gesendet wurde."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por tu seguridad, introduce un nuevo código enviado al correo de esta cuenta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour ta sécurité, saisis un nouveau code envoyé à l’adresse e-mail de ce compte."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para sua segurança, insira um novo código enviado para o email desta conta."
-          }
-        }
-      }
-    },
-    "Free" : {
-      "comment" : "Status shown when the account has no active subscription",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kostenlos"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gratis"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gratuit"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grátis"
-          }
-        }
-      }
-    },
-    "Google Play" : {
-      "comment" : "Status shown when an active subscription is managed by Google Play",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play"
-          }
-        }
-      }
-    },
-    "Keep your courses and progress available on all your devices." : {
-      "comment" : "Explains the benefit of signing in",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Kurse und dein Fortschritt sind auf allen deinen Geräten verfügbar."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accede a tus cursos y a tu progreso desde todos tus dispositivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retrouve tes cours et ta progression sur tous tes appareils."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acesse seus cursos e seu progresso em todos os seus dispositivos."
-          }
-        }
-      }
-    },
-    "Learn anything. It’s all included." : {
-      "comment" : "Headline on the Zoonk Plus subscription screen",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lerne, was du willst. Alles ist dabei."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprende lo que quieras. Todo está incluido."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apprends ce que tu veux. Tout est inclus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprenda qualquer coisa. Está tudo incluído."
-          }
-        }
-      }
-    },
-    "Learning built around your goals" : {
-      "comment" : "Zoonk Plus benefit describing personalized learning",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lernen passend zu deinen Zielen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estudio adaptado a tus objetivos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un apprentissage adapté à tes objectifs"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estudo pensado para seus objetivos"
-          }
-        }
-      }
-    },
-    "Make sure you're signed in with the Apple Account used for the purchase, then try again." : {
-      "comment" : "Recovery guidance when restore finds no eligible App Store purchases",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stelle sicher, dass du mit dem Apple Account angemeldet bist, den du für den Kauf verwendet hast, und versuche es erneut."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Asegúrate de haber iniciado sesión con la Cuenta de Apple que usaste para la compra e inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérifie que tu es connecté au compte Apple utilisé pour l’achat, puis réessaie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confira se você entrou com a Conta Apple usada na compra e tente novamente."
-          }
-        }
-      }
-    },
-    "Manage App Store subscription" : {
-      "comment" : "Opens Apple's subscription management before account deletion",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App-Store-Abonnement verwalten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestionar suscripción del App Store"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gérer l’abonnement App Store"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerenciar assinatura da App Store"
-          }
-        }
-      }
-    },
-    "Manage Sign in with Apple" : {
-      "comment" : "Opens Apple account authorization management after deletion",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„Mit Apple anmelden“ verwalten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestionar Inicio de sesión con Apple"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gérer Connexion avec Apple"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerenciar Iniciar Sessão com a Apple"
-          }
-        }
-      }
-    },
-    "Managed on Google Play" : {
-      "comment" : "Identifies Google Play as the owner of subscription billing\nTitle explaining where a Google-owned subscription is managed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Über Google Play verwaltet"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestionada en Google Play"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Géré sur Google Play"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerenciada pelo Google Play"
-          }
-        }
-      }
-    },
-    "Name" : {
-      "comment" : "Profile name field label",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nombre"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nome"
-          }
-        }
-      }
-    },
-    "No active subscription found" : {
-      "comment" : "Title shown when restored App Store purchases do not currently provide Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kein aktives Abo gefunden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se encontró ninguna suscripción activa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun abonnement actif trouvé"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma assinatura ativa encontrada"
-          }
-        }
-      }
-    },
-    "No purchases found" : {
-      "comment" : "Title shown when restore finds no eligible App Store purchases",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Käufe gefunden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se encontraron compras"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun achat trouvé"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma compra encontrada"
-          }
-        }
-      }
-    },
-    "OK" : {
-      "comment" : "Dismisses a subscription status message\nDismisses subscription management guidance",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aceptar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
             "value" : "OK"
           }
         }
       }
     },
-    "Permanently deleted" : {
-      "comment" : "Heading above the data removed during account deletion",
+    "Economics" : {
+      "comment" : "Course category for economics.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dauerhaft gelöscht"
+            "value" : "Volkswirtschaft"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminado permanentemente"
+            "value" : "Economía"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimé définitivement"
+            "value" : "Économie"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluídos permanentemente"
+            "value" : "Economia"
           }
         }
       }
     },
-    "Personalized courses" : {
-      "comment" : "Personalized learning data removed during account deletion",
+    "Engineering" : {
+      "comment" : "Course category for engineering.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personalisierte Kurse"
+            "value" : "Ingenieurwesen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cursos personalizados"
+            "value" : "Ingeniería"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cours personnalisés"
+            "value" : "Ingénierie"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cursos personalizados"
+            "value" : "Engenharia"
           }
         }
       }
     },
-    "Plus gives you unlimited courses and lessons for whatever you want to learn." : {
-      "comment" : "Summary of the Zoonk Plus subscription",
+    "Explanation" : {
+      "comment" : "Fallback title for an explanation lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Plus bekommst du unbegrenzt viele Kurse und Lektionen zu allem, was du lernen möchtest."
+            "value" : "Erklärung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus te ofrece cursos y lecciones ilimitados sobre todo lo que quieras aprender."
+            "value" : "Explicación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec Plus, suis autant de cours et de leçons que tu veux, sur tout ce que tu souhaites apprendre."
+            "value" : "Explication"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Plus oferece cursos e aulas ilimitados sobre o que você quiser aprender."
+            "value" : "Explicação"
           }
         }
       }
     },
-    "Privacy Policy" : {
-      "comment" : "Link to the privacy policy",
+    "Find a course or jump directly to a chapter." : {
+      "comment" : "Guidance shown before the learner enters a catalog search query.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datenschutzerklärung"
+            "value" : "Finde einen Kurs oder springe direkt zu einem Kapitel."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Política de privacidad"
+            "value" : "Busca un curso o ve directamente a un capítulo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Politique de confidentialité"
+            "value" : "Trouve un cours ou va directement à un chapitre."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Política de privacidade"
+            "value" : "Encontre um curso ou vá direto para um capítulo."
           }
         }
       }
     },
-    "Profile" : {
-      "comment" : "Account option for profile\nProfile editor navigation title",
+    "Follow a guided step-by-step tutorial." : {
+      "comment" : "Fallback description for a tutorial lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Profil"
+            "value" : "Folge einer Anleitung Schritt für Schritt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perfil"
+            "value" : "Sigue un tutorial guiado paso a paso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Profil"
+            "value" : "Suis un tutoriel guidé étape par étape."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perfil"
+            "value" : "Siga um tutorial guiado passo a passo."
           }
         }
       }
     },
-    "Profile and account information" : {
-      "comment" : "Account data removed during deletion",
+    "Geography" : {
+      "comment" : "Course category for geography.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Profil- und Kontoinformationen"
+            "value" : "Geografie"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Información del perfil y de la cuenta"
+            "value" : "Geografía"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informations du profil et du compte"
+            "value" : "Géographie"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informações do perfil e da conta"
+            "value" : "Geografia"
           }
         }
       }
     },
-    "Purchase couldn't be linked" : {
-      "comment" : "Title shown when Zoonk cannot accept a verified App Store purchase",
+    "Grammar" : {
+      "comment" : "Fallback title for a grammar lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kauf konnte nicht verknüpft werden"
+            "value" : "Grammatik"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo vincular la compra"
+            "value" : "Gramática"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’associer l’achat"
+            "value" : "Grammaire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível vincular a compra"
+            "value" : "Gramática"
           }
         }
       }
     },
-    "Purchase couldn't be verified" : {
-      "comment" : "Title shown when StoreKit cannot verify a purchase",
+    "Health" : {
+      "comment" : "Course category for health.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kauf konnte nicht überprüft werden"
+            "value" : "Gesundheit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo verificar la compra"
+            "value" : "Salud"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de vérifier l’achat"
+            "value" : "Santé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível verificar a compra"
+            "value" : "Saúde"
           }
         }
       }
     },
-    "Purchase linked to another account" : {
-      "comment" : "Title shown when an App Store purchase belongs to another Zoonk account",
+    "History" : {
+      "comment" : "Course category for history.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kauf ist mit einem anderen Konto verknüpft"
+            "value" : "Geschichte"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compra vinculada a otra cuenta"
+            "value" : "Historia"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Achat associé à un autre compte"
+            "value" : "Histoire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compra vinculada a outra conta"
+            "value" : "História"
           }
         }
       }
     },
-    "Purchase not completed" : {
-      "comment" : "Title shown when an App Store purchase fails",
+    "Languages" : {
+      "comment" : "Course category for languages.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kauf nicht abgeschlossen"
+            "value" : "Sprachen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compra no completada"
+            "value" : "Idiomas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Achat non finalisé"
+            "value" : "Langues"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compra não concluída"
+            "value" : "Idiomas"
           }
         }
       }
     },
-    "Purchases restored" : {
-      "comment" : "Title shown when App Store purchases were restored",
+    "Law" : {
+      "comment" : "Course category for law.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käufe wiederhergestellt"
+            "value" : "Recht"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compras restauradas"
+            "value" : "Derecho"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Achats restaurés"
+            "value" : "Droit"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compras restauradas"
+            "value" : "Direito"
           }
         }
       }
     },
-    "Restore Purchases" : {
-      "comment" : "Restores App Store purchases and synchronizes them with the Zoonk account",
+    "Learn how letters and sounds work in this writing system." : {
+      "comment" : "Fallback description for an alphabet lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Käufe wiederherstellen"
+            "value" : "Lerne, wie Buchstaben und Laute in diesem Schriftsystem funktionieren."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restaurar compras"
+            "value" : "Aprende cómo funcionan las letras y los sonidos en este sistema de escritura."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restaurer les achats"
+            "value" : "Découvre comment fonctionnent les lettres et les sons dans ce système d'écriture."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restaurar compras"
+            "value" : "Aprenda como as letras e os sons funcionam neste sistema de escrita."
           }
         }
       }
     },
-    "Save" : {
-      "comment" : "Button that saves profile changes",
+    "Learn new words and practice using them." : {
+      "comment" : "Fallback description for a vocabulary lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Speichern"
+            "value" : "Lerne neue Wörter und übe, sie zu verwenden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardar"
+            "value" : "Aprende palabras nuevas y practica cómo usarlas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistrer"
+            "value" : "Apprends de nouveaux mots et entraîne-toi à les utiliser."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvar"
+            "value" : "Aprenda palavras novas e pratique como usar elas."
           }
         }
       }
     },
-    "Send a new code" : {
-      "comment" : "Sends a replacement account deletion verification code",
+    "Lesson" : {
+      "comment" : "Fallback title while the native lesson player is unavailable.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neuen Code senden"
+            "value" : "Lektion"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar un código nuevo"
+            "value" : "Lección"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer un nouveau code"
+            "value" : "Leçon"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar novo código"
+            "value" : "Aula"
           }
         }
       }
     },
-    "Send code" : {
-      "comment" : "Button that sends an email sign-in code",
+    "Lesson player coming soon" : {
+      "comment" : "Title on the temporary destination shown before the native lesson player is available.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Code senden"
+            "value" : "Lektionsplayer bald verfügbar"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar código"
+            "value" : "El reproductor de lecciones estará disponible pronto"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer le code"
+            "value" : "Le lecteur de leçons arrive bientôt"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar código"
+            "value" : "O reprodutor de aulas estará disponível em breve"
           }
         }
       }
     },
-    "Send verification code" : {
-      "comment" : "Sends an email code for account deletion reauthorization",
+    "Lessons" : {
+      "comment" : "Heading above the ordered lesson list on a chapter screen.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bestätigungscode senden"
+            "value" : "Lektionen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar código de verificación"
+            "value" : "Lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer le code de vérification"
+            "value" : "Leçons"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar código de verificação"
+            "value" : "Aulas"
           }
         }
       }
     },
-    "Sign in" : {
-      "comment" : "Button that verifies an email code",
+    "Listen to sentences using words you recently learned." : {
+      "comment" : "Fallback description for a listening lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anmelden"
+            "value" : "Höre Sätze mit Wörtern, die du kürzlich gelernt hast."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar sesión"
+            "value" : "Escucha frases con palabras que aprendiste recientemente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se connecter"
+            "value" : "Écoute des phrases avec des mots que tu viens d'apprendre."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrar"
+            "value" : "Escute frases com palavras que você aprendeu recentemente."
           }
         }
       }
     },
-    "Sign in again" : {
-      "comment" : "Heading for email reauthentication before account deletion\nTitle shown when subscription synchronization requires authentication",
+    "Listening" : {
+      "comment" : "Fallback title for a listening lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut anmelden"
+            "value" : "Hören"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a iniciar sesión"
+            "value" : "Escucha"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se reconnecter"
+            "value" : "Écoute"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrar novamente"
+            "value" : "Escuta"
           }
         }
       }
     },
-    "Sign in to the Zoonk account that owns this App Store purchase, or contact support for help." : {
-      "comment" : "Recovery guidance when an App Store purchase belongs to another Zoonk account",
+    "Loading chapter" : {
+      "comment" : "Accessibility status while a chapter loads.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melde dich bei dem Zoonk-Konto an, mit dem dieser Kauf im App Store verknüpft ist, oder wende dich an den Support."
+            "value" : "Kapitel wird geladen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión en la cuenta de Zoonk vinculada a esta compra del App Store o contacta con soporte para obtener ayuda."
+            "value" : "Cargando capítulo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connecte-toi au compte Zoonk auquel cet achat de l’App Store est associé, ou contacte l’assistance pour obtenir de l’aide."
+            "value" : "Chargement du chapitre"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entre na conta do Zoonk vinculada a esta compra da App Store ou fale com o suporte para receber ajuda."
+            "value" : "Carregando capítulo"
           }
         }
       }
     },
-    "Sign in to Zoonk" : {
-      "comment" : "Title above the native sign-in methods",
+    "Loading course" : {
+      "comment" : "Accessibility status while a course loads.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bei Zoonk anmelden"
+            "value" : "Kurs wird geladen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión en Zoonk"
+            "value" : "Cargando curso"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connecte-toi à Zoonk"
+            "value" : "Chargement du cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrar no Zoonk"
+            "value" : "Carregando curso"
           }
         }
       }
     },
-    "Sign in with Google" : {
-      "comment" : "Accessibility label for the native Google sign-in button\nVisible label on the Google sign-in button",
+    "Loading courses" : {
+      "comment" : "Accessibility status while the course catalog loads.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Google anmelden"
+            "value" : "Kurse werden geladen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar sesión con Google"
+            "value" : "Cargando cursos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se connecter avec Google"
+            "value" : "Chargement des cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrar com o Google"
+            "value" : "Carregando cursos"
           }
         }
       }
     },
-    "Sign out" : {
-      "comment" : "Account sign-out action",
+    "Loading more courses" : {
+      "comment" : "Accessibility status while the next course page loads.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abmelden"
+            "value" : "Weitere Kurse werden geladen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerrar sesión"
+            "value" : "Cargando más cursos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se déconnecter"
+            "value" : "Chargement de cours supplémentaires"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sair"
+            "value" : "Carregando mais cursos"
           }
         }
       }
     },
-    "Subscription" : {
-      "comment" : "Account option for subscription\nHeading for mobile-store billing guidance during account deletion",
+    "Math" : {
+      "comment" : "Course category for mathematics.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abo"
+            "value" : "Mathematik"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suscripción"
+            "value" : "Matemáticas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abonnement"
+            "value" : "Mathématiques"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assinatura"
+            "value" : "Matemática"
           }
         }
       }
     },
-    "Terms of Service" : {
-      "comment" : "Link to the terms of service",
+    "More options" : {
+      "comment" : "Accessibility label for secondary catalog actions.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nutzungsbedingungen"
+            "value" : "Weitere Optionen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Términos del Servicio"
+            "value" : "Más opciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conditions d’utilisation"
+            "value" : "Plus d’options"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termos de Serviço"
+            "value" : "Mais opções"
           }
         }
       }
     },
-    "That code belongs to a different account. Request a new code for this account." : {
-      "comment" : "Error shown when an account deletion code belongs to a different account",
+    "No %@ courses yet" : {
+      "comment" : "Title when a selected category does not contain any courses.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Code gehört zu einem anderen Konto. Fordere einen neuen Code für dieses Konto an."
+            "value" : "Noch keine Kurse in der Kategorie %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese código pertenece a otra cuenta. Solicita un código nuevo para esta cuenta."
+            "value" : "Todavía no hay cursos de %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce code appartient à un autre compte. Demande un nouveau code pour ce compte."
+            "value" : "Aucun cours de la catégorie %@ pour le moment"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esse código pertence a outra conta. Solicite um novo código para esta conta."
+            "value" : "Ainda não há cursos de %@"
           }
         }
       }
     },
-    "That code is invalid or expired. Request a new code and try again." : {
-      "comment" : "Error shown when an email verification code is invalid or expired",
+    "No chapters yet" : {
+      "comment" : "Title when a course does not have any published chapters.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Code ist ungültig oder abgelaufen. Fordere einen neuen Code an und versuche es erneut."
+            "value" : "Noch keine Kapitel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese código no es válido o ha caducado. Solicita uno nuevo e inténtalo de nuevo."
+            "value" : "Todavía no hay capítulos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce code est invalide ou a expiré. Demande un nouveau code et réessaie."
+            "value" : "Aucun chapitre pour le moment"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esse código é inválido ou expirou. Solicite um novo código e tente novamente."
+            "value" : "Ainda não há capítulos"
           }
         }
       }
     },
-    "That username is already taken." : {
-      "comment" : "Error shown when a chosen username is unavailable",
+    "No courses yet" : {
+      "comment" : "Title when the public course catalog is empty.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Benutzername ist bereits vergeben."
+            "value" : "Noch keine Kurse"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese nombre de usuario ya está en uso."
+            "value" : "Todavía no hay cursos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce nom d’utilisateur est déjà pris."
+            "value" : "Aucun cours pour le moment"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esse nome de usuário já está em uso."
+            "value" : "Ainda não há cursos"
           }
         }
       }
     },
-    "The App Store couldn't complete this purchase. Check your connection and try again." : {
-      "comment" : "Recovery guidance after an App Store purchase fails",
+    "No lessons yet" : {
+      "comment" : "Title when a chapter does not have any published lessons.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der App Store konnte diesen Kauf nicht abschließen. Prüfe deine Internetverbindung und versuche es erneut."
+            "value" : "Noch keine Lektionen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El App Store no pudo completar esta compra. Comprueba tu conexión e inténtalo de nuevo."
+            "value" : "Todavía no hay lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’App Store n’a pas pu finaliser cet achat. Vérifie ta connexion, puis réessaie."
+            "value" : "Aucune leçon pour le moment"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A App Store não conseguiu concluir esta compra. Confira sua conexão e tente novamente."
+            "value" : "Ainda não há aulas"
           }
         }
       }
     },
-    "This permanently deletes your profile, progress, and personalized courses. This can't be undone." : {
-      "comment" : "Explains the consequences of confirming permanent account deletion",
+    "Not started" : {
+      "comment" : "Progress state for a chapter or lesson with no completed lessons.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dadurch werden dein Profil, dein Fortschritt und deine personalisierten Kurse dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden."
+            "value" : "Nicht begonnen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto elimina permanentemente tu perfil, tu progreso y tus cursos personalizados. No se puede deshacer."
+            "value" : "Sin empezar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton profil, ta progression et tes cours personnalisés seront supprimés définitivement. Cette action est irréversible."
+            "value" : "Pas commencé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso exclui permanentemente seu perfil, seu progresso e seus cursos personalizados. Não é possível desfazer."
+            "value" : "Não começou"
           }
         }
       }
     },
-    "Too many attempts. Wait a moment, then try again." : {
-      "comment" : "Error shown when sign-in attempts are temporarily rate limited",
+    "Opens the course" : {
+      "comment" : "Accessibility hint for a course in the catalog.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu viele Versuche. Warte einen Moment und versuche es dann erneut."
+            "value" : "Öffnet den Kurs"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demasiados intentos. Espera un momento y vuelve a intentarlo."
+            "value" : "Abre el curso"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trop de tentatives. Attends un instant, puis réessaie."
+            "value" : "Ouvre le cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muitas tentativas. Espere um pouco e tente de novo."
+            "value" : "Abre o curso"
+          }
+        }
+      }
+    },
+    "Please return to the catalog and choose another course." : {
+      "comment" : "Guidance when a course request returns no content.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kehre bitte zum Katalog zurück und wähle einen anderen Kurs."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve al catálogo y elige otro curso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retourne au catalogue et choisis un autre cours."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volte ao catálogo e escolha outro curso."
+          }
+        }
+      }
+    },
+    "Please try again in a moment." : {
+      "comment" : "Recovery guidance when catalog content is temporarily unavailable.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuche es bitte gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inténtalo de nuevo en unos instantes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessaie dans un instant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente de novo daqui a pouco."
+          }
+        }
+      }
+    },
+    "Practice" : {
+      "comment" : "Fallback title for a practice lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Práctica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática"
+          }
+        }
+      }
+    },
+    "Practice grammar patterns with examples and exercises." : {
+      "comment" : "Fallback description for a grammar lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übe Grammatikmuster mit Beispielen und Aufgaben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practica estructuras gramaticales con ejemplos y ejercicios."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraîne-toi aux règles de grammaire avec des exemples et des exercices."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pratique estruturas gramaticais com exemplos e exercícios."
+          }
+        }
+      }
+    },
+    "Quiz" : {
+      "comment" : "Fallback title for a quiz lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuestionario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz"
+          }
+        }
+      }
+    },
+    "Read sentences using words you recently learned." : {
+      "comment" : "Fallback description for a reading lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lies Sätze mit Wörtern, die du kürzlich gelernt hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee oraciones con palabras que aprendiste hace poco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lis des phrases avec des mots que tu as appris récemment."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leia frases com palavras que você aprendeu recentemente."
+          }
+        }
+      }
+    },
+    "Reading" : {
+      "comment" : "Fallback title for a reading lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lectura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leitura"
+          }
+        }
+      }
+    },
+    "Review" : {
+      "comment" : "Fallback title for a review lesson.\nReviews a completed course or chapter.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repaso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Révision"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisão"
+          }
+        }
+      }
+    },
+    "Review this chapter with practice based on your mistakes." : {
+      "comment" : "Fallback description for a review lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederhole dieses Kapitel mit Übungen zu deinen Fehlern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasa este capítulo con ejercicios basados en tus errores."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Révise ce chapitre avec des exercices basés sur tes erreurs."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revise este capítulo com atividades baseadas nos seus erros."
+          }
+        }
+      }
+    },
+    "Review, %lld%% complete" : {
+      "comment" : "Accessible review action followed by the course or chapter completion percent.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholen, zu %lld %% abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasar, %lld%% completado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réviser, progression à %lld %%"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisar, %lld%% concluído"
+          }
+        }
+      }
+    },
+    "Science" : {
+      "comment" : "Course category for science.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wissenschaft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sciences"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciências"
+          }
+        }
+      }
+    },
+    "Search chapters" : {
+      "comment" : "Placeholder for searching within a course's chapters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapitel suchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar capítulos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher des chapitres"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar capítulos"
+          }
+        }
+      }
+    },
+    "Search courses and chapters" : {
+      "comment" : "Placeholder for searching the public course catalog.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurse und Kapitel durchsuchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar cursos y capítulos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher des cours et des chapitres"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar cursos e capítulos"
+          }
+        }
+      }
+    },
+    "Search lessons" : {
+      "comment" : "Placeholder for searching within a chapter's lessons.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen suchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar lecciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher des leçons"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar aulas"
+          }
+        }
+      }
+    },
+    "Search the catalog" : {
+      "comment" : "Title shown before the learner enters a catalog search query.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Katalog durchsuchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar en el catálogo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher dans le catalogue"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar no catálogo"
+          }
+        }
+      }
+    },
+    "Searching the catalog" : {
+      "comment" : "Accessibility status while catalog search results load.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Katalog wird durchsucht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando en el catálogo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche dans le catalogue…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando no catálogo"
+          }
+        }
+      }
+    },
+    "Send feedback" : {
+      "comment" : "Opens a form for sending feedback about catalog content.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer des commentaires"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar feedback"
+          }
+        }
+      }
+    },
+    "Shows more information" : {
+      "comment" : "Accessibility hint for expandable course or chapter information.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt weitere Informationen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra más información"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche plus d’informations"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra mais informações"
+          }
+        }
+      }
+    },
+    "Society" : {
+      "comment" : "Course category for society.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesellschaft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sociedad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Société"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sociedade"
+          }
+        }
+      }
+    },
+    "Start" : {
+      "comment" : "Starts a course or chapter that has no learner progress.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar"
+          }
+        }
+      }
+    },
+    "Start, %lld%% complete" : {
+      "comment" : "Accessible start action followed by the course or chapter completion percent.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starten, zu %lld %% abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar, %lld%% completado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer, progression à %lld %%"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar, %lld%% concluído"
+          }
+        }
+      }
+    },
+    "Technology" : {
+      "comment" : "Course category for technology.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technologie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tecnología"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technologie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tecnologia"
+          }
+        }
+      }
+    },
+    "This chapter's lessons will appear here when they're available." : {
+      "comment" : "Guidance when a chapter does not have any published lessons.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Lektionen dieses Kapitels erscheinen hier, sobald sie verfügbar sind."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las lecciones de este capítulo aparecerán aquí cuando estén disponibles."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons de ce chapitre apparaîtront ici dès qu’elles seront disponibles."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas deste capítulo vão aparecer aqui quando estiverem disponíveis."
+          }
+        }
+      }
+    },
+    "This content may have moved or is no longer available." : {
+      "comment" : "Guidance when a course or chapter cannot be found.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Inhalt wurde möglicherweise verschoben oder ist nicht mehr verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es posible que este contenido se haya movido o ya no esté disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce contenu a peut-être été déplacé ou n’est plus disponible."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este conteúdo pode ter mudado de lugar ou não estar mais disponível."
+          }
+        }
+      }
+    },
+    "This course's chapters will appear here when they're available." : {
+      "comment" : "Guidance when a course does not have any published chapters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Kapitel dieses Kurses erscheinen hier, sobald sie verfügbar sind."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los capítulos de este curso aparecerán aquí cuando estén disponibles."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les chapitres de ce cours apparaîtront ici dès qu’ils seront disponibles."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os capítulos deste curso vão aparecer aqui quando estiverem disponíveis."
+          }
+        }
+      }
+    },
+    "Translate words from your previous vocabulary lesson." : {
+      "comment" : "Fallback description for a translation lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übersetze Wörter aus deiner letzten Wortschatzlektion."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traduce palabras de tu lección de vocabulario anterior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traduis des mots de ta leçon de vocabulaire précédente."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traduza palavras da aula de vocabulário anterior."
+          }
+        }
+      }
+    },
+    "Translation" : {
+      "comment" : "Fallback title for a translation lesson.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übersetzung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traducción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traduction"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tradução"
           }
         }
       }
     },
     "Try again" : {
-      "comment" : "Retries loading the saved account",
+      "comment" : "Retries loading catalog content after a failure.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2246,7 +2542,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inténtalo de nuevo"
+            "value" : "Volver a intentarlo"
           }
         },
         "fr" : {
@@ -2258,674 +2554,210 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar de novo"
+            "value" : "Tentar novamente"
           }
         }
       }
     },
-    "Unlimited courses and lessons" : {
-      "comment" : "Zoonk Plus benefit describing unlimited learning content",
+    "Tutorial" : {
+      "comment" : "Fallback title for a tutorial lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unbegrenzt viele Kurse und Lektionen"
+            "value" : "Tutorial"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cursos y lecciones ilimitados"
+            "value" : "Tutorial"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cours et leçons en illimité"
+            "value" : "Tutoriel"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cursos e aulas ilimitados"
+            "value" : "Tutorial"
           }
         }
       }
     },
-    "Use 3–30 letters, numbers, or underscores." : {
-      "comment" : "Username requirements below the profile field",
+    "Understand the key ideas using everyday language and practical examples." : {
+      "comment" : "Fallback description for an explanation lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verwende 3–30 Zeichen: Buchstaben, Zahlen oder Unterstriche."
+            "value" : "Verstehe die wichtigsten Ideen mit einfacher Sprache und praktischen Beispielen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usa entre 3 y 30 caracteres: letras, números o guiones bajos."
+            "value" : "Comprende las ideas clave con un lenguaje sencillo y ejemplos prácticos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilise 3 à 30 caractères : lettres, chiffres ou tirets bas."
+            "value" : "Comprends les idées clés avec des mots simples et des exemples pratiques."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use de 3 a 30 caracteres: letras, números ou sublinhados."
+            "value" : "Entenda as ideias principais com uma linguagem simples e exemplos práticos."
           }
         }
       }
     },
-    "Use a different email" : {
-      "comment" : "Button that returns to the email entry step",
+    "Use what you learned in the previous lesson to solve real-world problems." : {
+      "comment" : "Fallback description for a practice lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Andere E-Mail-Adresse verwenden"
+            "value" : "Nutze das Wissen aus der letzten Lektion, um Probleme aus dem Alltag zu lösen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar otro correo electrónico"
+            "value" : "Usa lo que aprendiste en la lección anterior para resolver problemas de la vida real."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utiliser une autre adresse e-mail"
+            "value" : "Utilise ce que tu as appris dans la leçon précédente pour résoudre des problèmes concrets."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar outro email"
+            "value" : "Use o que você aprendeu na aula anterior para resolver problemas do dia a dia."
           }
         }
       }
     },
-    "Use email instead" : {
-      "comment" : "Uses email OTP when Apple deletion reauthorization is unavailable",
+    "Vocabulary" : {
+      "comment" : "Fallback title for a vocabulary lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stattdessen E-Mail verwenden"
+            "value" : "Wortschatz"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar correo electrónico"
+            "value" : "Vocabulario"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utiliser l’adresse e-mail"
+            "value" : "Vocabulaire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar email"
+            "value" : "Vocabulário"
           }
         }
       }
     },
-    "Use Google Play on an Android device to change or cancel this subscription." : {
-      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
+    "Work through a lesson created for your goal." : {
+      "comment" : "Fallback description for a custom lesson.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verwende Google Play auf einem Android-Gerät, um dieses Abo zu ändern oder zu kündigen."
+            "value" : "Bearbeite eine Lektion, die auf dein Ziel zugeschnitten ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
+            "value" : "Completa una lección creada para tu objetivo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilise Google Play sur un appareil Android pour modifier ou annuler cet abonnement."
+            "value" : "Suis une leçon créée pour ton objectif."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use o Google Play em um dispositivo Android para alterar ou cancelar esta assinatura."
+            "value" : "Complete uma aula criada para o seu objetivo."
           }
         }
       }
     },
-    "username" : {
-      "comment" : "Placeholder for the username field",
+    "You can keep exploring this course and return when the lesson player is ready." : {
+      "comment" : "Guidance on the temporary lesson player destination.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "benutzername"
+            "value" : "Du kannst den Kurs weiter erkunden und zurückkommen, sobald die Lektionsansicht bereit ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nombre de usuario"
+            "value" : "Puedes seguir explorando este curso y volver cuando el reproductor de lecciones esté listo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nom d’utilisateur"
+            "value" : "Tu peux continuer à explorer ce cours et revenir quand le lecteur de leçons sera prêt."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nome de usuário"
+            "value" : "Você pode continuar explorando este curso e voltar quando a aula estiver pronta."
           }
         }
       }
     },
-    "Username" : {
-      "comment" : "Profile username field label",
+    "You're offline" : {
+      "comment" : "Title when catalog content cannot load because the device is offline.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Benutzername"
+            "value" : "Du bist offline"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nombre de usuario"
+            "value" : "No tienes conexión"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nom d’utilisateur"
+            "value" : "Tu es hors ligne"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nome de usuário"
-          }
-        }
-      }
-    },
-    "Verification code" : {
-      "comment" : "Account deletion verification code field label\nEmail sign-in code field label",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bestätigungscode"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Código de verificación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Code de vérification"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Código de verificação"
-          }
-        }
-      }
-    },
-    "Verify and delete" : {
-      "comment" : "Verifies the email code and permanently deletes the account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bestätigen und löschen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verificar y eliminar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérifier et supprimer"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verificar e excluir"
-          }
-        }
-      }
-    },
-    "We sent a sign-in code to your email. It expires in 5 minutes." : {
-      "comment" : "Explains where the email code was sent and when it expires",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir haben dir einen Anmeldecode per E-Mail gesendet. Er ist 5 Minuten lang gültig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviamos un código de inicio de sesión a tu correo. Caduca en 5 minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous avons envoyé un code de connexion à ton adresse e-mail. Il expire dans 5 minutes."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviamos um código de acesso para seu email. Ele expira em 5 minutos."
-          }
-        }
-      }
-    },
-    "you@example.com" : {
-      "comment" : "Example email address in the sign-in field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "du@beispiel.de"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu@ejemplo.com"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "toi@exemple.fr"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "voce@exemplo.com"
-          }
-        }
-      }
-    },
-    "Your App Store purchases are now available on this Zoonk account." : {
-      "comment" : "Confirms restored purchases were synchronized with Zoonk",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Käufe im App Store sind jetzt für dieses Zoonk-Konto verfügbar."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus compras del App Store ya están disponibles en esta cuenta de Zoonk."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes achats sur l’App Store sont maintenant disponibles sur ce compte Zoonk."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas compras da App Store agora estão disponíveis nesta conta do Zoonk."
-          }
-        }
-      }
-    },
-    "Your name" : {
-      "comment" : "Placeholder for the profile name field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Name"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu nombre"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton nom"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu nome"
-          }
-        }
-      }
-    },
-    "Your purchase is safe and hasn't been finished yet. Restore purchases when you're back online." : {
-      "comment" : "Explains that a transaction remains available after server synchronization fails",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Kauf geht nicht verloren und ist noch nicht abgeschlossen. Stelle deine Käufe wieder her, sobald du wieder online bist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compra está segura y todavía no se ha completado. Restaura las compras cuando vuelvas a tener conexión."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton achat est bien enregistré, mais il n’est pas encore finalisé. Restaure tes achats quand tu seras de nouveau en ligne."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua compra está segura e ainda não foi concluída. Restaure as compras quando estiver online novamente."
-          }
-        }
-      }
-    },
-    "Your purchase is safe. Sign in, then restore purchases to add Plus to your Zoonk account." : {
-      "comment" : "Explains how to recover a purchase after the Zoonk session expires",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Kauf geht nicht verloren. Melde dich an und stelle dann deine Käufe wieder her, um Plus für dein Zoonk-Konto zu aktivieren."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compra está segura. Inicia sesión y restaura las compras para añadir Plus a tu cuenta de Zoonk."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton achat est bien enregistré. Connecte-toi, puis restaure tes achats pour ajouter Plus à ton compte Zoonk."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua compra está segura. Entre na sua conta e depois restaure as compras para ativar o Plus na sua conta do Zoonk."
-          }
-        }
-      }
-    },
-    "Your Zoonk account and personalized data were permanently deleted." : {
-      "comment" : "Confirms that account data was permanently deleted",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden dauerhaft gelöscht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron permanentemente."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compte Zoonk et tes données personnalisées ont été supprimés définitivement."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
-          }
-        }
-      }
-    },
-    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish." : {
-      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se retirara la autorización. Elimina Zoonk de Inicio de sesión con Apple para finalizar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation. Retire Zoonk de Connexion avec Apple pour terminer."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar Sessão com a Apple para concluir."
-          }
-        }
-      }
-    },
-    "Zoonk checked your App Store purchases, but none currently provide Plus." : {
-      "comment" : "Explains that restored App Store purchases do not grant an active subscription",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk hat deine App-Store-Käufe geprüft, aber derzeit enthält keiner davon Plus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk revisó tus compras en App Store, pero actualmente ninguna te da acceso a Plus."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk a vérifié tes achats sur l’App Store, mais aucun ne donne actuellement accès à Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk verificou suas compras na App Store, mas nenhuma delas dá acesso ao Plus no momento."
-          }
-        }
-      }
-    },
-    "Zoonk couldn't connect. Check your connection and try again." : {
-      "comment" : "Error shown when an account request cannot reach the service",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk konnte keine Verbindung herstellen. Überprüfe deine Verbindung und versuche es erneut."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk no pudo conectarse. Revisa tu conexión e inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk n’a pas pu se connecter. Vérifie ta connexion et réessaie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo."
-          }
-        }
-      }
-    },
-    "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com." : {
-      "comment" : "Generic account deletion failure message",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk konnte dein Konto nicht löschen. Versuche es erneut oder kontaktiere hello@zoonk.com."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk no pudo eliminar tu cuenta. Inténtalo de nuevo o contacta con hello@zoonk.com."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk n’a pas pu supprimer ton compte. Réessaie ou contacte hello@zoonk.com."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk não conseguiu excluir sua conta. Tente novamente ou entre em contato pelo email hello@zoonk.com."
-          }
-        }
-      }
-    },
-    "Zoonk couldn't load your account. Your sign-in is still safely stored." : {
-      "comment" : "Explains that a temporary account load failure did not remove the session",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk konnte dein Konto nicht laden. Deine Anmeldung ist weiterhin sicher gespeichert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk no pudo cargar tu cuenta. Tu inicio de sesión sigue guardado de forma segura."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk n’a pas pu charger ton compte. Ta connexion reste enregistrée en toute sécurité."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk não conseguiu carregar sua conta. Seu acesso continua salvo com segurança."
-          }
-        }
-      }
-    },
-    "Zoonk couldn't sign you in. Try again or contact hello@zoonk.com." : {
-      "comment" : "Generic sign-in failure message",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk konnte dich nicht anmelden. Versuche es erneut oder kontaktiere hello@zoonk.com."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk no pudo iniciar tu sesión. Inténtalo de nuevo o escribe a hello@zoonk.com."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk n’a pas pu te connecter. Réessaie ou contacte hello@zoonk.com."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível entrar no Zoonk. Tente de novo ou fale com hello@zoonk.com."
-          }
-        }
-      }
-    },
-    "Zoonk Plus" : {
-      "comment" : "Title of the native Zoonk Plus subscription screen",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk Plus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Você está sem conexão"
           }
         }
       }

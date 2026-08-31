@@ -1,5 +1,6 @@
 @MainActor
 struct AppDependencies {
+  let courseCatalogStore: CourseCatalogStore
   let progressStore: ProgressStore
   let sessionStore: SessionStore
   let subscriptionStore: AppStoreSubscriptionStore
@@ -13,6 +14,10 @@ struct AppDependencies {
       googleAuthentication: GoogleAuthenticationClient())
 
     return AppDependencies(
+      courseCatalogStore: CourseCatalogStore(
+        api: CourseCatalogAPI(clients: clients),
+        language: currentCourseCatalogLanguage(),
+        session: sessionStore),
       progressStore: ProgressStore(
         api: ProgressAPI(clients: clients),
         session: sessionStore),

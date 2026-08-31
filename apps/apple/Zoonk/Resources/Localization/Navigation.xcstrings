@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Courses" : {
-      "comment" : "Navigation title for the learner's courses.",
+      "comment" : "Navigation title for browsing the public course catalog.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -147,7 +147,7 @@
       }
     },
     "Search" : {
-      "comment" : "Navigation title for searching Zoonk.",
+      "comment" : "Opens search on a catalog detail screen.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

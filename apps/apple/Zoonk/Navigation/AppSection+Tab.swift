@@ -1,24 +1,25 @@
 import SwiftUI
 
-extension AppSection {
-  var tabRole: TabRole? {
-    self == .search ? .search : nil
-  }
+struct AppSectionActions {
+  let presentAccount: () -> Void
+  let selectSection: (AppSection) -> Void
+}
 
+extension AppSection {
   @MainActor
   @ViewBuilder
-  func tabContent(onPresentAccount: @escaping () -> Void) -> some View {
+  func tabContent(actions: AppSectionActions) -> some View {
     switch self {
     case .home:
       HomeView()
     case .newCourse:
       NewCourseView()
     case .courses:
-      CoursesView()
+      CoursesView {
+        actions.selectSection(.newCourse)
+      }
     case .progress:
-      ProgressOverviewView(onSignIn: onPresentAccount)
-    case .search:
-      SearchView()
+      ProgressOverviewView(onSignIn: actions.presentAccount)
     }
   }
 }

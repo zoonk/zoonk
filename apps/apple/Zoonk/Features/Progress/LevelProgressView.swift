@@ -97,10 +97,15 @@ private struct LevelProgressContent: View {
           ProgressView(value: level.progressValue, total: level.progressTotal)
             .tint(level.belt.progressColor)
             .accessibilityLabel(
-              Text(
-                level.isMaxLevel ? "Level progress" : "Progress to the next level",
-                tableName: "Progress",
-                comment: "Accessibility label for level progress")
+              level.isMaxLevel
+                ? Text(
+                  "Level progress",
+                  tableName: "Progress",
+                  comment: "Accessibility label for progress within the maximum level")
+                : Text(
+                  "Progress to the next level",
+                  tableName: "Progress",
+                  comment: "Accessibility label for progress toward the learner's next level")
             )
             .accessibilityValue(milestoneDescription)
         }
