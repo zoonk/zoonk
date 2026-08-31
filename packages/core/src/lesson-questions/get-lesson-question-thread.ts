@@ -3,7 +3,10 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";
 import { getLessonQuestionAccess } from "./_utils/question-access";
-import { toLessonQuestionThreadResource } from "./_utils/question-resource";
+import {
+  lessonQuestionResourceOmit,
+  toLessonQuestionThreadResource,
+} from "./_utils/question-resource";
 import { type GetLessonQuestionThreadInput, MAX_LESSON_QUESTION_THREAD_TURNS } from "./contract";
 
 async function getCursorQuestion({
@@ -15,7 +18,10 @@ async function getCursorQuestion({
   lessonId: string;
   userId: string;
 }) {
-  return prisma.lessonQuestion.findFirst({ where: { id: cursor, thread: { lessonId, userId } } });
+  return prisma.lessonQuestion.findFirst({
+    omit: lessonQuestionResourceOmit,
+    where: { id: cursor, thread: { lessonId, userId } },
+  });
 }
 
 function getOlderQuestionsWhere(cursorQuestion: { createdAt: Date; id: string } | null) {
@@ -47,6 +53,7 @@ async function getQuestionPage({
   }
 
   const questions = await prisma.lessonQuestion.findMany({
+    omit: lessonQuestionResourceOmit,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_LESSON_QUESTION_THREAD_TURNS + 1,
     where: { ...getOlderQuestionsWhere(cursorQuestion), thread: { lessonId, userId } },

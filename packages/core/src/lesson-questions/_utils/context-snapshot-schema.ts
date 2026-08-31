@@ -48,14 +48,7 @@ const lessonQuestionContextSnapshotSchema = z.object({
     title: z.string().nullable(),
   }),
   lessonSteps: z.array(lessonQuestionStepContextSchema),
-  mistake: z
-    .object({
-      correctAnswer: z.string().nullable(),
-      feedback: z.string().nullable(),
-      selectedAnswer: z.string(),
-    })
-    .nullable(),
-  scope: z.object({ kind: z.enum(["answer", "lesson", "mistake", "step"]) }),
+  scope: z.object({ kind: z.enum(["answer", "lesson", "step"]) }),
   step: lessonQuestionStepContextSchema.nullable(),
   version: z.literal(1),
 });

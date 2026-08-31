@@ -14,7 +14,6 @@ import {
   usePlayerViewer,
 } from "../player-context";
 import { CompletionActions } from "./completion-actions";
-import { CompletionQuestionAction } from "./lesson-question-actions";
 import { PlayerSupportingText } from "./player-supporting-text";
 import { PlayerContentFrame } from "./step-layouts";
 
@@ -248,8 +247,6 @@ export function CompletionScreenContent({
             nextLessonHref={nextLessonHref}
             onRestart={onRestart}
           />
-
-          <CompletionQuestionAction />
         </div>
 
         {completionFooter}
@@ -283,8 +280,6 @@ export function CompletionScreenContent({
         nextLessonHref={nextLessonHref}
         onRestart={onRestart}
       />
-
-      <CompletionQuestionAction />
 
       {completionFooter}
     </CompletionScreen>

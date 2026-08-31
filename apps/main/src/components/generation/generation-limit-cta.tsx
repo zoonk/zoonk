@@ -81,7 +81,7 @@ export function GenerationLimitCTA<BackHref extends string, LoginHref extends st
 
         <EmptyDescription>
           {t(
-            "{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} lessonQuestion {question answers} other {content}}. You can keep learning from anything already generated.",
+            "{resource, select, lessonQuestion {{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached your question limit.}} Saved answers are still available.} other {{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated.}}",
             { period: limit.period, resource: limit.resource },
           )}
         </EmptyDescription>

@@ -85,6 +85,7 @@ const CANONICAL_OPERATIONS = [
   { method: "post", operationId: "createLessonPreload", path: "/lessons/{lessonId}/preloads" },
   { method: "get", operationId: "getLessonQuestionThread", path: "/lessons/{lessonId}/questions" },
   { method: "post", operationId: "createLessonQuestion", path: "/lessons/{lessonId}/questions" },
+  { method: "get", operationId: "getLessonQuestion", path: "/questions/{questionId}" },
   {
     method: "post",
     operationId: "createLessonQuestionAnswer",

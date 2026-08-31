@@ -12,6 +12,7 @@ import {
   SecondaryKbd,
 } from "./completion-action-link";
 import { MilestoneActions } from "./completion-milestone-actions";
+import { CompletionPrimaryActionGroup } from "./lesson-question-actions";
 
 /**
  * Keeps every completion action group on the same full-width vertical rhythm.
@@ -80,7 +81,7 @@ function SecondaryActions({
 
   return (
     <>
-      {backLink}
+      <CompletionPrimaryActionGroup>{backLink}</CompletionPrimaryActionGroup>
       {restartButton}
     </>
   );
@@ -115,9 +116,11 @@ export function CompletionActions({
     <CompletionActionsLayout>
       {nextLessonHref ? (
         <>
-          <PrimaryActionLink href={nextLessonHref} shortcut="Enter">
-            {t("Next")}
-          </PrimaryActionLink>
+          <CompletionPrimaryActionGroup>
+            <PrimaryActionLink href={nextLessonHref} shortcut="Enter">
+              {t("Next")}
+            </PrimaryActionLink>
+          </CompletionPrimaryActionGroup>
 
           <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
         </>

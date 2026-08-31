@@ -4,6 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type TouchEvent, useEffect, useRef } from "react";
+import { ContextualQuestionAction } from "./lesson-question-actions";
 import { PlayAudioButton } from "./play-audio-button";
 import { NavigableStepLayout } from "./step-layouts";
 
@@ -108,6 +109,8 @@ function DesktopNavigationToolbar({
             variant="outline"
           />
         )}
+
+        <ContextualQuestionAction className={DESKTOP_NAVIGATION_CONTROL_CLASS} />
 
         <DesktopNavigationButton
           aria-label={t("Next step")}

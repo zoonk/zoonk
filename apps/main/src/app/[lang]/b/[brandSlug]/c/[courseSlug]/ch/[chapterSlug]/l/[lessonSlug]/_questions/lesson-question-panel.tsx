@@ -44,11 +44,11 @@ function LessonQuestionPanelHeader({
           <XIcon aria-hidden="true" />
         </SheetClose>
       </div>
-      <div className="mt-0.5 -ml-2.5 self-start">
+      <div className="mt-0.5 -ml-2.5 self-stretch pr-2.5">
         <LessonQuestionCopyAction controller={controller} metadata={metadata} />
       </div>
       <SheetDescription className="sr-only">
-        {t("Ask questions about the lesson content")}
+        {t("Ask questions about this lesson")}
       </SheetDescription>
     </SheetHeader>
   );
@@ -57,11 +57,13 @@ function LessonQuestionPanelHeader({
 export function LessonQuestionPanel<const Href extends string>({
   controller,
   isAuthenticated,
+  isSubscribed,
   loginHref,
   metadata,
 }: {
   controller: LessonQuestionController;
   isAuthenticated: boolean;
+  isSubscribed: boolean;
   loginHref: AppRoute<Href>;
   metadata: LessonQuestionPanelMetadata;
 }) {
@@ -80,15 +82,14 @@ export function LessonQuestionPanel<const Href extends string>({
           <QuestionThread
             controller={controller}
             isAuthenticated={isAuthenticated}
+            isSubscribed={isSubscribed}
             loginHref={loginHref}
           />
         </div>
 
-        <QuestionComposer
-          controller={controller}
-          isAuthenticated={isAuthenticated}
-          loginHref={loginHref}
-        />
+        {isAuthenticated && isSubscribed && (
+          <QuestionComposer controller={controller} loginHref={loginHref} />
+        )}
       </SheetContent>
     </Sheet>
   );

@@ -2,12 +2,11 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { hasActiveSubscription } from "../../auth/subscription";
-import { getLessonAccessRequirement } from "../../lessons/access";
 import { getReadableLessonWhere } from "../../lessons/read-access";
 
 /**
- * Question creation and retrieval are lesson capabilities, so their live write/read
- * authorization follows the same publication, ownership, and chapter paywall rules as the player.
+ * Tutor generation is a subscriber capability even when the underlying lesson is free, while
+ * publication and ownership checks still follow the lesson's live readable scope.
  */
 export async function getLessonQuestionAccess({
   lessonId,
@@ -20,20 +19,19 @@ export async function getLessonQuestionAccess({
     return { status: "notFound" as const };
   }
 
-  const lesson = await prisma.lesson.findFirst({
-    include: { chapter: { include: { course: true } } },
-    where: getReadableLessonWhere({ lessonId, userId }),
-  });
+  const [lesson, hasSubscription] = await Promise.all([
+    prisma.lesson.findFirst({
+      include: { chapter: { include: { course: true } } },
+      where: getReadableLessonWhere({ lessonId, userId }),
+    }),
+    hasActiveSubscription(),
+  ]);
 
   if (!lesson || lesson.generationStatus !== "completed") {
     return { status: "notFound" as const };
   }
 
-  if (getLessonAccessRequirement({ lesson }) === "free") {
-    return { lesson, status: "ready" as const };
-  }
-
-  return (await hasActiveSubscription())
+  return hasSubscription
     ? { lesson, status: "ready" as const }
     : { status: "subscriptionRequired" as const };
 }

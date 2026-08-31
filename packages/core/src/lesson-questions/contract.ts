@@ -2,8 +2,11 @@ import { z } from "zod";
 import { createSelectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
 
 export const MAX_LESSON_QUESTION_LENGTH = 2000;
-export const MAX_LESSON_QUESTION_CONTEXT_STEPS = 10;
+export const MAX_LESSON_QUESTION_CONTEXT_STEPS = 50;
 export const MAX_LESSON_QUESTION_THREAD_TURNS = 50;
+
+/** @public Public clients use this boundary to keep step ordinals within Prisma's Int range. */
+export const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
 
 /** @public Public clients use this boundary to reject oversized answer collections before POSTing. */
 export const MAX_LESSON_QUESTION_ANSWER_ITEMS = 50;
@@ -38,19 +41,10 @@ const lessonQuestionLessonContextInputSchema = z
  * The player can shuffle and subset steps, so only the client knows the learner-visible ordinal.
  * This number is presentation metadata; Core still resolves every content-bearing field by step ID.
  */
-const lessonQuestionStepNumberSchema = z.number().int().min(1);
+const lessonQuestionStepNumberSchema = z.number().int().min(1).max(MAX_LESSON_QUESTION_STEP_NUMBER);
 
 const lessonQuestionStepContextInputSchema = z
   .object({ kind: z.literal("step"), stepId: z.uuid(), stepNumber: lessonQuestionStepNumberSchema })
-  .strict();
-
-const lessonQuestionMistakeContextInputSchema = z
-  .object({
-    answer: lessonQuestionSelectedAnswerSchema,
-    kind: z.literal("mistake"),
-    stepId: z.uuid(),
-    stepNumber: lessonQuestionStepNumberSchema,
-  })
   .strict();
 
 const lessonQuestionAnswerContextInputSchema = z
@@ -66,7 +60,6 @@ export const lessonQuestionContextInputSchema = z.discriminatedUnion("kind", [
   lessonQuestionLessonContextInputSchema,
   lessonQuestionStepContextInputSchema,
   lessonQuestionAnswerContextInputSchema,
-  lessonQuestionMistakeContextInputSchema,
 ]);
 
 export const createLessonQuestionInputSchema = z
@@ -83,21 +76,14 @@ const lessonQuestionContextSummarySchema = z.discriminatedUnion("kind", [
     .object({
       kind: z.literal("step"),
       stepId: z.uuid().nullable(),
-      stepNumber: z.number().int().min(1),
+      stepNumber: lessonQuestionStepNumberSchema,
     })
     .strict(),
   z
     .object({
       kind: z.literal("answer"),
       stepId: z.uuid().nullable(),
-      stepNumber: z.number().int().min(1),
-    })
-    .strict(),
-  z
-    .object({
-      kind: z.literal("mistake"),
-      stepId: z.uuid().nullable(),
-      stepNumber: z.number().int().min(1),
+      stepNumber: lessonQuestionStepNumberSchema,
     })
     .strict(),
 ]);

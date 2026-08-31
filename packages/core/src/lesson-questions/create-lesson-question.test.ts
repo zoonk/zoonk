@@ -21,20 +21,28 @@ vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 async function createPublishedCurriculum({
   lessonKind = "quiz",
-}: { lessonKind?: "quiz" | "review" } = {}) {
+  subscribed = true,
+}: { lessonKind?: "quiz" | "review"; subscribed?: boolean } = {}) {
   const [organization, user] = await Promise.all([
     organizationFixture({ kind: "brand" }),
     userFixture(),
   ]);
 
-  const course = await courseFixture({
-    description: "A server-owned course description",
-    isPublished: true,
-    language: "en",
-    organizationId: organization.id,
-    targetLanguage: "de",
-    title: "German foundations",
-  });
+  const [course] = await Promise.all([
+    courseFixture({
+      description: "A server-owned course description",
+      isPublished: true,
+      language: "en",
+      organizationId: organization.id,
+      targetLanguage: "de",
+      title: "German foundations",
+    }),
+    subscribed
+      ? prisma.subscription.create({
+          data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+        })
+      : Promise.resolve(null),
+  ]);
 
   const chapter = await chapterFixture({
     courseId: course.id,
@@ -87,6 +95,25 @@ describe(createLessonQuestion, () => {
 
     await expect(
       prisma.lessonQuestionThread.count({ where: { lessonId: lesson.id } }),
+    ).resolves.toBe(0);
+  });
+
+  it("requires an active subscription even for the first chapter", async () => {
+    const { lesson, user } = await createPublishedCurriculum({ subscribed: false });
+    mockSession(user.id);
+
+    const input = {
+      context: { kind: "lesson" as const },
+      question: "Can you summarize this?",
+      requestId: randomUUID(),
+    };
+
+    await expect(createLessonQuestion({ input, lessonId: lesson.id })).resolves.toStrictEqual({
+      status: "subscriptionRequired",
+    });
+
+    await expect(
+      prisma.lessonQuestionThread.count({ where: { lessonId: lesson.id, userId: user.id } }),
     ).resolves.toBe(0);
   });
 
@@ -152,7 +179,7 @@ describe(createLessonQuestion, () => {
     ).resolves.toHaveLength(1);
   });
 
-  it("rejects request ID reuse with a different mistake answer", async () => {
+  it("rejects request ID reuse with a different selected answer", async () => {
     const { lesson, user } = await createPublishedCurriculum();
 
     const content = {
@@ -182,7 +209,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "multipleChoice", selectedOptionId: "tschuss" },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -196,7 +223,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "multipleChoice", selectedOptionId: "guten-tag" },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -271,7 +298,6 @@ describe(createLessonQuestion, () => {
       chapter: { title: "Introductions" },
       course: { targetLanguage: "de", title: "German foundations" },
       lesson: { title: "Say hello" },
-      mistake: null,
       scope: { kind: "step" },
       step: { content: multipleChoiceContent, kind: "multipleChoice", stepNumber: 1 },
       version: 1,
@@ -281,6 +307,11 @@ describe(createLessonQuestion, () => {
       lessonSteps: [expect.objectContaining({ content: multipleChoiceContent, stepNumber: 1 })],
       scope: { kind: "lesson" },
       step: null,
+    });
+
+    await prisma.lessonQuestion.update({
+      data: { contextSnapshot: { corruptedForResourceRead: true } },
+      where: { id: storedStepQuestion.id },
     });
 
     const thread = await getLessonQuestionThread({ lessonId: lesson.id });
@@ -451,7 +482,7 @@ describe(createLessonQuestion, () => {
     });
   });
 
-  it("snapshots image and ordered mistake corrections from authoritative content", async () => {
+  it("snapshots image and ordered answer corrections from authoritative content", async () => {
     const { lesson, user } = await createPublishedCurriculum();
 
     const [imageStep, orderStep] = await Promise.all([
@@ -486,7 +517,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "selectImage", selectedOptionId: "dog" },
-          kind: "mistake",
+          kind: "answer",
           stepId: imageStep.id,
           stepNumber: 1,
         },
@@ -500,7 +531,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "selectImage", selectedOptionId: "fabricated-image" },
-          kind: "mistake",
+          kind: "answer",
           stepId: imageStep.id,
           stepNumber: 1,
         },
@@ -511,7 +542,7 @@ describe(createLessonQuestion, () => {
     });
 
     if (imageQuestion.status !== "created") {
-      throw new Error(`Expected an image mistake, received ${imageQuestion.status}`);
+      throw new Error(`Expected an image answer, received ${imageQuestion.status}`);
     }
 
     expect(unknownImage).toStrictEqual({ status: "invalidContext" });
@@ -525,7 +556,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "sortOrder", userOrder: ["Start work", "Eat breakfast", "Wake up"] },
-          kind: "mistake",
+          kind: "answer",
           stepId: orderStep.id,
           stepNumber: 2,
         },
@@ -539,7 +570,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "sortOrder", userOrder: ["Wake up", "Invented", "Start work"] },
-          kind: "mistake",
+          kind: "answer",
           stepId: orderStep.id,
           stepNumber: 2,
         },
@@ -550,7 +581,7 @@ describe(createLessonQuestion, () => {
     });
 
     if (orderQuestion.status !== "created") {
-      throw new Error(`Expected an ordered mistake, received ${orderQuestion.status}`);
+      throw new Error(`Expected an ordered answer, received ${orderQuestion.status}`);
     }
 
     expect(fabricatedOrder).toStrictEqual({ status: "invalidContext" });
@@ -561,13 +592,19 @@ describe(createLessonQuestion, () => {
     ]);
 
     expect(storedImage.contextSnapshot).toMatchObject({
-      mistake: { correctAnswer: "A cat", feedback: "That is a dog.", selectedAnswer: "A dog" },
+      answer: {
+        correctAnswer: "A cat",
+        feedback: "That is a dog.",
+        isCorrect: false,
+        selectedAnswer: "A dog",
+      },
     });
 
     expect(storedOrder.contextSnapshot).toMatchObject({
-      mistake: {
+      answer: {
         correctAnswer: "Wake up → Eat breakfast → Start work",
         feedback: "Breakfast comes before work.",
+        isCorrect: false,
         selectedAnswer: "Start work → Eat breakfast → Wake up",
       },
     });
@@ -605,7 +642,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "translation", selectedOptionId: distractorWord.id },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -619,7 +656,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { kind: "translation", selectedOptionId: randomUUID() },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -640,7 +677,12 @@ describe(createLessonQuestion, () => {
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: mistake.question.id } }),
     ).resolves.toMatchObject({
       contextSnapshot: {
-        mistake: { correctAnswer: "hallo", feedback: null, selectedAnswer: "Tschüss" },
+        answer: {
+          correctAnswer: "hallo",
+          feedback: null,
+          isCorrect: false,
+          selectedAnswer: "Tschüss",
+        },
       },
     });
   });
@@ -678,7 +720,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { arrangedWords: ["morgen", "lerne", "heute"], kind: "reading" },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -692,7 +734,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: { arrangedWords: ["invented", "lerne", "heute"], kind: "reading" },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -713,7 +755,11 @@ describe(createLessonQuestion, () => {
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: mistake.question.id } }),
     ).resolves.toMatchObject({
       contextSnapshot: {
-        mistake: { correctAnswer: "Ich lerne heute", selectedAnswer: "morgen lerne heute" },
+        answer: {
+          correctAnswer: "Ich lerne heute",
+          isCorrect: false,
+          selectedAnswer: "morgen lerne heute",
+        },
       },
     });
   });
@@ -740,6 +786,7 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: {
+            incorrectPair: { left: "Day", right: "Nacht" },
             kind: "matchColumns",
             mistakes: 1,
             userPairs: [
@@ -747,7 +794,7 @@ describe(createLessonQuestion, () => {
               { left: "Night", right: "Nacht" },
             ],
           },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -761,14 +808,15 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: {
+            incorrectPair: { left: "Invented", right: "Tag" },
             kind: "matchColumns",
             mistakes: 1,
             userPairs: [
-              { left: "Invented", right: "Tag" },
+              { left: "Day", right: "Tag" },
               { left: "Night", right: "Nacht" },
             ],
           },
-          kind: "mistake",
+          kind: "answer",
           stepId: step.id,
           stepNumber: 1,
         },
@@ -778,8 +826,76 @@ describe(createLessonQuestion, () => {
       lessonId: lesson.id,
     });
 
+    const correctPair = await createLessonQuestion({
+      input: {
+        context: {
+          answer: {
+            incorrectPair: { left: "Day", right: "Tag" },
+            kind: "matchColumns",
+            mistakes: 1,
+            userPairs: [
+              { left: "Day", right: "Tag" },
+              { left: "Night", right: "Nacht" },
+            ],
+          },
+          kind: "answer",
+          stepId: step.id,
+          stepNumber: 1,
+        },
+        question: "Was this pair actually wrong?",
+        requestId: randomUUID(),
+      },
+      lessonId: lesson.id,
+    });
+
+    const missingIncorrectPair = await createLessonQuestion({
+      input: {
+        context: {
+          answer: {
+            kind: "matchColumns",
+            mistakes: 1,
+            userPairs: [
+              { left: "Day", right: "Tag" },
+              { left: "Night", right: "Nacht" },
+            ],
+          },
+          kind: "answer",
+          stepId: step.id,
+          stepNumber: 1,
+        },
+        question: "Which pair did I get wrong?",
+        requestId: randomUUID(),
+      },
+      lessonId: lesson.id,
+    });
+
+    const incorrectPairWithoutMistake = await createLessonQuestion({
+      input: {
+        context: {
+          answer: {
+            incorrectPair: { left: "Day", right: "Nacht" },
+            kind: "matchColumns",
+            mistakes: 0,
+            userPairs: [
+              { left: "Day", right: "Tag" },
+              { left: "Night", right: "Nacht" },
+            ],
+          },
+          kind: "answer",
+          stepId: step.id,
+          stepNumber: 1,
+        },
+        question: "Why is this marked correct?",
+        requestId: randomUUID(),
+      },
+      lessonId: lesson.id,
+    });
+
     expect(mistake.status).toBe("created");
     expect(fabricated).toStrictEqual({ status: "invalidContext" });
+    expect(correctPair).toStrictEqual({ status: "invalidContext" });
+    expect(missingIncorrectPair).toStrictEqual({ status: "invalidContext" });
+    expect(incorrectPairWithoutMistake).toStrictEqual({ status: "invalidContext" });
 
     if (mistake.status !== "created") {
       throw new Error(`Expected a matching mistake, received ${mistake.status}`);
@@ -789,9 +905,10 @@ describe(createLessonQuestion, () => {
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: mistake.question.id } }),
     ).resolves.toMatchObject({
       contextSnapshot: {
-        mistake: {
+        answer: {
           correctAnswer: null,
-          selectedAnswer: "Day → Tag; Night → Nacht; Recorded mistakes: 1",
+          isCorrect: false,
+          selectedAnswer: "Day → Nacht; Recorded mistakes: 1",
         },
       },
     });
@@ -977,7 +1094,7 @@ describe(createLessonQuestion, () => {
   });
 
   it("requires an active subscription for questions in later chapters", async () => {
-    const { course, organization, user } = await createPublishedCurriculum();
+    const { course, organization, user } = await createPublishedCurriculum({ subscribed: false });
 
     const paidChapter = await chapterFixture({
       courseId: course.id,
@@ -1029,9 +1146,39 @@ describe(getLessonQuestionThread, () => {
     });
   });
 
+  it("requires a current subscription to read an existing first-chapter thread", async () => {
+    const { lesson, user } = await createPublishedCurriculum();
+    mockSession(user.id);
+
+    const created = await createLessonQuestion({
+      input: {
+        context: { kind: "lesson" },
+        question: "Keep this private",
+        requestId: randomUUID(),
+      },
+      lessonId: lesson.id,
+    });
+
+    expect(created.status).toBe("created");
+
+    await prisma.subscription.updateMany({
+      data: { status: "canceled" },
+      where: { referenceId: user.id },
+    });
+
+    await expect(getLessonQuestionThread({ lessonId: lesson.id })).resolves.toStrictEqual({
+      status: "subscriptionRequired",
+    });
+  });
+
   it("does not expose another learner's thread", async () => {
     const { lesson, user } = await createPublishedCurriculum();
     const otherUser = await userFixture();
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: otherUser.id, status: "active" },
+    });
+
     mockSession(user.id);
 
     const privateQuestion = await createLessonQuestion({

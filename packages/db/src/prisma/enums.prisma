@@ -9,7 +9,6 @@ enum LessonQuestionContextKind {
   lesson
   step
   answer
-  mistake
 }
 
 enum LessonQuestionStatus {

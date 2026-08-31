@@ -2276,6 +2276,99 @@
         }
       }
     },
+    "/questions/{questionId}": {
+      "get": {
+        "operationId": "getLessonQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get a lesson question",
+        "tags": [
+          "Lessons"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Lesson question ID"
+            },
+            "required": true,
+            "description": "Lesson question ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current learner-owned lesson question",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonQuestion"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/questions/{questionId}/answers": {
       "post": {
         "description": "Claims a pending or failed question and streams one grounded UTF-8 answer as plain text.",
@@ -4053,6 +4146,21 @@
                 {
                   "type": "object",
                   "properties": {
+                    "incorrectPair": {
+                      "type": "object",
+                      "properties": {
+                        "left": {
+                          "type": "string"
+                        },
+                        "right": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "left",
+                        "right"
+                      ]
+                    },
                     "kind": {
                       "type": "string",
                       "enum": [
@@ -4268,7 +4376,7 @@
                 ]
               },
               "stepIds": {
-                "maxItems": 10,
+                "maxItems": 50,
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -4299,7 +4407,7 @@
               "stepNumber": {
                 "type": "integer",
                 "minimum": 1,
-                "maximum": 9007199254740991
+                "maximum": 2147483647
               }
             },
             "required": [
@@ -4363,6 +4471,23 @@
                   {
                     "type": "object",
                     "properties": {
+                      "incorrectPair": {
+                        "type": "object",
+                        "properties": {
+                          "left": {
+                            "type": "string",
+                            "maxLength": 500
+                          },
+                          "right": {
+                            "type": "string",
+                            "maxLength": 500
+                          }
+                        },
+                        "required": [
+                          "left",
+                          "right"
+                        ]
+                      },
                       "kind": {
                         "type": "string",
                         "enum": [
@@ -4522,231 +4647,7 @@
               "stepNumber": {
                 "type": "integer",
                 "minimum": 1,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "answer",
-              "kind",
-              "stepId",
-              "stepNumber"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "answer": {
-                "oneOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "fillBlank"
-                        ]
-                      },
-                      "userAnswers": {
-                        "maxItems": 50,
-                        "type": "array",
-                        "items": {
-                          "type": "string",
-                          "maxLength": 500
-                        }
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "userAnswers"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "arrangedWords": {
-                        "maxItems": 50,
-                        "type": "array",
-                        "items": {
-                          "type": "string",
-                          "maxLength": 500
-                        }
-                      },
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "listening"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "arrangedWords",
-                      "kind"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "matchColumns"
-                        ]
-                      },
-                      "mistakes": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 50
-                      },
-                      "userPairs": {
-                        "maxItems": 50,
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "left": {
-                              "type": "string",
-                              "maxLength": 500
-                            },
-                            "right": {
-                              "type": "string",
-                              "maxLength": 500
-                            }
-                          },
-                          "required": [
-                            "left",
-                            "right"
-                          ]
-                        }
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "mistakes",
-                      "userPairs"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "multipleChoice"
-                        ]
-                      },
-                      "selectedOptionId": {
-                        "type": "string",
-                        "maxLength": 500
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "selectedOptionId"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "arrangedWords": {
-                        "maxItems": 50,
-                        "type": "array",
-                        "items": {
-                          "type": "string",
-                          "maxLength": 500
-                        }
-                      },
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "reading"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "arrangedWords",
-                      "kind"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "selectImage"
-                        ]
-                      },
-                      "selectedOptionId": {
-                        "type": "string",
-                        "maxLength": 500
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "selectedOptionId"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "sortOrder"
-                        ]
-                      },
-                      "userOrder": {
-                        "maxItems": 50,
-                        "type": "array",
-                        "items": {
-                          "type": "string",
-                          "maxLength": 500
-                        }
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "userOrder"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "translation"
-                        ]
-                      },
-                      "selectedOptionId": {
-                        "type": "string",
-                        "maxLength": 500
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "selectedOptionId"
-                    ]
-                  }
-                ],
-                "type": "object"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "mistake"
-                ]
-              },
-              "stepId": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "stepNumber": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
+                "maximum": 2147483647
               }
             },
             "required": [
@@ -7827,7 +7728,7 @@
                   "stepNumber": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 9007199254740991
+                    "maximum": 2147483647
                   }
                 },
                 "required": [
@@ -7855,35 +7756,7 @@
                   "stepNumber": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "kind",
-                  "stepId",
-                  "stepNumber"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "kind": {
-                    "type": "string",
-                    "enum": [
-                      "mistake"
-                    ]
-                  },
-                  "stepId": {
-                    "nullable": true,
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "stepNumber": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 9007199254740991
+                    "maximum": 2147483647
                   }
                 },
                 "required": [

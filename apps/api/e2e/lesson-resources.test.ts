@@ -57,6 +57,22 @@ async function createBearerApiContext({ baseURL, prefix }: { baseURL: string; pr
   return { apiContext, user: authenticated.user };
 }
 
+async function createSubscriberApiContext({
+  baseURL,
+  prefix,
+}: {
+  baseURL: string;
+  prefix: string;
+}) {
+  const authenticated = await createBearerApiContext({ baseURL, prefix });
+
+  await prisma.subscription.create({
+    data: { plan: "plus", provider: "zoonk", referenceId: authenticated.user.id, status: "active" },
+  });
+
+  return authenticated;
+}
+
 /**
  * Creates a public AI curriculum path because player reads and writes must be
  * exercised against the same published resources used by real learners.
@@ -278,9 +294,43 @@ test.describe("Lesson resources API", () => {
     await apiContext.dispose();
   });
 
+  test("requires a subscription to read or create first-chapter questions", async () => {
+    const { lesson } = await createPublishedLesson({});
+
+    const { apiContext, user } = await createBearerApiContext({
+      baseURL,
+      prefix: "lesson-question-subscription",
+    });
+
+    const [threadResponse, createResponse] = await Promise.all([
+      apiContext.get(`/v1/lessons/${lesson.id}/questions`),
+      apiContext.post(`/v1/lessons/${lesson.id}/questions`, {
+        data: {
+          context: { kind: "lesson" },
+          question: "Can you explain this lesson?",
+          requestId: randomUUID(),
+        },
+      }),
+    ]);
+
+    expect(threadResponse.status()).toBe(402);
+    expect(createResponse.status()).toBe(402);
+
+    await expect(
+      prisma.lessonQuestionThread.count({ where: { lessonId: lesson.id, userId: user.id } }),
+    ).resolves.toBe(0);
+
+    await apiContext.dispose();
+  });
+
   test("creates and resumes a private lesson question thread", async () => {
     const { lesson } = await createPublishedLesson({});
-    const { apiContext } = await createBearerApiContext({ baseURL, prefix: "lesson-questions" });
+
+    const { apiContext } = await createSubscriberApiContext({
+      baseURL,
+      prefix: "lesson-questions",
+    });
+
     const question = `How does this connect ${randomUUID()}?`;
     const requestId = randomUUID();
 
@@ -304,6 +354,11 @@ test.describe("Lesson resources API", () => {
       question,
       status: "pending",
     });
+
+    const questionResponse = await apiContext.get(`/v1/questions/${createdQuestion.id}`);
+
+    expect(questionResponse.status()).toBe(200);
+    await expect(questionResponse.json()).resolves.toStrictEqual(createdQuestion);
 
     const replayResponse = await apiContext.post(`/v1/lessons/${lesson.id}/questions`, {
       data: { context: { kind: "lesson" }, question, requestId },
@@ -353,7 +408,7 @@ test.describe("Lesson resources API", () => {
   test("creates only one unfinished turn from concurrent question requests", async () => {
     const { lesson } = await createPublishedLesson({});
 
-    const { apiContext, user } = await createBearerApiContext({
+    const { apiContext, user } = await createSubscriberApiContext({
       baseURL,
       prefix: "lesson-question-create-order",
     });
@@ -404,7 +459,7 @@ test.describe("Lesson resources API", () => {
   test("paginates older lesson questions with an opaque cursor", async () => {
     const { lesson } = await createPublishedLesson({});
 
-    const { apiContext } = await createBearerApiContext({
+    const { apiContext } = await createSubscriberApiContext({
       baseURL,
       prefix: "lesson-question-pagination",
     });
@@ -429,7 +484,6 @@ test.describe("Lesson resources API", () => {
       course: { description: null, language: "en", targetLanguage: null, title: "History course" },
       lesson: { description: null, kind: "explanation", language: "en", title: "History lesson" },
       lessonSteps: [],
-      mistake: null,
       scope: { kind: "lesson" },
       step: null,
       version: 1,
@@ -510,13 +564,9 @@ test.describe("Lesson resources API", () => {
   test("rechecks paid lesson access before answering a saved question", async () => {
     const { lesson } = await createPublishedLesson({ chapterPosition: 1 });
 
-    const { apiContext, user } = await createBearerApiContext({
+    const { apiContext, user } = await createSubscriberApiContext({
       baseURL,
       prefix: "lesson-question-expired-subscription",
-    });
-
-    await prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
     });
 
     const createResponse = await apiContext.post(`/v1/lessons/${lesson.id}/questions`, {
@@ -536,8 +586,12 @@ test.describe("Lesson resources API", () => {
       where: { referenceId: user.id },
     });
 
-    const answerResponse = await apiContext.post(`/v1/questions/${createdQuestion.id}/answers`);
+    const [questionResponse, answerResponse] = await Promise.all([
+      apiContext.get(`/v1/questions/${createdQuestion.id}`),
+      apiContext.post(`/v1/questions/${createdQuestion.id}/answers`),
+    ]);
 
+    expect(questionResponse.status()).toBe(402);
     expect(answerResponse.status()).toBe(402);
 
     await expect(answerResponse.json()).resolves.toMatchObject({
@@ -554,7 +608,7 @@ test.describe("Lesson resources API", () => {
   test("creates a question from a server-validated correct answer", async () => {
     const { lesson } = await createPublishedLesson({});
 
-    const { apiContext } = await createBearerApiContext({
+    const { apiContext } = await createSubscriberApiContext({
       baseURL,
       prefix: "lesson-question-correct-answer",
     });
@@ -605,13 +659,27 @@ test.describe("Lesson resources API", () => {
       },
     });
 
+    await prisma.lessonQuestion.update({
+      data: { contextSnapshot: { corruptedForResourceRead: true } },
+      where: { id: question.id },
+    });
+
+    const questionResponse = await apiContext.get(`/v1/questions/${question.id}`);
+
+    expect(questionResponse.status()).toBe(200);
+
+    await expect(questionResponse.json()).resolves.toMatchObject({
+      context: { kind: "answer", stepId: step.id, stepNumber: 1 },
+      id: question.id,
+    });
+
     await apiContext.dispose();
   });
 
-  test("rejects oversized and fabricated mistake answers before persistence", async () => {
+  test("rejects oversized and fabricated selected answers before persistence", async () => {
     const { lesson } = await createPublishedLesson({});
 
-    const { apiContext, user } = await createBearerApiContext({
+    const { apiContext, user } = await createSubscriberApiContext({
       baseURL,
       prefix: "lesson-question-answer-bounds",
     });
@@ -638,7 +706,7 @@ test.describe("Lesson resources API", () => {
                 kind: "multipleChoice",
                 selectedOptionId: "x".repeat(MAX_LESSON_QUESTION_ANSWER_TEXT_LENGTH + 1),
               },
-              kind: "mistake",
+              kind: "answer",
               stepId: step.id,
               stepNumber: 1,
             },
@@ -656,7 +724,7 @@ test.describe("Lesson resources API", () => {
                 ),
                 kind: "reading",
               },
-              kind: "mistake",
+              kind: "answer",
               stepId: step.id,
               stepNumber: 1,
             },
@@ -668,7 +736,7 @@ test.describe("Lesson resources API", () => {
           data: {
             context: {
               answer: { kind: "multipleChoice", selectedOptionId: "not-a-displayed-option" },
-              kind: "mistake",
+              kind: "answer",
               stepId: step.id,
               stepNumber: 1,
             },
@@ -715,7 +783,7 @@ test.describe("Lesson resources API", () => {
       position: 1,
     });
 
-    const { apiContext, user } = await createBearerApiContext({
+    const { apiContext, user } = await createSubscriberApiContext({
       baseURL,
       prefix: "lesson-question-generation-limit",
     });
@@ -762,7 +830,7 @@ test.describe("Lesson resources API", () => {
       expect(body).toStrictEqual({
         error: {
           code: "GENERATION_LIMIT_REACHED",
-          details: { period: "day", resource: "lessonQuestion", viewer: "authenticated" },
+          details: { period: "day", resource: "lessonQuestion", viewer: "subscriber" },
           message: "Generation limit reached",
         },
       });
@@ -811,7 +879,7 @@ test.describe("Lesson resources API", () => {
   test("does not answer a later turn while an earlier turn is unfinished", async () => {
     const { lesson } = await createPublishedLesson({});
 
-    const { apiContext, user } = await createBearerApiContext({
+    const { apiContext, user } = await createSubscriberApiContext({
       baseURL,
       prefix: "lesson-question-answer-order",
     });

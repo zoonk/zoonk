@@ -43,8 +43,7 @@ export type LessonQuestionContextSnapshot = {
   };
   lesson: { description: string | null; kind: string; language: string; title: string | null };
   lessonSteps: LessonQuestionStepContext[];
-  mistake: { correctAnswer: string | null; feedback: string | null; selectedAnswer: string } | null;
-  scope: { kind: "answer" | "lesson" | "mistake" | "step" };
+  scope: { kind: "answer" | "lesson" | "step" };
   step: LessonQuestionStepContext | null;
   version: 1;
 };

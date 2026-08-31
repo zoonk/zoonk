@@ -57,6 +57,7 @@
     "./lesson-questions/contract": "./src/lesson-questions/contract.ts",
     "./lesson-questions/create": "./src/lesson-questions/create-lesson-question.ts",
     "./lesson-questions/get-thread": "./src/lesson-questions/get-lesson-question-thread.ts",
+    "./lesson-questions/get": "./src/lesson-questions/get-lesson-question.ts",
     "./lesson-questions/answer-lifecycle": "./src/lesson-questions/answer-lifecycle.ts",
     "./navigation/external-redirect": "./src/navigation/external-redirect.ts",
     "./player/commands/get-next-lesson-preload-target": "./src/player/commands/get-next-lesson-preload-target.ts",

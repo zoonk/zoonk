@@ -6,6 +6,8 @@ export const test = base.extend<{
   authenticatedPage: Page;
   logoutPage: Page;
   noProgressUser: E2EUser;
+  subscriberPage: Page;
+  subscriberUser: E2EUser;
   userWithoutProgress: Page;
   withProgressUser: E2EUser;
 }>({
@@ -32,6 +34,24 @@ export const test = base.extend<{
   // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
   noProgressUser: async ({}, use) => {
     const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
+    await use(user);
+  },
+
+  subscriberPage: async ({ browser, subscriberUser }, use) => {
+    const ctx = await browser.newContext({ storageState: subscriberUser.storageState });
+    const page = await ctx.newPage();
+    await use(page);
+    await ctx.close();
+  },
+
+  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+  subscriberUser: async ({}, use) => {
+    const user = await createE2EUser(getBaseURL(), {
+      orgRole: "member",
+      withProgress: true,
+      withSubscription: true,
+    });
+
     await use(user);
   },
 

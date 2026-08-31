@@ -3,8 +3,9 @@
 import { Link, useRouter } from "@/i18n/navigation";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
-import { PlayerProvider } from "@zoonk/player/provider";
+import { PlayerProvider, type PlayerQuestionSupport } from "@zoonk/player/provider";
 import { PlayerShell } from "@zoonk/player/shell";
+import { memo, useMemo } from "react";
 import { LessonQuestionPanel } from "./_questions/lesson-question-panel";
 import { useLessonQuestions } from "./_questions/use-lesson-questions";
 import { getPlayerViewer } from "./get-player-viewer";
@@ -24,6 +25,7 @@ type LessonPlayerClientProps = {
   courseSlug: string;
   chapterSlug: string;
   isAuthenticated: boolean;
+  isSubscribed: boolean;
   lessonDescription: string;
   lessonProgress: LessonProgressMeta;
   lessonPosition: number;
@@ -36,9 +38,14 @@ type LessonPlayerClientProps = {
   userName: string | null;
 };
 
-export function LessonPlayerClient({
+type LessonPlayerSurfaceProps = LessonPlayerClientProps & {
+  model: ReturnType<typeof buildLessonPlayerModel>;
+  questionSupport: PlayerQuestionSupport;
+};
+
+/** Keeps token-by-token question updates from re-rendering the active player. */
+function LessonPlayerSurfaceComponent({
   lesson,
-  brandSlug,
   chapterPosition,
   chapterTitle,
   courseTitle,
@@ -46,33 +53,16 @@ export function LessonPlayerClient({
   chapterSlug,
   isAuthenticated,
   lessonDescription,
-  lessonProgress,
   lessonPosition,
   lessonSlug,
   lessonTitle,
-  nextChapter,
-  nextLesson,
   initialProgress,
+  model,
+  questionSupport,
   userEmail,
   userName,
-}: LessonPlayerClientProps) {
+}: LessonPlayerSurfaceProps) {
   const router = useRouter();
-
-  const model = buildLessonPlayerModel({
-    brandSlug,
-    chapterSlug,
-    courseSlug,
-    lessonProgress,
-    lessonSlug,
-    nextChapter,
-    nextLesson,
-  });
-
-  const questionController = useLessonQuestions({
-    isAuthenticated,
-    lessonId: lesson.id,
-    lessonSteps: lesson.steps,
-  });
 
   const onNextHref = model.onNextHref;
   const handleNext = onNextHref ? () => router.push(onNextHref) : undefined;
@@ -104,7 +94,7 @@ export function LessonPlayerClient({
       onNext={handleNext}
       onStepChange={handleStepChange}
       progressSnapshot={initialProgress?.progressSnapshot ?? null}
-      questionSupport={questionController.questionSupport}
+      questionSupport={questionSupport}
       totalBrainPower={initialProgress?.totalBrainPower ?? 0}
       viewer={getPlayerViewer({
         chapterSlug,
@@ -116,9 +106,62 @@ export function LessonPlayerClient({
       })}
     >
       <PlayerShell />
+    </PlayerProvider>
+  );
+}
+
+const LessonPlayerSurface = memo(LessonPlayerSurfaceComponent);
+
+export function LessonPlayerClient(props: LessonPlayerClientProps) {
+  const {
+    brandSlug,
+    chapterSlug,
+    chapterTitle,
+    courseSlug,
+    courseTitle,
+    isAuthenticated,
+    isSubscribed,
+    lesson,
+    lessonDescription,
+    lessonProgress,
+    lessonSlug,
+    lessonTitle,
+    nextChapter,
+    nextLesson,
+  } = props;
+
+  const model = useMemo(
+    () =>
+      buildLessonPlayerModel({
+        brandSlug,
+        chapterSlug,
+        courseSlug,
+        lessonProgress,
+        lessonSlug,
+        nextChapter,
+        nextLesson,
+      }),
+    [brandSlug, chapterSlug, courseSlug, lessonProgress, lessonSlug, nextChapter, nextLesson],
+  );
+
+  const questionController = useLessonQuestions({
+    isAuthenticated,
+    isSubscribed,
+    lessonId: lesson.id,
+    lessonSteps: lesson.steps,
+  });
+
+  return (
+    <>
+      <LessonPlayerSurface
+        {...props}
+        model={model}
+        questionSupport={questionController.questionSupport}
+      />
       <LessonQuestionPanel
         controller={questionController}
         isAuthenticated={isAuthenticated}
+        isSubscribed={isSubscribed}
         loginHref={model.navigation.loginHref ?? "/login"}
         metadata={{
           chapterTitle,
@@ -128,6 +171,6 @@ export function LessonPlayerClient({
           lessonTitle,
         }}
       />
-    </PlayerProvider>
+    </>
   );
 }

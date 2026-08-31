@@ -11,11 +11,11 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
   const t = useExtracted();
 
   if (error?.kind === "authentication") {
-    return <>{t("Your session expired. Sign in again to keep asking questions.")}</>;
+    return <>{t("Your session expired. Sign in again.")}</>;
   }
 
   if (error?.kind === "subscription") {
-    return <>{t("Questions are not available for this lesson with your current plan.")}</>;
+    return <>{t("Subscribe to ask questions")}</>;
   }
 
   if (error?.kind === "unavailable") {
@@ -23,21 +23,21 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
   }
 
   if (error?.kind === "invalid") {
-    return <>{t("This question cannot be sent from the current lesson context.")}</>;
+    return <>{t("We couldn't send this question. Try again.")}</>;
   }
 
   if (error?.kind === "limit") {
     return (
       <>
         {t(
-          "{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached the question limit.}} You can keep learning and review saved answers.",
+          "{period, select, day {You've reached today's question limit. Try again tomorrow.} month {You've reached this month's question limit. Try again next month.} other {You've reached your question limit.}}",
           { period: error.limit.period },
         )}
       </>
     );
   }
 
-  return <>{t("Something went wrong. Please try again.")}</>;
+  return <>{t("Something went wrong. Try again.")}</>;
 }
 
 export function QuestionErrorAction<Href extends string>({

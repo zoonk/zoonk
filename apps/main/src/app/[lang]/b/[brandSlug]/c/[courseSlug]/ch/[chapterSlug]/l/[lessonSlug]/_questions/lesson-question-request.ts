@@ -1,7 +1,4 @@
-import {
-  type LessonQuestionContextInput,
-  MAX_LESSON_QUESTION_CONTEXT_STEPS,
-} from "@zoonk/core/lesson-questions/contract";
+import { type LessonQuestionContextInput } from "@zoonk/core/lesson-questions/contract";
 import { type PlayerQuestionContext } from "@zoonk/player/provider";
 
 /**
@@ -17,7 +14,7 @@ export function getLessonQuestionContextInput({
   lessonStepIds: string[];
 }): LessonQuestionContextInput {
   if (context.kind === "lesson") {
-    return { kind: "lesson", stepIds: lessonStepIds.slice(0, MAX_LESSON_QUESTION_CONTEXT_STEPS) };
+    return { kind: "lesson", stepIds: lessonStepIds };
   }
 
   if (context.kind === "step") {

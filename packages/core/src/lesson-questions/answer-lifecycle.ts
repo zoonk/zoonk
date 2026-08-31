@@ -9,6 +9,7 @@ import {
   claimAnswerInTransaction,
 } from "./_utils/answer-claim";
 import { getLessonQuestionAccess } from "./_utils/question-access";
+import { lessonQuestionResourceOmit } from "./_utils/question-resource";
 
 type CompleteLessonQuestionAnswerInput = LessonQuestionAnswerCompletion & {
   questionId: string;
@@ -134,6 +135,7 @@ async function getConditionalWriteOutcome({
   }
 
   const exists = await prisma.lessonQuestion.findFirst({
+    omit: lessonQuestionResourceOmit,
     where: { id: questionId, thread: { userId } },
   });
 

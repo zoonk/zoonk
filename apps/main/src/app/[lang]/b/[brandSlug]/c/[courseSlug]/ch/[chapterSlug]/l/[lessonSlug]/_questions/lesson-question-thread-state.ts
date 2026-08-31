@@ -47,6 +47,7 @@ export function reduceLessonQuestionThreadAction({
       return {
         ...state,
         error: null,
+        isLoadingEarlier: false,
         isRefreshing: true,
         loadStatus: state.loadStatus === "ready" ? "ready" : "loading",
         requestError: null,

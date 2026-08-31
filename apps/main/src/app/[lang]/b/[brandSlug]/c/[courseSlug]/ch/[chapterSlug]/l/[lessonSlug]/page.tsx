@@ -6,6 +6,7 @@ import { redirect } from "@/i18n/navigation";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { isLessonSeoIndexable } from "@/lib/lessons/seo";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
+import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { listCourseChapters } from "@zoonk/core/chapters/list-by-course";
 import { getFirstCourseLesson } from "@zoonk/core/courses/get-first-lesson";
 import { type CatalogLesson, getLesson as getCatalogLesson } from "@zoonk/core/lessons/get-by-slug";
@@ -138,9 +139,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 async function LessonContent({ params }: Pick<Props, "params">) {
   const { brandSlug, chapterSlug, courseSlug, lang: locale, lessonSlug } = await params;
 
-  const [lessonShell, session] = await Promise.all([
+  const [lessonShell, session, activeSubscription] = await Promise.all([
     getCatalogLesson({ brandSlug, chapterSlug, courseSlug, lessonSlug }),
     getSession(),
+    getActiveSubscription(),
   ]);
 
   if (!lessonShell) {
@@ -255,6 +257,7 @@ async function LessonContent({ params }: Pick<Props, "params">) {
         courseSlug={courseSlug}
         chapterSlug={chapterSlug}
         isAuthenticated={Boolean(session)}
+        isSubscribed={Boolean(activeSubscription)}
         lessonDescription={lessonMeta.description}
         lessonProgress={lessonProgress}
         lessonPosition={lessonShell.position}

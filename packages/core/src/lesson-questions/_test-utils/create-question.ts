@@ -16,7 +16,12 @@ export async function createLessonQuestionFixture({
     userFixture(),
   ]);
 
-  const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+  const [course] = await Promise.all([
+    courseFixture({ isPublished: true, organizationId: organization.id }),
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    }),
+  ]);
 
   const chapter = await chapterFixture({
     courseId: course.id,
@@ -32,12 +37,6 @@ export async function createLessonQuestionFixture({
   });
 
   mockSession(user.id);
-
-  if (chapterPosition > 0) {
-    await prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-    });
-  }
 
   const created = await createLessonQuestion({
     input: {

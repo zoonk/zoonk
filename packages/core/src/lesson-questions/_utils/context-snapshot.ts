@@ -74,18 +74,25 @@ async function getQuestionSteps({
 }) {
   const requestedStepIds = getRequestedStepIds(context);
 
-  if (!hasUniqueIds(requestedStepIds) || requestedStepIds.some((stepId) => !isUuid(stepId))) {
+  if (
+    requestedStepIds.length > MAX_LESSON_QUESTION_CONTEXT_STEPS ||
+    !hasUniqueIds(requestedStepIds) ||
+    requestedStepIds.some((stepId) => !isUuid(stepId))
+  ) {
     return { status: "invalidContext" as const };
   }
 
   const steps = await prisma.step.findMany({
     include: lessonQuestionStepInclude,
     orderBy: [{ lesson: { position: "asc" } }, { position: "asc" }],
-    take: requestedStepIds.length === 0 ? MAX_LESSON_QUESTION_CONTEXT_STEPS : undefined,
+    take: requestedStepIds.length === 0 ? MAX_LESSON_QUESTION_CONTEXT_STEPS + 1 : undefined,
     where: getQuestionStepWhere({ lesson, requestedStepIds }),
   });
 
-  if (requestedStepIds.length > 0 && steps.length !== requestedStepIds.length) {
+  if (
+    steps.length > MAX_LESSON_QUESTION_CONTEXT_STEPS ||
+    (requestedStepIds.length > 0 && steps.length !== requestedStepIds.length)
+  ) {
     return { status: "invalidContext" as const };
   }
 
@@ -204,7 +211,7 @@ async function getValidatedAnswerContext({
   context: LessonQuestionContextInput;
   rawSteps: LessonQuestionStep[];
 }): Promise<NonNullable<LessonQuestionContextSnapshot["answer"]> | null | "invalid"> {
-  if (context.kind !== "answer" && context.kind !== "mistake") {
+  if (context.kind !== "answer") {
     return null;
   }
 
@@ -215,38 +222,6 @@ async function getValidatedAnswerContext({
   }
 
   return getLessonQuestionAnswer({ answer: context.answer, step: rawStep });
-}
-
-function getAnswerSnapshot({
-  context,
-  validatedAnswer,
-}: {
-  context: LessonQuestionContextInput;
-  validatedAnswer: NonNullable<LessonQuestionContextSnapshot["answer"]> | null;
-}) {
-  return context.kind === "answer" ? validatedAnswer : null;
-}
-
-function getMistakeSnapshot({
-  context,
-  validatedAnswer,
-}: {
-  context: LessonQuestionContextInput;
-  validatedAnswer: NonNullable<LessonQuestionContextSnapshot["answer"]> | null;
-}): LessonQuestionContextSnapshot["mistake"] | "invalid" {
-  if (context.kind !== "mistake") {
-    return null;
-  }
-
-  if (!validatedAnswer || validatedAnswer.isCorrect) {
-    return "invalid";
-  }
-
-  return {
-    correctAnswer: validatedAnswer.correctAnswer,
-    feedback: validatedAnswer.feedback,
-    selectedAnswer: validatedAnswer.selectedAnswer,
-  };
 }
 
 export async function buildLessonQuestionContextSnapshot({
@@ -282,15 +257,8 @@ export async function buildLessonQuestionContextSnapshot({
     return { status: "invalidContext" as const };
   }
 
-  const answer = getAnswerSnapshot({ context, validatedAnswer });
-  const mistake = getMistakeSnapshot({ context, validatedAnswer });
-
-  if (mistake === "invalid") {
-    return { status: "invalidContext" as const };
-  }
-
   const contextSnapshot: LessonQuestionContextSnapshot = {
-    answer,
+    answer: context.kind === "answer" ? validatedAnswer : null,
     chapter: { description: lesson.chapter.description, title: lesson.chapter.title },
     course: {
       description: lesson.chapter.course.description,
@@ -305,7 +273,6 @@ export async function buildLessonQuestionContextSnapshot({
       title: lesson.title,
     },
     lessonSteps: snapshotSteps.map((step) => step.context),
-    mistake,
     scope: { kind: context.kind },
     step: activeStep?.context ?? null,
     version: 1,
@@ -315,5 +282,6 @@ export async function buildLessonQuestionContextSnapshot({
     contextSnapshot,
     status: "ready" as const,
     stepId: context.kind === "lesson" ? null : context.stepId,
+    stepNumber: context.kind === "lesson" ? null : context.stepNumber,
   };
 }

@@ -6,9 +6,13 @@ import {
 import {
   claimLessonQuestionAnswer,
   completeLessonQuestionAnswer,
+  failLessonQuestionAnswer,
 } from "@zoonk/core/lesson-questions/answer-lifecycle";
+import { logError } from "@zoonk/utils/logger";
+import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST as postAnswer } from "./route";
+import type * as NextServer from "next/server";
 
 vi.mock("@zoonk/ai/tasks/lessons/question", () => ({
   LESSON_QUESTION_MODEL: "openai/gpt-5.6-luna",
@@ -26,8 +30,14 @@ vi.mock("@zoonk/core/lesson-questions/answer-lifecycle", () => ({
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 vi.mock("@/lib/server-track-events", () => ({ trackGenerationRateLimited: vi.fn() }));
 
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<typeof NextServer>()),
+  after: vi.fn(),
+}));
+
 const QUESTION_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
 const consumeStream = vi.fn();
+const afterTasks: Promise<unknown>[] = [];
 
 const completion: LessonQuestionAnswerCompletion = {
   answer: "A grounded answer",
@@ -56,6 +66,11 @@ async function createAnswerResponse(): Promise<{ input: StreamInput; response: R
 describe("lesson question answer route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    afterTasks.length = 0;
+
+    vi.mocked(after).mockImplementation((task) => {
+      afterTasks.push(Promise.resolve(typeof task === "function" ? task() : task));
+    });
 
     vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
       claim: {
@@ -77,6 +92,8 @@ describe("lesson question answer route", () => {
   });
 
   it("accepts the stream only after the claimed revision is persisted", async () => {
+    const backgroundConsumption = Promise.resolve();
+    consumeStream.mockReturnValueOnce(backgroundConsumption);
     vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status: "updated" });
     const { input, response } = await createAnswerResponse();
 
@@ -85,10 +102,71 @@ describe("lesson question answer route", () => {
     expect(response.headers.get("content-type")).toBe("text/plain; charset=utf-8");
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");
     expect(consumeStream).toHaveBeenCalledExactlyOnceWith();
+    expect(after).toHaveBeenCalledExactlyOnceWith(backgroundConsumption);
     await expect(Promise.resolve(input.onEnd(completion))).resolves.toBeUndefined();
 
     expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
       ...completion,
+      questionId: QUESTION_ID,
+      revision: 1,
+    });
+  });
+
+  it("finishes persistence after the response stream is canceled", async () => {
+    const continueGeneration = Promise.withResolvers<boolean>();
+    vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status: "updated" });
+
+    vi.mocked(streamLessonQuestionAnswer).mockImplementation((input) => ({
+      consumeStream: async () => {
+        await continueGeneration.promise;
+        await input.onEnd(completion);
+      },
+      stream: new ReadableStream<string>({
+        start(controller) {
+          controller.enqueue("Partial answer");
+        },
+      }),
+    }));
+
+    const { response } = await createAnswerResponse();
+    const reader = response.body?.getReader();
+
+    if (!reader) {
+      throw new Error("Expected a streamed answer body");
+    }
+
+    await reader.read();
+    await reader.cancel();
+
+    expect(completeLessonQuestionAnswer).not.toHaveBeenCalled();
+
+    continueGeneration.resolve(true);
+    await Promise.all(afterTasks);
+
+    expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
+      ...completion,
+      questionId: QUESTION_ID,
+      revision: 1,
+    });
+  });
+
+  it("fails the claim without logging provider request content", async () => {
+    const providerError = Object.assign(new Error("Provider failed"), {
+      requestBodyValues: { prompt: "private lesson and learner question" },
+    });
+
+    const { input } = await createAnswerResponse();
+
+    await expect(Promise.resolve(input.onError(providerError))).resolves.toBeUndefined();
+
+    expect(logError).toHaveBeenCalledExactlyOnceWith("[Lesson Question Answer Error]", {
+      questionId: QUESTION_ID,
+      revision: 1,
+    });
+
+    expect(logError).not.toHaveBeenCalledWith(expect.anything(), providerError);
+
+    expect(failLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
       questionId: QUESTION_ID,
       revision: 1,
     });

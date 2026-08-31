@@ -5,10 +5,12 @@ import { getLessonQuestionThreadRequest } from "./lesson-question-api";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 
 export function useLessonQuestionThread({
+  canAskQuestions,
   dispatch,
   lessonId,
   state,
 }: {
+  canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
   lessonId: string;
   state: LessonQuestionState;
@@ -16,6 +18,10 @@ export function useLessonQuestionThread({
   const latestLoadRevision = useRef(0);
 
   const loadThread = useCallback(async () => {
+    if (!canAskQuestions) {
+      return null;
+    }
+
     const loadRevision = latestLoadRevision.current + 1;
     latestLoadRevision.current = loadRevision;
     dispatch({ type: "threadLoadStarted" });
@@ -40,17 +46,22 @@ export function useLessonQuestionThread({
     });
 
     return questions;
-  }, [dispatch, lessonId]);
+  }, [canAskQuestions, dispatch, lessonId]);
 
   const load = useCallback(async () => (await loadThread()) !== null, [loadThread]);
 
   const loadEarlier = useCallback(async () => {
-    if (!state.hasMore || !state.nextCursor || state.isLoadingEarlier) {
+    if (!canAskQuestions || !state.hasMore || !state.nextCursor || state.isLoadingEarlier) {
       return;
     }
 
+    const loadRevision = latestLoadRevision.current;
     dispatch({ type: "earlierThreadLoadStarted" });
     const result = await getLessonQuestionThreadRequest({ cursor: state.nextCursor, lessonId });
+
+    if (loadRevision !== latestLoadRevision.current) {
+      return;
+    }
 
     if (result.status === "error" || !result.data) {
       dispatch({ type: "earlierThreadLoadFailed" });
@@ -63,9 +74,20 @@ export function useLessonQuestionThread({
       questions: result.data.questions,
       type: "earlierThreadLoaded",
     });
-  }, [dispatch, lessonId, state.hasMore, state.isLoadingEarlier, state.nextCursor]);
+  }, [
+    canAskQuestions,
+    dispatch,
+    lessonId,
+    state.hasMore,
+    state.isLoadingEarlier,
+    state.nextCursor,
+  ]);
 
   const reconcileLatestThread = useCallback(async () => {
+    if (!canAskQuestions) {
+      return false;
+    }
+
     const result = await getLessonQuestionThreadRequest({ lessonId });
 
     if (result.status === "error") {
@@ -74,7 +96,7 @@ export function useLessonQuestionThread({
 
     dispatch({ questions: result.data?.questions ?? [], type: "latestThreadReconciled" });
     return true;
-  }, [dispatch, lessonId]);
+  }, [canAskQuestions, dispatch, lessonId]);
 
   return { load, loadEarlier, loadThread, reconcileLatestThread };
 }

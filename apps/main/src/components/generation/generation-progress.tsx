@@ -163,9 +163,8 @@ function GenerationTimelineStep({
         <span
           className={cn(
             "pt-0.5 text-sm",
+            status === "active" && "shimmer font-medium",
             status === "completed" && "text-muted-foreground",
-            status === "active" &&
-              "animate-shimmer-text motion-reduce:text-foreground bg-[linear-gradient(90deg,var(--foreground)_0%,var(--foreground)_40%,var(--muted-foreground)_50%,var(--foreground)_60%,var(--foreground)_100%)] bg-size-[200%_100%] bg-clip-text font-medium text-transparent motion-reduce:animate-none motion-reduce:bg-none",
             status === "pending" && "text-muted-foreground/60",
           )}
         >

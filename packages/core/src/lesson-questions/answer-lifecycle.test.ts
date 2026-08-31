@@ -5,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getGenerationQuotaRules } from "../generation-quotas/limits";
 import { createLessonQuestionFixture } from "./_test-utils/create-question";
 import {
   parseLessonQuestionContextSnapshot,
@@ -264,7 +265,17 @@ describe("lesson question answer lifecycle", () => {
 
     await failLessonQuestionAnswer({ questionId: question.id, revision: seedClaim.claim.revision });
 
-    await setLessonQuestionDailyQuota({ count: 49, questionId: question.id });
+    const dailyLimit = getGenerationQuotaRules({
+      now: new Date(),
+      resource: "lessonQuestion",
+      viewer: "subscriber",
+    }).find((rule) => rule.period === "day")?.limit;
+
+    if (!dailyLimit) {
+      throw new Error("Expected a subscriber daily lesson-question limit");
+    }
+
+    await setLessonQuestionDailyQuota({ count: dailyLimit - 1, questionId: question.id });
 
     const [firstLesson, secondLesson] = await Promise.all([
       lessonFixture({
@@ -307,7 +318,7 @@ describe("lesson question answer lifecycle", () => {
 
     expect(limitResult).toMatchObject({
       actor: { distinctId: user.id, username: null },
-      limit: { period: "day", resource: "lessonQuestion", viewer: "authenticated" },
+      limit: { period: "day", resource: "lessonQuestion", viewer: "subscriber" },
       status: "limitReached",
     });
 
@@ -329,7 +340,7 @@ describe("lesson question answer lifecycle", () => {
       prisma.generationQuotaCounter.findFirstOrThrow({
         where: { actorKey: `user:${user.id}`, period: "day", resource: "lessonQuestion" },
       }),
-    ).resolves.toMatchObject({ count: 50 });
+    ).resolves.toMatchObject({ count: dailyLimit });
   });
 
   it("supplies only earlier completed turns as generation history", async () => {

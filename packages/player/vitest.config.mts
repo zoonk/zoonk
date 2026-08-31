@@ -18,6 +18,7 @@ const webHapticsShim = fileURLToPath(
 );
 
 export default defineConfig({
+  optimizeDeps: { include: ["@zoonk/ui > @base-ui/react/tooltip"] },
   plugins: [react()],
   resolve: {
     alias: {

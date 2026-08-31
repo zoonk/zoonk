@@ -1,33 +1,36 @@
 import "server-only";
-import { type LessonQuestion, type LessonQuestionThreadGetPayload } from "@zoonk/db";
+import { type LessonQuestionGetPayload, type LessonQuestionThreadGetPayload } from "@zoonk/db";
 import {
   type LessonQuestionContextSummary,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
 } from "../contract";
-import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 
-type ThreadWithQuestions = LessonQuestionThreadGetPayload<{ include: { questions: true } }>;
+export const lessonQuestionResourceOmit = { contextSnapshot: true } as const;
 
-function getContextSummary(question: LessonQuestion): LessonQuestionContextSummary {
+export type LessonQuestionResourceSource = LessonQuestionGetPayload<{
+  omit: typeof lessonQuestionResourceOmit;
+}>;
+
+type ThreadWithQuestions = LessonQuestionThreadGetPayload<{
+  include: { questions: { omit: typeof lessonQuestionResourceOmit } };
+}>;
+
+function getContextSummary(question: LessonQuestionResourceSource): LessonQuestionContextSummary {
   if (question.contextKind === "lesson") {
     return { kind: "lesson" };
   }
 
-  const snapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
-
-  if (!snapshot.step) {
-    throw new Error("Step-scoped lesson question is missing its immutable step snapshot");
+  if (!question.stepNumber) {
+    throw new Error("Step-scoped lesson question is missing its immutable step number");
   }
 
-  return {
-    kind: question.contextKind,
-    stepId: question.stepId,
-    stepNumber: snapshot.step.stepNumber,
-  };
+  return { kind: question.contextKind, stepId: question.stepId, stepNumber: question.stepNumber };
 }
 
-export function toLessonQuestionResource(question: LessonQuestion): LessonQuestionResource {
+export function toLessonQuestionResource(
+  question: LessonQuestionResourceSource,
+): LessonQuestionResource {
   return {
     answer: question.answer,
     context: getContextSummary(question),

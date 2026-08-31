@@ -27,7 +27,6 @@ const contextSnapshot = {
     title: "Hello and goodbye",
   },
   lessonSteps: [],
-  mistake: null,
   scope: { kind: "step" as const },
   step: {
     content: { kind: "multipleChoice", question: "How do you say hello?" },
@@ -148,12 +147,13 @@ describe(streamLessonQuestionAnswer, () => {
     streamLessonQuestionAnswer({
       contextSnapshot: {
         ...contextSnapshot,
-        mistake: {
+        answer: {
           correctAnswer: "Hallo",
           feedback: "Use Hallo for this greeting.",
+          isCorrect: false,
           selectedAnswer: "Guten Abend",
         },
-        scope: { kind: "mistake" },
+        scope: { kind: "answer" },
       },
       onEnd,
       onError: vi.fn(),

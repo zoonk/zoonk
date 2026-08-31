@@ -495,7 +495,6 @@ msgid "Loading more courses…"
 msgstr "Carregando mais cursos…"
 
 #: src/app/[lang]/(catalog)/courses/course-list-client.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "W_5hwr"
 msgid "Something went wrong. Please try again."
@@ -588,6 +587,7 @@ msgstr "Não foi possível remover este curso. Tente novamente."
 
 #: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
 #: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-markdown.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1577,6 +1577,7 @@ msgid "Log in to subscribe"
 msgstr "Entre para assinar"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
 #: src/components/generation/generation-limit-cta.tsx
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "gczcC5"
@@ -1685,19 +1686,14 @@ msgid "Follow us"
 msgstr "Siga a gente"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-composer.tsx
-msgctxt "c_9MOQ"
-msgid "Couldn't copy the lesson content. Please try again."
-msgstr "Não foi possível copiar o conteúdo da aula. Tente de novo."
+msgctxt "pLRK5_"
+msgid "We couldn't send your last question. Try again."
+msgstr "A gente não conseguiu enviar sua última pergunta. Tente de novo."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-composer.tsx
-msgctxt "Gg79xL"
-msgid "We couldn't confirm the previous question. Retry it before sending another."
-msgstr "A gente não conseguiu confirmar a pergunta anterior. Tente de novo antes de enviar outra."
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-composer.tsx
-msgctxt "7zs0h0"
-msgid "Retry previous question"
-msgstr "Tentar a pergunta anterior de novo"
+msgctxt "zMPwOt"
+msgid "Retry last question"
+msgstr "Tentar enviar a última pergunta de novo"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-composer.tsx
 msgctxt "9WRlF4"
@@ -1712,12 +1708,22 @@ msgstr "Fazer uma pergunta"
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-composer.tsx
 msgctxt "6sIYgs"
 msgid "Ask about the lesson content…"
-msgstr "Pergunte sobre o conteúdo da aula…"
+msgstr "Tire dúvidas sobre o conteúdo da aula…"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
-msgctxt "E_7YOR"
-msgid "Step {current} of {total}"
-msgstr "Passo {current} de {total}"
+msgctxt "p556q3"
+msgid "Copied"
+msgstr "Copiado"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
+msgctxt "Lq0WOJ"
+msgid "Copy lesson content"
+msgstr "Copiar conteúdo da aula"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
+msgctxt "e7kR6h"
+msgid "Part {current} of {total}"
+msgstr "Parte {current} de {total}"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
 msgctxt "QFpfEi"
@@ -1730,9 +1736,9 @@ msgid "Correct answer"
 msgstr "Resposta correta"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
-msgctxt "o8_J84"
-msgid "Current step"
-msgstr "Passo atual"
+msgctxt "k6ckn3"
+msgid "Currently viewing"
+msgstr "Você está vendo"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
 #: src/components/feedback/feedback-dialog.tsx
@@ -1771,24 +1777,20 @@ msgid "Your answer"
 msgstr "Sua resposta"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
-msgctxt "p556q3"
-msgid "Copied"
-msgstr "Copiado"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-copy-action.tsx
-msgctxt "Lq0WOJ"
-msgid "Copy lesson content"
-msgstr "Copiar conteúdo da aula"
+msgctxt "vmCtoi"
+msgid "Couldn't copy lesson content. Try again."
+msgstr "Não foi possível copiar o conteúdo da aula. Tente de novo."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
-msgctxt "XI71tX"
-msgid "Your session expired. Sign in again to keep asking questions."
-msgstr "Sua sessão expirou. Entre de novo para continuar fazendo perguntas."
+msgctxt "2P8sqa"
+msgid "Your session expired. Sign in again."
+msgstr "Sua sessão expirou. Entre de novo."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
-msgctxt "m-88Aa"
-msgid "Questions are not available for this lesson with your current plan."
-msgstr "As perguntas não estão disponíveis para esta aula no seu plano atual."
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
+msgctxt "iVOq9B"
+msgid "Subscribe to ask questions"
+msgstr "Assine para fazer perguntas"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -1796,14 +1798,19 @@ msgid "This lesson is no longer available."
 msgstr "Esta aula não está mais disponível."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
-msgctxt "I9zTK5"
-msgid "This question cannot be sent from the current lesson context."
-msgstr "Não é possível enviar esta pergunta no contexto atual da aula."
+msgctxt "g4aIUa"
+msgid "We couldn't send this question. Try again."
+msgstr "A gente não conseguiu enviar essa pergunta. Tente de novo."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
-msgctxt "pGTJUI"
-msgid "{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached the question limit.}} You can keep learning and review saved answers."
-msgstr "{period, select, day {Você atingiu o limite de perguntas de hoje.} month {Você atingiu o limite de perguntas deste mês.} other {Você atingiu o limite de perguntas.}} Você pode continuar estudando e revisar as respostas salvas."
+msgctxt "_n-jR8"
+msgid "{period, select, day {You've reached today's question limit. Try again tomorrow.} month {You've reached this month's question limit. Try again next month.} other {You've reached your question limit.}}"
+msgstr "{period, select, day {Você chegou ao limite de perguntas de hoje. Tente de novo amanhã.} month {Você chegou ao limite de perguntas deste mês. Tente de novo no mês que vem.} other {Você chegou ao seu limite de perguntas.}}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
+msgctxt "3kJE8G"
+msgid "Something went wrong. Try again."
+msgstr "Algo deu errado. Tente de novo."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
@@ -1816,6 +1823,21 @@ msgctxt "EaucLA"
 msgid "View plans"
 msgstr "Ver planos"
 
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-markdown.tsx
+msgctxt "13bnyN"
+msgid "Open this link?"
+msgstr "Abrir este link?"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-markdown.tsx
+msgctxt "YGP6Yl"
+msgid "This link opens a website outside Zoonk."
+msgstr "Este link abre um site fora do Zoonk."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-markdown.tsx
+msgctxt "YtFTtA"
+msgid "Open link"
+msgstr "Abrir link"
+
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-panel.tsx
 msgctxt "FyE_0i"
 msgid "Ask questions"
@@ -1827,9 +1849,14 @@ msgid "Close questions"
 msgstr "Fechar perguntas"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-panel.tsx
-msgctxt "kWRk4J"
-msgid "Ask questions about the lesson content"
-msgstr "Faça perguntas sobre o conteúdo da aula"
+msgctxt "haOEeK"
+msgid "Ask questions about this lesson"
+msgstr "Faça perguntas sobre esta aula"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
+msgctxt "RIj9BB"
+msgid "Loading questions…"
+msgstr "Carregando perguntas…"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
 msgctxt "DMPOmk"
@@ -1837,9 +1864,9 @@ msgid "Walk me through this answer"
 msgstr "Me explique essa resposta passo a passo"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "ic1w2z"
-msgid "Can you explain the difference?"
-msgstr "Você pode explicar a diferença?"
+msgctxt "VQ0LTP"
+msgid "Compare my answer with the correct one"
+msgstr "Compare minha resposta com a correta"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
 msgctxt "9KFewS"
@@ -1852,34 +1879,34 @@ msgid "Give me another example"
 msgstr "Me dê outro exemplo"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "hDA9Qt"
-msgid "What would you like to understand?"
-msgstr "O que você gostaria de entender?"
+msgctxt "BOsQu3"
+msgid "What would you like help with?"
+msgstr "Em que você quer ajuda?"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "U_HV_D"
-msgid "Sign in to ask about this lesson"
-msgstr "Entre para fazer perguntas sobre esta aula"
+msgctxt "I7p0KB"
+msgid "Sign in to ask questions"
+msgstr "Entre para fazer perguntas"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "34MBJ-"
-msgid "Your questions and answers will be saved with the lesson. You can still copy the lesson content."
-msgstr "Suas perguntas e respostas vão ficar salvas nesta aula. Você ainda pode copiar o conteúdo da aula."
+msgctxt "rLDJ2g"
+msgid "Get answers and explanations as you learn."
+msgstr "Receba respostas e explicações enquanto estuda."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "TuVsHf"
-msgid "Scroll to latest question"
-msgstr "Ir para a pergunta mais recente"
+msgctxt "E6r0bc"
+msgid "Scroll to latest"
+msgstr "Ir para a mais recente"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "SnJro_"
-msgid "Lesson questions"
-msgstr "Perguntas da aula"
+msgctxt "jJ8jWo"
+msgid "Questions about this lesson"
+msgstr "Perguntas sobre esta aula"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "OK8iBc"
-msgid "Couldn't load earlier questions. Please try again."
-msgstr "Não foi possível carregar as perguntas anteriores. Tente novamente."
+msgctxt "wMoDaY"
+msgid "Couldn't load earlier questions. Try again."
+msgstr "Não foi possível carregar as perguntas anteriores. Tente de novo."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
 msgctxt "nCFX1M"
@@ -1887,24 +1914,19 @@ msgid "Load earlier questions"
 msgstr "Carregar perguntas anteriores"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
+msgctxt "V-WZ__"
+msgid "About your answer"
+msgstr "Sobre sua resposta"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Sobre esta aula"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
-msgctxt "i-rJPA"
-msgid "About your answer on step {step}"
-msgstr "Sobre sua resposta no passo {step}"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
-msgctxt "6wg7cL"
-msgid "About step {step}"
-msgstr "Sobre o passo {step}"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
-msgctxt "LYVGIp"
-msgid "The answer was interrupted."
-msgstr "A resposta foi interrompida."
+msgctxt "KQvwZ5"
+msgid "We couldn't finish this answer."
+msgstr "A gente não conseguiu terminar essa resposta."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
 msgctxt "Zg9lxZ"
@@ -1918,9 +1940,9 @@ msgid "Check again"
 msgstr "Verificar de novo"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
-msgctxt "JQGrmm"
-msgid "No answer was generated."
-msgstr "Nenhuma resposta foi gerada."
+msgctxt "C1eFF3"
+msgid "No answer available."
+msgstr "Nenhuma resposta disponível."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
 msgctxt "P1QHV0"
@@ -1928,8 +1950,8 @@ msgid "Thinking…"
 msgstr "Pensando…"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
-msgctxt "eAxH8A"
-msgid "Question from you"
+msgctxt "LIVM_k"
+msgid "Your question"
 msgstr "Sua pergunta"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
@@ -2950,9 +2972,9 @@ msgid "{period, select, day {Daily} month {Monthly} other {Generation}} {resourc
 msgstr "{period, select, day {Limite diário} month {Limite mensal} other {Limite de geração}} de {resource, select, course {cursos} chapter {capítulos} lesson {aulas} lessonQuestion {perguntas} other {conteúdo}} atingido"
 
 #: src/components/generation/generation-limit-cta.tsx
-msgctxt "9tpq_a"
-msgid "{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} lessonQuestion {question answers} other {content}}. You can keep learning from anything already generated."
-msgstr "{period, select, day {Você atingiu o limite de hoje} month {Você atingiu o limite deste mês} other {Você atingiu o limite}} para gerar {resource, select, course {cursos} chapter {capítulos} lesson {aulas} lessonQuestion {respostas às perguntas} other {conteúdo}}. Você pode continuar estudando com tudo o que já foi gerado."
+msgctxt "vvv0PA"
+msgid "{resource, select, lessonQuestion {{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached your question limit.}} Saved answers are still available.} other {{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated.}}"
+msgstr "{resource, select, lessonQuestion {{period, select, day {Você chegou ao limite de perguntas de hoje.} month {Você chegou ao limite de perguntas deste mês.} other {Você chegou ao seu limite de perguntas.}} As respostas salvas continuam disponíveis.} other {{period, select, day {Você chegou ao limite de hoje} month {Você chegou ao limite deste mês} other {Você chegou ao limite}} para gerar {resource, select, course {cursos} chapter {capítulos} lesson {aulas} other {conteúdo}}. Você pode continuar estudando com tudo que já foi gerado.}}"
 
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "ctqXbT"

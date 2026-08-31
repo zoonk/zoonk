@@ -6,10 +6,11 @@ import { Bubble, BubbleContent } from "@zoonk/ui/components/bubble";
 import { Button } from "@zoonk/ui/components/button";
 import { Marker, MarkerContent, MarkerIcon } from "@zoonk/ui/components/marker";
 import { Message, MessageContent, MessageHeader } from "@zoonk/ui/components/message";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Streamdown } from "streamdown";
+import dynamic from "next/dynamic";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -17,39 +18,26 @@ import { type LessonQuestionController } from "./use-lesson-questions";
 function QuestionContextLabel({ context }: { context: LessonQuestionContextSummary }) {
   const t = useExtracted();
 
-  if (context.kind === "lesson") {
-    return <>{t("About this lesson")}</>;
+  if (context.kind === "answer") {
+    return <>{t("About your answer")}</>;
   }
 
-  if (context.kind === "answer" || context.kind === "mistake") {
-    return <>{t("About your answer on step {step}", { step: String(context.stepNumber) })}</>;
-  }
-
-  return <>{t("About step {step}", { step: String(context.stepNumber) })}</>;
+  return <>{t("About this lesson")}</>;
 }
 
-function AnswerMarkdown({
-  answer,
-  isAnimating,
-  isStreaming,
-}: {
-  answer: string;
-  isAnimating: boolean;
-  isStreaming: boolean;
-}) {
+function AnswerMarkdownSkeleton() {
   return (
-    <Streamdown
-      animated={isAnimating}
-      className="min-w-0 wrap-anywhere [&_a]:underline [&_a]:underline-offset-4"
-      controls={false}
-      isAnimating={isAnimating}
-      lineNumbers={false}
-      mode={isStreaming ? "streaming" : "static"}
-    >
-      {answer}
-    </Streamdown>
+    <div aria-hidden="true" className="flex flex-col gap-2 py-1">
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-4/5" />
+    </div>
   );
 }
+
+const AnswerMarkdown = dynamic(
+  () => import("./lesson-question-markdown").then((module) => module.LessonQuestionMarkdown),
+  { loading: AnswerMarkdownSkeleton, ssr: false },
+);
 
 function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null }) {
   const t = useExtracted();
@@ -63,7 +51,7 @@ function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null 
     return <RequestErrorMessage error={error} />;
   }
 
-  return <>{t("The answer was interrupted.")}</>;
+  return <>{t("We couldn't finish this answer.")}</>;
 }
 
 function QuestionAnswer<Href extends string>({
@@ -141,7 +129,7 @@ function QuestionAnswer<Href extends string>({
   }
 
   if (status === "completed") {
-    return <p className="text-muted-foreground">{t("No answer was generated.")}</p>;
+    return <p className="text-muted-foreground">{t("No answer available.")}</p>;
   }
 
   return (
@@ -173,6 +161,7 @@ export function QuestionTurn<Href extends string>({
   answerInProgressCount,
   answerError,
   loginHref,
+  onCheckAgain,
   onRetry,
   question,
 }: {
@@ -180,13 +169,14 @@ export function QuestionTurn<Href extends string>({
   answerInProgressCount: number;
   answerError: LessonQuestionController["state"]["answerError"];
   loginHref: AppRoute<Href>;
+  onCheckAgain: (questionId: string) => void;
   onRetry: (questionId: string) => void;
   question: LessonQuestionController["state"]["questions"][number];
 }) {
   const t = useExtracted();
 
   return (
-    <article aria-label={t("Question from you")} className="flex flex-col gap-3">
+    <article aria-label={t("Your question")} className="flex flex-col gap-3">
       <Message align="end">
         <MessageContent>
           <MessageHeader>
@@ -209,7 +199,7 @@ export function QuestionTurn<Href extends string>({
                 error={answerError?.questionId === question.id ? answerError.reason : null}
                 isLocallyStreaming={activeQuestionId === question.id}
                 loginHref={loginHref}
-                onCheckAgain={() => onRetry(question.id)}
+                onCheckAgain={() => onCheckAgain(question.id)}
                 onRetry={() => onRetry(question.id)}
                 status={question.status}
               />

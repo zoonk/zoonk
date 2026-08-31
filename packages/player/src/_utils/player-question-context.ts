@@ -11,7 +11,7 @@ export function getHeaderQuestionContext({
   step: SerializedStep;
   stepIndex: number;
 }): PlayerQuestionContext | null {
-  if (phase === "feedback" && step.kind !== "matchColumns") {
+  if (phase !== "playing") {
     return null;
   }
 
@@ -31,8 +31,7 @@ export function getAnswerQuestionContext({
   step: SerializedStep;
   stepIndex: number;
 }): PlayerQuestionContext | null {
-  const isAnsweredFeedback =
-    phase === "feedback" && result && selectedAnswer && step.kind !== "matchColumns";
+  const isAnsweredFeedback = phase === "feedback" && result && selectedAnswer;
 
   if (!isAnsweredFeedback) {
     return null;

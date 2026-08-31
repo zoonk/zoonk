@@ -2,6 +2,7 @@ import "server-only";
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
 import { type TransactionClient } from "@zoonk/db";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
+import { lessonQuestionResourceOmit } from "./question-resource";
 import { lockLessonQuestionThread } from "./thread-lock";
 
 const MAX_PRIOR_TURNS = 12;
@@ -49,6 +50,7 @@ async function getPriorTurns({
   transaction: TransactionClient;
 }) {
   const questions = await transaction.lessonQuestion.findMany({
+    omit: lessonQuestionResourceOmit,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_PRIOR_TURNS,
     where: {
@@ -71,6 +73,7 @@ async function hasBlockingQuestion({
 }) {
   const [earlierUnfinishedQuestion, otherRunningQuestion] = await Promise.all([
     transaction.lessonQuestion.findFirst({
+      omit: lessonQuestionResourceOmit,
       where: {
         OR: [
           { createdAt: { lt: question.createdAt } },
@@ -81,6 +84,7 @@ async function hasBlockingQuestion({
       },
     }),
     transaction.lessonQuestion.findFirst({
+      omit: lessonQuestionResourceOmit,
       where: { id: { not: question.id }, status: "running", threadId: question.threadId },
     }),
   ]);
@@ -100,6 +104,7 @@ export async function claimAnswerInTransaction({
   userId: string;
 }) {
   const questionOwner = await transaction.lessonQuestion.findFirst({
+    omit: lessonQuestionResourceOmit,
     where: { id: input.questionId, thread: { userId } },
   });
 

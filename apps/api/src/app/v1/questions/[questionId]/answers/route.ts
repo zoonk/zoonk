@@ -14,6 +14,7 @@ import {
   failLessonQuestionAnswer,
 } from "@zoonk/core/lesson-questions/answer-lifecycle";
 import { logError } from "@zoonk/utils/logger";
+import { after } from "next/server";
 
 /** Rejects the response body when the claimed revision did not accept the generated answer. */
 async function persistLessonQuestionAnswer({
@@ -87,16 +88,17 @@ async function createLessonQuestionAnswer(
     onEnd: async (completion) => {
       await persistLessonQuestionAnswer({ completion, questionId, revision });
     },
-    onError: async (error) => {
-      logError("[Lesson Question Answer Error]", error);
+    onError: async () => {
+      logError("[Lesson Question Answer Error]", { questionId, revision });
       await failLessonQuestionAnswer({ questionId, revision });
     },
     priorTurns,
     question,
   });
 
-  // Keep generation and persistence alive even if the learner closes the panel.
-  void generation.consumeStream();
+  // Register the already-started consumption with the request lifecycle so Vercel's waitUntil
+  // keeps generation and persistence alive after a learner disconnects.
+  after(Promise.resolve(generation.consumeStream()));
 
   return new Response(generation.stream.pipeThrough(new TextEncoderStream()), {
     headers: {

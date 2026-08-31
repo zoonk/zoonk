@@ -1,6 +1,9 @@
 "use client";
 
-import { type CreateLessonQuestionInput } from "@zoonk/core/lesson-questions/contract";
+import {
+  type CreateLessonQuestionInput,
+  type LessonQuestionResource,
+} from "@zoonk/core/lesson-questions/contract";
 import { type PlayerQuestionContext } from "@zoonk/player/provider";
 import { type Dispatch, useCallback, useRef } from "react";
 import { createLessonQuestionRequest } from "./lesson-question-api";
@@ -45,16 +48,16 @@ function getQuestionCreateRequest({
 }
 
 export function useSendLessonQuestion({
+  canAskQuestions,
   dispatch,
-  isAuthenticated,
   lessonId,
   lessonSteps,
   reconcileThread,
   state,
   streamAnswer,
 }: {
+  canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
-  isAuthenticated: boolean;
   lessonId: string;
   lessonSteps: readonly { id: string }[];
   reconcileThread: () => Promise<boolean>;
@@ -64,28 +67,37 @@ export function useSendLessonQuestion({
   const createRequestInFlight = useRef(false);
   const pendingCreateRequest = useRef<PendingQuestionCreateRequest | null>(null);
 
-  const hasBlockingQuestion = state.questions.some(doesLessonQuestionBlockNewQuestion);
+  const threadBlocksNewQuestion = state.questions.some((question) =>
+    doesLessonQuestionBlockNewQuestion(question),
+  );
 
   const submitQuestion = useCallback(
     async ({
+      authoritativeQuestions,
       context,
       question,
       retryUnresolved,
     }: {
+      authoritativeQuestions?: LessonQuestionResource[];
       context: PlayerQuestionContext;
       question: string;
       retryUnresolved: boolean;
     }) => {
       const unresolvedRequest = retryUnresolved ? pendingCreateRequest.current : null;
 
+      const blocksNewQuestion =
+        authoritativeQuestions?.some((candidate) =>
+          doesLessonQuestionBlockNewQuestion(candidate),
+        ) ?? threadBlocksNewQuestion;
+
       if (
-        !isAuthenticated ||
+        !canAskQuestions ||
         (!question && !unresolvedRequest) ||
         (!retryUnresolved && pendingCreateRequest.current) ||
         state.activeQuestionId ||
         createRequestInFlight.current ||
         state.isCreating ||
-        hasBlockingQuestion
+        blocksNewQuestion
       ) {
         return;
       }
@@ -126,15 +138,15 @@ export function useSendLessonQuestion({
       }
     },
     [
+      canAskQuestions,
       dispatch,
-      hasBlockingQuestion,
-      isAuthenticated,
       lessonId,
       lessonSteps,
       reconcileThread,
       state.activeQuestionId,
       state.isCreating,
       streamAnswer,
+      threadBlocksNewQuestion,
     ],
   );
 
@@ -149,8 +161,21 @@ export function useSendLessonQuestion({
   );
 
   const sendPrepared = useCallback(
-    async ({ context, question }: { context: PlayerQuestionContext; question: string }) =>
-      submitQuestion({ context, question: question.trim(), retryUnresolved: false }),
+    async ({
+      context,
+      question,
+      questions,
+    }: {
+      context: PlayerQuestionContext;
+      question: string;
+      questions: LessonQuestionResource[];
+    }) =>
+      submitQuestion({
+        authoritativeQuestions: questions,
+        context,
+        question: question.trim(),
+        retryUnresolved: false,
+      }),
     [submitQuestion],
   );
 

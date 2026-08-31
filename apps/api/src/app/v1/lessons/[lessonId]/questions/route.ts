@@ -1,6 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
+import { lessonQuestionAccessError } from "@/lib/lesson-question-errors";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { parseQueryParams } from "@/lib/query-params";
@@ -11,18 +12,6 @@ import {
 import { createLessonQuestion } from "@zoonk/core/lesson-questions/create";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
 import { type NextRequest, NextResponse } from "next/server";
-
-function questionAccessError(status: "notFound" | "subscriptionRequired" | "unauthorized") {
-  if (status === "unauthorized") {
-    return errors.unauthorized();
-  }
-
-  if (status === "subscriptionRequired") {
-    return errors.paymentRequired();
-  }
-
-  return errors.notFound();
-}
 
 /** Returns the current learner's private, lesson-scoped question thread. */
 async function getLessonQuestions(
@@ -54,7 +43,7 @@ async function getLessonQuestions(
   }
 
   if (result.status !== "ready") {
-    return questionAccessError(result.status);
+    return lessonQuestionAccessError(result.status);
   }
 
   return NextResponse.json(result.thread);
@@ -92,7 +81,7 @@ async function postLessonQuestion(
   }
 
   if (result.status !== "created") {
-    return questionAccessError(result.status);
+    return lessonQuestionAccessError(result.status);
   }
 
   return NextResponse.json(result.question, { status: 201 });

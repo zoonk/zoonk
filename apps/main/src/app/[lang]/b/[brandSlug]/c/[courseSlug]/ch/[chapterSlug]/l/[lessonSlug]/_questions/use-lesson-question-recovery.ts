@@ -2,15 +2,61 @@
 
 import { safeAsync } from "@zoonk/utils/error";
 import { type Dispatch, useEffect, useRef } from "react";
-import { getLessonQuestionThreadRequest } from "./lesson-question-api";
+import { getLessonQuestionRequest } from "./lesson-question-api";
+import {
+  getLessonQuestionPollDelay,
+  hasLessonQuestionPollingBudget,
+} from "./lesson-question-polling";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
+import {
+  isLessonQuestionAnswerInProgress,
+  isRetryableLessonQuestionStatusError,
+} from "./lesson-question-status";
 
-const ANSWER_STATUS_POLL_INTERVAL_MILLISECONDS = 1500;
 const MAX_TIMER_DELAY_MILLISECONDS = 2_147_000_000;
 
-function waitForAnswerStatusPoll() {
+function waitForPollDelay({ delay, signal }: { delay: number; signal: AbortSignal }) {
+  if (signal.aborted) {
+    return Promise.resolve();
+  }
+
   return new Promise<void>((resolve) => {
-    setTimeout(resolve, ANSWER_STATUS_POLL_INTERVAL_MILLISECONDS);
+    const timeoutId = globalThis.setTimeout(finish, delay);
+
+    function finish() {
+      globalThis.clearTimeout(timeoutId);
+      signal.removeEventListener("abort", finish);
+      resolve();
+    }
+
+    signal.addEventListener("abort", finish, { once: true });
+  });
+}
+
+function isPollingAvailable() {
+  return document.visibilityState === "visible" && navigator.onLine;
+}
+
+function waitForPollingAvailability(signal: AbortSignal) {
+  if (signal.aborted || isPollingAvailable()) {
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve) => {
+    function finishIfAvailable() {
+      if (!signal.aborted && !isPollingAvailable()) {
+        return;
+      }
+
+      document.removeEventListener("visibilitychange", finishIfAvailable);
+      globalThis.removeEventListener("online", finishIfAvailable);
+      signal.removeEventListener("abort", finishIfAvailable);
+      resolve();
+    }
+
+    document.addEventListener("visibilitychange", finishIfAvailable);
+    globalThis.addEventListener("online", finishIfAvailable);
+    signal.addEventListener("abort", finishIfAvailable, { once: true });
   });
 }
 
@@ -31,15 +77,13 @@ function getAnswerLimit(answerError: LessonQuestionState["answerError"]) {
 }
 
 export function useLessonQuestionRecovery({
+  canAskQuestions,
   dispatch,
-  isAuthenticated,
-  lessonId,
   state,
   streamAnswer,
 }: {
+  canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
-  isAuthenticated: boolean;
-  lessonId: string;
   state: LessonQuestionState;
   streamAnswer: (questionId: string) => Promise<void>;
 }) {
@@ -50,7 +94,7 @@ export function useLessonQuestionRecovery({
 
   useEffect(() => {
     if (
-      !isAuthenticated ||
+      !canAskQuestions ||
       !state.isOpen ||
       !pendingQuestionId ||
       state.activeQuestionId ||
@@ -77,7 +121,7 @@ export function useLessonQuestionRecovery({
   }, [
     dispatch,
     hasRunningQuestion,
-    isAuthenticated,
+    canAskQuestions,
     pendingQuestionId,
     state.activeQuestionId,
     state.isCreating,
@@ -88,29 +132,43 @@ export function useLessonQuestionRecovery({
   const remoteRunningQuestionId = state.activeQuestionId === null ? runningQuestionId : null;
 
   useEffect(() => {
-    if (!isAuthenticated || !state.isOpen || !remoteRunningQuestionId) {
+    if (!canAskQuestions || !state.isOpen || !remoteRunningQuestionId) {
       return;
     }
 
-    let isCancelled = false;
+    const abortController = new AbortController();
     const questionId = remoteRunningQuestionId;
+    const startedAt = Date.now();
 
-    async function pollAnswerStatus() {
-      await waitForAnswerStatusPoll();
+    async function pollAnswerStatus(attempt: number) {
+      const delay = getLessonQuestionPollDelay({
+        attempt,
+        elapsedMilliseconds: Date.now() - startedAt,
+      });
 
-      if (isCancelled) {
+      if (delay === null) {
         return;
       }
 
-      const result = await getLessonQuestionThreadRequest({ lessonId });
+      await waitForPollDelay({ delay, signal: abortController.signal });
+      await waitForPollingAvailability(abortController.signal);
 
-      if (isCancelled) {
+      if (
+        abortController.signal.aborted ||
+        !hasLessonQuestionPollingBudget({ attempt, elapsedMilliseconds: Date.now() - startedAt })
+      ) {
+        return;
+      }
+
+      const result = await getLessonQuestionRequest({ questionId, signal: abortController.signal });
+
+      if (abortController.signal.aborted) {
         return;
       }
 
       if (result.status === "error") {
-        if (result.error.kind === "unknown") {
-          void pollAnswerStatus();
+        if (isRetryableLessonQuestionStatusError(result.error)) {
+          await pollAnswerStatus(attempt + 1);
           return;
         }
 
@@ -119,21 +177,19 @@ export function useLessonQuestionRecovery({
         return;
       }
 
-      const questions = result.data?.questions ?? [];
+      dispatch({ questions: [result.data], type: "latestThreadReconciled" });
 
-      dispatch({ questions, type: "latestThreadReconciled" });
-
-      if (questions.some((question) => question.status === "running")) {
-        void pollAnswerStatus();
+      if (isLessonQuestionAnswerInProgress(result.data)) {
+        await pollAnswerStatus(attempt + 1);
       }
     }
 
-    void pollAnswerStatus();
+    void pollAnswerStatus(0);
 
     return () => {
-      isCancelled = true;
+      abortController.abort();
     };
-  }, [dispatch, isAuthenticated, lessonId, remoteRunningQuestionId, state.isOpen]);
+  }, [canAskQuestions, dispatch, remoteRunningQuestionId, state.isOpen]);
 
   const limitError = getAnswerLimit(state.answerError);
 

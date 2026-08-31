@@ -86,8 +86,12 @@ function lessonQuestionsUrl({ cursor, lessonId }: { cursor?: string; lessonId: s
   return url.toString();
 }
 
+function questionUrl(questionId: string) {
+  return new URL(`/v1/questions/${encodeURIComponent(questionId)}`, API_URL);
+}
+
 function questionAnswerUrl(questionId: string) {
-  return new URL(`/v1/questions/${encodeURIComponent(questionId)}/answers`, API_URL).toString();
+  return new URL(`${questionUrl(questionId).pathname}/answers`, API_URL).toString();
 }
 
 async function getAuthenticatedHeaders() {
@@ -143,6 +147,39 @@ export async function createLessonQuestionRequest({
       cache: "no-store",
       headers: await getJsonHeaders(),
       method: "POST",
+    }),
+  );
+
+  if (error || !response) {
+    return { error: { kind: "unknown" }, status: "error" };
+  }
+
+  if (!response.ok) {
+    return { error: await getApiError(response), status: "error" };
+  }
+
+  const { data: body, error: bodyError } = await safeAsync<unknown>(() => response.json());
+  const parsed = lessonQuestionResourceSchema.safeParse(body);
+
+  if (bodyError || !parsed.success) {
+    return { error: { kind: "unknown" }, status: "error" };
+  }
+
+  return { data: parsed.data, status: "success" };
+}
+
+export async function getLessonQuestionRequest({
+  questionId,
+  signal,
+}: {
+  questionId: string;
+  signal?: AbortSignal;
+}): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
+  const { data: response, error } = await safeAsync(async () =>
+    fetch(questionUrl(questionId), {
+      cache: "no-store",
+      headers: await getAuthenticatedHeaders(),
+      signal,
     }),
   );
 

@@ -3,7 +3,6 @@
 import { useExtracted } from "next-intl";
 import { usePlayerLessonMeta, usePlayerNavigation } from "../player-context";
 import { LessonOptionsPopover } from "./lesson-options-popover";
-import { HeaderQuestionAction } from "./lesson-question-actions";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 
@@ -54,7 +53,6 @@ export function InPlayStickyHeader({
         <div className="min-w-0 text-center">{centerContent ?? <HeaderLessonTitle />}</div>
 
         <div className="flex items-center gap-1 justify-self-end">
-          <HeaderQuestionAction />
           <LessonOptionsPopover />
         </div>
       </PlayerHeader>

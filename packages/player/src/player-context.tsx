@@ -54,6 +54,7 @@ export type PlayerQuestionContext =
     };
 
 export type PlayerQuestionSupport = {
+  canExplainAnswer: boolean;
   interactionState: "active" | "paused";
   onAskQuestion: (context: PlayerQuestionContext) => void;
   onExplainAnswer: ({

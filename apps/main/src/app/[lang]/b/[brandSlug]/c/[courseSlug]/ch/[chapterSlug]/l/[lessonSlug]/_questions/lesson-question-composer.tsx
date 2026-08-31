@@ -18,22 +18,16 @@ import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function ComposerError({
-  error,
   isResolvingPreviousQuestion,
   requestError,
 }: {
-  error: "copy" | "create";
   isResolvingPreviousQuestion: boolean;
   requestError: LessonQuestionApiError | null;
 }) {
   const t = useExtracted();
 
-  if (error === "copy") {
-    return <>{t("Couldn't copy the lesson content. Please try again.")}</>;
-  }
-
   if (requestError?.kind === "unknown" && isResolvingPreviousQuestion) {
-    return <>{t("We couldn't confirm the previous question. Retry it before sending another.")}</>;
+    return <>{t("We couldn't send your last question. Try again.")}</>;
   }
 
   return <RequestErrorMessage error={requestError} />;
@@ -67,11 +61,9 @@ const CREATE_NAVIGATION_ERROR_KINDS = new Set([
 const LESSON_QUESTION_COMPOSER_ID = "lesson-question-composer";
 
 function getComposerAvailability({
-  isAuthenticated,
   isResolvingPreviousQuestion,
   state,
 }: {
-  isAuthenticated: boolean;
   isResolvingPreviousQuestion: boolean;
   state: LessonQuestionController["state"];
 }) {
@@ -85,29 +77,22 @@ function getComposerAvailability({
     state.error === "create" &&
     Boolean(state.requestError && CREATE_NAVIGATION_ERROR_KINDS.has(state.requestError.kind));
 
-  const isReady = !isAuthenticated || state.loadStatus === "ready";
+  const isReady = state.loadStatus === "ready";
   const hasGenerationLimit = state.answerError?.reason.kind === "limit";
   const hasQuestionToSend = Boolean(state.draft.trim()) || isResolvingPreviousQuestion;
 
   return {
     canSend:
-      isAuthenticated &&
-      isReady &&
-      !isBusy &&
-      !createNavigationError &&
-      !hasGenerationLimit &&
-      hasQuestionToSend,
+      isReady && !isBusy && !createNavigationError && !hasGenerationLimit && hasQuestionToSend,
     createNavigationError,
   };
 }
 
 export function QuestionComposer({
   controller,
-  isAuthenticated,
   loginHref,
 }: {
   controller: LessonQuestionController;
-  isAuthenticated: boolean;
   loginHref: AppRoute<string>;
 }) {
   const t = useExtracted();
@@ -115,12 +100,11 @@ export function QuestionComposer({
   const isResolvingPreviousQuestion = controller.unresolvedQuestion !== null;
 
   const { canSend, createNavigationError } = getComposerAvailability({
-    isAuthenticated,
     isResolvingPreviousQuestion,
     state,
   });
 
-  const submitLabel = isResolvingPreviousQuestion ? t("Retry previous question") : t("Send");
+  const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {
@@ -162,10 +146,9 @@ export function QuestionComposer({
         </InputGroupAddon>
       </InputGroup>
 
-      {(state.error === "create" || state.error === "copy") && (
+      {state.error === "create" && (
         <p className="text-destructive mt-2 text-sm" role="alert">
           <ComposerError
-            error={state.error}
             isResolvingPreviousQuestion={isResolvingPreviousQuestion}
             requestError={state.requestError}
           />

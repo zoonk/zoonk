@@ -64,6 +64,25 @@ export const lessonQuestionPaths = {
       tags: ["Lessons"],
     },
   },
+  "/questions/{questionId}": {
+    get: {
+      operationId: "getLessonQuestion",
+      requestParams: { path: lessonQuestionPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: lessonQuestionResponseSchema } },
+          description: "Current learner-owned lesson question",
+        },
+        "400": validationErrorResponse,
+        "401": unauthorizedResponse,
+        "402": paymentRequiredResponse,
+        "404": notFoundResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get a lesson question",
+      tags: ["Lessons"],
+    },
+  },
   "/questions/{questionId}/answers": {
     post: {
       description:

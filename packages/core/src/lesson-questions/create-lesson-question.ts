@@ -1,11 +1,15 @@
 import "server-only";
 import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question";
-import { type LessonQuestion, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { getSession } from "../users/get-session";
 import { buildLessonQuestionContextSnapshot } from "./_utils/context-snapshot";
 import { toDatabaseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { getLessonQuestionAccess } from "./_utils/question-access";
-import { toLessonQuestionResource } from "./_utils/question-resource";
+import {
+  type LessonQuestionResourceSource,
+  lessonQuestionResourceOmit,
+  toLessonQuestionResource,
+} from "./_utils/question-resource";
 import { getLessonQuestionRequestFingerprint } from "./_utils/request-fingerprint";
 import { lockLessonQuestionThread } from "./_utils/thread-lock";
 import { type CreateLessonQuestionInput } from "./contract";
@@ -14,7 +18,7 @@ function getCreateLessonQuestionOutcome({
   question,
   requestFingerprint,
 }: {
-  question: LessonQuestion;
+  question: LessonQuestionResourceSource;
   requestFingerprint: string;
 }) {
   if (question.requestFingerprint !== requestFingerprint) {
@@ -33,7 +37,10 @@ function findExistingLessonQuestion({
   requestId: string;
   userId: string;
 }) {
-  return prisma.lessonQuestion.findFirst({ where: { requestId, thread: { lessonId, userId } } });
+  return prisma.lessonQuestion.findFirst({
+    omit: lessonQuestionResourceOmit,
+    where: { requestId, thread: { lessonId, userId } },
+  });
 }
 
 async function persistLessonQuestion({
@@ -42,6 +49,7 @@ async function persistLessonQuestion({
   lessonId,
   requestFingerprint,
   stepId,
+  stepNumber,
   userId,
 }: {
   contextSnapshot: LessonQuestionContextSnapshot;
@@ -49,6 +57,7 @@ async function persistLessonQuestion({
   lessonId: string;
   requestFingerprint: string;
   stepId: string | null;
+  stepNumber: number | null;
   userId: string;
 }) {
   return prisma.$transaction(async (transaction) => {
@@ -64,6 +73,7 @@ async function persistLessonQuestion({
     await lockLessonQuestionThread({ threadId: thread.id, transaction });
 
     const existingQuestion = await transaction.lessonQuestion.findUnique({
+      omit: lessonQuestionResourceOmit,
       where: { threadLessonQuestionRequest: { requestId: input.requestId, threadId: thread.id } },
     });
 
@@ -72,6 +82,7 @@ async function persistLessonQuestion({
     }
 
     const unfinishedQuestion = await transaction.lessonQuestion.findFirst({
+      omit: lessonQuestionResourceOmit,
       where: { status: { not: "completed" }, threadId: thread.id },
     });
 
@@ -88,8 +99,10 @@ async function persistLessonQuestion({
           requestFingerprint,
           requestId: input.requestId,
           stepId,
+          stepNumber,
           threadId: thread.id,
         },
+        omit: lessonQuestionResourceOmit,
       }),
       transaction.lessonQuestionThread.update({
         data: { updatedAt: new Date() },
@@ -151,6 +164,7 @@ export async function createLessonQuestion({
     lessonId,
     requestFingerprint,
     stepId: context.stepId,
+    stepNumber: context.stepNumber,
     userId: session.user.id,
   });
 }

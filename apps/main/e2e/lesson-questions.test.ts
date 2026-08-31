@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { type Page, type Route } from "@playwright/test";
+import { type Locator, type Page, type Route } from "@playwright/test";
 import {
   type CreateLessonQuestionInput,
   type LessonQuestionContextSummary,
   type LessonQuestionResource,
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
+import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -17,6 +18,16 @@ import { advanceToCompletionSummary } from "./completion";
 import { expect, test } from "./fixtures";
 
 const ANSWER_TEXT = "Gravity keeps pulling while the satellite moves forward, bending its path.";
+
+async function getRequiredElementBox(locator: Locator) {
+  const box = await locator.boundingBox();
+
+  if (!box) {
+    throw new Error("Expected a visible element bounding box");
+  }
+
+  return box;
+}
 
 function questionResource({
   answer = null,
@@ -189,11 +200,11 @@ function getMockQuestionPage({
 async function mockQuestionApi({
   answerLimitRequestNumbers = [],
   completeQuestionBeforeReplay = false,
-  completeRunningAfterGet,
+  completeRunningAfterStatusRequest,
   createErrorStatus,
   failAnswerRequestNumbers = [],
   failGetRequestNumbers = [],
-  getErrorStatuses = {},
+  failStatusRequestNumbers = [],
   holdGetRequestNumbers = [],
   holdFirstCreateResponse = false,
   initialQuestions = [],
@@ -201,15 +212,16 @@ async function mockQuestionApi({
   loseFirstCreateResponseAfterPersist = false,
   page,
   remoteQuestionOnFirstCreateConflict,
+  statusErrorStatuses = {},
   threadPageSize,
 }: {
   answerLimitRequestNumbers?: number[];
   completeQuestionBeforeReplay?: boolean;
-  completeRunningAfterGet?: number;
+  completeRunningAfterStatusRequest?: number;
   createErrorStatus?: number;
   failAnswerRequestNumbers?: number[];
   failGetRequestNumbers?: number[];
-  getErrorStatuses?: Partial<Record<number, number>>;
+  failStatusRequestNumbers?: number[];
   holdGetRequestNumbers?: number[];
   holdFirstCreateResponse?: boolean;
   initialQuestions?: LessonQuestionResource[];
@@ -217,6 +229,7 @@ async function mockQuestionApi({
   loseFirstCreateResponseAfterPersist?: boolean;
   page: Page;
   remoteQuestionOnFirstCreateConflict?: LessonQuestionResource;
+  statusErrorStatuses?: Partial<Record<number, number>>;
   threadPageSize?: number;
 }) {
   const threadId = randomUUID();
@@ -241,6 +254,7 @@ async function mockQuestionApi({
     questions: LessonQuestionResource[];
     releaseFirstCreateResponse: () => void;
     releaseGetResponse: (requestNumber: number) => void;
+    statusRequests: number;
   } = {
     answerRequests: 0,
     completedGetRequests: 0,
@@ -249,6 +263,7 @@ async function mockQuestionApi({
     questions: initialQuestions,
     releaseFirstCreateResponse: () => firstCreateResponse.resolve(null),
     releaseGetResponse: (requestNumber) => heldGetResponses.get(requestNumber)?.resolve(null),
+    statusRequests: 0,
   };
 
   await page.route("**/v1/lessons/**/questions*", async (route) => {
@@ -256,17 +271,6 @@ async function mockQuestionApi({
 
     if (route.request().method() === "GET") {
       state.getRequests += 1;
-      const getErrorStatus = getErrorStatuses[state.getRequests];
-
-      if (getErrorStatus) {
-        await route.fulfill({
-          contentType: "application/json",
-          json: { error: "Question thread unavailable" },
-          status: getErrorStatus,
-        });
-
-        return;
-      }
 
       if (failGetRequestNumbers.includes(state.getRequests)) {
         await route.fulfill({
@@ -276,14 +280,6 @@ async function mockQuestionApi({
         });
 
         return;
-      }
-
-      if (completeRunningAfterGet && state.getRequests >= completeRunningAfterGet) {
-        state.questions = state.questions.map((question) =>
-          question.status === "running"
-            ? { ...question, answer: ANSWER_TEXT, status: "completed" }
-            : question,
-        );
       }
 
       const cursor = new URL(route.request().url()).searchParams.get("cursor");
@@ -387,6 +383,53 @@ async function mockQuestionApi({
     await route.fulfill({ contentType: "application/json", json: question, status: 201 });
   });
 
+  await page.route("**/v1/questions/*", async (route) => {
+    expectBearerAuthorization(route);
+    state.statusRequests += 1;
+    const errorStatus = statusErrorStatuses[state.statusRequests];
+
+    if (errorStatus) {
+      await route.fulfill({
+        contentType: "application/json",
+        json: { error: "Question unavailable" },
+        status: errorStatus,
+      });
+
+      return;
+    }
+
+    if (failStatusRequestNumbers.includes(state.statusRequests)) {
+      await route.fulfill({
+        contentType: "application/json",
+        json: { error: "Unavailable" },
+        status: 503,
+      });
+
+      return;
+    }
+
+    const questionId = new URL(route.request().url()).pathname.split("/").at(-1);
+
+    if (
+      completeRunningAfterStatusRequest &&
+      state.statusRequests >= completeRunningAfterStatusRequest
+    ) {
+      state.questions = state.questions.map((question) =>
+        question.id === questionId && question.status === "running"
+          ? { ...question, answer: ANSWER_TEXT, status: "completed" }
+          : question,
+      );
+    }
+
+    const question = state.questions.find((candidate) => candidate.id === questionId);
+
+    await route.fulfill(
+      question
+        ? { contentType: "application/json", json: question, status: 200 }
+        : { contentType: "application/json", json: { error: "Not found" }, status: 404 },
+    );
+  });
+
   await page.route("**/v1/questions/**/answers", async (route) => {
     expectBearerAuthorization(route);
     state.answerRequests += 1;
@@ -412,7 +455,7 @@ async function mockQuestionApi({
         json: {
           error: {
             code: "GENERATION_LIMIT_REACHED",
-            details: { period: "day", resource: "lessonQuestion", viewer: "authenticated" },
+            details: { period: "day", resource: "lessonQuestion", viewer: "subscriber" },
             message: "Generation limit reached",
           },
         },
@@ -437,24 +480,34 @@ async function mockQuestionApi({
 async function installStreamingAnswerResponse({
   chunks,
   delayMilliseconds,
+  maxStreamedAnswers = Number.MAX_SAFE_INTEGER,
   page,
+  releaseAfterFirstChunkEvent = null,
 }: {
   chunks: string[];
   delayMilliseconds: number;
+  maxStreamedAnswers?: number;
   page: Page;
+  releaseAfterFirstChunkEvent?: string | null;
 }) {
   await page.addInitScript(
-    ({ answerChunks, chunkDelay }) => {
+    ({ answerChunks, chunkDelay, releaseEvent, streamLimit }) => {
       const originalFetch = globalThis.fetch.bind(globalThis);
+      let streamedAnswerCount = 0;
 
       globalThis.fetch = (input, init) => {
         const url =
           typeof input === "string" || input instanceof URL ? input.toString() : input.url;
 
-        if (!url.includes("/v1/questions/") || !url.endsWith("/answers")) {
+        if (
+          !url.includes("/v1/questions/") ||
+          !url.endsWith("/answers") ||
+          streamedAnswerCount >= streamLimit
+        ) {
           return originalFetch(input, init);
         }
 
+        streamedAnswerCount += 1;
         const encoder = new TextEncoder();
 
         return Promise.resolve(
@@ -470,6 +523,15 @@ async function installStreamingAnswerResponse({
                   }
 
                   controller.enqueue(encoder.encode(chunk));
+
+                  if (index === 0 && releaseEvent) {
+                    globalThis.addEventListener(releaseEvent, () => enqueueChunk(index + 1), {
+                      once: true,
+                    });
+
+                    return;
+                  }
+
                   setTimeout(() => enqueueChunk(index + 1), chunkDelay);
                 }
 
@@ -481,7 +543,12 @@ async function installStreamingAnswerResponse({
         );
       };
     },
-    { answerChunks: chunks, chunkDelay: delayMilliseconds },
+    {
+      answerChunks: chunks,
+      chunkDelay: delayMilliseconds,
+      releaseEvent: releaseAfterFirstChunkEvent,
+      streamLimit: maxStreamedAnswers,
+    },
   );
 }
 
@@ -503,7 +570,7 @@ async function expectCreateRecoveryAction({
   });
 
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Ask a question about this step" }).click();
+  await page.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Can I ask this?");
   await dialog.getByRole("button", { name: "Send" }).click();
@@ -515,7 +582,7 @@ async function expectCreateRecoveryAction({
 }
 
 test("asks from the active step, copies safe context, follows up, and resumes", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson({ includeSecondStep: true });
   const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
@@ -524,7 +591,7 @@ test("asks from the active step, copies safe context, follows up, and resumes", 
   await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
   const lessonUrl = authenticatedPage.url();
 
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
 
@@ -547,7 +614,7 @@ test("asks from the active step, copies safe context, follows up, and resumes", 
   expect(copied).toContain(scenario.correctOption);
   expect(copied).toContain(scenario.wrongOption);
   expect(copied).toContain(firstQuestion);
-  expect(copied).toContain("Current step: Step 1 of 2");
+  expect(copied).toContain("Currently viewing: Part 1 of 2");
   expect(copied).toContain(scenario.stepTitles[1]);
   expect(copied).not.toContain(scenario.hiddenFeedback);
   expect(copied).not.toContain(scenario.stepIds[0]);
@@ -579,7 +646,7 @@ test("asks from the active step, copies safe context, follows up, and resumes", 
   }
 
   await expect(authenticatedPage.getByText(secondStepTitle)).toBeVisible();
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect(dialog.getByText(firstQuestion)).toBeVisible();
 
   const followUp = "How does that connect to free fall?";
@@ -595,13 +662,13 @@ test("asks from the active step, copies safe context, follows up, and resumes", 
 
   await authenticatedPage.keyboard.press("Escape");
   await authenticatedPage.reload();
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect(dialog.getByText(firstQuestion)).toBeVisible();
   await expect(dialog.getByText(followUp)).toBeVisible();
   await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(2);
 });
 
-test("renders streamed answers as markdown", async ({ authenticatedPage }) => {
+test("renders streamed answers as markdown", async ({ subscriberPage: authenticatedPage }) => {
   const scenario = await createQuestionLesson();
 
   await installStreamingAnswerResponse({
@@ -617,7 +684,7 @@ test("renders streamed answers as markdown", async ({ authenticatedPage }) => {
   await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Explain the orbit.");
   await dialog.getByRole("button", { name: "Send" }).click();
@@ -627,8 +694,82 @@ test("renders streamed answers as markdown", async ({ authenticatedPage }) => {
   await expect(dialog.getByRole("button", { name: "Velocity" })).toBeVisible();
 });
 
+test("confirms external links in a localized accessible dialog", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  await setLocale(authenticatedPage, "pt");
+  const scenario = await createQuestionLesson();
+
+  await installStreamingAnswerResponse({
+    chunks: ["Veja [Exemplo externo](https://example.com) para saber mais."],
+    delayMilliseconds: 0,
+    page: authenticatedPage,
+  });
+
+  await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
+
+  await authenticatedPage.goto(scenario.url);
+
+  await authenticatedPage.getByRole("button", { name: "Pergunte sobre esta aula" }).click();
+
+  const questionSheet = authenticatedPage.getByRole("dialog");
+
+  await questionSheet
+    .getByRole("textbox", { name: "Fazer uma pergunta" })
+    .fill("Explique com uma fonte externa.");
+
+  await questionSheet.getByRole("button", { name: "Enviar" }).click();
+
+  const linkTrigger = questionSheet.getByRole("button", { name: "Exemplo externo" });
+  await expect(linkTrigger).toBeVisible();
+  await linkTrigger.click();
+
+  const confirmation = authenticatedPage.getByRole("alertdialog", { name: "Abrir este link?" });
+
+  const cancel = confirmation.getByRole("button", { name: "Cancelar" });
+  const openLink = confirmation.getByRole("link", { name: "Abrir link" });
+  await expect(cancel).toBeFocused();
+  await authenticatedPage.keyboard.press("Tab");
+  await expect(openLink).toBeFocused();
+  await authenticatedPage.keyboard.press("Tab");
+  await expect(cancel).toBeFocused();
+  await authenticatedPage.keyboard.press("Escape");
+  await expect(confirmation).not.toBeVisible();
+  await expect(linkTrigger).toBeFocused();
+});
+
+test("does not request images embedded in generated markdown", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson();
+  const imageUrl = "https://tracking.example.test/pixel.png";
+  const requestedImages: string[] = [];
+
+  await authenticatedPage.route(imageUrl, async (route) => {
+    requestedImages.push(route.request().url());
+    await route.fulfill({ body: "", contentType: "image/png", status: 200 });
+  });
+
+  await installStreamingAnswerResponse({
+    chunks: [`### Safe answer\n\n![Tracking pixel](${imageUrl})`],
+    delayMilliseconds: 0,
+    page: authenticatedPage,
+  });
+
+  await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = authenticatedPage.getByRole("dialog");
+  await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Show a safe answer.");
+  await dialog.getByRole("button", { name: "Send" }).click();
+  await expect(dialog.getByRole("heading", { level: 3, name: "Safe answer" })).toBeVisible();
+  await expect(dialog.getByLabel("Answering")).toHaveCount(0);
+  expect(requestedImages).toHaveLength(0);
+});
+
 test("recovers a lost create before sending a follow-up typed while waiting", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -640,7 +781,7 @@ test("recovers a lost create before sending a follow-up typed while waiting", as
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
   const question = "Can you explain the orbit again?";
@@ -652,15 +793,13 @@ test("recovers a lost create before sending a follow-up typed while waiting", as
   await textbox.fill(followUp);
   api.releaseFirstCreateResponse();
 
-  await expect(dialog.getByRole("alert")).toContainText(
-    "We couldn't confirm the previous question",
-  );
+  await expect(dialog.getByRole("alert")).toContainText("We couldn't send your last question");
 
   await expect(textbox).toHaveValue(followUp);
-  await expect(dialog.getByRole("button", { name: "Retry previous question" })).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Retry last question" })).toBeVisible();
   expect(api.questions).toHaveLength(1);
 
-  await dialog.getByRole("button", { name: "Retry previous question" }).click();
+  await dialog.getByRole("button", { name: "Retry last question" }).click();
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
   await expect(textbox).toHaveValue(followUp);
   expect(api.inputs).toHaveLength(2);
@@ -676,7 +815,7 @@ test("recovers a lost create before sending a follow-up typed while waiting", as
 });
 
 test("preserves an answer completed elsewhere while replaying a lost create", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -688,32 +827,32 @@ test("preserves an answer completed elsewhere while replaying a lost create", as
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Explain this replay.");
   await dialog.getByRole("button", { name: "Send" }).click();
-  await expect(dialog.getByRole("button", { name: "Retry previous question" })).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Retry last question" })).toBeVisible();
 
-  await dialog.getByRole("button", { name: "Retry previous question" }).click();
+  await dialog.getByRole("button", { name: "Retry last question" }).click();
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
   expect(api.questions).toHaveLength(1);
   expect(api.answerRequests).toBe(0);
 });
 
 test("offers sign-in after an authenticated create request loses its session", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   await expectCreateRecoveryAction({ action: "Sign in", page: authenticatedPage, status: 401 });
 });
 
 test("offers plan selection when question access is no longer available", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   await expectCreateRecoveryAction({ action: "View plans", page: authenticatedPage, status: 402 });
 });
 
-test("shows a stable upgrade action when the daily question limit is reached", async ({
-  authenticatedPage,
+test("shows a stable support action when the daily question limit is reached", async ({
+  subscriberPage: authenticatedPage,
 }) => {
   await authenticatedPage.clock.install({ time: new Date("2026-08-21T23:59:50.000Z") });
   const scenario = await createQuestionLesson();
@@ -725,7 +864,7 @@ test("shows a stable upgrade action when the daily question limit is reached", a
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await dialog
@@ -735,13 +874,13 @@ test("shows a stable upgrade action when the daily question limit is reached", a
   await dialog.getByRole("button", { name: "Send" }).click();
 
   await expect(dialog.getByText(/today's question limit/iu)).toBeVisible();
-  await expect(dialog.getByRole("link", { name: "Subscribe" })).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "Contact support" })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Try again" })).toHaveCount(0);
   await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
   expect(api.answerRequests).toBe(1);
 
   await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect(dialog.getByText(/today's question limit/iu)).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Try again" })).toHaveCount(0);
 
@@ -756,7 +895,7 @@ test("shows a stable upgrade action when the daily question limit is reached", a
 });
 
 test("reconciles a remote unfinished turn after question creation conflicts", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -773,7 +912,7 @@ test("reconciles a remote unfinished turn after question creation conflicts", as
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
   await textbox.fill("A local question waiting its turn.");
@@ -787,7 +926,7 @@ test("reconciles a remote unfinished turn after question creation conflicts", as
 });
 
 test("resumes a question persisted before its answer request started", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -804,7 +943,7 @@ test("resumes a question persisted before its answer request started", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(pendingQuestion.question)).toBeVisible();
@@ -813,7 +952,7 @@ test("resumes a question persisted before its answer request started", async ({
 });
 
 test("resumes a pending question again after transient recovery failures", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -825,25 +964,27 @@ test("resumes a pending question again after transient recovery failures", async
 
   const api = await mockQuestionApi({
     failAnswerRequestNumbers: [1],
-    failGetRequestNumbers: [2],
+    failStatusRequestNumbers: [1],
     initialQuestions: [pendingQuestion],
     lessonId: scenario.lessonId,
     page: authenticatedPage,
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
-  await expect(dialog.getByText("The answer was interrupted.")).toBeVisible();
+  await expect(dialog.getByText("We couldn't finish this answer.")).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
 
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
   expect(api.answerRequests).toBe(2);
 });
 
-test("reconciles an answer that kept running after a reload", async ({ authenticatedPage }) => {
+test("reconciles an answer that kept running after a reload", async ({
+  subscriberPage: authenticatedPage,
+}) => {
   const scenario = await createQuestionLesson();
 
   const runningQuestion = questionResource({
@@ -853,24 +994,25 @@ test("reconciles an answer that kept running after a reload", async ({ authentic
   });
 
   const api = await mockQuestionApi({
-    completeRunningAfterGet: 2,
+    completeRunningAfterStatusRequest: 1,
     initialQuestions: [runningQuestion],
     lessonId: scenario.lessonId,
     page: authenticatedPage,
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(runningQuestion.question)).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Check again" })).toBeVisible();
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible({ timeout: 5000 });
-  expect(api.getRequests).toBeGreaterThanOrEqual(2);
+  expect(api.getRequests).toBe(1);
+  expect(api.statusRequests).toBe(1);
 });
 
 test("keeps polling a remote answer after a transient refresh failure", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -881,23 +1023,57 @@ test("keeps polling a remote answer after a transient refresh failure", async ({
   });
 
   const api = await mockQuestionApi({
-    completeRunningAfterGet: 3,
-    failGetRequestNumbers: [2],
+    completeRunningAfterStatusRequest: 2,
+    failStatusRequestNumbers: [1],
     initialQuestions: [runningQuestion],
     lessonId: scenario.lessonId,
     page: authenticatedPage,
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible({ timeout: 7000 });
-  expect(api.getRequests).toBeGreaterThanOrEqual(3);
+  expect(api.getRequests).toBe(1);
+  expect(api.statusRequests).toBe(2);
+});
+
+test("pauses remote answer polling while the learner is offline", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  await authenticatedPage.clock.install({ time: new Date("2026-08-21T12:00:00.000Z") });
+  const scenario = await createQuestionLesson();
+
+  const runningQuestion = questionResource({
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "Please wait until the connection returns.",
+    status: "running",
+  });
+
+  const api = await mockQuestionApi({
+    completeRunningAfterStatusRequest: 1,
+    initialQuestions: [runningQuestion],
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+  });
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = authenticatedPage.getByRole("dialog");
+  await expect(dialog.getByText(runningQuestion.question)).toBeVisible();
+
+  await authenticatedPage.context().setOffline(true);
+  await authenticatedPage.clock.fastForward(10_000);
+  expect(api.statusRequests).toBe(0);
+
+  await authenticatedPage.context().setOffline(false);
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  expect(api.statusRequests).toBe(1);
 });
 
 test("stops polling and offers sign-in when a remote answer loses its session", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   await authenticatedPage.clock.install({ time: new Date("2026-08-21T12:00:00.000Z") });
   const scenario = await createQuestionLesson();
@@ -909,14 +1085,14 @@ test("stops polling and offers sign-in when a remote answer loses its session", 
   });
 
   const api = await mockQuestionApi({
-    getErrorStatuses: { 2: 401 },
     initialQuestions: [runningQuestion],
     lessonId: scenario.lessonId,
     page: authenticatedPage,
+    statusErrorStatuses: { 1: 401 },
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(runningQuestion.question)).toBeVisible();
@@ -925,10 +1101,45 @@ test("stops polling and offers sign-in when a remote answer loses its session", 
   await expect(dialog.getByRole("link", { name: "Sign in" })).toBeVisible();
 
   await authenticatedPage.clock.fastForward(5000);
-  expect(api.getRequests).toBe(2);
+  expect(api.getRequests).toBe(1);
+  expect(api.statusRequests).toBe(1);
 });
 
-test("refreshes saved questions whenever the panel is reopened", async ({ authenticatedPage }) => {
+test("offers plan selection when a manual answer check loses question access", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  await authenticatedPage.clock.install({ time: new Date("2026-08-21T12:00:00.000Z") });
+  const scenario = await createQuestionLesson();
+
+  const runningQuestion = questionResource({
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "Please check this answer manually.",
+    status: "running",
+  });
+
+  const api = await mockQuestionApi({
+    initialQuestions: [runningQuestion],
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+    statusErrorStatuses: { 1: 402 },
+  });
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+
+  const dialog = authenticatedPage.getByRole("dialog");
+
+  await dialog.getByRole("button", { name: "Check again" }).click();
+  await expect(dialog.getByText("Subscribe to ask questions")).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "View plans" })).toBeVisible();
+
+  expect(api.answerRequests).toBe(0);
+  expect(api.statusRequests).toBe(1);
+});
+
+test("refreshes saved questions whenever the panel is reopened", async ({
+  subscriberPage: authenticatedPage,
+}) => {
   const scenario = await createQuestionLesson();
 
   const firstQuestion = questionResource({
@@ -945,7 +1156,7 @@ test("refreshes saved questions whenever the panel is reopened", async ({ authen
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(firstQuestion.question)).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
@@ -959,14 +1170,38 @@ test("refreshes saved questions whenever the panel is reopened", async ({ authen
 
   api.questions = [...api.questions, remoteQuestion];
 
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect(dialog.getByText(remoteQuestion.question)).toBeVisible();
   await expect(dialog.getByText(remoteQuestion.answer ?? "")).toBeVisible();
   expect(api.getRequests).toBeGreaterThanOrEqual(2);
 });
 
+test("announces the initial question history load", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson();
+
+  const api = await mockQuestionApi({
+    holdGetRequestNumbers: [1],
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+  });
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+
+  const dialog = authenticatedPage.getByRole("dialog");
+  const loadingStatus = dialog.getByRole("status");
+
+  await expect(loadingStatus).toBeVisible();
+  await expect(loadingStatus).toHaveText("Loading questions…");
+  api.releaseGetResponse(1);
+  await expect(loadingStatus).toHaveCount(0);
+  await expect(dialog.getByText("What would you like help with?")).toBeVisible();
+});
+
 test("keeps saved history visible but blocks sending during a reopen refresh", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -985,12 +1220,12 @@ test("keeps saved history visible but blocks sending during a reopen refresh", a
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
 
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect.poll(() => api.getRequests).toBe(2);
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Wait for the refresh.");
@@ -1001,7 +1236,7 @@ test("keeps saved history visible but blocks sending during a reopen refresh", a
 });
 
 test("ignores an older reopen response that arrives after a newer refresh", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -1034,18 +1269,18 @@ test("ignores an older reopen response that arrives after a newer refresh", asyn
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(firstQuestion.question)).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
 
   api.questions = [staleQuestion];
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect.poll(() => api.getRequests).toBe(2);
   await authenticatedPage.keyboard.press("Escape");
 
   api.questions = [newestQuestion];
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect(dialog.getByText(newestQuestion.question)).toBeVisible();
   await expect(dialog.getByText(staleQuestion.question)).toHaveCount(0);
 
@@ -1056,7 +1291,7 @@ test("ignores an older reopen response that arrives after a newer refresh", asyn
 });
 
 test("loads earlier saved questions without dropping the latest page", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -1081,7 +1316,7 @@ test("loads earlier saved questions without dropping the latest page", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText("Oldest saved question")).toHaveCount(0);
@@ -1095,8 +1330,71 @@ test("loads earlier saved questions without dropping the latest page", async ({
   await expect(dialog.getByRole("button", { name: "Load earlier questions" })).toHaveCount(0);
 });
 
+test("ignores an earlier page that finishes after the latest page refreshes", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson();
+
+  const savedQuestions = [
+    "Old question before refresh",
+    "Middle question before refresh",
+    "Latest question before refresh",
+  ].map((question) =>
+    questionResource({
+      answer: `${question} answer`,
+      context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+      question,
+      status: "completed",
+    }),
+  );
+
+  const api = await mockQuestionApi({
+    holdGetRequestNumbers: [2],
+    initialQuestions: savedQuestions,
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+    threadPageSize: 2,
+  });
+
+  await authenticatedPage.goto(scenario.url);
+
+  const openQuestions = authenticatedPage.getByRole("button", { name: "Ask about this lesson" });
+
+  await openQuestions.click();
+  const dialog = authenticatedPage.getByRole("dialog");
+  const loadEarlier = dialog.getByRole("button", { name: "Load earlier questions" });
+
+  await expect(dialog.getByText("Middle question before refresh", { exact: true })).toBeVisible();
+  await loadEarlier.click();
+  await expect.poll(() => api.getRequests).toBe(2);
+
+  const latestQuestion = questionResource({
+    answer: "Latest question after refresh answer",
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "Latest question after refresh",
+    status: "completed",
+  });
+
+  api.questions = [...api.questions, latestQuestion];
+
+  await authenticatedPage.keyboard.press("Escape");
+  await openQuestions.click();
+  await expect(dialog.getByText(latestQuestion.question, { exact: true })).toBeVisible();
+
+  api.releaseGetResponse(2);
+  await expect.poll(() => api.completedGetRequests).toBe(3);
+  await expect(dialog.getByText("Old question before refresh", { exact: true })).toHaveCount(0);
+  await expect(loadEarlier).toBeVisible();
+
+  await loadEarlier.click();
+  await expect(dialog.getByText("Old question before refresh", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("Middle question before refresh", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("Latest question before refresh", { exact: true })).toBeVisible();
+  await expect(dialog.getByText(latestQuestion.question, { exact: true })).toBeVisible();
+});
+
 test("keeps earlier history while the latest answer is reconciled", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -1114,7 +1412,7 @@ test("keeps earlier history while the latest answer is reconciled", async ({
   });
 
   await mockQuestionApi({
-    completeRunningAfterGet: 3,
+    completeRunningAfterStatusRequest: 2,
     initialQuestions: [olderQuestion, runningQuestion],
     lessonId: scenario.lessonId,
     page: authenticatedPage,
@@ -1122,7 +1420,7 @@ test("keeps earlier history while the latest answer is reconciled", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("button", { name: "Load earlier questions" }).click();
 
@@ -1133,7 +1431,7 @@ test("keeps earlier history while the latest answer is reconciled", async ({
 });
 
 test("keeps a streamed answer in view while the learner follows the bottom", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -1166,9 +1464,9 @@ test("keeps a streamed answer in view while the learner follows the bottom", asy
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
-  const questionLog = dialog.getByRole("log", { name: "Lesson questions" });
+  const questionLog = dialog.getByRole("log", { name: "Questions about this lesson" });
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Stream this answer.");
   await dialog.getByRole("button", { name: "Send" }).click();
 
@@ -1184,7 +1482,7 @@ test("keeps a streamed answer in view while the learner follows the bottom", asy
 });
 
 test("does not move a learner who scrolls up while an answer streams", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
 
@@ -1219,9 +1517,9 @@ test("does not move a learner who scrolls up while an answer streams", async ({
 
   await authenticatedPage.setViewportSize({ height: 812, width: 375 });
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
-  const questionLog = dialog.getByRole("log", { name: "Lesson questions" });
+  const questionLog = dialog.getByRole("log", { name: "Questions about this lesson" });
 
   await dialog
     .getByRole("textbox", { name: "Ask a question" })
@@ -1238,9 +1536,10 @@ test("does not move a learner who scrolls up while an answer streams", async ({
   await expect.poll(() => questionLog.evaluate((element) => element.scrollTop)).toBe(0);
 });
 
-test("reclaims an interrupted running answer before retrying an older failure", async ({
-  authenticatedPage,
+test("checks an interrupted running answer before retrying an older failure", async ({
+  subscriberPage: authenticatedPage,
 }) => {
+  await authenticatedPage.clock.install({ time: new Date("2026-08-21T12:00:00.000Z") });
   const scenario = await createQuestionLesson();
 
   const failedQuestion = questionResource({
@@ -1256,13 +1555,14 @@ test("reclaims an interrupted running answer before retrying an older failure", 
   });
 
   const api = await mockQuestionApi({
+    completeRunningAfterStatusRequest: 1,
     initialQuestions: [failedQuestion, runningQuestion],
     lessonId: scenario.lessonId,
     page: authenticatedPage,
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const retryButton = dialog.getByRole("button", { name: "Try again" });
 
@@ -1273,10 +1573,13 @@ test("reclaims an interrupted running answer before retrying an older failure", 
 
   await retryButton.click();
   await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(2);
-  expect(api.answerRequests).toBe(2);
+  expect(api.answerRequests).toBe(1);
+  expect(api.statusRequests).toBe(1);
 });
 
-test("blocks a new question until a failed answer is retried", async ({ authenticatedPage }) => {
+test("blocks a new question until a failed answer is retried", async ({
+  subscriberPage: authenticatedPage,
+}) => {
   const scenario = await createQuestionLesson();
 
   const failedQuestion = questionResource({
@@ -1292,7 +1595,7 @@ test("blocks a new question until a failed answer is retried", async ({ authenti
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("A follow-up question.");
@@ -1307,7 +1610,7 @@ test("blocks a new question until a failed answer is retried", async ({ authenti
 });
 
 test("explains correct and incorrect answers on demand with validated answer context", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
   const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
@@ -1324,7 +1627,7 @@ test("explains correct and incorrect answers on demand with validated answer con
   await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
 
   await expect(
-    dialog.getByText("Explain why my answer was wrong and why the correct answer is correct."),
+    dialog.getByText("Why was my answer wrong? Explain the correct answer."),
   ).toBeVisible();
 
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
@@ -1336,7 +1639,7 @@ test("explains correct and incorrect answers on demand with validated answer con
       stepId: scenario.stepIds[0],
       stepNumber: 1,
     },
-    question: "Explain why my answer was wrong and why the correct answer is correct.",
+    question: "Why was my answer wrong? Explain the correct answer.",
   });
 
   await authenticatedPage.keyboard.press("Escape");
@@ -1345,7 +1648,7 @@ test("explains correct and incorrect answers on demand with validated answer con
   await authenticatedPage.getByRole("button", { name: /check/iu }).click();
   await authenticatedPage.getByRole("button", { name: "Explain answer" }).click();
 
-  await expect(dialog.getByText("Explain why this answer is correct.")).toBeVisible();
+  await expect(dialog.getByText("Why is this answer correct?")).toBeVisible();
   await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(2);
 
   expect(api.inputs[1]).toMatchObject({
@@ -1355,21 +1658,117 @@ test("explains correct and incorrect answers on demand with validated answer con
       stepId: scenario.stepIds[0],
       stepNumber: 1,
     },
-    question: "Explain why this answer is correct.",
+    question: "Why is this answer correct?",
   });
 });
 
+test("keeps questions accessible while an active answer blocks automatic explanation", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson();
+  const releaseFirstAnswerEvent = "zoonk:e2e-release-first-lesson-question-answer";
+
+  await installStreamingAnswerResponse({
+    chunks: ["FIRST_ANSWER_STARTED", " FIRST_ANSWER_FINISHED"],
+    delayMilliseconds: 0,
+    maxStreamedAnswers: 1,
+    page: authenticatedPage,
+    releaseAfterFirstChunkEvent: releaseFirstAnswerEvent,
+  });
+
+  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+
+  const dialog = authenticatedPage.getByRole("dialog");
+
+  await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Explain this first.");
+  await dialog.getByRole("button", { name: "Send" }).click();
+  await expect(dialog.getByText(/FIRST_ANSWER_STARTED/u)).toBeVisible();
+  await authenticatedPage.keyboard.press("Escape");
+
+  await authenticatedPage.getByRole("radio", { name: scenario.wrongOption }).click();
+  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
+
+  const openQuestions = authenticatedPage.getByRole("button", { name: "Open questions" });
+
+  await expect(openQuestions).toBeEnabled();
+  await openQuestions.click();
+  await expect(dialog.getByText(/FIRST_ANSWER_STARTED/u)).toBeVisible();
+
+  await authenticatedPage.evaluate((eventName) => {
+    globalThis.dispatchEvent(new Event(eventName));
+  }, releaseFirstAnswerEvent);
+
+  await expect(dialog.getByLabel("Answering")).toHaveCount(0);
+
+  api.questions = api.questions.map((question) => ({
+    ...question,
+    answer: "The first answer completed.",
+    status: "completed",
+  }));
+
+  await authenticatedPage.keyboard.press("Escape");
+  const explainAnswer = authenticatedPage.getByRole("button", { name: "Explain answer" });
+  await expect(explainAnswer).toBeEnabled();
+  await explainAnswer.click();
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+
+  expect(api.inputs).toHaveLength(2);
+  expect(api.answerRequests).toBe(1);
+});
+
+test("automatically explains after a stale blocker finishes elsewhere", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson();
+
+  const failedQuestion = questionResource({
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "An interrupted question from this lesson.",
+    status: "failed",
+  });
+
+  const api = await mockQuestionApi({
+    initialQuestions: [failedQuestion],
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+  });
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = authenticatedPage.getByRole("dialog");
+  await expect(dialog.getByText(failedQuestion.question)).toBeVisible();
+  await authenticatedPage.keyboard.press("Escape");
+
+  api.questions = [
+    { ...failedQuestion, answer: "This answer finished in another tab.", status: "completed" },
+  ];
+
+  await authenticatedPage.getByRole("radio", { name: scenario.wrongOption }).click();
+  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
+  await authenticatedPage.getByRole("button", { name: "Explain answer" }).click();
+
+  await expect(
+    dialog.getByText("Why was my answer wrong? Explain the correct answer."),
+  ).toBeVisible();
+
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  expect(api.inputs).toHaveLength(1);
+});
+
 test("asks from structural lesson completion with every displayed step", async ({
-  userWithoutProgress,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson({ staticOnly: true });
-  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: userWithoutProgress });
+  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
-  await userWithoutProgress.goto(scenario.url);
-  await userWithoutProgress.getByRole("button", { name: "Next step" }).click();
-  await advanceToCompletionSummary({ page: userWithoutProgress });
-  await userWithoutProgress.getByRole("button", { name: "Ask about this lesson" }).click();
-  const dialog = userWithoutProgress.getByRole("dialog");
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Next step" }).click();
+  await advanceToCompletionSummary({ page: authenticatedPage });
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Summarize this lesson.");
   await dialog.getByRole("button", { name: "Send" }).click();
@@ -1378,7 +1777,7 @@ test("asks from structural lesson completion with every displayed step", async (
 });
 
 test("reopens saved mobile history without moving focus into the composer", async ({
-  authenticatedPage,
+  subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson({ staticOnly: true });
   const longQuestion = `https://example.test/${"question".repeat(80)}`;
@@ -1399,33 +1798,87 @@ test("reopens saved mobile history without moving focus into the composer", asyn
 
   await authenticatedPage.setViewportSize({ height: 812, width: 375 });
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask a question about this step" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
 
   const dialog = authenticatedPage.getByRole("dialog");
   const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
+  const title = dialog.getByRole("heading", { name: "Ask questions" });
+  const close = dialog.getByRole("button", { name: "Close questions" });
+  const copy = dialog.getByRole("button", { name: "Copy lesson content" });
+  const log = dialog.getByRole("log", { name: "Questions about this lesson" });
 
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
   await expect(dialog.getByText(longAnswer)).toBeVisible();
-  await expect(dialog.getByRole("button", { name: "Close questions" })).toBeVisible();
+  await expect(title).toBeVisible();
+  await expect(close).toBeVisible();
+  await expect(copy).toBeVisible();
   await expect(textbox).not.toBeFocused();
+
+  const [dialogBox, titleBox, closeBox, copyBox, logBox] = await Promise.all([
+    getRequiredElementBox(dialog),
+    getRequiredElementBox(title),
+    getRequiredElementBox(close),
+    getRequiredElementBox(copy),
+    getRequiredElementBox(log),
+  ]);
+
+  const headerBottom = Math.max(
+    titleBox.y + titleBox.height,
+    closeBox.y + closeBox.height,
+    copyBox.y + copyBox.height,
+  );
+
+  expect(titleBox.width).toBeGreaterThan(80);
+  expect(closeBox.x + closeBox.width).toBeLessThanOrEqual(dialogBox.x + dialogBox.width);
+  expect(logBox.y).toBeGreaterThanOrEqual(headerBottom);
+});
+
+test("offers a subscription without requesting a question thread", async ({
+  authenticatedPage: nonSubscriberPage,
+}) => {
+  const scenario = await createQuestionLesson({ staticOnly: true });
+  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: nonSubscriberPage });
+
+  await nonSubscriberPage.setViewportSize({ height: 812, width: 375 });
+  await nonSubscriberPage.goto(scenario.url);
+  await nonSubscriberPage.getByRole("button", { name: "Ask about this lesson" }).click();
+
+  const dialog = nonSubscriberPage.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
+  await expect(dialog.getByText("Subscribe to ask questions")).toBeVisible();
+
+  await expect(dialog.getByText("Get answers and explanations as you learn.")).toBeVisible();
+
+  await expect(dialog.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
+    "href",
+    "/subscription",
+  );
+
+  await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveCount(0);
+  expect(api.getRequests).toBe(0);
+  expect(api.statusRequests).toBe(0);
 });
 
 test("keeps the mobile guest flow focused on sign-in or copying lesson content", async ({
   page,
 }) => {
   const scenario = await createQuestionLesson({ staticOnly: true });
+  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page });
+
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
   await page.getByRole("button", { name: "Continue without saving" }).click();
-  await page.getByRole("button", { name: "Ask a question about this step" }).click();
+  await page.getByRole("button", { name: "Ask about this lesson" }).click();
 
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-  await expect(dialog.getByText("Sign in to ask about this lesson")).toBeVisible();
-  await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toBeVisible();
+  await expect(dialog.getByText("Sign in to ask questions")).toBeVisible();
+  await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveCount(0);
   await expect(dialog.getByRole("button", { name: "Copy lesson content" })).toBeVisible();
-  await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
+  await expect(dialog.getByRole("button", { name: "Send" })).toHaveCount(0);
   await expect(dialog.getByRole("link", { name: "Sign in" })).toBeVisible();
+  expect(api.getRequests).toBe(0);
+  expect(api.statusRequests).toBe(0);
 
   const lessonUrl = page.url();
   await page.keyboard.press("Escape");

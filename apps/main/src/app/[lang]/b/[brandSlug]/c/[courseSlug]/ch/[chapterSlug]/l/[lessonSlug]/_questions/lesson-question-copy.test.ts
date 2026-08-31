@@ -76,7 +76,7 @@ function buildCopy({
     labels: {
       audioExercise: "Audio exercise",
       correctAnswer: "Correct answer",
-      currentStep: "Current step",
+      currentStep: "Currently viewing",
       feedback: "Feedback",
       leftColumn: "Left column",
       options: "Options",
@@ -86,11 +86,11 @@ function buildCopy({
       yourAnswer: "Your answer",
     },
     lessonDescription: "Learn why falling can create an orbit.",
-    lessonStepLabels: ["Step 1 of 2", "Step 2 of 2"],
+    lessonStepLabels: ["Part 1 of 2", "Part 2 of 2"],
     lessonSteps,
     lessonTitle: "Staying in orbit",
     question,
-    stepLabel: context.kind === "lesson" ? null : `Step ${context.stepIndex + 1} of 2`,
+    stepLabel: context.kind === "lesson" ? null : `Part ${context.stepIndex + 1} of 2`,
   });
 }
 
@@ -101,8 +101,8 @@ describe(buildLessonQuestionCopy, () => {
     expect(copy).toContain("Physics");
     expect(copy).toContain("Orbital motion");
     expect(copy).toContain("Staying in orbit");
-    expect(copy).toContain("Current step: Step 1 of 2");
-    expect(copy).toContain("Step 2 of 2");
+    expect(copy).toContain("Currently viewing: Part 1 of 2");
+    expect(copy).toContain("Part 2 of 2");
     expect(copy).toContain("An orbit is continuous free fall.");
     expect(copy).toContain("Why does a satellite stay in orbit?");
     expect(copy).toContain("Gravity continuously bends the path.");
@@ -178,12 +178,64 @@ describe(buildLessonQuestionCopy, () => {
     expect(copy).toContain("[Write your question]");
   });
 
+  it("copies the actual incorrect pair from an answered match-columns step", () => {
+    const step: SerializedStep = {
+      content: {
+        pairs: [
+          { left: "Earth", right: "planet" },
+          { left: "Sun", right: "star" },
+        ],
+        question: "Match each object to its type.",
+      },
+      fillBlankOptions: [],
+      id: "answered-match-step-id",
+      kind: "matchColumns",
+      matchColumnsRightItems: ["star", "planet"],
+      position: 1,
+      sentence: null,
+      sentenceWordOptions: [],
+      sortOrderItems: [],
+      translationOptions: [],
+      vocabularyOptions: [],
+      word: null,
+      wordBankOptions: [],
+    };
+
+    const selectedAnswer = {
+      incorrectPair: { left: "Earth", right: "star" },
+      kind: "matchColumns" as const,
+      mistakes: 1,
+      userPairs: [
+        { left: "Earth", right: "planet" },
+        { left: "Sun", right: "star" },
+      ],
+    };
+
+    const copy = buildCopy({
+      context: {
+        kind: "answer",
+        result: {
+          answer: selectedAnswer,
+          result: { correctAnswer: null, feedback: null, isCorrect: false },
+          stepId: step.id,
+        },
+        selectedAnswer,
+        step,
+        stepIndex: 1,
+      },
+      lessonSteps: [multipleChoiceStep(), step],
+    });
+
+    expect(copy).toContain("Your answer: Earth ↔ star");
+    expect(copy).not.toContain("Your answer: Earth ↔ planet, Sun ↔ star");
+  });
+
   it("copies the displayed lesson material on completion without answer metadata", () => {
     const copy = buildCopy({ context: { kind: "lesson" } });
 
     expect(copy).toContain("Learn why falling can create an orbit.");
-    expect(copy).toContain("Step 1 of 2");
-    expect(copy).toContain("Step 2 of 2");
+    expect(copy).toContain("Part 1 of 2");
+    expect(copy).toContain("Part 2 of 2");
     expect(copy).toContain("Why does a satellite stay in orbit?");
     expect(copy).not.toContain("Gravity does not disappear in orbit.");
   });

@@ -21,6 +21,7 @@ model LessonQuestion {
   requestFingerprint String                    @map("request_fingerprint")
   stepId             String?                   @map("step_id") @db.Uuid
   step               Step?                     @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  stepNumber         Int?                      @map("step_number")
   contextKind        LessonQuestionContextKind @map("context_kind")
   contextSnapshot    Json                      @map("context_snapshot")
   question           String

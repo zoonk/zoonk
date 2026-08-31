@@ -302,24 +302,19 @@ msgid "Skip lesson"
 msgstr "Saltar lección"
 
 #: src/components/lesson-question-actions.tsx
-msgctxt "eT5ZfG"
-msgid "Ask a question about this step"
-msgstr "Haz una pregunta sobre este paso"
+msgctxt "7_uozC"
+msgid "Open questions"
+msgstr "Abrir preguntas"
 
 #: src/components/lesson-question-actions.tsx
-msgctxt "ZT0z9z"
-msgid "Ask"
-msgstr "Preguntar"
+msgctxt "HlzdnD"
+msgid "Why is this answer correct?"
+msgstr "¿Por qué esta respuesta es correcta?"
 
 #: src/components/lesson-question-actions.tsx
-msgctxt "zB43NT"
-msgid "Explain why this answer is correct."
-msgstr "Explica por qué esta respuesta es correcta."
-
-#: src/components/lesson-question-actions.tsx
-msgctxt "pRsWNk"
-msgid "Explain why my answer was wrong and why the correct answer is correct."
-msgstr "Explica por qué mi respuesta estaba mal y por qué la otra respuesta es correcta."
+msgctxt "_U7-ok"
+msgid "Why was my answer wrong? Explain the correct answer."
+msgstr "¿Por qué mi respuesta fue incorrecta? Explica la respuesta correcta."
 
 #: src/components/lesson-question-actions.tsx
 msgctxt "95VNka"

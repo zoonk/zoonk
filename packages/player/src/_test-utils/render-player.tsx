@@ -10,6 +10,7 @@ import {
   type PlayerLessonProgress,
   type PlayerMilestone,
   type PlayerNavigation,
+  type PlayerQuestionSupport,
   type PlayerRoute,
   type PlayerViewer,
 } from "../player-context";
@@ -63,6 +64,7 @@ export function renderPlayer({
   onEscape = noop,
   onNext,
   progressSnapshot = null,
+  questionSupport,
   totalBrainPower = 0,
   viewer = { isAuthenticated: true, userName: "Alex" },
 }: {
@@ -78,6 +80,7 @@ export function renderPlayer({
   onEscape?: (href: PlayerRoute) => void;
   onNext?: () => void;
   progressSnapshot?: PlayerProgressSnapshot | null;
+  questionSupport?: PlayerQuestionSupport;
   totalBrainPower?: number;
   viewer?: PlayerViewer;
 }) {
@@ -96,6 +99,7 @@ export function renderPlayer({
       onEscape={onEscape}
       onNext={onNext}
       progressSnapshot={progressSnapshot}
+      questionSupport={questionSupport}
       totalBrainPower={totalBrainPower}
       viewer={viewer}
     >

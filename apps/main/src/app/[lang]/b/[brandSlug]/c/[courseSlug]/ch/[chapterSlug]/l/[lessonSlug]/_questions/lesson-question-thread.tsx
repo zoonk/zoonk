@@ -29,18 +29,25 @@ import { QuestionTurn } from "./lesson-question-turn";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function ThreadLoading() {
+  const t = useExtracted();
+
   return (
-    <div aria-hidden="true" className="flex flex-col gap-6">
-      <div className="flex flex-col items-end gap-2">
-        <Skeleton className="h-3 w-20" />
-        <Skeleton className="h-16 w-3/4 rounded-2xl" />
+    <>
+      <p className="sr-only" role="status">
+        {t("Loading questions…")}
+      </p>
+      <div aria-hidden="true" className="flex flex-col gap-6">
+        <div className="flex flex-col items-end gap-2">
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-16 w-3/4 rounded-2xl" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-2/3" />
+        </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-        <Skeleton className="h-4 w-2/3" />
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -81,7 +88,7 @@ function EmptyThread({
 
   const suggestions =
     contextKind === "answer"
-      ? [t("Walk me through this answer"), t("Can you explain the difference?")]
+      ? [t("Walk me through this answer"), t("Compare my answer with the correct one")]
       : [t("Explain this more simply"), t("Give me another example")];
 
   return (
@@ -90,7 +97,7 @@ function EmptyThread({
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
         </EmptyMedia>
-        <EmptyTitle className="text-base">{t("What would you like to understand?")}</EmptyTitle>
+        <EmptyTitle className="text-base">{t("What would you like help with?")}</EmptyTitle>
       </EmptyHeader>
       <EmptyContent className="flex-row flex-wrap justify-center">
         {suggestions.map((suggestion) => (
@@ -118,16 +125,32 @@ function GuestThread<Href extends string>({ loginHref }: { loginHref: AppRoute<H
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
         </EmptyMedia>
-        <EmptyTitle className="text-base">{t("Sign in to ask about this lesson")}</EmptyTitle>
-        <EmptyDescription>
-          {t(
-            "Your questions and answers will be saved with the lesson. You can still copy the lesson content.",
-          )}
-        </EmptyDescription>
+        <EmptyTitle className="text-base">{t("Sign in to ask questions")}</EmptyTitle>
       </EmptyHeader>
       <EmptyContent>
         <Link className={buttonVariants({ variant: "outline" })} href={loginHref} prefetch={false}>
           {t("Sign in")}
+        </Link>
+      </EmptyContent>
+    </Empty>
+  );
+}
+
+function SubscriptionGate() {
+  const t = useExtracted();
+
+  return (
+    <Empty className="min-h-full p-6">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <MessageSquareTextIcon />
+        </EmptyMedia>
+        <EmptyTitle className="text-base">{t("Subscribe to ask questions")}</EmptyTitle>
+        <EmptyDescription>{t("Get answers and explanations as you learn.")}</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Link className={buttonVariants()} href="/subscription" prefetch>
+          {t("Subscribe")}
         </Link>
       </EmptyContent>
     </Empty>
@@ -143,7 +166,7 @@ function ThreadViewport({ children, ...props }: React.ComponentProps<"div">) {
         <MessageScrollerViewport className="px-4 py-6 sm:px-5" {...props}>
           {children}
         </MessageScrollerViewport>
-        <MessageScrollerButton aria-label={t("Scroll to latest question")}>
+        <MessageScrollerButton aria-label={t("Scroll to latest")}>
           <ArrowDownIcon aria-hidden="true" />
         </MessageScrollerButton>
       </MessageScroller>
@@ -154,10 +177,12 @@ function ThreadViewport({ children, ...props }: React.ComponentProps<"div">) {
 export function QuestionThread<Href extends string>({
   controller,
   isAuthenticated,
+  isSubscribed,
   loginHref,
 }: {
   controller: LessonQuestionController;
   isAuthenticated: boolean;
+  isSubscribed: boolean;
   loginHref: AppRoute<Href>;
 }) {
   const t = useExtracted();
@@ -171,6 +196,14 @@ export function QuestionThread<Href extends string>({
     return (
       <ThreadViewport>
         <GuestThread loginHref={loginHref} />
+      </ThreadViewport>
+    );
+  }
+
+  if (!isSubscribed) {
+    return (
+      <ThreadViewport>
+        <SubscriptionGate />
       </ThreadViewport>
     );
   }
@@ -206,7 +239,7 @@ export function QuestionThread<Href extends string>({
   return (
     <ThreadViewport
       aria-busy={answerInProgressCount > 0}
-      aria-label={t("Lesson questions")}
+      aria-label={t("Questions about this lesson")}
       role="log"
     >
       <MessageScrollerContent role="presentation">
@@ -214,7 +247,7 @@ export function QuestionThread<Href extends string>({
           <MessageScrollerItem className="flex flex-col items-center gap-2">
             {state.earlierLoadFailed && (
               <p className="text-destructive text-center text-sm" role="alert">
-                {t("Couldn't load earlier questions. Please try again.")}
+                {t("Couldn't load earlier questions. Try again.")}
               </p>
             )}
             <Button
@@ -236,6 +269,7 @@ export function QuestionThread<Href extends string>({
               answerError={state.answerError}
               answerInProgressCount={answerInProgressCount}
               loginHref={loginHref}
+              onCheckAgain={(questionId) => void controller.checkAnswer(questionId)}
               onRetry={(questionId) => void controller.retryAnswer(questionId)}
               question={question}
             />
