@@ -12,8 +12,25 @@ const stepSchema = z.object({
 
 export const scoreSchema = z.object({ steps: z.array(stepSchema) });
 
+export const judgeCategoryScoreSchema = z.object({
+  categoryId: z.string(),
+  reasoning: z.string(),
+  score: z.number().min(1).max(10),
+});
+
+export const categorizedScoreSchema = scoreSchema.extend({
+  categoryScores: z.array(judgeCategoryScoreSchema),
+});
+
 type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
+export type JudgeCategoryScore = z.infer<typeof judgeCategoryScoreSchema>;
+
+export type ScoreCategory = { id: string; label: string; weight: number; expectations: string };
+
+export type CategoryScore = JudgeCategoryScore & { label: string; weight: number };
+
+export type CategoryScoreSummary = Omit<CategoryScore, "reasoning">;
 
 export type TestCase<TExpected = unknown, TInput = Record<string, unknown>> = {
   id: string;
@@ -55,7 +72,7 @@ type TaskResult<T = unknown> = {
   systemPrompt: string;
 };
 
-type TaskScoreResult = { score: number; steps: Score["steps"] };
+type TaskScoreResult = { score: number; steps: Score["steps"]; categoryScores?: CategoryScore[] };
 
 type TaskScoreParams<TExpected = unknown> = { output: string; testCase: TestCase<TExpected> };
 
@@ -73,6 +90,7 @@ export type EvalResult = {
   testCase: TestCase;
   output: string;
   steps: Score["steps"];
+  categoryScores?: CategoryScore[];
   inputTokens: number;
   outputTokens: number;
   duration: number;
@@ -92,6 +110,7 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   testCases: TestCase<TExpected, TInput>[];
   generate: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
   score?: TaskScorer<TExpected>;
+  scoreCategories?: ScoreCategory[];
 };
 
 /**
@@ -135,7 +154,11 @@ export type TaskModelOutputResults = {
 
 // === Scored Result Types (Without output data) ===
 
-export type ScoredResult = { testCase: TestCase; steps: Score["steps"] };
+export type ScoredResult = {
+  testCase: TestCase;
+  steps: Score["steps"];
+  categoryScores?: CategoryScore[];
+};
 
 export type ScoredTaskResults = { taskId: string; modelId: string; results: ScoredResult[] };
 
@@ -146,6 +169,7 @@ export type ModelRanking = {
   anonymousId: string;
   score: number;
   reasoning: string;
+  categoryScores?: CategoryScore[];
 };
 
 type JudgeRanking = { judgeId: string; rankings: ModelRanking[] };
@@ -168,4 +192,5 @@ export type BattleLeaderboardEntry = {
   averageCost: number;
   scoresByJudge: Record<string, number>;
   scoresByTestCase: Record<string, number>;
+  categoryScores: CategoryScoreSummary[];
 };

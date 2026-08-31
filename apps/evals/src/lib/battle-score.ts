@@ -4,7 +4,9 @@ import { NoOutputGeneratedError, Output, generateText } from "ai";
 import z from "zod";
 import { normalizeAnonymousId } from "./battle-mapping";
 import battleSystemPrompt from "./battle-system-prompt.md";
-import { type ModelRanking } from "./types";
+import { calculateScore } from "./score-calculation";
+import { formatScoreCategories, resolveCategoryScores } from "./score-categories";
+import { type ModelRanking, type ScoreCategory, judgeCategoryScoreSchema } from "./types";
 
 const MAX_BATTLE_RANKING_ATTEMPTS = 3;
 
@@ -15,7 +17,18 @@ const modelRankingSchema = z.object({
 });
 
 const battleRankingSchema = z.object({ rankings: z.array(modelRankingSchema) });
-type BattleRankingResult = z.infer<typeof battleRankingSchema>;
+
+const categorizedModelRankingSchema = modelRankingSchema
+  .omit({ score: true })
+  .extend({ categoryScores: z.array(judgeCategoryScoreSchema) });
+
+const categorizedBattleRankingSchema = z.object({
+  rankings: z.array(categorizedModelRankingSchema),
+});
+
+type BattleRankingResult =
+  | z.infer<typeof battleRankingSchema>
+  | z.infer<typeof categorizedBattleRankingSchema>;
 
 /**
  * Rejects labels that cannot be connected to an anonymized output instead of
@@ -75,16 +88,18 @@ async function generateBattleRankingResult({
   attempt = 1,
   judgeId,
   prompt,
+  schema,
 }: {
   attempt?: number;
   judgeId: string;
   prompt: string;
+  schema: z.ZodType<BattleRankingResult>;
 }): Promise<BattleRankingResult> {
   const generationResult = await safeAsync(() =>
     generateText({
       instructions: battleSystemPrompt,
       model: judgeId,
-      output: Output.object({ schema: battleRankingSchema }),
+      output: Output.object({ schema }),
       prompt,
     }),
   );
@@ -121,7 +136,7 @@ async function generateBattleRankingResult({
     throw error;
   }
 
-  return generateBattleRankingResult({ attempt: attempt + 1, judgeId, prompt });
+  return generateBattleRankingResult({ attempt: attempt + 1, judgeId, prompt, schema });
 }
 
 /**
@@ -134,16 +149,28 @@ export async function generateBattleRankings(params: {
   userPrompt: string;
   anonymizedOutputs: { anonymousId: string; output: string }[];
   mapping: { anonymousId: string; modelId: string }[];
+  scoreCategories?: ScoreCategory[];
 }): Promise<ModelRanking[]> {
-  const { judgeId, expectations, userPrompt, anonymizedOutputs, mapping } = params;
+  const { judgeId, expectations, userPrompt, anonymizedOutputs, mapping, scoreCategories } = params;
 
   const outputsSection = anonymizedOutputs
     .map((output) => `### ${output.anonymousId}\n\`\`\`json\n${output.output}\n\`\`\``)
     .join("\n\n");
 
+  const categoriesSection = scoreCategories
+    ? `
+## Score Categories
+Score every category independently for every output. A strength in one category must not erase a weakness in another.
+
+${formatScoreCategories(scoreCategories)}
+`
+    : "";
+
   const evalPrompt = `
 ## Task Expectations
 ${expectations}
+
+${categoriesSection}
 
 ## User Provided Values
 ${userPrompt}
@@ -155,10 +182,30 @@ Evaluate each model's output against the task expectations and user-provided val
 Ties are allowed if outputs are truly equivalent in quality.
 `;
 
-  const result = await generateBattleRankingResult({ judgeId, prompt: evalPrompt });
+  const schema = scoreCategories ? categorizedBattleRankingSchema : battleRankingSchema;
+  const result = await generateBattleRankingResult({ judgeId, prompt: evalPrompt, schema });
 
   return result.rankings.map((ranking) => {
     const modelMapping = getModelMapping({ anonymousId: ranking.anonymousId, judgeId, mapping });
+
+    if (scoreCategories && "categoryScores" in ranking) {
+      const categoryScores = resolveCategoryScores({
+        categories: scoreCategories,
+        judgeScores: ranking.categoryScores,
+      });
+
+      return {
+        anonymousId: modelMapping.anonymousId,
+        categoryScores,
+        modelId: modelMapping.modelId,
+        reasoning: ranking.reasoning,
+        score: calculateScore({ categoryScores, steps: [] }),
+      };
+    }
+
+    if (!("score" in ranking)) {
+      throw new Error(`Battle judge ${judgeId} omitted category scores.`);
+    }
 
     return {
       anonymousId: modelMapping.anonymousId,

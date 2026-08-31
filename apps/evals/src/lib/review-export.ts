@@ -52,7 +52,10 @@ function findLowestScoringResult({
   }
 
   return matchingResults.reduce((lowestResult, result) =>
-    calculateScore(result.steps) < calculateScore(lowestResult.steps) ? result : lowestResult,
+    calculateScore({ categoryScores: result.categoryScores, steps: result.steps }) <
+    calculateScore({ categoryScores: lowestResult.categoryScores, steps: lowestResult.steps })
+      ? result
+      : lowestResult,
   );
 }
 

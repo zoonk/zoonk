@@ -1,8 +1,9 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Output, generateText } from "ai";
 import { calculateScore } from "./score-calculation";
+import { formatScoreCategories, resolveCategoryScores } from "./score-categories";
 import systemPrompt from "./system-prompt.md";
-import { type ScoreStep, scoreSchema } from "./types";
+import { type ScoreCategory, type ScoreStep, categorizedScoreSchema, scoreSchema } from "./types";
 
 const BAD_SCORE = 8;
 const GOOD_SCORE = 9.2;
@@ -33,12 +34,24 @@ export async function generateScore(params: {
   expectations: string;
   prompt: string;
   output: string;
+  scoreCategories?: ScoreCategory[];
 }) {
-  const { expectations, prompt, output } = params;
+  const { expectations, prompt, output, scoreCategories } = params;
+
+  const categoriesSection = scoreCategories
+    ? `
+    **Score categories**
+    Score every category independently. A strength in one category must not erase a weakness in another.
+
+    ${formatScoreCategories(scoreCategories)}
+    `
+    : "";
 
   const evalPrompt = `
     **Expectations**
     ${expectations}
+
+    ${categoriesSection}
 
     **User provided values**
     ${prompt}
@@ -47,6 +60,26 @@ export async function generateScore(params: {
     ${output}
   `;
 
+  if (scoreCategories) {
+    const { output: result } = await generateText({
+      instructions: systemPrompt,
+      model: "openai/gpt-5.6-sol",
+      output: Output.object({ schema: categorizedScoreSchema }),
+      prompt: evalPrompt,
+    });
+
+    const categoryScores = resolveCategoryScores({
+      categories: scoreCategories,
+      judgeScores: result.categoryScores,
+    });
+
+    return {
+      categoryScores,
+      score: calculateScore({ categoryScores, steps: result.steps }),
+      steps: result.steps,
+    };
+  }
+
   const { output: result } = await generateText({
     instructions: systemPrompt,
     model: "openai/gpt-5.6-sol",
@@ -54,7 +87,7 @@ export async function generateScore(params: {
     prompt: evalPrompt,
   });
 
-  return { score: calculateScore(result.steps), steps: result.steps };
+  return { score: calculateScore({ steps: result.steps }), steps: result.steps };
 }
 
 export const getScoreClassName = (score: number) => {

@@ -4,7 +4,13 @@ import { cache } from "react";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
 import { type ModelConfig, getModelById, getModelDisplayName } from "./models";
 import { getAllOutputsForTask } from "./output-loader";
-import { type BattleLeaderboardEntry, type BattleMatchup, type ModelOutputs } from "./types";
+import { summarizeCategoryScores } from "./score-categories";
+import {
+  type BattleLeaderboardEntry,
+  type BattleMatchup,
+  type CategoryScore,
+  type ModelOutputs,
+} from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
@@ -49,30 +55,33 @@ function calculateCost(
 }
 
 type ModelScores = {
+  categoryScoreGroups: CategoryScore[][];
+  rankingCount: number;
   totalScore: number;
   scoresByJudge: Record<string, number>;
   scoresByTestCase: Record<string, number>;
 };
 
-function aggregateScoresFromMatchups(matchups: BattleMatchup[]): {
-  modelScores: Map<string, ModelScores>;
-  totalJudgments: number;
-} {
+function aggregateScoresFromMatchups(matchups: BattleMatchup[]): Map<string, ModelScores> {
   const modelScores = new Map<string, ModelScores>();
-  let totalJudgments = 0;
 
   for (const matchup of matchups) {
     for (const judgment of matchup.judgments) {
-      totalJudgments += 1;
-
       for (const ranking of judgment.rankings) {
         const existing = modelScores.get(ranking.modelId) ?? {
+          categoryScoreGroups: [],
+          rankingCount: 0,
           scoresByJudge: {},
           scoresByTestCase: {},
           totalScore: 0,
         };
 
         existing.totalScore += ranking.score;
+        existing.rankingCount += 1;
+
+        if (ranking.categoryScores) {
+          existing.categoryScoreGroups.push(ranking.categoryScores);
+        }
 
         existing.scoresByJudge[judgment.judgeId] =
           (existing.scoresByJudge[judgment.judgeId] ?? 0) + ranking.score;
@@ -85,7 +94,7 @@ function aggregateScoresFromMatchups(matchups: BattleMatchup[]): {
     }
   }
 
-  return { modelScores, totalJudgments };
+  return modelScores;
 }
 
 function calculateModelMetrics({
@@ -120,12 +129,15 @@ function calculateModelMetrics({
   return { averageCost, averageDuration };
 }
 
-function buildLeaderboardEntry(
-  modelId: string,
-  scores: ModelScores,
-  allOutputs: Map<string, ModelOutputs>,
-  matchupsCount: number,
-): BattleLeaderboardEntry | null {
+function buildLeaderboardEntry({
+  allOutputs,
+  modelId,
+  scores,
+}: {
+  allOutputs: Map<string, ModelOutputs>;
+  modelId: string;
+  scores: ModelScores;
+}): BattleLeaderboardEntry | null {
   const model = getModelById(modelId);
 
   if (!model) {
@@ -138,7 +150,8 @@ function buildLeaderboardEntry(
   return {
     averageCost,
     averageDuration,
-    averageScore: matchupsCount > 0 ? scores.totalScore / matchupsCount : 0,
+    averageScore: scores.rankingCount > 0 ? scores.totalScore / scores.rankingCount : 0,
+    categoryScores: summarizeCategoryScores(scores.categoryScoreGroups),
     modelId,
     modelName: getModelDisplayName(model),
     provider: modelId.split("/")[0] ?? modelId,
@@ -159,12 +172,12 @@ export const getBattleLeaderboard = cache(
       return [];
     }
 
-    const { modelScores } = aggregateScoresFromMatchups(matchups);
+    const modelScores = aggregateScoresFromMatchups(matchups);
 
     const entries: BattleLeaderboardEntry[] = [];
 
     for (const [modelId, scores] of modelScores) {
-      const entry = buildLeaderboardEntry(modelId, scores, allOutputs, matchups.length);
+      const entry = buildLeaderboardEntry({ allOutputs, modelId, scores });
 
       if (entry) {
         entries.push(entry);

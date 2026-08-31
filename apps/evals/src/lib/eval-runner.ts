@@ -79,13 +79,18 @@ async function scoreOutput({
         expectations: getJudgeExpectations(testCase),
         output: output.output,
         prompt: output.userPrompt,
+        scoreCategories: task.scoreCategories,
       });
 
   logInfo(`Score: ${scoreResult.score}`);
 
   const testCaseWithRun: TestCase = { ...testCase, id: output.testCaseId };
 
-  return { steps: scoreResult.steps, testCase: testCaseWithRun };
+  return {
+    categoryScores: scoreResult.categoryScores,
+    steps: scoreResult.steps,
+    testCase: testCaseWithRun,
+  };
 }
 
 function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): boolean {
@@ -168,6 +173,7 @@ function combineOutputsAndResults(
     }
 
     return {
+      categoryScores: scored.categoryScores,
       duration: output.duration,
       inputTokens: output.inputTokens,
       output: output.output,
@@ -202,6 +208,7 @@ export const getTaskResults = cache(
       }
 
       return {
+        categoryScores: scored.categoryScores,
         duration: output.duration,
         inputTokens: output.inputTokens,
         output: output.output,

@@ -2,7 +2,12 @@
 
 import { getScoreClassName } from "@/lib/score";
 import { calculateScore } from "@/lib/score-calculation";
-import { type EvalResult, type ScoreStep, type TestCaseOutput } from "@/lib/types";
+import {
+  type CategoryScore,
+  type EvalResult,
+  type ScoreStep,
+  type TestCaseOutput,
+} from "@/lib/types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
@@ -129,9 +134,33 @@ function EvaluationStepsSection({ steps }: { steps: ScoreStep[] }) {
   );
 }
 
+function CategoryScoresSection({ categoryScores }: { categoryScores: CategoryScore[] }) {
+  if (categoryScores.length === 0) {
+    return null;
+  }
+
+  return (
+    <div>
+      <p className="text-muted-foreground mb-2 text-sm">Category Scores</p>
+      <div className="grid gap-2 md:grid-cols-2">
+        {categoryScores.map((category) => (
+          <div className="rounded-lg border p-3" key={category.categoryId}>
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <p className="text-sm font-medium">{category.label}</p>
+              <p className="text-sm font-medium">{category.score.toFixed(1)}</p>
+            </div>
+            <p className="text-muted-foreground text-sm">{category.reasoning}</p>
+            <p className="text-muted-foreground mt-1 text-xs">Weight: {category.weight}%</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function TestCase({ result, index }: { result: EvalResult; index: number }) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
-  const score = calculateScore(result.steps);
+  const score = calculateScore({ categoryScores: result.categoryScores, steps: result.steps });
   const scoreDisplay = score.toFixed(2);
 
   return (
@@ -150,6 +179,8 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
         <TokensSection inputTokens={result.inputTokens} outputTokens={result.outputTokens} />
 
         <OutputSection output={result.output} />
+
+        <CategoryScoresSection categoryScores={result.categoryScores ?? []} />
 
         <EvaluationStepsSection steps={result.steps} />
       </AccordionContent>

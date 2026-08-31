@@ -1,7 +1,7 @@
 "use client";
 
 import { getModelById, getModelDisplayName } from "@/lib/models";
-import { type BattleMatchup } from "@/lib/types";
+import { type BattleMatchup, type CategoryScore } from "@/lib/types";
 import {
   Accordion,
   AccordionContent,
@@ -12,7 +12,13 @@ import { Badge } from "@zoonk/ui/components/badge";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { RankingItem } from "./ranking-item";
 
-type TestCaseEntry = { testCaseId: string; score: number; reasoning: string; anonymousId: string };
+type TestCaseEntry = {
+  testCaseId: string;
+  score: number;
+  reasoning: string;
+  anonymousId: string;
+  categoryScores?: CategoryScore[];
+};
 
 /**
  * Matches the empty-state footprint without assuming how many judges or model
@@ -61,6 +67,7 @@ function buildJudgeViews(
 
         entries.push({
           anonymousId: ranking.anonymousId,
+          categoryScores: ranking.categoryScores,
           reasoning: ranking.reasoning,
           score: ranking.score,
           testCaseId: matchup.testCaseId,
@@ -116,6 +123,7 @@ function ModelItem({
         {model.testCases.map((tc) => (
           <RankingItem
             anonymousId={tc.anonymousId}
+            categoryScores={tc.categoryScores}
             key={tc.testCaseId}
             reasoning={tc.reasoning}
             score={tc.score}

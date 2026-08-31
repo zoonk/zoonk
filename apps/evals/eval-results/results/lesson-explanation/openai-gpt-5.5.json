@@ -1,11 +1,23 @@
 {
-  "modelId": "openai/gpt-5.6-sol",
+  "modelId": "openai/gpt-5.5",
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The lesson never shows one complete, syntactically valid JavaScript function declaration with its name, parameters, braces, body, and return statement together, such as `function totalWithTax(price, taxRate) { return price + price * taxRate; }`. Because extracting a reusable function is the central mechanism, splitting these pieces across fragments leaves a beginner without a fully usable model of the resulting reusable block.",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "The anchor uses a generic checkout page rather than a named product, service, or other specific real-world instance, so it does not meet the anchor-specificity requirement. Also, `return total;` refers to an undeclared variable in the examples, and suggesting that a customer name should become an argument to a tax-calculation function may imply that every changing value belongs in the function even when the job does not need it.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "A compact before-and-after example would make the extraction procedure more concrete: show two duplicated calculations, the complete extracted declaration, and the replacement calls. The lesson could also state the boundary rule more precisely: make a changing value a parameter only if the named job actually needs that value.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
       ],
       "testCase": {
         "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about what makes repeated code become one reusable function. Penalize if:\n   - Declaring a function is confused with calling it\n   - The function name, parameters, or body are treated as optional decoration instead of the structure that defines the reusable block\n\n2. BOUNDARY CHECK: The core arc should stay on the reusable block itself. Penalize if the explanation spends its main teaching move on sibling angles like function calls or return values.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
@@ -27,8 +39,16 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The in-order trace is under-specified: the example says only that C has child F, but the claimed order C, F assumes F is specifically C's right child. Also, the explicit-stack explanation does not state that children must be pushed in reverse visitation order to preserve the shown left-before-right pre-order.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The lesson could add a compact complexity comparison: all traversals take O(n) time; DFS uses O(h) auxiliary space for tree height h, while BFS may use O(w) space for maximum level width w. Naming a concrete file browser such as Windows File Explorer would also make the already useful anchor more vivid.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
       ],
       "testCase": {
         "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about tracing depth-first and breadth-first traversals in trees. Penalize if:\n   - DFS is described as visiting every node on one level before descending, or BFS as following one branch before returning\n   - Pre-order, in-order, and post-order do not process the node respectively before, between, or after its child subtrees; in-order should not be generalized beyond the left-node-right structure of a binary tree\n   - DFS is disconnected from recursion or an explicit stack, or BFS is disconnected from the FIFO behavior of a queue\n\n2. BOUNDARY CHECK: The core arc should trace pre-order, in-order, post-order, and level-order traversal on a concrete tree while explaining when each node is processed and why a stack or queue produces that order. Brief uses or complexity notes are fine when they clarify the comparison. Penalize if the lesson becomes mainly about binary-search-tree operations, tree representation, recursion syntax, graph traversal with visited sets, balancing, heaps, or a catalog of applications.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
@@ -68,14 +88,14 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The treatment of captives is accurate but somewhat under-explained: it lists possible outcomes without clearly connecting captive taking to warfare’s political and ritual aims, such as restoring obligations, sustaining revenge cycles, incorporating outsiders, or producing prestige. This makes captives feel slightly less central than the topic-specific guidance requires.",
+          "conclusion": "The lesson is accurate and well bounded overall, but it slightly overstates that early European accounts were written only after disease, slavery, and colonization had already changed conflicts; the earliest contact accounts vary in how much prior disruption they reflect. The evidence-method section also occupies substantial space that overlaps with the sibling lesson on oral and written sources, though it remains relevant to the stated description.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 8.5
         },
         {
-          "conclusion": "Add a concrete regional case showing how a raid, alliance obligation, captive taking, and ritual or political outcome fit together. The lesson could also state more explicitly that archaeological defenses indicate organized threat and coordination but cannot, by themselves, establish whether the danger involved raids for captives, revenge, territory, or resources.",
+          "conclusion": "Deepen the central captive-taking mechanism by explaining more explicitly how obtaining captives could itself fulfill political and ritual aims—for example, sustaining revenge cycles, creating status, replacing losses through adoption, or enabling specific ceremonies—rather than mainly listing captives’ possible fates. A concrete named historical or archaeological case would also make the regional variation and source comparison more tangible.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -98,13 +118,9 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The lesson is accurate, focused, concrete, and well structured. A small omission is that it cites art. 5º, LIV, but not art. 5º, LV, the constitutional provision that expressly guarantees contraditório and ampla defesa; naming it would improve the formal legal grounding.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "It could clarify that avoiding surprise requires prior debate of the decisive issue or fundamento, not advance disclosure of the judge’s exact reasoning or likely outcome. The lesson already gestures toward this distinction, but one more explicit sentence would sharpen the practical test.",
+          "conclusion": "The lesson could add two useful caveats: a judge may adopt a different legal interpretation if the relevant ground was previously open to debate, and there is no violation when a party had a genuine opportunity to respond but chose not to use it.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -129,11 +145,15 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The lesson is accurate, focused, concrete, and complete. It could be marginally tighter by replacing the broad final discussion of point substitutions and mitochondrial-code variation with an additional frame-reading example, but these details are relevant caveats and do not meaningfully weaken the lesson.",
+          "conclusion": "The statement that AUG marks where translation begins is slightly overgeneralized: an AUG functions as the start codon only when recognized in an appropriate initiation context; internal AUG codons encode methionine without restarting translation. Also, the displayed LaTeX delimiters around `4^3 = 64` appear over-escaped and may render as raw backslashes.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Clarify that the initiation machinery selects the relevant AUG and thereby establishes the reading frame. A brief comparison of the same sequence divided from positions 1, 2, and 3 would make the three possible reading frames even more concrete.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 9
         }
       ],
       "testCase": {
@@ -158,16 +178,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The final step overgeneralizes that a much larger lead time means the main delay occurred before work began. When delivery follows completion, the gap can instead be caused partly or mainly by post-completion waiting, as an earlier step correctly explains.",
-          "kind": "minorErrors",
-          "score": 8.5
+          "conclusion": "The lesson incorrectly generalizes that pre-start waiting equals lead time minus cycle time. With its own boundaries—lead time from request to delivery and cycle time from start to completion—the difference also includes any interval between completion and delivery. The later warning that completion may differ from delivery exposes this contradiction. The decomposition should be: lead time = pre-start wait + cycle time + post-completion delivery wait.",
+          "kind": "majorErrors",
+          "score": 6
         },
         {
-          "conclusion": "Qualify the final interpretation with “when completion and delivery coincide.” It would also help to note that Jira status timestamps are valid proxies only when `Created`, `In Progress`, and `Done` actually correspond to request, real work start, and the chosen final event.",
+          "conclusion": "Cycle time is described as time spent in “active work,” which can imply touch time only. Cycle time is elapsed time from work start to completion and can include blocking or waiting after the item has started.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use separate timestamps for request, start, completion, and delivery, then show that lead time minus cycle time isolates pre-start waiting only when completion and delivery are the same timestamp. The rest of the lesson is concrete, well structured, in Portuguese, and supported by a specific Jira anchor.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -193,9 +217,13 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The lesson could be even more precise by saying that a Mercado Livre sale is recognized when control of the product transfers, rather than simply when the order is shipped. It could also clarify that equity is the residual interest in assets after liabilities, not necessarily money immediately available to the owners.",
+          "conclusion": "The inventory step says the expenditure remains “as inventory in patrimônio,” which can blur the lesson’s own distinction between total financial position and patrimônio líquido. More precisely, inventory remains an asset on the balance sheet and becomes cost of goods sold when the related goods are sold.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "A compact reconciliation could make the three perspectives even clearer: a credit sale increases profit and accounts receivable but not cash, while a loan increases cash and liabilities but not profit. This would explicitly connect each example to result, cash, and financial position at once.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -220,20 +248,16 @@
     },
     {
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Every mathematical expression is surrounded by NUL control characters (`\\u0000`), producing malformed rich text and likely visible or broken rendering. This is an explicit unsupported-formatting failure that materially harms readability, despite the underlying calculations being largely correct.",
-          "kind": "majorErrors",
-          "score": 6.5
-        },
-        {
-          "conclusion": "The grating equation `d sin θ = mλ` is presented without stating its normal-incidence assumption; non-normal incidence requires a more general relation. Also, `x=(x_D-x_E)/2` needs a clear coordinate/sign convention to avoid misuse when the two readings are recorded as positive distances.",
+          "conclusion": "The lesson is technically strong, but it implies that diffraction orders m = 1, 2, 3, ... generally appear without stating the limit |mλ/d| ≤ 1; some higher orders are physically impossible for a given wavelength and grating. Also, every LaTeX expression is surrounded by null control characters (\\u0000), which may create rendering clutter or failures.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 8.5
         },
         {
-          "conclusion": "Remove the control characters and use valid inline LaTeX throughout. The worked example would be stronger if it continued through a numerical uncertainty calculation and reported the final measurement explicitly as `λ ± σ_λ`, while briefly stating that the propagation formula assumes small, independent uncertainties.",
+          "conclusion": "For a more complete uncertainty treatment, mention that uncertainty in L and in the grating spacing d may also need propagation, not only uncertainty in x or θ. The anchor could also specify a Hubble spectrograph or narrowband H-alpha filter so it does not blur the distinction between measuring a spectral position and displaying H-alpha as red in a processed image.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -257,11 +281,15 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The lesson could make the decision procedure slightly more operational by stating that competing biological and abiotic source–sink models must be compared against measurement uncertainties, rather than merely saying that models should discard abiotic scenarios. This would strengthen the expert-level treatment, but the existing explanation is already accurate, focused, concrete, and complete.",
+          "conclusion": "The statement that O₂ or O₃ and CH₄ “react with each other” is an oversimplification: atmospheric methane is generally removed through oxidation pathways involving radicals rather than a simple direct reaction with O₂ or O₃. Also, ultraviolet radiation does not create ozone by itself; ozone production requires an oxygen-bearing precursor, chiefly O₂. These do not overturn the lesson’s conclusion but slightly blur the chemistry.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The lesson could strengthen its practical decision procedure by explicitly including measurement uncertainty, overlapping spectral features, and comparison of competing biological and abiotic models. It could also state that disequilibrium is persuasive only when plausible production rates can maintain the observed abundances under the planet’s stellar and atmospheric conditions.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 9
         }
       ],
       "testCase": {
@@ -283,18 +311,14 @@
     },
     {
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The core lesson is accurate, focused, and clearly distinguishes AdamW, warmup/decay, and gradient clipping. However, every mathematical expression contains NUL control characters and several lack valid closing LaTeX delimiters, so essential formulas may render as raw or broken clutter. Because this repeatedly affects the lesson’s formal mechanism, it is a significant delivery failure.",
-          "kind": "majorErrors",
-          "score": 6.5
-        },
-        {
-          "conclusion": "The notation is not fully explained: the hatted moment estimates and `epsilon` appear in the Adam/AdamW formulas without being defined. A beginner may not understand that the hats denote bias-corrected moving averages or that `epsilon` prevents division by zero and improves numerical stability.",
+          "conclusion": "The anchor is generic (“a large language model”) rather than naming a recognizable deployed system such as ChatGPT-style models, so it does not satisfy the specific real-world-instance requirement. The clipping formula also appears over-escaped as `\\\\(` and `\\\\)`, which may render as raw clutter instead of inline LaTeX. Finally, AdamW’s mechanism is described accurately but somewhat incompletely: it omits the actual first-/second-moment update shape and the roles of beta and epsilon, limiting the promised expert-level working understanding.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8
         },
         {
-          "conclusion": "After repairing the formulas, the lesson could add one brief practical caveat that AdamW weight decay is commonly omitted for biases and normalization parameters. Otherwise, the comparison, operational clipping guidance, monitoring advice, and Hugging Face Trainer anchor are strong and useful.",
+          "conclusion": "Use a named anchor such as ChatGPT-style models, fix the math delimiters, and add a compact AdamW equation or code-shaped update with plain-language definitions. A concrete configuration—such as linear warmup, cosine decay, global-norm clipping at 1.0, and monitoring loss plus gradient norm—would make practical use more tangible.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -319,8 +343,16 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The second arrangement is asserted rather than described: the lesson says the same four triangles leave two squares of areas a² and b², but does not explain how they are positioned or why the remaining regions are squares. With no visual, this slightly weakens the central rearrangement proof.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Add a short description of the second layout, or verify both leftovers algebraically using the outer area (a+b)² and the four triangles’ total area 4(ab/2)=2ab. This would make the area-preservation mechanism fully checkable in text.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about why the Pythagorean identity follows from an area rearrangement. Penalize if:\n   - The identity is applied to triangles that are not right triangles\n   - The side lengths are confused with the areas of the squares built on those sides\n   - Rearranging the same congruent triangles is treated as changing their total area\n\n2. BOUNDARY CHECK: The main arc should stay on seeing why the two smaller square areas equal the largest square area. Brief algebra is fine when it records the area comparison. Penalize if the lesson becomes mainly about the distance formula, coordinate proofs, trigonometry, Pythagorean triples, or the converse theorem.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
@@ -343,13 +375,9 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The step title “Watch if and only if” is misleading because the text explains the separate phrases “if” and “only if,” not the biconditional phrase “if and only if.” The lesson otherwise remains accurate and focused.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Rename that step to something like “Read ‘if’ and ‘only if’ carefully.” The anchor could also be more precise by naming the Constitution’s natural-born-citizen requirement and 14-year U.S. residency requirement.",
+          "conclusion": "The anchor could state the practical payoff more explicitly—for example, that separating required credentials from additional lockout conditions helps explain why entering the correct iPhone passcode may still not unlock the device immediately.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -375,8 +403,16 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The anchor presents “I am not mad” as a repeated direct quotation from Poe’s “The Tell-Tale Heart,” but that exact sentence is not repeated in the story; it paraphrases the narrator’s recurring claims of sanity. The literary example remains conceptually apt, but the quotation marks make it a minor factual misquotation.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "A brief integrated example could show how several clues combine into one interpretation, rather than illustrating each clue mostly in isolation. For example, the Poe anchor could connect the narrator’s claims of calmness and sanity with his obsessive conduct and eventual confession while preserving uncertainty about his perceptions.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about using textual evidence to recognize and interpret an unreliable narrator. Penalize if:\n   - The narrator is confused with the author\n   - Unreliability is treated as proof that every narrated detail is false or that the narrator must be deliberately lying\n   - A reader's suspicion is presented as sufficient without contradictions, omissions, reactions, or other evidence from the work\n\n2. BOUNDARY CHECK: The main arc should stay on how readers notice a gap between a narrator's version and what the text supports. Brief examples of bias, self-deception, limited knowledge, or deliberate deceit are useful. Penalize if the lesson becomes mainly a catalog of narrator types, point-of-view terminology, or general literary-analysis advice.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
