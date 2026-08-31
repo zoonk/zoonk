@@ -37,6 +37,21 @@ final class CourseCatalogStoreTests: XCTestCase {
       [CourseCatalogQuery(category: .science, language: "en")])
   }
 
+  func testLoadedCatalogIsReusedByAPresentationLoad() async {
+    let page = CourseCatalogPage(
+      courses: [.testFixture],
+      hasMore: false,
+      nextCursor: nil)
+    let api = CourseCatalogAPIStub(coursePageResults: [.success(page)])
+    let store = CourseCatalogStore(api: api, language: "en")
+
+    await store.loadCourses(category: .science)
+    await store.loadCoursesIfNeeded(category: .science)
+
+    let queries = await api.courseQueries
+    XCTAssertEqual(queries, [CourseCatalogQuery(category: .science, language: "en")])
+  }
+
   func testEmptyCourseLoadPublishesEmptyState() async {
     let api = CourseCatalogAPIStub(
       coursePageResults: [
@@ -336,7 +351,7 @@ final class CourseCatalogStoreTests: XCTestCase {
     initialRequest.cancel()
 
     let replacementRequest = Task {
-      await store.loadCourses(category: .science, force: true)
+      await store.loadCoursesIfNeeded(category: .science)
     }
     await fulfillment(of: [replacementRequestStarted], timeout: 1)
 
@@ -506,6 +521,21 @@ final class CourseCatalogStoreTests: XCTestCase {
       .loaded(CourseDetail(course: .testFixture, chapters: [.testFixture])))
   }
 
+  func testLoadedCourseDetailIsReusedByAPresentationLoad() async {
+    let api = CourseCatalogAPIStub(
+      chapterResults: [.success([.testFixture])],
+      courseResults: [.success(.testFixture)])
+    let store = CourseCatalogStore(api: api, language: "en")
+
+    await store.loadCourse(id: Course.testFixture.id)
+    await store.loadCourseIfNeeded(id: Course.testFixture.id)
+
+    let courseRequestCount = await api.courseRequestCount
+    let chapterListRequestCount = await api.chapterListRequestCount
+    XCTAssertEqual(courseRequestCount, 1)
+    XCTAssertEqual(chapterListRequestCount, 1)
+  }
+
   func testCourseDetailLoadsContinuationAndProgressWithTheCurrentSession() async {
     let session = SessionStore.preview(account: makeCourseCatalogTestAccount())
     let api = CourseCatalogAPIStub(
@@ -651,6 +681,19 @@ final class CourseCatalogStoreTests: XCTestCase {
       .loaded(ChapterDetail(chapter: .resourceTestFixture, lessons: [.testFixture])))
   }
 
+  func testLoadedChapterDetailIsReusedByAPresentationLoad() async {
+    let api = CourseCatalogAPIStub(lessonResults: [.success([.testFixture])])
+    let store = CourseCatalogStore(api: api, language: "en")
+
+    await store.loadChapter(id: CourseChapter.testFixture.id)
+    await store.loadChapterIfNeeded(id: CourseChapter.testFixture.id)
+
+    let chapterRequestCount = await api.chapterRequestCount
+    let lessonListRequestCount = await api.lessonListRequestCount
+    XCTAssertEqual(chapterRequestCount, 1)
+    XCTAssertEqual(lessonListRequestCount, 1)
+  }
+
   func testChapterDetailLoadsContinuationAndProgressWithTheCurrentSession() async {
     let session = SessionStore.preview(account: makeCourseCatalogTestAccount())
     let api = CourseCatalogAPIStub(
@@ -788,6 +831,10 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
   private(set) var courseContinuationTokens: [String?] = []
   private(set) var courseProgressTokens: [String?] = []
   private(set) var courseQueries: [CourseCatalogQuery] = []
+  private(set) var chapterListRequestCount = 0
+  private(set) var chapterRequestCount = 0
+  private(set) var courseRequestCount = 0
+  private(set) var lessonListRequestCount = 0
   private(set) var searchQueries: [CatalogSearchQuery] = []
 
   init(
@@ -820,19 +867,23 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
   }
 
   func getCourse(id: String) async throws -> Course {
-    try takeFirstResult(from: &courseResults).get()
+    courseRequestCount += 1
+    return try takeFirstResult(from: &courseResults).get()
   }
 
   func getChapter(id: String) async throws -> CourseChapter {
-    try takeFirstResult(from: &chapterDetailResults).get()
+    chapterRequestCount += 1
+    return try takeFirstResult(from: &chapterDetailResults).get()
   }
 
   func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-    try takeFirstResult(from: &chapterResults).get()
+    chapterListRequestCount += 1
+    return try takeFirstResult(from: &chapterResults).get()
   }
 
   func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
-    try takeFirstResult(from: &lessonResults).get()
+    lessonListRequestCount += 1
+    return try takeFirstResult(from: &lessonResults).get()
   }
 
   func getCourseNextLesson(courseID: String, token: String?) async throws

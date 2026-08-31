@@ -28,7 +28,7 @@ struct CourseView: View {
         resourceID: course.id,
         session: session.authenticatedSession)
     ) {
-      await catalog.loadCourse(id: course.id, force: true)
+      await catalog.loadCourseIfNeeded(id: course.id)
     }
     .refreshable {
       await catalog.loadCourse(id: course.id, force: true)

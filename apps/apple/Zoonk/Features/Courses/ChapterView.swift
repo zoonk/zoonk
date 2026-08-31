@@ -34,7 +34,7 @@ struct ChapterView: View {
         resourceID: chapter.id,
         session: session.authenticatedSession)
     ) {
-      await catalog.loadChapter(id: chapter.id, force: true)
+      await catalog.loadChapterIfNeeded(id: chapter.id)
     }
     .refreshable {
       await catalog.loadChapter(id: chapter.id, force: true)
@@ -134,6 +134,7 @@ private struct ChapterDetailList: View {
                 }
               }
             }
+            .accessibilityValue(Text(lesson.kind.localizedTitle))
             .listRowInsets(
               EdgeInsets(
                 top: CatalogDetailLayout.curriculumRowVerticalInset(

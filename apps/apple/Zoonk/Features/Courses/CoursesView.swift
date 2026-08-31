@@ -36,7 +36,7 @@ struct CoursesView: View {
         .toolbar(removing: destination.showsCompactHeader ? .title : nil)
     }
     .task(id: selectedCategory) {
-      await catalog.loadCourses(category: selectedCategory, force: true)
+      await catalog.loadCoursesIfNeeded(category: selectedCategory)
     }
     .task(id: searchText) {
       await updateSearchResults()

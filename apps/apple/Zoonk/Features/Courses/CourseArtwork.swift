@@ -41,12 +41,16 @@ struct CourseArtwork: View {
       Image(systemName: systemImage)
         .font(.system(.largeTitle, design: .rounded, weight: .medium))
         .symbolRenderingMode(.hierarchical)
-        .foregroundStyle(symbolTint ?? Color(uiColor: .secondaryLabel))
+        .foregroundStyle(fallbackForeground)
     }
   }
 
   private var fallbackBackground: Color {
     symbolTint?.opacity(0.12) ?? Color(uiColor: .tertiarySystemFill)
+  }
+
+  private var fallbackForeground: Color {
+    symbolTint?.mix(with: .primary, by: 0.35) ?? Color(uiColor: .secondaryLabel)
   }
 }
 

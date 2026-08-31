@@ -604,11 +604,19 @@ final class ZoonkUITests: XCTestCase {
       app.staticTexts["1. Meet the Roots"].exists,
       "Expected the lesson number to be part of the title instead of a separate leading column")
     XCTAssertTrue(completedLesson.label.contains("Completed"))
+    XCTAssertEqual(
+      completedLesson.value as? String,
+      "Explanation",
+      "Expected VoiceOver to identify the lesson kind independently from its title")
 
     let nextLesson = app.buttons.matching(
       NSPredicate(format: "label CONTAINS %@", "Follow the Water")
     ).firstMatch
     XCTAssertTrue(nextLesson.label.contains("Not started"))
+    XCTAssertEqual(
+      nextLesson.value as? String,
+      "Practice",
+      "Expected VoiceOver to identify the lesson kind independently from its title")
     chapterContinue.tap()
 
     XCTAssertTrue(

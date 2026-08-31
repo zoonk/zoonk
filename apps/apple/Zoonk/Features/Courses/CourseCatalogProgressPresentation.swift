@@ -76,6 +76,7 @@ struct CatalogProgressLabel: View {
       case .inProgress(let completed, let total):
         HStack(spacing: 4) {
           Image(systemName: "circle.dashed")
+            .foregroundStyle(indicatorTint)
             .accessibilityHidden(true)
 
           Text(
@@ -88,6 +89,7 @@ struct CatalogProgressLabel: View {
       case .completed:
         HStack(spacing: 4) {
           Image(systemName: "checkmark.circle.fill")
+            .foregroundStyle(indicatorTint)
             .accessibilityHidden(true)
 
           Text(
@@ -98,7 +100,7 @@ struct CatalogProgressLabel: View {
       }
     }
     .font(.caption.weight(.semibold))
-    .foregroundStyle(tint)
+    .foregroundStyle(.primary)
     .padding(.horizontal, 8)
     .padding(.vertical, 4)
     .background(tint.opacity(0.12), in: Capsule())
@@ -110,5 +112,9 @@ struct CatalogProgressLabel: View {
     case .inProgress: .blue
     case .completed: .green
     }
+  }
+
+  private var indicatorTint: Color {
+    tint.mix(with: .primary, by: 0.35)
   }
 }

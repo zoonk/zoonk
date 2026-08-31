@@ -57,6 +57,16 @@ final class CourseCatalogStore {
     activeRequests.contains(.search)
   }
 
+  func loadCoursesIfNeeded(category: CourseCategory?) async {
+    let query = CourseCatalogQuery(category: category, language: language)
+
+    guard query != activeCourseQuery || needsPresentationLoad(coursesState) else {
+      return
+    }
+
+    await loadCourses(category: category, force: true)
+  }
+
   func loadCourses(category: CourseCategory?, force: Bool = false) async {
     let query = CourseCatalogQuery(category: category, language: language)
     let queryChanged = query != activeCourseQuery
@@ -169,6 +179,16 @@ final class CourseCatalogStore {
     courseStates[id] ?? .idle
   }
 
+  func loadCourseIfNeeded(id: String) async {
+    synchronizeSession()
+
+    guard needsPresentationLoad(courseState(for: id)) else {
+      return
+    }
+
+    await loadCourse(id: id, force: true)
+  }
+
   func loadCourse(id: String, force: Bool = false) async {
     synchronizeSession()
     let authenticatedSession = session.authenticatedSession
@@ -217,6 +237,16 @@ final class CourseCatalogStore {
 
   func chapterState(for id: String) -> CourseCatalogLoadState<ChapterDetail> {
     chapterStates[id] ?? .idle
+  }
+
+  func loadChapterIfNeeded(id: String) async {
+    synchronizeSession()
+
+    guard needsPresentationLoad(chapterState(for: id)) else {
+      return
+    }
+
+    await loadChapter(id: id, force: true)
   }
 
   func loadChapter(id: String, force: Bool = false) async {
@@ -378,7 +408,18 @@ final class CourseCatalogStore {
     state: CourseCatalogLoadState<Value>,
     force: Bool
   ) -> Bool {
-    force || (!activeRequests.contains(resource) && state != .loading)
+    force || (!activeRequests.contains(resource) && needsPresentationLoad(state))
+  }
+
+  private func needsPresentationLoad<Value>(
+    _ state: CourseCatalogLoadState<Value>
+  ) -> Bool {
+    switch state {
+    case .idle, .loading, .failed:
+      true
+    case .loaded, .empty:
+      false
+    }
   }
 
   private func loadingState<Value>(
