@@ -98,7 +98,7 @@ describe(createLessonQuestion, () => {
     ).resolves.toBe(0);
   });
 
-  it("requires an active subscription even for the first chapter", async () => {
+  it("allows an authenticated learner to ask about a free first-chapter lesson", async () => {
     const { lesson, user } = await createPublishedCurriculum({ subscribed: false });
     mockSession(user.id);
 
@@ -108,13 +108,13 @@ describe(createLessonQuestion, () => {
       requestId: randomUUID(),
     };
 
-    await expect(createLessonQuestion({ input, lessonId: lesson.id })).resolves.toStrictEqual({
-      status: "subscriptionRequired",
+    await expect(createLessonQuestion({ input, lessonId: lesson.id })).resolves.toMatchObject({
+      status: "created",
     });
 
     await expect(
       prisma.lessonQuestionThread.count({ where: { lessonId: lesson.id, userId: user.id } }),
-    ).resolves.toBe(0);
+    ).resolves.toBe(1);
   });
 
   it("returns one durable question for concurrent request replays", async () => {
@@ -1146,7 +1146,7 @@ describe(getLessonQuestionThread, () => {
     });
   });
 
-  it("requires a current subscription to read an existing first-chapter thread", async () => {
+  it("keeps a free first-chapter thread available without a subscription", async () => {
     const { lesson, user } = await createPublishedCurriculum();
     mockSession(user.id);
 
@@ -1166,8 +1166,9 @@ describe(getLessonQuestionThread, () => {
       where: { referenceId: user.id },
     });
 
-    await expect(getLessonQuestionThread({ lessonId: lesson.id })).resolves.toStrictEqual({
-      status: "subscriptionRequired",
+    await expect(getLessonQuestionThread({ lessonId: lesson.id })).resolves.toMatchObject({
+      status: "ready",
+      thread: { questions: [{ id: expect.any(String) }] },
     });
   });
 

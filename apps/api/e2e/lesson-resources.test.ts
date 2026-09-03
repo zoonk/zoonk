@@ -294,7 +294,7 @@ test.describe("Lesson resources API", () => {
     await apiContext.dispose();
   });
 
-  test("requires a subscription to read or create first-chapter questions", async () => {
+  test("lets an authenticated learner read and create first-chapter questions", async () => {
     const { lesson } = await createPublishedLesson({});
 
     const { apiContext, user } = await createBearerApiContext({
@@ -313,12 +313,13 @@ test.describe("Lesson resources API", () => {
       }),
     ]);
 
-    expect(threadResponse.status()).toBe(402);
-    expect(createResponse.status()).toBe(402);
+    expect(threadResponse.status()).toBe(200);
+    await expect(threadResponse.json()).resolves.toBeNull();
+    expect(createResponse.status()).toBe(201);
 
     await expect(
       prisma.lessonQuestionThread.count({ where: { lessonId: lesson.id, userId: user.id } }),
-    ).resolves.toBe(0);
+    ).resolves.toBe(1);
 
     await apiContext.dispose();
   });

@@ -14,6 +14,7 @@ type AdminPaginationPath =
   | "/courses"
   | "/leaderboard"
   | "/lessons"
+  | "/questions"
   | "/stats/engagement/learners"
   | "/subscriptions"
   | "/users";

@@ -21,7 +21,7 @@ describe(getLessonQuestion, () => {
     });
   });
 
-  it("requires a current subscription", async () => {
+  it("keeps a free-lesson question available without a subscription", async () => {
     const { question, user } = await createLessonQuestionFixture();
 
     await prisma.subscription.updateMany({
@@ -29,8 +29,9 @@ describe(getLessonQuestion, () => {
       where: { referenceId: user.id },
     });
 
-    await expect(getLessonQuestion({ questionId: question.id })).resolves.toStrictEqual({
-      status: "subscriptionRequired",
+    await expect(getLessonQuestion({ questionId: question.id })).resolves.toMatchObject({
+      question: { id: question.id },
+      status: "ready",
     });
   });
 

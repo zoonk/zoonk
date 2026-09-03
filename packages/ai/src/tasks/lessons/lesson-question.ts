@@ -138,7 +138,7 @@ function createLessonQuestionGenerationOptions({
   model: string;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
-  reasoning: Reasoning | undefined;
+  reasoning?: Reasoning;
   useFallback: boolean;
 }) {
   return {
@@ -288,7 +288,6 @@ export function streamLessonQuestionAnswer({
     model: LESSON_QUESTION_MODEL,
     priorTurns,
     question,
-    reasoning: "minimal",
     useFallback: true,
   });
 

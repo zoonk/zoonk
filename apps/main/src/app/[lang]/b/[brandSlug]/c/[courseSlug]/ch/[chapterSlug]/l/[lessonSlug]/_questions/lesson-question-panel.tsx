@@ -57,13 +57,11 @@ function LessonQuestionPanelHeader({
 export function LessonQuestionPanel<const Href extends string>({
   controller,
   isAuthenticated,
-  isSubscribed,
   loginHref,
   metadata,
 }: {
   controller: LessonQuestionController;
   isAuthenticated: boolean;
-  isSubscribed: boolean;
   loginHref: AppRoute<Href>;
   metadata: LessonQuestionPanelMetadata;
 }) {
@@ -82,14 +80,11 @@ export function LessonQuestionPanel<const Href extends string>({
           <QuestionThread
             controller={controller}
             isAuthenticated={isAuthenticated}
-            isSubscribed={isSubscribed}
             loginHref={loginHref}
           />
         </div>
 
-        {isAuthenticated && isSubscribed && (
-          <QuestionComposer controller={controller} loginHref={loginHref} />
-        )}
+        {isAuthenticated && <QuestionComposer controller={controller} loginHref={loginHref} />}
       </SheetContent>
     </Sheet>
   );

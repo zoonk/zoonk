@@ -16,6 +16,7 @@ import {
   HomeIcon,
   LayersIcon,
   MessageSquareTextIcon,
+  MessagesSquareIcon,
   TrophyIcon,
   Users,
 } from "lucide-react";
@@ -31,6 +32,7 @@ const menuItems = [
   { icon: BookOpen, label: "Courses", url: "/courses" },
   { icon: MessageSquareTextIcon, label: "Course Prompts", url: "/course-prompts" },
   { icon: LayersIcon, label: "Lessons", url: "/lessons" },
+  { icon: MessagesSquareIcon, label: "Questions", url: "/questions" },
 ] as const;
 
 function isActive(pathname: string, url: string) {

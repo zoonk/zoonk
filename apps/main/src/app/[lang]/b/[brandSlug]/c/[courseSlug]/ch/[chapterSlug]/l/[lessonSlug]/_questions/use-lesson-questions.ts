@@ -15,7 +15,6 @@ import { useSendLessonQuestion } from "./use-send-lesson-question";
 
 type UseLessonQuestionsInput = {
   isAuthenticated: boolean;
-  isSubscribed: boolean;
   lessonId: string;
   lessonSteps: readonly { id: string }[];
 };
@@ -36,12 +35,11 @@ export type LessonQuestionController = {
 
 export function useLessonQuestions({
   isAuthenticated,
-  isSubscribed,
   lessonId,
   lessonSteps,
 }: UseLessonQuestionsInput): LessonQuestionController {
   const [state, dispatch] = useReducer(lessonQuestionReducer, INITIAL_LESSON_QUESTION_STATE);
-  const canAskQuestions = isAuthenticated && isSubscribed;
+  const canAskQuestions = isAuthenticated;
   const canExplainAnswer = !state.activeQuestionId && !state.isCreating;
 
   const { load, loadEarlier, loadThread, reconcileLatestThread } = useLessonQuestionThread({

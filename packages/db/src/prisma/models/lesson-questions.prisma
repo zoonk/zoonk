@@ -39,6 +39,7 @@ model LessonQuestion {
   updatedAt          DateTime                  @default(now()) @updatedAt @map("updated_at")
 
   @@unique([threadId, requestId], name: "threadLessonQuestionRequest")
+  @@index([createdAt])
   @@index([threadId, createdAt])
   @@index([stepId])
   @@map("lesson_questions")

@@ -1577,7 +1577,6 @@ msgid "Log in to subscribe"
 msgstr "Connecte-toi pour t’abonner"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
 #: src/components/generation/generation-limit-cta.tsx
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "gczcC5"
@@ -1787,7 +1786,6 @@ msgid "Your session expired. Sign in again."
 msgstr "Ta session a expiré. Reconnecte-toi."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-errors.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
 msgctxt "iVOq9B"
 msgid "Subscribe to ask questions"
 msgstr "Abonne-toi pour poser des questions"
@@ -1887,11 +1885,6 @@ msgstr "Comment peut-on t’aider ?"
 msgctxt "I7p0KB"
 msgid "Sign in to ask questions"
 msgstr "Connecte-toi pour poser des questions"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
-msgctxt "rLDJ2g"
-msgid "Get answers and explanations as you learn."
-msgstr "Obtiens des réponses et des explications pendant que tu apprends."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-thread.tsx
 msgctxt "E6r0bc"

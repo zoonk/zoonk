@@ -25,7 +25,6 @@ type LessonPlayerClientProps = {
   courseSlug: string;
   chapterSlug: string;
   isAuthenticated: boolean;
-  isSubscribed: boolean;
   lessonDescription: string;
   lessonProgress: LessonProgressMeta;
   lessonPosition: number;
@@ -120,7 +119,6 @@ export function LessonPlayerClient(props: LessonPlayerClientProps) {
     courseSlug,
     courseTitle,
     isAuthenticated,
-    isSubscribed,
     lesson,
     lessonDescription,
     lessonProgress,
@@ -146,7 +144,6 @@ export function LessonPlayerClient(props: LessonPlayerClientProps) {
 
   const questionController = useLessonQuestions({
     isAuthenticated,
-    isSubscribed,
     lessonId: lesson.id,
     lessonSteps: lesson.steps,
   });
@@ -161,7 +158,6 @@ export function LessonPlayerClient(props: LessonPlayerClientProps) {
       <LessonQuestionPanel
         controller={questionController}
         isAuthenticated={isAuthenticated}
-        isSubscribed={isSubscribed}
         loginHref={model.navigation.loginHref ?? "/login"}
         metadata={{
           chapterTitle,

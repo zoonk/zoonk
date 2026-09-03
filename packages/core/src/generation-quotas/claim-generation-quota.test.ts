@@ -232,17 +232,16 @@ describe(claimGenerationQuotaIfNeeded, () => {
 
   it.each([
     { daily: 20, resource: "lesson" as const, subscriber: false, viewer: "guest" as const },
-    { daily: 20, resource: "lessonQuestion" as const, subscriber: false, viewer: "guest" as const },
     { daily: 50, resource: "lesson" as const, subscriber: false, viewer: "authenticated" as const },
     {
-      daily: 50,
+      daily: 10,
       resource: "lessonQuestion" as const,
       subscriber: false,
       viewer: "authenticated" as const,
     },
     { daily: 400, resource: "lesson" as const, subscriber: true, viewer: "subscriber" as const },
     {
-      daily: 400,
+      daily: 500,
       resource: "lessonQuestion" as const,
       subscriber: true,
       viewer: "subscriber" as const,
@@ -269,6 +268,14 @@ describe(claimGenerationQuotaIfNeeded, () => {
     },
   );
 
+  it("does not grant lesson question generation to guests", async () => {
+    await expect(
+      claimGenerationQuota({ resource: "lessonQuestion", targetId: randomUUID() }),
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "day", resource: "lessonQuestion", viewer: "guest" }),
+    );
+  });
+
   it.each([
     {
       monthly: 10,
@@ -285,7 +292,7 @@ describe(claimGenerationQuotaIfNeeded, () => {
     },
     { monthly: 5000, resource: "lesson" as const, subscriber: true, viewer: "subscriber" as const },
     {
-      monthly: 300,
+      monthly: 50,
       resource: "lessonQuestion" as const,
       subscriber: false,
       viewer: "authenticated" as const,

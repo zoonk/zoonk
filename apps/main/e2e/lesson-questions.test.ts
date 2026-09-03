@@ -385,6 +385,8 @@ async function mockQuestionApi({
 
   await page.route("**/v1/questions/*", async (route) => {
     expectBearerAuthorization(route);
+    const questionId = new URL(route.request().url()).pathname.split("/").at(-1);
+
     state.statusRequests += 1;
     const errorStatus = statusErrorStatuses[state.statusRequests];
 
@@ -407,8 +409,6 @@ async function mockQuestionApi({
 
       return;
     }
-
-    const questionId = new URL(route.request().url()).pathname.split("/").at(-1);
 
     if (
       completeRunningAfterStatusRequest &&
@@ -1833,7 +1833,7 @@ test("reopens saved mobile history without moving focus into the composer", asyn
   expect(logBox.y).toBeGreaterThanOrEqual(headerBottom);
 });
 
-test("offers a subscription without requesting a question thread", async ({
+test("lets a signed-in learner ask about a free lesson without subscribing", async ({
   authenticatedPage: nonSubscriberPage,
 }) => {
   const scenario = await createQuestionLesson({ staticOnly: true });
@@ -1845,17 +1845,13 @@ test("offers a subscription without requesting a question thread", async ({
 
   const dialog = nonSubscriberPage.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-  await expect(dialog.getByText("Subscribe to ask questions")).toBeVisible();
-
-  await expect(dialog.getByText("Get answers and explanations as you learn.")).toBeVisible();
-
-  await expect(dialog.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
-    "href",
-    "/subscription",
-  );
-
-  await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveCount(0);
-  expect(api.getRequests).toBe(0);
+  const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
+  await expect(textbox).toBeVisible();
+  await textbox.fill("Can you explain this another way?");
+  await dialog.getByRole("button", { name: "Send" }).click();
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  expect(api.getRequests).toBe(1);
+  expect(api.answerRequests).toBe(1);
   expect(api.statusRequests).toBe(0);
 });
 

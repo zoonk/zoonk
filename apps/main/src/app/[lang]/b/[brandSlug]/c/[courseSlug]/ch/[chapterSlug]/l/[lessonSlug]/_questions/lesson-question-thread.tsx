@@ -136,27 +136,6 @@ function GuestThread<Href extends string>({ loginHref }: { loginHref: AppRoute<H
   );
 }
 
-function SubscriptionGate() {
-  const t = useExtracted();
-
-  return (
-    <Empty className="min-h-full p-6">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <MessageSquareTextIcon />
-        </EmptyMedia>
-        <EmptyTitle className="text-base">{t("Subscribe to ask questions")}</EmptyTitle>
-        <EmptyDescription>{t("Get answers and explanations as you learn.")}</EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Link className={buttonVariants()} href="/subscription" prefetch>
-          {t("Subscribe")}
-        </Link>
-      </EmptyContent>
-    </Empty>
-  );
-}
-
 function ThreadViewport({ children, ...props }: React.ComponentProps<"div">) {
   const t = useExtracted();
 
@@ -177,12 +156,10 @@ function ThreadViewport({ children, ...props }: React.ComponentProps<"div">) {
 export function QuestionThread<Href extends string>({
   controller,
   isAuthenticated,
-  isSubscribed,
   loginHref,
 }: {
   controller: LessonQuestionController;
   isAuthenticated: boolean;
-  isSubscribed: boolean;
   loginHref: AppRoute<Href>;
 }) {
   const t = useExtracted();
@@ -196,14 +173,6 @@ export function QuestionThread<Href extends string>({
     return (
       <ThreadViewport>
         <GuestThread loginHref={loginHref} />
-      </ThreadViewport>
-    );
-  }
-
-  if (!isSubscribed) {
-    return (
-      <ThreadViewport>
-        <SubscriptionGate />
       </ThreadViewport>
     );
   }

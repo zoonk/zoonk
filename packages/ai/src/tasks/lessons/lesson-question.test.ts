@@ -122,7 +122,6 @@ describe(streamLessonQuestionAnswer, () => {
             order: ["openai", "azure", "google", "anthropic", "vertex"],
           },
         },
-        reasoning: "minimal",
       }),
     );
 
@@ -136,6 +135,7 @@ describe(streamLessonQuestionAnswer, () => {
     );
 
     expect(call).not.toHaveProperty("tools");
+    expect(call?.reasoning).toBeUndefined();
 
     generation.consumeStream();
     expect(consumeStream).toHaveBeenCalledExactlyOnceWith();
