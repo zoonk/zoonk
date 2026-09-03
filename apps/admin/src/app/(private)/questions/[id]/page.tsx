@@ -137,8 +137,11 @@ async function QuestionDetailContent({ params }: Pick<PageProps<"/questions/[id]
             {question.model ?? question.requestedModel ?? "—"}
           </QuestionDetailField>
           <QuestionDetailField label="Provider">{question.provider ?? "—"}</QuestionDetailField>
-          <QuestionDetailField label="Tokens">
-            {question.totalTokens?.toLocaleString() ?? "—"}
+          <QuestionDetailField label="Input tokens">
+            {question.inputTokens?.toLocaleString() ?? "—"}
+          </QuestionDetailField>
+          <QuestionDetailField label="Output tokens">
+            {question.outputTokens?.toLocaleString() ?? "—"}
           </QuestionDetailField>
           <QuestionDetailField label="Finish reason">
             {question.finishReason ?? "—"}
