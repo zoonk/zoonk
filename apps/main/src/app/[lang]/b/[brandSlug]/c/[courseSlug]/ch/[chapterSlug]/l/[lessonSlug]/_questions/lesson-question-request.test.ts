@@ -1,6 +1,10 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { isUuid } from "@zoonk/utils/uuid";
 import { describe, expect, it } from "vitest";
-import { getLessonQuestionContextInput } from "./lesson-question-request";
+import {
+  getAnswerExplanationRequestId,
+  getLessonQuestionContextInput,
+} from "./lesson-question-request";
 
 const STEP = {
   content: {
@@ -23,6 +27,20 @@ const STEP = {
   word: null,
   wordBankOptions: [],
 } satisfies SerializedStep;
+
+function getAnswerContext(selectedOptionId: string) {
+  return {
+    kind: "answer" as const,
+    result: {
+      answer: { kind: "multipleChoice" as const, selectedOptionId },
+      result: { correctAnswer: "Answer A", feedback: "Hidden feedback", isCorrect: false },
+      stepId: STEP.id,
+    },
+    selectedAnswer: { kind: "multipleChoice" as const, selectedOptionId },
+    step: STEP,
+    stepIndex: 0,
+  };
+}
 
 describe("lesson question requests", () => {
   it("sends only the step reference and learner answer to the trusted API boundary", () => {
@@ -90,5 +108,37 @@ describe("lesson question requests", () => {
         lessonStepIds,
       }),
     ).toStrictEqual({ kind: "step", stepId: currentStepId, stepNumber: 11 });
+  });
+
+  it("reuses one request id for the same answer explanation", async () => {
+    const input = {
+      context: getAnswerContext("answer-b"),
+      lessonStepIds: [STEP.id],
+      question: "Why was my answer wrong? Explain the correct answer.",
+    };
+
+    const firstRequestId = await getAnswerExplanationRequestId(input);
+    const secondRequestId = await getAnswerExplanationRequestId(input);
+
+    expect(firstRequestId).toBe(secondRequestId);
+    expect(isUuid(firstRequestId)).toBe(true);
+  });
+
+  it("uses a different request id for a different submitted answer", async () => {
+    const question = "Why was my answer wrong? Explain the correct answer.";
+
+    const firstRequestId = await getAnswerExplanationRequestId({
+      context: getAnswerContext("answer-a"),
+      lessonStepIds: [STEP.id],
+      question,
+    });
+
+    const secondRequestId = await getAnswerExplanationRequestId({
+      context: getAnswerContext("answer-b"),
+      lessonStepIds: [STEP.id],
+      question,
+    });
+
+    expect(firstRequestId).not.toBe(secondRequestId);
   });
 });

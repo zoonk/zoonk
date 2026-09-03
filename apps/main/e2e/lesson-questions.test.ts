@@ -335,9 +335,13 @@ async function mockQuestionApi({
     if (existingRequest) {
       const isSameRequest = JSON.stringify(existingRequest.input) === JSON.stringify(input);
 
+      const currentQuestion =
+        state.questions.find((question) => question.id === existingRequest.question.id) ??
+        existingRequest.question;
+
       const replayedQuestion = completeQuestionBeforeReplay
-        ? { ...existingRequest.question, answer: ANSWER_TEXT, status: "completed" as const }
-        : existingRequest.question;
+        ? { ...currentQuestion, answer: ANSWER_TEXT, status: "completed" as const }
+        : currentQuestion;
 
       if (completeQuestionBeforeReplay) {
         questionsByRequestId.set(input.requestId, { input, question: replayedQuestion });
@@ -1643,6 +1647,17 @@ test("explains correct and incorrect answers on demand with validated answer con
   });
 
   await authenticatedPage.keyboard.press("Escape");
+  await authenticatedPage.getByRole("button", { name: "Explain answer" }).click();
+
+  await expect(
+    dialog.getByText("Why was my answer wrong? Explain the correct answer."),
+  ).toHaveCount(1);
+
+  await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(1);
+  expect(api.questions).toHaveLength(1);
+  expect(api.answerRequests).toBe(1);
+
+  await authenticatedPage.keyboard.press("Escape");
   await authenticatedPage.reload();
   await authenticatedPage.getByRole("radio", { name: scenario.correctOption }).click();
   await authenticatedPage.getByRole("button", { name: /check/iu }).click();
@@ -1651,7 +1666,7 @@ test("explains correct and incorrect answers on demand with validated answer con
   await expect(dialog.getByText("Why is this answer correct?")).toBeVisible();
   await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(2);
 
-  expect(api.inputs[1]).toMatchObject({
+  expect(api.inputs.at(-1)).toMatchObject({
     context: {
       answer: { kind: "multipleChoice", selectedOptionId: scenario.correctOptionId },
       kind: "answer",

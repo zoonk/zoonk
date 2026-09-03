@@ -25,11 +25,13 @@ function getQuestionCreateRequest({
   lessonSteps,
   pendingRequest,
   question,
+  requestId,
 }: {
   context: PlayerQuestionContext;
   lessonSteps: readonly { id: string }[];
   pendingRequest: PendingQuestionCreateRequest | null;
   question: string;
+  requestId?: string;
 }): PendingQuestionCreateRequest {
   if (pendingRequest) {
     return pendingRequest;
@@ -43,7 +45,7 @@ function getQuestionCreateRequest({
       }),
       question,
     },
-    requestId: crypto.randomUUID(),
+    requestId: requestId ?? crypto.randomUUID(),
   };
 }
 
@@ -76,11 +78,13 @@ export function useSendLessonQuestion({
       authoritativeQuestions,
       context,
       question,
+      requestId,
       retryUnresolved,
     }: {
       authoritativeQuestions?: LessonQuestionResource[];
       context: PlayerQuestionContext;
       question: string;
+      requestId?: string;
       retryUnresolved: boolean;
     }) => {
       const unresolvedRequest = retryUnresolved ? pendingCreateRequest.current : null;
@@ -110,6 +114,7 @@ export function useSendLessonQuestion({
         lessonSteps,
         pendingRequest: unresolvedRequest,
         question,
+        requestId,
       });
 
       const input = { ...request.input, requestId: request.requestId };
@@ -165,15 +170,18 @@ export function useSendLessonQuestion({
       context,
       question,
       questions,
+      requestId,
     }: {
       context: PlayerQuestionContext;
       question: string;
       questions: LessonQuestionResource[];
+      requestId: string;
     }) =>
       submitQuestion({
         authoritativeQuestions: questions,
         context,
         question: question.trim(),
+        requestId,
         retryUnresolved: false,
       }),
     [submitQuestion],

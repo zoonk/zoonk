@@ -3,6 +3,7 @@
 import { type PlayerQuestionContext, type PlayerQuestionSupport } from "@zoonk/player/provider";
 import { safeAsync } from "@zoonk/utils/error";
 import { useCallback, useMemo, useReducer } from "react";
+import { getAnswerExplanationRequestId } from "./lesson-question-request";
 import {
   INITIAL_LESSON_QUESTION_STATE,
   type LessonQuestionState,
@@ -95,15 +96,22 @@ export function useLessonQuestions({
         return;
       }
 
-      const questions = await loadThread();
+      const [questions, requestId] = await Promise.all([
+        loadThread(),
+        getAnswerExplanationRequestId({
+          context,
+          lessonStepIds: lessonSteps.map((step) => step.id),
+          question,
+        }),
+      ]);
 
       if (!questions) {
         return;
       }
 
-      await sendPrepared({ context, question, questions });
+      await sendPrepared({ context, question, questions, requestId });
     },
-    [canAskQuestions, canExplainAnswer, loadThread, sendPrepared],
+    [canAskQuestions, canExplainAnswer, lessonSteps, loadThread, sendPrepared],
   );
 
   const copy = useCallback(async (text: string) => {
