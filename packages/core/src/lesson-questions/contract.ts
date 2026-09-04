@@ -2,7 +2,6 @@ import { z } from "zod";
 import { createSelectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
 
 export const MAX_LESSON_QUESTION_LENGTH = 2000;
-export const MAX_LESSON_QUESTION_CONTEXT_STEPS = 50;
 export const MAX_LESSON_QUESTION_THREAD_TURNS = 50;
 
 const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
@@ -26,10 +25,7 @@ const lessonQuestionSelectedAnswerSchema = createSelectedAnswerSchema({
 });
 
 const lessonQuestionLessonContextInputSchema = z
-  .object({
-    kind: z.literal("lesson"),
-    stepIds: z.array(z.uuid()).max(MAX_LESSON_QUESTION_CONTEXT_STEPS).optional(),
-  })
+  .object({ kind: z.literal("lesson"), stepIds: z.array(z.uuid()).optional() })
   .strict();
 
 /**

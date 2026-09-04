@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { MAX_LESSON_QUESTION_CONTEXT_STEPS, createLessonQuestionInputSchema } from "./contract";
+import { createLessonQuestionInputSchema } from "./contract";
 
 const FIRST_INTEGER_ABOVE_PRISMA_RANGE = 2_147_483_648;
 
@@ -21,20 +21,8 @@ describe(parseCreateInput, () => {
     expect(parseCreateInput({ kind: "lesson", stepIds }).success).toBe(true);
   });
 
-  it("rejects a lesson context above the provider grounding budget", () => {
-    const stepIds = Array.from({ length: MAX_LESSON_QUESTION_CONTEXT_STEPS + 1 }, () =>
-      randomUUID(),
-    );
-
-    expect(parseCreateInput({ kind: "lesson", stepIds }).success).toBe(false);
-  });
-
-  it("does not apply the lesson context budget to a displayed step number", () => {
-    const result = parseCreateInput({
-      kind: "step",
-      stepId: randomUUID(),
-      stepNumber: MAX_LESSON_QUESTION_CONTEXT_STEPS + 1,
-    });
+  it("accepts a displayed step number in a long lesson", () => {
+    const result = parseCreateInput({ kind: "step", stepId: randomUUID(), stepNumber: 51 });
 
     expect(result.success).toBe(true);
   });

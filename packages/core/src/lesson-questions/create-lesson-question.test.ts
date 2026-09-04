@@ -14,6 +14,7 @@ import {
   parseLessonQuestionContextSnapshot,
   toDatabaseLessonQuestionContextSnapshot,
 } from "./_utils/context-snapshot-schema";
+import { createLessonQuestionInputSchema } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
@@ -78,6 +79,58 @@ describe(createLessonQuestion, () => {
   beforeEach(() => {
     mockSession(null);
   });
+
+  it.each([true, false])(
+    "preserves the full content of a long lesson (explicit step IDs: %s)",
+    async (withStepIds) => {
+      const { lesson, user } = await createPublishedCurriculum();
+
+      const steps = await Promise.all(
+        Array.from({ length: 51 }, (_, position) =>
+          stepFixture({
+            content: {
+              text: `Lesson content ${position + 1}`,
+              title: `Topic ${position + 1}`,
+              variant: "text",
+            },
+            isPublished: true,
+            kind: "static",
+            lessonId: lesson.id,
+            position,
+          }),
+        ),
+      );
+
+      mockSession(user.id);
+
+      const orderedSteps = withStepIds ? steps.toReversed() : steps;
+
+      const input = createLessonQuestionInputSchema.parse({
+        context: withStepIds
+          ? { kind: "lesson", stepIds: orderedSteps.map((step) => step.id) }
+          : { kind: "lesson" },
+        question: "How does the last topic connect to the first?",
+        requestId: randomUUID(),
+      });
+
+      const result = await createLessonQuestion({ input, lessonId: lesson.id });
+      expect(result.status).toBe("created");
+
+      if (result.status !== "created") {
+        throw new Error("Expected a question about a long lesson to be created");
+      }
+
+      const stored = await prisma.lessonQuestion.findUniqueOrThrow({
+        where: { id: result.question.id },
+      });
+
+      const snapshot = parseLessonQuestionContextSnapshot(stored.contextSnapshot);
+
+      expect(snapshot.lessonSteps.map((step) => step.content)).toStrictEqual(
+        orderedSteps.map((step) => step.content),
+      );
+    },
+  );
 
   it("does not create question history for a guest", async () => {
     const { lesson } = await createPublishedCurriculum();

@@ -7,7 +7,7 @@ import { getPublishedStepWhere, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { ANSWERABLE_STEP_KINDS } from "../../player/contracts/validate-answers";
 import { isSupportedStepKind, parseStepContent } from "../../steps/contract/content";
-import { type LessonQuestionContextInput, MAX_LESSON_QUESTION_CONTEXT_STEPS } from "../contract";
+import { type LessonQuestionContextInput } from "../contract";
 import { getLessonQuestionAnswer } from "./answer-context";
 import { type LessonQuestionAccessLesson } from "./question-access";
 import { type LessonQuestionStep, lessonQuestionStepInclude } from "./question-step";
@@ -65,6 +65,7 @@ function orderStepsByRequestedIds({
   });
 }
 
+/** Lesson length must not prevent asking questions; include all requested, authorized steps. */
 async function getQuestionSteps({
   context,
   lesson,
@@ -74,25 +75,17 @@ async function getQuestionSteps({
 }) {
   const requestedStepIds = getRequestedStepIds(context);
 
-  if (
-    requestedStepIds.length > MAX_LESSON_QUESTION_CONTEXT_STEPS ||
-    !hasUniqueIds(requestedStepIds) ||
-    requestedStepIds.some((stepId) => !isUuid(stepId))
-  ) {
+  if (!hasUniqueIds(requestedStepIds) || requestedStepIds.some((stepId) => !isUuid(stepId))) {
     return { status: "invalidContext" as const };
   }
 
   const steps = await prisma.step.findMany({
     include: lessonQuestionStepInclude,
     orderBy: [{ lesson: { position: "asc" } }, { position: "asc" }],
-    take: requestedStepIds.length === 0 ? MAX_LESSON_QUESTION_CONTEXT_STEPS + 1 : undefined,
     where: getQuestionStepWhere({ lesson, requestedStepIds }),
   });
 
-  if (
-    steps.length > MAX_LESSON_QUESTION_CONTEXT_STEPS ||
-    (requestedStepIds.length > 0 && steps.length !== requestedStepIds.length)
-  ) {
+  if (requestedStepIds.length > 0 && steps.length !== requestedStepIds.length) {
     return { status: "invalidContext" as const };
   }
 
