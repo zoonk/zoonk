@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { renderHook } from "@testing-library/react";
+import { cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { type PlayerKeyboardModel } from "./player-screen";
 import { usePlayerKeyboard } from "./use-player-keyboard";
@@ -25,12 +25,20 @@ function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]
 }
 
 function fireKey(key: string, modifiers: Partial<KeyboardEventInit> = {}) {
-  const event = new KeyboardEvent("keydown", { bubbles: true, key, ...modifiers });
+  const event = new KeyboardEvent("keydown", {
+    bubbles: true,
+    cancelable: true,
+    key,
+    ...modifiers,
+  });
+
   globalThis.dispatchEvent(event);
+  return event;
 }
 
 describe(usePlayerKeyboard, () => {
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
   });
 
@@ -209,6 +217,29 @@ describe(usePlayerKeyboard, () => {
 
       expect(opts.onRestart).not.toHaveBeenCalled();
     });
+  });
+
+  it("does not handle player shortcuts while interaction is paused", () => {
+    const opts = buildOptions({
+      interactionState: "paused",
+      keyboard: {
+        canRestart: true,
+        enterAction: "check",
+        leftAction: "navigatePrev",
+        rightAction: "navigateNext",
+      },
+    });
+
+    renderHook(() => usePlayerKeyboard(opts));
+
+    const events = ["Enter", "r", "ArrowRight", "ArrowLeft", "Escape"].map((key) => fireKey(key));
+
+    expect(opts.onCheck).not.toHaveBeenCalled();
+    expect(opts.onNavigateNext).not.toHaveBeenCalled();
+    expect(opts.onNavigatePrev).not.toHaveBeenCalled();
+    expect(opts.onRestart).not.toHaveBeenCalled();
+    expect(opts.onEscape).not.toHaveBeenCalled();
+    expect(events.every((event) => !event.defaultPrevented)).toBe(true);
   });
 
   describe("modifier keys", () => {

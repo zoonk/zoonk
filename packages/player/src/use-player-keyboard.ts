@@ -66,6 +66,11 @@ function runKeyboardAction({
   }
 }
 
+/**
+ * The question sheet sets `interactionState` to "paused" while it is open.
+ * Player shortcuts must yield in that state so keys used in the sheet cannot
+ * also check an answer, navigate, restart, or exit the lesson.
+ */
 export function usePlayerKeyboard({
   interactionState,
   keyboard,
