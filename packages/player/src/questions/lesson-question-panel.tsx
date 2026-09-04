@@ -11,6 +11,7 @@ import {
 } from "@zoonk/ui/components/sheet";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import dynamic from "next/dynamic";
 import { QuestionComposer } from "./lesson-question-composer";
 import { LessonQuestionCopyAction } from "./lesson-question-copy-action";
 import {
@@ -18,8 +19,14 @@ import {
   LessonQuestionNavigationContext,
 } from "./lesson-question-navigation";
 import { type LessonQuestionPanelMetadata } from "./lesson-question-panel-types";
-import { QuestionThread } from "./lesson-question-thread";
+import { ThreadViewportSkeleton } from "./lesson-question-thread-viewport";
 import { type LessonQuestionController } from "./use-lesson-questions";
+
+/** Load the conversation and Markdown together so saved answers don't resize an already visible thread. */
+const QuestionThread = dynamic(
+  () => import("./lesson-question-thread").then((module) => module.QuestionThread),
+  { loading: ThreadViewportSkeleton, ssr: false },
+);
 
 function LessonQuestionPanelHeader({
   controller,

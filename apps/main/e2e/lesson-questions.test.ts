@@ -1257,6 +1257,65 @@ test("announces the initial question history load", async ({
   await expect(dialog.getByText("What would you like help with?")).toBeVisible();
 });
 
+test("reveals saved questions and answers together when conversation code loads slowly", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson({ staticOnly: true });
+
+  const savedQuestion = questionResource({
+    answer: `### Staying in orbit\n\n${ANSWER_TEXT}`,
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "Why doesn't the satellite fall straight down?",
+    status: "completed",
+  });
+
+  const api = await mockQuestionApi({
+    initialQuestions: [savedQuestion],
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+  });
+
+  await authenticatedPage.setViewportSize({ height: 812, width: 375 });
+  await authenticatedPage.goto(scenario.url);
+  const askButton = authenticatedPage.getByRole("button", { name: "Ask about this lesson" });
+  await expect(askButton).toBeVisible();
+
+  const scriptRequested = Promise.withResolvers<null>();
+  const releaseScripts = Promise.withResolvers<null>();
+
+  // Hold real lazy-loaded scripts to reproduce a cold, slow connection without mocking the renderer.
+  await authenticatedPage.route("**/_next/static/chunks/*.js", async (route) => {
+    scriptRequested.resolve(null);
+    await releaseScripts.promise;
+    await route.continue();
+  });
+
+  const dialog = authenticatedPage.getByRole("dialog");
+
+  try {
+    await askButton.click();
+    await scriptRequested.promise;
+    await expect.poll(() => api.completedGetRequests).toBe(1);
+
+    await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "Copy lesson content" })).toBeVisible();
+    await expect(dialog.getByRole("status")).toHaveText("Loading questions…");
+    await expect(dialog.getByText(savedQuestion.question)).toHaveCount(0);
+    await dialog.getByRole("textbox", { name: "Ask a question" }).fill("My follow-up question");
+  } finally {
+    releaseScripts.resolve(null);
+  }
+
+  await expect(dialog.getByRole("heading", { name: "Staying in orbit" })).toBeVisible();
+  await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  await expect(dialog.getByRole("status")).toHaveCount(0);
+
+  await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveValue(
+    "My follow-up question",
+  );
+});
+
 test("keeps saved history visible but blocks sending during a reopen refresh", async ({
   subscriberPage: authenticatedPage,
 }) => {

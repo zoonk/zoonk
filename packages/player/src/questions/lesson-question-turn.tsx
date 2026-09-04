@@ -5,12 +5,11 @@ import { Bubble, BubbleContent } from "@zoonk/ui/components/bubble";
 import { Button } from "@zoonk/ui/components/button";
 import { Marker, MarkerContent } from "@zoonk/ui/components/marker";
 import { Message, MessageContent, MessageHeader } from "@zoonk/ui/components/message";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import dynamic from "next/dynamic";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
+import { LessonQuestionMarkdown } from "./lesson-question-markdown";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function QuestionContextLabel({ context }: { context: LessonQuestionContextSummary }) {
@@ -22,20 +21,6 @@ function QuestionContextLabel({ context }: { context: LessonQuestionContextSumma
 
   return <>{t("About this lesson")}</>;
 }
-
-function AnswerMarkdownSkeleton() {
-  return (
-    <div aria-hidden="true" className="flex flex-col gap-2 py-1">
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-4/5" />
-    </div>
-  );
-}
-
-const AnswerMarkdown = dynamic(
-  () => import("./lesson-question-markdown").then((module) => module.LessonQuestionMarkdown),
-  { loading: AnswerMarkdownSkeleton, ssr: false },
-);
 
 function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null }) {
   const t = useExtracted();
@@ -76,7 +61,9 @@ function QuestionAnswer({
   if (status === "failed") {
     return (
       <div className="flex flex-col items-start gap-3">
-        {answer && <AnswerMarkdown answer={answer} isAnimating={false} isStreaming={false} />}
+        {answer && (
+          <LessonQuestionMarkdown answer={answer} isAnimating={false} isStreaming={false} />
+        )}
         <p className="text-destructive text-sm">
           <AnswerFailureMessage error={error} />
         </p>
@@ -89,7 +76,7 @@ function QuestionAnswer({
     return (
       <div className="flex flex-col items-start gap-3">
         <div className="text-foreground w-full min-w-0">
-          <AnswerMarkdown
+          <LessonQuestionMarkdown
             answer={answer}
             isAnimating={isLocallyStreaming}
             isStreaming={status === "running"}

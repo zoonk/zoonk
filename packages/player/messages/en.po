@@ -632,7 +632,12 @@ msgctxt "haOEeK"
 msgid "Ask questions about this lesson"
 msgstr "Ask questions about this lesson"
 
-#: src/questions/lesson-question-thread.tsx
+#: src/questions/lesson-question-thread-viewport.tsx
+msgctxt "E6r0bc"
+msgid "Scroll to latest"
+msgstr "Scroll to latest"
+
+#: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "RIj9BB"
 msgid "Loading questions…"
 msgstr "Loading questions…"
@@ -666,11 +671,6 @@ msgstr "What would you like help with?"
 msgctxt "I7p0KB"
 msgid "Sign in to ask questions"
 msgstr "Sign in to ask questions"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "E6r0bc"
-msgid "Scroll to latest"
-msgstr "Scroll to latest"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "jJ8jWo"
