@@ -10,7 +10,7 @@ export const lessonQuestionTask: Task<
   GenerateLessonQuestionAnswerParams,
   LessonQuestionAnswerSchema
 > = {
-  description: "Answer learner questions using bounded lesson, step, and validated answer context",
+  description: "Answer learner questions using lesson, step, and validated answer context",
   generate: generateLessonQuestionAnswer,
   id: "lesson-question",
   name: "Lesson Question",
