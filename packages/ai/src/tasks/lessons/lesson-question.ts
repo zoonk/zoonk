@@ -135,7 +135,6 @@ function createLessonQuestionGenerationOptions({
 }) {
   return {
     instructions: systemPrompt,
-    maxOutputTokens: 600,
     messages: createLessonQuestionMessages({ contextSnapshot, priorTurns, question }),
     model,
     providerOptions: buildProviderOptions({ fallbackModels, model, useFallback }),
