@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getGenerationLimit } from "./generation-limit";
+import { getGenerationLimit } from "./parse-limit";
 
 describe(getGenerationLimit, () => {
   it("parses the API generation limit contract", () => {

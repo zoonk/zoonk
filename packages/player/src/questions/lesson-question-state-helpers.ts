@@ -1,5 +1,5 @@
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
-import { type PlayerQuestionContext } from "@zoonk/player/provider";
+import { type PlayerQuestionContext } from "../player-context";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 
 export function updateQuestionById({

@@ -518,9 +518,6 @@ importers:
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      ai:
-        specifier: 'catalog:'
-        version: 7.0.66(zod@4.4.3)
       botid:
         specifier: 'catalog:'
         version: 1.5.11(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -554,9 +551,6 @@ importers:
       server-only:
         specifier: 'catalog:'
         version: 0.0.1
-      streamdown:
-        specifier: 2.5.0
-        version: 2.5.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -907,6 +901,9 @@ importers:
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../utils
+      ai:
+        specifier: 'catalog:'
+        version: 7.0.66(zod@4.4.3)
       katex:
         specifier: 0.18.4
         version: 0.18.4
@@ -928,6 +925,9 @@ importers:
       recharts:
         specifier: 'catalog:'
         version: 3.10.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(redux@5.0.1)
+      streamdown:
+        specifier: 2.5.0
+        version: 2.5.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)
       web-haptics:
         specifier: 0.0.6
         version: 0.0.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

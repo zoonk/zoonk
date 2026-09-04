@@ -1,7 +1,11 @@
 "use client";
 
 import { type Dispatch, useCallback, useRef } from "react";
-import { getLessonQuestionRequest, streamLessonQuestionAnswerRequest } from "./lesson-question-api";
+import {
+  type LessonQuestionConnection,
+  getLessonQuestionRequest,
+  streamLessonQuestionAnswerRequest,
+} from "./lesson-question-api";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 import {
   hasOtherAnswerInProgress,
@@ -9,10 +13,12 @@ import {
 } from "./lesson-question-status";
 
 export function useLessonQuestionAnswers({
+  connection,
   canAskQuestions,
   dispatch,
   state,
 }: {
+  connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
   state: LessonQuestionState;
@@ -21,7 +27,7 @@ export function useLessonQuestionAnswers({
 
   const reconcileAnswerFailure = useCallback(
     async ({ questionId, reason }: Extract<LessonQuestionAction, { type: "answerFailed" }>) => {
-      const result = await getLessonQuestionRequest({ questionId });
+      const result = await getLessonQuestionRequest({ connection, questionId });
 
       if (result.status === "error") {
         dispatch({ questionId, reason, type: "answerFailed" });
@@ -41,7 +47,7 @@ export function useLessonQuestionAnswers({
         dispatch({ questionId, reason, type: "answerFailed" });
       }
     },
-    [dispatch],
+    [connection, dispatch],
   );
 
   const streamAnswer = useCallback(
@@ -49,6 +55,7 @@ export function useLessonQuestionAnswers({
       dispatch({ questionId, type: "answerStarted" });
 
       const result = await streamLessonQuestionAnswerRequest({
+        connection,
         onChunk: (chunk) => dispatch({ chunk, questionId, type: "answerChunkReceived" }),
         questionId,
       });
@@ -60,7 +67,7 @@ export function useLessonQuestionAnswers({
 
       dispatch({ questionId, type: "answerCompleted" });
     },
-    [dispatch, reconcileAnswerFailure],
+    [connection, dispatch, reconcileAnswerFailure],
   );
 
   const retryAnswer = useCallback(
@@ -96,7 +103,7 @@ export function useLessonQuestionAnswers({
       }
 
       answerChecksInFlight.current.add(questionId);
-      const result = await getLessonQuestionRequest({ questionId });
+      const result = await getLessonQuestionRequest({ connection, questionId });
       answerChecksInFlight.current.delete(questionId);
 
       if (result.status === "error") {
@@ -109,7 +116,7 @@ export function useLessonQuestionAnswers({
 
       dispatch({ questions: [result.data], type: "latestThreadReconciled" });
     },
-    [canAskQuestions, dispatch, state.activeQuestionId, state.questions],
+    [connection, canAskQuestions, dispatch, state.activeQuestionId, state.questions],
   );
 
   return { checkAnswer, retryAnswer, streamAnswer };

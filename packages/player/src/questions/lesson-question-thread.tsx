@@ -1,6 +1,5 @@
 "use client";
 
-import { type AppRoute, Link } from "@/i18n/navigation";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -24,6 +23,7 @@ import { ArrowDownIcon, MessageSquareTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
+import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { QuestionTurn } from "./lesson-question-turn";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -51,13 +51,11 @@ function ThreadLoading() {
   );
 }
 
-function ThreadLoadError<Href extends string>({
+function ThreadLoadError({
   error,
-  loginHref,
   onRetry,
 }: {
   error: LessonQuestionApiError | null;
-  loginHref: AppRoute<Href>;
   onRetry: () => void;
 }) {
   return (
@@ -71,7 +69,7 @@ function ThreadLoadError<Href extends string>({
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <QuestionErrorAction error={error} loginHref={loginHref} onRetry={onRetry} />
+        <QuestionErrorAction error={error} onRetry={onRetry} />
       </EmptyContent>
     </Empty>
   );
@@ -116,8 +114,9 @@ function EmptyThread({
   );
 }
 
-function GuestThread<Href extends string>({ loginHref }: { loginHref: AppRoute<Href> }) {
+function GuestThread() {
   const t = useExtracted();
+  const { linkComponent: Link, loginHref } = useLessonQuestionNavigation();
 
   return (
     <Empty className="min-h-full p-6">
@@ -153,14 +152,12 @@ function ThreadViewport({ children, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export function QuestionThread<Href extends string>({
+export function QuestionThread({
   controller,
   isAuthenticated,
-  loginHref,
 }: {
   controller: LessonQuestionController;
   isAuthenticated: boolean;
-  loginHref: AppRoute<Href>;
 }) {
   const t = useExtracted();
   const { state } = controller;
@@ -172,7 +169,7 @@ export function QuestionThread<Href extends string>({
   if (!isAuthenticated) {
     return (
       <ThreadViewport>
-        <GuestThread loginHref={loginHref} />
+        <GuestThread />
       </ThreadViewport>
     );
   }
@@ -188,11 +185,7 @@ export function QuestionThread<Href extends string>({
   if (state.error === "load") {
     return (
       <ThreadViewport>
-        <ThreadLoadError
-          error={state.requestError}
-          loginHref={loginHref}
-          onRetry={() => void controller.load()}
-        />
+        <ThreadLoadError error={state.requestError} onRetry={() => void controller.load()} />
       </ThreadViewport>
     );
   }
@@ -237,7 +230,6 @@ export function QuestionThread<Href extends string>({
               activeQuestionId={state.activeQuestionId}
               answerError={state.answerError}
               answerInProgressCount={answerInProgressCount}
-              loginHref={loginHref}
               onCheckAgain={(questionId) => void controller.checkAnswer(questionId)}
               onRetry={(questionId) => void controller.retryAnswer(questionId)}
               question={question}

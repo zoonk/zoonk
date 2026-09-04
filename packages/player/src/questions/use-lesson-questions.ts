@@ -1,8 +1,9 @@
 "use client";
 
-import { type PlayerQuestionContext, type PlayerQuestionSupport } from "@zoonk/player/provider";
 import { safeAsync } from "@zoonk/utils/error";
 import { useCallback, useMemo, useReducer } from "react";
+import { type PlayerQuestionContext, type PlayerQuestionSupport } from "../player-context";
+import { type LessonQuestionConnection } from "./lesson-question-api";
 import { getAnswerExplanationRequestId } from "./lesson-question-request";
 import {
   INITIAL_LESSON_QUESTION_STATE,
@@ -15,6 +16,7 @@ import { useLessonQuestionThread } from "./use-lesson-question-thread";
 import { useSendLessonQuestion } from "./use-send-lesson-question";
 
 type UseLessonQuestionsInput = {
+  connection: LessonQuestionConnection;
   isAuthenticated: boolean;
   lessonId: string;
   lessonSteps: readonly { id: string }[];
@@ -35,6 +37,7 @@ export type LessonQuestionController = {
 };
 
 export function useLessonQuestions({
+  connection,
   isAuthenticated,
   lessonId,
   lessonSteps,
@@ -45,6 +48,7 @@ export function useLessonQuestions({
 
   const { load, loadEarlier, loadThread, reconcileLatestThread } = useLessonQuestionThread({
     canAskQuestions,
+    connection,
     dispatch,
     lessonId,
     state,
@@ -67,12 +71,14 @@ export function useLessonQuestions({
 
   const { checkAnswer, retryAnswer, streamAnswer } = useLessonQuestionAnswers({
     canAskQuestions,
+    connection,
     dispatch,
     state,
   });
 
   const { send, sendPrepared, unresolvedQuestion } = useSendLessonQuestion({
     canAskQuestions,
+    connection,
     dispatch,
     lessonId,
     lessonSteps,
@@ -81,7 +87,7 @@ export function useLessonQuestions({
     streamAnswer,
   });
 
-  useLessonQuestionRecovery({ canAskQuestions, dispatch, state, streamAnswer });
+  useLessonQuestionRecovery({ canAskQuestions, connection, dispatch, state, streamAnswer });
 
   const explainAnswer = useCallback(
     async ({ context, question }: { context: PlayerQuestionContext; question: string }) => {

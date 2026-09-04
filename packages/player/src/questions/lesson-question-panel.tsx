@@ -1,6 +1,5 @@
 "use client";
 
-import { type AppRoute } from "@/i18n/navigation";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Sheet,
@@ -14,6 +13,10 @@ import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { QuestionComposer } from "./lesson-question-composer";
 import { LessonQuestionCopyAction } from "./lesson-question-copy-action";
+import {
+  type LessonQuestionNavigation,
+  LessonQuestionNavigationContext,
+} from "./lesson-question-navigation";
 import { type LessonQuestionPanelMetadata } from "./lesson-question-panel-types";
 import { QuestionThread } from "./lesson-question-thread";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -54,38 +57,36 @@ function LessonQuestionPanelHeader({
   );
 }
 
-export function LessonQuestionPanel<const Href extends string>({
+export function LessonQuestionPanel({
+  navigation,
   controller,
   isAuthenticated,
-  loginHref,
   metadata,
 }: {
   controller: LessonQuestionController;
+  navigation: LessonQuestionNavigation;
   isAuthenticated: boolean;
-  loginHref: AppRoute<Href>;
   metadata: LessonQuestionPanelMetadata;
 }) {
   const { state } = controller;
 
   return (
-    <Sheet onOpenChange={(open) => !open && controller.close()} open={state.isOpen}>
-      <SheetContent
-        className="gap-0 outline-none data-[side=right]:w-full sm:max-w-md"
-        showCloseButton={false}
-        side="right"
-      >
-        <LessonQuestionPanelHeader controller={controller} metadata={metadata} />
+    <LessonQuestionNavigationContext value={navigation}>
+      <Sheet onOpenChange={(open) => !open && controller.close()} open={state.isOpen}>
+        <SheetContent
+          className="gap-0 outline-none data-[side=right]:w-full sm:max-w-md"
+          showCloseButton={false}
+          side="right"
+        >
+          <LessonQuestionPanelHeader controller={controller} metadata={metadata} />
 
-        <div className="min-h-0 flex-1">
-          <QuestionThread
-            controller={controller}
-            isAuthenticated={isAuthenticated}
-            loginHref={loginHref}
-          />
-        </div>
+          <div className="min-h-0 flex-1">
+            <QuestionThread controller={controller} isAuthenticated={isAuthenticated} />
+          </div>
 
-        {isAuthenticated && <QuestionComposer controller={controller} loginHref={loginHref} />}
-      </SheetContent>
-    </Sheet>
+          {isAuthenticated && <QuestionComposer controller={controller} />}
+        </SheetContent>
+      </Sheet>
+    </LessonQuestionNavigationContext>
   );
 }

@@ -1,10 +1,10 @@
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import {
   type GenerationQuotaLimit,
   type GenerationQuotaPeriod,
   type GenerationQuotaResource,
   type GenerationQuotaViewer,
-} from "@zoonk/core/generation-quotas/contract";
-import { getString, isJsonObject } from "@zoonk/utils/json";
+} from "./contract";
 
 const GENERATION_QUOTA_PERIODS = new Set<string>(["day", "month"]);
 

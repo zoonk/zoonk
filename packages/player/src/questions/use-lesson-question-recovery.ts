@@ -2,7 +2,7 @@
 
 import { safeAsync } from "@zoonk/utils/error";
 import { type Dispatch, useEffect, useRef } from "react";
-import { getLessonQuestionRequest } from "./lesson-question-api";
+import { type LessonQuestionConnection, getLessonQuestionRequest } from "./lesson-question-api";
 import {
   getLessonQuestionPollDelay,
   hasLessonQuestionPollingBudget,
@@ -77,11 +77,13 @@ function getAnswerLimit(answerError: LessonQuestionState["answerError"]) {
 }
 
 export function useLessonQuestionRecovery({
+  connection,
   canAskQuestions,
   dispatch,
   state,
   streamAnswer,
 }: {
+  connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
   state: LessonQuestionState;
@@ -160,7 +162,11 @@ export function useLessonQuestionRecovery({
         return;
       }
 
-      const result = await getLessonQuestionRequest({ questionId, signal: abortController.signal });
+      const result = await getLessonQuestionRequest({
+        connection,
+        questionId,
+        signal: abortController.signal,
+      });
 
       if (abortController.signal.aborted) {
         return;
@@ -189,7 +195,7 @@ export function useLessonQuestionRecovery({
     return () => {
       abortController.abort();
     };
-  }, [canAskQuestions, dispatch, remoteRunningQuestionId, state.isOpen]);
+  }, [connection, canAskQuestions, dispatch, remoteRunningQuestionId, state.isOpen]);
 
   const limitError = getAnswerLimit(state.answerError);
 

@@ -1,5 +1,5 @@
 import { type LessonQuestionContextInput } from "@zoonk/core/lesson-questions/contract";
-import { type PlayerQuestionContext } from "@zoonk/player/provider";
+import { type PlayerQuestionContext } from "../player-context";
 
 const ANSWER_EXPLANATION_REQUEST_NAMESPACE = "zoonk:lesson-answer-explanation:v1";
 const HEX_RADIX = 16;

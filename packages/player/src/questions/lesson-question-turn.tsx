@@ -1,6 +1,5 @@
 "use client";
 
-import { type AppRoute } from "@/i18n/navigation";
 import { type LessonQuestionContextSummary } from "@zoonk/core/lesson-questions/contract";
 import { Bubble, BubbleContent } from "@zoonk/ui/components/bubble";
 import { Button } from "@zoonk/ui/components/button";
@@ -53,13 +52,12 @@ function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null 
   return <>{t("We couldn't finish this answer.")}</>;
 }
 
-function QuestionAnswer<Href extends string>({
+function QuestionAnswer({
   answer,
   checkAgainDisabled,
   disabled,
   error,
   isLocallyStreaming,
-  loginHref,
   onCheckAgain,
   onRetry,
   status,
@@ -69,7 +67,6 @@ function QuestionAnswer<Href extends string>({
   disabled: boolean;
   error: LessonQuestionApiError | null;
   isLocallyStreaming: boolean;
-  loginHref: AppRoute<Href>;
   onCheckAgain: () => void;
   onRetry: () => void;
   status: "pending" | "running" | "completed" | "failed";
@@ -83,12 +80,7 @@ function QuestionAnswer<Href extends string>({
         <p className="text-destructive text-sm">
           <AnswerFailureMessage error={error} />
         </p>
-        <QuestionErrorAction
-          disabled={disabled}
-          error={error}
-          loginHref={loginHref}
-          onRetry={onRetry}
-        />
+        <QuestionErrorAction disabled={disabled} error={error} onRetry={onRetry} />
       </div>
     );
   }
@@ -144,11 +136,10 @@ function QuestionAnswer<Href extends string>({
   );
 }
 
-export function QuestionTurn<Href extends string>({
+export function QuestionTurn({
   activeQuestionId,
   answerInProgressCount,
   answerError,
-  loginHref,
   onCheckAgain,
   onRetry,
   question,
@@ -156,7 +147,6 @@ export function QuestionTurn<Href extends string>({
   activeQuestionId: string | null;
   answerInProgressCount: number;
   answerError: LessonQuestionController["state"]["answerError"];
-  loginHref: AppRoute<Href>;
   onCheckAgain: (questionId: string) => void;
   onRetry: (questionId: string) => void;
   question: LessonQuestionController["state"]["questions"][number];
@@ -186,7 +176,6 @@ export function QuestionTurn<Href extends string>({
                 disabled={activeQuestionId !== null || answerInProgressCount > 0}
                 error={answerError?.questionId === question.id ? answerError.reason : null}
                 isLocallyStreaming={activeQuestionId === question.id}
-                loginHref={loginHref}
                 onCheckAgain={() => onCheckAgain(question.id)}
                 onRetry={() => onRetry(question.id)}
                 status={question.status}

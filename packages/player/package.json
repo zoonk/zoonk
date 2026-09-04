@@ -5,6 +5,8 @@
   "exports": {
     "./messages": "./src/messages.ts",
     "./provider": "./src/player-provider.tsx",
+    "./questions": "./src/questions.ts",
+    "./questions/styles.css": "./src/questions/styles.css",
     "./shell": "./src/components/player-shell.tsx"
   },
   "scripts": {
@@ -24,9 +26,11 @@
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "ai": "catalog:",
     "katex": "0.18.4",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "streamdown": "2.5.0",
     "web-haptics": "0.0.6"
   },
   "devDependencies": {

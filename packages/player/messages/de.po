@@ -37,6 +37,7 @@ msgstr "Position {position}: {item}. Tippe, um zu entfernen."
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/select-image-step.tsx
+#: src/questions/lesson-question-copy-action.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Deine Antwort"
@@ -58,6 +59,7 @@ msgid "Exit"
 msgstr "Beenden"
 
 #: src/components/completion-actions.tsx
+#: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Erneut versuchen"
@@ -384,6 +386,7 @@ msgid "Lesson controls"
 msgstr "Lektionssteuerung"
 
 #: src/components/select-image-step.tsx
+#: src/questions/lesson-question-copy-action.tsx
 msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "Richtige Antwort"
@@ -467,6 +470,257 @@ msgstr "Nicht ganz"
 msgctxt "lqtP-R"
 msgid "Vocabulary"
 msgstr "Wortschatz"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "pLRK5_"
+msgid "We couldn't send your last question. Try again."
+msgstr "Deine letzte Frage konnte nicht gesendet werden. Versuch es noch einmal."
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "zMPwOt"
+msgid "Retry last question"
+msgstr "Letzte Frage erneut senden"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "9WRlF4"
+msgid "Send"
+msgstr "Senden"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "iPfRms"
+msgid "Ask a question"
+msgstr "Frage stellen"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "6sIYgs"
+msgid "Ask about the lesson content…"
+msgstr "Frag etwas zum Inhalt der Lektion…"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "p556q3"
+msgid "Copied"
+msgstr "Kopiert"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "Lq0WOJ"
+msgid "Copy lesson content"
+msgstr "Lektionsinhalt kopieren"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "e7kR6h"
+msgid "Part {current} of {total}"
+msgstr "Teil {current} von {total}"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "QFpfEi"
+msgid "Audio exercise"
+msgstr "Hörübung"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "k6ckn3"
+msgid "Currently viewing"
+msgstr "Aktuelle Ansicht"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "Ejhdi4"
+msgid "Feedback"
+msgstr "Feedback"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "HqBZKC"
+msgid "Left column"
+msgstr "Linke Spalte"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "NDV5Mq"
+msgid "Options"
+msgstr "Antwortmöglichkeiten"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "l3rMMR"
+msgid "My question"
+msgstr "Meine Frage"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "FiksC2"
+msgid "Right column"
+msgstr "Rechte Spalte"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "Lz437P"
+msgid "[Write your question]"
+msgstr "[Schreib deine Frage]"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "vmCtoi"
+msgid "Couldn't copy lesson content. Try again."
+msgstr "Der Lektionsinhalt konnte nicht kopiert werden. Versuch es noch einmal."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "2P8sqa"
+msgid "Your session expired. Sign in again."
+msgstr "Deine Sitzung ist abgelaufen. Melde dich erneut an."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "iVOq9B"
+msgid "Subscribe to ask questions"
+msgstr "Abonniere, um Fragen zu stellen"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "0-TBnr"
+msgid "This lesson is no longer available."
+msgstr "Diese Lektion ist nicht mehr verfügbar."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "g4aIUa"
+msgid "We couldn't send this question. Try again."
+msgstr "Diese Frage konnte nicht gesendet werden. Versuch es noch einmal."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "_n-jR8"
+msgid "{period, select, day {You've reached today's question limit. Try again tomorrow.} month {You've reached this month's question limit. Try again next month.} other {You've reached your question limit.}}"
+msgstr "{period, select, day {Du hast dein Fragenlimit für heute erreicht. Versuch es morgen noch einmal.} month {Du hast dein Fragenlimit für diesen Monat erreicht. Versuch es nächsten Monat noch einmal.} other {Du hast dein Fragenlimit erreicht.}}"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "3kJE8G"
+msgid "Something went wrong. Try again."
+msgstr "Etwas ist schiefgelaufen. Versuch es noch einmal."
+
+#: src/questions/lesson-question-errors.tsx
+#: src/questions/lesson-question-thread.tsx
+msgctxt "SQJto2"
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "EaucLA"
+msgid "View plans"
+msgstr "Abos ansehen"
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "13bnyN"
+msgid "Open this link?"
+msgstr "Diesen Link öffnen?"
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "YGP6Yl"
+msgid "This link opens a website outside Zoonk."
+msgstr "Dieser Link öffnet eine Website außerhalb von Zoonk."
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "YtFTtA"
+msgid "Open link"
+msgstr "Link öffnen"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "FyE_0i"
+msgid "Ask questions"
+msgstr "Fragen stellen"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "J9Kkha"
+msgid "Close questions"
+msgstr "Fragen schließen"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "haOEeK"
+msgid "Ask questions about this lesson"
+msgstr "Fragen zu dieser Lektion stellen"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "RIj9BB"
+msgid "Loading questions…"
+msgstr "Fragen werden geladen…"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "DMPOmk"
+msgid "Walk me through this answer"
+msgstr "Erkläre mir diese Antwort Schritt für Schritt"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "VQ0LTP"
+msgid "Compare my answer with the correct one"
+msgstr "Vergleiche meine Antwort mit der richtigen"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "9KFewS"
+msgid "Explain this more simply"
+msgstr "Erkläre das einfacher"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "KPsIMl"
+msgid "Give me another example"
+msgstr "Gib mir ein weiteres Beispiel"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "BOsQu3"
+msgid "What would you like help with?"
+msgstr "Wobei brauchst du Hilfe?"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "I7p0KB"
+msgid "Sign in to ask questions"
+msgstr "Melde dich an, um Fragen zu stellen"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "E6r0bc"
+msgid "Scroll to latest"
+msgstr "Zur neuesten Frage scrollen"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "jJ8jWo"
+msgid "Questions about this lesson"
+msgstr "Fragen zu dieser Lektion"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "wMoDaY"
+msgid "Couldn't load earlier questions. Try again."
+msgstr "Frühere Fragen konnten nicht geladen werden. Versuch es noch einmal."
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "nCFX1M"
+msgid "Load earlier questions"
+msgstr "Frühere Fragen laden"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "V-WZ__"
+msgid "About your answer"
+msgstr "Zu deiner Antwort"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "A6lEGi"
+msgid "About this lesson"
+msgstr "Zu dieser Lektion"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "KQvwZ5"
+msgid "We couldn't finish this answer."
+msgstr "Diese Antwort konnte nicht fertiggestellt werden."
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "1A8Z_l"
+msgid "Check again"
+msgstr "Erneut prüfen"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "C1eFF3"
+msgid "No answer available."
+msgstr "Keine Antwort verfügbar."
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "P1QHV0"
+msgid "Thinking…"
+msgstr "Ich denke nach…"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "LIVM_k"
+msgid "Your question"
+msgstr "Deine Frage"
 
 #: src/use-belt-label.ts
 msgctxt "znY9eW"

@@ -4,9 +4,9 @@ import {
   type CreateLessonQuestionInput,
   type LessonQuestionResource,
 } from "@zoonk/core/lesson-questions/contract";
-import { type PlayerQuestionContext } from "@zoonk/player/provider";
 import { type Dispatch, useCallback, useRef } from "react";
-import { createLessonQuestionRequest } from "./lesson-question-api";
+import { type PlayerQuestionContext } from "../player-context";
+import { type LessonQuestionConnection, createLessonQuestionRequest } from "./lesson-question-api";
 import { getLessonQuestionContextInput } from "./lesson-question-request";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
@@ -50,6 +50,7 @@ function getQuestionCreateRequest({
 }
 
 export function useSendLessonQuestion({
+  connection,
   canAskQuestions,
   dispatch,
   lessonId,
@@ -58,6 +59,7 @@ export function useSendLessonQuestion({
   state,
   streamAnswer,
 }: {
+  connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
   lessonId: string;
@@ -119,7 +121,7 @@ export function useSendLessonQuestion({
 
       const input = { ...request.input, requestId: request.requestId };
       pendingCreateRequest.current = request;
-      const result = await createLessonQuestionRequest({ input, lessonId });
+      const result = await createLessonQuestionRequest({ connection, input, lessonId });
       createRequestInFlight.current = false;
 
       if (result.status === "error") {
@@ -143,6 +145,7 @@ export function useSendLessonQuestion({
       }
     },
     [
+      connection,
       canAskQuestions,
       dispatch,
       lessonId,

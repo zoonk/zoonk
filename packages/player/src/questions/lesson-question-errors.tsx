@@ -1,11 +1,10 @@
 "use client";
 
-import { GenerationLimitAction } from "@/components/generation/generation-limit-cta";
-import { type AppRoute, Link } from "@/i18n/navigation";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type LessonQuestionApiError } from "./lesson-question-api";
+import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 
 export function RequestErrorMessage({ error }: { error: LessonQuestionApiError | null }) {
   const t = useExtracted();
@@ -40,20 +39,25 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
   return <>{t("Something went wrong. Try again.")}</>;
 }
 
-export function QuestionErrorAction<Href extends string>({
+export function QuestionErrorAction({
   className,
   disabled = false,
   error,
-  loginHref,
   onRetry,
 }: {
   className?: string;
   disabled?: boolean;
   error: LessonQuestionApiError | null;
-  loginHref: AppRoute<Href>;
   onRetry: () => void;
 }) {
   const t = useExtracted();
+
+  const {
+    linkComponent: Link,
+    loginHref,
+    subscriptionHref,
+    renderLimitAction,
+  } = useLessonQuestionNavigation();
 
   if (error?.kind === "authentication") {
     return (
@@ -69,21 +73,14 @@ export function QuestionErrorAction<Href extends string>({
 
   if (error?.kind === "subscription") {
     return (
-      <Link className={buttonVariants({ className, variant: "outline" })} href="/subscription">
+      <Link className={buttonVariants({ className, variant: "outline" })} href={subscriptionHref}>
         {t("View plans")}
       </Link>
     );
   }
 
   if (error?.kind === "limit") {
-    return (
-      <GenerationLimitAction
-        className={className}
-        loginHref={loginHref}
-        variant="outline"
-        viewer={error.limit.viewer}
-      />
-    );
+    return renderLimitAction({ className, loginHref, viewer: error.limit.viewer });
   }
 
   if (error?.kind === "unavailable") {

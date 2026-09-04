@@ -1,6 +1,5 @@
 "use client";
 
-import { type AppRoute } from "@/i18n/navigation";
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
 import {
   InputGroup,
@@ -88,13 +87,7 @@ function getComposerAvailability({
   };
 }
 
-export function QuestionComposer({
-  controller,
-  loginHref,
-}: {
-  controller: LessonQuestionController;
-  loginHref: AppRoute<string>;
-}) {
+export function QuestionComposer({ controller }: { controller: LessonQuestionController }) {
   const t = useExtracted();
   const { state } = controller;
   const isResolvingPreviousQuestion = controller.unresolvedQuestion !== null;
@@ -160,7 +153,6 @@ export function QuestionComposer({
           <QuestionErrorAction
             className="w-full"
             error={state.requestError}
-            loginHref={loginHref}
             onRetry={() => void controller.send()}
           />
         </div>

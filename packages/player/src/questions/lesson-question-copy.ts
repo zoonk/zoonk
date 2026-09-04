@@ -1,6 +1,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
-import { type PlayerQuestionContext } from "@zoonk/player/provider";
+import { type PlayerQuestionContext } from "../player-context";
 import { getAnswerMaterial } from "./lesson-question-answer-copy";
 import { type LessonQuestionCopyLabels } from "./lesson-question-copy-types";
 

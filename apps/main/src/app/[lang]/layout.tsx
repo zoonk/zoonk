@@ -8,7 +8,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import { AppAnalytics } from "./app-analytics";
 import "@zoonk/ui/globals.css";
-import "@/styles/streamdown.css";
+import "@zoonk/player/questions/styles.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),

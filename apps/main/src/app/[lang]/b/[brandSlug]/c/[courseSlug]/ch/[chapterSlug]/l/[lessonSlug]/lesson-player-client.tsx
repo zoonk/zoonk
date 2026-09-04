@@ -1,13 +1,20 @@
 "use client";
 
+import { GenerationLimitAction } from "@/components/generation/generation-limit-cta";
 import { Link, useRouter } from "@/i18n/navigation";
+import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
 import { PlayerProvider, type PlayerQuestionSupport } from "@zoonk/player/provider";
+import {
+  type LessonQuestionConnection,
+  type LessonQuestionLimitActionProps,
+  LessonQuestionPanel,
+  useLessonQuestions,
+} from "@zoonk/player/questions";
 import { PlayerShell } from "@zoonk/player/shell";
+import { API_URL } from "@zoonk/utils/url";
 import { memo, useMemo } from "react";
-import { LessonQuestionPanel } from "./_questions/lesson-question-panel";
-import { useLessonQuestions } from "./_questions/use-lesson-questions";
 import { getPlayerViewer } from "./get-player-viewer";
 import {
   type LessonProgressMeta,
@@ -15,6 +22,26 @@ import {
   buildLessonPlayerModel,
 } from "./lesson-player-model";
 import { useLessonPlayerHandlers } from "./use-lesson-player-handlers";
+
+const questionConnection: LessonQuestionConnection = {
+  apiUrl: API_URL,
+  getHeaders: getWorkflowAuthHeaders,
+};
+
+function renderQuestionLimitAction({
+  className,
+  loginHref,
+  viewer,
+}: LessonQuestionLimitActionProps) {
+  return (
+    <GenerationLimitAction
+      className={className}
+      loginHref={loginHref}
+      variant="outline"
+      viewer={viewer}
+    />
+  );
+}
 
 type LessonPlayerClientProps = {
   lesson: SerializedLesson;
@@ -143,6 +170,7 @@ export function LessonPlayerClient(props: LessonPlayerClientProps) {
   );
 
   const questionController = useLessonQuestions({
+    connection: questionConnection,
     isAuthenticated,
     lessonId: lesson.id,
     lessonSteps: lesson.steps,
@@ -158,7 +186,12 @@ export function LessonPlayerClient(props: LessonPlayerClientProps) {
       <LessonQuestionPanel
         controller={questionController}
         isAuthenticated={isAuthenticated}
-        loginHref={model.navigation.loginHref ?? "/login"}
+        navigation={{
+          linkComponent: Link,
+          loginHref: model.navigation.loginHref ?? "/login",
+          renderLimitAction: renderQuestionLimitAction,
+          subscriptionHref: "/subscription",
+        }}
         metadata={{
           chapterTitle,
           courseTitle,

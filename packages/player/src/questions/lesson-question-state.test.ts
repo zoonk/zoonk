@@ -1,7 +1,7 @@
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { type PlayerQuestionContext } from "@zoonk/player/provider";
 import { describe, expect, it } from "vitest";
+import { type PlayerQuestionContext } from "../player-context";
 import { INITIAL_LESSON_QUESTION_STATE, lessonQuestionReducer } from "./lesson-question-state";
 
 function questionResource(overrides?: Partial<LessonQuestionResource>): LessonQuestionResource {

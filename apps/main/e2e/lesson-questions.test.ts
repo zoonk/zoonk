@@ -772,7 +772,7 @@ test("confirms external links in a localized accessible dialog", async ({
   const questionSheet = authenticatedPage.getByRole("dialog");
 
   await questionSheet
-    .getByRole("textbox", { name: "Fazer uma pergunta" })
+    .getByRole("textbox", { name: "Faça uma pergunta" })
     .fill("Explique com uma fonte externa.");
 
   await questionSheet.getByRole("button", { name: "Enviar" }).click();

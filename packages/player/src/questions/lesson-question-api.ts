@@ -1,6 +1,5 @@
-import { getGenerationLimit } from "@/lib/workflow/_utils/generation-limit";
-import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contract";
+import { getGenerationLimit } from "@zoonk/core/generation-quotas/parse-limit";
 import {
   type CreateLessonQuestionInput,
   type LessonQuestionResource,
@@ -9,9 +8,13 @@ import {
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { API_URL } from "@zoonk/utils/url";
 import { DefaultChatTransport, type UIMessageChunk } from "ai";
 import { getLessonQuestionLimitRetryAt } from "./lesson-question-limit";
+
+export type LessonQuestionConnection = {
+  apiUrl: string;
+  getHeaders: () => Promise<Record<string, string>>;
+};
 
 type LessonQuestionApiErrorKind =
   | "authentication"
@@ -77,8 +80,16 @@ async function getApiError(response: Response): Promise<LessonQuestionApiError> 
   return { kind: "unknown" };
 }
 
-function lessonQuestionsUrl({ cursor, lessonId }: { cursor?: string; lessonId: string }) {
-  const url = new URL(`/v1/lessons/${encodeURIComponent(lessonId)}/questions`, API_URL);
+function lessonQuestionsUrl({
+  connection,
+  cursor,
+  lessonId,
+}: {
+  connection: LessonQuestionConnection;
+  cursor?: string;
+  lessonId: string;
+}) {
+  const url = new URL(`/v1/lessons/${encodeURIComponent(lessonId)}/questions`, connection.apiUrl);
 
   if (cursor) {
     url.searchParams.set("cursor", cursor);
@@ -87,20 +98,31 @@ function lessonQuestionsUrl({ cursor, lessonId }: { cursor?: string; lessonId: s
   return url.toString();
 }
 
-function questionUrl(questionId: string) {
-  return new URL(`/v1/questions/${encodeURIComponent(questionId)}`, API_URL);
+function questionUrl({
+  connection,
+  questionId,
+}: {
+  connection: LessonQuestionConnection;
+  questionId: string;
+}) {
+  return new URL(`/v1/questions/${encodeURIComponent(questionId)}`, connection.apiUrl);
 }
 
-function questionAnswerUrl(questionId: string) {
-  return new URL(`${questionUrl(questionId).pathname}/answers`, API_URL).toString();
+function questionAnswerUrl({
+  connection,
+  questionId,
+}: {
+  connection: LessonQuestionConnection;
+  questionId: string;
+}) {
+  return new URL(
+    `${questionUrl({ connection, questionId }).pathname}/answers`,
+    connection.apiUrl,
+  ).toString();
 }
 
-async function getAuthenticatedHeaders() {
-  return getWorkflowAuthHeaders();
-}
-
-async function getJsonHeaders() {
-  return { ...(await getAuthenticatedHeaders()), "Content-Type": "application/json" };
+async function getJsonHeaders(connection: LessonQuestionConnection) {
+  return { ...(await connection.getHeaders()), "Content-Type": "application/json" };
 }
 
 class LessonQuestionAnswerRequestError extends Error {
@@ -124,16 +146,18 @@ const fetchLessonQuestionAnswer: typeof fetch = async (input, init) => {
 };
 
 export async function getLessonQuestionThreadRequest({
+  connection,
   cursor,
   lessonId,
 }: {
+  connection: LessonQuestionConnection;
   cursor?: string;
   lessonId: string;
 }): Promise<LessonQuestionApiResult<LessonQuestionThreadResource | null>> {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(lessonQuestionsUrl({ cursor, lessonId }), {
+    fetch(lessonQuestionsUrl({ connection, cursor, lessonId }), {
       cache: "no-store",
-      headers: await getAuthenticatedHeaders(),
+      headers: await connection.getHeaders(),
     }),
   );
 
@@ -156,17 +180,19 @@ export async function getLessonQuestionThreadRequest({
 }
 
 export async function createLessonQuestionRequest({
+  connection,
   input,
   lessonId,
 }: {
+  connection: LessonQuestionConnection;
   input: CreateLessonQuestionInput;
   lessonId: string;
 }): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(lessonQuestionsUrl({ lessonId }), {
+    fetch(lessonQuestionsUrl({ connection, lessonId }), {
       body: JSON.stringify(input),
       cache: "no-store",
-      headers: await getJsonHeaders(),
+      headers: await getJsonHeaders(connection),
       method: "POST",
     }),
   );
@@ -190,16 +216,18 @@ export async function createLessonQuestionRequest({
 }
 
 export async function getLessonQuestionRequest({
+  connection,
   questionId,
   signal,
 }: {
+  connection: LessonQuestionConnection;
   questionId: string;
   signal?: AbortSignal;
 }): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(questionUrl(questionId), {
+    fetch(questionUrl({ connection, questionId }), {
       cache: "no-store",
-      headers: await getAuthenticatedHeaders(),
+      headers: await connection.getHeaders(),
       signal,
     }),
   );
@@ -249,16 +277,18 @@ async function readAnswerStream({
 }
 
 export async function streamLessonQuestionAnswerRequest({
+  connection,
   onChunk,
   questionId,
 }: {
+  connection: LessonQuestionConnection;
   onChunk: (chunk: string) => void;
   questionId: string;
 }): Promise<LessonQuestionApiResult<null>> {
   const transport = new DefaultChatTransport({
-    api: questionAnswerUrl(questionId),
+    api: questionAnswerUrl({ connection, questionId }),
     fetch: fetchLessonQuestionAnswer,
-    headers: getAuthenticatedHeaders,
+    headers: connection.getHeaders,
   });
 
   const { data: stream, error } = await safeAsync(() =>

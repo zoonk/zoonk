@@ -29,7 +29,7 @@ import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
 
 export type { PlayerStepChangeEvent } from "./player-events";
-export { type PlayerQuestionContext, type PlayerQuestionSupport } from "./player-context";
+export { type PlayerQuestionSupport } from "./player-context";
 
 export function PlayerProvider({
   lesson,
