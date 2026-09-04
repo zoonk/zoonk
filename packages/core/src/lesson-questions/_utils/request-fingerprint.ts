@@ -16,7 +16,6 @@ function getAnswerFingerprint(answer: SelectedAnswer): unknown[] {
       return [
         answer.kind,
         answer.mistakes,
-        answer.incorrectPair ? [answer.incorrectPair.left, answer.incorrectPair.right] : null,
         answer.userPairs.map((pair) => [pair.left, pair.right]),
       ];
     case "multipleChoice":

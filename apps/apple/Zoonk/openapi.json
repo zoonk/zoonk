@@ -4146,21 +4146,6 @@
                 {
                   "type": "object",
                   "properties": {
-                    "incorrectPair": {
-                      "type": "object",
-                      "properties": {
-                        "left": {
-                          "type": "string"
-                        },
-                        "right": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "left",
-                        "right"
-                      ]
-                    },
                     "kind": {
                       "type": "string",
                       "enum": [
@@ -4471,23 +4456,6 @@
                   {
                     "type": "object",
                     "properties": {
-                      "incorrectPair": {
-                        "type": "object",
-                        "properties": {
-                          "left": {
-                            "type": "string",
-                            "maxLength": 500
-                          },
-                          "right": {
-                            "type": "string",
-                            "maxLength": 500
-                          }
-                        },
-                        "required": [
-                          "left",
-                          "right"
-                        ]
-                      },
                       "kind": {
                         "type": "string",
                         "enum": [

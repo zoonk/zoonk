@@ -1,6 +1,6 @@
 export const ANSWER_ITEM_SEPARATOR = " → ";
 
-export function normalizeAnswerItem(value: string): string {
+function normalizeAnswerItem(value: string): string {
   return value.trim().toLocaleLowerCase();
 }
 

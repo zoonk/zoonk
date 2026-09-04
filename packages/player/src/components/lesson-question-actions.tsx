@@ -6,7 +6,7 @@ import { BookOpenTextIcon, MessageSquareTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   getAnswerQuestionContext,
-  getHeaderQuestionContext,
+  getStepQuestionContext,
 } from "../_utils/player-question-context";
 import { usePlayerQuestionSupport, usePlayerRuntime } from "../player-context";
 import { getCurrentResult, getCurrentStep, getSelectedAnswer } from "../player-selectors";
@@ -95,7 +95,7 @@ export function ContextualQuestionAction({ className }: { className?: string } =
     );
   }
 
-  const questionContext = getHeaderQuestionContext({
+  const questionContext = getStepQuestionContext({
     phase: state.phase,
     step: currentStep,
     stepIndex: state.currentStepIndex,

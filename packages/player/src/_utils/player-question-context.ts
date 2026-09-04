@@ -2,7 +2,7 @@ import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson
 import { type PlayerQuestionContext } from "../player-context";
 import { type PlayerPhase, type SelectedAnswer, type StepResult } from "../player-reducer";
 
-export function getHeaderQuestionContext({
+export function getStepQuestionContext({
   phase,
   step,
   stepIndex,

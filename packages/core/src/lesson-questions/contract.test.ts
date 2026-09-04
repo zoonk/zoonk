@@ -61,26 +61,4 @@ describe(parseCreateInput, () => {
 
     expect(result.success).toBe(false);
   });
-
-  it("preserves bounded incorrect match attempts in answer context", () => {
-    const result = parseCreateInput({
-      answer: {
-        incorrectPair: { left: "Day", right: "Nacht" },
-        kind: "matchColumns",
-        mistakes: 1,
-        userPairs: [
-          { left: "Day", right: "Tag" },
-          { left: "Night", right: "Nacht" },
-        ],
-      },
-      kind: "answer",
-      stepId: randomUUID(),
-      stepNumber: 1,
-    });
-
-    expect(result).toMatchObject({
-      data: { context: { answer: { incorrectPair: { left: "Day", right: "Nacht" } } } },
-      success: true,
-    });
-  });
 });

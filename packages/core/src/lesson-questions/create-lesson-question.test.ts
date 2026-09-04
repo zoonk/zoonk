@@ -764,7 +764,7 @@ describe(createLessonQuestion, () => {
     });
   });
 
-  it("preserves bounded match mistakes and rejects fabricated column labels", async () => {
+  it("preserves bounded match answers and rejects fabricated column labels", async () => {
     const { lesson, user } = await createPublishedCurriculum();
 
     const step = await stepFixture({
@@ -786,7 +786,6 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: {
-            incorrectPair: { left: "Day", right: "Nacht" },
             kind: "matchColumns",
             mistakes: 1,
             userPairs: [
@@ -808,11 +807,10 @@ describe(createLessonQuestion, () => {
       input: {
         context: {
           answer: {
-            incorrectPair: { left: "Invented", right: "Tag" },
             kind: "matchColumns",
             mistakes: 1,
             userPairs: [
-              { left: "Day", right: "Tag" },
+              { left: "Invented", right: "Tag" },
               { left: "Night", right: "Nacht" },
             ],
           },
@@ -826,76 +824,8 @@ describe(createLessonQuestion, () => {
       lessonId: lesson.id,
     });
 
-    const correctPair = await createLessonQuestion({
-      input: {
-        context: {
-          answer: {
-            incorrectPair: { left: "Day", right: "Tag" },
-            kind: "matchColumns",
-            mistakes: 1,
-            userPairs: [
-              { left: "Day", right: "Tag" },
-              { left: "Night", right: "Nacht" },
-            ],
-          },
-          kind: "answer",
-          stepId: step.id,
-          stepNumber: 1,
-        },
-        question: "Was this pair actually wrong?",
-        requestId: randomUUID(),
-      },
-      lessonId: lesson.id,
-    });
-
-    const missingIncorrectPair = await createLessonQuestion({
-      input: {
-        context: {
-          answer: {
-            kind: "matchColumns",
-            mistakes: 1,
-            userPairs: [
-              { left: "Day", right: "Tag" },
-              { left: "Night", right: "Nacht" },
-            ],
-          },
-          kind: "answer",
-          stepId: step.id,
-          stepNumber: 1,
-        },
-        question: "Which pair did I get wrong?",
-        requestId: randomUUID(),
-      },
-      lessonId: lesson.id,
-    });
-
-    const incorrectPairWithoutMistake = await createLessonQuestion({
-      input: {
-        context: {
-          answer: {
-            incorrectPair: { left: "Day", right: "Nacht" },
-            kind: "matchColumns",
-            mistakes: 0,
-            userPairs: [
-              { left: "Day", right: "Tag" },
-              { left: "Night", right: "Nacht" },
-            ],
-          },
-          kind: "answer",
-          stepId: step.id,
-          stepNumber: 1,
-        },
-        question: "Why is this marked correct?",
-        requestId: randomUUID(),
-      },
-      lessonId: lesson.id,
-    });
-
     expect(mistake.status).toBe("created");
     expect(fabricated).toStrictEqual({ status: "invalidContext" });
-    expect(correctPair).toStrictEqual({ status: "invalidContext" });
-    expect(missingIncorrectPair).toStrictEqual({ status: "invalidContext" });
-    expect(incorrectPairWithoutMistake).toStrictEqual({ status: "invalidContext" });
 
     if (mistake.status !== "created") {
       throw new Error(`Expected a matching mistake, received ${mistake.status}`);
@@ -908,7 +838,7 @@ describe(createLessonQuestion, () => {
         answer: {
           correctAnswer: null,
           isCorrect: false,
-          selectedAnswer: "Day → Nacht; Recorded mistakes: 1",
+          selectedAnswer: "Day → Tag; Night → Nacht; Recorded mistakes: 1",
         },
       },
     });

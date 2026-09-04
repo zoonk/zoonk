@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildSerializedStep } from "../_test-utils/player-test-data";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { getAnswerQuestionContext, getHeaderQuestionContext } from "./player-question-context";
+import { getAnswerQuestionContext, getStepQuestionContext } from "./player-question-context";
 
 const STEP = buildSerializedStep({
   content: {
@@ -27,17 +27,13 @@ function buildResult({ isCorrect }: { isCorrect: boolean }): StepResult {
   };
 }
 
-describe(getHeaderQuestionContext, () => {
+describe(getStepQuestionContext, () => {
   it("hides general question support during graded feedback", () => {
-    expect(getHeaderQuestionContext({ phase: "feedback", step: STEP, stepIndex: 2 })).toBeNull();
-  });
-
-  it("also hides general question support after a correct answer", () => {
-    expect(getHeaderQuestionContext({ phase: "feedback", step: STEP, stepIndex: 2 })).toBeNull();
+    expect(getStepQuestionContext({ phase: "feedback", step: STEP, stepIndex: 2 })).toBeNull();
   });
 
   it("does not treat a stored result as current feedback", () => {
-    expect(getHeaderQuestionContext({ phase: "playing", step: STEP, stepIndex: 2 })).toStrictEqual({
+    expect(getStepQuestionContext({ phase: "playing", step: STEP, stepIndex: 2 })).toStrictEqual({
       kind: "step",
       step: STEP,
       stepIndex: 2,

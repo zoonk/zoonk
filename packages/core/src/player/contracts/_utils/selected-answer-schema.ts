@@ -52,7 +52,6 @@ export function createSelectedAnswerSchema({
     z.object({ kind: z.literal("fillBlank"), userAnswers: answerItemsSchema }),
     z.object({ arrangedWords: answerItemsSchema, kind: z.literal("listening") }),
     z.object({
-      incorrectPair: matchPairSchema.optional(),
       kind: z.literal("matchColumns"),
       mistakes: getMistakesSchema(maxMistakes),
       userPairs: getAnswerItemsSchema({ itemSchema: matchPairSchema, maxItems }),
