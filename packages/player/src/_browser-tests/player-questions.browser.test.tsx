@@ -175,62 +175,6 @@ describe("player browser integration: lesson questions", () => {
     });
   });
 
-  it("preserves incorrect match attempts for the answer explanation", async () => {
-    const onExplainAnswer = vi.fn();
-
-    renderPlayer({
-      lesson: buildSerializedLesson({
-        steps: [
-          buildSerializedStep({
-            content: {
-              pairs: [
-                { left: "Sun", right: "Day" },
-                { left: "Moon", right: "Night" },
-              ],
-              question: "Match each item",
-            },
-            id: "question-match-step",
-            kind: "matchColumns",
-            matchColumnsRightItems: ["Day", "Night"],
-          }),
-        ],
-      }),
-      questionSupport: {
-        canExplainAnswer: true,
-        interactionState: "active",
-        onAskQuestion: vi.fn(),
-        onExplainAnswer,
-      },
-    });
-
-    await page.getByRole("button", { name: "Sun" }).click();
-    await page.getByRole("button", { name: "Night" }).click();
-    await expect.element(page.getByRole("button", { name: "Sun" })).toBeEnabled();
-
-    await page.getByRole("button", { name: "Sun" }).click();
-    await page.getByRole("button", { name: "Day" }).click();
-    await page.getByRole("button", { name: "Moon" }).click();
-    await page.getByRole("button", { name: "Night" }).click();
-    await page.getByRole("button", { name: /check/iu }).click();
-
-    await expect.element(page.getByRole("button", { name: /continue/iu })).toBeVisible();
-
-    const explainButton = page.getByRole("button", { name: /explain answer/iu });
-    await expect.element(explainButton).toBeVisible();
-    await explainButton.click();
-
-    expect(onExplainAnswer).toHaveBeenCalledWith(
-      expect.objectContaining({
-        context: expect.objectContaining({
-          kind: "answer",
-          selectedAnswer: expect.objectContaining({
-            incorrectPair: { left: "Sun", right: "Night" },
-          }),
-        }),
-      }),
-    );
-  });
-
   it("keeps the lesson question action beside the completion primary action", async () => {
     const onAskQuestion = vi.fn();
 

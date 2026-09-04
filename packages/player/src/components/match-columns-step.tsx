@@ -168,7 +168,6 @@ export function MatchColumnsStep({
   const [selected, setSelected] = useState<MatchSelection | null>(null);
   const [correctMatches, setCorrectMatches] = useState<MatchAttempt[]>([]);
   const [flashingMatch, setFlashingMatch] = useState<MatchAttempt | null>(null);
-  const [incorrectPair, setIncorrectPair] = useState<MatchAttempt["pair"]>();
   const [mistakes, setMistakes] = useState(0);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const allMatched = correctMatches.length === content.pairs.length;
@@ -207,7 +206,6 @@ export function MatchColumnsStep({
 
         if (nextCorrect.length === content.pairs.length) {
           onSelectAnswer(step.id, {
-            incorrectPair,
             kind: "matchColumns",
             mistakes,
             userPairs: nextCorrect.map((attempt) => attempt.pair),
@@ -216,7 +214,6 @@ export function MatchColumnsStep({
       } else {
         void trigger("warning");
         setMistakes((prev) => prev + 1);
-        setIncorrectPair(match.pair);
         setFlashingMatch(match);
         setSelected(null);
 
@@ -230,17 +227,7 @@ export function MatchColumnsStep({
         }, FLASH_DURATION);
       }
     },
-    [
-      content,
-      correctMatches,
-      flashingMatch,
-      incorrectPair,
-      mistakes,
-      onSelectAnswer,
-      selected,
-      step.id,
-      trigger,
-    ],
+    [content, correctMatches, flashingMatch, mistakes, onSelectAnswer, selected, step.id, trigger],
   );
 
   useOptionKeyboard({

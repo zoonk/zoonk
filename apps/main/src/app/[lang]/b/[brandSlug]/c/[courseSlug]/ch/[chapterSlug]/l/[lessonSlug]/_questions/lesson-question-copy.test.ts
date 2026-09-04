@@ -178,58 +178,6 @@ describe(buildLessonQuestionCopy, () => {
     expect(copy).toContain("[Write your question]");
   });
 
-  it("copies the actual incorrect pair from an answered match-columns step", () => {
-    const step: SerializedStep = {
-      content: {
-        pairs: [
-          { left: "Earth", right: "planet" },
-          { left: "Sun", right: "star" },
-        ],
-        question: "Match each object to its type.",
-      },
-      fillBlankOptions: [],
-      id: "answered-match-step-id",
-      kind: "matchColumns",
-      matchColumnsRightItems: ["star", "planet"],
-      position: 1,
-      sentence: null,
-      sentenceWordOptions: [],
-      sortOrderItems: [],
-      translationOptions: [],
-      vocabularyOptions: [],
-      word: null,
-      wordBankOptions: [],
-    };
-
-    const selectedAnswer = {
-      incorrectPair: { left: "Earth", right: "star" },
-      kind: "matchColumns" as const,
-      mistakes: 1,
-      userPairs: [
-        { left: "Earth", right: "planet" },
-        { left: "Sun", right: "star" },
-      ],
-    };
-
-    const copy = buildCopy({
-      context: {
-        kind: "answer",
-        result: {
-          answer: selectedAnswer,
-          result: { correctAnswer: null, feedback: null, isCorrect: false },
-          stepId: step.id,
-        },
-        selectedAnswer,
-        step,
-        stepIndex: 1,
-      },
-      lessonSteps: [multipleChoiceStep(), step],
-    });
-
-    expect(copy).toContain("Your answer: Earth ↔ star");
-    expect(copy).not.toContain("Your answer: Earth ↔ planet, Sun ↔ star");
-  });
-
   it("copies the displayed lesson material on completion without answer metadata", () => {
     const copy = buildCopy({ context: { kind: "lesson" } });
 

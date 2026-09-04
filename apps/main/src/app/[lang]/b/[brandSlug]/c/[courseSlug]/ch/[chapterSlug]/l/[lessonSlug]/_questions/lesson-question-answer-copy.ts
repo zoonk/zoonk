@@ -43,11 +43,7 @@ function getSelectedAnswerText(context: Extract<PlayerQuestionContext, { kind: "
   }
 
   if (selectedAnswer.kind === "matchColumns") {
-    const pairs = selectedAnswer.incorrectPair
-      ? [selectedAnswer.incorrectPair]
-      : selectedAnswer.userPairs;
-
-    return pairs.map((pair) => `${pair.left} ↔ ${pair.right}`).join(", ");
+    return selectedAnswer.userPairs.map((pair) => `${pair.left} ↔ ${pair.right}`).join(", ");
   }
 
   return null;

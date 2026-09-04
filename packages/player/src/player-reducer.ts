@@ -21,12 +21,7 @@ export type PlayerPhase = "startWarning" | "playing" | "feedback" | "completed";
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
   | { kind: "listening"; arrangedWords: string[] }
-  | {
-      incorrectPair?: { left: string; right: string };
-      kind: "matchColumns";
-      mistakes: number;
-      userPairs: { left: string; right: string }[];
-    }
+  | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
   | { kind: "multipleChoice"; selectedOptionId: string }
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedOptionId: string }
@@ -159,6 +154,8 @@ function handleCheckAnswer(
     return state;
   }
 
+  const currentStep = state.steps[state.currentStepIndex];
+
   const stepResult: StepResult = {
     answer: state.selectedAnswers[action.stepId],
     result: action.result,
@@ -171,6 +168,13 @@ function handleCheckAnswer(
     results: { ...state.results, [action.stepId]: stepResult },
     stepTimings: recordStepTiming(state, action.stepId),
   };
+
+  // UX invariant: Match Columns must advance on Check without requiring a second Continue click.
+  // Pair feedback is instant, so a post-check feedback phase adds an empty, redundant interaction.
+  // DO NOT change this behavior without explicit authorization
+  if (currentStep?.kind === "matchColumns") {
+    return handleContinue(checked);
+  }
 
   return checked;
 }

@@ -6,7 +6,7 @@ import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: arrangement steps", () => {
-  it("matches pairs, pauses for feedback, and continues to the next step", async () => {
+  it("matches pairs and auto-advances to the next step after checking", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -37,8 +37,6 @@ describe("player browser integration: arrangement steps", () => {
     await page.getByRole("button", { name: "Moon" }).click();
     await page.getByRole("button", { name: "Night" }).click();
     await page.getByRole("button", { name: /check/iu }).click();
-    await expect.element(page.getByRole("button", { name: /continue/iu })).toBeVisible();
-    await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByRole("heading", { name: "Next step" })).toBeInTheDocument();
   });
@@ -182,7 +180,6 @@ describe("player browser integration: arrangement steps", () => {
     await page.getByRole("button", { name: "Beta" }).click();
     await page.getByRole("button", { name: "One" }).nth(1).click();
     await page.getByRole("button", { name: /check/iu }).click();
-    await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByRole("heading", { name: "Next step" })).toBeInTheDocument();
   });
@@ -282,7 +279,6 @@ describe("player browser integration: arrangement steps", () => {
     await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
 
     await page.getByRole("button", { name: /check/iu }).click();
-    await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByRole("status")).toBeInTheDocument();
     await expect.element(page.getByText("0%")).toBeInTheDocument();

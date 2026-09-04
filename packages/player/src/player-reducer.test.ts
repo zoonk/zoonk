@@ -295,8 +295,8 @@ describe("CHECK_ANSWER", () => {
     expect(next.results["mc-1"]?.answer).toStrictEqual(multipleChoiceAnswer);
   });
 
-  describe("matchColumns feedback", () => {
-    it("waits for Continue so learners can review and explain the result", () => {
+  describe("matchColumns auto-advance", () => {
+    it("auto-advances to next step instead of entering feedback phase", () => {
       const steps = [
         buildStep({ id: "mc-1", kind: "matchColumns", position: 0 }),
         buildStep({ id: "mc-2", kind: "matchColumns", position: 1 }),
@@ -310,8 +310,8 @@ describe("CHECK_ANSWER", () => {
         type: "CHECK_ANSWER",
       });
 
-      expect(next.phase).toBe("feedback");
-      expect(next.currentStepIndex).toBe(0);
+      expect(next.phase).toBe("playing");
+      expect(next.currentStepIndex).toBe(1);
 
       expect(next.results["mc-1"]).toStrictEqual({
         answer: undefined,
@@ -320,7 +320,7 @@ describe("CHECK_ANSWER", () => {
       });
     });
 
-    it("waits for Continue when matchColumns is the last step", () => {
+    it("sets completed when matchColumns is the last step", () => {
       const steps = [buildStep({ id: "mc-1", kind: "matchColumns", position: 0 })];
       const state = buildState({ steps });
 
@@ -330,7 +330,7 @@ describe("CHECK_ANSWER", () => {
         type: "CHECK_ANSWER",
       });
 
-      expect(next.phase).toBe("feedback");
+      expect(next.phase).toBe("completed");
 
       expect(next.results["mc-1"]).toStrictEqual({
         answer: undefined,
@@ -355,7 +355,7 @@ describe("CHECK_ANSWER", () => {
         type: "CHECK_ANSWER",
       });
 
-      expect(next.phase).toBe("feedback");
+      expect(next.phase).toBe("completed");
 
       expect(next.stepTimings["mc-1"]).toStrictEqual({
         answeredAt: Date.now(),

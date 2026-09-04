@@ -43,15 +43,6 @@ describe(getHeaderQuestionContext, () => {
       stepIndex: 2,
     });
   });
-
-  it("hides general question support during match-column feedback", () => {
-    const step = buildSerializedStep({
-      content: { pairs: [{ left: "Day", right: "Night" }] },
-      kind: "matchColumns",
-    });
-
-    expect(getHeaderQuestionContext({ phase: "feedback", step, stepIndex: 0 })).toBeNull();
-  });
 });
 
 describe(getAnswerQuestionContext, () => {
@@ -85,29 +76,5 @@ describe(getAnswerQuestionContext, () => {
         stepIndex: 2,
       }),
     ).toBeNull();
-  });
-
-  it("uses answer context after match-column feedback", () => {
-    const step = buildSerializedStep({
-      content: { pairs: [{ left: "Day", right: "Night" }] },
-      kind: "matchColumns",
-    });
-
-    const selectedAnswer = {
-      incorrectPair: { left: "Day", right: "Morning" },
-      kind: "matchColumns",
-      mistakes: 1,
-      userPairs: [{ left: "Day", right: "Night" }],
-    } satisfies SelectedAnswer;
-
-    const result = {
-      answer: selectedAnswer,
-      result: { correctAnswer: null, feedback: null, isCorrect: false },
-      stepId: step.id,
-    } satisfies StepResult;
-
-    expect(
-      getAnswerQuestionContext({ phase: "feedback", result, selectedAnswer, step, stepIndex: 0 }),
-    ).toStrictEqual({ kind: "answer", result, selectedAnswer, step, stepIndex: 0 });
   });
 });
