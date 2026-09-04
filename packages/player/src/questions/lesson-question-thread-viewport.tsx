@@ -5,18 +5,39 @@ import {
   MessageScrollerButton,
   MessageScrollerProvider,
   MessageScrollerViewport,
+  useMessageScroller,
 } from "@zoonk/ui/components/message-scroller";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ArrowDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useEffect } from "react";
 
-export function ThreadViewport({ children, ...props }: React.ComponentProps<"div">) {
+/** Reopening an explanation should show that answer, not the thread's latest turn. */
+function QuestionScrollTarget({ questionId }: { questionId: string | null | undefined }) {
+  const { scrollToMessage } = useMessageScroller();
+
+  useEffect(() => {
+    if (questionId) {
+      scrollToMessage(questionId, { align: "start", behavior: "instant" });
+    }
+  }, [questionId, scrollToMessage]);
+
+  return null;
+}
+
+export function ThreadViewport({
+  children,
+  revealedQuestionId,
+  ...props
+}: React.ComponentProps<"div"> & { revealedQuestionId?: string | null }) {
   const t = useExtracted();
 
   return (
     <MessageScrollerProvider autoScroll defaultScrollPosition="last-anchor">
+      <QuestionScrollTarget questionId={revealedQuestionId} />
       <MessageScroller>
-        <MessageScrollerViewport className="px-4 py-6 sm:px-5" {...props}>
+        {/* The scroller preserves message positions; native anchoring would apply a second scroll adjustment. */}
+        <MessageScrollerViewport className="px-4 py-6 [overflow-anchor:none] sm:px-5" {...props}>
           {children}
         </MessageScrollerViewport>
         <MessageScrollerButton aria-label={t("Scroll to latest")}>

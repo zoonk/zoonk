@@ -161,7 +161,7 @@ describe("lesson question answer lifecycle", () => {
     ).resolves.toMatchObject({ generationRevision: 0, status: "pending" });
   });
 
-  it("uses the revision to prevent a stale generation from overwriting a retry", async () => {
+  it.each(["failed", "abandoned"])("safely retries a %s answer", async (cause) => {
     const { lesson, question } = await createLessonQuestionFixture();
 
     const firstClaim = await claimLessonQuestionAnswer({
@@ -173,9 +173,17 @@ describe("lesson question answer lifecycle", () => {
       throw new Error(`Expected a ready claim, received ${firstClaim.status}`);
     }
 
-    await expect(
-      failLessonQuestionAnswer({ questionId: question.id, revision: firstClaim.claim.revision }),
-    ).resolves.toStrictEqual({ status: "updated" });
+    if (cause === "abandoned") {
+      await prisma.lessonQuestion.update({
+        data: { updatedAt: new Date(Date.now() - 180_000) },
+        where: { id: question.id },
+      });
+    } else {
+      await failLessonQuestionAnswer({
+        questionId: question.id,
+        revision: firstClaim.claim.revision,
+      });
+    }
 
     const retry = await claimLessonQuestionAnswer({
       questionId: question.id,

@@ -306,7 +306,7 @@ msgstr "Passer la leçon"
 #: src/components/lesson-question-actions.tsx
 msgctxt "7_uozC"
 msgid "Open questions"
-msgstr "Questions ouvertes"
+msgstr "Ouvrir les questions"
 
 #: src/components/lesson-question-actions.tsx
 msgctxt "HlzdnD"

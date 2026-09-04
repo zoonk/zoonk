@@ -31,6 +31,7 @@ export type LessonQuestionState = {
   nextCursor: string | null;
   questions: LessonQuestionResource[];
   requestError: LessonQuestionApiError | null;
+  revealedQuestionId: string | null;
 };
 
 export type LessonQuestionAction =
@@ -82,7 +83,27 @@ export const INITIAL_LESSON_QUESTION_STATE: LessonQuestionState = {
   nextCursor: null,
   questions: [],
   requestError: null,
+  revealedQuestionId: null,
 };
+
+function reduceQuestionCreated({
+  question,
+  state,
+}: {
+  question: LessonQuestionResource;
+  state: LessonQuestionState;
+}): LessonQuestionState {
+  return {
+    ...state,
+    copied: false,
+    draft: state.draft.trim() === question.question ? "" : state.draft,
+    error: null,
+    isCreating: false,
+    questions: mergeCreatedQuestion({ question, questions: state.questions }),
+    requestError: null,
+    revealedQuestionId: question.status === "completed" ? question.id : null,
+  };
+}
 
 function updateAnswerStarted(question: LessonQuestionResource): LessonQuestionResource {
   return { ...question, answer: null, status: "running" };
@@ -186,6 +207,7 @@ export function lessonQuestionReducer(
           ? state.draft
           : "",
         isOpen: true,
+        revealedQuestionId: null,
       };
     case "close":
       return { ...state, copied: false, isOpen: false };
@@ -194,15 +216,7 @@ export function lessonQuestionReducer(
     case "questionCreateStarted":
       return { ...state, error: null, isCreating: true, requestError: null };
     case "questionCreated":
-      return {
-        ...state,
-        copied: false,
-        draft: state.draft.trim() === action.question.question ? "" : state.draft,
-        error: null,
-        isCreating: false,
-        questions: mergeCreatedQuestion({ question: action.question, questions: state.questions }),
-        requestError: null,
-      };
+      return reduceQuestionCreated({ question: action.question, state });
     case "questionCreateFailed":
       return { ...state, error: "create", isCreating: false, requestError: action.reason };
     case "answerStarted":

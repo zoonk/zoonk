@@ -114,9 +114,15 @@ export function useLessonQuestionAnswers({
         return;
       }
 
+      if (result.data.status === "running") {
+        // The server only reclaims abandoned generations and rejects ones still in progress.
+        await streamAnswer(questionId);
+        return;
+      }
+
       dispatch({ questions: [result.data], type: "latestThreadReconciled" });
     },
-    [connection, canAskQuestions, dispatch, state.activeQuestionId, state.questions],
+    [connection, canAskQuestions, dispatch, state.activeQuestionId, state.questions, streamAnswer],
   );
 
   return { checkAnswer, retryAnswer, streamAnswer };

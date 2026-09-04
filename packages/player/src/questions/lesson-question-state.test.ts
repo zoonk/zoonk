@@ -317,6 +317,70 @@ describe(lessonQuestionReducer, () => {
     expect(reconciled.questions[2]?.answer).toBe("Updated latest answer");
   });
 
+  it("keeps a reopened older explanation in chronological order across page loads", () => {
+    const explanation = questionResource({
+      answer: "Original explanation",
+      createdAt: "2026-08-21T10:00:00.000Z",
+      id: "0198ca70-9c50-7000-8000-000000000004",
+      status: "completed",
+    });
+
+    const middleQuestion = questionResource({
+      createdAt: "2026-08-21T11:00:00.000Z",
+      id: "0198ca70-9c50-7000-8000-000000000002",
+      status: "completed",
+    });
+
+    const latestQuestion = questionResource({
+      createdAt: "2026-08-21T12:00:00.000Z",
+      id: "0198ca70-9c50-7000-8000-000000000003",
+      status: "completed",
+    });
+
+    const loaded = lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, {
+      hasMore: true,
+      nextCursor: latestQuestion.id,
+      questions: [latestQuestion],
+      type: "threadLoaded",
+    });
+
+    const reopened = lessonQuestionReducer(loaded, {
+      question: explanation,
+      type: "questionCreated",
+    });
+
+    expect(reopened.questions.map((question) => question.id)).toStrictEqual([
+      explanation.id,
+      latestQuestion.id,
+    ]);
+
+    const earlier = lessonQuestionReducer(reopened, {
+      hasMore: false,
+      nextCursor: null,
+      questions: [explanation, middleQuestion],
+      type: "earlierThreadLoaded",
+    });
+
+    expect(earlier.questions.map((question) => question.id)).toStrictEqual([
+      explanation.id,
+      middleQuestion.id,
+      latestQuestion.id,
+    ]);
+
+    const reconciled = lessonQuestionReducer(earlier, {
+      questions: [{ ...explanation, answer: "Updated explanation" }],
+      type: "latestThreadReconciled",
+    });
+
+    expect(reconciled.questions.map((question) => question.id)).toStrictEqual([
+      explanation.id,
+      middleQuestion.id,
+      latestQuestion.id,
+    ]);
+
+    expect(reconciled.questions[0]?.answer).toBe("Updated explanation");
+  });
+
   it("preserves a typed question when creating it fails", () => {
     const drafted = lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, {
       draft: "Why is my answer wrong?",

@@ -2,6 +2,13 @@ import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contra
 import { type PlayerQuestionContext } from "../player-context";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 
+function sortQuestions(questions: LessonQuestionResource[]) {
+  return questions.toSorted(
+    (left, right) =>
+      left.createdAt.localeCompare(right.createdAt) || left.id.localeCompare(right.id),
+  );
+}
+
 export function updateQuestionById({
   questions,
   questionId,
@@ -24,7 +31,7 @@ export function mergeCreatedQuestion({
   const existingQuestion = questions.some((candidate) => candidate.id === question.id);
 
   if (!existingQuestion) {
-    return [...questions, question];
+    return sortQuestions([...questions, question]);
   }
 
   return updateQuestionById({ questionId: question.id, questions, update: () => question });
@@ -43,7 +50,7 @@ export function mergeEarlierQuestions({
     (question) => !currentQuestionIds.has(question.id),
   );
 
-  return [...newEarlierQuestions, ...currentQuestions];
+  return sortQuestions([...newEarlierQuestions, ...currentQuestions]);
 }
 
 export function mergeLatestQuestions({
@@ -59,7 +66,7 @@ export function mergeLatestQuestions({
     (question) => !latestQuestionIds.has(question.id),
   );
 
-  return [...retainedEarlierQuestions, ...latestQuestions];
+  return sortQuestions([...retainedEarlierQuestions, ...latestQuestions]);
 }
 
 export function isSameDraftContext({

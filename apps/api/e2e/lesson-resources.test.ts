@@ -300,19 +300,19 @@ test.describe("Lesson resources API", () => {
       prefix: "lesson-question-subscription",
     });
 
-    const [threadResponse, createResponse] = await Promise.all([
-      apiContext.get(`/v1/lessons/${lesson.id}/questions`),
-      apiContext.post(`/v1/lessons/${lesson.id}/questions`, {
-        data: {
-          context: { kind: "lesson" },
-          question: "Can you explain this lesson?",
-          requestId: randomUUID(),
-        },
-      }),
-    ]);
+    const threadResponse = await apiContext.get(`/v1/lessons/${lesson.id}/questions`);
 
     expect(threadResponse.status()).toBe(200);
     await expect(threadResponse.json()).resolves.toBeNull();
+
+    const createResponse = await apiContext.post(`/v1/lessons/${lesson.id}/questions`, {
+      data: {
+        context: { kind: "lesson" },
+        question: "Can you explain this lesson?",
+        requestId: randomUUID(),
+      },
+    });
+
     expect(createResponse.status()).toBe(201);
 
     await expect(

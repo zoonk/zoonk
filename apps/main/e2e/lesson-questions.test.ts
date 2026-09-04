@@ -1068,6 +1068,86 @@ test("reconciles an answer that kept running after a reload", async ({
   expect(api.statusRequests).toBe(1);
 });
 
+test("recovers an abandoned answer when the learner checks again", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson();
+
+  const abandonedQuestion = {
+    ...questionResource({
+      context: { kind: "lesson" },
+      question: "Please recover this interrupted answer.",
+      status: "running",
+    }),
+    updatedAt: new Date(Date.now() - 180_000).toISOString(),
+  };
+
+  const api = await mockQuestionApi({
+    initialQuestions: [abandonedQuestion],
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+  });
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = authenticatedPage.getByRole("dialog");
+  await dialog.getByRole("textbox", { name: "Ask a question" }).fill("My follow-up question.");
+  await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
+  await dialog.getByRole("button", { name: "Check again" }).click();
+
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Send" })).toBeEnabled();
+  expect(api.questions).toHaveLength(1);
+  expect(api.answerRequests).toBe(1);
+});
+
+test("keeps waiting when another session is still generating the answer", async ({
+  subscriberPage: authenticatedPage,
+}) => {
+  const scenario = await createQuestionLesson();
+
+  const runningQuestion = questionResource({
+    context: { kind: "lesson" },
+    question: "Please wait for my other session.",
+    status: "running",
+  });
+
+  const api = await mockQuestionApi({
+    initialQuestions: [runningQuestion],
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+  });
+
+  // The server rejects duplicate claims while the original provider request is still active.
+  await authenticatedPage.route(`**/v1/questions/${runningQuestion.id}/answers`, (route) =>
+    route.fulfill({ json: { error: "Answer already in progress" }, status: 409 }),
+  );
+
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = authenticatedPage.getByRole("dialog");
+  await dialog.getByRole("textbox", { name: "Ask a question" }).fill("My follow-up question.");
+
+  await Promise.all([
+    authenticatedPage.waitForResponse(
+      (response) =>
+        response.url().endsWith(`/${runningQuestion.id}/answers`) && response.status() === 409,
+    ),
+    dialog.getByRole("button", { name: "Check again" }).click(),
+  ]);
+
+  await expect(dialog.getByRole("button", { name: "Check again" })).toBeEnabled();
+  await expect(dialog.getByText("Thinking…")).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Try again" })).not.toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
+  expect(api.answerRequests).toBe(0);
+
+  api.questions = [{ ...runningQuestion, answer: ANSWER_TEXT, status: "completed" }];
+  await dialog.getByRole("button", { name: "Check again" }).click();
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Send" })).toBeEnabled();
+});
+
 test("keeps polling a remote answer after a transient refresh failure", async ({
   subscriberPage: authenticatedPage,
 }) => {
@@ -1787,6 +1867,91 @@ test("explains correct and incorrect answers on demand with validated answer con
     },
     question: "Why is this answer correct?",
   });
+});
+
+async function expectReopenedSavedExplanation({
+  page: authenticatedPage,
+  pageSize,
+}: {
+  page: Page;
+  pageSize: number;
+}) {
+  const scenario = await createQuestionLesson();
+
+  const api = await mockQuestionApi({
+    lessonId: scenario.lessonId,
+    page: authenticatedPage,
+    threadPageSize: pageSize,
+  });
+
+  await authenticatedPage.setViewportSize({ height: 812, width: 375 });
+  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.getByRole("radio", { name: scenario.wrongOption }).click();
+  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
+  const explainAnswer = authenticatedPage.getByRole("button", { name: "Explain answer" });
+  await explainAnswer.click();
+
+  const dialog = authenticatedPage.getByRole("dialog");
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  await authenticatedPage.keyboard.press("Escape");
+
+  const followUps = Array.from({ length: 6 }, (_, index) => ({
+    ...questionResource({
+      answer: `Follow-up explanation ${index}. ${"Gravity bends the satellite's path. ".repeat(12)}`,
+      context: { kind: "lesson" },
+      question: `Follow-up question ${index}`,
+      status: "completed",
+    }),
+    createdAt: new Date(Date.now() + index + 1).toISOString(),
+  }));
+
+  api.questions = [...api.questions, ...followUps];
+  await explainAnswer.click();
+
+  await expect(
+    dialog
+      .getByRole("article", { name: "Your question" })
+      .getByText("Why was my answer wrong? Explain the correct answer."),
+  ).toBeInViewport();
+
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeInViewport();
+  expect(api.questions).toHaveLength(7);
+  expect(api.answerRequests).toBe(1);
+
+  const loadEarlier = dialog.getByRole("button", { name: "Load earlier questions" });
+
+  async function loadAllEarlierQuestions() {
+    if (!(await loadEarlier.isVisible())) {
+      return;
+    }
+
+    const completedRequests = api.completedGetRequests;
+    await loadEarlier.click();
+    await expect.poll(() => api.completedGetRequests).toBeGreaterThan(completedRequests);
+    await loadAllEarlierQuestions();
+  }
+
+  await loadAllEarlierQuestions();
+
+  const turns = dialog.getByRole("article", { name: "Your question" });
+  await expect(turns).toHaveCount(7);
+  await expect(turns.nth(0)).toContainText(ANSWER_TEXT);
+
+  await Promise.all(
+    followUps.map((question, index) =>
+      expect(turns.nth(index + 1)).toContainText(question.question),
+    ),
+  );
+}
+
+test("reopens the saved explanation after follow-ups in the loaded page", async ({
+  subscriberPage,
+}) => {
+  await expectReopenedSavedExplanation({ page: subscriberPage, pageSize: 50 });
+});
+
+test("reopens the saved explanation outside the latest page", async ({ subscriberPage }) => {
+  await expectReopenedSavedExplanation({ page: subscriberPage, pageSize: 2 });
 });
 
 test("keeps questions accessible while an active answer blocks automatic explanation", async ({

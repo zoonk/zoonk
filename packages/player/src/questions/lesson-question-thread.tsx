@@ -151,11 +151,12 @@ export function QuestionThread({
     <ThreadViewport
       aria-busy={answerInProgressCount > 0}
       aria-label={t("Questions about this lesson")}
+      revealedQuestionId={state.revealedQuestionId}
       role="log"
     >
       <MessageScrollerContent role="presentation">
         {state.hasMore && (
-          <MessageScrollerItem className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-2">
             {state.earlierLoadFailed && (
               <p className="text-destructive text-center text-sm" role="alert">
                 {t("Couldn't load earlier questions. Try again.")}
@@ -171,7 +172,7 @@ export function QuestionThread({
               {state.isLoadingEarlier && <Spinner aria-hidden="true" />}
               {t("Load earlier questions")}
             </Button>
-          </MessageScrollerItem>
+          </div>
         )}
         {state.questions.map((question) => (
           <MessageScrollerItem key={question.id} messageId={question.id} scrollAnchor>
