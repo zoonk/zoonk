@@ -2371,7 +2371,7 @@
     },
     "/questions/{questionId}/answers": {
       "post": {
-        "description": "Claims a pending or failed question and streams one grounded UTF-8 answer as plain text.",
+        "description": "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream.",
         "operationId": "createLessonQuestionAnswer",
         "security": [
           {
@@ -2401,11 +2401,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Streamed lesson question answer",
+            "description": "Lesson question answer streamed as AI SDK UI message events",
             "content": {
-              "text/plain": {
+              "text/event-stream": {
                 "schema": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "AI SDK UI message stream. Each data field contains a UI message chunk and the stream ends with a [DONE] event.",
+                  "example": "data: {\"type\":\"text-delta\",\"id\":\"answer\",\"delta\":\"An orbit is...\"}\n\n"
                 }
               }
             }

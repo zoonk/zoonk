@@ -4,10 +4,9 @@ import { type AppRoute } from "@/i18n/navigation";
 import { type LessonQuestionContextSummary } from "@zoonk/core/lesson-questions/contract";
 import { Bubble, BubbleContent } from "@zoonk/ui/components/bubble";
 import { Button } from "@zoonk/ui/components/button";
-import { Marker, MarkerContent, MarkerIcon } from "@zoonk/ui/components/marker";
+import { Marker, MarkerContent } from "@zoonk/ui/components/marker";
 import { Message, MessageContent, MessageHeader } from "@zoonk/ui/components/message";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import dynamic from "next/dynamic";
@@ -97,20 +96,12 @@ function QuestionAnswer<Href extends string>({
   if (answer) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <div className="flex w-full items-end gap-2">
-          <div className="text-foreground min-w-0 flex-1">
-            <AnswerMarkdown
-              answer={answer}
-              isAnimating={isLocallyStreaming}
-              isStreaming={status === "running"}
-            />
-          </div>
-          {status === "running" && (
-            <Spinner
-              aria-label={t("Answering")}
-              className="text-muted-foreground mb-0.5 size-3.5 shrink-0"
-            />
-          )}
+        <div className="text-foreground w-full min-w-0">
+          <AnswerMarkdown
+            answer={answer}
+            isAnimating={isLocallyStreaming}
+            isStreaming={status === "running"}
+          />
         </div>
         {status === "running" && !isLocallyStreaming && (
           <Button
@@ -135,9 +126,6 @@ function QuestionAnswer<Href extends string>({
   return (
     <div className="flex flex-col items-start gap-3">
       <Marker role="status">
-        <MarkerIcon>
-          <Spinner />
-        </MarkerIcon>
         <MarkerContent className="shimmer">{t("Thinking…")}</MarkerContent>
       </Marker>
       {status === "running" && !isLocallyStreaming && (

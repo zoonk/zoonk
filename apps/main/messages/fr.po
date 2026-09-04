@@ -1922,11 +1922,6 @@ msgid "We couldn't finish this answer."
 msgstr "Nous n’avons pas pu terminer cette réponse."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
-msgctxt "Zg9lxZ"
-msgid "Answering"
-msgstr "Réponse en cours"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/_questions/lesson-question-turn.tsx
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "1A8Z_l"
 msgid "Check again"

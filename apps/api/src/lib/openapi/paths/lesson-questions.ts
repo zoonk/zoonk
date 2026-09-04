@@ -1,7 +1,7 @@
 import { MAX_LESSON_QUESTION_THREAD_TURNS } from "@zoonk/core/lesson-questions/contract";
 import {
   createLessonQuestionRequestSchema,
-  lessonQuestionAnswerResponseSchema,
+  lessonQuestionAnswerStreamSchema,
   lessonQuestionResponseSchema,
   lessonQuestionThreadQuerySchema,
   lessonQuestionThreadResponseSchema,
@@ -86,13 +86,13 @@ export const lessonQuestionPaths = {
   "/questions/{questionId}/answers": {
     post: {
       description:
-        "Claims a pending or failed question and streams one grounded UTF-8 answer as plain text.",
+        "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream.",
       operationId: "createLessonQuestionAnswer",
       requestParams: { path: lessonQuestionPathParamsSchema },
       responses: {
         "200": {
-          content: { "text/plain": { schema: lessonQuestionAnswerResponseSchema } },
-          description: "Streamed lesson question answer",
+          content: { "text/event-stream": { schema: lessonQuestionAnswerStreamSchema } },
+          description: "Lesson question answer streamed as AI SDK UI message events",
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,

@@ -45,4 +45,10 @@ export const lessonQuestionThreadResponseSchema = lessonQuestionThreadResourceSc
   .meta({ id: "LessonQuestionThread" })
   .nullable();
 
-export const lessonQuestionAnswerResponseSchema = z.string();
+export const lessonQuestionAnswerStreamSchema = z
+  .string()
+  .meta({
+    description:
+      "AI SDK UI message stream. Each data field contains a UI message chunk and the stream ends with a [DONE] event.",
+    examples: ['data: {"type":"text-delta","id":"answer","delta":"An orbit is..."}\n\n'],
+  });

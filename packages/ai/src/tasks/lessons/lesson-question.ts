@@ -1,7 +1,6 @@
 import "server-only";
-import { zoonkGateway } from "@zoonk/ai/gateway";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { type TextStreamPart, type ToolSet, generateText, streamText } from "ai";
+import { generateText, streamText } from "ai";
 import systemPrompt from "./lesson-question.prompt.md";
 
 export const LESSON_QUESTION_MODEL = "openai/gpt-5.6-luna";
@@ -62,8 +61,6 @@ export type LessonQuestionAnswerCompletion = {
 
 type StreamLessonQuestionAnswerParams = {
   contextSnapshot: LessonQuestionContextSnapshot;
-  onEnd: (completion: LessonQuestionAnswerCompletion) => Promise<void> | void;
-  onError: (error: unknown) => Promise<void> | void;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
 };
@@ -78,11 +75,6 @@ export type GenerateLessonQuestionAnswerParams = {
 };
 
 export type LessonQuestionAnswerSchema = { answer: string };
-
-type GenerationState = {
-  failure: { error: unknown; settled: Promise<void> } | null;
-  routedModel: { model: string; provider: string } | null;
-};
 
 function toHistoryMessages(priorTurns: readonly LessonQuestionPriorTurn[]) {
   return priorTurns.flatMap(({ answer, question }) => [
@@ -145,7 +137,7 @@ function createLessonQuestionGenerationOptions({
     instructions: systemPrompt,
     maxOutputTokens: 600,
     messages: createLessonQuestionMessages({ contextSnapshot, priorTurns, question }),
-    model: zoonkGateway(model),
+    model,
     providerOptions: buildProviderOptions({ fallbackModels, model, useFallback }),
     reasoning,
   };
@@ -155,6 +147,11 @@ function serializeLessonQuestionMessages(
   messages: ReturnType<typeof createLessonQuestionMessages>,
 ): string {
   return messages.map(({ content, role }) => `${role.toUpperCase()}:\n${content}`).join("\n\n");
+}
+
+/** Provider errors can contain private prompt data; the delivery adapter logs safe identifiers. */
+function suppressLessonQuestionProviderError() {
+  return Promise.resolve();
 }
 
 /**
@@ -192,7 +189,13 @@ export async function generateLessonQuestionAnswer({
   };
 }
 
-function getRoutedModel({ modelId, provider }: { modelId: string; provider: string }) {
+export function resolveLessonQuestionAnswerModel({
+  modelId,
+  provider,
+}: {
+  modelId: string;
+  provider: string;
+}) {
   const configuredModel = configuredModels.find(
     (candidate) => candidate === modelId || candidate.endsWith(`/${modelId}`),
   );
@@ -203,86 +206,15 @@ function getRoutedModel({ modelId, provider }: { modelId: string; provider: stri
   return { model, provider: providerSeparator > 0 ? model.slice(0, providerSeparator) : provider };
 }
 
-async function waitForErrorHandling(settled: Promise<void>) {
-  try {
-    await settled;
-  } catch {
-    // The raw response keeps the original generation or persistence error.
-  }
-}
-
 /**
- * Raw text has no error envelope, so provider failures must reject the response
- * body instead of looking like a successfully completed empty answer.
- */
-function createAnswerTextStream({
-  generationState,
-  reportError,
-  stream,
-}: {
-  generationState: GenerationState;
-  reportError: (error: unknown) => Promise<void>;
-  stream: ReadableStream<TextStreamPart<ToolSet>>;
-}) {
-  const answerState = { hasText: false };
-
-  return stream.pipeThrough(
-    new TransformStream<TextStreamPart<ToolSet>, string>({
-      async flush(controller) {
-        if (generationState.failure) {
-          await waitForErrorHandling(generationState.failure.settled);
-          controller.error(generationState.failure.error);
-          return;
-        }
-
-        if (!answerState.hasText) {
-          const error = new Error(EMPTY_ANSWER_MESSAGE);
-
-          await reportError(error);
-          controller.error(error);
-        }
-      },
-      async transform(part, controller) {
-        if (part.type === "text-delta") {
-          answerState.hasText ||= part.text.trim().length > 0;
-          controller.enqueue(part.text);
-        }
-
-        if (part.type === "error") {
-          await reportError(part.error);
-          controller.error(part.error);
-        }
-      },
-    }),
-  );
-}
-
-/**
- * Streams one bounded, lesson-grounded tutor response while keeping the model
- * and fallback policy out of delivery adapters. Persistence remains caller-owned
- * so the API can protect retries with the question's claimed revision.
+ * Keeps the model and fallback policy in the task while delivery adapters choose
+ * how to stream and persist the generated response.
  */
 export function streamLessonQuestionAnswer({
   contextSnapshot,
-  onEnd,
-  onError,
   priorTurns,
   question,
 }: StreamLessonQuestionAnswerParams) {
-  const generationState: GenerationState = { failure: null, routedModel: null };
-
-  const reportError = async (error: unknown) => {
-    if (generationState.failure) {
-      await waitForErrorHandling(generationState.failure.settled);
-      return;
-    }
-
-    const settled = Promise.resolve().then(() => onError(error));
-
-    generationState.failure = { error, settled };
-    await waitForErrorHandling(settled);
-  };
-
   const generationOptions = createLessonQuestionGenerationOptions({
     contextSnapshot,
     model: LESSON_QUESTION_MODEL,
@@ -291,46 +223,5 @@ export function streamLessonQuestionAnswer({
     useFallback: true,
   });
 
-  const generation = streamText({
-    ...generationOptions,
-    onEnd: async ({ finishReason, model, text, usage }) => {
-      if (generationState.failure) {
-        return;
-      }
-
-      if (!text.trim()) {
-        await reportError(new Error(EMPTY_ANSWER_MESSAGE));
-        return;
-      }
-
-      const routedModel =
-        generationState.routedModel ??
-        getRoutedModel({ modelId: model.modelId, provider: model.provider });
-
-      try {
-        await onEnd({
-          answer: text,
-          finishReason,
-          ...(usage.inputTokens === undefined ? {} : { inputTokens: usage.inputTokens }),
-          model: routedModel.model,
-          ...(usage.outputTokens === undefined ? {} : { outputTokens: usage.outputTokens }),
-          provider: routedModel.provider,
-          ...(usage.totalTokens === undefined ? {} : { totalTokens: usage.totalTokens }),
-        });
-      } catch (error) {
-        await reportError(error);
-      }
-    },
-    onError: async ({ error }) => {
-      await reportError(error);
-    },
-    onLanguageModelCallEnd: ({ modelId, provider }) => {
-      generationState.routedModel = getRoutedModel({ modelId, provider });
-    },
-  });
-
-  return {
-    consumeStream: () => generation.consumeStream(),
-    stream: createAnswerTextStream({ generationState, reportError, stream: generation.stream }),
-  };
+  return streamText({ ...generationOptions, onError: suppressLessonQuestionProviderError });
 }

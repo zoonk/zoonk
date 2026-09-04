@@ -52,14 +52,15 @@ Do not inflate severity, invent failure modes, or report generic best-practice v
 
 ### 2. Review Simplicity and Architecture
 
-- Ask whether the implementation is the simplest design that fully solves the problem and supports known growth.
+- Ask whether the implementation is the simplest design that fully solves the problem and supports known growth. AI Agents usually over-engineer solutions, so you must double-check that this is the simplest solution for this problem.
 - Look for duplicated logic, markup, class names, schemas, types, constants, prompts, or documentation that should have one source of truth.
+- Look for leftover code from a previous implementation.
 - Prefer small named functions, linear pipelines, early returns, immutable transformations, meaningful names, and one responsibility per file.
-- Flag nested business logic in `map`, `filter`, `flatMap`, or `reduce`; nested conditionals; value computation through `let` and reassignment; and large files that mix parsing, validation, persistence, and orchestration.
+- Flag nested business logic in `map`, `filter`, `flatMap`, or `reduce`; nested conditionals; value computation through `let` and reassignment; and large files that mix parsing, validation, persistence, and orchestration. Prefer functional composition, immutability, early returns, and small helpers that can be unit tested.
 - Check that functions with multiple domain parameters use one named object parameter, except framework callbacks and functions wrapped in React `cache`, where stable primitive positional arguments preserve memoization.
 - Reject unnecessary aliases, compatibility re-exports after moves, boolean-prop proliferation, premature providers, and abstractions that make a single path harder to understand.
 - Also reject "only used twice" reasoning when repeated UI or domain behavior needs to stay synchronized. Prefer a reusable primitive or helper when it creates a real single source of truth.
-- Confirm new and changed functions have meaningful `/** ... */` comments that explain why the function exists rather than restating its implementation.
+- Confirm new and changed functions have meaningful `/** ... */` comments that explain **why** the function exists rather than restating its implementation.
 - Separate semantic changes from formatting churn and flag unrelated formatting-only diffs.
 
 ### 3. Review Security, Permissions, and Privacy
@@ -111,6 +112,7 @@ Read [Zoonk compound components](../zoonk-compound-components/SKILL.md) and [Ver
 - Keep interfaces clean, minimal, calm, and consistent with Apple, Linear, and Vercel inspiration. Flag clutter, unnecessary cards, heavy borders or shadows, weak hierarchy, confusing action priority, excessive motion, and controls that do not clearly communicate their effect.
 - Use outline buttons for most actions and links, default buttons for selected or submit actions, and secondary buttons for deliberate emphasis unless the product context requires otherwise.
 - For Apple-platform changes, read [Apple Human Interface Guidelines](../apple-human-interface-guidelines/SKILL.md). For Android changes, read [Android Material Guidelines](../android-material-guidelines/SKILL.md).
+- Don't check only code correctness, also check the actual UI and UX. A solution that is correct but confusing, inconsistent, or ugly is still a defect.
 
 ### 7. Review Data, APIs, and Workflows
 
@@ -154,6 +156,9 @@ Read [Zoonk testing](../zoonk-testing/SKILL.md) whenever the change adds behavio
 ## Common Review Misses
 
 - Reviewing only changed lines while missing a broken caller, permission boundary, schema constraint, route entry point, cache scope, or generated artifact.
+- Not flagging over-engineered code that could be simplified.
+- Not checking leftovers from previous implementations.
+- Not checking the actual UI and UX for correctness, accessibility, and design.
 - Assuming an existing pattern is correct without checking whether it violates current repository standards.
 - Suggesting a local patch when the invariant belongs in a shared data, component, validation, or workflow boundary.
 - Removing independent work from `Promise.all` and accidentally introducing a waterfall.

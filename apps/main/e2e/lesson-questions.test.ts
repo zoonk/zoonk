@@ -19,6 +19,27 @@ import { expect, test } from "./fixtures";
 
 const ANSWER_TEXT = "Gravity keeps pulling while the satellite moves forward, bending its path.";
 
+const UI_MESSAGE_STREAM_HEADERS = {
+  "Cache-Control": "no-cache",
+  "Content-Type": "text/event-stream",
+  "x-vercel-ai-ui-message-stream": "v1",
+};
+
+function uiMessageEvent(event: object) {
+  return `data: ${JSON.stringify(event)}\n\n`;
+}
+
+function uiMessageStreamBody(chunks: string[]) {
+  return [
+    uiMessageEvent({ type: "start" }),
+    uiMessageEvent({ id: "answer", type: "text-start" }),
+    ...chunks.map((delta) => uiMessageEvent({ delta, id: "answer", type: "text-delta" })),
+    uiMessageEvent({ id: "answer", type: "text-end" }),
+    uiMessageEvent({ type: "finish" }),
+    "data: [DONE]\n\n",
+  ].join("");
+}
+
 async function getRequiredElementBox(locator: Locator) {
   const box = await locator.boundingBox();
 
@@ -475,7 +496,11 @@ async function mockQuestionApi({
         : question,
     );
 
-    await route.fulfill({ body: ANSWER_TEXT, contentType: "text/plain", status: 200 });
+    await route.fulfill({
+      body: uiMessageStreamBody([ANSWER_TEXT]),
+      headers: UI_MESSAGE_STREAM_HEADERS,
+      status: 200,
+    });
   });
 
   return state;
@@ -518,15 +543,27 @@ async function installStreamingAnswerResponse({
           new Response(
             new ReadableStream({
               start(controller) {
+                function encodeEvent(event: object) {
+                  return encoder.encode(`data: ${JSON.stringify(event)}\n\n`);
+                }
+
+                controller.enqueue(encodeEvent({ type: "start" }));
+                controller.enqueue(encodeEvent({ id: "answer", type: "text-start" }));
+
                 function enqueueChunk(index: number) {
                   const chunk = answerChunks[index];
 
                   if (chunk === undefined) {
+                    controller.enqueue(encodeEvent({ id: "answer", type: "text-end" }));
+                    controller.enqueue(encodeEvent({ type: "finish" }));
+                    controller.enqueue(encoder.encode("data: [DONE]\n\n"));
                     controller.close();
                     return;
                   }
 
-                  controller.enqueue(encoder.encode(chunk));
+                  controller.enqueue(
+                    encodeEvent({ delta: chunk, id: "answer", type: "text-delta" }),
+                  );
 
                   if (index === 0 && releaseEvent) {
                     globalThis.addEventListener(releaseEvent, () => enqueueChunk(index + 1), {
@@ -542,7 +579,14 @@ async function installStreamingAnswerResponse({
                 enqueueChunk(0);
               },
             }),
-            { headers: { "Content-Type": "text/plain" }, status: 200 },
+            {
+              headers: {
+                "Cache-Control": "no-cache",
+                "Content-Type": "text/event-stream",
+                "x-vercel-ai-ui-message-stream": "v1",
+              },
+              status: 200,
+            },
           ),
         );
       };
@@ -674,15 +718,17 @@ test("asks from the active step, copies safe context, follows up, and resumes", 
 
 test("renders streamed answers as markdown", async ({ subscriberPage: authenticatedPage }) => {
   const scenario = await createQuestionLesson();
+  const releaseStreamEvent = "release-markdown-answer";
 
   await installStreamingAnswerResponse({
     chunks: [
-      "### Key",
-      " idea\n\n- **Gravity** bends the path.\n",
+      "### Key idea\n\n",
+      "- **Gravity** bends the path.\n",
       "- [Velocity](https://example.com) carries it forward.",
     ],
     delayMilliseconds: 40,
     page: authenticatedPage,
+    releaseAfterFirstChunkEvent: releaseStreamEvent,
   });
 
   await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
@@ -694,6 +740,13 @@ test("renders streamed answers as markdown", async ({ subscriberPage: authentica
   await dialog.getByRole("button", { name: "Send" }).click();
 
   await expect(dialog.getByRole("heading", { level: 3, name: "Key idea" })).toBeVisible();
+  await expect(dialog.getByLabel("Answering")).toHaveCount(0);
+
+  await authenticatedPage.evaluate(
+    (eventName) => globalThis.dispatchEvent(new Event(eventName)),
+    releaseStreamEvent,
+  );
+
   await expect(dialog.getByRole("listitem")).toHaveCount(2);
   await expect(dialog.getByRole("button", { name: "Velocity" })).toBeVisible();
 });

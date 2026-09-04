@@ -514,7 +514,7 @@ describe("OpenAPI document", () => {
     expect(document.paths).not.toHaveProperty("/lessons/{lessonId}/generations");
   });
 
-  it("documents authenticated lesson questions and raw streamed answers", () => {
+  it("documents authenticated lesson questions and UI message streams", () => {
     const document = documentContractSchema.parse(openAPIDocument);
     const authenticated = [{ bearerAuth: [] }, { cookieAuth: [] }];
     const questions = document.paths["/lessons/{lessonId}/questions"];
@@ -560,7 +560,7 @@ describe("OpenAPI document", () => {
     expect(answers?.post).toMatchObject({
       operationId: "createLessonQuestionAnswer",
       responses: {
-        "200": { content: { "text/plain": { schema: { type: "string" } } } },
+        "200": { content: { "text/event-stream": { schema: { type: "string" } } } },
         "402": expect.any(Object),
         "403": expect.any(Object),
         "409": expect.any(Object),

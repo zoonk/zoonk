@@ -1,21 +1,21 @@
 import { trackGenerationRateLimited } from "@/lib/server-track-events";
-import {
-  type LessonQuestionAnswerCompletion,
-  streamLessonQuestionAnswer,
-} from "@zoonk/ai/tasks/lessons/question";
+import { streamLessonQuestionAnswer } from "@zoonk/ai/tasks/lessons/question";
 import {
   claimLessonQuestionAnswer,
   completeLessonQuestionAnswer,
   failLessonQuestionAnswer,
 } from "@zoonk/core/lesson-questions/answer-lifecycle";
 import { logError } from "@zoonk/utils/logger";
+import { simulateReadableStream, streamText } from "ai";
+import { MockLanguageModelV4 } from "ai/test";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST as postAnswer } from "./route";
+import type * as LessonQuestionModule from "@zoonk/ai/tasks/lessons/question";
 import type * as NextServer from "next/server";
 
-vi.mock("@zoonk/ai/tasks/lessons/question", () => ({
-  LESSON_QUESTION_MODEL: "openai/gpt-5.6-luna",
+vi.mock("@zoonk/ai/tasks/lessons/question", async (importOriginal) => ({
+  ...(await importOriginal<typeof LessonQuestionModule>()),
   streamLessonQuestionAnswer: vi.fn(),
 }));
 
@@ -36,31 +36,52 @@ vi.mock("next/server", async (importOriginal) => ({
 }));
 
 const QUESTION_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
-const consumeStream = vi.fn();
+const ANSWER = "A grounded answer";
+const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 const afterTasks: Promise<unknown>[] = [];
 
-const completion: LessonQuestionAnswerCompletion = {
-  answer: "A grounded answer",
-  finishReason: "stop",
-  model: "openai/gpt-5.6-luna",
-  provider: "openai",
-};
+const successfulProviderStream: MockLanguageModelV4["doStream"] = async () => ({
+  stream: simulateReadableStream({
+    chunks: [
+      {
+        id: "response-id",
+        modelId: "openai/gpt-5.6-luna",
+        timestamp: new Date("2026-09-04T12:00:00.000Z"),
+        type: "response-metadata",
+      },
+      { id: "answer", type: "text-start" },
+      { delta: ANSWER, id: "answer", type: "text-delta" },
+      { id: "answer", type: "text-end" },
+      {
+        finishReason: { raw: undefined, unified: "stop" },
+        type: "finish",
+        usage: {
+          inputTokens: { cacheRead: undefined, cacheWrite: undefined, noCache: 80, total: 80 },
+          outputTokens: { reasoning: undefined, text: 12, total: 12 },
+        },
+      },
+    ],
+  }),
+});
 
-type StreamInput = Parameters<typeof streamLessonQuestionAnswer>[0];
+function createTestGeneration(
+  doStream: MockLanguageModelV4["doStream"] = successfulProviderStream,
+) {
+  return streamText({
+    model: new MockLanguageModelV4({
+      doStream,
+      modelId: "openai/gpt-5.6-luna",
+      provider: "gateway",
+    }),
+    onError: vi.fn(),
+    prompt: "Test lesson question",
+  });
+}
 
-async function createAnswerResponse(): Promise<{ input: StreamInput; response: Response }> {
-  const response = await postAnswer(
-    new Request(`http://localhost/v1/questions/${QUESTION_ID}/answers`),
-    { params: Promise.resolve({ questionId: QUESTION_ID }) },
-  );
-
-  const input = vi.mocked(streamLessonQuestionAnswer).mock.calls[0]?.[0];
-
-  if (!input) {
-    throw new Error("Expected answer generation to start");
-  }
-
-  return { input, response };
+async function createAnswerResponse() {
+  return postAnswer(new Request(`http://localhost/v1/questions/${QUESTION_ID}/answers`), {
+    params: Promise.resolve({ questionId: QUESTION_ID }),
+  });
 }
 
 describe("lesson question answer route", () => {
@@ -83,52 +104,78 @@ describe("lesson question answer route", () => {
       status: "ready",
     } as never);
 
-    // The provider cannot be called deterministically in adapter tests, so the narrow AI stream
-    // boundary is replaced while the route-owned persistence callbacks remain real.
-    vi.mocked(streamLessonQuestionAnswer).mockImplementation(() => ({
-      consumeStream,
-      stream: new ReadableStream<string>({ start: (controller) => controller.close() }),
-    }));
+    // The route uses a real AI SDK stream with only the external model boundary replaced.
+    vi.mocked(streamLessonQuestionAnswer).mockImplementation(() => createTestGeneration());
+    vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status: "updated" });
   });
 
-  it("accepts the stream only after the claimed revision is persisted", async () => {
-    const backgroundConsumption = Promise.resolve();
-    consumeStream.mockReturnValueOnce(backgroundConsumption);
-    vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status: "updated" });
-    const { input, response } = await createAnswerResponse();
+  it("streams UI message events and persists the completed answer", async () => {
+    const response = await createAnswerResponse();
 
     expect(response.status).toBe(200);
     expect(response.headers.get("cache-control")).toBe("no-store");
-    expect(response.headers.get("content-type")).toBe("text/plain; charset=utf-8");
+    expect(response.headers.get("content-type")).toBe("text/event-stream");
+    expect(response.headers.get("x-vercel-ai-ui-message-stream")).toBe("v1");
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");
-    expect(consumeStream).toHaveBeenCalledExactlyOnceWith();
-    expect(after).toHaveBeenCalledExactlyOnceWith(backgroundConsumption);
-    await expect(Promise.resolve(input.onEnd(completion))).resolves.toBeUndefined();
+    expect(after).toHaveBeenCalledOnce();
+
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    expect(body).toContain(`"delta":"${ANSWER}"`);
+    expect(body).toContain("data: [DONE]");
 
     expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
-      ...completion,
+      answer: ANSWER,
+      finishReason: "stop",
+      inputTokens: 80,
+      model: "openai/gpt-5.6-luna",
+      outputTokens: 12,
+      provider: "openai",
       questionId: QUESTION_ID,
       revision: 1,
+      totalTokens: 92,
     });
   });
 
   it("finishes persistence after the response stream is canceled", async () => {
-    const continueGeneration = Promise.withResolvers<boolean>();
-    vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status: "updated" });
+    const continueGeneration = Promise.withResolvers<null>();
 
-    vi.mocked(streamLessonQuestionAnswer).mockImplementation((input) => ({
-      consumeStream: async () => {
-        await continueGeneration.promise;
-        await input.onEnd(completion);
-      },
-      stream: new ReadableStream<string>({
+    const controlledProviderStream: MockLanguageModelV4["doStream"] = async () => ({
+      stream: new ReadableStream({
         start(controller) {
-          controller.enqueue("Partial answer");
+          controller.enqueue({ id: "answer", type: "text-start" });
+          controller.enqueue({ delta: "Partial answer", id: "answer", type: "text-delta" });
+
+          void continueGeneration.promise.then(() => {
+            controller.enqueue({ delta: " completed", id: "answer", type: "text-delta" });
+            controller.enqueue({ id: "answer", type: "text-end" });
+
+            controller.enqueue({
+              finishReason: { raw: undefined, unified: "stop" },
+              type: "finish",
+              usage: {
+                inputTokens: {
+                  cacheRead: undefined,
+                  cacheWrite: undefined,
+                  noCache: 10,
+                  total: 10,
+                },
+                outputTokens: { reasoning: undefined, text: 4, total: 4 },
+              },
+            });
+
+            controller.close();
+          });
         },
       }),
-    }));
+    });
 
-    const { response } = await createAnswerResponse();
+    vi.mocked(streamLessonQuestionAnswer).mockImplementation(() =>
+      createTestGeneration(controlledProviderStream),
+    );
+
+    const response = await createAnswerResponse();
     const reader = response.body?.getReader();
 
     if (!reader) {
@@ -140,24 +187,35 @@ describe("lesson question answer route", () => {
 
     expect(completeLessonQuestionAnswer).not.toHaveBeenCalled();
 
-    continueGeneration.resolve(true);
+    continueGeneration.resolve(null);
     await Promise.all(afterTasks);
 
-    expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
-      ...completion,
-      questionId: QUESTION_ID,
-      revision: 1,
-    });
+    expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        answer: "Partial answer completed",
+        questionId: QUESTION_ID,
+        revision: 1,
+      }),
+    );
   });
 
-  it("fails the claim without logging provider request content", async () => {
+  it("marks an exhausted provider failure as retryable without logging request content", async () => {
     const providerError = Object.assign(new Error("Provider failed"), {
       requestBodyValues: { prompt: "private lesson and learner question" },
     });
 
-    const { input } = await createAnswerResponse();
+    const failedProviderStream: MockLanguageModelV4["doStream"] = async () => ({
+      stream: simulateReadableStream({ chunks: [{ error: providerError, type: "error" }] }),
+    });
 
-    await expect(Promise.resolve(input.onError(providerError))).resolves.toBeUndefined();
+    vi.mocked(streamLessonQuestionAnswer).mockImplementation(() =>
+      createTestGeneration(failedProviderStream),
+    );
+
+    const response = await createAnswerResponse();
+
+    await expect(response.text()).rejects.toThrow(EMPTY_ANSWER_MESSAGE);
+    await Promise.all(afterTasks);
 
     expect(logError).toHaveBeenCalledExactlyOnceWith("[Lesson Question Answer Error]", {
       questionId: QUESTION_ID,
@@ -187,10 +245,7 @@ describe("lesson question answer route", () => {
       status: "limitReached",
     });
 
-    const response = await postAnswer(
-      new Request(`http://localhost/v1/questions/${QUESTION_ID}/answers`),
-      { params: Promise.resolve({ questionId: QUESTION_ID }) },
-    );
+    const response = await createAnswerResponse();
 
     expect(response.status).toBe(429);
 
@@ -212,14 +267,21 @@ describe("lesson question answer route", () => {
   });
 
   it.each(["notFound", "stale", "unauthorized"] as const)(
-    "rejects the stream when completion persistence returns %s",
+    "marks the answer retryable when completion persistence returns %s",
     async (status) => {
       vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status });
-      const { input } = await createAnswerResponse();
+      const response = await createAnswerResponse();
 
-      await expect(Promise.resolve(input.onEnd(completion))).rejects.toThrow(
+      await expect(response.text()).rejects.toThrow(
         `Lesson question answer was not persisted: ${status}`,
       );
+
+      await Promise.all(afterTasks);
+
+      expect(failLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
+        questionId: QUESTION_ID,
+        revision: 1,
+      });
     },
   );
 });

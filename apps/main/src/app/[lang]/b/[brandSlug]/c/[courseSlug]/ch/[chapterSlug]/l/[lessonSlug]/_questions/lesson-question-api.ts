@@ -10,6 +10,7 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { API_URL } from "@zoonk/utils/url";
+import { DefaultChatTransport, type UIMessageChunk } from "ai";
 import { getLessonQuestionLimitRetryAt } from "./lesson-question-limit";
 
 type LessonQuestionApiErrorKind =
@@ -101,6 +102,26 @@ async function getAuthenticatedHeaders() {
 async function getJsonHeaders() {
   return { ...(await getAuthenticatedHeaders()), "Content-Type": "application/json" };
 }
+
+class LessonQuestionAnswerRequestError extends Error {
+  readonly apiError: LessonQuestionApiError;
+
+  constructor(apiError: LessonQuestionApiError) {
+    super("Lesson question answer request failed");
+    this.apiError = apiError;
+    this.name = "LessonQuestionAnswerRequestError";
+  }
+}
+
+const fetchLessonQuestionAnswer: typeof fetch = async (input, init) => {
+  const response = await fetch(input, init);
+
+  if (!response.ok) {
+    throw new LessonQuestionAnswerRequestError(await getApiError(response));
+  }
+
+  return response;
+};
 
 export async function getLessonQuestionThreadRequest({
   cursor,
@@ -201,34 +222,30 @@ export async function getLessonQuestionRequest({
   return { data: parsed.data, status: "success" };
 }
 
-async function readTextStream({
-  decoder,
+async function readAnswerStream({
   onChunk,
   reader,
 }: {
-  decoder: TextDecoder;
   onChunk: (chunk: string) => void;
-  reader: ReadableStreamDefaultReader<Uint8Array>;
+  reader: ReadableStreamDefaultReader<UIMessageChunk>;
 }): Promise<number> {
   const result = await reader.read();
 
   if (result.done) {
-    const finalChunk = decoder.decode();
-
-    if (finalChunk) {
-      onChunk(finalChunk);
-    }
-
-    return finalChunk.length;
+    return 0;
   }
 
-  const chunk = decoder.decode(result.value, { stream: true });
-
-  if (chunk) {
-    onChunk(chunk);
+  if (result.value.type === "error") {
+    throw new Error(result.value.errorText);
   }
 
-  return chunk.length + (await readTextStream({ decoder, onChunk, reader }));
+  if (result.value.type !== "text-delta") {
+    return readAnswerStream({ onChunk, reader });
+  }
+
+  onChunk(result.value.delta);
+
+  return result.value.delta.length + (await readAnswerStream({ onChunk, reader }));
 }
 
 export async function streamLessonQuestionAnswerRequest({
@@ -238,30 +255,32 @@ export async function streamLessonQuestionAnswerRequest({
   onChunk: (chunk: string) => void;
   questionId: string;
 }): Promise<LessonQuestionApiResult<null>> {
-  const { data: response, error } = await safeAsync(async () =>
-    fetch(questionAnswerUrl(questionId), {
-      cache: "no-store",
-      headers: await getAuthenticatedHeaders(),
-      method: "POST",
+  const transport = new DefaultChatTransport({
+    api: questionAnswerUrl(questionId),
+    fetch: fetchLessonQuestionAnswer,
+    headers: getAuthenticatedHeaders,
+  });
+
+  const { data: stream, error } = await safeAsync(() =>
+    transport.sendMessages({
+      abortSignal: undefined,
+      chatId: questionId,
+      messageId: undefined,
+      messages: [],
+      trigger: "submit-message",
     }),
   );
 
-  if (error || !response) {
-    return { error: { kind: "unknown" }, status: "error" };
+  if (error instanceof LessonQuestionAnswerRequestError) {
+    return { error: error.apiError, status: "error" };
   }
 
-  if (!response.ok) {
-    return { error: await getApiError(response), status: "error" };
-  }
-
-  const body = response.body;
-
-  if (!body) {
+  if (error || !stream) {
     return { error: { kind: "unknown" }, status: "error" };
   }
 
   const { data: characterCount, error: streamError } = await safeAsync(() =>
-    readTextStream({ decoder: new TextDecoder(), onChunk, reader: body.getReader() }),
+    readAnswerStream({ onChunk, reader: stream.getReader() }),
   );
 
   if (streamError || !characterCount) {

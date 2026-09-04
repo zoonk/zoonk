@@ -28,6 +28,7 @@
     "@zoonk/player": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "ai": "catalog:",
     "botid": "catalog:",
     "eventsource-parser": "4.0.0",
     "lucide-react": "catalog:",
