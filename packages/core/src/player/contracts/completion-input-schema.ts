@@ -6,8 +6,7 @@ import { createSelectedAnswerSchema } from "./_utils/selected-answer-schema";
 const MAX_DAY_OF_WEEK = 6;
 const MAX_HOUR_OF_DAY = 23;
 
-/** @public Player transports reuse this exact runtime schema for submitted answer shapes. */
-export const selectedAnswerSchema = createSelectedAnswerSchema();
+const selectedAnswerSchema = createSelectedAnswerSchema();
 
 const stepTimingSchema = z.object({
   answeredAt: z.number(),

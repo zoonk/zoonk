@@ -5,20 +5,15 @@ export const MAX_LESSON_QUESTION_LENGTH = 2000;
 export const MAX_LESSON_QUESTION_CONTEXT_STEPS = 50;
 export const MAX_LESSON_QUESTION_THREAD_TURNS = 50;
 
-/** @public Public clients use this boundary to keep step ordinals within Prisma's Int range. */
-export const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
+const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
 
-/** @public Public clients use this boundary to reject oversized answer collections before POSTing. */
-export const MAX_LESSON_QUESTION_ANSWER_ITEMS = 50;
+const MAX_LESSON_QUESTION_ANSWER_ITEMS = 50;
 
-/** @public Public clients use this boundary to reject oversized answer text before POSTing. */
-export const MAX_LESSON_QUESTION_ANSWER_TEXT_LENGTH = 500;
+const MAX_LESSON_QUESTION_ANSWER_TEXT_LENGTH = 500;
 
-/** @public Public clients use this boundary to reject invalid mistake counts before POSTing. */
-export const MAX_LESSON_QUESTION_ANSWER_MISTAKES = 50;
+const MAX_LESSON_QUESTION_ANSWER_MISTAKES = 50;
 
-/** @public Public transports reuse the cursor schema for query parsing and documentation. */
-export const lessonQuestionThreadCursorSchema = z.uuid();
+const lessonQuestionThreadCursorSchema = z.uuid();
 
 export const getLessonQuestionThreadInputSchema = z
   .object({ cursor: lessonQuestionThreadCursorSchema.optional() })

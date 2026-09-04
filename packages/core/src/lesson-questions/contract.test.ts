@@ -1,10 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import {
-  MAX_LESSON_QUESTION_CONTEXT_STEPS,
-  MAX_LESSON_QUESTION_STEP_NUMBER,
-  createLessonQuestionInputSchema,
-} from "./contract";
+import { MAX_LESSON_QUESTION_CONTEXT_STEPS, createLessonQuestionInputSchema } from "./contract";
+
+const FIRST_INTEGER_ABOVE_PRISMA_RANGE = 2_147_483_648;
 
 const createInput = (context: unknown) => ({
   context,
@@ -45,7 +43,7 @@ describe(parseCreateInput, () => {
     const result = parseCreateInput({
       kind: "step",
       stepId: randomUUID(),
-      stepNumber: MAX_LESSON_QUESTION_STEP_NUMBER + 1,
+      stepNumber: FIRST_INTEGER_ABOVE_PRISMA_RANGE,
     });
 
     expect(result.success).toBe(false);

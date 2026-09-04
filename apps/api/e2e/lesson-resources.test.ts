@@ -1,10 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
-import {
-  MAX_LESSON_QUESTION_ANSWER_ITEMS,
-  MAX_LESSON_QUESTION_ANSWER_TEXT_LENGTH,
-  MAX_LESSON_QUESTION_THREAD_TURNS,
-} from "@zoonk/core/lesson-questions/contract";
+import { MAX_LESSON_QUESTION_THREAD_TURNS } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
@@ -16,6 +12,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const EXHAUSTED_GENERATION_QUOTA_COUNT = 1_000_000;
+const FIRST_OVERSIZED_ANSWER_ITEM_COUNT = 51;
+const FIRST_OVERSIZED_ANSWER_TEXT_LENGTH = 501;
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 function getUtcDayStart(date: Date): Date {
@@ -705,7 +703,7 @@ test.describe("Lesson resources API", () => {
             context: {
               answer: {
                 kind: "multipleChoice",
-                selectedOptionId: "x".repeat(MAX_LESSON_QUESTION_ANSWER_TEXT_LENGTH + 1),
+                selectedOptionId: "x".repeat(FIRST_OVERSIZED_ANSWER_TEXT_LENGTH),
               },
               kind: "answer",
               stepId: step.id,
@@ -720,7 +718,7 @@ test.describe("Lesson resources API", () => {
             context: {
               answer: {
                 arrangedWords: Array.from(
-                  { length: MAX_LESSON_QUESTION_ANSWER_ITEMS + 1 },
+                  { length: FIRST_OVERSIZED_ANSWER_ITEM_COUNT },
                   () => "word",
                 ),
                 kind: "reading",
