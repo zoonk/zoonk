@@ -29,6 +29,24 @@ const LESSON_QUESTION_THREAD_ACTION_TYPES: ReadonlySet<LessonQuestionAction["typ
   "threadLoadStarted",
 ]);
 
+/** A refresh may skip a page of new questions; keep its cursor so those questions remain reachable. */
+function getRefreshedPagination({
+  state,
+  action,
+}: {
+  state: LessonQuestionState;
+  action: Extract<LessonQuestionAction, { type: "threadLoaded" }>;
+}) {
+  const currentIds = new Set(state.questions.map((question) => question.id));
+  const hasOverlap = action.questions.some((question) => currentIds.has(question.id));
+
+  if (state.loadStatus === "ready" && hasOverlap) {
+    return { hasMore: state.hasMore, nextCursor: state.nextCursor };
+  }
+
+  return { hasMore: action.hasMore, nextCursor: action.nextCursor };
+}
+
 export function isLessonQuestionThreadAction(
   action: LessonQuestionAction,
 ): action is LessonQuestionThreadAction {
@@ -55,6 +73,7 @@ export function reduceLessonQuestionThreadAction({
     case "threadLoaded":
       return {
         ...state,
+        ...getRefreshedPagination({ action, state }),
         activeQuestionId: null,
         answerError: getReconciledAnswerError({
           answerError: state.answerError,
@@ -62,13 +81,14 @@ export function reduceLessonQuestionThreadAction({
         }),
         earlierLoadFailed: false,
         error: null,
-        hasMore: action.hasMore,
         isCreating: false,
         isLoadingEarlier: false,
         isRefreshing: false,
         loadStatus: "ready",
-        nextCursor: action.nextCursor,
-        questions: action.questions,
+        questions: mergeLatestQuestions({
+          currentQuestions: state.questions,
+          latestQuestions: action.questions,
+        }),
         requestError: null,
       };
     case "threadLoadFailed":

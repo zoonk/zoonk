@@ -1,6 +1,6 @@
 "use client";
 
-import { type Dispatch, useCallback, useRef } from "react";
+import { type Dispatch, useCallback, useLayoutEffect, useRef } from "react";
 import {
   type LessonQuestionConnection,
   getLessonQuestionRequest,
@@ -24,6 +24,12 @@ export function useLessonQuestionAnswers({
   state: LessonQuestionState;
 }) {
   const answerChecksInFlight = useRef(new Set<string>());
+  const currentState = useRef(state);
+
+  // A manual status check can resolve after polling already saved the answer.
+  useLayoutEffect(() => {
+    currentState.current = state;
+  }, [state]);
 
   const reconcileAnswerFailure = useCallback(
     async ({ questionId, reason }: Extract<LessonQuestionAction, { type: "answerFailed" }>) => {
@@ -52,6 +58,14 @@ export function useLessonQuestionAnswers({
 
   const streamAnswer = useCallback(
     async (questionId: string) => {
+      if (
+        currentState.current.activeQuestionId ||
+        currentState.current.questions.find((question) => question.id === questionId)?.status ===
+          "completed"
+      ) {
+        return;
+      }
+
       dispatch({ questionId, type: "answerStarted" });
 
       const result = await streamLessonQuestionAnswerRequest({

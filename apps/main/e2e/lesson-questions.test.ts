@@ -1148,6 +1148,70 @@ test("keeps waiting when another session is still generating the answer", async 
   await expect(dialog.getByRole("button", { name: "Send" })).toBeEnabled();
 });
 
+test("does not restart an answer when an older manual check arrives after polling completes", async ({
+  subscriberPage: page,
+}) => {
+  const scenario = await createQuestionLesson();
+
+  const runningQuestion = questionResource({
+    context: { kind: "lesson" },
+    question: "A question being answered elsewhere",
+    status: "running",
+  });
+
+  const api = await mockQuestionApi({
+    initialQuestions: [runningQuestion],
+    lessonId: scenario.lessonId,
+    page,
+  });
+
+  const heldCheck = Promise.withResolvers<null>();
+  const requests: string[] = [];
+  const completedRequests: string[] = [];
+  await page.clock.install({ time: new Date("2026-08-21T12:00:00.000Z") });
+
+  // Load the lazy conversation before freezing timers, then reopen with polling under test control.
+  await page.goto(scenario.url);
+  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("button", { name: "Check again" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await page.clock.pauseAt(new Date("2026-08-21T13:00:00.000Z"));
+
+  await page.route(`**/v1/questions/${runningQuestion.id}`, async (route) => {
+    requests.push(route.request().url());
+    const isFirst = requests.length === 1;
+
+    if (isFirst) {
+      await heldCheck.promise;
+    }
+
+    await route.fulfill({
+      json: isFirst
+        ? runningQuestion
+        : { ...runningQuestion, answer: ANSWER_TEXT, status: "completed" },
+    });
+
+    completedRequests.push(route.request().url());
+  });
+
+  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+
+  try {
+    await dialog.getByRole("button", { name: "Check again" }).click();
+    await expect.poll(() => requests.length).toBe(1);
+    await page.clock.fastForward(2000);
+    await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  } finally {
+    heldCheck.resolve(null);
+  }
+
+  await expect.poll(() => completedRequests.length).toBe(2);
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+  expect(api.answerRequests).toBe(0);
+});
+
 test("keeps polling a remote answer after a transient refresh failure", async ({
   subscriberPage: authenticatedPage,
 }) => {
@@ -1504,7 +1568,7 @@ test("loads earlier saved questions without dropping the latest page", async ({
     }),
   );
 
-  await mockQuestionApi({
+  const api = await mockQuestionApi({
     initialQuestions: savedQuestions,
     lessonId: scenario.lessonId,
     page: authenticatedPage,
@@ -1523,6 +1587,12 @@ test("loads earlier saved questions without dropping the latest page", async ({
   await expect(dialog.getByText("Oldest saved question", { exact: true })).toBeVisible();
   await expect(dialog.getByText("Middle saved question", { exact: true })).toBeVisible();
   await expect(dialog.getByText("Latest saved question", { exact: true })).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Load earlier questions" })).toHaveCount(0);
+
+  await authenticatedPage.keyboard.press("Escape");
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await expect.poll(() => api.completedGetRequests).toBe(3);
+  await expect(dialog.getByText("Oldest saved question", { exact: true })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Load earlier questions" })).toHaveCount(0);
 });
 

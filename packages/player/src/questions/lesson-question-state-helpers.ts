@@ -34,7 +34,11 @@ export function mergeCreatedQuestion({
     return sortQuestions([...questions, question]);
   }
 
-  return updateQuestionById({ questionId: question.id, questions, update: () => question });
+  return updateQuestionById({
+    questionId: question.id,
+    questions,
+    update: (current) => getLatestQuestion({ current, latest: question }),
+  });
 }
 
 export function mergeEarlierQuestions({
@@ -60,13 +64,50 @@ export function mergeLatestQuestions({
   currentQuestions: LessonQuestionResource[];
   latestQuestions: LessonQuestionResource[];
 }) {
+  const currentQuestionById = new Map(currentQuestions.map((question) => [question.id, question]));
   const latestQuestionIds = new Set(latestQuestions.map((question) => question.id));
 
   const retainedEarlierQuestions = currentQuestions.filter(
     (question) => !latestQuestionIds.has(question.id),
   );
 
-  return sortQuestions([...retainedEarlierQuestions, ...latestQuestions]);
+  return sortQuestions([
+    ...retainedEarlierQuestions,
+    ...latestQuestions.map((question) =>
+      getLatestQuestion({ current: currentQuestionById.get(question.id), latest: question }),
+    ),
+  ]);
+}
+
+/** Completed answers are immutable; an older HTTP response must never replace one with a running snapshot. */
+function getLatestQuestion({
+  current,
+  latest,
+}: {
+  current: LessonQuestionResource | undefined;
+  latest: LessonQuestionResource;
+}) {
+  if (!current) {
+    return latest;
+  }
+
+  if (
+    (current.status === "completed" && latest.status !== "completed") ||
+    current.updatedAt > latest.updatedAt
+  ) {
+    return current;
+  }
+
+  if (
+    current.status === "running" &&
+    latest.status === "running" &&
+    current.answer &&
+    !latest.answer
+  ) {
+    return { ...latest, answer: current.answer };
+  }
+
+  return latest;
 }
 
 export function isSameDraftContext({

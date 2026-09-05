@@ -62,6 +62,105 @@ function answerContext(selectedOptionId: string): PlayerQuestionContext {
 }
 
 describe(lessonQuestionReducer, () => {
+  it("ignores a stale running snapshot and stream events after an answer is saved", () => {
+    const question = questionResource({ answer: "Saved answer", status: "completed" });
+
+    const loaded = lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, {
+      hasMore: false,
+      nextCursor: null,
+      questions: [question],
+      type: "threadLoaded",
+    });
+
+    const stale = lessonQuestionReducer(loaded, {
+      questions: [questionResource({ status: "running" })],
+      type: "latestThreadReconciled",
+    });
+
+    const started = lessonQuestionReducer(stale, {
+      questionId: question.id,
+      type: "answerStarted",
+    });
+
+    const chunk = lessonQuestionReducer(started, {
+      chunk: "Late chunk",
+      questionId: question.id,
+      type: "answerChunkReceived",
+    });
+
+    const failed = lessonQuestionReducer(chunk, {
+      questionId: question.id,
+      reason: { kind: "unknown" },
+      type: "answerFailed",
+    });
+
+    expect(failed.questions).toStrictEqual([question]);
+    expect(failed.activeQuestionId).toBeNull();
+    expect(failed.answerError).toBeNull();
+
+    const replayed = lessonQuestionReducer(failed, {
+      question: questionResource(),
+      type: "questionCreated",
+    });
+
+    expect(replayed.questions).toStrictEqual([question]);
+  });
+
+  it("keeps earlier pages and their cursor when reopening refreshes the latest page", () => {
+    const older = questionResource({ id: "older" });
+    const latest = questionResource({ id: "latest" });
+
+    const loaded = lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, {
+      hasMore: true,
+      nextCursor: latest.id,
+      questions: [latest],
+      type: "threadLoaded",
+    });
+
+    const earlier = lessonQuestionReducer(loaded, {
+      hasMore: true,
+      nextCursor: older.id,
+      questions: [older],
+      type: "earlierThreadLoaded",
+    });
+
+    const refreshed = lessonQuestionReducer(earlier, {
+      hasMore: true,
+      nextCursor: latest.id,
+      questions: [{ ...latest, answer: "Saved", status: "completed" }],
+      type: "threadLoaded",
+    });
+
+    expect(refreshed.questions).toContainEqual(older);
+    expect(refreshed.questions).toContainEqual({ ...latest, answer: "Saved", status: "completed" });
+    expect(refreshed.nextCursor).toBe(older.id);
+    expect(refreshed.hasMore).toBe(true);
+  });
+
+  it("retains a cursor when more than a page of questions arrives between refreshes", () => {
+    const old = questionResource({ id: "old", status: "completed" });
+    const latest = questionResource({ id: "latest", status: "completed" });
+
+    const loaded = lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, {
+      hasMore: false,
+      nextCursor: null,
+      questions: [old],
+      type: "threadLoaded",
+    });
+
+    const refreshed = lessonQuestionReducer(loaded, {
+      hasMore: true,
+      nextCursor: latest.id,
+      questions: [latest],
+      type: "threadLoaded",
+    });
+
+    expect(refreshed.questions).toContainEqual(old);
+    expect(refreshed.questions).toContainEqual(latest);
+    expect(refreshed.nextCursor).toBe(latest.id);
+    expect(refreshed.hasMore).toBe(true);
+  });
+
   it("preserves the draft and lesson history when the panel is closed and reopened", () => {
     const opened = lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, {
       context: LESSON_CONTEXT,

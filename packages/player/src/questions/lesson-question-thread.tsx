@@ -174,8 +174,13 @@ export function QuestionThread({
             </Button>
           </div>
         )}
+        {/* Real message heights keep bottom-following stable as streamed content grows. */}
         {state.questions.map((question) => (
-          <MessageScrollerItem key={question.id} messageId={question.id} scrollAnchor>
+          <MessageScrollerItem
+            className="[content-visibility:visible]"
+            key={question.id}
+            messageId={question.id}
+          >
             <QuestionTurn
               activeQuestionId={state.activeQuestionId}
               answerError={state.answerError}

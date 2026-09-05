@@ -8,6 +8,7 @@ import {
   useMessageScroller,
 } from "@zoonk/ui/components/message-scroller";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -27,17 +28,21 @@ function QuestionScrollTarget({ questionId }: { questionId: string | null | unde
 
 export function ThreadViewport({
   children,
+  className,
   revealedQuestionId,
   ...props
 }: React.ComponentProps<"div"> & { revealedQuestionId?: string | null }) {
   const t = useExtracted();
 
   return (
-    <MessageScrollerProvider autoScroll defaultScrollPosition="last-anchor">
+    <MessageScrollerProvider autoScroll>
       <QuestionScrollTarget questionId={revealedQuestionId} />
       <MessageScroller>
         {/* The scroller preserves message positions; native anchoring would apply a second scroll adjustment. */}
-        <MessageScrollerViewport className="px-4 py-6 [overflow-anchor:none] sm:px-5" {...props}>
+        <MessageScrollerViewport
+          className={cn("px-4 py-6 [overflow-anchor:none] sm:px-5", className)}
+          {...props}
+        >
           {children}
         </MessageScrollerViewport>
         <MessageScrollerButton aria-label={t("Scroll to latest")}>

@@ -11,7 +11,7 @@ const cachedListLessonQuestions = cacheAdminData(
       prisma.lessonQuestion.findMany({
         include: lessonQuestionReviewInclude,
         omit: { contextSnapshot: true },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         skip: offset,
         take: limit,
         where,

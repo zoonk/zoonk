@@ -136,6 +136,12 @@ function reduceAnswerStarted({
   action: Extract<LessonQuestionAction, { type: "answerStarted" }>;
   state: LessonQuestionState;
 }): LessonQuestionState {
+  if (
+    state.questions.find((question) => question.id === action.questionId)?.status === "completed"
+  ) {
+    return state;
+  }
+
   return {
     ...state,
     activeQuestionId: action.questionId,
@@ -155,6 +161,10 @@ function reduceAnswerChunk({
   action: Extract<LessonQuestionAction, { type: "answerChunkReceived" }>;
   state: LessonQuestionState;
 }): LessonQuestionState {
+  if (state.activeQuestionId !== action.questionId) {
+    return state;
+  }
+
   return {
     ...state,
     questions: updateQuestionById({
@@ -172,6 +182,13 @@ function reduceAnswerFinished({
   action: Extract<LessonQuestionAction, { type: "answerCompleted" | "answerFailed" }>;
   state: LessonQuestionState;
 }): LessonQuestionState {
+  if (
+    (state.activeQuestionId !== null && state.activeQuestionId !== action.questionId) ||
+    state.questions.find((question) => question.id === action.questionId)?.status === "completed"
+  ) {
+    return state;
+  }
+
   const status = action.type === "answerCompleted" ? "completed" : "failed";
 
   return {
