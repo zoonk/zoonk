@@ -2,16 +2,16 @@ import { type Page, test as base } from "@playwright/test";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 
-export const test = base.extend<
-  {
-    authenticatedPage: Page;
-    logoutPage: Page;
-    subscriberPage: Page;
-    subscriberUser: E2EUser;
-    userWithoutProgress: Page;
-  },
-  { noProgressUser: E2EUser; withProgressUser: E2EUser }
->({
+// Each test needs its own user: lesson completions and subscriptions persist beyond browser contexts.
+export const test = base.extend<{
+  authenticatedPage: Page;
+  logoutPage: Page;
+  noProgressUser: E2EUser;
+  subscriberPage: Page;
+  subscriberUser: E2EUser;
+  userWithoutProgress: Page;
+  withProgressUser: E2EUser;
+}>({
   authenticatedPage: async ({ browser, withProgressUser }, use) => {
     const ctx = await browser.newContext({ storageState: withProgressUser.storageState });
     const page = await ctx.newPage();
@@ -32,14 +32,11 @@ export const test = base.extend<
     await ctx.close();
   },
 
-  noProgressUser: [
-    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
-    async ({}, use) => {
-      const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
-      await use(user);
-    },
-    { scope: "worker" },
-  ],
+  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+  noProgressUser: async ({}, use) => {
+    const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
+    await use(user);
+  },
 
   subscriberPage: async ({ browser, subscriberUser }, use) => {
     const ctx = await browser.newContext({ storageState: subscriberUser.storageState });
@@ -66,14 +63,11 @@ export const test = base.extend<
     await ctx.close();
   },
 
-  withProgressUser: [
-    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
-    async ({}, use) => {
-      const user = await createE2EUser(getBaseURL(), { orgRole: "member", withProgress: true });
-      await use(user);
-    },
-    { scope: "worker" },
-  ],
+  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+  withProgressUser: async ({}, use) => {
+    const user = await createE2EUser(getBaseURL(), { orgRole: "member", withProgress: true });
+    await use(user);
+  },
 });
 
 export { expect } from "@playwright/test";
