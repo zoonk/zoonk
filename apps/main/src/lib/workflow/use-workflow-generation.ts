@@ -1,13 +1,13 @@
 "use client";
 
 import { GENERATION_VISITOR_ID_HEADER } from "@zoonk/core/generation-quotas/contract";
+import { getGenerationLimit } from "@zoonk/core/generation-quotas/parse-limit";
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
 import { API_URL } from "@zoonk/utils/url";
 import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
 import { getGenerationEventsUrl } from "./_utils/generation-events-url";
-import { getGenerationLimit } from "./_utils/generation-limit";
 import { getWorkflowAuthHeaders } from "./auth-headers";
 import {
   type GenerationAction,

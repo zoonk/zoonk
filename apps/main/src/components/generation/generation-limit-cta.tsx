@@ -15,29 +15,37 @@ import { GaugeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 /** Selects the next useful action from the entitlement that reached its generation limit. */
-function GenerationLimitAction<Href extends string>({
+export function GenerationLimitAction<Href extends string>({
+  className,
   loginHref,
+  variant = "default",
   viewer,
 }: {
+  className?: string;
   loginHref: AppRoute<Href>;
+  variant?: "default" | "outline";
   viewer: GenerationQuotaLimit["viewer"];
 }) {
   const t = useExtracted();
 
   if (viewer === "guest") {
-    return <GenerationShortcutLink href={loginHref}>{t("Log in")}</GenerationShortcutLink>;
+    return (
+      <GenerationShortcutLink className={className} href={loginHref} variant={variant}>
+        {t("Log in")}
+      </GenerationShortcutLink>
+    );
   }
 
   if (viewer === "authenticated") {
     return (
-      <GenerationShortcutLink href="/subscription" prefetch>
+      <GenerationShortcutLink className={className} href="/subscription" prefetch variant={variant}>
         {t("Subscribe")}
       </GenerationShortcutLink>
     );
   }
 
   return (
-    <GenerationShortcutLink href="/support" prefetch>
+    <GenerationShortcutLink className={className} href="/support" prefetch variant={variant}>
       {t("Contact support")}
     </GenerationShortcutLink>
   );
@@ -66,14 +74,14 @@ export function GenerationLimitCTA<BackHref extends string, LoginHref extends st
 
         <EmptyTitle aria-level={1} role="heading">
           {t(
-            "{period, select, day {Daily} month {Monthly} other {Generation}} {resource, select, course {course} chapter {chapter} lesson {lesson} other {generation}} limit reached",
+            "{period, select, day {Daily} month {Monthly} other {Generation}} {resource, select, course {course} chapter {chapter} lesson {lesson} lessonQuestion {question} other {generation}} limit reached",
             { period: limit.period, resource: limit.resource },
           )}
         </EmptyTitle>
 
         <EmptyDescription>
           {t(
-            "{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated.",
+            "{resource, select, lessonQuestion {{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached your question limit.}} Saved answers are still available.} other {{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated.}}",
             { period: limit.period, resource: limit.resource },
           )}
         </EmptyDescription>

@@ -1,8 +1,9 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { type ReactNode, createContext, useContext } from "react";
-import { type PlayerState } from "./player-reducer";
+import { type PlayerState, type SelectedAnswer, type StepResult } from "./player-reducer";
 import { type PlayerScreenModel } from "./player-screen";
 import { type PlayerActions } from "./use-player-actions";
 
@@ -41,6 +42,30 @@ export type PlayerLessonProgress = {
   totalLessonsInChapter: number;
 };
 
+export type PlayerQuestionContext =
+  | { kind: "lesson" }
+  | { kind: "step"; step: SerializedStep; stepIndex: number }
+  | {
+      kind: "answer";
+      result: StepResult;
+      selectedAnswer: SelectedAnswer;
+      step: SerializedStep;
+      stepIndex: number;
+    };
+
+export type PlayerQuestionSupport = {
+  canExplainAnswer: boolean;
+  interactionState: "active" | "paused";
+  onAskQuestion: (context: PlayerQuestionContext) => void;
+  onExplainAnswer: ({
+    context,
+    question,
+  }: {
+    context: PlayerQuestionContext;
+    question: string;
+  }) => void;
+};
+
 type ChapterMilestone = { chapterHref: PlayerRoute; kind: "chapter"; nextHref: PlayerRoute | null };
 
 type CourseMilestone = { chapterHref: PlayerRoute; courseHref: PlayerRoute; kind: "course" };
@@ -74,6 +99,7 @@ type PlayerConfigContextValue = {
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
   next: () => void;
+  questionSupport: PlayerQuestionSupport | null;
   viewer: PlayerViewer;
 };
 
@@ -132,6 +158,14 @@ export function usePlayerMilestone(): PlayerMilestone | null {
 
 export function usePlayerNavigation(): PlayerNavigation {
   return usePlayerConfig().navigation;
+}
+
+export function usePlayerQuestionSupport(): PlayerQuestionSupport | null {
+  return usePlayerConfig().questionSupport;
+}
+
+export function usePlayerInteractionState(): PlayerQuestionSupport["interactionState"] {
+  return usePlayerConfig().questionSupport?.interactionState ?? "active";
 }
 
 export function usePlayerRuntime(): PlayerRuntimeContextValue {

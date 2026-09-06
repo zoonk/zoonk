@@ -14,6 +14,7 @@ import {
   type PlayerLinkComponent,
   type PlayerMilestone,
   type PlayerNavigation,
+  type PlayerQuestionSupport,
   type PlayerRoute,
   PlayerRuntimeContext,
   type PlayerViewer,
@@ -28,6 +29,7 @@ import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
 
 export type { PlayerStepChangeEvent } from "./player-events";
+export { type PlayerQuestionSupport } from "./player-context";
 
 export function PlayerProvider({
   lesson,
@@ -45,6 +47,7 @@ export function PlayerProvider({
   onNext,
   onStepChange,
   progressSnapshot = null,
+  questionSupport,
   totalBrainPower,
   viewer,
 }: {
@@ -63,6 +66,7 @@ export function PlayerProvider({
   onNext?: () => void;
   onStepChange?: (event: PlayerStepChangeEvent) => void;
   progressSnapshot?: PlayerProgressSnapshot | null;
+  questionSupport?: PlayerQuestionSupport;
   totalBrainPower: number;
   viewer: PlayerViewer;
 }) {
@@ -100,6 +104,7 @@ export function PlayerProvider({
       : navigation.chapterHref;
 
   usePlayerKeyboard({
+    interactionState: questionSupport?.interactionState ?? "active",
     keyboard: screen.keyboard,
     onCheck: actions.check,
     onContinue: actions.continue,
@@ -126,6 +131,7 @@ export function PlayerProvider({
       milestone,
       navigation,
       next: handleNext,
+      questionSupport: questionSupport ?? null,
       viewer,
     }),
     [
@@ -141,6 +147,7 @@ export function PlayerProvider({
       linkComponent,
       milestone,
       navigation,
+      questionSupport,
       viewer,
     ],
   );

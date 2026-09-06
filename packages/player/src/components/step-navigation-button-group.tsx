@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ContextualQuestionAction } from "./lesson-question-actions";
 
 /**
  * Read-only steps need explicit touch targets because swipe gestures are
@@ -42,7 +42,7 @@ export function StepNavigationButtonGroup({
 
       <Button
         aria-keyshortcuts="ArrowRight"
-        className={cn("min-w-0 flex-1", !canNavigatePrev && !audioAction && "w-full")}
+        className="min-w-0 flex-1"
         onClick={onNavigateNext}
         size="lg"
         type="button"
@@ -51,6 +51,7 @@ export function StepNavigationButtonGroup({
         <ChevronRightIcon aria-hidden="true" data-icon="inline-end" />
       </Button>
 
+      <ContextualQuestionAction />
       {audioAction}
     </div>
   );

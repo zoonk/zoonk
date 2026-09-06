@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { usePlayerInteractionState } from "../player-context";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { OptionCard } from "./option-card";
 import { PlayerRichText } from "./player-rich-text";
@@ -114,8 +115,14 @@ export function PlayerChoiceSceneOptions({
   options: readonly PlayerChoiceSceneOption[];
 }) {
   const t = useExtracted();
+  const interactionState = usePlayerInteractionState();
 
-  useOptionKeyboard({ enabled: keyboardEnabled, onSelect, optionCount: options.length });
+  useOptionKeyboard({
+    enabled: keyboardEnabled,
+    interactionState,
+    onSelect,
+    optionCount: options.length,
+  });
 
   return (
     <div

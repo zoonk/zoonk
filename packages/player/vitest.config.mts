@@ -18,6 +18,9 @@ const webHapticsShim = fileURLToPath(
 );
 
 export default defineConfig({
+  // Pre-bundle the transitive Base UI tooltip to prevent Vite from reloading browser tests
+  // mid-run and creating a duplicate React instance.
+  optimizeDeps: { include: ["@zoonk/ui > @base-ui/react/tooltip"] },
   plugins: [react()],
   resolve: {
     alias: {

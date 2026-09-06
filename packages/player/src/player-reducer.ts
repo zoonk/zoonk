@@ -169,7 +169,9 @@ function handleCheckAnswer(
     stepTimings: recordStepTiming(state, action.stepId),
   };
 
-  // matchColumns validates each pair during interaction, so feedback is redundant.
+  // UX invariant: Match Columns must advance on Check without requiring a second Continue click.
+  // Pair feedback is instant, so a post-check feedback phase adds an empty, redundant interaction.
+  // DO NOT change this behavior without explicit authorization
   if (currentStep?.kind === "matchColumns") {
     return handleContinue(checked);
   }

@@ -88,7 +88,7 @@ async function setClaimCounter({
 }: {
   count: number;
   period: GenerationQuotaPeriod;
-  resource: "chapter" | "course" | "lesson";
+  resource: GenerationQuotaResource;
   targetId: string;
 }) {
   const claim = await prisma.generationQuotaClaim.findUniqueOrThrow({
@@ -106,7 +106,7 @@ function claimGenerationQuota({
   resource,
   targetId,
 }: {
-  resource: "chapter" | "course" | "lesson";
+  resource: GenerationQuotaResource;
   targetId: string;
 }) {
   return claimGenerationQuotaIfNeeded({ resource, shouldClaimQuota: true, targetId });
@@ -231,31 +231,49 @@ describe(claimGenerationQuotaIfNeeded, () => {
   });
 
   it.each([
-    { daily: 20, subscriber: false, viewer: "guest" as const },
-    { daily: 50, subscriber: false, viewer: "authenticated" as const },
-    { daily: 400, subscriber: true, viewer: "subscriber" as const },
-  ])("applies the $viewer daily lesson limit", async ({ daily, subscriber, viewer }) => {
-    if (viewer !== "guest") {
-      await useAuthenticatedViewer({ subscriber });
-    }
+    { daily: 20, resource: "lesson" as const, subscriber: false, viewer: "guest" as const },
+    { daily: 50, resource: "lesson" as const, subscriber: false, viewer: "authenticated" as const },
+    {
+      daily: 10,
+      resource: "lessonQuestion" as const,
+      subscriber: false,
+      viewer: "authenticated" as const,
+    },
+    { daily: 400, resource: "lesson" as const, subscriber: true, viewer: "subscriber" as const },
+    {
+      daily: 500,
+      resource: "lessonQuestion" as const,
+      subscriber: true,
+      viewer: "subscriber" as const,
+    },
+  ])(
+    "applies the $viewer daily $resource limit",
+    async ({ daily, resource, subscriber, viewer }) => {
+      if (viewer !== "guest") {
+        await useAuthenticatedViewer({ subscriber });
+      }
 
-    const firstTargetId = randomUUID();
-    await claimGenerationQuota({ resource: "lesson", targetId: firstTargetId });
+      const firstTargetId = randomUUID();
+      await claimGenerationQuota({ resource, targetId: firstTargetId });
 
-    await setClaimCounter({
-      count: daily - 1,
-      period: "day",
-      resource: "lesson",
-      targetId: firstTargetId,
-    });
+      await setClaimCounter({ count: daily - 1, period: "day", resource, targetId: firstTargetId });
 
+      await expect(
+        claimGenerationQuota({ resource, targetId: randomUUID() }),
+      ).resolves.toStrictEqual({ status: "ready" });
+
+      await expect(
+        claimGenerationQuota({ resource, targetId: randomUUID() }),
+      ).resolves.toMatchObject(getReachedLimitResult({ period: "day", resource, viewer }));
+    },
+  );
+
+  it("does not grant lesson question generation to guests", async () => {
     await expect(
-      claimGenerationQuota({ resource: "lesson", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({ status: "ready" });
-
-    await expect(
-      claimGenerationQuota({ resource: "lesson", targetId: randomUUID() }),
-    ).resolves.toMatchObject(getReachedLimitResult({ period: "day", resource: "lesson", viewer }));
+      claimGenerationQuota({ resource: "lessonQuestion", targetId: randomUUID() }),
+    ).resolves.toMatchObject(
+      getReachedLimitResult({ period: "day", resource: "lessonQuestion", viewer: "guest" }),
+    );
   });
 
   it.each([
@@ -273,6 +291,18 @@ describe(claimGenerationQuotaIfNeeded, () => {
       viewer: "authenticated" as const,
     },
     { monthly: 5000, resource: "lesson" as const, subscriber: true, viewer: "subscriber" as const },
+    {
+      monthly: 50,
+      resource: "lessonQuestion" as const,
+      subscriber: false,
+      viewer: "authenticated" as const,
+    },
+    {
+      monthly: 5000,
+      resource: "lessonQuestion" as const,
+      subscriber: true,
+      viewer: "subscriber" as const,
+    },
   ])(
     "limits $viewer $resource generation to $monthly per month",
     async ({ monthly, resource, subscriber, viewer }) => {

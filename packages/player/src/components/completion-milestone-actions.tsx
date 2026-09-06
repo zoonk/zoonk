@@ -7,6 +7,7 @@ import {
   SecondaryActionButton,
   SecondaryActionLink,
 } from "./completion-action-link";
+import { CompletionPrimaryActionGroup } from "./lesson-question-actions";
 
 /**
  * Keeps lesson review inside the player. Going back to the chapter is a separate
@@ -36,9 +37,11 @@ function CourseCompleteActions({ onRestart }: { onRestart: () => void }) {
 
   return (
     <>
-      <PrimaryActionLink href={milestone.courseHref} shortcut="Esc">
-        {t("Back to course")}
-      </PrimaryActionLink>
+      <CompletionPrimaryActionGroup>
+        <PrimaryActionLink href={milestone.courseHref} shortcut="Esc">
+          {t("Back to course")}
+        </PrimaryActionLink>
+      </CompletionPrimaryActionGroup>
 
       <ReviewButton onRestart={onRestart} />
     </>
@@ -60,9 +63,11 @@ function ChapterCompleteActions({ onRestart }: { onRestart: () => void }) {
   if (milestone.nextHref) {
     return (
       <>
-        <PrimaryActionLink href={milestone.nextHref} shortcut="Enter">
-          {t("Next Chapter")}
-        </PrimaryActionLink>
+        <CompletionPrimaryActionGroup>
+          <PrimaryActionLink href={milestone.nextHref} shortcut="Enter">
+            {t("Next Chapter")}
+          </PrimaryActionLink>
+        </CompletionPrimaryActionGroup>
 
         <SecondaryActionLink href={milestone.chapterHref} shortcut="Esc">
           {t("Back to chapter")}
@@ -75,9 +80,11 @@ function ChapterCompleteActions({ onRestart }: { onRestart: () => void }) {
 
   return (
     <>
-      <PrimaryActionLink href={milestone.chapterHref} shortcut="Esc">
-        {t("Back to chapter")}
-      </PrimaryActionLink>
+      <CompletionPrimaryActionGroup>
+        <PrimaryActionLink href={milestone.chapterHref} shortcut="Esc">
+          {t("Back to chapter")}
+        </PrimaryActionLink>
+      </CompletionPrimaryActionGroup>
 
       <ReviewButton onRestart={onRestart} />
     </>

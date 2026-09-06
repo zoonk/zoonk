@@ -248,6 +248,8 @@ export function CompletionScreenContent({
             onRestart={onRestart}
           />
         </div>
+
+        {completionFooter}
       </CompletionScreen>
     );
   }

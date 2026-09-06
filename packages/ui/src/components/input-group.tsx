@@ -54,7 +54,9 @@ function InputGroupAddon({
           return;
         }
 
-        event.currentTarget.parentElement?.querySelector("input")?.focus();
+        event.currentTarget.parentElement
+          ?.querySelector<HTMLInputElement | HTMLTextAreaElement>("input, textarea")
+          ?.focus();
       }}
       role="group"
       {...props}

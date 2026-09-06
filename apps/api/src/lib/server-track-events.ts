@@ -12,7 +12,8 @@ type ServerEventProperties = Record<string, boolean | null | number | string>;
 export type GenerationRateLimitTarget =
   | { coursePromptId: string; courseSlug?: string | null }
   | { chapterSlug: string; courseSlug: string }
-  | { chapterSlug: string; courseSlug: string; lessonSlug: string };
+  | { chapterSlug: string; courseSlug: string; lessonSlug: string }
+  | { questionId: string };
 
 const GENERATION_RATE_LIMITED_EVENT = "Generation Rate Limited";
 
@@ -65,6 +66,10 @@ export async function trackAuthCompleted({
  * back to the course-prompt ID before a generated course has a slug.
  */
 function getGenerationTargetProperties(target: GenerationRateLimitTarget): ServerEventProperties {
+  if ("questionId" in target) {
+    return { questionId: target.questionId };
+  }
+
   if ("coursePromptId" in target) {
     return target.courseSlug
       ? { courseSlug: target.courseSlug }

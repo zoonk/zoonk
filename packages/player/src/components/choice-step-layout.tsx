@@ -9,7 +9,7 @@ import {
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
-import { StepActionButton } from "./step-action-button";
+import { StepActionGroup } from "./step-action-group";
 import { StepImageView } from "./step-image";
 
 /**
@@ -89,7 +89,7 @@ function ChoiceStepImageStage({ image }: { image: StepImage }) {
  * uses the shared sticky bottom bar.
  */
 function ChoiceStepDesktopAction() {
-  return <StepActionButton className="hidden lg:flex" />;
+  return <StepActionGroup className="hidden lg:flex" />;
 }
 
 /**

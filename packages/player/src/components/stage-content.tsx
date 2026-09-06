@@ -16,7 +16,7 @@ import { describePlayerStep } from "../player-step";
 import { CompletionProgressMilestoneScreen } from "./completion-progress-milestone-screen";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
-import { StepActionButton } from "./step-action-button";
+import { StepActionGroup } from "./step-action-group";
 import { PlayerContentFrame } from "./step-layouts";
 import { StepRenderer } from "./step-renderer";
 import { UnauthenticatedStartWarningScreen } from "./unauthenticated-progress-prompt";
@@ -32,7 +32,7 @@ import { UnauthenticatedStartWarningScreen } from "./unauthenticated-progress-pr
 function DesktopInlineAction() {
   return (
     <PlayerContentFrame className="hidden lg:flex">
-      <StepActionButton />
+      <StepActionGroup />
     </PlayerContentFrame>
   );
 }
@@ -77,6 +77,63 @@ function getStepContentLayoutClass({ step }: { step?: SerializedStep }) {
   return "my-auto";
 }
 
+function FeedbackStageContent() {
+  const { state } = usePlayerRuntime();
+  const currentResult = getCurrentResult(state);
+  const currentStep = getCurrentStep(state);
+
+  if (!currentResult) {
+    return null;
+  }
+
+  return (
+    <div className="my-auto flex w-full flex-col gap-6">
+      <FeedbackScreenContent result={currentResult} step={currentStep} />
+      <DesktopInlineAction />
+    </div>
+  );
+}
+
+function ActiveStepContent() {
+  const { actions, screen, state } = usePlayerRuntime();
+  const currentResult = getCurrentResult(state);
+  const currentStep = getCurrentStep(state);
+  const selectedAnswer = getSelectedAnswer(state);
+
+  if (screen.kind !== "step" || !currentStep) {
+    return null;
+  }
+
+  const showInlineAction =
+    hasDesktopInlineAction(screen) && !hasEmbeddedDesktopAction({ step: currentStep });
+
+  const stepContent = (
+    <StepRenderer
+      canNavigatePrev={screen.canNavigatePrev}
+      onNavigateNext={actions.navigateNext}
+      onNavigatePrev={actions.navigatePrev}
+      onSelectAnswer={actions.selectAnswer}
+      promptAudioUrl={screen.bottomBar?.audioUrl}
+      result={state.phase === "feedback" ? currentResult : undefined}
+      selectedAnswer={selectedAnswer}
+      step={currentStep}
+    />
+  );
+
+  if (!showInlineAction) {
+    return stepContent;
+  }
+
+  return (
+    <div
+      className={cn("flex w-full flex-col gap-6", getStepContentLayoutClass({ step: currentStep }))}
+    >
+      {stepContent}
+      {showInlineAction && <DesktopInlineAction />}
+    </div>
+  );
+}
+
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
 
@@ -85,9 +142,6 @@ export function StageContent() {
 
   const activeCompletionMilestone = getActiveCompletionMilestone(state);
   const completionResult = getCompletionResult(state);
-  const currentResult = getCurrentResult(state);
-  const currentStep = getCurrentStep(state);
-  const selectedAnswer = getSelectedAnswer(state);
 
   if (screen.kind === "startWarning") {
     return (
@@ -121,47 +175,12 @@ export function StageContent() {
     );
   }
 
-  if (screen.kind === "feedbackScreen" && currentResult) {
-    return (
-      <div className="my-auto flex w-full flex-col gap-6">
-        <FeedbackScreenContent result={currentResult} step={currentStep} />
-        <DesktopInlineAction />
-      </div>
-    );
+  if (screen.kind === "feedbackScreen") {
+    return <FeedbackStageContent />;
   }
 
-  if (screen.kind === "step" && currentStep) {
-    const showInlineAction =
-      hasDesktopInlineAction(screen) && !hasEmbeddedDesktopAction({ step: currentStep });
-
-    const stepContent = (
-      <StepRenderer
-        canNavigatePrev={screen.canNavigatePrev}
-        onNavigateNext={actions.navigateNext}
-        onNavigatePrev={actions.navigatePrev}
-        onSelectAnswer={actions.selectAnswer}
-        promptAudioUrl={screen.bottomBar?.audioUrl}
-        result={state.phase === "feedback" ? currentResult : undefined}
-        selectedAnswer={selectedAnswer}
-        step={currentStep}
-      />
-    );
-
-    if (showInlineAction) {
-      return (
-        <div
-          className={cn(
-            "flex w-full flex-col gap-6",
-            getStepContentLayoutClass({ step: currentStep }),
-          )}
-        >
-          {stepContent}
-          <DesktopInlineAction />
-        </div>
-      );
-    }
-
-    return stepContent;
+  if (screen.kind === "step") {
+    return <ActiveStepContent />;
   }
 
   return null;

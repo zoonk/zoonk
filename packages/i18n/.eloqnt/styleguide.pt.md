@@ -31,6 +31,7 @@
 - "quiz": "quiz"
 - "language": "idioma"
 - "score": "Pontuação"
+- "step": "passo"
 
 ## Special Cases
 

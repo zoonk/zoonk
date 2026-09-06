@@ -38,6 +38,7 @@ msgstr "Posición {position}: {item}. Toca para quitar."
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/select-image-step.tsx
+#: src/questions/lesson-question-copy-action.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Tu respuesta"
@@ -59,6 +60,7 @@ msgid "Exit"
 msgstr "Salir"
 
 #: src/components/completion-actions.tsx
+#: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Inténtalo de nuevo"
@@ -302,6 +304,31 @@ msgctxt "YLFqnP"
 msgid "Skip lesson"
 msgstr "Saltar lección"
 
+#: src/components/lesson-question-actions.tsx
+msgctxt "7_uozC"
+msgid "Open questions"
+msgstr "Abrir preguntas"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "HlzdnD"
+msgid "Why is this answer correct?"
+msgstr "¿Por qué esta respuesta es correcta?"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "_U7-ok"
+msgid "Why was my answer wrong? Explain the correct answer."
+msgstr "¿Por qué mi respuesta fue incorrecta? Explica la respuesta correcta."
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "95VNka"
+msgid "Explain answer"
+msgstr "Explicar la respuesta"
+
+#: src/components/lesson-question-actions.tsx
+msgctxt "fQciZq"
+msgid "Ask about this lesson"
+msgstr "Pregunta sobre esta lección"
+
 #: src/components/listening-step.tsx
 msgctxt "aAmWaS"
 msgid "What do you hear?"
@@ -360,6 +387,7 @@ msgid "Lesson controls"
 msgstr "Controles de la lección"
 
 #: src/components/select-image-step.tsx
+#: src/questions/lesson-question-copy-action.tsx
 msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "Respuesta correcta"
@@ -443,6 +471,257 @@ msgstr "Casi"
 msgctxt "lqtP-R"
 msgid "Vocabulary"
 msgstr "Vocabulario"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "pLRK5_"
+msgid "We couldn't send your last question. Try again."
+msgstr "No pudimos enviar tu última pregunta. Inténtalo de nuevo."
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "zMPwOt"
+msgid "Retry last question"
+msgstr "Reintentar la última pregunta"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "9WRlF4"
+msgid "Send"
+msgstr "Enviar"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "iPfRms"
+msgid "Ask a question"
+msgstr "Haz una pregunta"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "6sIYgs"
+msgid "Ask about the lesson content…"
+msgstr "Pregunta sobre el contenido de la lección…"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "p556q3"
+msgid "Copied"
+msgstr "Copiado"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "Lq0WOJ"
+msgid "Copy lesson content"
+msgstr "Copiar el contenido de la lección"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "e7kR6h"
+msgid "Part {current} of {total}"
+msgstr "Parte {current} de {total}"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "QFpfEi"
+msgid "Audio exercise"
+msgstr "Ejercicio de audio"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "k6ckn3"
+msgid "Currently viewing"
+msgstr "Viendo ahora"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "Ejhdi4"
+msgid "Feedback"
+msgstr "Comentarios"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "HqBZKC"
+msgid "Left column"
+msgstr "Columna izquierda"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "NDV5Mq"
+msgid "Options"
+msgstr "Opciones"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "l3rMMR"
+msgid "My question"
+msgstr "Mi pregunta"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "FiksC2"
+msgid "Right column"
+msgstr "Columna derecha"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "Lz437P"
+msgid "[Write your question]"
+msgstr "[Escribe tu pregunta]"
+
+#: src/questions/lesson-question-copy-action.tsx
+msgctxt "vmCtoi"
+msgid "Couldn't copy lesson content. Try again."
+msgstr "No se pudo copiar el contenido de la lección. Inténtalo de nuevo."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "2P8sqa"
+msgid "Your session expired. Sign in again."
+msgstr "Tu sesión caducó. Inicia sesión de nuevo."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "iVOq9B"
+msgid "Subscribe to ask questions"
+msgstr "Suscríbete para hacer preguntas"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "0-TBnr"
+msgid "This lesson is no longer available."
+msgstr "Esta lección ya no está disponible."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "g4aIUa"
+msgid "We couldn't send this question. Try again."
+msgstr "No pudimos enviar esta pregunta. Inténtalo de nuevo."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "_n-jR8"
+msgid "{period, select, day {You've reached today's question limit. Try again tomorrow.} month {You've reached this month's question limit. Try again next month.} other {You've reached your question limit.}}"
+msgstr "{period, select, day {Alcanzaste el límite de preguntas de hoy. Inténtalo de nuevo mañana.} month {Alcanzaste el límite de preguntas de este mes. Inténtalo de nuevo el próximo mes.} other {Alcanzaste tu límite de preguntas.}}"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "3kJE8G"
+msgid "Something went wrong. Try again."
+msgstr "Algo salió mal. Inténtalo de nuevo."
+
+#: src/questions/lesson-question-errors.tsx
+#: src/questions/lesson-question-thread.tsx
+msgctxt "SQJto2"
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "EaucLA"
+msgid "View plans"
+msgstr "Ver planes"
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "13bnyN"
+msgid "Open this link?"
+msgstr "¿Abrir este enlace?"
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "YGP6Yl"
+msgid "This link opens a website outside Zoonk."
+msgstr "Este enlace abre un sitio web externo a Zoonk."
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/questions/lesson-question-markdown.tsx
+msgctxt "YtFTtA"
+msgid "Open link"
+msgstr "Abrir enlace"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "FyE_0i"
+msgid "Ask questions"
+msgstr "Hacer preguntas"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "J9Kkha"
+msgid "Close questions"
+msgstr "Cerrar preguntas"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "haOEeK"
+msgid "Ask questions about this lesson"
+msgstr "Haz preguntas sobre esta lección"
+
+#: src/questions/lesson-question-thread-viewport.tsx
+msgctxt "E6r0bc"
+msgid "Scroll to latest"
+msgstr "Ir a lo más reciente"
+
+#: src/questions/lesson-question-thread-viewport.tsx
+msgctxt "RIj9BB"
+msgid "Loading questions…"
+msgstr "Cargando preguntas…"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "DMPOmk"
+msgid "Walk me through this answer"
+msgstr "Explícame esta respuesta paso a paso"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "VQ0LTP"
+msgid "Compare my answer with the correct one"
+msgstr "Compara mi respuesta con la correcta"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "9KFewS"
+msgid "Explain this more simply"
+msgstr "Explícame esto de forma más sencilla"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "KPsIMl"
+msgid "Give me another example"
+msgstr "Dame otro ejemplo"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "BOsQu3"
+msgid "What would you like help with?"
+msgstr "¿Con qué necesitas ayuda?"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "I7p0KB"
+msgid "Sign in to ask questions"
+msgstr "Inicia sesión para hacer preguntas"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "jJ8jWo"
+msgid "Questions about this lesson"
+msgstr "Preguntas sobre esta lección"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "wMoDaY"
+msgid "Couldn't load earlier questions. Try again."
+msgstr "No pudimos cargar las preguntas anteriores. Inténtalo de nuevo."
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "nCFX1M"
+msgid "Load earlier questions"
+msgstr "Cargar preguntas anteriores"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "V-WZ__"
+msgid "About your answer"
+msgstr "Sobre tu respuesta"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "A6lEGi"
+msgid "About this lesson"
+msgstr "Sobre esta lección"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "KQvwZ5"
+msgid "We couldn't finish this answer."
+msgstr "No pudimos completar esta respuesta."
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "1A8Z_l"
+msgid "Check again"
+msgstr "Comprobar de nuevo"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "C1eFF3"
+msgid "No answer available."
+msgstr "No hay ninguna respuesta disponible."
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "P1QHV0"
+msgid "Thinking…"
+msgstr "Pensando…"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "LIVM_k"
+msgid "Your question"
+msgstr "Tu pregunta"
 
 #: src/use-belt-label.ts
 msgctxt "znY9eW"

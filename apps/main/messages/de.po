@@ -2701,14 +2701,14 @@ msgid "You need to log in to create new courses and lessons with AI. You can exp
 msgstr "Du musst dich anmelden, um mit KI neue Kurse und Lektionen zu erstellen. Bestehende Kurse kannst du auch ohne Anmeldung erkunden."
 
 #: src/components/generation/generation-limit-cta.tsx
-msgctxt "GLlr0C"
-msgid "{period, select, day {Daily} month {Monthly} other {Generation}} {resource, select, course {course} chapter {chapter} lesson {lesson} other {generation}} limit reached"
-msgstr "{resource, select, course {Kurse} chapter {Kapitel} lesson {Lektionen} other {Generierung}}: {period, select, day {Tageslimit erreicht} month {Monatslimit erreicht} other {Limit erreicht}}"
+msgctxt "7AF4uB"
+msgid "{period, select, day {Daily} month {Monthly} other {Generation}} {resource, select, course {course} chapter {chapter} lesson {lesson} lessonQuestion {question} other {generation}} limit reached"
+msgstr "{period, select, day {Tageslimit} month {Monatslimit} other {Generierungslimit}} für {resource, select, course {Kurse} chapter {Kapitel} lesson {Lektionen} lessonQuestion {Fragen} other {Inhalte}} erreicht"
 
 #: src/components/generation/generation-limit-cta.tsx
-msgctxt "xMbHsD"
-msgid "{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated."
-msgstr "{period, select, day {Du hast das heutige Limit} month {Du hast das Limit für diesen Monat} other {Du hast das Limit}} für das Erstellen von {resource, select, course {Kursen} chapter {Kapiteln} lesson {Lektionen} other {Inhalten}} erreicht. Du kannst mit allen bereits erstellten Inhalten weiterlernen."
+msgctxt "vvv0PA"
+msgid "{resource, select, lessonQuestion {{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached your question limit.}} Saved answers are still available.} other {{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated.}}"
+msgstr "{resource, select, lessonQuestion {{period, select, day {Du hast dein Fragenlimit für heute erreicht.} month {Du hast dein Fragenlimit für diesen Monat erreicht.} other {Du hast dein Fragenlimit erreicht.}} Gespeicherte Antworten sind weiterhin verfügbar.} other {{period, select, day {Du hast dein Tageslimit} month {Du hast dein Monatslimit} other {Du hast das Limit}} für das Erstellen von {resource, select, course {Kursen} chapter {Kapiteln} lesson {Lektionen} other {Inhalten}} erreicht. Du kannst mit allem weiterlernen, was bereits erstellt wurde.}}"
 
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "ctqXbT"

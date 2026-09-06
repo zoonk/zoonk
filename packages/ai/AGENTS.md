@@ -1,0 +1,1 @@
+- When writing a prompt, don't use "Zoonk" (eg "You're a Zoonk tutor"). Models don't know what "Zoonk" is, and it can lead to confusion or irrelevant responses. Instead, you could use something like "You're a tutor for a learning app."
