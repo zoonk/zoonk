@@ -16,15 +16,17 @@ struct CourseCatalogGrid: View {
     }
 
     if page.canLoadMore {
-      CourseCatalogLoadMoreView(
-        category: category,
-        failure: catalog.loadMoreFailure,
-        isLoading: catalog.isLoadingMore)
+      CourseGridLoadMoreView(
+        failure: courseGridLoadMoreFailure(catalog.loadMoreFailure),
+        isLoading: catalog.isLoadingMore
+      ) {
+        await catalog.loadMoreCourses(category: category)
+      }
     }
   }
 
-  private var layout: CourseCatalogLayout {
-    CourseCatalogLayout(
+  private var layout: CourseGridLayout {
+    CourseGridLayout(
       dynamicTypeSize: dynamicTypeSize,
       horizontalSizeClass: horizontalSizeClass)
   }
@@ -32,20 +34,31 @@ struct CourseCatalogGrid: View {
   @ViewBuilder
   private func courseItem(_ course: CourseSummary) -> some View {
     if page.canLoadMore, course.id == page.courses.last?.id {
-      CourseCatalogItem(course: course, artworkSize: layout.artworkSize)
-        .task(
-          id: CourseCatalogPaginationTaskID(
-            cursor: page.nextCursor,
-            isLoadingCourses: catalog.isLoadingCourses)
-        ) {
-          guard !catalog.isLoadingCourses else {
-            return
-          }
-
-          await catalog.loadMoreCourses(category: category, force: true)
+      CourseGridItem(
+        artworkSize: layout.artworkSize,
+        description: course.description,
+        destination: .course(CourseReference(course)),
+        imageURL: course.imageURL,
+        title: course.title
+      )
+      .task(
+        id: CourseCatalogPaginationTaskID(
+          cursor: page.nextCursor,
+          isLoadingCourses: catalog.isLoadingCourses)
+      ) {
+        guard !catalog.isLoadingCourses else {
+          return
         }
+
+        await catalog.loadMoreCourses(category: category, force: true)
+      }
     } else {
-      CourseCatalogItem(course: course, artworkSize: layout.artworkSize)
+      CourseGridItem(
+        artworkSize: layout.artworkSize,
+        description: course.description,
+        destination: .course(CourseReference(course)),
+        imageURL: course.imageURL,
+        title: course.title)
     }
   }
 }
@@ -73,8 +86,8 @@ struct CourseCatalogLoadingGrid: View {
         comment: "Accessibility status while the course catalog loads."))
   }
 
-  private var layout: CourseCatalogLayout {
-    CourseCatalogLayout(
+  private var layout: CourseGridLayout {
+    CourseGridLayout(
       dynamicTypeSize: dynamicTypeSize,
       horizontalSizeClass: horizontalSizeClass)
   }
@@ -84,7 +97,7 @@ private struct CourseCatalogLoadingItem: View {
   let artworkSize: CGFloat
 
   var body: some View {
-    CourseCatalogRow(imageURL: nil, artworkSize: artworkSize) {
+    CourseGridRow(imageURL: nil, artworkSize: artworkSize) {
       textContent
     }
     .redacted(reason: .placeholder)
@@ -100,35 +113,48 @@ private struct CourseCatalogLoadingItem: View {
   }
 }
 
-private struct CourseCatalogItem: View {
+struct CourseGridItem: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
-  let course: CourseSummary
   let artworkSize: CGFloat
+  let description: String?
+  let destination: CourseDestination?
+  let imageURL: URL?
+  let title: String
 
+  @ViewBuilder
   var body: some View {
-    NavigationLink(value: CourseDestination.course(CourseReference(course))) {
-      CourseCatalogRow(imageURL: course.imageURL, artworkSize: artworkSize) {
-        textContent
+    if let destination {
+      NavigationLink(value: destination) {
+        row
+          .contentShape(Rectangle())
       }
-      .contentShape(Rectangle())
+      .buttonStyle(.plain)
+      .accessibilityHint(
+        Text(
+          "Opens the course",
+          tableName: "Courses",
+          comment: "Accessibility hint for a course in the catalog."))
+    } else {
+      row
+        .accessibilityElement(children: .combine)
     }
-    .buttonStyle(.plain)
-    .accessibilityHint(
-      Text(
-        "Opens the course",
-        tableName: "Courses",
-        comment: "Accessibility hint for a course in the catalog."))
+  }
+
+  private var row: some View {
+    CourseGridRow(imageURL: imageURL, artworkSize: artworkSize) {
+      textContent
+    }
   }
 
   private var textContent: some View {
     VStack(alignment: .leading, spacing: 3) {
-      Text(course.title)
+      Text(title)
         .font(.headline)
         .foregroundStyle(.primary)
         .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
 
-      if let description = catalogText(course.description) {
+      if let description = catalogText(description) {
         Text(description)
           .font(.subheadline)
           .foregroundStyle(.secondary)
@@ -138,7 +164,7 @@ private struct CourseCatalogItem: View {
   }
 }
 
-private struct CourseCatalogRow<Content: View>: View {
+struct CourseGridRow<Content: View>: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -147,7 +173,7 @@ private struct CourseCatalogRow<Content: View>: View {
   @ViewBuilder let content: Content
 
   var body: some View {
-    HStack(alignment: usesBalancedRegularLayout ? .center : .top, spacing: 12) {
+    HStack(alignment: dynamicTypeSize.isAccessibilitySize ? .top : .center, spacing: 12) {
       CourseArtwork(imageURL: imageURL)
         .frame(width: artworkSize, height: artworkSize)
 
@@ -168,12 +194,12 @@ private struct CourseCatalogRow<Content: View>: View {
   }
 }
 
-private struct CourseCatalogLayout {
+struct CourseGridLayout {
   let dynamicTypeSize: DynamicTypeSize
   let horizontalSizeClass: UserInterfaceSizeClass?
 
   var artworkSize: CGFloat {
-    horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize ? 88 : 80
+    horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize ? 88 : 64
   }
 
   var columns: [GridItem] {
@@ -185,12 +211,15 @@ private struct CourseCatalogLayout {
   }
 }
 
-private struct CourseCatalogLoadMoreView: View {
-  @Environment(CourseCatalogStore.self) private var catalog
+enum CourseGridLoadMoreFailure: Equatable {
+  case network
+  case unavailable
+}
 
-  let category: CourseCategory?
-  let failure: CourseCatalogFailure?
+struct CourseGridLoadMoreView: View {
+  let failure: CourseGridLoadMoreFailure?
   let isLoading: Bool
+  let retry: @MainActor () async -> Void
 
   var body: some View {
     Group {
@@ -208,7 +237,7 @@ private struct CourseCatalogLoadMoreView: View {
 
           Button {
             Task {
-              await catalog.loadMoreCourses(category: category)
+              await retry()
             }
           } label: {
             Text(
@@ -232,18 +261,28 @@ private struct CourseCatalogLoadMoreView: View {
   }
 
   @ViewBuilder
-  private func failureDescription(_ failure: CourseCatalogFailure) -> some View {
+  private func failureDescription(_ failure: CourseGridLoadMoreFailure) -> some View {
     switch failure {
     case .network:
       Text(
         "Couldn't load more while offline.",
         tableName: "Courses",
         comment: "Message when another course page cannot load because the device is offline.")
-    case .notFound, .unavailable:
+    case .unavailable:
       Text(
         "Couldn't load more courses.",
         tableName: "Courses",
         comment: "Message when another course page cannot be loaded.")
     }
   }
+}
+
+private func courseGridLoadMoreFailure(
+  _ failure: CourseCatalogFailure?
+) -> CourseGridLoadMoreFailure? {
+  guard let failure else {
+    return nil
+  }
+
+  return failure == .network ? .network : .unavailable
 }

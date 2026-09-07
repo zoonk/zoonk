@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toCurrentUserCourse } from "@/lib/current-learning-responses";
-import { resourcePageQuerySchema } from "@/lib/openapi/schemas/catalog-resources";
+import { currentUserCoursesQuerySchema } from "@/lib/openapi/schemas/current-learning";
 import { createPaginatedResponse, decodeCursor } from "@/lib/pagination";
 import { parseQueryParams } from "@/lib/query-params";
 import { listCurrentUserCoursesPage } from "@zoonk/core/courses/list-current-user";
@@ -12,7 +12,7 @@ import { NextResponse } from "next/server";
  * order without accepting a caller-selected user identity.
  */
 async function listCurrentUserCourses(request: Request) {
-  const parsed = parseQueryParams(new URL(request.url).searchParams, resourcePageQuerySchema);
+  const parsed = parseQueryParams(new URL(request.url).searchParams, currentUserCoursesQuerySchema);
 
   if (!parsed.success) {
     return errors.validation(parsed.error);
@@ -24,7 +24,11 @@ async function listCurrentUserCourses(request: Request) {
     return errors.badRequest("Invalid pagination cursor");
   }
 
-  const page = await listCurrentUserCoursesPage({ limit: parsed.data.limit, offset });
+  const page = await listCurrentUserCoursesPage({
+    limit: parsed.data.limit,
+    offset,
+    query: parsed.data.query,
+  });
 
   if (!page) {
     return errors.unauthorized();

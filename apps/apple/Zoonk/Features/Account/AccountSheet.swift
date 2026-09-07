@@ -20,7 +20,7 @@ struct AccountSheet: View {
   @State private var isGooglePlayManagementPresented = false
   @State private var path = [AccountDestination]()
 
-  let openCatalog: () -> Void
+  let openMyCourses: () -> Void
 
   var body: some View {
     NavigationStack(path: $path) {
@@ -115,7 +115,7 @@ struct AccountSheet: View {
           deleteAccount: { path.append(.deleteAccount(makeDeletionDestination(account))) },
           editProfile: { path.append(.profile) },
           manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
-          openCatalog: showCatalog,
+          openMyCourses: showMyCourses,
           openSubscription: { showSubscription(for: account) },
           showGooglePlayManagement: { isGooglePlayManagementPresented = true }
         )
@@ -174,10 +174,10 @@ struct AccountSheet: View {
     }
   }
 
-  /// Closes the modal before moving to the app's native public catalog without opening a duplicate web surface.
-  private func showCatalog() {
+  /// Closes the modal before returning to the root of the learner's course library.
+  private func showMyCourses() {
     dismiss()
-    openCatalog()
+    openMyCourses()
   }
 
   private func showSubscription(for account: CurrentAccount) {
@@ -197,7 +197,7 @@ private struct SignedInAccountView: View {
   let deleteAccount: () -> Void
   let editProfile: () -> Void
   let manageAppStoreSubscription: () -> Void
-  let openCatalog: () -> Void
+  let openMyCourses: () -> Void
   let openSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
@@ -221,13 +221,13 @@ private struct SignedInAccountView: View {
       }
 
       Section {
-        Button(action: openCatalog) {
+        Button(action: openMyCourses) {
           AccountRowLabel(
             title: Text(
-              "Browse courses",
+              "My courses",
               tableName: "Account",
-              comment: "Account option that opens the public course catalog"),
-            systemImage: "square.grid.2x2")
+              comment: "Account option that opens the learner's enrolled courses"),
+            systemImage: "books.vertical")
         }
       }
 

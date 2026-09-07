@@ -297,6 +297,15 @@ final class CourseCatalogStore {
     finishRequest(requestIdentity)
   }
 
+  /// Invalidates the previous query before a debounced request starts, without discarding an unchanged search.
+  func prepareSearch(query: String) {
+    guard catalogText(query) != activeSearchQuery?.query else {
+      return
+    }
+
+    clearSearch()
+  }
+
   func searchCatalog(query: String, force: Bool = false) async {
     let normalizedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
 

@@ -308,7 +308,7 @@ private func makeCourseCategory(
   return category
 }
 
-private func makeCourseOrganization(
+func makeCourseOrganization(
   _ payload: Components.Schemas.OrganizationSummary
 ) -> CourseOrganization {
   CourseOrganization(

@@ -40,6 +40,19 @@ struct CourseReference: Hashable {
     title = course.title
   }
 
+  init?(_ course: UserCourseSummary) {
+    guard let organization = course.organization else {
+      return nil
+    }
+
+    description = course.description
+    id = course.id
+    imageURL = course.imageURL
+    organizationName = organization.name
+    organizationSlug = organization.slug
+    title = course.title
+  }
+
   init(_ course: Course) {
     description = course.description
     id = course.id

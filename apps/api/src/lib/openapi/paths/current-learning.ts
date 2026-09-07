@@ -1,7 +1,7 @@
-import { resourcePageQuerySchema } from "../schemas/catalog-resources";
 import {
   courseContinuationListResponseSchema,
   currentUserCourseListResponseSchema,
+  currentUserCoursesQuerySchema,
   lessonVisibilitySchema,
   lessonVisibilityUpdateSchema,
 } from "../schemas/current-learning";
@@ -28,7 +28,7 @@ export const currentLearningPaths = {
   "/me/courses": {
     get: {
       operationId: "listCurrentUserCourses",
-      requestParams: { query: resourcePageQuerySchema },
+      requestParams: { query: currentUserCoursesQuerySchema },
       responses: {
         "200": {
           content: { "application/json": { schema: currentUserCourseListResponseSchema } },

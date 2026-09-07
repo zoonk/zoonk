@@ -78,6 +78,78 @@ test.describe("Current learner catalog API", () => {
     await Promise.all([apiContext.dispose(), otherUser.apiContext.dispose()]);
   });
 
+  test("searches enrolled course titles and descriptions before paginating", async () => {
+    const baseURL = process.env.E2E_BASE_URL ?? "";
+
+    const [{ apiContext, user }, organization] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "search-my-courses" }),
+      organizationFixture({ kind: "brand" }),
+    ]);
+
+    const [titleMatch, descriptionMatch, unrelated, unenrolled] = await Promise.all([
+      courseFixture({ organizationId: organization.id, title: "Ocean habitats" }),
+      courseFixture({
+        description: "Explore ocean ecosystems",
+        organizationId: null,
+        title: "Marine science",
+        userId: user.id,
+      }),
+      courseFixture({
+        description: "Numbers and patterns",
+        organizationId: organization.id,
+        title: "Math",
+      }),
+      courseFixture({ organizationId: organization.id, title: "Ocean navigation" }),
+    ]);
+
+    await Promise.all([
+      courseUserFixture({ courseId: titleMatch.id, userId: user.id }),
+      courseUserFixture({ courseId: descriptionMatch.id, userId: user.id }),
+      courseUserFixture({ courseId: unrelated.id, userId: user.id }),
+    ]);
+
+    const firstResponse = await apiContext.get("/v1/me/courses", {
+      params: { limit: 1, query: "  OCEAN  " },
+    });
+
+    expect(firstResponse.status()).toBe(200);
+    const firstPage = await firstResponse.json();
+    expect(firstPage.data).toHaveLength(1);
+    expect(firstPage.pagination.hasMore).toBe(true);
+
+    const secondResponse = await apiContext.get("/v1/me/courses", {
+      params: { cursor: firstPage.pagination.nextCursor, limit: 1, query: "ocean" },
+    });
+
+    expect(secondResponse.status()).toBe(200);
+    const secondPage = await secondResponse.json();
+
+    const courseIds = [...firstPage.data, ...secondPage.data].map(
+      (course: { id: string }) => course.id,
+    );
+
+    expect(new Set(courseIds)).toEqual(new Set([titleMatch.id, descriptionMatch.id]));
+    expect(courseIds).not.toContain(unenrolled.id);
+    expect(secondPage.pagination).toEqual({ hasMore: false, nextCursor: null });
+
+    const emptyResponse = await apiContext.get("/v1/me/courses", {
+      params: { query: "no-matching-course" },
+    });
+
+    expect(emptyResponse.status()).toBe(200);
+
+    expect(await emptyResponse.json()).toEqual({
+      data: [],
+      pagination: { hasMore: false, nextCursor: null },
+    });
+
+    const allResponse = await apiContext.get("/v1/me/courses", { params: { query: "   " } });
+    expect(allResponse.status()).toBe(200);
+    const allPage = await allResponse.json();
+    expect(allPage.data).toHaveLength(3);
+    await apiContext.dispose();
+  });
+
   test("removes a course from the learner's library without clearing progress", async () => {
     const baseURL = process.env.E2E_BASE_URL ?? "";
 

@@ -11,10 +11,12 @@ import { getSession } from "../users/get-session";
  */
 async function findCurrentUserCourses({
   offset,
+  query,
   take,
   userId,
 }: {
   offset?: number;
+  query?: string;
   take?: number;
   userId: string;
 }) {
@@ -24,7 +26,19 @@ async function findCurrentUserCourses({
     ...(take !== undefined && { take }),
     ...(offset !== undefined && { skip: Math.max(Math.trunc(offset), 0) }),
     where: {
-      course: { OR: [{ organization: { kind: "brand" } }, { organizationId: null }] },
+      course: {
+        OR: [{ organization: { kind: "brand" } }, { organizationId: null }],
+        ...(query && {
+          AND: [
+            {
+              OR: [
+                { title: { contains: query, mode: "insensitive" as const } },
+                { description: { contains: query, mode: "insensitive" as const } },
+              ],
+            },
+          ],
+        }),
+      },
       userId,
     },
   });
@@ -59,9 +73,11 @@ export async function listCurrentUserCourses() {
 export async function listCurrentUserCoursesPage({
   limit,
   offset = 0,
+  query,
 }: {
   limit: number;
   offset?: number;
+  query?: string;
 }) {
   const session = await getSession();
 
@@ -73,6 +89,7 @@ export async function listCurrentUserCoursesPage({
 
   const courses = await findCurrentUserCourses({
     offset,
+    query: query?.trim(),
     take: pageSize + 1,
     userId: session.user.id,
   });

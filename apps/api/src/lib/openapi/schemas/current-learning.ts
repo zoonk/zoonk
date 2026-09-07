@@ -1,10 +1,20 @@
 import { MAX_CONTINUE_LEARNING_ITEMS } from "@zoonk/core/courses/continue-learning-contract";
 import { z } from "zod";
-import { organizationSummarySchema } from "./catalog-resources";
+import { organizationSummarySchema, resourcePageQuerySchema } from "./catalog-resources";
 import { paginationSchema } from "./common";
 import { lessonKindSchema } from "./curriculum";
 
 const nullableOrganizationSummarySchema = organizationSummarySchema.nullable();
+
+export const currentUserCoursesQuerySchema = resourcePageQuerySchema
+  .extend({
+    query: z
+      .string()
+      .trim()
+      .optional()
+      .meta({ description: "Filter enrolled courses by title or description, ignoring case" }),
+  })
+  .meta({ id: "CurrentUserCoursesQuery" });
 
 const currentUserCourseSchema = z
   .object({
