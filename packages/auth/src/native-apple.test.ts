@@ -75,7 +75,7 @@ function createTestUser() {
  */
 function createAppleAccount({ subject, userId }: { subject: string; userId: string }) {
   return prisma.account.create({
-    data: { accountId: subject, issuer: APPLE_ISSUER, providerId: APPLE_PROVIDER_ID, userId },
+    data: { accountId: subject, providerId: APPLE_PROVIDER_ID, userId },
   });
 }
 
@@ -170,19 +170,18 @@ describe(signInWithNativeApple, () => {
     });
   });
 
-  it("selects the verified Apple identity by issuer and subject", async () => {
+  it("selects the verified Apple identity by provider and subject", async () => {
     const subject = `apple-${randomUUID()}`;
-    const [sessionUser, otherIssuerUser] = await Promise.all([createTestUser(), createTestUser()]);
 
-    const [account, otherIssuerAccount, sessionResponse] = await Promise.all([
+    const [sessionUser, otherProviderUser] = await Promise.all([
+      createTestUser(),
+      createTestUser(),
+    ]);
+
+    const [account, otherProviderAccount, sessionResponse] = await Promise.all([
       createAppleAccount({ subject, userId: sessionUser.id }),
       prisma.account.create({
-        data: {
-          accountId: subject,
-          issuer: "local:oauth:apple",
-          providerId: APPLE_PROVIDER_ID,
-          userId: otherIssuerUser.id,
-        },
+        data: { accountId: subject, providerId: "google", userId: otherProviderUser.id },
       }),
       createSessionResponse({ userId: sessionUser.id }),
     ]);
@@ -199,13 +198,13 @@ describe(signInWithNativeApple, () => {
       sessionResponse,
     );
 
-    const [persistedAccount, persistedOtherIssuerAccount] = await Promise.all([
+    const [persistedAccount, persistedOtherProviderAccount] = await Promise.all([
       prisma.account.findUniqueOrThrow({ where: { id: account.id } }),
-      prisma.account.findUniqueOrThrow({ where: { id: otherIssuerAccount.id } }),
+      prisma.account.findUniqueOrThrow({ where: { id: otherProviderAccount.id } }),
     ]);
 
     expect(persistedAccount.refreshToken).toBe(authorization.refreshToken);
-    expect(persistedOtherIssuerAccount.refreshToken).toBeNull();
+    expect(persistedOtherProviderAccount.refreshToken).toBeNull();
   });
 
   it("treats a malformed Better Auth success response as an internal failure", async () => {

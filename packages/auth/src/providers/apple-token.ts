@@ -1,6 +1,6 @@
 import { getApplePublicKey } from "better-auth/social-providers";
 import { decodeProtectedHeader, jwtVerify } from "jose";
-import { getAppleAccountIssuer, getAppleConfiguration } from "./apple";
+import { getAppleConfiguration, getAppleIdentityTokenIssuer } from "./apple";
 import { AppleAuthorizationError } from "./apple-rest";
 
 const HEX_RADIX = 16;
@@ -66,8 +66,8 @@ async function nonceMatches({ claim, nonce }: { claim: unknown; nonce: string })
 
 /**
  * Validates that an identity token was signed by Apple for this native app and
- * returns its trusted issuer and stable Apple subject. Together they form the
- * Better Auth 1.7 identity that must match the existing Apple Account row.
+ * returns its trusted issuer and stable Apple subject. The verified subject
+ * must match the existing account scoped to Apple's provider.
  */
 export async function verifyNativeAppleIdentityToken({
   nonce,
@@ -77,9 +77,9 @@ export async function verifyNativeAppleIdentityToken({
   token: string;
 }) {
   const configuration = getAppleConfiguration();
-  const accountIssuer = getAppleAccountIssuer();
+  const issuer = getAppleIdentityTokenIssuer();
 
-  if (!configuration || !accountIssuer) {
+  if (!configuration || !issuer) {
     throw new AppleAuthorizationError("configuration");
   }
 
@@ -96,7 +96,7 @@ export async function verifyNativeAppleIdentityToken({
       {
         algorithms: ["RS256"],
         audience: configuration.appBundleIdentifier,
-        issuer: accountIssuer,
+        issuer,
         maxTokenAge: "1h",
       },
     );

@@ -52,11 +52,13 @@ function getNativeClientIdentifier() {
 }
 
 /**
- * Resolves the canonical Apple identity using the trusted issuer and verified
- * provider subject required by Better Auth 1.7.
+ * Scopes the verified subject to Apple's provider so another provider using
+ * the same subject cannot receive this account's credentials.
  */
-async function getExactAppleAccount({ issuer, subject }: { issuer: string; subject: string }) {
-  return prisma.account.findUnique({ where: { issuer_accountId: { accountId: subject, issuer } } });
+async function getExactAppleAccount({ subject }: { subject: string }) {
+  return prisma.account.findUnique({
+    where: { providerId_accountId: { accountId: subject, providerId: "apple" } },
+  });
 }
 
 /**

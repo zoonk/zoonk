@@ -108,10 +108,10 @@ const configuredAppleProvider = appleProvider.apple ? apple(appleProvider.apple)
 
 /**
  * Uses Better Auth's built-in provider metadata as the source of truth for the
- * canonical issuer persisted with Apple accounts.
+ * issuer required when verifying Apple identity tokens.
  */
-export function getAppleAccountIssuer() {
-  return configuredAppleProvider?.accountIssuer;
+export function getAppleIdentityTokenIssuer() {
+  return configuredAppleProvider?.idToken.issuer;
 }
 
 /**

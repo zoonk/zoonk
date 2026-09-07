@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 
 type UserAttrs = { email: string; name: string; role: "user" | "admin"; password: string };
 
-const CREDENTIAL_ISSUER = "local:credential";
 const CREDENTIAL_PROVIDER_ID = "credential";
 
 function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
@@ -34,7 +33,6 @@ export async function userFixture(attrs?: Partial<UserAttrs>) {
         create: {
           accountId: userId,
           id: randomUUID(),
-          issuer: CREDENTIAL_ISSUER,
           password: params.password,
           providerId: CREDENTIAL_PROVIDER_ID,
         },
