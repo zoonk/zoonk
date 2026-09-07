@@ -1,3 +1,7 @@
+- Treat the public OpenAPI document as a product contract. Reuse runtime Zod boundary schemas in the document, give public operations stable `operationId` and security declarations, make compatibility an explicit product decision instead of adding aliases by default, and keep Better Auth's infrastructure routes out of the public product API.
+- Add public API endpoints to `document.ts`. Unversioned same-origin UI transport routes stay out of the public OpenAPI document, but require an explicit architecture record, CSRF protection for cookie-authenticated mutations, and E2E coverage.
+- Workflow files containing `"use workflow"` cannot call Node APIs directly; put those calls in `"use step"` functions. Prefer linear waves of independent work with `Promise.allSettled`. Installed workflow docs are in `apps/api/node_modules/workflow/docs/`.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

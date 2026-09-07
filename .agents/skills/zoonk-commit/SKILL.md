@@ -1,100 +1,42 @@
 ---
 name: zoonk-commit
-description: Guidelines for writing commit messages and PR descriptions. Use when creating commits, writing PR descriptions, or asking about commit format.
+description: Write Zoonk commit messages and PR titles or descriptions when preparing a commit or pull request.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
-# Commit Messages
+# Commit and PR wording
 
-## Format
+Follow the repository's local-review and explicit-commit boundary. Drafting a message does not authorize a commit or push. An authorized PR uses one commit; never amend or force-push.
 
-```
-type(scope): short message
-```
+Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period.
 
-## Types
+| Type       | Use                                                  |
+| ---------- | ---------------------------------------------------- |
+| `feat`     | New behavior                                         |
+| `fix`      | Bug fix                                              |
+| `refactor` | Restructuring without a behavior change              |
+| `chore`    | Maintenance, dependencies, configuration, or tooling |
 
-- `feat` - new feature
-- `fix` - bug fix
-- `refactor` - code refactoring
-- `chore` - maintenance tasks (deps, config, tooling)
+## Scope
 
-## Scopes
+Use the owning app or package name: `main` for `apps/main`, `player` for `packages/player`. When several workspaces change, choose the owner of the user-facing behavior, then the main implementation, then the workspace a reviewer would inspect first. Supporting changes do not make a commit horizontal.
 
-Use the owning app or package name as scope when working in this monorepo.
+Use inferred scopes only when no app or package owns the work: `agents` for agent instructions and skills, `ci` for workflows, `deps` for repository-wide dependency maintenance, and `test` for tests spanning workspaces. Do not invent thematic scopes such as `auth`, `ui`, or `diagrams` when the workspace owner is clear.
 
-### Scope Selection Order
+Examples:
 
-1. If the change is fully owned by one app in `apps/<name>`, use that app name.
-2. If the change is fully owned by one package in `packages/<name>`, use that package name.
-3. Only use an inferred scope like `deps`, `ci`, or `agents` when the change truly spans multiple workspaces or does not belong to a single app/package.
-4. Do not pick a scope based on the kind of code changed (eg `data`) when the files clearly belong to one app/package. The workspace owner wins.
-
-### Multi-package Changes
-
-When one commit touches multiple apps/packages, use the **primary owner** as the scope.
-
-Pick the primary owner in this order:
-
-1. The app/package where the user-facing bug or behavior lives
-2. The app/package containing the main implementation change
-3. The app/package a reviewer would most naturally inspect first
-
-Supporting changes in other packages do **not** change the scope.
-
-Example:
-
-- A player runtime bug requires a fix in `packages/player` plus an upstream safeguard in `packages/ai` -> use `fix(player): ...`
-
-**Inferred scopes** (when change doesn't fit an app/package):
-
-- `agents` - CLAUDE.md, AGENTS.md, `.claude/` folder
-- `ci` - GitHub workflows, CI/CD configuration
-- `deps` - dependency updates across multiple packages
-- `test` - when only test files are changed
-
-### Good Scope Choices
-
-- `fix(player): improve belt progress contrast` for changes in `packages/player/...`
-- `fix(main): correct level page copy` for changes in `apps/main/...`
-- `fix(api): handle null response in auth` for changes in `apps/api/...`
-
-### Avoid These Mistakes
-
-- `fix(ui): improve belt progress contrast` when the change is in `packages/player`
-- `fix(data): update main progress query` when the change is only in `apps/main`
-- `fix(ui): restyle main level card` when the change is only in `apps/main`
-- `fix(diagrams): avoid empty diagram node ids` when `player` is the clear primary owner
-
-Never invent thematic scopes like `diagrams`, `auth`, or `visuals` when an owning app/package is clear.
-
-## Examples
-
-```
-feat(main): add user profile page
-fix(player): improve belt progress contrast
-fix(api): handle null response in auth
-refactor(db): use enum for status field
-chore(deps): update react to v19
-chore(agents): add commit skill
-fix(ci): update node version in workflow
-fix(test): fix e2e test flakiness for course chapters
+```text
+fix(player): preserve progress when retrying a lesson
+feat(main): add course search
+refactor(core): centralize course visibility rules
+chore(agents): simplify repository instructions
 ```
 
-## Rules
+## PR description
 
-- Use lowercase for entire message
-- No period at the end
-- Keep message under 72 characters
-- Use imperative mood ("add" not "added")
+Describe the concrete problem and resulting behavior for a reviewer who has not seen the conversation. Keep it brief; include a trigger or before/after example when useful. Rewrite the title and body around the final implementation if the scope changes. Omit conversational history and verification command lists.
 
-# PR Titles
-
-Use the same `type(scope): short message` format as the commit title.
-
-# PR Descriptions
-
-Keep descriptions brief. Focus on what changed. No need to list verification commands run.
+For multiline bodies, use a structured tool argument or write the exact text to a temporary file and pass `gh ... --body-file <path>`.
