@@ -74,14 +74,19 @@ export function useLessonQuestions({
       dispatchToContext({ action: { context, type: "open" }, context });
 
       const scope = getLessonQuestionScope(context);
-      const needsRefresh = openedScopes.current.has(scope) || !preloadedScopes.current.has(scope);
+
+      const needsRefresh =
+        openedScopes.current.has(scope) ||
+        !preloadedScopes.current.has(scope) ||
+        getState(context).error === "load";
+
       openedScopes.current.add(scope);
 
       if (canAskQuestions && needsRefresh) {
         void loadThread(context);
       }
     },
-    [canAskQuestions, dispatchToContext, loadThread],
+    [canAskQuestions, dispatchToContext, getState, loadThread],
   );
 
   const close = useCallback(() => dispatch({ type: "close" }), [dispatch]);

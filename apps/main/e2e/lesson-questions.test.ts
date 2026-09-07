@@ -1543,6 +1543,36 @@ test("refreshes saved questions whenever the panel is reopened", async ({
   expect(api.getRequests).toBeGreaterThanOrEqual(2);
 });
 
+test("retries a failed preload when the question panel is first opened", async ({
+  subscriberPage: page,
+}) => {
+  const scenario = await createQuestionLesson();
+
+  const savedQuestion = questionResource({
+    answer: "The saved explanation is available again.",
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "Show my saved question after the connection recovers.",
+    status: "completed",
+  });
+
+  const api = await mockQuestionApi({
+    failGetRequestNumbers: [1],
+    initialQuestions: [savedQuestion],
+    lessonId: scenario.lessonId,
+    page,
+  });
+
+  await page.goto(scenario.url);
+  await expect.poll(() => api.getRequests).toBe(1);
+  await page.waitForLoadState("networkidle");
+  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Try again" })).toHaveCount(0);
+  expect(api.getRequests).toBe(2);
+});
+
 test("announces the initial question history load", async ({
   subscriberPage: authenticatedPage,
 }) => {
@@ -1562,9 +1592,11 @@ test("announces the initial question history load", async ({
 
   await expect(loadingStatus).toBeVisible();
   await expect(loadingStatus).toHaveText("Loading questions…");
+  expect(api.getRequests).toBe(1);
   api.releaseGetResponse(1);
   await expect(loadingStatus).toHaveCount(0);
   await expect(dialog.getByText("What would you like help with?")).toBeVisible();
+  expect(api.getRequests).toBe(1);
 });
 
 test("keeps saved history visible but blocks sending during a reopen refresh", async ({
