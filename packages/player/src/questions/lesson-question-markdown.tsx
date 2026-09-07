@@ -1,5 +1,7 @@
 "use client";
 
+import { math } from "@streamdown/math";
+import { mermaid } from "@streamdown/mermaid";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -16,6 +18,7 @@ import { type LinkSafetyModalProps, Streamdown } from "streamdown";
 import { getSafeLessonQuestionUrl } from "./lesson-question-url";
 
 const DISALLOWED_ANSWER_ELEMENTS = ["img"] as const;
+const LESSON_QUESTION_PLUGINS = { math, mermaid };
 
 /**
  * Uses the app's accessible dialog primitive for external links because
@@ -89,13 +92,13 @@ export function LessonQuestionMarkdown({
   return (
     <Streamdown
       animated={isAnimating}
-      className="min-w-0 wrap-anywhere [&_a]:underline [&_a]:underline-offset-4"
+      className="min-w-0 wrap-anywhere [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1 [&_a]:underline [&_a]:underline-offset-4"
       controls={false}
       disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
       isAnimating={isAnimating}
-      lineNumbers={false}
       linkSafety={LESSON_QUESTION_LINK_SAFETY}
       mode={isStreaming ? "streaming" : "static"}
+      plugins={LESSON_QUESTION_PLUGINS}
       urlTransform={getSafeLessonQuestionUrl}
     >
       {answer}

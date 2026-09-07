@@ -5,16 +5,16 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
-import { PlayerProvider, type PlayerQuestionSupport } from "@zoonk/player/provider";
+import { PlayerProvider } from "@zoonk/player/provider";
 import {
   type LessonQuestionConnection,
   type LessonQuestionLimitActionProps,
   LessonQuestionPanel,
-  useLessonQuestions,
+  LessonQuestionProvider,
 } from "@zoonk/player/questions";
 import { PlayerShell } from "@zoonk/player/shell";
 import { API_URL } from "@zoonk/utils/url";
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import { getPlayerViewer } from "./get-player-viewer";
 import {
   type LessonProgressMeta,
@@ -64,14 +64,9 @@ type LessonPlayerClientProps = {
   userName: string | null;
 };
 
-type LessonPlayerSurfaceProps = LessonPlayerClientProps & {
-  model: ReturnType<typeof buildLessonPlayerModel>;
-  questionSupport: PlayerQuestionSupport;
-};
-
-/** Keeps token-by-token question updates from re-rendering the active player. */
-function LessonPlayerSurfaceComponent({
+export function LessonPlayerClient({
   lesson,
+  brandSlug,
   chapterPosition,
   chapterTitle,
   courseTitle,
@@ -79,15 +74,30 @@ function LessonPlayerSurfaceComponent({
   chapterSlug,
   isAuthenticated,
   lessonDescription,
+  lessonProgress,
   lessonPosition,
   lessonSlug,
   lessonTitle,
   initialProgress,
-  model,
-  questionSupport,
+  nextChapter,
+  nextLesson,
   userEmail,
   userName,
-}: LessonPlayerSurfaceProps) {
+}: LessonPlayerClientProps) {
+  const model = useMemo(
+    () =>
+      buildLessonPlayerModel({
+        brandSlug,
+        chapterSlug,
+        courseSlug,
+        lessonProgress,
+        lessonSlug,
+        nextChapter,
+        nextLesson,
+      }),
+    [brandSlug, chapterSlug, courseSlug, lessonProgress, lessonSlug, nextChapter, nextLesson],
+  );
+
   const router = useRouter();
 
   const onNextHref = model.onNextHref;
@@ -120,7 +130,6 @@ function LessonPlayerSurfaceComponent({
       onNext={handleNext}
       onStepChange={handleStepChange}
       progressSnapshot={initialProgress?.progressSnapshot ?? null}
-      questionSupport={questionSupport}
       totalBrainPower={initialProgress?.totalBrainPower ?? 0}
       viewer={getPlayerViewer({
         chapterSlug,
@@ -131,75 +140,24 @@ function LessonPlayerSurfaceComponent({
         userName,
       })}
     >
-      <PlayerShell />
+      <LessonQuestionProvider connection={questionConnection} lessonId={lesson.id}>
+        <PlayerShell />
+        <LessonQuestionPanel
+          navigation={{
+            linkComponent: Link,
+            loginHref: model.navigation.loginHref ?? "/login",
+            renderLimitAction: renderQuestionLimitAction,
+            subscriptionHref: "/subscription",
+          }}
+          metadata={{
+            chapterTitle,
+            courseTitle,
+            lessonDescription,
+            lessonSteps: lesson.steps,
+            lessonTitle,
+          }}
+        />
+      </LessonQuestionProvider>
     </PlayerProvider>
-  );
-}
-
-const LessonPlayerSurface = memo(LessonPlayerSurfaceComponent);
-
-export function LessonPlayerClient(props: LessonPlayerClientProps) {
-  const {
-    brandSlug,
-    chapterSlug,
-    chapterTitle,
-    courseSlug,
-    courseTitle,
-    isAuthenticated,
-    lesson,
-    lessonDescription,
-    lessonProgress,
-    lessonSlug,
-    lessonTitle,
-    nextChapter,
-    nextLesson,
-  } = props;
-
-  const model = useMemo(
-    () =>
-      buildLessonPlayerModel({
-        brandSlug,
-        chapterSlug,
-        courseSlug,
-        lessonProgress,
-        lessonSlug,
-        nextChapter,
-        nextLesson,
-      }),
-    [brandSlug, chapterSlug, courseSlug, lessonProgress, lessonSlug, nextChapter, nextLesson],
-  );
-
-  const questionController = useLessonQuestions({
-    connection: questionConnection,
-    isAuthenticated,
-    lessonId: lesson.id,
-    lessonSteps: lesson.steps,
-  });
-
-  return (
-    <>
-      <LessonPlayerSurface
-        {...props}
-        model={model}
-        questionSupport={questionController.questionSupport}
-      />
-      <LessonQuestionPanel
-        controller={questionController}
-        isAuthenticated={isAuthenticated}
-        navigation={{
-          linkComponent: Link,
-          loginHref: model.navigation.loginHref ?? "/login",
-          renderLimitAction: renderQuestionLimitAction,
-          subscriptionHref: "/subscription",
-        }}
-        metadata={{
-          chapterTitle,
-          courseTitle,
-          lessonDescription,
-          lessonSteps: lesson.steps,
-          lessonTitle,
-        }}
-      />
-    </>
   );
 }

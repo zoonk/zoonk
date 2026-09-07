@@ -41,11 +41,13 @@ function toPriorTurns(
 async function getPriorTurns({
   createdAt,
   questionId,
+  stepId,
   threadId,
   transaction,
 }: {
   createdAt: Date;
   questionId: string;
+  stepId: string | null;
   threadId: string;
   transaction: TransactionClient;
 }) {
@@ -57,6 +59,7 @@ async function getPriorTurns({
       OR: [{ createdAt: { lt: createdAt } }, { createdAt, id: { lt: questionId } }],
       answer: { not: null },
       status: "completed",
+      stepId,
       threadId,
     },
   });
@@ -68,7 +71,7 @@ async function hasBlockingQuestion({
   question,
   transaction,
 }: {
-  question: { createdAt: Date; id: string; threadId: string };
+  question: { createdAt: Date; id: string; stepId: string | null; threadId: string };
   transaction: TransactionClient;
 }) {
   const [earlierUnfinishedQuestion, otherRunningQuestion] = await Promise.all([
@@ -80,12 +83,18 @@ async function hasBlockingQuestion({
           { createdAt: question.createdAt, id: { lt: question.id } },
         ],
         status: { not: "completed" },
+        stepId: question.stepId,
         threadId: question.threadId,
       },
     }),
     transaction.lessonQuestion.findFirst({
       omit: lessonQuestionResourceOmit,
-      where: { id: { not: question.id }, status: "running", threadId: question.threadId },
+      where: {
+        id: { not: question.id },
+        status: "running",
+        stepId: question.stepId,
+        threadId: question.threadId,
+      },
     }),
   ]);
 
@@ -159,6 +168,7 @@ export async function claimAnswerInTransaction({
   const priorTurns = await getPriorTurns({
     createdAt: question.createdAt,
     questionId: question.id,
+    stepId: question.stepId,
     threadId: question.threadId,
     transaction,
   });

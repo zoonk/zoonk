@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -62,6 +63,96 @@ describe("lesson question answer lifecycle", () => {
   beforeEach(() => {
     vi.mocked(headers).mockResolvedValue(new Headers());
     mockSession(null);
+  });
+
+  it("isolates generation and follow-up history by step", async () => {
+    const { lesson, question } = await createLessonQuestionFixture();
+
+    await prisma.lessonQuestion.update({
+      data: { answer: "Lesson summary", status: "completed" },
+      where: { id: question.id },
+    });
+
+    const steps = await Promise.all(
+      [0, 1].map((position) =>
+        stepFixture({
+          content: { text: "A lesson concept", title: "Concept", variant: "text" },
+          isPublished: true,
+          kind: "static",
+          lessonId: lesson.id,
+          position,
+        }),
+      ),
+    );
+
+    const created = await Promise.all(
+      steps.map((step) =>
+        createLessonQuestion({
+          input: {
+            context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
+            question: `Explain step ${step.position}`,
+            requestId: randomUUID(),
+          },
+          lessonId: lesson.id,
+        }),
+      ),
+    );
+
+    const [first, second] = created;
+
+    if (first?.status !== "created" || second?.status !== "created") {
+      throw new Error("Expected both step questions");
+    }
+
+    const claims = await Promise.all(
+      [first, second].map((result) =>
+        claimLessonQuestionAnswer({
+          questionId: result.question.id,
+          requestedModel: "openai/gpt-5.6-luna",
+        }),
+      ),
+    );
+
+    expect(claims).toMatchObject([
+      { claim: { priorTurns: [] }, status: "ready" },
+      { claim: { priorTurns: [] }, status: "ready" },
+    ]);
+
+    await prisma.lessonQuestion.update({
+      data: { answer: "First step explanation", status: "completed" },
+      where: { id: first.question.id },
+    });
+
+    const firstStep = steps[0];
+
+    if (!firstStep) {
+      throw new Error("Expected the first step");
+    }
+
+    const followUp = await createLessonQuestion({
+      input: {
+        context: { kind: "step", stepId: firstStep.id, stepNumber: 1 },
+        question: "Can you give an example?",
+        requestId: randomUUID(),
+      },
+      lessonId: lesson.id,
+    });
+
+    if (followUp.status !== "created") {
+      throw new Error("Expected a follow-up");
+    }
+
+    await expect(
+      claimLessonQuestionAnswer({
+        questionId: followUp.question.id,
+        requestedModel: "openai/gpt-5.6-luna",
+      }),
+    ).resolves.toMatchObject({
+      claim: {
+        priorTurns: [{ answer: "First step explanation", question: first.question.question }],
+      },
+      status: "ready",
+    });
   });
 
   it("atomically claims generation and blocks duplicate claims", async () => {

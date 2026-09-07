@@ -13,8 +13,15 @@ const lessonQuestionContextInputOpenAPISchema = lessonQuestionContextInputSchema
 
 export const lessonQuestionThreadQuerySchema = getLessonQuestionThreadInputSchema
   .extend({
+    contextKind: getLessonQuestionThreadInputSchema.shape.contextKind.meta({
+      description: "Filter by context kind; use lesson for the completion conversation",
+    }),
     cursor: getLessonQuestionThreadInputSchema.shape.cursor.meta({
       description: "Opaque cursor returned in nextCursor",
+    }),
+    stepId: getLessonQuestionThreadInputSchema.shape.stepId.meta({
+      description:
+        "Return questions and answer explanations for this step only; pagination uses the same filter",
     }),
   })
   .meta({ id: "LessonQuestionThreadQuery" });

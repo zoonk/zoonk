@@ -11,6 +11,7 @@ import {
   type PlayerMilestone,
   type PlayerNavigation,
   type PlayerQuestionSupport,
+  PlayerQuestionSupportContext,
   type PlayerRoute,
   type PlayerViewer,
 } from "../player-context";
@@ -99,11 +100,12 @@ export function renderPlayer({
       onEscape={onEscape}
       onNext={onNext}
       progressSnapshot={progressSnapshot}
-      questionSupport={questionSupport}
       totalBrainPower={totalBrainPower}
       viewer={viewer}
     >
-      <PlayerShell />
+      <PlayerQuestionSupportContext value={questionSupport ?? null}>
+        <PlayerShell />
+      </PlayerQuestionSupportContext>
     </PlayerProvider>,
   );
 }

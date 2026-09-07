@@ -1,11 +1,13 @@
 "use client";
 
-import { type Dispatch, useCallback, useLayoutEffect, useRef } from "react";
+import { type Dispatch, useCallback, useRef } from "react";
+import { type PlayerQuestionContext } from "../player-context";
 import {
   type LessonQuestionConnection,
   getLessonQuestionRequest,
   streamLessonQuestionAnswerRequest,
 } from "./lesson-question-api";
+import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 import {
   hasOtherAnswerInProgress,
@@ -16,72 +18,91 @@ export function useLessonQuestionAnswers({
   connection,
   canAskQuestions,
   dispatch,
+  dispatchToContext,
+  getState,
   state,
 }: {
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
+  dispatchToContext: Dispatch<LessonQuestionSessionAction>;
+  getState: (context: PlayerQuestionContext) => LessonQuestionState;
   state: LessonQuestionState;
 }) {
   const answerChecksInFlight = useRef(new Set<string>());
-  const currentState = useRef(state);
-
-  // A manual status check can resolve after polling already saved the answer.
-  useLayoutEffect(() => {
-    currentState.current = state;
-  }, [state]);
 
   const reconcileAnswerFailure = useCallback(
-    async ({ questionId, reason }: Extract<LessonQuestionAction, { type: "answerFailed" }>) => {
+    async ({
+      context,
+      questionId,
+      reason,
+    }: { context: PlayerQuestionContext } & Extract<
+      LessonQuestionAction,
+      { type: "answerFailed" }
+    >) => {
+      const dispatchToSession = (action: LessonQuestionAction) =>
+        dispatchToContext({ action, context });
+
       const result = await getLessonQuestionRequest({ connection, questionId });
 
       if (result.status === "error") {
-        dispatch({ questionId, reason, type: "answerFailed" });
+        dispatchToSession({ questionId, reason, type: "answerFailed" });
         return;
       }
 
       const question = result.data;
 
       if (question.status === "pending") {
-        dispatch({ questionId, reason, type: "answerFailed" });
+        dispatchToSession({ questionId, reason, type: "answerFailed" });
         return;
       }
 
-      dispatch({ questions: [question], type: "latestThreadReconciled" });
+      dispatchToSession({ questions: [question], type: "latestThreadReconciled" });
 
       if (question.status === "failed") {
-        dispatch({ questionId, reason, type: "answerFailed" });
+        dispatchToSession({ questionId, reason, type: "answerFailed" });
       }
     },
-    [connection, dispatch],
+    [connection, dispatchToContext],
   );
 
   const streamAnswer = useCallback(
-    async (questionId: string) => {
+    async ({ context, questionId }: { context: PlayerQuestionContext; questionId: string }) => {
+      const currentState = getState(context);
+
+      const dispatchToSession = (action: LessonQuestionAction) =>
+        dispatchToContext({ action, context });
+
       if (
-        currentState.current.activeQuestionId ||
-        currentState.current.questions.find((question) => question.id === questionId)?.status ===
+        currentState.activeQuestionId ||
+        currentState.questions.find((question) => question.id === questionId)?.status ===
           "completed"
       ) {
         return;
       }
 
-      dispatch({ questionId, type: "answerStarted" });
+      dispatchToSession({ questionId, type: "answerStarted" });
 
       const result = await streamLessonQuestionAnswerRequest({
         connection,
-        onChunk: (chunk) => dispatch({ chunk, questionId, type: "answerChunkReceived" }),
+        onChunk: (chunk) => dispatchToSession({ chunk, questionId, type: "answerChunkReceived" }),
         questionId,
       });
 
       if (result.status === "error") {
-        await reconcileAnswerFailure({ questionId, reason: result.error, type: "answerFailed" });
+        await reconcileAnswerFailure({
+          context,
+          questionId,
+          reason: result.error,
+          type: "answerFailed",
+        });
+
         return;
       }
 
-      dispatch({ questionId, type: "answerCompleted" });
+      dispatchToSession({ questionId, type: "answerCompleted" });
     },
-    [connection, dispatch, reconcileAnswerFailure],
+    [connection, dispatchToContext, getState, reconcileAnswerFailure],
   );
 
   const retryAnswer = useCallback(
@@ -98,9 +119,9 @@ export function useLessonQuestionAnswers({
         return;
       }
 
-      await streamAnswer(questionId);
+      await streamAnswer({ context: state.context, questionId });
     },
-    [canAskQuestions, state.activeQuestionId, state.questions, streamAnswer],
+    [canAskQuestions, state.activeQuestionId, state.context, state.questions, streamAnswer],
   );
 
   const checkAnswer = useCallback(
@@ -130,13 +151,21 @@ export function useLessonQuestionAnswers({
 
       if (result.data.status === "running") {
         // The server only reclaims abandoned generations and rejects ones still in progress.
-        await streamAnswer(questionId);
+        await streamAnswer({ context: state.context, questionId });
         return;
       }
 
       dispatch({ questions: [result.data], type: "latestThreadReconciled" });
     },
-    [connection, canAskQuestions, dispatch, state.activeQuestionId, state.questions, streamAnswer],
+    [
+      connection,
+      canAskQuestions,
+      dispatch,
+      state.activeQuestionId,
+      state.context,
+      state.questions,
+      streamAnswer,
+    ],
   );
 
   return { checkAnswer, retryAnswer, streamAnswer };

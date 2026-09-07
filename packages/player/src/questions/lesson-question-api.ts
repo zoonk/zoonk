@@ -2,6 +2,7 @@ import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contrac
 import { getGenerationLimit } from "@zoonk/core/generation-quotas/parse-limit";
 import {
   type CreateLessonQuestionInput,
+  type GetLessonQuestionThreadInput,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
   lessonQuestionResourceSchema,
@@ -82,17 +83,23 @@ async function getApiError(response: Response): Promise<LessonQuestionApiError> 
 
 function lessonQuestionsUrl({
   connection,
+  contextKind,
   cursor,
   lessonId,
-}: {
-  connection: LessonQuestionConnection;
-  cursor?: string;
-  lessonId: string;
-}) {
+  stepId,
+}: { connection: LessonQuestionConnection; lessonId: string } & GetLessonQuestionThreadInput) {
   const url = new URL(`/v1/lessons/${encodeURIComponent(lessonId)}/questions`, connection.apiUrl);
 
   if (cursor) {
     url.searchParams.set("cursor", cursor);
+  }
+
+  if (stepId) {
+    url.searchParams.set("stepId", stepId);
+  }
+
+  if (contextKind) {
+    url.searchParams.set("contextKind", contextKind);
   }
 
   return url.toString();
@@ -147,15 +154,18 @@ const fetchLessonQuestionAnswer: typeof fetch = async (input, init) => {
 
 export async function getLessonQuestionThreadRequest({
   connection,
+  contextKind,
   cursor,
   lessonId,
+  stepId,
 }: {
   connection: LessonQuestionConnection;
-  cursor?: string;
   lessonId: string;
-}): Promise<LessonQuestionApiResult<LessonQuestionThreadResource | null>> {
+} & GetLessonQuestionThreadInput): Promise<
+  LessonQuestionApiResult<LessonQuestionThreadResource | null>
+> {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(lessonQuestionsUrl({ connection, cursor, lessonId }), {
+    fetch(lessonQuestionsUrl({ connection, contextKind, cursor, lessonId, stepId }), {
       cache: "no-store",
       headers: await connection.getHeaders(),
     }),

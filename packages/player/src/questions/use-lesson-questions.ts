@@ -1,26 +1,25 @@
 "use client";
 
 import { safeAsync } from "@zoonk/utils/error";
-import { useCallback, useMemo, useReducer } from "react";
-import { type PlayerQuestionContext, type PlayerQuestionSupport } from "../player-context";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  type PlayerQuestionContext,
+  type PlayerQuestionSupport,
+  usePlayerRuntime,
+  usePlayerViewer,
+} from "../player-context";
+import { usePlayerQuestionContext } from "../use-player-question-context";
 import { type LessonQuestionConnection } from "./lesson-question-api";
 import { getAnswerExplanationRequestId } from "./lesson-question-request";
-import {
-  INITIAL_LESSON_QUESTION_STATE,
-  type LessonQuestionState,
-  lessonQuestionReducer,
-} from "./lesson-question-state";
+import { getLessonQuestionScope } from "./lesson-question-scope";
+import { type LessonQuestionState } from "./lesson-question-state";
 import { useLessonQuestionAnswers } from "./use-lesson-question-answers";
 import { useLessonQuestionRecovery } from "./use-lesson-question-recovery";
+import { useLessonQuestionSessions } from "./use-lesson-question-sessions";
 import { useLessonQuestionThread } from "./use-lesson-question-thread";
 import { useSendLessonQuestion } from "./use-send-lesson-question";
 
-type UseLessonQuestionsInput = {
-  connection: LessonQuestionConnection;
-  isAuthenticated: boolean;
-  lessonId: string;
-  lessonSteps: readonly { id: string }[];
-};
+type UseLessonQuestionsInput = { connection: LessonQuestionConnection; lessonId: string };
 
 export type LessonQuestionController = {
   changeDraft: (draft: string) => void;
@@ -38,11 +37,13 @@ export type LessonQuestionController = {
 
 export function useLessonQuestions({
   connection,
-  isAuthenticated,
   lessonId,
-  lessonSteps,
 }: UseLessonQuestionsInput): LessonQuestionController {
-  const [state, dispatch] = useReducer(lessonQuestionReducer, INITIAL_LESSON_QUESTION_STATE);
+  const activeContext = usePlayerQuestionContext();
+  const { state: playerState } = usePlayerRuntime();
+  const { isAuthenticated } = usePlayerViewer();
+  const lessonSteps = playerState.steps;
+  const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions(activeContext);
   const canAskQuestions = isAuthenticated;
   const canExplainAnswer = !state.activeQuestionId && !state.isCreating;
 
@@ -50,36 +51,65 @@ export function useLessonQuestions({
     canAskQuestions,
     connection,
     dispatch,
+    dispatchToContext,
+    getState,
     lessonId,
     state,
   });
 
+  const preloadedScopes = useRef(new Set<string>());
+  const openedScopes = useRef(new Set<string>());
+
+  useEffect(() => {
+    const scope = getLessonQuestionScope(activeContext);
+
+    if (canAskQuestions && !preloadedScopes.current.has(scope)) {
+      preloadedScopes.current.add(scope);
+      void loadThread(activeContext);
+    }
+  }, [activeContext, canAskQuestions, loadThread]);
+
   const open = useCallback(
     (context: PlayerQuestionContext) => {
-      dispatch({ context, type: "open" });
+      dispatchToContext({ action: { context, type: "open" }, context });
 
-      if (canAskQuestions && !state.activeQuestionId && !state.isCreating) {
-        void load();
+      const scope = getLessonQuestionScope(context);
+
+      const needsRefresh =
+        openedScopes.current.has(scope) ||
+        !preloadedScopes.current.has(scope) ||
+        getState(context).error === "load";
+
+      openedScopes.current.add(scope);
+
+      if (canAskQuestions && needsRefresh) {
+        void loadThread(context);
       }
     },
-    [canAskQuestions, load, state.activeQuestionId, state.isCreating],
+    [canAskQuestions, dispatchToContext, getState, loadThread],
   );
 
-  const close = useCallback(() => dispatch({ type: "close" }), []);
+  const close = useCallback(() => dispatch({ type: "close" }), [dispatch]);
 
-  const changeDraft = useCallback((draft: string) => dispatch({ draft, type: "draftChanged" }), []);
+  const changeDraft = useCallback(
+    (draft: string) => dispatch({ draft, type: "draftChanged" }),
+    [dispatch],
+  );
 
   const { checkAnswer, retryAnswer, streamAnswer } = useLessonQuestionAnswers({
     canAskQuestions,
     connection,
     dispatch,
+    dispatchToContext,
+    getState,
     state,
   });
 
   const { send, sendPrepared, unresolvedQuestion } = useSendLessonQuestion({
     canAskQuestions,
     connection,
-    dispatch,
+    dispatchToContext,
+    getState,
     lessonId,
     lessonSteps,
     reconcileThread: reconcileLatestThread,
@@ -87,7 +117,18 @@ export function useLessonQuestions({
     streamAnswer,
   });
 
-  useLessonQuestionRecovery({ canAskQuestions, connection, dispatch, state, streamAnswer });
+  const resumeAnswer = useCallback(
+    (questionId: string) => streamAnswer({ context: state.context, questionId }),
+    [state.context, streamAnswer],
+  );
+
+  useLessonQuestionRecovery({
+    canAskQuestions,
+    connection,
+    dispatch,
+    state,
+    streamAnswer: resumeAnswer,
+  });
 
   const explainAnswer = useCallback(
     async ({ context, question }: { context: PlayerQuestionContext; question: string }) => {
@@ -95,15 +136,16 @@ export function useLessonQuestions({
         return;
       }
 
-      dispatch({ context, type: "open" });
-      dispatch({ draft: question, type: "draftChanged" });
+      dispatchToContext({ action: { context, type: "open" }, context });
+      dispatchToContext({ action: { draft: question, type: "draftChanged" }, context });
+      openedScopes.current.add(getLessonQuestionScope(context));
 
       if (!canAskQuestions) {
         return;
       }
 
       const [questions, requestId] = await Promise.all([
-        loadThread(),
+        loadThread(context),
         getAnswerExplanationRequestId({
           context,
           lessonStepIds: lessonSteps.map((step) => step.id),
@@ -117,13 +159,16 @@ export function useLessonQuestions({
 
       await sendPrepared({ context, question, questions, requestId });
     },
-    [canAskQuestions, canExplainAnswer, lessonSteps, loadThread, sendPrepared],
+    [canAskQuestions, canExplainAnswer, dispatchToContext, lessonSteps, loadThread, sendPrepared],
   );
 
-  const copy = useCallback(async (text: string) => {
-    const { error } = await safeAsync(() => navigator.clipboard.writeText(text));
-    dispatch({ type: error ? "copyFailed" : "copied" });
-  }, []);
+  const copy = useCallback(
+    async (text: string) => {
+      const { error } = await safeAsync(() => navigator.clipboard.writeText(text));
+      dispatch({ type: error ? "copyFailed" : "copied" });
+    },
+    [dispatch],
+  );
 
   const questionSupport = useMemo<PlayerQuestionSupport>(
     () => ({

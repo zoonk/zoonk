@@ -98,13 +98,14 @@ type PlayerConfigContextValue = {
   linkComponent: PlayerLinkComponent;
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
-  next: () => void;
-  questionSupport: PlayerQuestionSupport | null;
+  next: (() => void) | null;
+  onEscape: (href: PlayerRoute) => void;
   viewer: PlayerViewer;
 };
 
 const PlayerConfigContext = createContext<PlayerConfigContextValue | null>(null);
 const PlayerRuntimeContext = createContext<PlayerRuntimeContextValue | null>(null);
+const PlayerQuestionSupportContext = createContext<PlayerQuestionSupport | null>(null);
 
 function usePlayerConfig(): PlayerConfigContextValue {
   const context = useContext(PlayerConfigContext);
@@ -160,12 +161,17 @@ export function usePlayerNavigation(): PlayerNavigation {
   return usePlayerConfig().navigation;
 }
 
+export function usePlayerNavigationActions() {
+  const { next, onEscape } = usePlayerConfig();
+  return { next, onEscape };
+}
+
 export function usePlayerQuestionSupport(): PlayerQuestionSupport | null {
-  return usePlayerConfig().questionSupport;
+  return useContext(PlayerQuestionSupportContext);
 }
 
 export function usePlayerInteractionState(): PlayerQuestionSupport["interactionState"] {
-  return usePlayerConfig().questionSupport?.interactionState ?? "active";
+  return usePlayerQuestionSupport()?.interactionState ?? "active";
 }
 
 export function usePlayerRuntime(): PlayerRuntimeContextValue {
@@ -182,4 +188,4 @@ export function usePlayerViewer(): PlayerViewer {
   return usePlayerConfig().viewer;
 }
 
-export { PlayerConfigContext, PlayerRuntimeContext };
+export { PlayerConfigContext, PlayerQuestionSupportContext, PlayerRuntimeContext };

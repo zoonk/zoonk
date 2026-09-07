@@ -83,7 +83,7 @@ async function persistLessonQuestion({
 
     const unfinishedQuestion = await transaction.lessonQuestion.findFirst({
       omit: lessonQuestionResourceOmit,
-      where: { status: { not: "completed" }, threadId: thread.id },
+      where: { status: { not: "completed" }, stepId, threadId: thread.id },
     });
 
     if (unfinishedQuestion) {

@@ -40,6 +40,7 @@ catalog:
   ai: 7.0.66
   botid: 1.5.11
   jsdom: 30.0.1
+  katex: 0.18.4
   lucide-react: 1.31.0
   next-intl: 4.14.0
   next: 16.3.1
@@ -62,4 +63,6 @@ minimumReleaseAge: 0
 
 overrides:
   "ai-sdk-provider-codex-cli>@openai/codex": "-"
+  # Keep lesson and question math on the same KaTeX version as the stylesheet.
+  katex: "catalog:"
   nanoid@>=4.0.0 <5.1.16: ^5.1.16

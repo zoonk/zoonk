@@ -3,7 +3,13 @@
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
 import { PlayerAudioProvider } from "../player-audio-context";
-import { usePlayerRuntime } from "../player-context";
+import {
+  usePlayerInteractionState,
+  usePlayerMilestone,
+  usePlayerNavigation,
+  usePlayerNavigationActions,
+  usePlayerRuntime,
+} from "../player-context";
 import {
   getCurrentResult,
   getCurrentStep,
@@ -11,6 +17,7 @@ import {
   getUpcomingImages,
 } from "../player-selectors";
 import { usePlayerHaptics } from "../use-player-haptics";
+import { usePlayerKeyboard } from "../use-player-keyboard";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayAudioButton } from "./play-audio-button";
 import { PlayerBottomBar } from "./player-bottom-bar";
@@ -92,7 +99,11 @@ function getAudioProviderKey({ audioUrl, stepId }: { audioUrl: string | null; st
 
 export function PlayerShell() {
   const t = useExtracted();
-  const { screen, state } = usePlayerRuntime();
+  const { actions, screen, state } = usePlayerRuntime();
+  const interactionState = usePlayerInteractionState();
+  const milestone = usePlayerMilestone();
+  const navigation = usePlayerNavigation();
+  const { next, onEscape } = usePlayerNavigationActions();
   const [autoPlayAudio, setAutoPlayAudio] = useState(false);
 
   const currentResult = getCurrentResult(state);
@@ -118,6 +129,23 @@ export function PlayerShell() {
   const enableAutoPlayAudio = useCallback(() => setAutoPlayAudio(true), []);
 
   usePlayerHaptics({ current: { phase: state.phase, result: currentResult, step: currentStep } });
+
+  const escapeHref =
+    screen.scene === "completion" && milestone?.kind === "course"
+      ? milestone.courseHref
+      : navigation.chapterHref;
+
+  usePlayerKeyboard({
+    interactionState,
+    keyboard: screen.keyboard,
+    onCheck: actions.check,
+    onContinue: actions.continue,
+    onEscape: () => onEscape(escapeHref),
+    onNavigateNext: actions.navigateNext,
+    onNavigatePrev: actions.navigatePrev,
+    onNext: next,
+    onRestart: actions.restart,
+  });
 
   return (
     <main className="ph-no-rageclick flex h-dvh flex-col overflow-hidden">

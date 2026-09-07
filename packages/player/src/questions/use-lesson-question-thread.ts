@@ -1,75 +1,105 @@
 "use client";
 
 import { type Dispatch, useCallback, useRef } from "react";
+import { type PlayerQuestionContext } from "../player-context";
 import {
   type LessonQuestionConnection,
   getLessonQuestionThreadRequest,
 } from "./lesson-question-api";
+import { getLessonQuestionScope, getLessonQuestionScopeQuery } from "./lesson-question-scope";
+import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 
 export function useLessonQuestionThread({
   connection,
   canAskQuestions,
   dispatch,
+  dispatchToContext,
+  getState,
   lessonId,
   state,
 }: {
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
+  dispatchToContext: Dispatch<LessonQuestionSessionAction>;
+  getState: (context: PlayerQuestionContext) => LessonQuestionState;
   lessonId: string;
   state: LessonQuestionState;
 }) {
-  const latestLoadRevision = useRef(0);
+  const latestLoadRevisions = useRef(new Map<string, number>());
 
-  const loadThread = useCallback(async () => {
-    if (!canAskQuestions) {
-      return null;
-    }
+  const loadThread = useCallback(
+    async (context: PlayerQuestionContext) => {
+      const dispatchToSession = (action: LessonQuestionAction) =>
+        dispatchToContext({ action, context });
 
-    const loadRevision = latestLoadRevision.current + 1;
-    latestLoadRevision.current = loadRevision;
-    dispatch({ type: "threadLoadStarted" });
-    const result = await getLessonQuestionThreadRequest({ connection, lessonId });
+      const current = getState(context);
 
-    if (loadRevision !== latestLoadRevision.current) {
-      return null;
-    }
+      if (current.activeQuestionId || current.isCreating) {
+        return current.questions;
+      }
 
-    if (result.status === "error") {
-      dispatch({ reason: result.error, type: "threadLoadFailed" });
-      return null;
-    }
+      if (!canAskQuestions) {
+        return null;
+      }
 
-    const questions = result.data?.questions ?? [];
+      const scope = getLessonQuestionScope(context);
+      const loadRevision = (latestLoadRevisions.current.get(scope) ?? 0) + 1;
+      latestLoadRevisions.current.set(scope, loadRevision);
+      dispatchToSession({ type: "threadLoadStarted" });
 
-    dispatch({
-      hasMore: result.data?.hasMore ?? false,
-      nextCursor: result.data?.nextCursor ?? null,
-      questions,
-      type: "threadLoaded",
-    });
+      const result = await getLessonQuestionThreadRequest({
+        connection,
+        lessonId,
+        ...getLessonQuestionScopeQuery(context),
+      });
 
-    return questions;
-  }, [connection, canAskQuestions, dispatch, lessonId]);
+      if (loadRevision !== latestLoadRevisions.current.get(scope)) {
+        return null;
+      }
 
-  const load = useCallback(async () => (await loadThread()) !== null, [loadThread]);
+      if (result.status === "error") {
+        dispatchToSession({ reason: result.error, type: "threadLoadFailed" });
+        return null;
+      }
+
+      const questions = result.data?.questions ?? [];
+
+      dispatchToSession({
+        hasMore: result.data?.hasMore ?? false,
+        nextCursor: result.data?.nextCursor ?? null,
+        questions,
+        type: "threadLoaded",
+      });
+
+      return questions;
+    },
+    [connection, canAskQuestions, dispatchToContext, getState, lessonId],
+  );
+
+  const load = useCallback(
+    async () => (await loadThread(state.context)) !== null,
+    [loadThread, state.context],
+  );
 
   const loadEarlier = useCallback(async () => {
     if (!canAskQuestions || !state.hasMore || !state.nextCursor || state.isLoadingEarlier) {
       return;
     }
 
-    const loadRevision = latestLoadRevision.current;
+    const scope = getLessonQuestionScope(state.context);
+    const loadRevision = latestLoadRevisions.current.get(scope);
     dispatch({ type: "earlierThreadLoadStarted" });
 
     const result = await getLessonQuestionThreadRequest({
       connection,
+      ...getLessonQuestionScopeQuery(state.context),
       cursor: state.nextCursor,
       lessonId,
     });
 
-    if (loadRevision !== latestLoadRevision.current) {
+    if (loadRevision !== latestLoadRevisions.current.get(scope)) {
       return;
     }
 
@@ -89,25 +119,40 @@ export function useLessonQuestionThread({
     canAskQuestions,
     dispatch,
     lessonId,
+    state.context,
     state.hasMore,
     state.isLoadingEarlier,
     state.nextCursor,
   ]);
 
-  const reconcileLatestThread = useCallback(async () => {
-    if (!canAskQuestions) {
-      return false;
-    }
+  const reconcileLatestThread = useCallback(
+    async (context: PlayerQuestionContext) => {
+      const dispatchToSession = (action: LessonQuestionAction) =>
+        dispatchToContext({ action, context });
 
-    const result = await getLessonQuestionThreadRequest({ connection, lessonId });
+      if (!canAskQuestions) {
+        return false;
+      }
 
-    if (result.status === "error") {
-      return false;
-    }
+      const result = await getLessonQuestionThreadRequest({
+        connection,
+        lessonId,
+        ...getLessonQuestionScopeQuery(context),
+      });
 
-    dispatch({ questions: result.data?.questions ?? [], type: "latestThreadReconciled" });
-    return true;
-  }, [connection, canAskQuestions, dispatch, lessonId]);
+      if (result.status === "error") {
+        return false;
+      }
+
+      dispatchToSession({
+        questions: result.data?.questions ?? [],
+        type: "latestThreadReconciled",
+      });
+
+      return true;
+    },
+    [connection, canAskQuestions, dispatchToContext, lessonId],
+  );
 
   return { load, loadEarlier, loadThread, reconcileLatestThread };
 }
