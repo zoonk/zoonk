@@ -2,10 +2,10 @@
 
 These instructions apply to the native iPhone and iPad app in this directory and supplement the repository-level instructions in `../../AGENTS.md`.
 
-## Required Apple Guidance
+## Apple UI guidance
 
-- Before changing code for iOS or iPadOS, read `../../.agents/skills/apple-human-interface-guidelines/SKILL.md` and follow Apple's current Human Interface Guidelines and official platform documentation.
-- Before adding custom view hierarchies, state synchronization, platform branches, or animation workarounds, inspect current semantic SwiftUI APIs and official Apple examples for a system-owned solution. When behavior is uncertain, validate the smallest equivalent implementation across supported form factors. Do not call an approach the simplest or best-practice solution until native alternatives have been checked; prefer the least code that lets the system own adaptation and behavior.
+- For Apple UI and interaction decisions, use [Apple Human Interface Guidelines](../../.agents/skills/apple-human-interface-guidelines/SKILL.md) and consult the relevant official platform documentation. Framework-independent logic and documentation edits do not require a UI-guidance pass.
+- Prefer native SwiftUI containers and semantic APIs before adding custom view hierarchies, state synchronization, platform branches, or animation workarounds. Consult official examples and validate a small equivalent implementation when platform behavior is uncertain.
 - Treat Apple platform conventions as product requirements. The `main` web app can define product intent, copy, business behavior, and API contracts, but it must never be copied as the UI, layout, navigation, interaction, or visual design template for this app.
 - Design for touch and adaptive layouts across compact iPhone screens, regular-width iPad layouts, multitasking, and resizable iPad windows.
 - Prefer system colors, semantic colors, system materials, system typography, native controls, and SF Symbols. Add custom colors, symbols, or controls only when a system component cannot express the product need.
@@ -43,7 +43,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 
 ## Verification
 
-- Build the iOS target and inspect both iPhone and iPad destinations because one binary can still render differently across size classes and multitasking widths.
+- For app code changes, build the iOS target. For UI or adaptive-layout changes, inspect the affected iPhone and iPad destinations because one binary can render differently across size classes and multitasking widths. Documentation-only edits need document validation, not a simulator run.
 - Prefer UI tests for user flows and unit tests for non-trivial pure domain logic. Do not test SwiftUI implementation details or static catalog contents.
-- Give asynchronous observable stores direct unit coverage for their success, authentication-expiry, and transient-failure transitions; UI tests alone are not sufficient state-machine coverage.
+- When changing asynchronous observable stores, cover the affected success, authentication-expiry, transient-failure, and request-order transitions directly; UI tests alone may miss state-machine races.
 - Never call Apple UI work complete based only on builds or automated tests. Inspect the rendered result on relevant iPhone and iPad simulators, compare neighboring controls for alignment and visual consistency, and verify accessibility, localization, focus, window sizing, and input behavior in proportion to the change.

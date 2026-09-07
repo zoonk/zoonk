@@ -1,3 +1,5 @@
+Admin data functions use `cacheAdminData` from `src/data/_utils/admin-data-cache.ts` so `requireAdminRouteAccess` runs beside each query in independently streamed route segments. A layout guard alone is insufficient.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

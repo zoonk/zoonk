@@ -1,260 +1,53 @@
+# Zoonk repository guidance
+
 ## Principles
 
-- Always prefer the **simplest solution**. If something feels complex, refactor. Avoid over-engineering things
-- **Simplicity ≠ laziness.** Creating a reusable component for repeated patterns IS the simple solution—it maintains consistency and quality. Leaving duplication "because it's only N files" leads to inconsistency (bugs). DRY is about having a single source of truth, not just reducing typing. When you see the same pattern repeated, extract it
-- Favor **clarity and minimalism** in both code and UI
-- **Do not create formatting-only diffs.** Preserve existing formatting unless a line needs a semantic change. Formatting is handled by `oxfmt`, so never manually reflow unrelated code, expand one-line calls/types/objects into multiline, or collapse multiline code into one line unless that exact code is being changed for behavior.
-- Follow design inspirations from Apple, Linear, Vercel
-- Code must be modular, following SOLID and DRY principles
-- Avoid nested conditionals and complex logic
-- Prefer short and composable functions
-- Avoid nested business logic inside `map`, `filter`, `flatMap`, and `reduce`. If an array callback needs branching, multiple steps, or non-trivial normalization, extract it into a named helper
-- Prefer top-level functions that read like pipelines of named domain operations. The main function should describe the flow; helpers should describe the rules
-- If a condition or transformation is important enough to think about, it is important enough to name
-- Keep inline callbacks trivial. Simple property access or a one-line predicate is fine; anything more should become a helper
-- When logic feels nested, split it by responsibility: matching, normalization, filtering, transformation, and merging should usually be separate functions
-- **Split files with multiple concerns.** If a file has distinct responsibilities (e.g., utils, validation, parsing, main logic), extract them into a `_utils/` folder (if internal) or separate files. A file should have one clear purpose, avoid doing too many things in a single file
-- Prefer functional programming over OOP
-- Avoid mutations: return new values instead of modifying existing data or state
-- Use `[condition && value, ...].filter(Boolean)` instead of `let` + `.push()` for conditional arrays
-- **Never use `let` + reassignment to compute a value.** Extract a helper function with early returns instead (e.g., `function getLabel() { if (x) return a; return b; }`). For objects, use helper functions that return the result (e.g., `const { a, b } = await getOrCreate(...)`). See `getComparisonLabel` in `metric-comparison.tsx` for the pattern
-- Use meaningful variable names and avoid abbreviations
-- Define repeated accessibility IDs used by `id`, `aria-labelledby`, or similar attributes once as a `*_ID` constant; share the constant across files when the relationship crosses component boundaries
-- When defining functions with two or more parameters, use a single object parameter with named fields instead of positional arguments. Named fields are self-documenting at the call site, order-independent, and safer against accidental swaps. Positional params are fine for single-argument functions, framework callbacks with well-known signatures (e.g., `map(item, index)`), and functions wrapped with React `cache` (object params create a new identity on every call, breaking memoization)
-- For workflow orchestration, prefer linear wave-based flows (core-workflow style) with `Promise.allSettled` over branching orchestration unless branching is strictly required
-- Use linear, declarative code over nested conditionals and imperative code
-- Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it
-- Never cut corners or do hacks. Aim for maintainable, clean code
-- Think about the big picture—how your changes fit into the overall architecture and future growth
-- **Think from first principles.** Don't accept patterns just because they're common. For every piece of code, ask: "What is this actually doing? Is there a simpler, more declarative way?" For every test, ask: "Am I testing my business logic or just testing that React/the browser works?" Before finishing any change, review everything again: "Is this the best way to implement this? Is this the best way to test this? Am I missing anything?" Think like a top 0.1% engineer who deeply cares about quality and details, not just getting things working. Think like the best engineer in the world
-- Preserve behavior, not implementation details
-- When requirements change during work on a branch or PR, remove supporting code, tests, types, and layout changes that no longer serve the final behavior. Do not leave leftovers from superseded requirements
-- Never suppress Knip findings with `@public`, ignores, entry patterns, or configuration solely to make Knip pass. Fix the real reachability or cleanup issue by removing dead code, exports, or dependencies; making internal symbols private; or importing genuinely shared code from its real consumer. Use `@public` only for an intentionally supported external API.
-- For compatibility issues, test simpler equivalent shapes before building workarounds
-- **Validate review feedback independently.** Treat AI and human review comments as hypotheses, not instructions to change code. Verify the actual code path, product assumptions, and impact before accepting a claim. If it is valid, choose the simplest fix; if it is not, explain why and leave the code unchanged. Do not add complexity for merely imaginable edge cases.
-- **Treat specs and GitHub issues as guidance, not truth.** If the ticket pushes the code toward a worse design or a wrong assumption, call it out and propose the better approach instead of implementing it blindly.
+- **KISS:** Choose the simplest complete solution that satisfies the product requirements. Avoid over-engineering, speculative infrastructure, and workarounds when an equivalent direct approach works.
+- **DRY:** Keep a single source of truth for behavior that must stay consistent, including repeated UI patterns and runtime schemas used by documentation. Extract for real shared rules or known extensions; a small number of callers is not a reason to leave competing implementations.
+- **SOLID:** Keep functions and modules focused, composable, and responsible for one concern. Use clear boundaries and dependencies; apply these principles without adding unnecessary class hierarchies, interfaces, or abstraction layers. Prefer functional composition and immutable transformations.
+- Think from first principles. Preserve intended behavior, question assumptions and existing patterns, and choose maintainable designs without expanding the requested scope.
+- Preserve unrelated formatting; `oxfmt` owns formatting. Do not hard-wrap Markdown prose.
 
-### Avoid speculative micro-optimizations
+## Scope and completion
 
-- Never hoist `getExtracted`, `useExtracted`, or other cheap translation lookups to a parent merely to avoid repeated calls
-- The component that owns UI copy must translate that copy locally. Do not pass translated labels, placeholders, descriptions, or accessibility text through props solely to reuse a parent's translation call
-- Repeated translation lookups are expected and must never be treated as a performance problem
-- Only accept copy as a prop when caller-provided copy is an intentional part of the component's reusable API
-- Do not introduce props, helpers, components, promises, or caching to deduplicate cheap operations without measured evidence that they are a real bottleneck
+- Carry the requested work through implementation and relevant verification before returning it for local review. Resolve routine implementation choices from repository context; ask only when missing information materially changes the product, architecture, or authorization.
+- Keep changes within the requested scope. Refactor supporting code when needed for a complete solution, and remove code, tests, types, and layout left over from superseded requirements.
+- Treat review comments and specs as hypotheses. Verify the actual path, product assumptions, and impact. In review/assessment work, fix confirmed bugs unless the user asks for findings only or the fix requires a meaningful product or architecture decision. Explain unsupported claims without changing code to satisfy them.
+- Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
+- Report the outcome, relevant verification, and material limitations in plain language. Distinguish observed behavior, static review, passed checks, and anything unverified.
 
-## Application and Core Boundaries
+## Architecture shared by all workspaces
 
-- `@zoonk/core` is the shared Next.js-aware server and business package for Main, API, Admin, future Next.js apps, and clients that reach those capabilities through API. Do not add a framework-abstraction layer until another framework is actually adopted.
-- Put reusable business rules, authorization, Prisma access, business orchestration, shared authentication utilities, and reusable Cache Component reads in `@zoonk/core`. Apps are delivery adapters: they own HTTP parsing and serialization, UI composition, translations, URLs, redirects, metadata, Suspense, and presentation fallbacks.
-- Do not add direct Prisma access to an app for a capability that belongs in another app, the public API, mobile, CLI, or an agent. Web-only indexing and SEO queries such as sitemaps may remain in a web app.
-- Every reusable product capability exposed by Main must also be reachable through the public API so native apps, CLI tools, and agents can provide the same behavior. Audit new Main pages against the OpenAPI document; exclude only delivery-specific concerns such as URLs, redirects, metadata, prefetch presentation, and SEO.
-- If an app must coordinate multiple core calls to perform one coherent API-like operation, add a resource- or domain-capability leaf in core instead of duplicating that orchestration across apps. Do not create page-sized aggregate functions or expose one function per Prisma query.
-- Public authenticated core functions call the shared `getSession()` capability themselves and own every permission check. Apps may pass untrusted resource IDs and validated input, but they must never pass a caller-selected acting `userId` to a public core capability.
-- Internal core helpers may receive a user ID only after a public core boundary derives it from the authenticated session. Do not export those helpers as authorization boundaries.
-- Use `"use cache"` for reusable caller-independent reads and `"use cache: private"` for authenticated or request-dependent reads that need same-tree deduplication and runtime prefetching. Cache the complete exported read capability when instant navigation depends on its full result.
-- Do not blanket-cache every Prisma read. Mutations, authorization preconditions whose freshness controls a write, generation polling, and durable workflow-step reads remain uncached unless their freshness and invalidation contract is explicitly designed.
-- Do not convert session or persistence failures into `null` inside reusable core reads or Cache Component leaves. Reserve `null` for legitimate missing data, let infrastructure failures propagate for HTTP 5xx mapping, and place any intentional web-only graceful fallback in the owning app outside the `"use cache"` or `"use cache: private"` leaf.
-- Use the default cache-life profile unless a product requirement explicitly establishes another freshness policy. You don't need to call `cacheLife("default")`. That's redundant.
-- Normalize route values and other semantically equivalent inputs before calling a regular `"use cache"` leaf so encoded and decoded values share one canonical cache key.
-- Core mutations own cache-tag invalidation and return only their domain resource or outcome. Use `revalidateTag(tag, { expire: 0 })` inside shared mutations that can run from both Server Actions and Route Handlers; apps retain only route-specific `revalidatePath()` calls.
-- Import core capabilities through direct package subpath leaf exports. Do not create a monolithic facade or root barrel that imports every feature; client-only, workflow-safe, and server-only leaves must remain separate so unused dependencies stay outside each consumer's module graph.
-- Treat the public OpenAPI document as a product contract. Reuse runtime Zod boundary schemas in the document, give public operations stable `operationId` and security declarations, make compatibility an explicit product decision instead of adding aliases by default, and keep Better Auth's infrastructure routes out of the public product API.
+- Put reusable business rules, authorization, persistence, and orchestration in `@zoonk/core`. Apps own delivery: HTTP parsing/serialization, UI composition, translations, URLs, metadata, and presentation fallbacks. Do not add framework abstraction until another framework is adopted.
+- Apps call authenticated core capabilities rather than supplying an acting user ID. Read the [core capability contract](packages/core/AGENTS.md) when adding or changing those capabilities or their callers.
+- Reusable product behavior must be reachable through the public API. Main owns its [capability parity audit](apps/main/AGENTS.md); API owns the [public contract and transport rules](apps/api/AGENTS.md).
 
-## Engineering Mindset
+## Verification
 
-- **Build for growth, not current size.** "We only have N of X" is NEVER a valid reason to skip proper patterns. Early-stage projects grow. Build infrastructure that scales with the project from the start.
-- **Structure code for known growth.** When a plan or issue tracker shows a file will grow (e.g., new renderers, phases, or features), extract components and helpers proactively — don't wait for it to become a problem. "One-time use" is not a reason to inline if we already know more uses are coming.
-- **Single source of truth always wins.** If two things must stay in sync (schemas + docs, types + validation), generate one from the other. Manual duplication WILL drift.
-- **Setup cost is amortized.** The effort to set up reusable code and automations always pays off. Don't optimize for today's sprint. Focus on long-term velocity.
-- **Principles override plans.** If a plan marks something as "optional" but skipping it would violate core principles (like single source of truth), do it anyway. Plans are guidance; principles are non-negotiable. When in doubt, ask: "Does skipping this create duplicate sources of truth or technical debt?"
-- **Plans must include tests.** Every implementation plan should identify which tests need to be added or updated — integration tests for data/workflow logic, e2e tests for UI flows, and unit tests for utilities. If a plan doesn't mention tests, it's incomplete. Tests must give us the confidence that everything is working as expected and help prevent regressions in the future.
-- **Zero tolerance for flakiness.** If a test fails once in any number of runs, it's broken — investigate and fix it. Never dismiss failures as "intermittent" or "pre-existing". A flaky test is worse than no test because it erodes trust in the entire suite. Run e2e tests multiple times before considering them done. Zero tolerance for flakiness means fixing ALL failures, not just the ones in your plan.
-- **Never copy bad patterns.** When existing code has a bad pattern, fix it instead of replicating it. Always evaluate whether existing patterns are correct before following them. "Leave the codebase better than you found it" means actively fixing bad patterns you encounter, not propagating them.
-- In review/assessment mode, do not defer confirmed bugs as “low priority.” Classify each finding as real bug, non-bug, or behavior-dependent. Fix confirmed bugs unless the user explicitly asks for triage only or the fix has meaningful product/architecture risk.
+- Choose checks that prove the changed behavior and cover affected consumers. For behavior changes, prefer a failing regression test before implementation when practical. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
+- Use [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md) when writing or changing tests: E2E for user flows, real-database integration tests for persistence and business logic, and unit tests for non-trivial pure helpers. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
+- Run relevant local checks and fix failures caused by the requested change without pausing for review after each step. Investigate failures, including intermittent ones; do not rerun until green and dismiss them. Fix failures in the affected scope, and report unrelated failures with evidence instead of silently expanding the task.
+- Once affected checks pass, broaden or repeat them only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
 
-## Design Style
+## Task-specific guidance
 
-Whenever you're designing something, follow this design style:
+Read the scoped `AGENTS.md` files governing paths you change, including when working from the repository root. Read shared guides only when the task matches their scope; this index is not a required reading list for every edit.
 
-Subtle animations, great typography, clean, minimalist, and intuitive design with lots of black/white and empty space. Make it clean, intuitive and super simple to use. Take inspiration from brands with great design like Vercel, Linear, and Apple. Ask yourself "How would Apple, Linear, or Vercel design this?"
+| Task                                                            | Guidance                                                                           |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| TypeScript or JavaScript                                        | [Code conventions](.agents/guides/typescript.md)                                   |
+| React/Next.js UI or web translations, including shared packages | [Web UI and localization](.agents/guides/web.md)                                   |
+| Prisma queries in any workspace                                 | [Prisma query conventions](.agents/guides/prisma.md)                               |
+| Prisma schema, migrations, or generated client                  | [Database package](packages/db/AGENTS.md)                                          |
+| Core authorization, reads, caching, or mutations                | [Core package](packages/core/AGENTS.md)                                            |
+| Main product capabilities                                       | [Main app](apps/main/AGENTS.md)                                                    |
+| API routes, OpenAPI, or durable workflows                       | [API app](apps/api/AGENTS.md)                                                      |
+| Admin data access                                               | [Admin app](apps/admin/AGENTS.md)                                                  |
+| Apple app                                                       | [Apple app](apps/apple/AGENTS.md)                                                  |
+| Android UI                                                      | [Android Material guidelines](.agents/skills/android-material-guidelines/SKILL.md) |
+| AI task prompts                                                 | [AI package](packages/ai/AGENTS.md)                                                |
+| Local services, sign-in, or validation commands                 | [Development guide](.agents/guides/development.md)                                 |
 
-You **deeply care about quality and details**, so every element should feel polished and well thought out.
+## Maintaining these instructions
 
-Some design preferences:
-
-- Avoid cards/items with borders and heavy shadows. Prefer using empty space and subtle dividers instead
-- For buttons, prefer `outline` variant for most buttons and links. Use the default one only for active/selected states or for submit buttons. Use the `secondary` variant for buttons you want to emphasize a bit more
-- Prefer using existing components from `@zoonk/ui` instead of creating new ones. If a component doesn't exist, search the `shadcn` registry before creating a new one
-
-For detailed UX guidelines (interactions, animation, layout, accessibility), see [.agents/skills/zoonk-design/SKILL.md](.agents/skills/zoonk-design/SKILL.md)
-
-## Android Platforms
-
-- For any development targeting Android phones, tablets, foldables, ChromeOS, desktop windowing, Wear OS, Android TV, Android for Cars, Android XR, widgets, or other Android surfaces, read [.agents/skills/android-material-guidelines/SKILL.md](.agents/skills/android-material-guidelines/SKILL.md) and follow Google's Android and Material Design guidance.
-- Always prefer Android platform conventions over copying the web app or Apple apps. The `main` app can define product intent, but native Android apps should use Material 3, adaptive layouts, Android navigation patterns, system bars, input behavior, and form-factor-specific guidance.
-- Prefer Material components, Material color schemes, dynamic color where appropriate, Material Symbols, AndroidX libraries, and platform-provided behavior before custom colors, icons, controls, or gestures.
-
-## Conventions
-
-- Prefer server components over client components. Only use client components when absolutely necessary
-- Avoid `useEffect` and `useState` unless absolutely required
-- **Required**: Every time you use `useEffect` you **MUST** read the [vercel-react-best-practices skill](.agents/skills/vercel-react-best-practices/SKILL.md) AND these docs: https://react.dev/learn/you-might-not-need-an-effect
-- Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs for streaming data](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
-- Use `safeAsync` when using `await` to better handle errors
-- When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
-- Always build skeleton components when using `Suspense` for loading states
-- Always place skeletons in the same file as the component they're loading for, not in a separate file
-- Don't add comments to a component's props
-- Don't create migration files manually. Run `pnpm --filter @zoonk/db db:migrate --name <migration-name>` to generate migration
-- Workflow files (`"use workflow"`) can't call Node APIs directly; wrap them in `"use step"` functions
-- When adding a public API endpoint, add its contract to `document.ts`. Unversioned same-origin UI transport routes stay out of the public OpenAPI document, but they require an explicit architecture record, CSRF protection for cookie-authenticated mutations, and end-to-end coverage
-- When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
-- Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
-- When moving a type or function to a different file, update all references to import from the new location. Never re-export from the old file — re-exports create unnecessary indirection and drift
-- Function comments must explain the non-obvious reason the function exists, such as a product requirement, architectural boundary, security constraint, invariant, or tradeoff. Never merely restate the function name, parameters, return value, or steps already clear from the implementation. If there is no meaningful context to add, omit the comment instead of documenting the obvious.
-- Use clear, concrete language and include an example only when it materially clarifies the reason. Avoid vague explanations like "remove anything we don't support"; name the unsupported cases and explain why they are excluded.
-- When writing function comments in JavaScript or TypeScript, use `/** ... */` so the rationale appears in JSDoc tooltips
-- When refactoring code, double check if the remaining or replaced logic still makes sense. For example, it's pointless to just reassign a type or const like `type ExistingCourse = Course` or `const existingCourse = course`. Just use the original type or const instead of creating an alias that adds no value
-- Never move independent async work out of an existing Promise.all because it can create a waterfall. Preserving or increasing parallelism is required, even if one branch does not use every result. Treat newly serialized async reads as a performance regression unless there is a concrete dependency between them. You should always avoid waterfalls
-- Do not store an unawaited promise solely to overlap async operations (for example, `const valuePromise = load(); ...; const value = await valuePromise`). Prefer a direct `await`. Only introduce explicit concurrency when it has a demonstrated benefit and can be expressed clearly with `Promise.all`
-- Run browser-launching test commands such as Playwright, Cypress, Puppeteer, Selenium, or repository E2E scripts with escalated sandbox permissions on the first attempt. Chromium-based browsers require Mach services that are blocked by the workspace sandbox, so do not first run these commands inside the sandbox; send the exact command to Auto-review for approval instead
-
-## Local Authentication
-
-- When a local page requires sign-in, choose an existing user from `packages/db/src/prisma/seed/users.ts`; it includes role-specific accounts such as `owner@zoonk.test`. Or if you need to test a new/random user, just use a random `@zoonk.test` email.
-- `pnpm dev` starts every app through clone- and worktree-scoped Portless routes, including the local mailbox app. After requesting an OTP, open the newest message for that user's email and use its code. Use `pnpm dev:lan` only when a phone or another device needs `.local` routes, use `pnpm dev:direct` only when debugging without Portless, and use `pnpm dev:prune` to remove orphaned servers left by crashed Portless sessions. Stop active development stacks from their original terminals.
-
-## Prisma Queries
-
-- **Don't use `select` by default.** Return the full model — most models have only small columns and `select` adds maintenance cost (manual types, updating selects when adding fields) with negligible performance benefit
-- **Use `omit`** only for models with large columns (`Step.content`, `Step.visualContent`, `StepAttempt.answer`, `StepAttempt.effects`) when you don't need those fields
-- **Use `include`** to load relations. Use `select` on included relations when you only need specific fields from the related model
-- **Don't define manual types** that mirror Prisma query shapes. Use Prisma's generated types (`Course`, `Chapter`, etc.) or derive types from queries using `NonNullable<Awaited<ReturnType<typeof myQueryFn>>>`. If the type you need isn't exported from `@zoonk/db`, add it to the export list in `packages/db/src/index.ts` — don't work around it with complex derived types or local redefinitions
-
-## Compound Components
-
-When writing React components, use compound components. Always read this before creating components:
-
-- `.agents/skills/zoonk-compound-components/SKILL.md`
-- `.agents/skills/vercel-composition-patterns/SKILL.md`
-
-## Testing
-
-- Default to TDD: write a failing test first, run it to confirm it fails for the right reason, then write the code to make it pass. Exception is for internal apps like `admin`, `evals`, and `blog`. Don't write tests for those
-- Never add app routes, pages, or endpoints solely for E2E tests. E2E tests must exercise real product surfaces
-- Don't write unit tests for React components, prefer E2E tests. React unit tests require mocking and test implementation details, making tests fail if we change implementation
-- Add unit tests for pure functions, helpers, and utils
-- Extract pure functions with non-trivial logic (validation, transformation, regex) from component files into their own file (e.g., `_utils/`). This follows the single-concern principle and enables direct unit testing without exporting internals from component files
-- Add integration tests for data functions, business logic, and workflows with Prisma
-- Treat mocks as a last resort, not the default test setup. Before mocking a dependency, determine whether the behavior can be exercised safely and deterministically with the real implementation, a test database, fixtures, or the public runtime boundary
-- Do not replace `@zoonk/db`, Prisma delegates, repositories, or other persistence APIs with module mocks when testing data behavior. Persist real records in the test database, call the real code path, and assert the resulting database state so foreign keys, transactions, constraints, cascades, and queries are actually verified
-- Mock only the narrowest unavoidable boundary, such as a third-party network service, a platform API unavailable in tests, or a failure mode that cannot be produced safely with the real dependency. When a mock is necessary, add a comment explaining why the real dependency cannot cover that scenario; do not recreate an entire database, framework, or client API as a mock object
-- Direct handler tests with mocked dependencies are unit or adapter tests, not endpoint coverage. Test endpoint behavior through real HTTP with the real database so routing, middleware, authentication, validation, serialization, and persistence are covered together
-- Don't add tests for CSS, style changes, prompt wording, zod schemas or other things where tests would only assert copy, external library internals, or implementation details
-- Don't write snapshot-style tests that assert static data equals itself (e.g., testing that a config constant returns a hard-coded list). These tests catch no bugs — any intentional change requires updating both the constant and the test mechanically. Test behavior and logic, not data
-- Parallelize independent fixtures: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
-- Don't export a function just to test it. Instead, write tests for the public exported function that calls the internal function
-
-**E2E Query Rules (MANDATORY)**:
-
-- **ALWAYS use semantic queries**: `getByRole`, `getByLabel`, `getByText`, `getByPlaceholder` (prefer `getByRole` when possible)
-- **NEVER use implementation details**: `data-slot`, `data-testid`, CSS classes, or `.locator()` with selectors
-- **If semantic queries don't work**: Fix the component's accessibility first (add `aria-label`, proper roles, etc.)
-
-```typescript
-// BAD - Implementation details
-page.locator("[data-slot='badge']");
-page.locator("[data-testid='submit']");
-page.locator(".btn-primary");
-
-// GOOD - Semantic queries
-page.getByRole("button", { name: /submit/i });
-page.getByRole("heading", { name: /welcome/i });
-page.getByLabel(/email/i);
-```
-
-**Exclude** `admin` and `evals` apps from testing requirements (internal tools).
-
-**E2E builds**: Apps use separate build directories for E2E testing (e.g., `.next-e2e` instead of `.next`). When running E2E tests, build with `pnpm --filter {app} build:e2e`
-
-**IMPORTANT:** Before writing E2E tests, **always** read the [zoonk-testing skill](.agents/skills/zoonk-testing/SKILL.md).
-
-## i18n
-
-- Use `getExtracted` (server) or `useExtracted` (client) for translations, don't use `getTranslations` or `useTranslations`
-- Pass string literals, never variables or keys (e.g., `getExtracted("Hello world")`, not `getExtracted(greeting)` nor `getExtracted("greeting")`)
-- **NEVER pass `t` / `getExtracted` / `useExtracted` as a function argument, prop, or store it in a variable to call later.** Always call `t("literal")` directly in the component. If you need translated text in a helper, use conditionals in the component: `verdict === "correct" ? t("Correct!") : t("Not quite")`
-- Always use ICU standards for translation, see the [next-intl docs](https://next-intl.dev/docs/usage/translations)
-- For plural text, always use ICU plural syntax in one message (e.g., `{count, plural, one {# item} other {# items}}`) instead of branching in code or creating separate singular/plural strings
-- When writing UI copy, follow the [eloqnt styleguide](packages/i18n/.eloqnt/styleguide.md) that's also used for translations
-- Don't edit PO files directly. When you're finished with a task, extract new strings with `pnpm build` and translate them with `pnpm i18n`
-- Translation strings are extracted to PO files either automatically while `next dev` is running, or when `pnpm --filter {app} build` is invoked
-- When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
-- i18n functions like `getExtracted` can't be called inside `Promise.all`
-
-## Next.js links
-
-We're using Next.js `typedRoutes` feature. Next.js can statically type links to prevent typos and other errors when using `next/link`. These types are generated when we run `pnpm typecheck` or `pnpm build`.
-
-This works out of the box if you pass a string literal to `href`. However, for variables, you may need to use `as const` to preserve literal types. **NEVER** cast them as `Route` because this defeats the purpose of type safety:
-
-```tsx
-// BAD - casting as Route defeats type safety
-const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as Route;
-
-// ALSO BAD - Creating wrapper functions instead of using `as const`
-function route<Href extends string>(href: Route<Href>): Route<Href> {
-  return href;
-}
-
-// GOOD - string literal as const
-const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as const;
-```
-
-To accept href in a custom component wrapping next/link, use a generic:
-
-```tsx
-import type { Route } from "next";
-import Link from "next/link";
-
-function Card<Href extends string>({ href }: { href: Route<Href> | URL }) {
-  return (
-    <Link href={href}>
-      <div>My Card</div>
-    </Link>
-  );
-}
-```
-
-You can also type a simple data structure and iterate to render links:
-
-```tsx
-import type { Route } from "next";
-
-type NavItem<Href extends string = string> = { href: Href; label: string };
-
-export const navItems: NavItem<Route>[] = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/blog", label: "Blog" },
-];
-```
-
-## Quality Checks
-
-How to verify your work:
-
-- pnpm turbo format:fix
-- pnpm turbo lint:fix
-- pnpm typecheck
-- pnpm knip --production
-- pnpm db:generate (update prisma client when you change prisma schema)
-- pnpm --filter @zoonk/db db:migrate
-- pnpm build --filter <app>
-- pnpm test --filter <app>
-- pnpm e2e --filter <app>
-- pnpm i18n:lint (fix errors in source locale directly, translate missing strings in target locales with i18n)
-
-## Docs
-
-- Workflow docs are in the `api` app: `apps/api/node_modules/workflow/docs/`
+Keep repository rules focused on project constraints and non-obvious decisions. Put task-specific procedures in the relevant skill and load supporting references only as needed.
