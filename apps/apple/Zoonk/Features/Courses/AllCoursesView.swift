@@ -54,6 +54,8 @@ struct AllCoursesView: View {
       return
     }
 
+    catalog.prepareSearch(query: searchText)
+
     do {
       try await Task.sleep(for: .milliseconds(250))
     } catch {

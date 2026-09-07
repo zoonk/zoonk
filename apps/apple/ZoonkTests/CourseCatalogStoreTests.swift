@@ -784,6 +784,61 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(searchQueries, [])
   }
 
+  func testPreparingANewQueryClearsPreviousSearchFeedbackBeforeRequesting() async {
+    let responses: [Result<CatalogSearchResults, Error>] = [
+      .success(.testFixture),
+      .success(CatalogSearchResults(chapters: [], courses: [])),
+      .failure(CourseCatalogFailure.network),
+    ]
+
+    for response in responses {
+      let api = CourseCatalogAPIStub(searchResults: [response, .success(.testFixture)])
+      let store = CourseCatalogStore(api: api, language: "en")
+      await store.searchCatalog(query: "stars")
+      XCTAssertNotEqual(store.searchState, .idle)
+
+      store.prepareSearch(query: "planets")
+
+      XCTAssertEqual(store.searchState, .idle)
+      XCTAssertFalse(store.isSearching)
+      let queriesBeforeDebounce = await api.searchQueries
+      XCTAssertEqual(queriesBeforeDebounce, [CatalogSearchQuery(language: "en", query: "stars")])
+
+      await store.searchCatalog(query: "planets")
+      XCTAssertEqual(store.searchState, .loaded(.testFixture))
+      let queriesAfterDebounce = await api.searchQueries
+      XCTAssertEqual(queriesAfterDebounce.map(\.query), ["stars", "planets"])
+    }
+  }
+
+  func testPreparingTheSameNormalizedQueryPreservesSearchResults() async {
+    let api = CourseCatalogAPIStub(searchResults: [.success(.testFixture)])
+    let store = CourseCatalogStore(api: api, language: "en")
+    await store.searchCatalog(query: "stars")
+
+    store.prepareSearch(query: "  stars\n")
+    await store.searchCatalog(query: "stars")
+
+    XCTAssertEqual(store.searchState, .loaded(.testFixture))
+    let queries = await api.searchQueries
+    XCTAssertEqual(queries, [CatalogSearchQuery(language: "en", query: "stars")])
+  }
+
+  func testPreviousSearchCannotPublishWhileANewQueryIsDebouncing() async {
+    let searchStarted = expectation(description: "Original search started")
+    let api = SuspendedCourseCatalogAPI({ _ in }, searchDidStart: { _ in searchStarted.fulfill() })
+    let store = CourseCatalogStore(api: api, language: "en")
+    let originalSearch = Task { await store.searchCatalog(query: "stars") }
+    await fulfillment(of: [searchStarted], timeout: 1)
+
+    store.prepareSearch(query: "planets")
+    await api.resolveSearchRequest(at: 0, with: .testFixture)
+    await originalSearch.value
+
+    XCTAssertEqual(store.searchState, .idle)
+    XCTAssertFalse(store.isSearching)
+  }
+
   func testLateCatalogSearchCannotReplaceANewerQuery() async {
     let firstSearchStarted = expectation(description: "First catalog search started")
     let secondSearchStarted = expectation(description: "Second catalog search started")

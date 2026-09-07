@@ -782,6 +782,38 @@ final class ZoonkUITests: XCTestCase {
       "Expected Back to return to the chapter's lesson list")
   }
 
+  /// Editing a search moves between matching and empty results without retaining the previous query's feedback.
+  @MainActor
+  func testCatalogSearchUpdatesWhenTheQueryChanges() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .catalog)
+    app.launch()
+    app.buttons["Courses"].firstMatch.tap()
+    let searchField = app.searchFields["Search all courses"]
+    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+    searchField.tap()
+    searchField.typeText("water")
+    XCTAssertTrue(app.staticTexts["Roots and Water"].waitForExistence(timeout: 5))
+
+    let suffix = "zznomatch"
+    searchField.typeText(suffix)
+    let emptyDescription = app.staticTexts.matching(
+      NSPredicate(format: "label CONTAINS %@", "water" + suffix)
+    ).firstMatch
+    XCTAssertTrue(emptyDescription.waitForExistence(timeout: 5))
+    XCTAssertFalse(app.staticTexts["Roots and Water"].exists)
+
+    searchField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: suffix.count))
+    XCTAssertTrue(app.staticTexts["Roots and Water"].waitForExistence(timeout: 5))
+    XCTAssertFalse(emptyDescription.exists)
+    XCTAssertEqual(searchField.value as? String, "water")
+
+    let screenshot = XCTAttachment(screenshot: app.screenshot())
+    screenshot.lifetime = .keepAlways
+    add(screenshot)
+  }
+
   /// Proves catalog search replaces the removed Search tab and searches beyond the selected category.
   @MainActor
   func testCoursesSearchFindsCoursesAndChapters() {
