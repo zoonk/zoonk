@@ -49,13 +49,13 @@ content inside that language. Shared language belongs in the shared primitive.
 
 ## Optional Lesson Questions
 
-Questions are available through `@zoonk/player/questions`. Apps that do not offer questions can keep using `@zoonk/player/provider` and `@zoonk/player/shell` without importing the questions module or its stylesheet, and omit `questionSupport` from `PlayerProvider`.
+Questions are available through `@zoonk/player/questions`. Apps that do not offer questions can keep using `@zoonk/player/provider` and `@zoonk/player/shell` without importing the questions module or its stylesheet.
 
 To enable questions:
 
-- Import `useLessonQuestions` and `LessonQuestionPanel` from `@zoonk/player/questions`, and import `@zoonk/player/questions/styles.css` in the app's stylesheet entry point.
-- Create a stable `LessonQuestionConnection` containing the API base URL and a `getHeaders` function that retrieves current authentication headers for each request. Pass it to `useLessonQuestions` with the lesson ID, displayed lesson steps, and authentication state.
-- Pass the returned `controller.questionSupport` to `PlayerProvider`, and render `LessonQuestionPanel` alongside the player using the same controller and lesson metadata.
+- Import `LessonQuestionProvider` and `LessonQuestionPanel` from `@zoonk/player/questions`, and import `@zoonk/player/questions/styles.css` in the app's stylesheet entry point.
+- Create a stable `LessonQuestionConnection` containing the API base URL and a `getHeaders` function that retrieves current authentication headers for each request. Pass it to `LessonQuestionProvider` with the lesson ID.
+- Inside `PlayerProvider`, wrap `PlayerShell` and `LessonQuestionPanel` in `LessonQuestionProvider`. The question provider reads the active step and viewer from the player, preloads that step's history, and retains each step's conversation. Pass the lesson metadata to the panel.
 - Supply the panel's `navigation` with the app's link component, sign-in and subscription URLs, and `renderLimitAction` for the app's quota action. The panel owns its copy; apps only supply their navigation and subscription integration.
 
-The module owns the question sheet, streaming, conversation recovery, lesson-content copying, and Markdown rendering. Its translations are included in the existing player messages. Authorization, quotas, persistence, and generation remain in Core and the API; passing `isAuthenticated` controls presentation, not permission enforcement.
+The module owns the question sheet, streaming, conversation recovery, lesson-content copying, and Markdown rendering. Its translations are included in the existing player messages. Authorization, quotas, persistence, and generation remain in Core and the API; the player's viewer controls presentation, not permission enforcement.

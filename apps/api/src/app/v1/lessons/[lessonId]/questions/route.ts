@@ -33,10 +33,7 @@ async function getLessonQuestions(
     return errors.validation(query.error);
   }
 
-  const result = await getLessonQuestionThread({
-    cursor: query.data.cursor,
-    lessonId: path.data.lessonId,
-  });
+  const result = await getLessonQuestionThread({ ...query.data, lessonId: path.data.lessonId });
 
   if (result.status === "invalidCursor") {
     return errors.badRequest("Invalid lesson question cursor");

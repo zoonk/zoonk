@@ -2,6 +2,11 @@ import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contra
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, it } from "vitest";
 import { type PlayerQuestionContext } from "../player-context";
+import {
+  INITIAL_LESSON_QUESTION_SESSIONS,
+  getLessonQuestionSession,
+  lessonQuestionSessionsReducer,
+} from "./lesson-question-sessions";
 import { INITIAL_LESSON_QUESTION_STATE, lessonQuestionReducer } from "./lesson-question-state";
 
 function questionResource(overrides?: Partial<LessonQuestionResource>): LessonQuestionResource {
@@ -513,5 +518,83 @@ describe(lessonQuestionReducer, () => {
     });
 
     expect(created.draft).toBe("A follow-up typed while waiting");
+  });
+});
+
+describe(lessonQuestionSessionsReducer, () => {
+  it("keeps drafts and pagination in their own step when a response arrives after navigation", () => {
+    const first = stepContext("0198ca70-9c50-7000-8000-000000000010");
+    const second = stepContext("0198ca70-9c50-7000-8000-000000000020");
+
+    const opened = lessonQuestionSessionsReducer(INITIAL_LESSON_QUESTION_SESSIONS, {
+      action: { context: first, type: "open" },
+      context: first,
+    });
+
+    const drafted = lessonQuestionSessionsReducer(opened, {
+      action: { draft: "Explain this step", type: "draftChanged" },
+      context: first,
+    });
+
+    const moved = lessonQuestionSessionsReducer(drafted, {
+      action: { context: second, type: "open" },
+      context: second,
+    });
+
+    const loaded = lessonQuestionSessionsReducer(moved, {
+      action: {
+        hasMore: true,
+        nextCursor: "older",
+        questions: [questionResource()],
+        type: "threadLoaded",
+      },
+      context: first,
+    });
+
+    expect(getLessonQuestionSession({ context: second, sessions: loaded })).toMatchObject({
+      draft: "",
+      hasMore: false,
+      questions: [],
+    });
+
+    const reopened = lessonQuestionSessionsReducer(loaded, {
+      action: { context: first, type: "open" },
+      context: first,
+    });
+
+    expect(getLessonQuestionSession({ context: first, sessions: reopened })).toMatchObject({
+      draft: "Explain this step",
+      hasMore: true,
+      nextCursor: "older",
+      questions: [questionResource()],
+    });
+  });
+
+  it("shares a conversation between a step and its answer explanation", () => {
+    const step = stepContext("0198ca70-9c50-7000-8000-000000000010");
+    const answer = answerContext("option-a");
+
+    const loaded = lessonQuestionSessionsReducer(INITIAL_LESSON_QUESTION_SESSIONS, {
+      action: {
+        hasMore: false,
+        nextCursor: null,
+        questions: [questionResource()],
+        type: "threadLoaded",
+      },
+      context: step,
+    });
+
+    const opened = lessonQuestionSessionsReducer(loaded, {
+      action: { context: answer, type: "open" },
+      context: answer,
+    });
+
+    expect(getLessonQuestionSession({ context: answer, sessions: opened }).questions).toStrictEqual(
+      [questionResource()],
+    );
+
+    expect(
+      getLessonQuestionSession({ context: LESSON_CONTEXT, sessions: opened }).questions,
+    ).toStrictEqual([]);
   });
 });

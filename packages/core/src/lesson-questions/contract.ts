@@ -15,7 +15,11 @@ const MAX_LESSON_QUESTION_ANSWER_MISTAKES = 50;
 const lessonQuestionThreadCursorSchema = z.uuid();
 
 export const getLessonQuestionThreadInputSchema = z
-  .object({ cursor: lessonQuestionThreadCursorSchema.optional() })
+  .object({
+    contextKind: z.enum(["lesson", "step", "answer"]).optional(),
+    cursor: lessonQuestionThreadCursorSchema.optional(),
+    stepId: z.uuid().optional(),
+  })
   .strict();
 
 const lessonQuestionSelectedAnswerSchema = createSelectedAnswerSchema({

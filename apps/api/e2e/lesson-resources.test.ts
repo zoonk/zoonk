@@ -404,6 +404,59 @@ test.describe("Lesson resources API", () => {
     await apiContext.dispose();
   });
 
+  test("filters question history by step and validates cursors within that step", async () => {
+    const { lesson } = await createPublishedLesson({});
+
+    const { apiContext } = await createSubscriberApiContext({
+      baseURL,
+      prefix: "step-question-history",
+    });
+
+    const steps = await Promise.all(
+      [10, 11].map((position) =>
+        stepFixture({
+          content: { text: "A concept", title: "Concept", variant: "text" },
+          isPublished: true,
+          kind: "static",
+          lessonId: lesson.id,
+          position,
+        }),
+      ),
+    );
+
+    const responses = await Promise.all(
+      steps.map((step) =>
+        apiContext.post(`/v1/lessons/${lesson.id}/questions`, {
+          data: {
+            context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
+            question: `Explain part ${step.position}`,
+            requestId: randomUUID(),
+          },
+        }),
+      ),
+    );
+
+    expect(responses.map((response) => response.status())).toEqual([201, 201]);
+    const [first, second] = await Promise.all(responses.map((response) => response.json()));
+
+    const [stepHistory, otherCursor, lessonHistory, invalidStep] = await Promise.all([
+      apiContext.get(`/v1/lessons/${lesson.id}/questions?stepId=${first.context.stepId}`),
+      apiContext.get(
+        `/v1/lessons/${lesson.id}/questions?stepId=${first.context.stepId}&cursor=${second.id}`,
+      ),
+      apiContext.get(`/v1/lessons/${lesson.id}/questions?contextKind=lesson`),
+      apiContext.get(`/v1/lessons/${lesson.id}/questions?stepId=invalid`),
+    ]);
+
+    expect(stepHistory.status()).toBe(200);
+    await expect(stepHistory.json()).resolves.toMatchObject({ hasMore: false, questions: [first] });
+    expect(otherCursor.status()).toBe(400);
+    expect(lessonHistory.status()).toBe(200);
+    await expect(lessonHistory.json()).resolves.toMatchObject({ questions: [] });
+    expect(invalidStep.status()).toBe(400);
+    await apiContext.dispose();
+  });
+
   test("creates only one unfinished turn from concurrent question requests", async () => {
     const { lesson } = await createPublishedLesson({});
 

@@ -1190,6 +1190,128 @@ describe(getLessonQuestionThread, () => {
     ).resolves.toStrictEqual({ status: "invalidCursor" });
   });
 
+  it("filters step and answer questions before pagination and rejects another step's cursor", async () => {
+    const { lesson, user } = await createPublishedCurriculum();
+
+    const [firstStep, secondStep] = await Promise.all([
+      stepFixture({
+        content: multipleChoiceContent,
+        isPublished: true,
+        kind: "multipleChoice",
+        lessonId: lesson.id,
+        position: 0,
+      }),
+      stepFixture({
+        content: multipleChoiceContent,
+        isPublished: true,
+        kind: "multipleChoice",
+        lessonId: lesson.id,
+        position: 1,
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const created = await createLessonQuestion({
+      input: {
+        context: { kind: "step", stepId: firstStep.id, stepNumber: 1 },
+        question: "First step question",
+        requestId: randomUUID(),
+      },
+      lessonId: lesson.id,
+    });
+
+    if (created.status !== "created") {
+      throw new Error("Expected a question");
+    }
+
+    const source = await prisma.lessonQuestion.findUniqueOrThrow({
+      where: { id: created.question.id },
+    });
+
+    const contextSnapshot = toDatabaseLessonQuestionContextSnapshot(
+      parseLessonQuestionContextSnapshot(source.contextSnapshot),
+    );
+
+    await prisma.lessonQuestion.createMany({
+      data: Array.from({ length: 55 }, (_, index) => ({
+        contextKind: "step",
+        contextSnapshot,
+        question: `Other step ${index}`,
+        requestFingerprint: `other-${index}`,
+        requestId: randomUUID(),
+        stepId: secondStep.id,
+        stepNumber: 2,
+        threadId: source.threadId,
+      })),
+    });
+
+    const explanation = await prisma.lessonQuestion.create({
+      data: {
+        contextKind: "answer",
+        contextSnapshot,
+        question: "Explain my answer",
+        requestFingerprint: "explanation",
+        requestId: randomUUID(),
+        stepId: firstStep.id,
+        stepNumber: 1,
+        threadId: source.threadId,
+      },
+    });
+
+    const page = await getLessonQuestionThread({ lessonId: lesson.id, stepId: firstStep.id });
+
+    expect(page).toMatchObject({
+      status: "ready",
+      thread: {
+        hasMore: false,
+        nextCursor: null,
+        questions: [{ id: source.id }, { id: explanation.id }],
+      },
+    });
+
+    await expect(
+      getLessonQuestionThread({ cursor: source.id, lessonId: lesson.id, stepId: secondStep.id }),
+    ).resolves.toStrictEqual({ status: "invalidCursor" });
+
+    await expect(
+      getLessonQuestionThread({ contextKind: "lesson", lessonId: lesson.id }),
+    ).resolves.toMatchObject({ status: "ready", thread: { questions: [] } });
+  });
+
+  it("lets a learner ask on another step while an earlier step is unfinished", async () => {
+    const { lesson, user } = await createPublishedCurriculum();
+
+    const steps = await Promise.all(
+      [0, 1].map((position) =>
+        stepFixture({
+          content: multipleChoiceContent,
+          isPublished: true,
+          kind: "multipleChoice",
+          lessonId: lesson.id,
+          position,
+        }),
+      ),
+    );
+
+    mockSession(user.id);
+
+    const results = await Promise.all(
+      steps.map((step) =>
+        createLessonQuestion({
+          input: {
+            context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
+            question: "Help with this part",
+            requestId: randomUUID(),
+          },
+          lessonId: lesson.id,
+        }),
+      ),
+    );
+
+    expect(results.map((result) => result.status)).toStrictEqual(["created", "created"]);
+  });
+
   it("paginates the latest fifty questions without losing older turns", async () => {
     const { lesson, user } = await createPublishedCurriculum();
     mockSession(user.id);

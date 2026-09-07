@@ -508,6 +508,7 @@ msgid "Copy lesson content"
 msgstr "Copiar conteúdo da aula"
 
 #: src/questions/lesson-question-copy-action.tsx
+#: src/questions/lesson-question-panel.tsx
 msgctxt "e7kR6h"
 msgid "Part {current} of {total}"
 msgstr "Parte {current} de {total}"
@@ -692,6 +693,11 @@ msgstr "Carregar perguntas anteriores"
 msgctxt "V-WZ__"
 msgid "About your answer"
 msgstr "Sobre sua resposta"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "e0zkbG"
+msgid "About this part"
+msgstr "Sobre esta parte"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "A6lEGi"

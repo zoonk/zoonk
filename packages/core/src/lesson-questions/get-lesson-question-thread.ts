@@ -10,17 +10,21 @@ import {
 import { type GetLessonQuestionThreadInput, MAX_LESSON_QUESTION_THREAD_TURNS } from "./contract";
 
 async function getCursorQuestion({
+  contextKind,
   cursor,
   lessonId,
+  stepId,
   userId,
 }: {
+  contextKind: GetLessonQuestionThreadInput["contextKind"];
   cursor: string;
+  stepId: string | undefined;
   lessonId: string;
   userId: string;
 }) {
   return prisma.lessonQuestion.findFirst({
     omit: lessonQuestionResourceOmit,
-    where: { id: cursor, thread: { lessonId, userId } },
+    where: { contextKind, id: cursor, stepId, thread: { lessonId, userId } },
   });
 }
 
@@ -38,15 +42,21 @@ function getOlderQuestionsWhere(cursorQuestion: { createdAt: Date; id: string } 
 }
 
 async function getQuestionPage({
+  contextKind,
   cursor,
   lessonId,
+  stepId,
   userId,
 }: {
+  contextKind: GetLessonQuestionThreadInput["contextKind"];
   cursor: string | undefined;
+  stepId: string | undefined;
   lessonId: string;
   userId: string;
 }) {
-  const cursorQuestion = cursor ? await getCursorQuestion({ cursor, lessonId, userId }) : null;
+  const cursorQuestion = cursor
+    ? await getCursorQuestion({ contextKind, cursor, lessonId, stepId, userId })
+    : null;
 
   if (cursor && !cursorQuestion) {
     return { status: "invalidCursor" as const };
@@ -56,7 +66,12 @@ async function getQuestionPage({
     omit: lessonQuestionResourceOmit,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_LESSON_QUESTION_THREAD_TURNS + 1,
-    where: { ...getOlderQuestionsWhere(cursorQuestion), thread: { lessonId, userId } },
+    where: {
+      contextKind,
+      stepId,
+      ...getOlderQuestionsWhere(cursorQuestion),
+      thread: { lessonId, userId },
+    },
   });
 
   const hasMore = questions.length > MAX_LESSON_QUESTION_THREAD_TURNS;
@@ -70,10 +85,12 @@ async function getQuestionPage({
   };
 }
 
-/** Returns the current learner's lesson-scoped conversation without exposing stored AI metadata. */
+/** Filters before pagination so other steps cannot displace the active step's history. */
 export async function getLessonQuestionThread({
+  contextKind,
   cursor,
   lessonId,
+  stepId,
 }: GetLessonQuestionThreadInput & { lessonId: string }) {
   const session = await getSession();
 
@@ -95,7 +112,7 @@ export async function getLessonQuestionThread({
     prisma.lessonQuestionThread.findUnique({
       where: { userLessonQuestionThread: { lessonId, userId: session.user.id } },
     }),
-    getQuestionPage({ cursor, lessonId, userId: session.user.id }),
+    getQuestionPage({ contextKind, cursor, lessonId, stepId, userId: session.user.id }),
   ]);
 
   if (page.status !== "ready") {

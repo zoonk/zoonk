@@ -19,7 +19,7 @@ function QuestionContextLabel({ context }: { context: LessonQuestionContextSumma
     return <>{t("About your answer")}</>;
   }
 
-  return <>{t("About this lesson")}</>;
+  return context.kind === "step" ? t("About this part") : t("About this lesson");
 }
 
 function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null }) {

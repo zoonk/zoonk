@@ -3,7 +3,7 @@
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
-import { useCallback, useMemo, useReducer } from "react";
+import { useMemo, useReducer } from "react";
 import {
   getEffectiveCompletionProgressSnapshot,
   getStoredCompletionMilestoneKeys,
@@ -14,7 +14,6 @@ import {
   type PlayerLinkComponent,
   type PlayerMilestone,
   type PlayerNavigation,
-  type PlayerQuestionSupport,
   type PlayerRoute,
   PlayerRuntimeContext,
   type PlayerViewer,
@@ -25,11 +24,9 @@ import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
 import { getPlayerScreenModel } from "./player-screen";
 import { usePlayerActions } from "./use-player-actions";
-import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
 
 export type { PlayerStepChangeEvent } from "./player-events";
-export { type PlayerQuestionSupport } from "./player-context";
 
 export function PlayerProvider({
   lesson,
@@ -47,7 +44,6 @@ export function PlayerProvider({
   onNext,
   onStepChange,
   progressSnapshot = null,
-  questionSupport,
   totalBrainPower,
   viewer,
 }: {
@@ -66,7 +62,6 @@ export function PlayerProvider({
   onNext?: () => void;
   onStepChange?: (event: PlayerStepChangeEvent) => void;
   progressSnapshot?: PlayerProgressSnapshot | null;
-  questionSupport?: PlayerQuestionSupport;
   totalBrainPower: number;
   viewer: PlayerViewer;
 }) {
@@ -94,27 +89,6 @@ export function PlayerProvider({
 
   const screen = useMemo(() => getPlayerScreenModel(state), [state]);
 
-  const handleNext = useCallback(() => {
-    onNext?.();
-  }, [onNext]);
-
-  const escapeHref =
-    screen.scene === "completion" && milestone?.kind === "course"
-      ? milestone.courseHref
-      : navigation.chapterHref;
-
-  usePlayerKeyboard({
-    interactionState: questionSupport?.interactionState ?? "active",
-    keyboard: screen.keyboard,
-    onCheck: actions.check,
-    onContinue: actions.continue,
-    onEscape: () => onEscape(escapeHref),
-    onNavigateNext: actions.navigateNext,
-    onNavigatePrev: actions.navigatePrev,
-    onNext: onNext ? handleNext : null,
-    onRestart: actions.restart,
-  });
-
   const configValue = useMemo(
     () => ({
       lessonMeta: {
@@ -130,8 +104,8 @@ export function PlayerProvider({
       linkComponent,
       milestone,
       navigation,
-      next: handleNext,
-      questionSupport: questionSupport ?? null,
+      next: onNext ?? null,
+      onEscape,
       viewer,
     }),
     [
@@ -140,14 +114,14 @@ export function PlayerProvider({
       lesson.title,
       chapterTitle,
       courseTitle,
-      handleNext,
       lessonDescription,
       lessonProgress,
       lessonTitle,
       linkComponent,
       milestone,
       navigation,
-      questionSupport,
+      onEscape,
+      onNext,
       viewer,
     ],
   );

@@ -11,7 +11,7 @@ import {
 } from "@zoonk/ui/components/sheet";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import dynamic from "next/dynamic";
+import { usePlayerViewer } from "../player-context";
 import { QuestionComposer } from "./lesson-question-composer";
 import { LessonQuestionCopyAction } from "./lesson-question-copy-action";
 import {
@@ -19,14 +19,9 @@ import {
   LessonQuestionNavigationContext,
 } from "./lesson-question-navigation";
 import { type LessonQuestionPanelMetadata } from "./lesson-question-panel-types";
-import { ThreadViewportSkeleton } from "./lesson-question-thread-viewport";
+import { useLessonQuestionController } from "./lesson-question-provider";
+import { QuestionThread } from "./lesson-question-thread";
 import { type LessonQuestionController } from "./use-lesson-questions";
-
-/** Load the conversation and Markdown together so saved answers don't resize an already visible thread. */
-const QuestionThread = dynamic(
-  () => import("./lesson-question-thread").then((module) => module.QuestionThread),
-  { loading: ThreadViewportSkeleton, ssr: false },
-);
 
 function LessonQuestionPanelHeader({
   controller,
@@ -57,8 +52,13 @@ function LessonQuestionPanelHeader({
       <div className="mt-0.5 -ml-2.5 self-stretch pr-2.5">
         <LessonQuestionCopyAction controller={controller} metadata={metadata} />
       </div>
-      <SheetDescription className="sr-only">
-        {t("Ask questions about this lesson")}
+      <SheetDescription className="text-xs">
+        {controller.state.context.kind === "lesson"
+          ? t("Ask questions about this lesson")
+          : t("Part {current} of {total}", {
+              current: String(controller.state.context.stepIndex + 1),
+              total: String(metadata.lessonSteps.length),
+            })}
       </SheetDescription>
     </SheetHeader>
   );
@@ -66,15 +66,13 @@ function LessonQuestionPanelHeader({
 
 export function LessonQuestionPanel({
   navigation,
-  controller,
-  isAuthenticated,
   metadata,
 }: {
-  controller: LessonQuestionController;
   navigation: LessonQuestionNavigation;
-  isAuthenticated: boolean;
   metadata: LessonQuestionPanelMetadata;
 }) {
+  const controller = useLessonQuestionController();
+  const { isAuthenticated } = usePlayerViewer();
   const { state } = controller;
 
   return (

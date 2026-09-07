@@ -17,6 +17,19 @@ import { normalizeString } from "@zoonk/utils/string";
 import { advanceToCompletionSummary } from "./completion";
 import { expect, test } from "./fixtures";
 
+const FORMATTED_ANSWER = [
+  "### Key idea",
+  "- **Gravity** bends the path.\n- [Velocity](https://example.com) carries it forward.\n  - Tangential motion matters.",
+  "1. Measure the speed.\n2. Compare the direction.",
+  "> An orbit is continuous free fall.",
+  "Use `orbitalSpeed` for the speed.",
+  "```javascript\nconst orbitalSpeed = 7.8;\nconsole.log(orbitalSpeed);\n```",
+  "| Quantity | Unit |\n| --- | --- |\n| Speed | km/s |",
+  String.raw`The mean radius is $$\overline{r}$$ and the speed is:`,
+  "$$\nv = \\sqrt{\\frac{GM}{r}}\n$$",
+  "```mermaid\nflowchart TD\n  accTitle: How an orbit forms\n  accDescr: Gravity and forward motion produce an orbit.\n  A[Gravity] --> B[Orbit]\n  C[Forward motion] --> B\n```",
+].join("\n\n");
+
 const ANSWER_TEXT = "Gravity keeps pulling while the satellite moves forward, bending its path.";
 
 const UI_MESSAGE_STREAM_HEADERS = {
@@ -218,6 +231,22 @@ function getMockQuestionPage({
   return { hasMore, nextCursor: hasMore ? (page[0]?.id ?? null) : null, questions: page };
 }
 
+function matchesQuestionScope({
+  question,
+  stepId,
+  contextKind,
+}: {
+  question: LessonQuestionResource;
+  stepId: string | null;
+  contextKind: string | null;
+}) {
+  if (stepId && (question.context.kind === "lesson" || question.context.stepId !== stepId)) {
+    return false;
+  }
+
+  return !contextKind || question.context.kind === contextKind;
+}
+
 async function mockQuestionApi({
   answerLimitRequestNumbers = [],
   completeQuestionBeforeReplay = false,
@@ -303,12 +332,19 @@ async function mockQuestionApi({
         return;
       }
 
-      const cursor = new URL(route.request().url()).searchParams.get("cursor");
+      const searchParams = new URL(route.request().url()).searchParams;
+      const cursor = searchParams.get("cursor");
+      const stepId = searchParams.get("stepId");
+      const contextKind = searchParams.get("contextKind");
+
+      const scopedQuestions = state.questions.filter((question) =>
+        matchesQuestionScope({ contextKind, question, stepId }),
+      );
 
       const threadPage = getMockQuestionPage({
         cursor,
         pageSize: threadPageSize,
-        questions: state.questions,
+        questions: scopedQuestions,
       });
 
       const responseJson =
@@ -695,7 +731,7 @@ test("asks from the active step, copies safe context, follows up, and resumes", 
 
   await expect(authenticatedPage.getByText(secondStepTitle)).toBeVisible();
   await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  await expect(dialog.getByText(firstQuestion)).toBeVisible();
+  await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
 
   const followUp = "How does that connect to free fall?";
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
@@ -712,8 +748,63 @@ test("asks from the active step, copies safe context, follows up, and resumes", 
   await authenticatedPage.reload();
   await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect(dialog.getByText(firstQuestion)).toBeVisible();
+  await expect(dialog.getByText(followUp)).not.toBeVisible();
+  await authenticatedPage.keyboard.press("Escape");
+  await authenticatedPage.getByRole("radio", { name: scenario.correctOption }).click();
+  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
+  await authenticatedPage.getByRole("button", { name: /continue/iu }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   await expect(dialog.getByText(followUp)).toBeVisible();
-  await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(2);
+  await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
+  await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(1);
+});
+
+test("keeps a late history preload in its own step and restores it on return", async ({
+  subscriberPage: page,
+}) => {
+  const scenario = await createQuestionLesson({ includeSecondStep: true, staticOnly: true });
+
+  const firstQuestion = questionResource({
+    answer: "First part answer",
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "First part question",
+    status: "completed",
+  });
+
+  const secondQuestion = questionResource({
+    answer: "Second part answer",
+    context: { kind: "step", stepId: scenario.stepIds[1] ?? null, stepNumber: 2 },
+    question: "Second part question",
+    status: "completed",
+  });
+
+  const api = await mockQuestionApi({
+    holdGetRequestNumbers: [1],
+    initialQuestions: [firstQuestion, secondQuestion],
+    lessonId: scenario.lessonId,
+    page,
+  });
+
+  await page.goto(scenario.url);
+  await expect.poll(() => api.getRequests).toBe(1);
+  await page.getByRole("button", { name: "Next step" }).click();
+  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByText(secondQuestion.question)).toBeVisible();
+  api.releaseGetResponse(1);
+  await expect.poll(() => api.completedGetRequests).toBe(2);
+  await expect(dialog.getByText(firstQuestion.question)).not.toBeVisible();
+  await dialog.getByRole("button", { name: "Close questions" }).focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(dialog.getByText("Part 2 of 2")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.getByRole("button", { name: "Previous step" })).not.toBeVisible();
+  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await expect(dialog.getByText(firstQuestion.question)).toBeVisible();
+  await expect(dialog.getByText(secondQuestion.question)).not.toBeVisible();
+  expect(api.getRequests).toBe(2);
 });
 
 test("renders streamed answers as markdown", async ({ subscriberPage: authenticatedPage }) => {
@@ -721,11 +812,7 @@ test("renders streamed answers as markdown", async ({ subscriberPage: authentica
   const releaseStreamEvent = "release-markdown-answer";
 
   await installStreamingAnswerResponse({
-    chunks: [
-      "### Key idea\n\n",
-      "- **Gravity** bends the path.\n",
-      "- [Velocity](https://example.com) carries it forward.",
-    ],
+    chunks: ["### Key idea\n\n", FORMATTED_ANSWER.slice("### Key idea\n\n".length)],
     delayMilliseconds: 40,
     page: authenticatedPage,
     releaseAfterFirstChunkEvent: releaseStreamEvent,
@@ -747,8 +834,87 @@ test("renders streamed answers as markdown", async ({ subscriberPage: authentica
     releaseStreamEvent,
   );
 
-  await expect(dialog.getByRole("listitem")).toHaveCount(2);
+  await expect(dialog.getByRole("listitem")).toHaveCount(5);
   await expect(dialog.getByRole("button", { name: "Velocity" })).toBeVisible();
+  await expect(dialog.getByRole("blockquote")).toContainText("continuous free fall");
+  await expect(dialog.getByText("const orbitalSpeed = 7.8;", { exact: false })).toBeVisible();
+
+  await expect
+    .poll(() => dialog.getByRole("code").filter({ hasText: "const orbitalSpeed" }).innerText())
+    .toContain(";\nconsole.log");
+
+  await expect(dialog.getByRole("table").getByRole("cell", { name: "km/s" })).toBeVisible();
+  await expect(dialog.getByRole("math")).toHaveCount(2);
+  await expect(dialog.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
+});
+
+test("renders preloaded Markdown immediately while optional scripts load", async ({
+  subscriberPage: page,
+}, testInfo) => {
+  const scenario = await createQuestionLesson();
+
+  const savedQuestion = questionResource({
+    answer: FORMATTED_ANSWER,
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
+    question: "Show the orbit with examples",
+    status: "completed",
+  });
+
+  const api = await mockQuestionApi({
+    initialQuestions: [savedQuestion],
+    lessonId: scenario.lessonId,
+    page,
+  });
+
+  await page.setViewportSize({ height: 812, width: 375 });
+  await page.goto(scenario.url);
+  await expect.poll(() => api.completedGetRequests).toBe(1);
+  await expect(page.getByRole("button", { name: "Ask about this lesson" })).toBeVisible();
+  const releaseScripts = Promise.withResolvers<null>();
+  const errors: Error[] = [];
+  page.on("pageerror", (error) => errors.push(error));
+
+  // Diagram rendering and code highlighting must not delay the rest of a saved answer.
+  await page.route("**/_next/static/chunks/*.js", async (route) => {
+    await releaseScripts.promise;
+    await route.continue();
+  });
+
+  const dialog = page.getByRole("dialog");
+
+  try {
+    await page.getByRole("button", { name: "Ask about this lesson" }).click();
+    await expect(dialog.getByRole("heading", { name: "Key idea" })).toBeVisible();
+    await expect(dialog.getByRole("status")).toHaveCount(0);
+    expect(api.getRequests).toBe(1);
+    await expect(dialog.getByRole("listitem")).toHaveCount(5);
+    await expect(dialog.getByRole("math")).toHaveCount(2);
+
+    await expect(
+      dialog.getByRole("table").getByRole("columnheader", { name: "Quantity" }),
+    ).toBeVisible();
+
+    await expect
+      .poll(() => dialog.getByRole("code").filter({ hasText: "const orbitalSpeed" }).innerText())
+      .toContain(";\nconsole.log");
+
+    await testInfo.attach("saved-markdown-mobile", {
+      body: await dialog.screenshot({ path: "/tmp/zoonk-questions-markdown-mobile.png" }),
+      contentType: "image/png",
+    });
+  } finally {
+    releaseScripts.resolve(null);
+  }
+
+  await page.waitForLoadState("networkidle");
+  await expect(dialog.getByRole("table")).toBeVisible();
+  await expect(dialog.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
+  expect(errors).toEqual([]);
+
+  await testInfo.attach("saved-math-diagram-mobile", {
+    body: await dialog.screenshot({ path: "/tmp/zoonk-questions-math-diagram-mobile.png" }),
+    contentType: "image/png",
+  });
 });
 
 test("confirms external links in a localized accessible dialog", async ({
@@ -1075,7 +1241,7 @@ test("recovers an abandoned answer when the learner checks again", async ({
 
   const abandonedQuestion = {
     ...questionResource({
-      context: { kind: "lesson" },
+      context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
       question: "Please recover this interrupted answer.",
       status: "running",
     }),
@@ -1107,7 +1273,7 @@ test("keeps waiting when another session is still generating the answer", async 
   const scenario = await createQuestionLesson();
 
   const runningQuestion = questionResource({
-    context: { kind: "lesson" },
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
     question: "Please wait for my other session.",
     status: "running",
   });
@@ -1154,7 +1320,7 @@ test("does not restart an answer when an older manual check arrives after pollin
   const scenario = await createQuestionLesson();
 
   const runningQuestion = questionResource({
-    context: { kind: "lesson" },
+    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
     question: "A question being answered elsewhere",
     status: "running",
   });
@@ -1399,65 +1565,6 @@ test("announces the initial question history load", async ({
   api.releaseGetResponse(1);
   await expect(loadingStatus).toHaveCount(0);
   await expect(dialog.getByText("What would you like help with?")).toBeVisible();
-});
-
-test("reveals saved questions and answers together when conversation code loads slowly", async ({
-  subscriberPage: authenticatedPage,
-}) => {
-  const scenario = await createQuestionLesson({ staticOnly: true });
-
-  const savedQuestion = questionResource({
-    answer: `### Staying in orbit\n\n${ANSWER_TEXT}`,
-    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
-    question: "Why doesn't the satellite fall straight down?",
-    status: "completed",
-  });
-
-  const api = await mockQuestionApi({
-    initialQuestions: [savedQuestion],
-    lessonId: scenario.lessonId,
-    page: authenticatedPage,
-  });
-
-  await authenticatedPage.setViewportSize({ height: 812, width: 375 });
-  await authenticatedPage.goto(scenario.url);
-  const askButton = authenticatedPage.getByRole("button", { name: "Ask about this lesson" });
-  await expect(askButton).toBeVisible();
-
-  const scriptRequested = Promise.withResolvers<null>();
-  const releaseScripts = Promise.withResolvers<null>();
-
-  // Hold real lazy-loaded scripts to reproduce a cold, slow connection without mocking the renderer.
-  await authenticatedPage.route("**/_next/static/chunks/*.js", async (route) => {
-    scriptRequested.resolve(null);
-    await releaseScripts.promise;
-    await route.continue();
-  });
-
-  const dialog = authenticatedPage.getByRole("dialog");
-
-  try {
-    await askButton.click();
-    await scriptRequested.promise;
-    await expect.poll(() => api.completedGetRequests).toBe(1);
-
-    await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-    await expect(dialog.getByRole("button", { name: "Copy lesson content" })).toBeVisible();
-    await expect(dialog.getByRole("status")).toHaveText("Loading questions…");
-    await expect(dialog.getByText(savedQuestion.question)).toHaveCount(0);
-    await dialog.getByRole("textbox", { name: "Ask a question" }).fill("My follow-up question");
-  } finally {
-    releaseScripts.resolve(null);
-  }
-
-  await expect(dialog.getByRole("heading", { name: "Staying in orbit" })).toBeVisible();
-  await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
-  await expect(dialog.getByRole("status")).toHaveCount(0);
-
-  await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveValue(
-    "My follow-up question",
-  );
 });
 
 test("keeps saved history visible but blocks sending during a reopen refresh", async ({
@@ -1968,7 +2075,7 @@ async function expectReopenedSavedExplanation({
   const followUps = Array.from({ length: 6 }, (_, index) => ({
     ...questionResource({
       answer: `Follow-up explanation ${index}. ${"Gravity bends the satellite's path. ".repeat(12)}`,
-      context: { kind: "lesson" },
+      context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
       question: `Follow-up question ${index}`,
       status: "completed",
     }),
