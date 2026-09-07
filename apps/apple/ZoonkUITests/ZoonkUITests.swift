@@ -320,24 +320,171 @@ final class ZoonkUITests: XCTestCase {
       "Expected guidance without an external Google Play purchase link")
   }
 
-  /// Proves the account shortcut names the public destination it opens instead of promising an unimplemented learner library.
+  /// Proves the account shortcut leaves a course detail and opens the signed-in learner's library at its root.
   @MainActor
-  func testBrowseCoursesAccountActionOpensThePublicCatalog() {
+  func testMyCoursesAccountActionOpensTheEnrolledCourseList() {
     continueAfterFailure = false
 
-    let app = makeApp(for: .freeSubscription)
+    let app = makeApp(for: .catalog)
     app.launch()
+
+    openPlantsCourse(in: app)
+    app.buttons["Home"].firstMatch.tap()
     openAccount(in: app)
 
-    let browseCourses = app.buttons["Browse courses"]
+    let myCourses = app.buttons["My courses"]
     XCTAssertTrue(
-      browseCourses.waitForExistence(timeout: 5),
-      "Expected the account sheet to describe the public catalog destination")
-    browseCourses.tap()
+      myCourses.waitForExistence(timeout: 5), "Expected the account sheet to offer My courses")
+    myCourses.tap()
 
     XCTAssertTrue(
       app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 5),
-      "Expected the account shortcut to open the deterministic public catalog")
+      "Expected the account shortcut to open the enrolled course list")
+    XCTAssertTrue(
+      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5),
+      "Expected pagination to retain a personal course in the learner's library")
+    XCTAssertEqual(
+      app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "My Backyard Field Notes"))
+        .count, 0,
+      "Expected a personal course without a public route to remain noninteractive")
+    XCTAssertEqual(
+      app.links.matching(NSPredicate(format: "label CONTAINS %@", "My Backyard Field Notes"))
+        .count, 0,
+      "Expected a personal course without a public route to avoid a broken link")
+    XCTAssertTrue(app.buttons["My Courses"].isSelected, "Expected My Courses to be selected")
+    XCTAssertFalse(
+      app.staticTexts["Everyday Numbers"].exists,
+      "Expected the account shortcut to exclude courses outside the learner's library")
+  }
+
+  /// Proves signed-in learners can switch between the public catalog and their enrolled courses without leaving the Courses tab.
+  @MainActor
+  func testCoursesToggleSwitchesBetweenAllAndMyCourses() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .catalog)
+    app.launch()
+    app.buttons["Courses"].firstMatch.tap()
+
+    let allCourses = app.buttons["All Courses"]
+    let myCourses = app.buttons["My Courses"]
+    XCTAssertTrue(allCourses.waitForExistence(timeout: 5))
+    XCTAssertTrue(myCourses.exists)
+    XCTAssertTrue(allCourses.isSelected)
+    XCTAssertTrue(app.staticTexts["Everyday Numbers"].firstMatch.waitForExistence(timeout: 5))
+    XCTAssertTrue(app.searchFields["Search all courses"].exists)
+    let selectorPosition = myCourses.frame.minY
+
+    myCourses.tap()
+
+    XCTAssertTrue(myCourses.isSelected)
+    XCTAssertTrue(app.searchFields["Search my courses"].waitForExistence(timeout: 5))
+    XCTAssertEqual(myCourses.frame.minY, selectorPosition, accuracy: 1)
+    XCTAssertTrue(app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["Ocean Worlds"].firstMatch.waitForExistence(timeout: 5))
+    XCTAssertFalse(app.staticTexts["Everyday Numbers"].exists)
+
+    allCourses.tap()
+
+    XCTAssertTrue(allCourses.isSelected)
+    XCTAssertTrue(app.staticTexts["Everyday Numbers"].firstMatch.waitForExistence(timeout: 5))
+  }
+
+  /// Refresh must resume pagination even when it returns the same first page and cursor.
+  @MainActor
+  func testMyCoursesRefreshResumesPendingPagination() throws {
+    continueAfterFailure = false
+    let isPad = UIDevice.current.userInterfaceIdiom == .pad
+    let pageSize = isPad ? 20 : 6
+    XCUIDevice.shared.orientation = isPad ? .landscapeLeft : .portrait
+    defer { XCUIDevice.shared.orientation = .portrait }
+
+    let app = makeApp(for: .catalog)
+    app.launchEnvironment["ZOONK_UI_TEST_CATALOG"] = try courseCatalogPaginationUITestSnapshotJSON(
+      pageSize: pageSize)
+    app.launch()
+    app.buttons["Courses"].firstMatch.tap()
+    app.buttons["My Courses"].tap()
+
+    let lastCourse = app.staticTexts[String(format: "Enrolled Course %02d", pageSize)].firstMatch
+    let list = app.scrollViews.containing(.staticText, identifier: "Enrolled Course 01").firstMatch
+    XCTAssertTrue(list.waitForExistence(timeout: 5))
+    list.swipeUp()
+    XCTAssertTrue(lastCourse.waitForExistence(timeout: 5))
+    XCTAssertFalse(app.staticTexts["My Backyard Field Notes"].exists)
+
+    list.swipeDown()
+    let refreshStart = list.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+    let refreshEnd = list.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+    refreshStart.press(forDuration: 0.1, thenDragTo: refreshEnd)
+
+    XCTAssertTrue(
+      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5),
+      "Expected refresh to resume pagination and show the remaining enrollment")
+  }
+
+  /// Keeps library search scoped to enrollments while preserving the catalog filter across collection changes.
+  @MainActor
+  func testMyCoursesSearchPreservesCollectionState() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .catalog)
+    app.launch()
+    app.buttons["Courses"].firstMatch.tap()
+
+    let categorySelector = app.scrollViews["Course categories"]
+    XCTAssertTrue(categorySelector.waitForExistence(timeout: 5))
+    let science = categorySelector.buttons["Science"]
+    categorySelector.scrollToReveal(science)
+    science.tap()
+    XCTAssertTrue(app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 5))
+
+    app.buttons["My Courses"].tap()
+    let searchField = app.searchFields["Search my courses"]
+    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+    searchField.tap()
+    searchField.typeText("field notes")
+    XCTAssertTrue(
+      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["How Plants Grow"].firstMatch.waitForNonExistence(timeout: 5))
+
+    app.buttons["All Courses"].tap()
+    XCTAssertTrue(science.waitForExistence(timeout: 5))
+    XCTAssertTrue(science.isSelected)
+    XCTAssertFalse(app.staticTexts["Everyday Numbers"].exists)
+
+    app.buttons["My Courses"].tap()
+    XCTAssertEqual(searchField.value as? String, "field notes")
+    XCTAssertTrue(
+      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5))
+  }
+
+  /// Proves the learner sees the value of signing in before the native account flow opens.
+  @MainActor
+  func testSignedOutMyCoursesExplainsLoginAndOpensAccountSheet() {
+    continueAfterFailure = false
+
+    let app = makeApp()
+    app.launch()
+    app.buttons["Courses"].firstMatch.tap()
+
+    let myCourses = app.buttons["My Courses"]
+    XCTAssertTrue(myCourses.waitForExistence(timeout: 5))
+    myCourses.tap()
+
+    XCTAssertTrue(app.staticTexts["Log in to track your courses"].waitForExistence(timeout: 5))
+    XCTAssertTrue(
+      app.staticTexts[
+        "Keep your courses and progress in one place by logging in to your account."
+      ].exists)
+
+    let logIn = app.buttons["Log in"]
+    XCTAssertTrue(logIn.exists)
+    logIn.tap()
+
+    XCTAssertTrue(
+      app.buttons["Continue with Apple"].waitForExistence(timeout: 5),
+      "Expected the My Courses login action to open the native account sheet")
   }
 
   /// Proves that account deletion is a deliberate native flow: the account option opens a dedicated screen and the irreversible request still requires confirmation.
@@ -644,7 +791,7 @@ final class ZoonkUITests: XCTestCase {
     app.launch()
     app.buttons["Courses"].firstMatch.tap()
 
-    let searchField = app.searchFields["Search courses and chapters"]
+    let searchField = app.searchFields["Search all courses"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
     searchField.tap()
     searchField.typeText("water")

@@ -1,6 +1,7 @@
 @MainActor
 struct AppDependencies {
   let courseCatalogStore: CourseCatalogStore
+  let myCoursesStore: MyCoursesStore
   let progressStore: ProgressStore
   let sessionStore: SessionStore
   let subscriptionStore: AppStoreSubscriptionStore
@@ -17,6 +18,9 @@ struct AppDependencies {
       courseCatalogStore: CourseCatalogStore(
         api: CourseCatalogAPI(clients: clients),
         language: currentCourseCatalogLanguage(),
+        session: sessionStore),
+      myCoursesStore: MyCoursesStore(
+        api: MyCoursesAPI(clients: clients),
         session: sessionStore),
       progressStore: ProgressStore(
         api: ProgressAPI(clients: clients),

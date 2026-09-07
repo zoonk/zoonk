@@ -36,6 +36,35 @@
         }
       }
     },
+    "Account unavailable" : {
+      "comment" : "Title when My Courses cannot determine the signed-in account.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konto nicht verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta no disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compte indisponible"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conta indisponível"
+          }
+        }
+      }
+    },
     "All" : {
       "comment" : "Category option that shows courses from every category.",
       "localizations" : {
@@ -61,6 +90,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Todos"
+          }
+        }
+      }
+    },
+    "All Courses" : {
+      "comment" : "Segment that shows the public course catalog.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Kurse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os cursos"
           }
         }
       }
@@ -558,6 +616,35 @@
         }
       }
     },
+    "Course collection" : {
+      "comment" : "Accessibility label for switching between all courses and My Courses.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursübersicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colección de cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sélection de cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coleção de cursos"
+          }
+        }
+      }
+    },
     "Course information" : {
       "comment" : "Title for secondary information about a course.",
       "localizations" : {
@@ -675,7 +762,7 @@
       }
     },
     "Courses are unavailable" : {
-      "comment" : "Title when the public course catalog cannot be loaded.",
+      "comment" : "Title when My Courses cannot be loaded from the service.\nTitle when the public course catalog cannot be loaded.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -964,35 +1051,6 @@
         }
       }
     },
-    "Find a course or jump directly to a chapter." : {
-      "comment" : "Guidance shown before the learner enters a catalog search query.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finde einen Kurs oder springe direkt zu einem Kapitel."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Busca un curso o ve directamente a un capítulo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trouve un cours ou va directement à un chapitre."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontre um curso ou vá direto para um capítulo."
-          }
-        }
-      }
-    },
     "Follow a guided step-by-step tutorial." : {
       "comment" : "Fallback description for a tutorial lesson.",
       "localizations" : {
@@ -1134,6 +1192,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "História"
+          }
+        }
+      }
+    },
+    "Keep your courses and progress in one place by logging in to your account." : {
+      "comment" : "Explains why signing in is useful on the My Courses screen.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich in deinem Konto an, damit deine Kurse und dein Fortschritt an einem Ort bleiben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión en tu cuenta para tener tus cursos y tu progreso en un solo lugar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi à ton compte pour retrouver tes cours et ta progression au même endroit."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre na sua conta para manter seus cursos e progresso em um só lugar."
           }
         }
       }
@@ -1515,6 +1602,64 @@
         }
       }
     },
+    "Log in" : {
+      "comment" : "Opens the native account sheet from My Courses.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmelden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se connecter"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrar"
+          }
+        }
+      }
+    },
+    "Log in to track your courses" : {
+      "comment" : "Title inviting signed-out learners to log in to use My Courses.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich an, um deine Kurse im Blick zu behalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión para llevar el control de tus cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi pour suivre tes cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre para acompanhar seus cursos"
+          }
+        }
+      }
+    },
     "Math" : {
       "comment" : "Course category for mathematics.",
       "localizations" : {
@@ -1569,6 +1714,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mais opções"
+          }
+        }
+      }
+    },
+    "My Courses" : {
+      "comment" : "Segment that shows the signed-in learner's enrolled courses.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meine Kurse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mes cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meus cursos"
           }
         }
       }
@@ -1632,7 +1806,7 @@
       }
     },
     "No courses yet" : {
-      "comment" : "Title when the public course catalog is empty.",
+      "comment" : "Title when the public course catalog is empty.\nTitle when the signed-in learner has not enrolled in any courses.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2066,6 +2240,35 @@
         }
       }
     },
+    "Search all courses" : {
+      "comment" : "Searches the public catalog, including chapters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Kurse durchsuchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar en todos los cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher dans tous les cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar em todos os cursos"
+          }
+        }
+      }
+    },
     "Search chapters" : {
       "comment" : "Placeholder for searching within a course's chapters.",
       "localizations" : {
@@ -2091,35 +2294,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buscar capítulos"
-          }
-        }
-      }
-    },
-    "Search courses and chapters" : {
-      "comment" : "Placeholder for searching the public course catalog.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurse und Kapitel durchsuchen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar cursos y capítulos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rechercher des cours et des chapitres"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar cursos e capítulos"
           }
         }
       }
@@ -2153,31 +2327,31 @@
         }
       }
     },
-    "Search the catalog" : {
-      "comment" : "Title shown before the learner enters a catalog search query.",
+    "Search my courses" : {
+      "comment" : "Searches only the learner's enrolled courses.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katalog durchsuchen"
+            "value" : "Meine Kurse durchsuchen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscar en el catálogo"
+            "value" : "Buscar en mis cursos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rechercher dans le catalogue"
+            "value" : "Rechercher dans mes cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscar no catálogo"
+            "value" : "Buscar nos meus cursos"
           }
         }
       }
@@ -2323,6 +2497,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Começar"
+          }
+        }
+      }
+    },
+    "Start a course" : {
+      "comment" : "Opens course creation from an empty My Courses list.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einen Kurs starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar un curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer un cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar um curso"
+          }
+        }
+      }
+    },
+    "Start learning something new today." : {
+      "comment" : "Guidance when the signed-in learner has no courses.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lerne noch heute etwas Neues."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza a aprender algo nuevo hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commence à apprendre quelque chose de nouveau dès aujourd’hui."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece a aprender algo novo hoje."
           }
         }
       }
@@ -2531,7 +2763,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Retries loading catalog content after a failure.",
+      "comment" : "Retries account restoration from My Courses.\nRetries loading My Courses after a failure.\nRetries loading catalog content after a failure.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2734,7 +2966,7 @@
       }
     },
     "You're offline" : {
-      "comment" : "Title when catalog content cannot load because the device is offline.",
+      "comment" : "Title when My Courses cannot load without a network connection.\nTitle when catalog content cannot load because the device is offline.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2758,6 +2990,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você está sem conexão"
+          }
+        }
+      }
+    },
+    "Your courses are safe. Try loading them again." : {
+      "comment" : "Reassures learners after My Courses fails to load.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Kurse sind sicher. Versuch, sie noch einmal zu laden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus cursos siguen ahí. Intenta cargarlos de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes cours sont toujours là. Essaie de les charger à nouveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus cursos continuam salvos. Tente carregar de novo."
+          }
+        }
+      }
+    },
+    "Zoonk couldn't load your account. Check your connection and try again." : {
+      "comment" : "Guidance when account restoration fails on My Courses.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk konnte dein Konto nicht laden. Prüfe deine Verbindung und versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk no pudo cargar tu cuenta. Revisa tu conexión y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk n’a pas pu charger ton compte. Vérifie ta connexion et réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk não conseguiu carregar sua conta. Confira sua conexão e tente de novo."
           }
         }
       }

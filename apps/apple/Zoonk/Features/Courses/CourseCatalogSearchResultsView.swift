@@ -10,9 +10,7 @@ struct CourseCatalogSearchResultsView: View {
   var body: some View {
     Group {
       switch catalog.searchState {
-      case .idle:
-        searchPrompt
-      case .loading:
+      case .idle, .loading:
         ProgressView()
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .accessibilityLabel(
@@ -30,24 +28,6 @@ struct CourseCatalogSearchResultsView: View {
     }
     .frame(maxWidth: 900)
     .frame(maxWidth: .infinity)
-  }
-
-  private var searchPrompt: some View {
-    ContentUnavailableView {
-      Label {
-        Text(
-          "Search the catalog",
-          tableName: "Courses",
-          comment: "Title shown before the learner enters a catalog search query.")
-      } icon: {
-        Image(systemName: "magnifyingglass")
-      }
-    } description: {
-      Text(
-        "Find a course or jump directly to a chapter.",
-        tableName: "Courses",
-        comment: "Guidance shown before the learner enters a catalog search query.")
-    }
   }
 
   private func resultsList(_ results: CatalogSearchResults) -> some View {

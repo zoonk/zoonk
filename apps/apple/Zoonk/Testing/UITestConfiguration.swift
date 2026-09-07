@@ -5,6 +5,7 @@
   struct UITestConfiguration {
     let courseCatalog: CourseCatalogStore
     let initiallyPresentsAccount: Bool
+    let myCourses: MyCoursesStore
     let progress: ProgressStore
     let session: SessionStore
 
@@ -15,17 +16,22 @@
         return nil
       }
 
+      let environment = ProcessInfo.processInfo.environment
+      let catalogSnapshot = courseCatalogSnapshot(from: environment)
       let session = SessionStore.preview(
-        account: account(from: ProcessInfo.processInfo.environment))
+        account: account(from: environment))
 
       return UITestConfiguration(
         courseCatalog: CourseCatalogStore(
-          api: courseCatalogAPI(from: ProcessInfo.processInfo.environment),
+          api: courseCatalogAPI(snapshot: catalogSnapshot),
           language: currentCourseCatalogLanguage(),
           session: session),
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"),
+        myCourses: MyCoursesStore(
+          api: myCoursesAPI(snapshot: catalogSnapshot),
+          session: session),
         progress: ProgressStore(
-          api: progressAPI(from: ProcessInfo.processInfo.environment),
+          api: progressAPI(from: environment),
           session: session),
         session: session)
     }
@@ -63,18 +69,38 @@
     }
 
     private static func courseCatalogAPI(
-      from environment: [String: String]
+      snapshot: UITestCourseCatalogSnapshot?
     ) -> any CourseCatalogAPIClient {
+      guard let snapshot else {
+        return CourseCatalogAPI(
+          clients: APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL))
+      }
+
+      return UITestCourseCatalogAPI(snapshot: snapshot)
+    }
+
+    private static func myCoursesAPI(
+      snapshot: UITestCourseCatalogSnapshot?
+    ) -> any MyCoursesAPIClient {
+      guard let snapshot else {
+        return MyCoursesAPI(
+          clients: APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL))
+      }
+
+      return UITestMyCoursesAPI(snapshot: snapshot)
+    }
+
+    private static func courseCatalogSnapshot(
+      from environment: [String: String]
+    ) -> UITestCourseCatalogSnapshot? {
       guard let catalogJSON = environment["ZOONK_UI_TEST_CATALOG"] else {
-        let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
-        return CourseCatalogAPI(clients: clients)
+        return nil
       }
 
       do {
-        let snapshot = try JSONDecoder().decode(
+        return try JSONDecoder().decode(
           UITestCourseCatalogSnapshot.self,
           from: Data(catalogJSON.utf8))
-        return UITestCourseCatalogAPI(snapshot: snapshot)
       } catch {
         preconditionFailure("ZOONK_UI_TEST_CATALOG must contain a valid catalog snapshot")
       }
@@ -85,7 +111,79 @@
     let chapters: [CourseChapter]
     let completedLessonIDs: Set<String>
     let courses: [Course]
+    let enrolledCourseIDs: Set<String>
+    let holdsFirstMyCoursesPagination: Bool?
     let lessons: [CourseLesson]
+    let myCoursesPageSize: Int?
+    let personalCourses: [UserCourseSummary]
+  }
+
+  private actor UITestMyCoursesAPI: MyCoursesAPIClient {
+    let snapshot: UITestCourseCatalogSnapshot
+    private var didHoldPagination = false
+    private var paginationContinuation: CheckedContinuation<Void, Never>?
+
+    init(snapshot: UITestCourseCatalogSnapshot) {
+      self.snapshot = snapshot
+    }
+
+    /// Uses one-item pages by default so My Courses UI scenarios exercise automatic pagination.
+    func listCourses(request: MyCoursesRequest) async throws -> MyCoursesPage {
+      guard !request.token.isEmpty else {
+        throw MyCoursesAPIError.unauthorized
+      }
+
+      // Holds a network page until refresh replaces it, making request ordering deterministic.
+      if request.query.cursor != nil, snapshot.holdsFirstMyCoursesPagination == true,
+        !didHoldPagination
+      {
+        didHoldPagination = true
+        await withCheckedContinuation { continuation in
+          paginationContinuation = continuation
+        }
+      } else if request.query.cursor == nil {
+        paginationContinuation?.resume()
+        paginationContinuation = nil
+      }
+
+      let enrolledCourses =
+        snapshot.courses
+        .filter { course in
+          snapshot.enrolledCourseIDs.contains(course.id)
+        }
+        .map(makeUserCourseSummary) + snapshot.personalCourses
+      let matchingCourses = enrolledCourses.filter {
+        matchesQuery((course: $0, query: request.query.query))
+      }
+      let requestedStartIndex = request.query.cursor.flatMap(Int.init) ?? 0
+      let startIndex = min(max(requestedStartIndex, 0), matchingCourses.count)
+      let pageSize = max(request.query.limit ?? snapshot.myCoursesPageSize ?? 1, 0)
+      let endIndex = min(startIndex + pageSize, matchingCourses.count)
+      let courses = Array(matchingCourses[startIndex..<endIndex])
+      let hasMore = endIndex < matchingCourses.count
+
+      return MyCoursesPage(
+        courses: courses,
+        hasMore: hasMore,
+        nextCursor: hasMore ? String(endIndex) : nil)
+    }
+
+    private func matchesQuery(_ source: (course: UserCourseSummary, query: String?)) -> Bool {
+      guard let query = catalogText(source.query) else { return true }
+      return source.course.title.localizedCaseInsensitiveContains(query)
+        || source.course.description?.localizedCaseInsensitiveContains(query) == true
+    }
+
+    private func makeUserCourseSummary(_ course: Course) -> UserCourseSummary {
+      UserCourseSummary(
+        description: course.description,
+        id: course.id,
+        imageURL: course.imageURL,
+        language: course.language,
+        organization: course.organization,
+        slug: course.slug,
+        title: course.title)
+    }
   }
 
   private actor UITestCourseCatalogAPI: CourseCatalogAPIClient {

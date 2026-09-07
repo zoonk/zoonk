@@ -4,6 +4,7 @@ struct AppView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(SessionStore.self) private var session
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
+  @State private var coursesScope = CoursesScope.all
   @State private var isAccountPresented: Bool
   @State private var navigationPaths: [AppSection: NavigationPath] = [:]
   @State private var selectedSection = AppSection.home
@@ -19,6 +20,7 @@ struct AppView: View {
           NavigationStack(path: navigationPath(for: section)) {
             section.tabContent(
               actions: AppSectionActions(
+                coursesScope: $coursesScope,
                 presentAccount: { isAccountPresented = true },
                 selectSection: { selectedSection = $0 })
             )
@@ -40,9 +42,7 @@ struct AppView: View {
     }
     .tabViewStyle(.sidebarAdaptable)
     .sheet(isPresented: $isAccountPresented) {
-      AccountSheet {
-        selectedSection = .courses
-      }
+      AccountSheet(openMyCourses: showMyCourses)
     }
     .task {
       await session.restore()
@@ -107,6 +107,12 @@ struct AppView: View {
       set: { navigationPaths[section] = $0 })
   }
 
+  private func showMyCourses() {
+    navigationPaths[.courses] = NavigationPath()
+    coursesScope = .mine
+    selectedSection = .courses
+  }
+
   /// Rechecks iCloud Keychain whenever the app returns to the foreground so a login or logout from another Apple device updates this UI without a process restart.
   private func reconcileSessionWhenActive(_ scenePhase: ScenePhase) {
     guard scenePhase == .active else {
@@ -138,6 +144,7 @@ private struct AdaptiveNavigationTitle: ViewModifier {
         language: currentCourseCatalogLanguage(),
         session: session)
     )
+    .environment(MyCoursesStore(api: MyCoursesAPI(clients: clients), session: session))
     .environment(ProgressStore(api: ProgressAPI(clients: clients), session: session))
     .environment(session)
     .environment(AppStoreSubscriptionStore.live())

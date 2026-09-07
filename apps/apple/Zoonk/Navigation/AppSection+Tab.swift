@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct AppSectionActions {
+  let coursesScope: Binding<CoursesScope>
   let presentAccount: () -> Void
   let selectSection: (AppSection) -> Void
 }
@@ -15,9 +16,10 @@ extension AppSection {
     case .newCourse:
       NewCourseView()
     case .courses:
-      CoursesView {
-        actions.selectSection(.newCourse)
-      }
+      CoursesView(
+        scope: actions.coursesScope,
+        onCreateCourse: { actions.selectSection(.newCourse) },
+        onSignIn: actions.presentAccount)
     case .progress:
       ProgressOverviewView(onSignIn: actions.presentAccount)
     }

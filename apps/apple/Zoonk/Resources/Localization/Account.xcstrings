@@ -262,35 +262,6 @@
         }
       }
     },
-    "Browse courses" : {
-      "comment" : "Account option that opens the public course catalog",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurse entdecken"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Explorar cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parcourir les cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver cursos"
-          }
-        }
-      }
-    },
     "By continuing, you agree to the Zoonk Terms of Service and Privacy Policy." : {
       "comment" : "Legal agreement shown below sign-in methods",
       "localizations" : {
@@ -1244,6 +1215,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gerenciada pelo Google Play"
+          }
+        }
+      }
+    },
+    "My courses" : {
+      "comment" : "Account option that opens the learner's enrolled courses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meine Kurse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mes cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meus cursos"
           }
         }
       }
