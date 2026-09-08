@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "navigation_courses": "67712d7098ee3f11f6c26c56a2f3213e967d47208162be8610a6e8b772571152",
+  "navigation_home": "64557015e6a1bebd1556e2a421ca4f4508814c2a161648bb1a18e5c6d85db627",
+  "navigation_new": "2056ffb89d945f32b58e77f8c98b5dfc35c06c2bdf775d9de3c83ce4409d7643",
+  "navigation_progress": "e46d4109d585cfa1f5b905db41d2d69a1650d76feaac822d3b6e78a2a34c93eb",
+  "placeholder_courses": "d3c7972d4d9b60d4bd4e2fad91031669a64cbd70d98ab0d311e0dc9faeace265",
+  "placeholder_home": "67882d9e90934afe15fb82d45bc7de2c638935134185e664da1e3ceb06205865",
+  "placeholder_new_course": "e736694984efe7eba5e4bf96441deca7df99fc567944e7b52ef9d1f0ddf2f8c0",
+  "placeholder_progress": "3aaced153981d397f0c4f120de17cc1e81a9cc9e23d9e4a998e0038b47b68597"
+}
+-->
+<resources>
+    <string name="navigation_home">Início</string>
+    <string name="navigation_new">Novo</string>
+    <string name="navigation_courses">Cursos</string>
+    <string name="navigation_progress">Progresso</string>
+    <string name="placeholder_home">Tela inicial</string>
+    <string name="placeholder_new_course">Tela de novo curso</string>
+    <string name="placeholder_courses">Tela de cursos</string>
+    <string name="placeholder_progress">Tela de progresso</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "navigation_courses": "219e663f0841152e77bdaaecced7d1b0e132e42fa273c3cba2cfcec6d7d3fcc8",
+  "navigation_home": "a6f2a6ed3d05a85a051afaf10cfb4166e09f8105251b92263677770401ceec42",
+  "navigation_new": "f3cf68cea2e228c82838003c815b60ea72fee967f7e6fb9aab84b98199745050",
+  "navigation_progress": "eaffb87e3390248b8186e20ce1a198d74a9c2c257a62a1339425c93a1c54e4c8",
+  "placeholder_courses": "b51d486959510d423c2917adc1c61f9c5aa26449763e4444ef2c0d8cb9cb0dd0",
+  "placeholder_home": "d659a10c1651fd608164b7af998c4a09391a1f3dd71520e1c8462a9ce36d2462",
+  "placeholder_new_course": "2d17ccaa6bd58bb8b2ad1dd7ba4782f72e654290fd8a0a826891dbc355c109f5",
+  "placeholder_progress": "ba80722106789baded425e021ae3ac6b9eb60fe284df182bd72eb834ca356c95"
+}
+-->
+<resources>
+    <string name="navigation_home">Accueil</string>
+    <string name="navigation_new">Nouveau</string>
+    <string name="navigation_courses">Cours</string>
+    <string name="navigation_progress">Progrès</string>
+    <string name="placeholder_home">Écran d’accueil</string>
+    <string name="placeholder_new_course">Écran de création d’un cours</string>
+    <string name="placeholder_courses">Écran des cours</string>
+    <string name="placeholder_progress">Écran de progression</string>
+</resources>

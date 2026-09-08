@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="48dp"
+        android:height="48dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/launcher_background" />
+        </shape>
+    </item>
+    <item
+        android:width="48dp"
+        android:height="48dp"
+        android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>

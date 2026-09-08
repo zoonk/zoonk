@@ -1,0 +1,12 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "i18n:lint": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/utils/src/locale.ts",
+        "$TURBO_ROOT$/packages/i18n/src/define-eloqnt-config.ts"
+      ]
+    }
+  }
+}

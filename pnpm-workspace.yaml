@@ -22,6 +22,7 @@ catalog:
   "@dnd-kit/sortable": 10.0.0
   "@dnd-kit/utilities": 3.2.2
   "@eloqnt/cli": 0.6.25
+  "@eloqnt/format-android-xml": 0.0.8
   "@eloqnt/format-apple-xcstrings": 0.0.6
   "@mdx-js/loader": 3.1.1
   "@mdx-js/react": 3.1.1
