@@ -1,5 +1,5 @@
 import createMDX from "@next/mdx";
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";

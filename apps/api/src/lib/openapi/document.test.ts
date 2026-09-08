@@ -581,7 +581,7 @@ describe("OpenAPI document", () => {
 
     expect(document.components.schemas.LessonQuestion).toMatchObject({
       properties: {
-        answer: { anyOf: [{ type: "string" }, { type: "null" }] },
+        answer: { type: ["string", "null"] },
         id: { format: "uuid" },
         status: { enum: ["pending", "running", "completed", "failed"] },
       },

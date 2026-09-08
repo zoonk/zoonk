@@ -27,6 +27,7 @@ function createImageResult() {
   };
 
   return {
+    calls: [],
     image,
     images: [image],
     providerMetadata: {},

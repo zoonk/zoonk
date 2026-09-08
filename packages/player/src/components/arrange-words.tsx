@@ -136,29 +136,25 @@ export function ArrangeWordsInteraction({
   stepId: string;
   wordBankOptions: WordBankOption[];
 }) {
-  const idCounter = useRef(0);
   const { trigger } = useWebHaptics();
 
   const [placedWords, setPlacedWords] = useState<PlacedWordWithBankIndex[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
-      return result.answer.arrangedWords.map((word) => {
-        const id = String(idCounter.current);
-        idCounter.current += 1;
-
-        return {
-          audioUrl: null,
-          id,
-          pronunciation: null,
-          romanization: null,
-          translation: null,
-          word,
-          wordBankIndex: null,
-        };
-      });
+      return result.answer.arrangedWords.map((word, index) => ({
+        audioUrl: null,
+        id: String(index),
+        pronunciation: null,
+        romanization: null,
+        translation: null,
+        word,
+        wordBankIndex: null,
+      }));
     }
 
     return [];
   });
+
+  const idCounter = useRef(placedWords.length);
 
   const { play } = useWordAudio({ preloadUrls: wordBankOptions.map((option) => option.audioUrl) });
 

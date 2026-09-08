@@ -31,8 +31,8 @@
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.7.3",
-    "jose": "6.2.9",
-    "stripe": "22.5.0",
+    "jose": "6.2.12",
+    "stripe": "22.6.1",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import { type TimeScorePattern } from "@zoonk/core/progress/get-score-patterns";
 import { formatMetricPercent } from "@zoonk/utils/number";
-import { type LucideIcon, Moon, MoonStar, Sun, Sunrise } from "lucide-react";
+import { Moon, MoonStar, Sun, Sunrise } from "lucide-react";
 import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { getScoreTimePeriodRange } from "./_utils/time-period";
 import {
@@ -12,11 +12,6 @@ import {
 
 const DAY_RHYTHM_TITLE_ID = "day-rhythm-title";
 const TIME_PERIOD_ICONS = [Moon, Sunrise, Sun, MoonStar] as const;
-
-/** Keeps each fixed daypart paired with a familiar icon from the app's icon set. */
-function getTimePeriodIcon(period: number): LucideIcon {
-  return TIME_PERIOD_ICONS.at(period) ?? Moon;
-}
 
 /**
  * Renders one daypart with its localized clock range and honest sample size.
@@ -38,7 +33,7 @@ async function DayRhythmItem({
   const hasAnswers = pattern.totalAnswers > 0;
   const score = formatMetricPercent({ format, value: pattern.score });
   const timeRange = getScoreTimePeriodRange({ locale, period: pattern.period });
-  const Icon = getTimePeriodIcon(pattern.period);
+  const Icon = TIME_PERIOD_ICONS[pattern.period] ?? Moon;
 
   return (
     <article

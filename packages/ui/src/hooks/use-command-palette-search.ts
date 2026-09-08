@@ -65,7 +65,6 @@ export function useCommandPaletteSearch<TResults>(options: {
     requestIdRef.current += 1;
 
     if (trimmedQuery.length < minQueryLength) {
-      setResults(emptyResults);
       return;
     }
 
@@ -90,5 +89,15 @@ export function useCommandPaletteSearch<TResults>(options: {
     return () => globalThis.clearTimeout(timeoutId);
   }, [query, debounceMs, minQueryLength, onSearch, emptyResults]);
 
-  return { closePalette, isOpen, isPending, onSelectItem, open, query, results, setQuery, toggle };
+  return {
+    closePalette,
+    isOpen,
+    isPending,
+    onSelectItem,
+    open,
+    query,
+    results: query.trim().length < minQueryLength ? emptyResults : results,
+    setQuery,
+    toggle,
+  };
 }

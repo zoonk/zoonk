@@ -32,6 +32,7 @@ export function MetricPillLinks() {
       block: "nearest",
       inline: "center",
     });
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- A route change assigns the active DOM ref; scrolling must run again for the new segment.
   }, [segment]);
 
   return items.map((item) => (

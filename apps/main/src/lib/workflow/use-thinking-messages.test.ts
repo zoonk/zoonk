@@ -24,7 +24,7 @@ const countingGenerators = {
 function advanceTicks(count: number) {
   Array.from({ length: count }).forEach(() => {
     act(() => {
-      vi.advanceTimersByTime(3000);
+      vi.advanceTimersToNextTimer();
     });
   });
 }
@@ -64,7 +64,7 @@ describe(useThinkingMessages, () => {
     expect(result.current).toStrictEqual({ phaseA: "Analyzing...", phaseB: "Loading..." });
 
     act(() => {
-      vi.advanceTimersByTime(3000);
+      vi.advanceTimersToNextTimer();
     });
 
     expect(result.current).toStrictEqual({ phaseA: "Planning...", phaseB: "Processing..." });
@@ -99,13 +99,17 @@ describe(useThinkingMessages, () => {
     );
 
     act(() => {
-      vi.advanceTimersByTime(3000);
+      vi.advanceTimersToNextTimer();
     });
 
     expect(result.current).toStrictEqual({ phaseA: "Planning..." });
 
     rerender({ active: [] });
     expect(result.current).toStrictEqual({});
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
 
     rerender({ active: ["phaseA"] });
     expect(result.current).toStrictEqual({ phaseA: "Analyzing..." });
@@ -128,7 +132,7 @@ describe(useThinkingMessages, () => {
     expect(result.current).toStrictEqual({ lessons: "Exploring..." });
 
     act(() => {
-      vi.advanceTimersByTime(3000);
+      vi.advanceTimersToNextTimer();
     });
 
     expect(result.current).toStrictEqual({ lessons: "Lesson 1" });

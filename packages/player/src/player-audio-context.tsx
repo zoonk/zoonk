@@ -1,7 +1,15 @@
 "use client";
 
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "./player-shortcuts";
 import { useWordAudio } from "./use-word-audio";
 
@@ -32,7 +40,7 @@ export function PlayerAudioProvider({
   children: React.ReactNode;
   onAutoPlayAudioEnabled: () => void;
 }) {
-  const [hasHandledAudioPrompt, setHasHandledAudioPrompt] = useState(false);
+  const hasHandledAudioPromptRef = useRef(false);
   const [playingAudioUrl, setPlayingAudioUrl] = useState<string | null>(null);
 
   const { pause, play } = useWordAudio({
@@ -55,7 +63,7 @@ export function PlayerAudioProvider({
       shouldEnableAutoplay: boolean;
       targetAudioUrl: string;
     }) => {
-      setHasHandledAudioPrompt(true);
+      hasHandledAudioPromptRef.current = true;
 
       const playbackStatus = await play(targetAudioUrl);
 
@@ -77,7 +85,7 @@ export function PlayerAudioProvider({
     (targetAudioUrl: string) => {
       if (playingAudioUrl === targetAudioUrl) {
         pause();
-        setHasHandledAudioPrompt(true);
+        hasHandledAudioPromptRef.current = true;
         setPlayingAudioUrl(null);
         return;
       }
@@ -90,12 +98,17 @@ export function PlayerAudioProvider({
   usePlayerAudioKeyboardShortcut({ audioUrl, onToggleAudio: toggleAudio });
 
   useEffect(() => {
-    if (!audioUrl || !autoPlayAudio || hasHandledAudioPrompt || isPlaying) {
+    if (!audioUrl || !autoPlayAudio || hasHandledAudioPromptRef.current) {
       return;
     }
 
     void startAudio({ shouldEnableAutoplay: false, targetAudioUrl: audioUrl });
-  }, [audioUrl, autoPlayAudio, hasHandledAudioPrompt, isPlaying, startAudio]);
+
+    /** Cleanup releases the audio source, so a new effect setup must be able to try again. */
+    return () => {
+      hasHandledAudioPromptRef.current = false;
+    };
+  }, [audioUrl, autoPlayAudio, startAudio]);
 
   const value = useMemo(
     () => ({ audioUrl, isPlaying, toggleAudio }),

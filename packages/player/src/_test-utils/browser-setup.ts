@@ -36,12 +36,13 @@ const MockAudio = vi.fn(function MockAudio(this: MockAudioInstance) {
 });
 
 /**
- * Browser autoplay rules are represented by play() rejecting. Tests use this
- * helper for the next playback attempt so the player fallback stays covered
- * without depending on a real browser policy decision.
+ * Native play() can reject because of autoplay policy or effect cleanup.
+ * Tests control that media boundary while exercising the real player lifecycle.
  */
-export function mockNextAudioPlayFailure() {
-  playAudio.mockRejectedValueOnce(new DOMException("Autoplay blocked", "NotAllowedError"));
+export function mockNextAudioPlayFailure(
+  error = new DOMException("Autoplay blocked", "NotAllowedError"),
+) {
+  playAudio.mockRejectedValueOnce(error);
 }
 
 beforeAll(() => {

@@ -54,11 +54,11 @@ function getRandomInterval(): number {
   return MIN_INTERVAL + Math.random() * (MAX_INTERVAL - MIN_INTERVAL);
 }
 
-type ThinkingState = { tick: number; indices: Record<string, number> };
+type ThinkingState = { indices: Record<string, number> };
 
 type ThinkingAction = { type: "advance"; phases: readonly string[] } | { type: "reset" };
 
-const INITIAL_STATE: ThinkingState = { indices: {}, tick: 0 };
+const INITIAL_STATE: ThinkingState = { indices: {} };
 
 function thinkingReducer(state: ThinkingState, action: ThinkingAction): ThinkingState {
   if (action.type === "reset") {
@@ -69,7 +69,6 @@ function thinkingReducer(state: ThinkingState, action: ThinkingAction): Thinking
     indices: Object.fromEntries(
       action.phases.map((phase) => [phase, (state.indices[phase] ?? 0) + 1]),
     ),
-    tick: state.tick + 1,
   };
 }
 
@@ -98,14 +97,15 @@ export function useThinkingMessages<TPhase extends string>(
       return;
     }
 
-    const timeout = setTimeout(() => {
+    function tick() {
       advanceMessages();
-    }, getRandomInterval());
+      timeout = setTimeout(tick, getRandomInterval());
+    }
 
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [hasActive, state.tick]);
+    let timeout = setTimeout(tick, getRandomInterval());
+
+    return () => clearTimeout(timeout);
+  }, [hasActive]);
 
   if (!hasActive) {
     return {};

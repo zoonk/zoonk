@@ -40,52 +40,41 @@ export function useInfiniteList<TItem>({
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoadError, setHasLoadError] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialItems.length >= limit);
-  const lastKeyRef = useRef(getLastKey(initialItems, getKey));
+  const loadInFlight = useRef(false);
 
   /**
    * Load-more requests are opportunistic background fetches. Network failures
    * should stop auto-loading instead of escaping as global promise rejections.
    */
   const loadMore = useCallback(async () => {
-    const cursor = lastKeyRef.current;
+    const cursor = getLastKey(items, getKey);
 
-    if (cursor === null) {
+    if (cursor === null || loadInFlight.current) {
       return;
     }
 
+    loadInFlight.current = true;
     setIsLoading(true);
 
-    try {
-      const { data: newItems, error } = await safeAsync(() => fetchMore(cursor));
+    const { data: newItems, error } = await safeAsync(() => fetchMore(cursor));
+    loadInFlight.current = false;
+    setIsLoading(false);
 
-      if (error) {
-        setHasLoadError(true);
-        return;
-      }
-
-      if (newItems.length < limit) {
-        setHasNextPage(false);
-      }
-
-      setItems((prev) => {
-        // Dedupe by key to prevent duplicates from race conditions
-        const existingKeys = new Set(prev.map((item) => getKey(item)));
-        const uniqueNewItems = newItems.filter((item) => !existingKeys.has(getKey(item)));
-
-        const newLastKey = getLastKey(uniqueNewItems, getKey);
-
-        if (newLastKey !== null) {
-          lastKeyRef.current = newLastKey;
-        }
-
-        return [...prev, ...uniqueNewItems];
-      });
-
-      setHasLoadError(false);
-    } finally {
-      setIsLoading(false);
+    if (error) {
+      setHasLoadError(true);
+      return;
     }
-  }, [fetchMore, getKey, limit]);
+
+    setHasNextPage(newItems.length >= limit);
+
+    setItems((prev) => {
+      const existingKeys = new Set(prev.map((item) => getKey(item)));
+      const uniqueNewItems = newItems.filter((item) => !existingKeys.has(getKey(item)));
+      return [...prev, ...uniqueNewItems];
+    });
+
+    setHasLoadError(false);
+  }, [fetchMore, getKey, items, limit]);
 
   /**
    * A failed background load should be user-recoverable without reloading the

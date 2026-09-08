@@ -32,14 +32,14 @@
     "katex": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "streamdown": "2.5.0",
+    "streamdown": "2.6.0",
     "web-haptics": "0.0.6"
   },
   "devDependencies": {
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "@vitest/browser-playwright": "4.1.10",
+    "@vitest/browser-playwright": "5.0.0",
     "@zoonk/i18n": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "jsdom": "catalog:",

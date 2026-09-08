@@ -1,12 +1,9 @@
 "use client";
 
 import { authClient } from "@zoonk/auth/client";
-import {
-  USERNAME_MIN_LENGTH,
-  isUsernameSyntaxValid,
-  normalizeUsername,
-} from "@zoonk/auth/username-rules";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { isUsernameSyntaxValid, normalizeUsername } from "@zoonk/auth/username-rules";
+import { safeAsync } from "@zoonk/utils/error";
+import { useCallback, useEffect, useState } from "react";
 
 export type UsernameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
 
@@ -21,9 +18,11 @@ const DEBOUNCE_MS = 300;
 export function useUsernameAvailability(currentUsername?: string | null) {
   const normalizedCurrentUsername = currentUsername ? normalizeUsername(currentUsername) : "";
   const [username, setUsername] = useState(normalizedCurrentUsername);
-  const [status, setStatus] = useState<UsernameStatus>("idle");
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
-  const abortRef = useRef<AbortController>(null);
+
+  const [availability, setAvailability] = useState<{
+    username: string;
+    status: UsernameStatus;
+  } | null>(null);
 
   // Render-time state adjustment: sync username when currentUsername
   // arrives from async session without an extra render pass.
@@ -37,74 +36,74 @@ export function useUsernameAvailability(currentUsername?: string | null) {
     }
   }
 
-  const setNormalizedUsername = useCallback((value: string) => {
-    setUsername(normalizeUsername(value));
-  }, []);
+  const setNormalizedUsername = useCallback(
+    (value: string) => {
+      const normalized = normalizeUsername(value);
 
-  const checkAvailability = useCallback(
-    async (value: string) => {
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-
-      if (!isUsernameSyntaxValid(value)) {
-        setStatus("invalid");
+      if (normalized === username) {
         return;
       }
 
-      if (value === normalizedCurrentUsername) {
-        setStatus("idle");
-        return;
-      }
-
-      setStatus("checking");
-
-      try {
-        const { data, error } = await authClient.isUsernameAvailable({
-          fetchOptions: { signal: controller.signal },
-          username: value,
-        });
-
-        if (error) {
-          setStatus("taken");
-          return;
-        }
-
-        setStatus(data?.available ? "available" : "taken");
-      } catch {
-        // When abort() is called, better-fetch throws an AbortError
-        // instead of returning { error }. Silently ignore it — the
-        // newer request will handle the result.
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setStatus("idle");
-      }
+      setUsername(normalized);
+      setAvailability(null);
     },
-    [normalizedCurrentUsername],
+    [username],
   );
 
   useEffect(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    if (!username || username.length < USERNAME_MIN_LENGTH) {
-      setStatus(username.length > 0 ? "invalid" : "idle");
+    if (!isUsernameSyntaxValid(username) || username === normalizedCurrentUsername) {
       return;
     }
 
-    timerRef.current = setTimeout(() => {
-      void checkAvailability(username);
+    const controller = new AbortController();
+
+    const timeout = setTimeout(async () => {
+      const { data: response, error } = await safeAsync(() =>
+        authClient.isUsernameAvailable({ fetchOptions: { signal: controller.signal }, username }),
+      );
+
+      if (controller.signal.aborted) {
+        return;
+      }
+
+      /** A transport failure leaves server validation in charge on submit. */
+      if (error) {
+        setAvailability({ status: "idle", username });
+        return;
+      }
+
+      const available = !response.error && response.data?.available;
+      setAvailability({ status: available ? "available" : "taken", username });
     }, DEBOUNCE_MS);
 
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+      clearTimeout(timeout);
+      controller.abort();
     };
-  }, [username, checkAvailability]);
+  }, [username, normalizedCurrentUsername]);
+
+  const status = getUsernameStatus({ availability, normalizedCurrentUsername, username });
 
   return { setUsername: setNormalizedUsername, status, username };
+}
+
+/** Validation belongs to the current input, including while its request is still debouncing. */
+function getUsernameStatus({
+  availability,
+  normalizedCurrentUsername,
+  username,
+}: {
+  availability: { username: string; status: UsernameStatus } | null;
+  normalizedCurrentUsername: string;
+  username: string;
+}): UsernameStatus {
+  if (!username || username === normalizedCurrentUsername) {
+    return "idle";
+  }
+
+  if (!isUsernameSyntaxValid(username)) {
+    return "invalid";
+  }
+
+  return availability?.username === username ? availability.status : "checking";
 }

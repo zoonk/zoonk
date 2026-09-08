@@ -199,6 +199,16 @@ describe(useAnimatedProgress, () => {
     rerender({ isActive: false, realProgress: 30, targetProgress: 70 });
 
     expect(result.current).toBe(30);
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+
+    expect(result.current).toBe(30);
+
+    rerender({ isActive: true, realProgress: 30, targetProgress: 70 });
+
+    expect(result.current).toBe(30);
   });
 
   it("does not drift when target equals real progress", () => {

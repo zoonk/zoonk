@@ -107,6 +107,7 @@ export function renderPlayer({
         <PlayerShell />
       </PlayerQuestionSupportContext>
     </PlayerProvider>,
+    { reactStrictMode: true },
   );
 }
 
