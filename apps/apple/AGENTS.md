@@ -12,6 +12,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Preserve Dynamic Type, VoiceOver semantics, sufficient contrast, system spacing, safe areas, keyboard behavior, focus behavior, and reduced-motion settings by relying on native components and avoiding fixed-size assumptions.
 - Keep grouped controls visually consistent in height, alignment, typography, shape, and prominence while still allowing localized labels and Dynamic Type to expand when needed.
 - For dense visualizations, separate visible mark size from the interaction surface. Make data explorable with simple touch, pointer, keyboard, and VoiceOver interactions instead of turning tiny marks into tiny controls.
+- When using an SF Symbol, first check what symbol is used for this feature in the `main` app. Then, choose the closest SF Symbol. Symbols/icons should be consistent across platforms.
 
 ## Platform Architecture
 

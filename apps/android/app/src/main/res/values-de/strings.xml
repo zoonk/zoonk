@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "navigation_courses": "3503391c67799ee44bd9bae7a86d44f744f703e8e6b381629a15d268e0ec2649",
+  "navigation_home": "7442f4129488ceb699d3eaca7ab0642714a54d2a7b61685980a11aa9b426ae8d",
+  "navigation_new": "56af1792d08bdc98221fa712fe5e5d4dea7b0a9236da4e953a4dc70903d9f6e7",
+  "navigation_progress": "f3a5c7e607eb600c69468487007fcc61874609f054b9f80758c918da2e44d394",
+  "placeholder_courses": "b2983415c2320c18eb5919f11ccd90434d25c346b3a225194234ee23322365db",
+  "placeholder_home": "139c3e8bbaff3c8bd5e26cd4256c6b768449fd78ff6386b3d6331549ebacc6d6",
+  "placeholder_new_course": "f6c8a24dfe95557adff75c10963853c8c18455b4a2f3a0bd36d48e53a2ac9187",
+  "placeholder_progress": "d0110b0967dd8aee67dbcd7e2c58142749f37c76e03dfa22c957b6ce4629975b"
+}
+-->
+<resources>
+    <string name="navigation_home">Start</string>
+    <string name="navigation_new">Neu</string>
+    <string name="navigation_courses">Kurse</string>
+    <string name="navigation_progress">Fortschritt</string>
+    <string name="placeholder_home">Startseite</string>
+    <string name="placeholder_new_course">Seite für einen neuen Kurs</string>
+    <string name="placeholder_courses">Kursübersicht</string>
+    <string name="placeholder_progress">Fortschrittsübersicht</string>
+</resources>

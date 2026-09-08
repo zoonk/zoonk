@@ -1,0 +1,23 @@
+{
+  "name": "android",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "i18n:lint": "node scripts/i18n/check-catalogs.mts && eloqnt lint --strict",
+    "i18n": "node scripts/i18n/translate.mts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@eloqnt/cli": "catalog:",
+    "@eloqnt/format-android-xml": "catalog:",
+    "@types/node": "catalog:",
+    "@zoonk/i18n": "workspace:*",
+    "@zoonk/tsconfig": "workspace:*",
+    "@zoonk/utils": "workspace:*",
+    "fast-xml-builder": "1.3.1",
+    "fast-xml-parser": "5.11.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

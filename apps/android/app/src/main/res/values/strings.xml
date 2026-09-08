@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Zoonk</string>
+    <string name="navigation_home">Home</string>
+    <string name="navigation_new">New</string>
+    <string name="navigation_courses">Courses</string>
+    <string name="navigation_progress">Progress</string>
+    <string name="placeholder_home">Home screen</string>
+    <string name="placeholder_new_course">New course screen</string>
+    <string name="placeholder_courses">Courses screen</string>
+    <string name="placeholder_progress">Progress screen</string>
+</resources>
