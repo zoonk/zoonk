@@ -24,7 +24,7 @@
 ### Prerequisites
 
 - Node.js v24
-- pnpm v11
+- pnpm v12
 - PostgreSQL v18
 
 We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm versions.

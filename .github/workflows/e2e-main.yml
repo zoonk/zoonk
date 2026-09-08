@@ -14,9 +14,6 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  NODE_VERSION: 24
-
 jobs:
   e2e:
     runs-on: ubuntu-latest
@@ -70,19 +67,11 @@ jobs:
             ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-
             ${{ runner.os }}-nextjs-main-
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v2
         with:
-          version: 11.21.0
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
+          runtime: node@24
+          cache: true
 
       - name: Setup database
         run: pnpm --filter @zoonk/db db:setup:e2e
