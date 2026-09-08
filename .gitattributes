@@ -1,0 +1,39 @@
+# Dependency and tool lockfiles.
+pnpm-lock.yaml linguist-generated=true
+skills-lock.json linguist-generated=true
+Package.resolved linguist-generated=true
+packages/db/src/prisma/migrations/migration_lock.toml linguist-generated=true
+
+# Evaluation outputs, scores, battle rankings, and comparison exports.
+apps/evals/eval-results/**/*.json linguist-generated=true
+
+# Web catalogs extracted by next-intl and translated by Eloqnt.
+apps/*/messages/*.po linguist-generated=true
+packages/*/messages/*.po linguist-generated=true
+
+# Apple catalogs extracted by Xcode and translated by Eloqnt.
+apps/apple/Zoonk/Resources/Localization/*.xcstrings linguist-generated=true
+
+# Apple API contract exported by pnpm openapi:generate.
+apps/apple/Zoonk/openapi.json linguist-generated=true
+
+# Xcode's generated workspace metadata. The project and shared schemes are source configuration.
+apps/apple/Zoonk.xcodeproj/project.xcworkspace/contents.xcworkspacedata linguist-generated=true
+
+# Android catalogs translated by Eloqnt; values/strings.xml is the authored English source.
+# Match language codes without hiding configuration overrides such as values-night or values-land.
+apps/android/app/src/main/res/values-[a-z][a-z]/strings.xml linguist-generated=true
+
+# Gradle wrapper code. Keep wrapper properties and JVM criteria visible as build configuration.
+apps/android/gradlew linguist-generated=true
+apps/android/gradlew.bat linguist-generated=true
+apps/android/gradle/wrapper/gradle-wrapper.jar linguist-generated=true
+
+# External skills and their Claude aliases are managed by upstream installations.
+# Explicit exceptions preserve Zoonk-owned skills, including symlinks and nested files.
+.agents/skills/** linguist-generated=true
+.agents/skills/zoonk-* linguist-generated=false
+.agents/skills/zoonk-*/** linguist-generated=false
+.claude/skills/** linguist-generated=true
+.claude/skills/zoonk-* linguist-generated=false
+.claude/skills/zoonk-*/** linguist-generated=false
