@@ -144,7 +144,7 @@ describe("player browser integration: vocabulary", () => {
       .not.toBeInTheDocument();
   });
 
-  it("automatically plays the next vocabulary prompt after audio is started", async () => {
+  it("autoplays the next prompt after Strict Mode interrupts the first playback attempt", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "vocabulary",
@@ -186,6 +186,8 @@ describe("player browser integration: vocabulary", () => {
       .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
 
+    /** Native audio rejects an in-flight play() when Strict Mode cleanup releases its source. */
+    mockNextAudioPlayFailure(new DOMException("Playback interrupted by cleanup", "AbortError"));
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
 
     const secondCard = page.getByRole("region", { name: /vocabulary: Adios/iu });

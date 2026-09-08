@@ -3,7 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type TouchEvent, useEffect, useRef } from "react";
+import { type TouchEvent, useCallback, useEffect, useRef } from "react";
 import { ContextualQuestionAction } from "./lesson-question-actions";
 import { PlayAudioButton } from "./play-audio-button";
 import { NavigableStepLayout } from "./step-layouts";
@@ -220,16 +220,16 @@ export function SwipeNavigableStepLayout({
    * release decision. Keeping drag state out of React avoids the old
    * "everything moves with my finger" feeling the user called out.
    */
-  function resetSwipeGesture() {
+  const resetSwipeGesture = useCallback(() => {
     gestureRef.current = null;
-  }
+  }, []);
 
   /**
    * Each touch gesture installs temporary window listeners so fast swipes still
    * resolve even if the finger ends outside the player bounds. Removing them as
    * soon as the gesture settles avoids stacking duplicate listeners.
    */
-  function detachWindowTouchListeners() {
+  const detachWindowTouchListeners = useCallback(() => {
     const endHandler = endHandlerRef.current;
 
     if (endHandler) {
@@ -243,7 +243,7 @@ export function SwipeNavigableStepLayout({
       globalThis.removeEventListener("touchcancel", cancelHandler);
       cancelHandlerRef.current = null;
     }
-  }
+  }, []);
 
   /**
    * Swipes should work anywhere in the read-only content, not only if the touch
@@ -343,7 +343,7 @@ export function SwipeNavigableStepLayout({
       detachWindowTouchListeners();
       resetSwipeGesture();
     },
-    [],
+    [detachWindowTouchListeners, resetSwipeGesture],
   );
 
   return (

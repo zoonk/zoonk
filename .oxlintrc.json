@@ -81,11 +81,13 @@
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
     "react/forbid-component-props": "off",
+    // Unsupported compiler syntax reports skipped optimizations, not incorrect code.
+    "react/todo": "off",
     "react/jsx-filename-extension": ["error", { "extensions": ["tsx"] }],
     "react/jsx-handler-names": "off",
     "react/jsx-no-literals": [
       "error",
-      { "allowedStrings": [".", "@", "Enter", "Esc", "R", "zoonk.com"] }
+      { "allowedStrings": ["%", ".", "@", "Enter", "Esc", "R", "zoonk.com", "|", "−"] }
     ],
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],

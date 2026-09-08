@@ -46,9 +46,8 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
+          # Frozen resolution needs a cache containing this lockfile's revisions.
           key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-
 
       - name: Cache Xcode compilations
         uses: actions/cache@v6

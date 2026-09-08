@@ -43,6 +43,7 @@ export function useLessonPlayerHandlers({
   useEffect(() => {
     hasRequestedNextLessonPreload.current = false;
     hasTrackedSecondStep.current = false;
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Reset per-lesson tracking and preloading when navigation changes the lesson.
   }, [lesson.id]);
 
   useTrackLessonStarted({

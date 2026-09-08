@@ -216,18 +216,26 @@ function FieldDynamicDescription({
   className?: string;
   successMessage?: string | null;
 }) {
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [messageState, setMessageState] = useState({
+    message: successMessage,
+    visible: Boolean(successMessage),
+  });
+
+  if (successMessage !== messageState.message) {
+    setMessageState({ message: successMessage, visible: Boolean(successMessage) });
+  }
+
+  const showSuccess = messageState.visible;
 
   useEffect(() => {
     if (successMessage) {
-      setShowSuccess(true);
-
-      const timer = setTimeout(() => setShowSuccess(false), SUCCESS_DISPLAY_TIME);
+      const timer = setTimeout(
+        () => setMessageState({ message: successMessage, visible: false }),
+        SUCCESS_DISPLAY_TIME,
+      );
 
       return () => clearTimeout(timer);
     }
-
-    setShowSuccess(false);
   }, [successMessage]);
 
   return (

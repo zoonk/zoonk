@@ -41,12 +41,12 @@
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "knip": "6.32.2",
-    "oxfmt": "0.63.0",
-    "oxlint": "1.78.0",
+    "knip": "6.35.0",
+    "oxfmt": "0.67.0",
+    "oxlint": "1.82.0",
     "oxlint-tsgolint": "7.0.2001",
-    "portless": "0.15.5",
-    "turbo": "2.10.10",
+    "portless": "0.15.6",
+    "turbo": "2.10.12",
     "typescript": "catalog:"
   },
   "engines": {

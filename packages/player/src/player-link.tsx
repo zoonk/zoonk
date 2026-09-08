@@ -15,5 +15,6 @@ type PlayerLinkProps = Omit<PlayerLinkComponentProps, "href"> & { href: PlayerRo
 export function PlayerLink({ href, prefetch = true, ...props }: PlayerLinkProps) {
   const LinkComponent = usePlayerLinkComponent();
 
+  // oxlint-disable-next-line react/static-components -- The host supplies a stable module-level Link through context; this hook does not create a component.
   return <LinkComponent {...props} href={href} prefetch={prefetch} />;
 }

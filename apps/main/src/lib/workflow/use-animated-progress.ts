@@ -82,6 +82,11 @@ export function useAnimatedProgress({
   const estimatedDurationRef = useRef(estimatedDurationMs);
   const targetProgressRef = useRef(targetProgress);
 
+  /** Reset before a retry can render the previous run's inflated percentage. */
+  if (!isActive && display !== realProgress) {
+    setDisplay(realProgress);
+  }
+
   useEffect(() => {
     const progressWindowChanged = hasProgressWindowChanged({
       estimatedDurationMs,
@@ -102,7 +107,6 @@ export function useAnimatedProgress({
 
   useEffect(() => {
     if (!isActive) {
-      setDisplay(realProgress);
       highWaterRef.current = realProgress;
       startTimeRef.current = null;
       cancelAnimationFrame(rafRef.current);

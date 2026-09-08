@@ -87,6 +87,32 @@ test.describe("Profile settings page", () => {
     ).toBeVisible();
   });
 
+  test("clears previous availability while a new username is debouncing", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.clock.install();
+    await authenticatedPage.goto("/profile");
+
+    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/iu });
+    const availableUsername = `available${Date.now().toString().slice(-8)}`;
+    await usernameInput.fill(availableUsername);
+    await expect(authenticatedPage.getByText(/is available/iu)).toBeVisible();
+
+    /** Hold the debounce so a previous result cannot masquerade as the new input's validation. */
+    await authenticatedPage.clock.pauseAt(new Date(Date.now() + 1000));
+    await usernameInput.fill(`${availableUsername}next`);
+
+    await expect(authenticatedPage.getByText(/checking/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/is available/iu)).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /save changes/iu })).toBeDisabled();
+
+    await usernameInput.fill(availableUsername);
+
+    await expect(authenticatedPage.getByText(/checking/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/is available/iu)).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /save changes/iu })).toBeDisabled();
+  });
+
   test("shows error for whitespace-only name", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/profile");
 

@@ -23,14 +23,14 @@ const lessonKindLabels: Record<string, string> = {
   vocabulary: "Vocabulary",
 };
 
-type LessonBreakdownRow = {
+type LessonBreakdownData = {
   kind: string;
   avgDuration: number;
   completionRate: number;
   completionCount: number;
 };
 
-export function LessonBreakdownTable({ data }: { data: LessonBreakdownRow[] }) {
+export function LessonBreakdownTable({ data }: { data: LessonBreakdownData[] }) {
   return (
     <Table>
       <TableHeader>
@@ -56,7 +56,7 @@ export function LessonBreakdownTable({ data }: { data: LessonBreakdownRow[] }) {
   );
 }
 
-function LessonBreakdownRow({ row }: { row: LessonBreakdownRow }) {
+function LessonBreakdownRow({ row }: { row: LessonBreakdownData }) {
   return (
     <TableRow>
       <TableCell className="font-medium">{lessonKindLabels[row.kind] ?? row.kind}</TableCell>

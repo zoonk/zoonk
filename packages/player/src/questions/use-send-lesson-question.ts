@@ -4,7 +4,7 @@ import {
   type CreateLessonQuestionInput,
   type LessonQuestionResource,
 } from "@zoonk/core/lesson-questions/contract";
-import { type Dispatch, useCallback, useRef } from "react";
+import { type Dispatch, useCallback, useRef, useState } from "react";
 import { type PlayerQuestionContext } from "../player-context";
 import { type LessonQuestionConnection, createLessonQuestionRequest } from "./lesson-question-api";
 import { getLessonQuestionContextInput } from "./lesson-question-request";
@@ -74,6 +74,10 @@ export function useSendLessonQuestion({
 }) {
   const createRequestsInFlight = useRef(new Set<string>());
   const pendingCreateRequests = useRef(new Map<string, PendingQuestionCreateRequest>());
+  /** The ref gates requests immediately; render reads an immutable state snapshot. */
+  const [pendingRequestSnapshot, setPendingRequestSnapshot] = useState(
+    new Map<string, PendingQuestionCreateRequest>(),
+  );
 
   const submitQuestion = useCallback(
     async ({
@@ -128,12 +132,14 @@ export function useSendLessonQuestion({
 
       const input = { ...request.input, requestId: request.requestId };
       pendingCreateRequests.current.set(scope, request);
+      setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
       const result = await createLessonQuestionRequest({ connection, input, lessonId });
       createRequestsInFlight.current.delete(scope);
 
       if (result.status === "error") {
         if (result.error.kind !== "unknown") {
           pendingCreateRequests.current.delete(scope);
+          setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
         }
 
         if (result.error.kind === "conflict" && (await reconcileThread(context))) {
@@ -145,6 +151,7 @@ export function useSendLessonQuestion({
       }
 
       pendingCreateRequests.current.delete(scope);
+      setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
       dispatch({ question: result.data, type: "questionCreated" });
 
       if (shouldGenerateAnswer(result.data.status)) {
@@ -197,8 +204,7 @@ export function useSendLessonQuestion({
 
   const unresolvedQuestion = state.isCreating
     ? null
-    : (pendingCreateRequests.current.get(getLessonQuestionScope(state.context))?.input.question ??
-      null);
+    : (pendingRequestSnapshot.get(getLessonQuestionScope(state.context))?.input.question ?? null);
 
   return { send, sendPrepared, unresolvedQuestion };
 }

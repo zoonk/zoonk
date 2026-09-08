@@ -671,7 +671,7 @@
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
+				minimumVersion = 10.0.0;
 			};
 		};
 		5A0A00110000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */ = {
@@ -679,7 +679,7 @@
 			repositoryURL = "https://github.com/apple/swift-openapi-generator";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.13.0;
+				minimumVersion = 1.13.1;
 			};
 		};
 		5A0A00120000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
@@ -687,7 +687,7 @@
 			repositoryURL = "https://github.com/apple/swift-openapi-runtime";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.12.0;
+				minimumVersion = 1.12.1;
 			};
 		};
 		5A0A00130000000000000001 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */ = {
@@ -703,7 +703,7 @@
 			repositoryURL = "https://github.com/apple/swift-http-types";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.6.0;
+				minimumVersion = 1.8.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

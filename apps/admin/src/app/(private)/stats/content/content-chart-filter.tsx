@@ -66,6 +66,7 @@ export function ContentChart({
   statsPeriod: StatsPeriod;
 }) {
   const [filter, setFilter] = useState<ContentFilterValue>("all");
+  const { chartEnd, chartPeriod, current: currentPeriod } = statsPeriod;
 
   const analysis = useMemo(() => {
     const filtered = currentContent.map((row) => ({
@@ -76,15 +77,15 @@ export function ContentChart({
     return {
       current: getFilteredTotal({ content: currentContent, filter }),
       dataPoints: completeMetricTrend({
-        dataPoints: buildChartData(filtered, statsPeriod.chartPeriod, "en"),
+        dataPoints: buildChartData(filtered, chartPeriod, "en"),
         emptyValue: 0,
-        end: statsPeriod.chartEnd,
-        period: statsPeriod.chartPeriod,
-        start: statsPeriod.current.start,
+        end: chartEnd,
+        period: chartPeriod,
+        start: currentPeriod.start,
       }),
       previous: getFilteredTotal({ content: previousContent, filter }),
     };
-  }, [currentContent, filter, previousContent, statsPeriod]);
+  }, [chartEnd, chartPeriod, currentContent, currentPeriod.start, filter, previousContent]);
 
   return (
     <AdminAnalysisTrend
