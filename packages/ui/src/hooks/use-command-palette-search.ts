@@ -50,6 +50,18 @@ export function useCommandPaletteSearch<TResults>(options: {
   const open = useCallback(() => setIsOpen(true), []);
   const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
+  const handleQueryChange = useCallback(
+    (value: string) => {
+      setQuery(value);
+
+      if (value.trim().length < minQueryLength) {
+        requestIdRef.current += 1;
+        setResults(emptyResults);
+      }
+    },
+    [emptyResults, minQueryLength],
+  );
+
   const closePalette = useCallback(() => {
     setIsOpen(false);
     setQuery("");
@@ -97,7 +109,7 @@ export function useCommandPaletteSearch<TResults>(options: {
     open,
     query,
     results: query.trim().length < minQueryLength ? emptyResults : results,
-    setQuery,
+    setQuery: handleQueryChange,
     toggle,
   };
 }

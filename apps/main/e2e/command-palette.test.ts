@@ -118,6 +118,32 @@ async function expectActiveOption(page: Page, optionName: RegExp) {
   await expect(input).toHaveAttribute("aria-activedescendant", optionId!);
 }
 
+async function expectSearchResultsReset({ page, shortQuery }: { page: Page; shortQuery: string }) {
+  const course = await createTestCourse();
+
+  await page.goto("/");
+  await openCommandPalette(page);
+
+  const dialog = page.getByRole("dialog");
+  const input = dialog.getByRole("combobox", { name: SEARCH_CONTROL_NAME });
+  const courseOption = dialog.getByRole("option", { name: new RegExp(`^${course.title}`, "u") });
+
+  await input.fill(course.title);
+  await expect(courseOption).toBeVisible();
+
+  /** Hold the debounce window open so a fast response cannot hide stale results. */
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
+
+  await input.fill(shortQuery);
+  await expect(courseOption).not.toBeVisible();
+  await input.fill(course.title.slice(0, -1));
+  await expect(courseOption).not.toBeVisible();
+
+  await page.clock.resume();
+  await expect(courseOption).toBeVisible();
+}
+
 /**
  * Long catalog titles and descriptions should truncate inside the palette; if
  * they increase scrollWidth, touch users can accidentally pan sideways instead
@@ -364,6 +390,14 @@ test.describe("Command Palette - Authenticated", () => {
 });
 
 test.describe("Command Palette - Course Search", () => {
+  test("clears stored search results when the query is emptied", async ({ page }) => {
+    await expectSearchResultsReset({ page, shortQuery: "" });
+  });
+
+  test("clears stored search results when the query becomes one character", async ({ page }) => {
+    await expectSearchResultsReset({ page, shortQuery: "e" });
+  });
+
   test("does not search with fewer than 2 characters", async ({ page }) => {
     const course = await createTestCourse();
     await page.goto("/");
