@@ -45,17 +45,37 @@ class HardcodedComposeTextDetectorTest : LintDetectorTest() {
                 import androidx.compose.material3.Icon
                 private const val TITLE = "Welcome"
                 @Composable fun Heading(title: String) { MaterialText(title) }
+                @Composable fun Explanation(
+                    message: String,
+                    content: String,
+                    description: String,
+                    prompt: String,
+                    hint: String,
+                ) {
+                    MaterialText(message)
+                    MaterialText(content)
+                    MaterialText(description)
+                    MaterialText(prompt)
+                    MaterialText(hint)
+                }
                 @Composable fun Screen(name: String) {
                     MaterialText("Hello")
                     MaterialText(text = TITLE)
                     MaterialText("Hello, ＄name")
                     Icon(contentDescription = "Close")
                     Heading(title = "Courses")
+                    Explanation(
+                        message = "Something went wrong",
+                        content = "Try another lesson",
+                        description = "Learn at your own pace",
+                        prompt = "What do you want to learn?",
+                        hint = "Choose a topic",
+                    )
                 }
                 """,
                 ).indented(),
             ).run()
-            .expectErrorCount(5)
+            .expectErrorCount(10)
     }
 
     fun testResourcesAndDynamicContentAreAllowed() {

@@ -126,8 +126,22 @@ class HardcodedComposeTextDetector :
     companion object {
         private const val COMPOSABLE = "androidx.compose.runtime.Composable"
 
-        // Composable routes, keys, IDs, and other internal strings are not display text.
-        private val TEXT_PARAMETERS = setOf("text", "title", "subtitle", "label", "contentDescription", "stateDescription", "paneTitle")
+        // Recognize common display-text parameters without treating routes, keys, and IDs as copy.
+        private val TEXT_PARAMETERS =
+            setOf(
+                "content",
+                "contentDescription",
+                "description",
+                "hint",
+                "label",
+                "message",
+                "paneTitle",
+                "prompt",
+                "stateDescription",
+                "subtitle",
+                "text",
+                "title",
+            )
         private val TEXT_TYPES = setOf("java.lang.String", "java.lang.CharSequence")
         val ISSUE: Issue =
             Issue.create(
