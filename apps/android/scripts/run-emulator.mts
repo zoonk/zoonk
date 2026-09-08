@@ -1,7 +1,7 @@
 /* eslint-disable max-lines -- Keep this standalone developer workflow in one dependency-free script. */
 import { type ChildProcess, type SpawnSyncReturns, spawn, spawnSync } from "node:child_process";
-import { accessSync, constants, existsSync } from "node:fs";
-import { homedir } from "node:os";
+import { accessSync, constants } from "node:fs";
+import { homedir, platform } from "node:os";
 import path from "node:path";
 
 type DeviceFamily = "phone" | "tablet";
@@ -172,10 +172,16 @@ function getAndroidSdkDirectory() {
     return path.resolve(androidSdkRoot);
   }
 
-  const defaultSdkDirectory = path.join(homedir(), "Library", "Android", "sdk");
-  const standardDirectories = [defaultSdkDirectory, path.join(homedir(), "Android", "Sdk")];
+  if (platform() === "win32") {
+    const localAppData =
+      process.env.LOCALAPPDATA?.trim() || path.join(homedir(), "AppData", "Local");
 
-  return standardDirectories.find((directory) => existsSync(directory)) ?? defaultSdkDirectory;
+    return path.join(localAppData, "Android", "Sdk");
+  }
+
+  return platform() === "darwin"
+    ? path.join(homedir(), "Library", "Android", "sdk")
+    : path.join(homedir(), "Android", "Sdk");
 }
 
 function assertExecutable({
@@ -208,9 +214,10 @@ function assertReadableFile({ filePath, label }: { filePath: string; label: stri
 
 function getAndroidToolchain(): AndroidToolchain {
   const sdkDirectory = getAndroidSdkDirectory();
-  const adbPath = path.join(sdkDirectory, "platform-tools", "adb");
-  const emulatorPath = path.join(sdkDirectory, "emulator", "emulator");
-  const gradleWrapperPath = path.join(androidDirectory, "gradlew");
+  const isWindows = platform() === "win32";
+  const adbPath = path.join(sdkDirectory, "platform-tools", isWindows ? "adb.exe" : "adb");
+  const emulatorPath = path.join(sdkDirectory, "emulator", isWindows ? "emulator.exe" : "emulator");
+  const gradleWrapperPath = path.join(androidDirectory, isWindows ? "gradlew.bat" : "gradlew");
 
   const sdkHint =
     "Install the required Android SDK tools or correct ANDROID_HOME/ANDROID_SDK_ROOT.";
@@ -220,7 +227,9 @@ function getAndroidToolchain(): AndroidToolchain {
 
   assertExecutable({
     filePath: gradleWrapperPath,
-    hint: "Restore apps/android/gradlew and make it executable with chmod +x.",
+    hint: isWindows
+      ? "Restore apps/android/gradlew.bat."
+      : "Restore apps/android/gradlew and make it executable with chmod +x.",
     label: "Gradle wrapper",
   });
 
@@ -527,9 +536,14 @@ async function waitForBoot({
 function buildApp({ environment, gradleWrapperPath }: AndroidToolchain) {
   process.stdout.write("Building the Android debug APK...\n");
 
+  const isWindows = platform() === "win32";
+
+  /** A fixed, relative batch command avoids shell interpolation of workspace paths with spaces. */
   runCommand({
-    arguments: [":app:assembleDebug"],
-    command: gradleWrapperPath,
+    arguments: isWindows
+      ? ["/d", "/s", "/c", String.raw`.\gradlew.bat :app:assembleDebug`]
+      : [":app:assembleDebug"],
+    command: isWindows ? (environment.ComSpec ?? "cmd.exe") : gradleWrapperPath,
     environment,
     workingDirectory: androidDirectory,
   });

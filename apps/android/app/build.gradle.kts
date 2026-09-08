@@ -52,7 +52,6 @@ android {
     lint {
         abortOnError = true
         checkDependencies = true
-        lintConfig = rootProject.file("lint.xml")
         warningsAsErrors = true
     }
 

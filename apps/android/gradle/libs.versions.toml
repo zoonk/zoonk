@@ -1,21 +1,20 @@
 [versions]
 activityCompose = "1.13.0"
-# Android Studio Panda 4 supports AGP through 9.2.
-#noinspection AndroidGradlePluginVersion
+# AGP 9.4 requires Android Studio Quail 4 or newer.
 agp = "9.4.0"
 androidxAnnotation = "1.10.0"
 androidxTest = "1.7.0"
 androidxTestEspresso = "3.7.0"
 androidxTestExtJunit = "1.3.0"
 composeBom = "2026.08.00"
-# AGP 9.2 ships Kotlin 2.3.10, and the Compose compiler plugin must match it.
+# Keep the JVM and Compose compiler plugins aligned; upgrade them together.
 #noinspection NewerVersionAvailable
 kotlin = "2.3.10"
 # Custom detectors must compile and test against the lint version bundled with our pinned AGP.
 #noinspection GradleDependency
 lint = "32.4.0"
 junit = "4.13.2"
-spotless = "8.10.1"
+spotless = "8.10.2"
 
 [libraries]
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }

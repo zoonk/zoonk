@@ -37,7 +37,9 @@ class HardcodedComposeTextDetector :
                 if (!isTextApi(method)) return
 
                 for ((argument, parameter) in context.evaluator.computeArgumentMapping(node, method)) {
-                    if (parameter.type.canonicalText in TEXT_TYPES) {
+                    if (parameter.type.canonicalText in TEXT_TYPES &&
+                        (!method.hasAnnotation(COMPOSABLE) || parameter.name in TEXT_PARAMETERS)
+                    ) {
                         reportHardcodedText(context, argument)
                     }
                 }
@@ -53,7 +55,7 @@ class HardcodedComposeTextDetector :
     private fun isTextApi(method: PsiMethod): Boolean {
         val owner = method.containingClass?.qualifiedName.orEmpty()
         if (owner.startsWith("androidx.compose.animation.")) return false
-        if (method.hasAnnotation("androidx.compose.runtime.Composable")) return true
+        if (method.hasAnnotation(COMPOSABLE)) return true
         if (isSemanticsText(method)) return true
         return owner.startsWith("androidx.compose.ui.text.AnnotatedString") &&
             (method.isConstructor || method.name in setOf("append", "appendLine"))
@@ -122,6 +124,10 @@ class HardcodedComposeTextDetector :
     }
 
     companion object {
+        private const val COMPOSABLE = "androidx.compose.runtime.Composable"
+
+        // Composable routes, keys, IDs, and other internal strings are not display text.
+        private val TEXT_PARAMETERS = setOf("text", "title", "subtitle", "label", "contentDescription", "stateDescription", "paneTitle")
         private val TEXT_TYPES = setOf("java.lang.String", "java.lang.CharSequence")
         val ISSUE: Issue =
             Issue.create(

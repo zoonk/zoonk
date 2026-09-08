@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<lint>
-    <!-- AGP 9.2 requires Gradle 9.4.1 and is the newest line supported by Android Studio Panda 4. -->
-    <issue id="AndroidGradlePluginVersion">
-        <ignore path="gradle/wrapper/gradle-wrapper.properties" />
-    </issue>
-</lint>

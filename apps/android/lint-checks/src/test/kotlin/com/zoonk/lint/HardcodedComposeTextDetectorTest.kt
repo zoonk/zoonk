@@ -139,6 +139,44 @@ class HardcodedComposeTextDetectorTest : LintDetectorTest() {
             .expectErrorCount(1)
     }
 
+    fun testInternalComposeStringsAreAllowed() {
+        lint()
+            .files(
+                composable,
+                components,
+                kotlin(
+                    """
+                package androidx.navigation.compose
+                import androidx.compose.runtime.Composable
+                @Composable fun NavHost(startDestination: String, route: String? = null) {}
+                """,
+                ).indented(),
+                kotlin(
+                    """
+                package androidx.compose.animation.core
+                import androidx.compose.runtime.Composable
+                @Composable fun animateFloatAsState(label: String) {}
+                """,
+                ).indented(),
+                kotlin(
+                    """
+                package test.pkg
+                import androidx.compose.runtime.Composable
+                import androidx.compose.animation.core.animateFloatAsState
+                import androidx.navigation.compose.NavHost
+                @Composable fun CourseRoute(courseId: String = "new", key: String = "course") {}
+                @Composable fun Screen() {
+                    NavHost(startDestination = "home", route = "root")
+                    CourseRoute(courseId = "draft", key = "new-course")
+                    CourseRoute()
+                    animateFloatAsState(label = "progress")
+                }
+                """,
+                ).indented(),
+            ).run()
+            .expectClean()
+    }
+
     fun testSemanticsAndAnnotatedText() {
         lint()
             .files(
