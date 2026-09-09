@@ -6,7 +6,7 @@ import { generateImageWithSafetyRetry } from "../_utils/generate-image-with-safe
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import promptTemplate from "./step-select-image.prompt.md";
 
-const defaultModel = "openai/gpt-image-2";
+const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY = "low";
 
 const fallbackModels = [

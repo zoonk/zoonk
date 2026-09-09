@@ -90,7 +90,7 @@ describe(generateImageWithSafetyRetry, () => {
       buildPrompt: ({ input }) => `Create a course thumbnail for ${input}.`,
       input: originalInput,
       maxImagesPerCall: 1,
-      model: "openai/gpt-image-2",
+      model: "openai/gpt-image-2.5-flare",
       size: "1024x1024",
     });
 
@@ -118,7 +118,7 @@ describe(generateImageWithSafetyRetry, () => {
         buildPrompt: ({ input }) => `Create a course thumbnail for ${input}.`,
         input: "safe course",
         maxImagesPerCall: 1,
-        model: "openai/gpt-image-2",
+        model: "openai/gpt-image-2.5-flare",
         size: "1024x1024",
       }),
     ).rejects.toThrow("Model timed out");
