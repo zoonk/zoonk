@@ -7,7 +7,7 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import illustrationPromptTemplate from "./step-content-image.prompt.md";
 import practicePromptTemplate from "./step-content-practice-image.prompt.md";
 
-const defaultModel = "openai/gpt-image-2";
+const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY = "low";
 
 const fallbackModels = [

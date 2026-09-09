@@ -5,7 +5,7 @@ import { type ImageGenerationQuality, buildImageProviderOptions } from "../../pr
 import { generateImageWithSafetyRetry } from "../_utils/generate-image-with-safety-retry";
 import promptTemplate from "./content-thumbnail.prompt.md";
 
-const defaultModel = "openai/gpt-image-2";
+const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY = "low";
 
 const fallbackModels = [
