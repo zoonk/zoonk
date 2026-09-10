@@ -3317,7 +3317,7 @@
             "description": "Sign-in code sent"
           },
           "400": {
-            "description": "Validation error",
+            "description": "Request validation failed or a new account uses a temporary email address. Error code: DISPOSABLE_EMAIL_NOT_ALLOWED. Existing accounts and supported privacy aliases remain allowed.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3401,7 +3401,7 @@
             }
           },
           "400": {
-            "description": "Validation error",
+            "description": "Request validation failed or a new account uses a temporary email address. Error code: DISPOSABLE_EMAIL_NOT_ALLOWED. Existing accounts and supported privacy aliases remain allowed.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3538,7 +3538,7 @@
             }
           },
           "400": {
-            "description": "Request validation failed, or the email code is invalid or expired. Error codes include: EMAIL_SIGN_IN_CODE_INVALID, EMAIL_SIGN_IN_CODE_EXPIRED.",
+            "description": "Request validation failed, the email code is invalid or expired, or a new account uses a temporary email address. Error codes include: EMAIL_SIGN_IN_CODE_INVALID, EMAIL_SIGN_IN_CODE_EXPIRED, DISPOSABLE_EMAIL_NOT_ALLOWED.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3622,7 +3622,7 @@
             }
           },
           "400": {
-            "description": "Validation error",
+            "description": "Request validation failed or a new account uses a temporary email address. Error code: DISPOSABLE_EMAIL_NOT_ALLOWED. Existing accounts and supported privacy aliases remain allowed.",
             "content": {
               "application/json": {
                 "schema": {

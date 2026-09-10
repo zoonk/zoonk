@@ -619,6 +619,8 @@ final class SessionStore {
     switch apiError {
     case .accountDisabled, .accountMismatch, .appleCredentialMismatch:
       return .signIn
+    case .disposableEmail:
+      return .disposableEmail
     case .invalidCode:
       return .invalidCode
     case .invalidAppStorePurchase:
@@ -649,7 +651,7 @@ final class SessionStore {
     switch apiError {
     case .accountMismatch:
       return .accountMismatch
-    case .accountDisabled, .appleCredentialMismatch:
+    case .accountDisabled, .appleCredentialMismatch, .disposableEmail:
       return .accountDeletion
     case .invalidCode:
       return .invalidCode

@@ -25,9 +25,16 @@ const initialEmailLoginState = { status: "idle" as const };
 export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
   const t = useExtracted();
   const [state, formAction] = useActionState(sendVerificationOTPAction, initialEmailLoginState);
-  const hasEmailError = state.status === "invalidEmail";
-  const hasGenericError = state.status === "error";
-  const hasError = hasEmailError || hasGenericError;
+  const hasError = state.status !== "idle";
+
+  const errorMessage = {
+    disposableEmail: t(
+      "Temporary email addresses aren't supported. Use another email or a privacy alias.",
+    ),
+    error: t("There was an error signing you in. Please try again or contact hello@zoonk.com"),
+    idle: "",
+    invalidEmail: t("Enter a valid email address"),
+  }[state.status];
 
   return (
     <LoginForm action={formAction} onSubmit={() => trackSignInMethodChosen({ method: "otp" })}>
@@ -43,9 +50,7 @@ export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
       </LoginField>
 
       <LoginError aria-live="polite" hasError={hasError} id={emailErrorId}>
-        {hasEmailError
-          ? t("Enter a valid email address")
-          : t("There was an error signing you in. Please try again or contact hello@zoonk.com")}
+        {errorMessage}
       </LoginError>
 
       <LoginSubmit>{t("Continue")}</LoginSubmit>

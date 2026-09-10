@@ -33,7 +33,12 @@ const appleAuthorizationResponse = {
 
 const emailCodeErrorResponse = {
   ...badRequestResponse,
-  description: `Request validation failed, or the email code is invalid or expired. Error codes include: ${sessionErrorCodes.emailCodeInvalid}, ${sessionErrorCodes.emailCodeExpired}.`,
+  description: `Request validation failed, the email code is invalid or expired, or a new account uses a temporary email address. Error codes include: ${sessionErrorCodes.emailCodeInvalid}, ${sessionErrorCodes.emailCodeExpired}, ${sessionErrorCodes.disposableEmail}.`,
+} as const;
+
+const signupValidationResponse = {
+  ...validationErrorResponse,
+  description: `Request validation failed or a new account uses a temporary email address. Error code: ${sessionErrorCodes.disposableEmail}. Existing accounts and supported privacy aliases remain allowed.`,
 } as const;
 
 const emailCodeForbiddenResponse = {
@@ -68,7 +73,7 @@ export const sessionPaths = {
       },
       responses: {
         "204": { description: "Sign-in code sent" },
-        "400": validationErrorResponse,
+        "400": signupValidationResponse,
         "403": forbiddenResponse,
         "429": rateLimitResponse,
       },
@@ -86,7 +91,7 @@ export const sessionPaths = {
       },
       responses: {
         "200": sessionTokenResponse,
-        "400": validationErrorResponse,
+        "400": signupValidationResponse,
         "401": appleAuthorizationResponse,
         "403": accountDisabledResponse,
         "429": rateLimitResponse,
@@ -137,7 +142,7 @@ export const sessionPaths = {
       },
       responses: {
         "200": sessionTokenResponse,
-        "400": validationErrorResponse,
+        "400": signupValidationResponse,
         "401": googleAuthorizationResponse,
         "403": accountDisabledResponse,
         "429": rateLimitResponse,
