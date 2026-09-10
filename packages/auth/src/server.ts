@@ -23,6 +23,7 @@ import {
 } from "./config";
 import { ensureUserProgressAfterAuthCreate } from "./db-hooks";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
+import { validateEmailBeforeOTP, validateEmailBeforeUserCreate } from "./email-signup-policy";
 import { ac, admin, member, owner } from "./permissions";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
@@ -46,7 +47,12 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     protocol: isLocalhostSupported() ? "http" : "https",
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
-  databaseHooks: { user: { create: { after: ensureUserProgressAfterAuthCreate } } },
+  databaseHooks: {
+    user: {
+      create: { after: ensureUserProgressAfterAuthCreate, before: validateEmailBeforeUserCreate },
+    },
+  },
+  hooks: { before: validateEmailBeforeOTP },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,

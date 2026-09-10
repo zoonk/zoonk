@@ -43,6 +43,8 @@ export const auth = betterAuth({
   },
   hooks: {
     before: createAuthMiddleware(async (context) => {
+      await baseAuthConfig.hooks?.before?.(context);
+
       if (context.path === "/get-session") {
         await recordSessionLookup(context.headers ?? context.request?.headers);
       }

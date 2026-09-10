@@ -5,6 +5,7 @@ enum AccountAPIError: Error, Equatable {
   case accountDisabled
   case accountMismatch
   case appleCredentialMismatch
+  case disposableEmail
   case invalidCode
   case invalidEmail
   case invalidAppStorePurchase
@@ -94,8 +95,9 @@ struct AccountAPI {
     switch output {
     case .noContent:
       return
-    case .badRequest:
-      throw AccountAPIError.invalidEmail
+    case .badRequest(let response):
+      let error = getAPIError(statusCode: 400, payload: try response.body.json)
+      throw error == .validation ? AccountAPIError.invalidEmail : error
     case .forbidden(let response):
       throw getAPIError(statusCode: 403, payload: try response.body.json)
     case .tooManyRequests:
@@ -347,6 +349,10 @@ struct AccountAPI {
 
     if code == "INVALID_EMAIL" {
       return .invalidEmail
+    }
+
+    if code == "DISPOSABLE_EMAIL_NOT_ALLOWED" {
+      return .disposableEmail
     }
 
     if statusCode == 409 || code == "USERNAME_IS_ALREADY_TAKEN" {

@@ -12,6 +12,23 @@ msgid "Sign in to Zoonk"
 msgstr "Connecte-toi à Zoonk"
 
 #: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "vO6NBp"
+msgid "Temporary email addresses aren't supported. Use another email or a privacy alias."
+msgstr "Les adresses e-mail temporaires ne sont pas acceptées. Utilise une autre adresse e-mail ou un alias qui protège ta vie privée."
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/login/social-login.tsx
+msgctxt "pN2p0t"
+msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
+msgstr "Impossible de te connecter. Réessaie ou contacte hello@zoonk.com"
+
+#: src/app/auth/login/email-login-form.tsx
+msgctxt "YRe93Y"
+msgid "Enter a valid email address"
+msgstr "Saisis une adresse e-mail valide"
+
+#: src/app/auth/login/email-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "E-mail"
@@ -20,17 +37,6 @@ msgstr "E-mail"
 msgctxt "apQW0E"
 msgid "me@gmail.com"
 msgstr "me@gmail.com"
-
-#: src/app/auth/login/email-login-form.tsx
-msgctxt "YRe93Y"
-msgid "Enter a valid email address"
-msgstr "Saisis une adresse e-mail valide"
-
-#: src/app/auth/login/email-login-form.tsx
-#: src/app/auth/login/social-login.tsx
-msgctxt "pN2p0t"
-msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
-msgstr "Impossible de te connecter. Réessaie ou contacte hello@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx

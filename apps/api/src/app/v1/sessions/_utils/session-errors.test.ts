@@ -14,6 +14,24 @@ const sessionErrorMappers = [
 
 describe("native session errors", () => {
   it.each(sessionErrorMappers)(
+    "maps disposable signup errors to the product contract",
+    async (mapError) => {
+      const response = mapError(
+        new NativeAuthResponseError({
+          body: { code: "DISPOSABLE_EMAIL_NOT_ALLOWED" },
+          statusCode: 400,
+        }),
+      );
+
+      expect(response?.status).toBe(400);
+
+      await expect(response?.json()).resolves.toMatchObject({
+        error: { code: "DISPOSABLE_EMAIL_NOT_ALLOWED" },
+      });
+    },
+  );
+
+  it.each(sessionErrorMappers)(
     "maps auth rate limits to the stable product error",
     async (mapError) => {
       const response = mapError(

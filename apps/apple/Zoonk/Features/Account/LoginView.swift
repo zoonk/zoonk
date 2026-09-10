@@ -171,6 +171,11 @@ struct AccountFailureMessage: View {
         "Enter a valid email address.",
         tableName: "Account",
         comment: "Error shown when an email address is invalid")
+    case .disposableEmail:
+      Text(
+        "Temporary email addresses aren't supported. Use another email or a privacy alias.",
+        tableName: "Account",
+        comment: "Temporary inbox rejection; persistent privacy aliases remain supported")
     case .network:
       Text(
         "Zoonk couldn't connect. Check your connection and try again.",
