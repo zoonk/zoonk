@@ -99,6 +99,11 @@ describe("email signup policy", () => {
     "mozmail.com",
     "simplelogin.co",
     "slmail.me",
+    "8shield.net",
+    "passmail.com",
+    "passmail.net",
+    "passfwd.com",
+    "passinbox.com",
     "learner.anonaddy.com",
   ])("allows signup with a privacy alias on %s", async (domain) => {
     const email = createEmail(domain);

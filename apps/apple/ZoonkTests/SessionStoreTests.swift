@@ -4,6 +4,43 @@ import XCTest
 
 final class SessionStoreTests: XCTestCase {
   @MainActor
+  func testDisposableEmailRejectionKeepsEmailEntryRecoverable() async {
+    let api = SessionStoreAPIStub()
+    api.emailCodeResult = .failure(.disposableEmail)
+    let session = makeSession(api: api, credentialStore: SessionCredentialStoreSpy())
+    await session.restore()
+
+    let didSendCode = await session.sendEmailCode(email: "learner@mailinator.com")
+
+    XCTAssertFalse(didSendCode)
+    XCTAssertEqual(session.failure, .disposableEmail)
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertFalse(session.isWorking)
+
+    api.emailCodeResult = .success(())
+    let didSendReplacementCode = await session.sendEmailCode(email: "learner@icloud.com")
+
+    XCTAssertTrue(didSendReplacementCode)
+    XCTAssertNil(session.failure)
+    XCTAssertEqual(session.state, .signedOut)
+  }
+
+  @MainActor
+  func testDisposableEmailRejectionDoesNotSaveSessionWhenRedeemingCode() async {
+    let credentialStore = SessionCredentialStoreSpy()
+    let session = makeSession(
+      api: SessionStoreAPIStub(emailSignInResult: .failure(.disposableEmail)),
+      credentialStore: credentialStore)
+    await session.restore()
+
+    await session.signInWithEmailCode(email: "learner@mailinator.com", code: "123456")
+
+    XCTAssertEqual(session.failure, .disposableEmail)
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertTrue(credentialStore.savedTokens.isEmpty)
+  }
+
+  @MainActor
   func testRestoreWithoutCredentialSignsOut() async {
     let credentialStore = SessionCredentialStoreSpy()
     let session = makeSession(credentialStore: credentialStore)
@@ -554,6 +591,7 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountError: Error?
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
+  var emailCodeResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var updateProfileHandler: (@MainActor (String, String, String) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
@@ -600,6 +638,10 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
 
   func signInWithEmailCode(email: String, code: String) async throws -> String {
     try emailSignInResult.get()
+  }
+
+  func sendEmailCode(email: String) async throws {
+    try emailCodeResult.get()
   }
 
   func signOut(token: String) async throws {

@@ -101,6 +101,7 @@ enum AccountSessionState: Equatable {
 enum AccountFailure: Equatable {
   case accountDeletion
   case accountMismatch
+  case disposableEmail
   case invalidCode
   case invalidEmail
   case network

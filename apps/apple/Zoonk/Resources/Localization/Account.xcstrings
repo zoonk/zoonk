@@ -2031,6 +2031,35 @@
         }
       }
     },
+    "Temporary email addresses aren't supported. Use another email or a privacy alias." : {
+      "comment" : "Temporary inbox rejection; persistent privacy aliases remain supported",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporäre E-Mail-Adressen werden nicht unterstützt. Verwende eine andere E-Mail-Adresse oder eine Alias-Adresse zum Schutz deiner Privatsphäre."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se admiten direcciones de correo temporales. Usa otro correo o un alias privado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les adresses e-mail temporaires ne sont pas acceptées. Utilise une autre adresse ou un alias qui protège ta vie privée."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endereços de email temporários não são aceitos. Use outro email ou um alias de privacidade."
+          }
+        }
+      }
+    },
     "Terms of Service" : {
       "comment" : "Link to the terms of service",
       "localizations" : {

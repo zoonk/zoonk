@@ -22,6 +22,11 @@ describe(isDisposableEmail, () => {
     "learner@learner.anonaddy.com",
     "learner@relay.firefox.com",
     "learner@aleeas.com",
+    "learner@8shield.net",
+    "learner@passmail.com",
+    "learner@passmail.net",
+    "learner@passfwd.com",
+    "learner@passinbox.com",
     "learner@33mail.com",
   ])("allows a regular mailbox or privacy alias: %s", (email) => {
     expect(isDisposableEmail(email)).toBe(false);

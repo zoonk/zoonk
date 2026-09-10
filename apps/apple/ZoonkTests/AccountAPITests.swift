@@ -5,6 +5,54 @@ import XCTest
 @testable import Zoonk
 
 final class AccountAPITests: XCTestCase {
+  func testDisposableEmailRejectionRemainsDistinctWhenRequestingCode() async {
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: EmailPolicyTransport(code: "DISPOSABLE_EMAIL_NOT_ALLOWED")))
+
+    do {
+      try await api.sendEmailCode(email: "learner@mailinator.com")
+      XCTFail("Expected a temporary inbox to be rejected")
+    } catch let error as AccountAPIError {
+      XCTAssertEqual(error, .disposableEmail)
+    } catch {
+      XCTFail("Unexpected error: \(error)")
+    }
+  }
+
+  func testDisposableEmailRejectionRemainsDistinctWhenRedeemingCode() async {
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: EmailPolicyTransport(code: "DISPOSABLE_EMAIL_NOT_ALLOWED")))
+
+    do {
+      _ = try await api.signInWithEmailCode(email: "learner@mailinator.com", code: "123456")
+      XCTFail("Expected a temporary inbox to be rejected")
+    } catch let error as AccountAPIError {
+      XCTAssertEqual(error, .disposableEmail)
+    } catch {
+      XCTFail("Unexpected error: \(error)")
+    }
+  }
+
+  func testMalformedEmailStillOffersEmailValidationRecovery() async {
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: EmailPolicyTransport(code: "VALIDATION_ERROR")))
+
+    do {
+      try await api.sendEmailCode(email: "invalid-email")
+      XCTFail("Expected an invalid email to be rejected")
+    } catch let error as AccountAPIError {
+      XCTAssertEqual(error, .invalidEmail)
+    } catch {
+      XCTFail("Unexpected error: \(error)")
+    }
+  }
+
   func testCurrentAccountUsesSharedClientConfiguration() async throws {
     let clients = APIClientFactory(
       baseURL: URL(string: "https://api.zoonk.test")!,
@@ -99,6 +147,25 @@ final class AccountAPITests: XCTestCase {
 
 private enum CurrentAccountTransportError: Error {
   case invalidRequest
+}
+
+private struct EmailPolicyTransport: ClientTransport {
+  let code: String
+
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    var headerFields = HTTPFields()
+    headerFields[.contentType] = "application/json"
+
+    return (
+      HTTPResponse(status: .badRequest, headerFields: headerFields),
+      HTTPBody(#"{"error":{"code":"\#(code)","message":"Email cannot be used"}}"#)
+    )
+  }
 }
 
 /// The generated client's cross-cutting configuration is observable only at the transport boundary, so this avoids depending on an external server.
