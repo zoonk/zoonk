@@ -24,8 +24,7 @@
     ],
     "ui": "tui",
     "cacheMaxAge": "7d",
-    "cacheMaxSize": "10GB",
-    "inputs": ["packages/db/.env.test.local", "packages/db/.env.e2e.local"]
+    "cacheMaxSize": "10GB"
   },
   "tasks": {
     "//#format": {},
@@ -47,6 +46,7 @@
     },
     "build:e2e": {
       "dependsOn": ["db:generate", "^build:e2e"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
       "outputs": [
         ".next-e2e/**",
         "!.next-e2e/cache/**",
@@ -69,14 +69,22 @@
       "dependsOn": ["db:generate", "^dev:direct"],
       "persistent": true
     },
-    "e2e": { "dependsOn": ["build:e2e"], "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"] },
+    "e2e": {
+      "dependsOn": ["build:e2e"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
+      "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"]
+    },
     "i18n:lint": {},
     "i18n": { "cache": false },
     "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },
-    "test": { "dependsOn": ["db:generate", "^db:setup:test", "^test"] },
+    "test": {
+      "dependsOn": ["db:generate", "^db:setup:test", "^test"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"]
+    },
     "test:watch": {
       "cache": false,
       "dependsOn": ["db:generate", "^db:setup:test"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"],
       "persistent": true
     },
     "typecheck": {

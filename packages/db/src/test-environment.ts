@@ -21,11 +21,18 @@ export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string>
   const localPath = resolve(directory, `.env.${mode}.local`);
 
   if (process.env.CI) {
-    const pooled = process.env.DATABASE_URL || process.env.DATABASE_URL_UNPOOLED;
-    const unpooled = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
+    const pooled =
+      process.env.DATABASE_URL || process.env.DATABASE_URL_UNPOOLED || defaults.DATABASE_URL;
+
+    const unpooled =
+      process.env.DATABASE_URL_UNPOOLED ||
+      process.env.DATABASE_URL ||
+      defaults.DATABASE_URL_UNPOOLED;
 
     return {
-      ...defaults,
+      ...Object.fromEntries(
+        Object.entries(defaults).map(([key, value]) => [key, process.env[key] ?? value]),
+      ),
       ...(pooled && { DATABASE_URL: pooled }),
       ...(unpooled && { DATABASE_URL_UNPOOLED: unpooled }),
     };
