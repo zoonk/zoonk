@@ -31,10 +31,9 @@
     "@shadcn/react": "0.3.1",
     "@zoonk/utils": "workspace:*",
     "class-variance-authority": "0.7.1",
-    "clsx": "2.1.1",
+    "cn": "0.2.6",
     "input-otp": "1.5.0",
-    "react-infinite-scroll-hook": "6.0.1",
-    "tailwind-merge": "3.6.0"
+    "react-infinite-scroll-hook": "6.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:",
