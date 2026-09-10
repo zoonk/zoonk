@@ -34,6 +34,13 @@ export const EVAL_MODELS: ModelConfig[] = [
     name: "deepseek-v4-flash",
     outputCost: 0.28,
   },
+  { id: "google/gemini-3.8-flash", inputCost: 1.5, name: "gemini-3.8-flash", outputCost: 7.5 },
+  {
+    id: "google/gemini-3.5-flash-lite",
+    inputCost: 0.3,
+    name: "gemini-3.5-flash-lite",
+    outputCost: 2.5,
+  },
   { id: "google/gemini-3.5-flash", inputCost: 1.5, name: "gemini-3.5-flash", outputCost: 9 },
   { id: "google/gemini-3.1-pro-preview", inputCost: 2, name: "gemini-3.1-pro", outputCost: 12 },
   {

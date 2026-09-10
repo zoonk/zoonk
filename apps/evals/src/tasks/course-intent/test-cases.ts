@@ -454,4 +454,6 @@ export const TEST_CASES: CourseIntentTestCase[] = [
   intentCase({ id: "argentina", intent: "ambiguous", prompt: "argentina" }),
   intentCase({ id: "cybersecurity", intent: "learn", prompt: "cybersecurity" }),
   intentCase({ id: "direito", intent: "learn", prompt: "direito" }),
+  intentCase({ id: "echecs", intent: "learn", prompt: "échecs" }),
+  intentCase({ id: "quero-aprender-direito", intent: "learn", prompt: "quero aprender direito" }),
 ];

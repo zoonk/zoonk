@@ -5,7 +5,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./course-intent.prompt.md";
 
 const defaultModel = "openai/gpt-5.6-luna";
-const fallbackModels = ["google/gemini-3.1-flash-lite", "openai/gpt-5.4-mini"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 const courseIntentSchema = z.enum(["unsafe", "exam", "question", "learn", "ambiguous"]);
 
