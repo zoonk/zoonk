@@ -1,6 +1,7 @@
 function isNamedCall(node, name) {
   return (
     node?.type === "CallExpression" &&
+    !node.optional &&
     node.callee.type === "Identifier" &&
     node.callee.name === name
   );
@@ -63,7 +64,7 @@ export function getPromiseAllTranslationBindings({ node, sourceCode }) {
   );
 }
 
-export function getTranslationVariableNames({ node, sourceCode }) {
+function getTranslationVariableNames({ node, sourceCode }) {
   if (node.id?.type !== "Identifier") {
     return getPromiseAllTranslationBindings({ node, sourceCode }).map((binding) => binding.name);
   }
@@ -75,4 +76,23 @@ export function getTranslationVariableNames({ node, sourceCode }) {
   }
 
   return [];
+}
+
+/** Resolve the nearest declaration so shadowed names never inherit translator behavior. */
+export function isTranslationIdentifier({ node, sourceCode }) {
+  if (node.type !== "Identifier") {
+    return false;
+  }
+
+  for (let scope = sourceCode.getScope(node); scope; scope = scope.upper) {
+    const variable = scope.set.get(node.name);
+
+    if (variable) {
+      return variable.defs.some((definition) =>
+        getTranslationVariableNames({ node: definition.node, sourceCode }).includes(node.name),
+      );
+    }
+  }
+
+  return false;
 }

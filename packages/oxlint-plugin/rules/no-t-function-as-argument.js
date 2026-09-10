@@ -1,24 +1,12 @@
 import { defineRule } from "@oxlint/plugins";
-import { getTranslationVariableNames } from "../utils/translation-bindings.js";
+import { isTranslationIdentifier } from "../utils/translation-bindings.js";
 
-function checkObjectProperty(prop, tVariableNames, context) {
+function checkObjectProperty(prop, context) {
   if (prop.type !== "Property") {
     return;
   }
 
-  // Check shorthand first: { t } - use key since it's the visible identifier
-  if (prop.shorthand && prop.key.type === "Identifier" && tVariableNames.has(prop.key.name)) {
-    context.report({
-      data: { name: prop.key.name },
-      loc: prop.key.loc,
-      messageId: "noTFunctionAsArgument",
-    });
-
-    return;
-  }
-
-  // Non-shorthand: { translate: t }
-  if (prop.value.type === "Identifier" && tVariableNames.has(prop.value.name)) {
+  if (isTranslationIdentifier({ node: prop.value, sourceCode: context.sourceCode })) {
     context.report({
       data: { name: prop.value.name },
       loc: prop.value.loc,
@@ -29,44 +17,18 @@ function checkObjectProperty(prop, tVariableNames, context) {
 
 export default defineRule({
   createOnce(context) {
-    let tVariableNames;
-
     return {
-      before() {
-        tVariableNames = new Set();
-      },
-
-      VariableDeclarator(node) {
-        for (const name of getTranslationVariableNames({ node, sourceCode: context.sourceCode })) {
-          tVariableNames.add(name);
-        }
-      },
-
       CallExpression(node) {
-        if (tVariableNames.size === 0) {
-          return;
-        }
-
-        // Get the callee name for checking if this is a direct t() call
-        let calleeName = null;
-
-        if (node.callee.type === "Identifier") {
-          calleeName = node.callee.name;
-        } else if (
-          node.callee.type === "MemberExpression" &&
-          node.callee.object.type === "Identifier"
-        ) {
-          calleeName = node.callee.object.name;
-        }
+        const callee = node.callee.type === "MemberExpression" ? node.callee.object : node.callee;
 
         // Skip if this is calling t itself (t("key") or t.rich("key"))
-        if (calleeName && tVariableNames.has(calleeName)) {
+        if (isTranslationIdentifier({ node: callee, sourceCode: context.sourceCode })) {
           return;
         }
 
         // Check if any argument is the t variable
         for (const arg of node.arguments) {
-          if (arg.type === "Identifier" && tVariableNames.has(arg.name)) {
+          if (isTranslationIdentifier({ node: arg, sourceCode: context.sourceCode })) {
             context.report({
               data: { name: arg.name },
               loc: arg.loc,
@@ -77,7 +39,7 @@ export default defineRule({
           // Also check object properties: someHelper({ translate: t }) or { t }
           if (arg.type === "ObjectExpression") {
             for (const prop of arg.properties) {
-              checkObjectProperty(prop, tVariableNames, context);
+              checkObjectProperty(prop, context);
             }
           }
         }

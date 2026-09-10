@@ -39,7 +39,7 @@ function containsGetExtractedCall(node, supportedCalls) {
     return node.body.some((statement) => containsGetExtractedCall(statement, supportedCalls));
   }
 
-  if (node.type === "ExpressionStatement") {
+  if (node.type === "ExpressionStatement" || node.type === "ChainExpression") {
     return containsGetExtractedCall(node.expression, supportedCalls);
   }
 
