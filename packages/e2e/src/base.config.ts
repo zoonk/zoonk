@@ -1,9 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-
-const E2E_DATABASE_URL =
-  process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/zoonk_e2e";
-
-const E2E_API_URL = "http://localhost:49152";
+import { getTestEnvironment } from "@zoonk/db/test-environment";
 
 const CHROMIUM_PROJECT = {
   name: "chromium",
@@ -31,15 +27,8 @@ export function createBaseConfig(options: {
     webServer: {
       command: "pnpm start -p 0",
       env: {
-        AI_GATEWAY_API_KEY: "e2e-disabled",
-        DATABASE_URL: E2E_DATABASE_URL,
-        DATABASE_URL_UNPOOLED: E2E_DATABASE_URL,
-        E2E_TESTING: "true",
-        GEMINI_API_KEY: "e2e-disabled",
-        NEXT_PUBLIC_API_URL: E2E_API_URL,
-        OPENAI_API_KEY: "e2e-disabled",
+        ...getTestEnvironment("e2e"),
         STRIPE_SECRET_KEY: "sk_test_fake",
-        VERCEL_OIDC_TOKEN: "",
         ...options.webServerEnv,
       },
       timeout: 120_000,

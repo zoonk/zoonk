@@ -4,31 +4,7 @@ name = "zoonk"
 
 [setup]
 script = '''
-set -eu
-
-cd "$CODEX_WORKTREE_PATH"
-
-primary_worktree="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
-
-for relative_path in \
-  apps/admin/.env \
-  apps/api/.env \
-  apps/evals/.env \
-  apps/main/.env \
-  packages/db/.env
-do
-  source_path="$primary_worktree/$relative_path"
-  destination_path="$CODEX_WORKTREE_PATH/$relative_path"
-
-  if [ -f "$source_path" ] && [ "$source_path" != "$destination_path" ]; then
-    mkdir -p "$(dirname "$destination_path")"
-    cp "$source_path" "$destination_path"
-    chmod 600 "$destination_path"
-  fi
-done
-
-pnpm install --frozen-lockfile
-pnpm db:generate
+node scripts/worktree/setup.mts
 '''
 
 [[actions]]

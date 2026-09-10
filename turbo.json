@@ -24,7 +24,8 @@
     ],
     "ui": "tui",
     "cacheMaxAge": "7d",
-    "cacheMaxSize": "10GB"
+    "cacheMaxSize": "10GB",
+    "inputs": ["packages/db/.env.test.local", "packages/db/.env.e2e.local"]
   },
   "tasks": {
     "//#format": {},

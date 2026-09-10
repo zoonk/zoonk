@@ -4,20 +4,21 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./utils": "./src/utils.ts"
+    "./utils": "./src/utils.ts",
+    "./test-environment": "./src/test-environment.ts"
   },
   "scripts": {
     "db:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
-    "db:reset:e2e": "env $(cat .env.e2e | xargs) prisma migrate reset",
-    "db:reset:test": "env $(cat .env.test | xargs) prisma migrate reset",
+    "db:reset:e2e": "node ../../scripts/run-test-env.mts e2e prisma migrate reset",
+    "db:reset:test": "node ../../scripts/run-test-env.mts test prisma migrate reset",
     "db:sync-content": "tsx src/prisma/sync-content.ts",
     "db:seed": "prisma db seed",
-    "db:seed:e2e": "env $(cat .env.e2e | xargs) prisma db seed",
-    "db:setup:e2e": "env $(cat .env.e2e | xargs) prisma migrate deploy",
-    "db:setup:test": "env $(cat .env.test | xargs) prisma migrate deploy",
+    "db:seed:e2e": "node ../../scripts/run-test-env.mts e2e prisma db seed",
+    "db:setup:e2e": "node ../../scripts/run-test-env.mts e2e prisma migrate deploy",
+    "db:setup:test": "node ../../scripts/run-test-env.mts test prisma migrate deploy",
     "db:studio": "prisma studio",
     "typecheck": "tsc --noEmit"
   },

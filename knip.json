@@ -3,7 +3,7 @@
   "ignore": ["**/*.d.**.ts"],
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
-  "ignoreBinaries": ["build-and-start", "make", "turbo!"],
+  "ignoreBinaries": ["build-and-start", "make", "psql", "turbo!"],
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",
@@ -16,7 +16,7 @@
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
-    ".": { "project": ["scripts/dev/**/*.mts"] },
+    ".": { "project": ["scripts/**/*.mts"] },
     "apps/android": {
       "entry": [".eloqnt/config.ts", ".eloqnt/android-xml.ts"],
       "project": [".eloqnt/**/*.ts", "scripts/**/*.mts", "!scripts/run-emulator.mts"]
