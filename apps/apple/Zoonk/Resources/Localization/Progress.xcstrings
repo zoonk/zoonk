@@ -1353,31 +1353,31 @@
         }
       }
     },
-    "Days at 100% Energy" : {
+    "Days at Max Energy" : {
       "comment" : "Label for the number of days the learner reached full Energy",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tage mit 100 % Energie"
+            "value" : "Tage mit maximaler Energie"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Días con Energía al 100 %"
+            "value" : "Días con Energía máxima"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jours à 100 % d’Énergie"
+            "value" : "Jours à Énergie maximale"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dias com 100% de Energia"
+            "value" : "Dias com Energia Máxima"
           }
         }
       }
@@ -1817,31 +1817,31 @@
         }
       }
     },
-    "Keep learning to reach 100%." : {
+    "Keep learning to reach Max Energy." : {
       "comment" : "Encouragement shown while the learner builds Energy.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lerne weiter, um 100 % zu erreichen."
+            "value" : "Lerne weiter, um maximale Energie zu erreichen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sigue estudiando para llegar al 100 %."
+            "value" : "Sigue estudiando para alcanzar la Energía máxima."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continue à apprendre pour atteindre 100 %."
+            "value" : "Continue d’apprendre pour atteindre l’Énergie maximale."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continue estudando para chegar a 100%."
+            "value" : "Continue estudando para chegar à Energia Máxima."
           }
         }
       }
@@ -2219,6 +2219,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Baixa"
+          }
+        }
+      }
+    },
+    "Max Energy" : {
+      "comment" : "Accessible daily value for maximum Energy in the contribution calendar",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximale Energie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energía máxima"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Énergie maximale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energia Máxima"
           }
         }
       }

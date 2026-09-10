@@ -14,7 +14,7 @@ import { EnergyContent, EnergyContentSkeleton } from "./energy-content";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return { description: t("Keep your Energy at 100% by studying every day."), title: t("Energy") };
+  return { description: t("Stay at Max Energy by studying every day."), title: t("Energy") };
 }
 
 export default async function EnergyPage() {
@@ -26,7 +26,7 @@ export default async function EnergyPage() {
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Energy")}</ContainerTitle>
           <ContainerDescription>
-            {t("Keep your Energy at 100% by studying every day.")}
+            {t("Stay at Max Energy by studying every day.")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

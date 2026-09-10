@@ -21,7 +21,7 @@ export function EnergyMilestoneIndicator() {
   );
 }
 
-/** Keeps every threshold celebration pointed at the single 100% Energy goal. */
+/** Keeps every threshold celebration pointed at the Max Energy goal. */
 function EnergyThresholdCopy({
   milestone,
 }: {
@@ -49,25 +49,25 @@ function EnergyThresholdCopy({
         })}
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
-        {t("Complete lessons every day and answer correctly to reach 100%.")}
+        {t("Complete lessons every day and answer correctly to reach Max Energy.")}
       </PlayerSupportingText>
     </>
   );
 }
 
-/** Preserves the one-year celebration while naming other milestones by the familiar 100% goal. */
+/** Preserves the one-year celebration while naming other milestones by the Max Energy goal. */
 function FullEnergyDaysTitle({ days }: { days: number }) {
   const t = useExtracted();
   const format = useFormatter();
   const formattedDays = formatWholeNumber({ format, value: days });
 
   if (days === 365) {
-    return <CompletionMilestoneTitle>{t("1 year of max Energy")}</CompletionMilestoneTitle>;
+    return <CompletionMilestoneTitle>{t("1 year of Max Energy")}</CompletionMilestoneTitle>;
   }
 
   return (
     <CompletionMilestoneTitle>
-      {t("{days} days at 100% Energy", { days: formattedDays })}
+      {t("{days} days at Max Energy", { days: formattedDays })}
     </CompletionMilestoneTitle>
   );
 }

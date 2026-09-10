@@ -97,19 +97,19 @@ msgid "{percentage} Energy"
 msgstr "{percentage} de Energia"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "AW9QoT"
-msgid "Complete lessons every day and answer correctly to reach 100%."
-msgstr "Complete aulas todos os dias e responda corretamente para chegar a 100%."
+msgctxt "4ZXR7W"
+msgid "Complete lessons every day and answer correctly to reach Max Energy."
+msgstr "Complete aulas todos os dias e responda corretamente para chegar à Energia Máxima."
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "5YVYKd"
-msgid "1 year of max Energy"
-msgstr "1 ano com Energia máxima"
+msgctxt "xCyvpN"
+msgid "1 year of Max Energy"
+msgstr "1 ano de Energia Máxima"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "zcc-w4"
-msgid "{days} days at 100% Energy"
-msgstr "{days} dias com 100% de Energia"
+msgctxt "-kk9tg"
+msgid "{days} days at Max Energy"
+msgstr "{days} dias com Energia Máxima"
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "JEEeYJ"

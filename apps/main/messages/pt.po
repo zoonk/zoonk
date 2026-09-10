@@ -246,14 +246,14 @@ msgid "Continue learning"
 msgstr "Continuar estudando"
 
 #: src/app/[lang]/(catalog)/(home)/energy.tsx
-msgctxt "S5vNR_"
-msgid "Reach 100%"
-msgstr "Chegue a 100%"
+msgctxt "0Bz4ZD"
+msgid "Reach Max Energy"
+msgstr "Alcance a Energia Máxima"
 
 #: src/app/[lang]/(catalog)/(home)/energy.tsx
-msgctxt "j-gOkC"
-msgid "Stay at 100%"
-msgstr "Continue em 100%"
+msgctxt "MlOidD"
+msgid "Stay at Max Energy"
+msgstr "Mantenha a Energia Máxima"
 
 #: src/app/[lang]/(catalog)/(home)/energy.tsx
 #: src/app/[lang]/(progress)/_components/metric-pills.tsx
@@ -1065,6 +1065,11 @@ msgid "No Energy recorded on {date}"
 msgstr "Nenhuma Energia registrada em {date}"
 
 #: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "FpslmD"
+msgid "Max Energy on {date}"
+msgstr "Energia Máxima em {date}"
+
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
 msgctxt "GThwd0"
 msgid "{percentage} Energy on {date}"
 msgstr "{percentage} de Energia em {date}"
@@ -1120,9 +1125,9 @@ msgid "Energy rewards consistency. Learning regularly helps reinforce what you l
 msgstr "A Energia recompensa a constância. Estudar com frequência ajuda a fixar o que você aprende."
 
 #: src/app/[lang]/(progress)/energy/energy-insights.tsx
-msgctxt "qm9EdM"
-msgid "Days at 100% Energy"
-msgstr "Dias com 100% de Energia"
+msgctxt "-1YhhW"
+msgid "Days at Max Energy"
+msgstr "Dias com Energia Máxima"
 
 #: src/app/[lang]/(progress)/energy/energy-insights.tsx
 msgctxt "F9mA1x"
@@ -1135,9 +1140,9 @@ msgid "Your Energy"
 msgstr "Sua Energia"
 
 #: src/app/[lang]/(progress)/energy/page.tsx
-msgctxt "aHGjLP"
-msgid "Keep your Energy at 100% by studying every day."
-msgstr "Mantenha sua Energia em 100% estudando todos os dias."
+msgctxt "ajjT8S"
+msgid "Stay at Max Energy by studying every day."
+msgstr "Mantenha a Energia Máxima estudando todos os dias."
 
 #: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "gaXaWV"

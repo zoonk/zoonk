@@ -1,4 +1,4 @@
-import { type EnergyDay } from "@zoonk/core/progress/energy";
+import { type EnergyDay, MAX_ENERGY } from "@zoonk/core/progress/energy";
 import {
   ContributionCalendar,
   ContributionCalendarCaption,
@@ -138,19 +138,26 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
   const monthFormatter = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" });
   const shortDateFormatter = getProgressInsightDateFormatter(locale);
 
-  const calendarDays = days.map((day) => {
+  function getAccessibleLabel(day: EnergyDay) {
     const date = shortDateFormatter.format(day.date);
 
-    const accessibleLabel =
-      day.energy === null
-        ? t("No Energy recorded on {date}", { date })
-        : t("{percentage} Energy on {date}", {
-            date,
-            percentage: formatMetricPercent({ format, value: day.energy }),
-          });
+    if (day.energy === null) {
+      return t("No Energy recorded on {date}", { date });
+    }
 
-    return getEnergyCalendarDay({ accessibleLabel, day, keyboardStartDate });
-  });
+    if (day.energy >= MAX_ENERGY) {
+      return t("Max Energy on {date}", { date });
+    }
+
+    return t("{percentage} Energy on {date}", {
+      date,
+      percentage: formatMetricPercent({ format, value: day.energy }),
+    });
+  }
+
+  const calendarDays = days.map((day) =>
+    getEnergyCalendarDay({ accessibleLabel: getAccessibleLabel(day), day, keyboardStartDate }),
+  );
 
   const weeks = groupContributionCalendarDaysByWeek(calendarDays).map((week) =>
     getEnergyCalendarWeek({ monthFormatter, week }),
