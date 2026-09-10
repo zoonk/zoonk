@@ -21,5 +21,7 @@ Run commands from the repository root using `mise x -- pnpm ...` in this environ
 
 ## Local development and sign-in
 
+- In a new linked worktree, run `pnpm worktree:setup` before database-dependent work; Codex's environment hook already does this. Keep the generated local database overrides so migrations, integration tests, and E2E tests stay isolated. Rerun setup to restore expired databases.
+
 - `pnpm dev` starts the apps and mailbox through clone- and worktree-scoped Portless routes. Use the URLs it prints. Use `pnpm dev:lan` for another device, `pnpm dev:direct` for direct ports, and `pnpm dev:prune` for orphaned servers. Stop active stacks from their original terminals.
 - For local sign-in, use an account from `packages/db/src/prisma/seed/users.ts`, such as `owner@zoonk.test`, or a new `@zoonk.test` address. Request an OTP and read the newest message for that address in the local mailbox.

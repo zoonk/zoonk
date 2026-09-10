@@ -50,6 +50,12 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm i18n:lint` to run i18n linting
 - `pnpm i18n` to translate missing i18n keys
 
+### Working with Git worktrees
+
+Codex runs `pnpm worktree:setup` automatically when creating a worktree. For other tools, run it once in the new worktree after `git worktree add`. It installs dependencies, generates Prisma, and prepares isolated development, test, and E2E databases when the primary checkout has a local `zoonk` database. Keep using `pnpm dev`, `pnpm test`, and `pnpm e2e` normally.
+
+See [worktree database setup](./packages/db/README.md#worktree-databases) for prerequisites, cleanup, and recovery.
+
 ## Supporters
 
 <br />

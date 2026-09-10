@@ -1,13 +1,10 @@
+import { getTestEnvironment } from "@zoonk/db/test-environment";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
-    env: {
-      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/zoonk_test",
-      DATABASE_URL_UNPOOLED: "postgres://postgres:postgres@localhost:5432/zoonk_test",
-      NEXT_PUBLIC_APP_DOMAIN: "localhost:3000",
-    },
+    env: { ...getTestEnvironment("test"), NEXT_PUBLIC_APP_DOMAIN: "localhost:3000" },
     environment: "node",
   },
 });

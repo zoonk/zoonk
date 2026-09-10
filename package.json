@@ -34,7 +34,8 @@
     "stripe:listen:lan": "node scripts/dev/stripe-listen.mts --lan",
     "test": "turbo test",
     "test:watch": "turbo test:watch",
-    "typecheck": "turbo typecheck && tsc --project scripts/tsconfig.json"
+    "typecheck": "turbo typecheck && tsc --project scripts/tsconfig.json",
+    "worktree:setup": "node scripts/worktree/setup.mts"
   },
   "devDependencies": {
     "@eloqnt/cli": "catalog:",

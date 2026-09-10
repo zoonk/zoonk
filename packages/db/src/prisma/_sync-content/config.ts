@@ -1,6 +1,5 @@
 import "dotenv/config";
 
-const DESTINATION_DATABASE_NAMES = new Set(["zoonk"]);
 const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "localhost"]);
 
 function getRequiredEnvironmentVariable(name: string): string {
@@ -21,8 +20,11 @@ function assertLocalDestination(connectionString: string): void {
   const url = new URL(connectionString);
   const databaseName = getDatabaseName(url);
 
-  if (!LOCAL_DATABASE_HOSTS.has(url.hostname) || !DESTINATION_DATABASE_NAMES.has(databaseName)) {
-    throw new Error("Content sync can only replace the local zoonk database");
+  const isDevelopmentDatabase =
+    databaseName === "zoonk" || /^zoonk_wt_[a-f0-9]{12}_dev$/u.test(databaseName);
+
+  if (!LOCAL_DATABASE_HOSTS.has(url.hostname) || !isDevelopmentDatabase) {
+    throw new Error("Content sync can only replace a local Zoonk development database");
   }
 }
 
