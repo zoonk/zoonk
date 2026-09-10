@@ -590,6 +590,71 @@ describe(completeLesson, () => {
     });
   });
 
+  it("persists every successful match and wrong attempt in the lesson score", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, step } = await createMultipleChoiceLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const pairs = [
+      { left: "A", right: "1" },
+      { left: "B", right: "2" },
+    ];
+
+    const [otherSteps, matchStep] = await Promise.all([
+      Promise.all(
+        Array.from({ length: 8 }, (_, index) =>
+          stepFixture({
+            content: buildMultipleChoiceContent(),
+            isPublished: true,
+            kind: "multipleChoice",
+            lessonId: lesson.id,
+            position: index + 1,
+          }),
+        ),
+      ),
+      stepFixture({
+        content: { pairs },
+        isPublished: true,
+        kind: "matchColumns",
+        lessonId: lesson.id,
+        position: 9,
+      }),
+    ]);
+
+    const input = buildCompletionInputForSteps({
+      lessonId: lesson.id,
+      stepIds: [step.id, ...otherSteps.map((item) => item.id)],
+    });
+
+    const completion = await submitCompletionForUser({
+      input: {
+        ...input,
+        answers: {
+          ...input.answers,
+          [matchStep.id]: { kind: "matchColumns", mistakes: 2, userPairs: pairs },
+        },
+      },
+      userId: user.id,
+    });
+
+    expect(completion).toMatchObject({
+      result: { correctCount: 11, energyDelta: 2, incorrectCount: 2 },
+      status: "completed",
+    });
+
+    await expect(
+      prisma.dailyProgress.findMany({ where: { userId: user.id } }),
+    ).resolves.toStrictEqual([
+      expect.objectContaining({ correctAnswers: 11, incorrectAnswers: 2 }),
+    ]);
+  });
+
   it("does not write completion progress for a guest", async () => {
     const { chapter, organization } = await createChapterContext();
 

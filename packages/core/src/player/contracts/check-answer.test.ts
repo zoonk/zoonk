@@ -135,6 +135,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toStrictEqual({
+      answerCounts: { correct: 2, incorrect: 0 },
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
@@ -148,6 +149,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toStrictEqual({
+      answerCounts: { correct: 2, incorrect: 0 },
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
@@ -161,11 +163,23 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 1)).toStrictEqual({
+      answerCounts: { correct: 2, incorrect: 1 },
       correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });
   });
+
+  it.each([-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY])(
+    "does not award matching credit for invalid mistake count %s",
+    (mistakes) => {
+      expect(checkMatchColumnsAnswer(content, content.pairs, mistakes)).toStrictEqual({
+        correctAnswer: null,
+        feedback: null,
+        isCorrect: false,
+      });
+    },
+  );
 
   it("returns incorrect when a pair is wrong", () => {
     const userPairs = [

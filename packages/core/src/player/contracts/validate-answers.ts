@@ -1,10 +1,14 @@
 import { type StepKind } from "@zoonk/db";
+import { type AnswerResult } from "./check-answer";
 import { type CheckableStep, checkStepAnswer } from "./check-step-answer";
 import { type SelectedAnswer } from "./completion-input-schema";
 
 export type StepData = CheckableStep & { id: string };
 
-type ValidatedStepResult = { answer: object; isCorrect: boolean; stepId: string };
+type ValidatedStepResult = Pick<AnswerResult, "answerCounts" | "isCorrect"> & {
+  answer: object;
+  stepId: string;
+};
 
 export const ANSWERABLE_STEP_KINDS = [
   "fillBlank",
@@ -40,6 +44,15 @@ export function validateAnswers(
 
     const result = checkStepAnswer(step, answer);
 
-    return result ? [{ answer, isCorrect: result.isCorrect, stepId: step.id }] : [];
+    return result
+      ? [
+          {
+            answer,
+            answerCounts: result.answerCounts,
+            isCorrect: result.isCorrect,
+            stepId: step.id,
+          },
+        ]
+      : [];
   });
 }
