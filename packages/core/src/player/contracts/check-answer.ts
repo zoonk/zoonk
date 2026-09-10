@@ -5,9 +5,11 @@ import {
   type SelectImageStepContent,
   type SortOrderStepContent,
 } from "@zoonk/core/steps/contract/content";
+import { MAX_MATCH_COLUMNS_MISTAKES } from "./_utils/match-columns-limits";
 import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
 export type AnswerResult = {
+  answerCounts?: { correct: number; incorrect: number };
   correctAnswer: string | null;
   isCorrect: boolean;
   feedback: string | null;
@@ -99,7 +101,22 @@ export function checkMatchColumnsAnswer(
 ): AnswerResult {
   const allPairsCorrect = hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
 
-  return { correctAnswer: null, feedback: null, isCorrect: allPairsCorrect && mistakes === 0 };
+  if (
+    !allPairsCorrect ||
+    !Number.isSafeInteger(mistakes) ||
+    mistakes < 0 ||
+    mistakes > MAX_MATCH_COLUMNS_MISTAKES
+  ) {
+    return { correctAnswer: null, feedback: null, isCorrect: false };
+  }
+
+  /** The player requires every pair to be solved and records wrong attempts separately. */
+  return {
+    answerCounts: { correct: content.pairs.length, incorrect: mistakes },
+    correctAnswer: null,
+    feedback: null,
+    isCorrect: mistakes === 0,
+  };
 }
 
 export function checkSortOrderAnswer(

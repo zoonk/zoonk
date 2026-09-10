@@ -231,6 +231,7 @@ export async function completeLesson(input: CompletionInput) {
 
     return {
       answer: validated.answer,
+      answerCounts: validated.answerCounts,
       answeredAt: timing ? new Date(timing.answeredAt) : new Date(),
       dayOfWeek: timing?.dayOfWeek ?? new Date().getDay(),
       durationSeconds: getCappedStepAttemptDurationSeconds({

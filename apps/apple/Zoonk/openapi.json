@@ -4189,7 +4189,9 @@
                       ]
                     },
                     "mistakes": {
-                      "type": "number"
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000
                     },
                     "userPairs": {
                       "type": "array",

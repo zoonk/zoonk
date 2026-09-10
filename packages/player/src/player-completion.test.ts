@@ -1,5 +1,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, it } from "vitest";
+import { checkStep } from "./check-step";
 import { computeLocalCompletion } from "./player-completion";
 import { type PlayerState, type StepResult } from "./player-reducer";
 
@@ -45,6 +46,40 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 describe(computeLocalCompletion, () => {
+  it("previews 11 correct and 2 wrong answers for nine correct steps and two matches", () => {
+    const pairs = [
+      { left: "A", right: "1" },
+      { left: "B", right: "2" },
+    ];
+
+    const step = buildStep({ content: { pairs }, id: "match", kind: "matchColumns" });
+    const answer = { kind: "matchColumns" as const, mistakes: 2, userPairs: pairs };
+
+    const results: Record<string, StepResult> = Object.fromEntries(
+      Array.from({ length: 9 }, (_, index) => [
+        `mc-${index}`,
+        { result: { correctAnswer: null, feedback: null, isCorrect: true }, stepId: `mc-${index}` },
+      ]),
+    );
+
+    const completion = computeLocalCompletion(
+      buildState({
+        results: {
+          ...results,
+          [step.id]: { answer, result: checkStep(step, answer).result, stepId: step.id },
+        },
+      }),
+    );
+
+    expect(completion).toMatchObject({ correctCount: 11, energyDelta: 2, incorrectCount: 2 });
+
+    expect(
+      Math.round(
+        (completion.correctCount / (completion.correctCount + completion.incorrectCount)) * 100,
+      ),
+    ).toBe(85);
+  });
+
   it("uses standard scoring for checked steps", () => {
     const steps = [
       buildStep({

@@ -10,7 +10,7 @@
 
 ## Scope and completion
 
-- Carry the requested work through implementation and relevant verification before returning it for local review. Resolve routine implementation choices from repository context; ask only when missing information materially changes the product, architecture, or authorization.
+- Own the user’s intended outcome through implementation and verification. Use the request, examples, and surrounding context to establish what successful completion requires. Evaluate the solution in the context of the surrounding system. Before handing work back, challenge the assumptions behind your approach and investigate evidence that the solution is incomplete or introduces regressions. Complete the supporting work necessary for the authorized goal. Apply simplicity and scope constraints to achieve the smallest complete solution.
 - Keep changes within the requested scope. Refactor supporting code when needed for a complete solution, and remove code, tests, types, and layout left over from superseded requirements.
 - Treat review comments and specs as hypotheses. Verify the actual path, product assumptions, and impact. In review/assessment work, fix confirmed bugs unless the user asks for findings only or the fix requires a meaningful product or architecture decision. Explain unsupported claims without changing code to satisfy them.
 - Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
@@ -24,7 +24,7 @@
 
 ## Verification
 
-- Choose checks that prove the changed behavior and cover affected consumers. For behavior changes, prefer a failing regression test before implementation when practical. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
+- Choose verification that could expose mistakes in your understanding or implementation. Judge completion against the intended behavior and available evidence; passing checks alone do not establish that the task is complete. For behavior changes, prefer a failing regression test before implementation when practical. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
 - Use [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md) when writing or changing tests: E2E for user flows, real-database integration tests for persistence and business logic, and unit tests for non-trivial pure helpers. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
 - Run relevant local checks and fix failures caused by the requested change without pausing for review after each step. Investigate failures, including intermittent ones; do not rerun until green and dismiss them. Fix failures in the affected scope, and report unrelated failures with evidence instead of silently expanding the task.
 - Once affected checks pass, broaden or repeat them only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.

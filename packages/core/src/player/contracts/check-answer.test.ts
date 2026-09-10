@@ -135,6 +135,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toStrictEqual({
+      answerCounts: { correct: 2, incorrect: 0 },
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
@@ -148,6 +149,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toStrictEqual({
+      answerCounts: { correct: 2, incorrect: 0 },
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
@@ -161,6 +163,32 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 1)).toStrictEqual({
+      answerCounts: { correct: 2, incorrect: 1 },
+      correctAnswer: null,
+      feedback: null,
+      isCorrect: false,
+    });
+  });
+
+  it("counts mistakes up to the supported per-step limit", () => {
+    expect(checkMatchColumnsAnswer(content, content.pairs, 10_000)).toStrictEqual({
+      answerCounts: { correct: 2, incorrect: 10_000 },
+      correctAnswer: null,
+      feedback: null,
+      isCorrect: false,
+    });
+  });
+
+  it.each([
+    -1,
+    0.5,
+    10_001,
+    2 ** 31,
+    Number.MAX_SAFE_INTEGER + 1,
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+  ])("does not award matching credit for invalid mistake count %s", (mistakes) => {
+    expect(checkMatchColumnsAnswer(content, content.pairs, mistakes)).toStrictEqual({
       correctAnswer: null,
       feedback: null,
       isCorrect: false,

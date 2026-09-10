@@ -1,5 +1,7 @@
 import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "../../progress/energy";
+import { getStepAnswerCounts } from "./answer-counts";
+import { type AnswerResult } from "./check-answer";
 
 export type ScoreResult = {
   brainPower: number;
@@ -8,7 +10,7 @@ export type ScoreResult = {
   incorrectCount: number;
 };
 
-type ScoredStepResult = { isCorrect: boolean };
+type ScoredStepResult = Pick<AnswerResult, "answerCounts" | "isCorrect">;
 
 /**
  * Computes completion rewards from checked step results.
@@ -19,8 +21,10 @@ type ScoredStepResult = { isCorrect: boolean };
  * static reading steps count as completing useful lesson work.
  */
 export function computeLessonScore({ results }: { results: ScoredStepResult[] }): ScoreResult {
-  const correctCount = results.filter((result) => result.isCorrect).length;
-  const incorrectCount = results.length - correctCount;
+  const counts = results.map((result) => getStepAnswerCounts(result));
+  const correctCount = counts.reduce((total, count) => total + count.correct, 0);
+
+  const incorrectCount = counts.reduce((total, count) => total + count.incorrect, 0);
 
   const energyDelta =
     results.length === 0

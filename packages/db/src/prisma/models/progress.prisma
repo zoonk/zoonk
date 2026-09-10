@@ -46,18 +46,20 @@ model CourseCompletion {
 }
 
 model StepAttempt {
-  id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId          String   @map("user_id") @db.Uuid
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stepId          String   @map("step_id") @db.Uuid
-  step            Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  isCorrect       Boolean  @map("is_correct")
-  answer          Json
-  effects         Json?
-  durationSeconds Int      @map("duration_seconds")
-  answeredAt      DateTime @default(now()) @map("answered_at")
-  hourOfDay       Int      @map("hour_of_day") @db.SmallInt
-  dayOfWeek       Int      @map("day_of_week") @db.SmallInt
+  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepId           String   @map("step_id") @db.Uuid
+  step             Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  isCorrect        Boolean  @map("is_correct")
+  correctAnswers   Int?     @map("correct_answers")
+  incorrectAnswers Int?     @map("incorrect_answers")
+  answer           Json
+  effects          Json?
+  durationSeconds  Int      @map("duration_seconds")
+  answeredAt       DateTime @default(now()) @map("answered_at")
+  hourOfDay        Int      @map("hour_of_day") @db.SmallInt
+  dayOfWeek        Int      @map("day_of_week") @db.SmallInt
 
   @@index([userId, answeredAt])
   @@index([stepId])

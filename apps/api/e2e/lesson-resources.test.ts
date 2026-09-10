@@ -997,6 +997,41 @@ test.describe("Lesson resources API", () => {
     await apiContext.dispose();
   });
 
+  test("rejects oversized matching mistake counts before saving progress", async () => {
+    const { lesson } = await createPublishedLesson({});
+
+    const pairs = [
+      { left: "A", right: "1" },
+      { left: "B", right: "2" },
+    ];
+
+    const step = await stepFixture({
+      content: { pairs },
+      isPublished: true,
+      kind: "matchColumns",
+      lessonId: lesson.id,
+    });
+
+    const { apiContext, user } = await createBearerApiContext({
+      baseURL,
+      prefix: "matching-mistake-limit",
+    });
+
+    const response = await apiContext.post(`/v1/lessons/${lesson.id}/completions`, {
+      data: {
+        answers: { [step.id]: { kind: "matchColumns", mistakes: 2 ** 31, userPairs: pairs } },
+        startedAt: Date.now() - 10_000,
+        stepTimings: {},
+        timeZone: "UTC",
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    await expect(prisma.dailyProgress.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(prisma.stepAttempt.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await apiContext.dispose();
+  });
+
   test("completes a lesson and returns the authoritative rewards", async () => {
     const { lesson } = await createPublishedLesson({});
 

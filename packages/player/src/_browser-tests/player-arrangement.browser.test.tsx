@@ -247,7 +247,7 @@ describe("player browser integration: arrangement steps", () => {
       .toBeInTheDocument();
   });
 
-  it("keeps match-columns mistakes in the completion result even after correction", async () => {
+  it("counts successful matches and mistakes separately in the completion result", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -281,7 +281,7 @@ describe("player browser integration: arrangement steps", () => {
     await page.getByRole("button", { name: /check/iu }).click();
 
     await expect.element(page.getByRole("status")).toBeInTheDocument();
-    await expect.element(page.getByText("0%")).toBeInTheDocument();
+    await expect.element(page.getByText("67%")).toBeInTheDocument();
   });
 
   it("shows the correct order when the shared sort-order answer is wrong", async () => {

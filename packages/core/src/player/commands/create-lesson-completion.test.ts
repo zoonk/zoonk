@@ -11,10 +11,16 @@ import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getUserProgressCacheTag } from "../../cache/tags";
+import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
+import { getScorePatterns } from "../../progress/get-score-patterns";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { completeLesson } from "./create-lesson-completion";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
+
+vi.mock("../../progress/get-request-date-context", () => ({
+  getRequestProgressDateContext: vi.fn(),
+}));
 
 const TEST_SECONDS_PER_MINUTE = 60;
 const TEST_COMPLETION_CAP_MINUTES = 30;
@@ -587,6 +593,131 @@ describe(completeLesson, () => {
 
     expect(revalidateTag).toHaveBeenCalledExactlyOnceWith(getUserProgressCacheTag(user.id), {
       expire: 0,
+    });
+  });
+
+  it("persists every successful match and wrong attempt in the lesson score", async () => {
+    const now = new Date();
+
+    vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+      currentDate: now,
+      currentInstant: now,
+      timeZone: "UTC",
+    });
+
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, step } = await createMultipleChoiceLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const pairs = [
+      { left: "A", right: "1" },
+      { left: "B", right: "2" },
+    ];
+
+    const [otherSteps, matchStep] = await Promise.all([
+      Promise.all(
+        Array.from({ length: 8 }, (_, index) =>
+          stepFixture({
+            content: buildMultipleChoiceContent(),
+            isPublished: true,
+            kind: "multipleChoice",
+            lessonId: lesson.id,
+            position: index + 1,
+          }),
+        ),
+      ),
+      stepFixture({
+        content: { pairs },
+        isPublished: true,
+        kind: "matchColumns",
+        lessonId: lesson.id,
+        position: 9,
+      }),
+    ]);
+
+    const input = buildCompletionInputForSteps({
+      lessonId: lesson.id,
+      stepIds: [step.id, ...otherSteps.map((item) => item.id)],
+    });
+
+    const completion = await submitCompletionForUser({
+      input: {
+        ...input,
+        answers: {
+          ...input.answers,
+          [matchStep.id]: { kind: "matchColumns", mistakes: 2, userPairs: pairs },
+        },
+        stepTimings: { ...input.stepTimings, [matchStep.id]: input.stepTimings[step.id]! },
+      },
+      userId: user.id,
+    });
+
+    expect(completion).toMatchObject({
+      result: { correctCount: 11, energyDelta: 2, incorrectCount: 2 },
+      status: "completed",
+    });
+
+    await expect(
+      prisma.dailyProgress.findMany({ where: { userId: user.id } }),
+    ).resolves.toStrictEqual([
+      expect.objectContaining({ correctAnswers: 11, incorrectAnswers: 2 }),
+    ]);
+
+    const patterns = await getScorePatterns();
+
+    expect(patterns?.times).toStrictEqual([
+      {
+        correctAnswers: 11,
+        incorrectAnswers: 2,
+        period: 2,
+        score: (11 / 13) * 100,
+        totalAnswers: 13,
+      },
+    ]);
+
+    expect(patterns?.weekdays).toStrictEqual([
+      expect.objectContaining({ correctAnswers: 11, incorrectAnswers: 2, totalAnswers: 13 }),
+    ]);
+  });
+
+  it("does not overflow progress counters for an oversized match mistake count", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, step } = await createMultipleChoiceLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const pairs = [
+      { left: "A", right: "1" },
+      { left: "B", right: "2" },
+    ];
+
+    await prisma.step.update({
+      data: { content: { pairs }, kind: "matchColumns" },
+      where: { id: step.id },
+    });
+
+    const completion = await submitCompletionForUser({
+      input: {
+        ...buildCompletionInput({ lessonId: lesson.id, stepId: step.id }),
+        answers: { [step.id]: { kind: "matchColumns", mistakes: 2 ** 31, userPairs: pairs } },
+      },
+      userId: user.id,
+    });
+
+    expect(completion).toMatchObject({
+      result: { correctCount: 0, incorrectCount: 1 },
+      status: "completed",
     });
   });
 
