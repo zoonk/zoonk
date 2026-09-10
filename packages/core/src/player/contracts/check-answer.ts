@@ -5,6 +5,7 @@ import {
   type SelectImageStepContent,
   type SortOrderStepContent,
 } from "@zoonk/core/steps/contract/content";
+import { MAX_MATCH_COLUMNS_MISTAKES } from "./_utils/match-columns-limits";
 import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
 export type AnswerResult = {
@@ -100,7 +101,12 @@ export function checkMatchColumnsAnswer(
 ): AnswerResult {
   const allPairsCorrect = hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
 
-  if (!allPairsCorrect || !Number.isInteger(mistakes) || mistakes < 0) {
+  if (
+    !allPairsCorrect ||
+    !Number.isSafeInteger(mistakes) ||
+    mistakes < 0 ||
+    mistakes > MAX_MATCH_COLUMNS_MISTAKES
+  ) {
     return { correctAnswer: null, feedback: null, isCorrect: false };
   }
 

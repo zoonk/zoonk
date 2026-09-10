@@ -2,6 +2,8 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { clampEnergy } from "../../progress/energy";
+import { getStepAnswerCounts } from "../contracts/answer-counts";
+import { type AnswerResult } from "../contracts/check-answer";
 import { type ScoreResult } from "../contracts/compute-score";
 import { getCompletionEnergyContext } from "./_utils/completion-energy";
 import { getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
@@ -19,6 +21,7 @@ export async function submitLessonCompletion(input: {
   startedAt: Date;
   stepResults: {
     answer: object;
+    answerCounts?: AnswerResult["answerCounts"];
     answeredAt: Date;
     dayOfWeek: number;
     durationSeconds: number;
@@ -47,9 +50,11 @@ export async function submitLessonCompletion(input: {
         data: input.stepResults.map((step) => ({
           answer: step.answer,
           answeredAt: step.answeredAt,
+          correctAnswers: getStepAnswerCounts(step).correct,
           dayOfWeek: step.dayOfWeek,
           durationSeconds: step.durationSeconds,
           hourOfDay: step.hourOfDay,
+          incorrectAnswers: getStepAnswerCounts(step).incorrect,
           isCorrect: step.isCorrect,
           stepId: step.stepId,
           userId: input.userId,

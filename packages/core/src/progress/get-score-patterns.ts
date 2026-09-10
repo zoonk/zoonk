@@ -86,6 +86,7 @@ function getAnsweredAtRangeFilter({ endDate, startDate }: { endDate: Date; start
 /**
  * Loads weekday and time-of-day aggregates in parallel so the Patterns page
  * gets one coherent window without creating a database waterfall.
+ * Attempts without saved answer totals retain their original boolean score.
  */
 async function queryScorePatterns({
   dailyProgress,
@@ -109,8 +110,8 @@ async function queryScorePatterns({
           WHEN hour_of_day BETWEEN 12 AND 17 THEN 2
           ELSE 3
         END AS "period",
-        COUNT(*) FILTER (WHERE is_correct = true)::int AS "correctAnswers",
-        COUNT(*) FILTER (WHERE is_correct = false)::int AS "incorrectAnswers"
+        SUM(COALESCE(correct_answers, is_correct::int))::int AS "correctAnswers",
+        SUM(COALESCE(incorrect_answers, (NOT is_correct)::int))::int AS "incorrectAnswers"
       FROM step_attempts
       WHERE user_id = ${userId} AND ${answeredAtRangeFilter}
       GROUP BY 1

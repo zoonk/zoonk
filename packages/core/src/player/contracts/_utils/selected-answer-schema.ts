@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_MATCH_COLUMNS_MISTAKES } from "./match-columns-limits";
 
 type SelectedAnswerSchemaLimits = {
   maxItems?: number;
@@ -30,18 +31,10 @@ function getAnswerItemsSchema<T extends z.ZodType>({
   return itemsSchema.max(maxItems);
 }
 
-function getMistakesSchema(maxMistakes: number | undefined) {
-  if (maxMistakes === undefined) {
-    return z.number();
-  }
-
-  return z.number().int().min(0).max(maxMistakes);
-}
-
 /** Keeps completion answers and stricter derived boundaries on one discriminated data contract. */
 export function createSelectedAnswerSchema({
   maxItems,
-  maxMistakes,
+  maxMistakes = MAX_MATCH_COLUMNS_MISTAKES,
   maxTextLength,
 }: SelectedAnswerSchemaLimits = {}) {
   const answerTextSchema = getAnswerTextSchema(maxTextLength);
@@ -53,7 +46,7 @@ export function createSelectedAnswerSchema({
     z.object({ arrangedWords: answerItemsSchema, kind: z.literal("listening") }),
     z.object({
       kind: z.literal("matchColumns"),
-      mistakes: getMistakesSchema(maxMistakes),
+      mistakes: z.number().int().min(0).max(maxMistakes),
       userPairs: getAnswerItemsSchema({ itemSchema: matchPairSchema, maxItems }),
     }),
     z.object({ kind: z.literal("multipleChoice"), selectedOptionId: answerTextSchema }),
