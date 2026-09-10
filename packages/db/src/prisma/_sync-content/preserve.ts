@@ -178,9 +178,10 @@ export async function restoreDestinationReferences({
   const stepAttempts = await destination.query(
     `INSERT INTO step_attempts
            (id, user_id, step_id, is_correct, answer, effects, duration_seconds, answered_at,
-            hour_of_day, day_of_week)
+            hour_of_day, day_of_week, correct_answers, incorrect_answers)
          SELECT local.id, local.user_id, steps.id, local.is_correct, local.answer, local.effects,
-                local.duration_seconds, local.answered_at, local.hour_of_day, local.day_of_week
+                local.duration_seconds, local.answered_at, local.hour_of_day, local.day_of_week,
+                local.correct_answers, local.incorrect_answers
            FROM local_step_attempts local
            JOIN courses ON courses.organization_id = $1 AND courses.slug = local.course_slug
            JOIN chapters ON chapters.course_id = courses.id AND chapters.slug = local.chapter_slug
