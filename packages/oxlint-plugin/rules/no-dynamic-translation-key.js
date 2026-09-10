@@ -1,44 +1,5 @@
 import { defineRule } from "@oxlint/plugins";
-
-function isGetExtractedCall(node) {
-  if (!node) {
-    return false;
-  }
-
-  if (node.type === "AwaitExpression") {
-    return isGetExtractedCall(node.argument);
-  }
-
-  if (node.type !== "CallExpression") {
-    return false;
-  }
-
-  if (node.callee.type === "Identifier" && node.callee.name === "getExtracted") {
-    return true;
-  }
-
-  return false;
-}
-
-function isUseExtractedCall(node) {
-  if (!node) {
-    return false;
-  }
-
-  if (node.type !== "CallExpression") {
-    return false;
-  }
-
-  if (node.callee.type === "Identifier" && node.callee.name === "useExtracted") {
-    return true;
-  }
-
-  return false;
-}
-
-function isTVariable(node) {
-  return isGetExtractedCall(node) || isUseExtractedCall(node);
-}
+import { isTranslationIdentifier } from "../utils/translation-bindings.js";
 
 function isStringLiteral(node) {
   if (!node) {
@@ -108,43 +69,11 @@ function isStaticTranslationArgument(node) {
 
 export default defineRule({
   createOnce(context) {
-    let tVariableNames;
-
     return {
-      before() {
-        tVariableNames = new Set();
-      },
-
-      VariableDeclarator(node) {
-        if (!node.id || node.id.type !== "Identifier") {
-          return;
-        }
-
-        if (isTVariable(node.init)) {
-          tVariableNames.add(node.id.name);
-        }
-      },
-
       CallExpression(node) {
-        if (tVariableNames.size === 0) {
-          return;
-        }
+        const callee = node.callee.type === "MemberExpression" ? node.callee.object : node.callee;
 
-        // Get the callee name
-        let calleeName = null;
-
-        // Direct call: t("key")
-        if (node.callee.type === "Identifier") {
-          calleeName = node.callee.name;
-        }
-
-        // Method call: t.rich("key"), t.raw("key"), t.markup("key")
-        if (node.callee.type === "MemberExpression" && node.callee.object.type === "Identifier") {
-          calleeName = node.callee.object.name;
-        }
-
-        // Skip if not a t function call
-        if (!calleeName || !tVariableNames.has(calleeName)) {
+        if (!isTranslationIdentifier({ node: callee, sourceCode: context.sourceCode })) {
           return;
         }
 
