@@ -1,5 +1,6 @@
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { sessionErrorCodes } from "@/lib/session-error-codes";
+import { DISPOSABLE_EMAIL_ERROR_MESSAGE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
 import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/native-apple";
 
@@ -40,6 +41,16 @@ function getAccountDisabledErrorResponse(error: unknown) {
 }
 
 function getSharedSessionErrorResponse(error: unknown) {
+  const authError = getAuthError(error);
+
+  if (authError?.code === sessionErrorCodes.disposableEmail) {
+    return createErrorResponse({
+      code: sessionErrorCodes.disposableEmail,
+      message: DISPOSABLE_EMAIL_ERROR_MESSAGE,
+      status: httpStatus.badRequest,
+    });
+  }
+
   return getRateLimitErrorResponse(error) ?? getAccountDisabledErrorResponse(error);
 }
 

@@ -9,6 +9,7 @@
     "./cookies": "./src/cookies.ts",
     "./e2e": "./src/e2e.ts",
     "./email-deletion-contract": "./src/email-deletion-contract.ts",
+    "./email-signup-contract": "./src/email-signup-contract.ts",
     "./errors": "./src/errors.ts",
     "./next": "./src/next.ts",
     "./native-apple": "./src/native-apple.ts",
@@ -32,6 +33,7 @@
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.7.3",
     "jose": "6.2.12",
+    "mailchecker": "6.0.21",
     "stripe": "22.6.1",
     "zod": "catalog:"
   },

@@ -1,5 +1,6 @@
 "use server";
 
+import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
 import { sendVerificationOTP } from "@zoonk/core/users/otp/send";
 import { safeAsync } from "@zoonk/utils/error";
@@ -7,7 +8,7 @@ import { parseFormField } from "@zoonk/utils/form";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-type VerificationOTPState = { status: "idle" | "invalidEmail" | "error" };
+type VerificationOTPState = { status: "idle" | "invalidEmail" | "disposableEmail" | "error" };
 
 /**
  * Keeps Better Auth's stricter server-side email validation from becoming a
@@ -17,6 +18,10 @@ type VerificationOTPState = { status: "idle" | "invalidEmail" | "error" };
  */
 function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPState | null {
   const authError = getAuthError(error);
+
+  if (authError?.code === DISPOSABLE_EMAIL_ERROR_CODE) {
+    return { status: "disposableEmail" };
+  }
 
   if (authError?.code === "INVALID_EMAIL" || authError?.message === "Invalid email") {
     return { status: "invalidEmail" };
