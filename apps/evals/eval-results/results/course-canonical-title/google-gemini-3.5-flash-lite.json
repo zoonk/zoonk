@@ -1,5 +1,5 @@
 {
-  "modelId": "google/gemini-3.1-flash-lite",
+  "modelId": "google/gemini-3.5-flash-lite",
   "results": [
     {
       "steps": [
@@ -75,9 +75,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Machine Learning"] },
@@ -87,9 +99,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Machine Learning"] },
@@ -99,9 +123,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Machine Learning"] },
@@ -159,9 +195,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Large Language Models`. Generated title `Artificial Intelligence and Large Language Models`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Large Language Models`. Generated title `Artificial Intelligence and Large Language Models`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Large Language Models`. Generated title `Artificial Intelligence and Large Language Models`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Large Language Models"] },
@@ -333,9 +381,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Organische Chemie"] },
@@ -348,9 +408,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Organische Chemie"] },
@@ -363,9 +435,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Organische Chemie`. Generated title `Organische Strukturlehre`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Organische Chemie"] },
@@ -1046,9 +1130,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Model Refinement`, `Model Refining`, `Refining a Model`. Generated title `Model Fine-Tuning`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Model Refinement`, `Model Refining`, `Refining a Model`. Generated title `Model Fine-Tuning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Model Refinement`, `Model Refining`, `Refining a Model`. Generated title `Model Fine-Tuning`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
@@ -1060,9 +1156,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Model Refinement`, `Model Refining`, `Refining a Model`. Generated title `Model Fine-Tuning`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Model Refinement`, `Model Refining`, `Refining a Model`. Generated title `Model Fine-Tuning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Model Refinement`, `Model Refining`, `Refining a Model`. Generated title `Model Fine-Tuning`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
@@ -1098,9 +1206,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Síndrome dos Ovários Policísticos`. Generated title `Síndrome dos Ovários Poliquísticos`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Síndrome dos Ovários Policísticos`. Generated title `Síndrome dos Ovários Poliquísticos`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Síndrome dos Ovários Policísticos`. Generated title `Síndrome dos Ovários Poliquísticos`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Síndrome dos Ovários Policísticos"] },

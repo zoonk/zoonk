@@ -50,6 +50,7 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 1.5,
   },
   { id: "google/gemini-3-flash", inputCost: 0.5, name: "gemini-3-flash", outputCost: 3 },
+  { id: "openai/gpt-6-astra", inputCost: 10, name: "gpt-6-astra", outputCost: 50 },
   { id: "openai/gpt-5.6-sol", inputCost: 4, name: "gpt-5.6-sol", outputCost: 20 },
   { id: "openai/gpt-5.6-terra", inputCost: 2, name: "gpt-5.6-terra", outputCost: 12 },
   { id: "openai/gpt-5.6-luna", inputCost: 0.2, name: "gpt-5.6-luna", outputCost: 1.2 },

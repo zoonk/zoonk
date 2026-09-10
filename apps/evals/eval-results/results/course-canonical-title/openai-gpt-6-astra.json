@@ -1,5 +1,5 @@
 {
-  "modelId": "google/gemini-3.1-flash-lite",
+  "modelId": "openai/gpt-6-astra",
   "results": [
     {
       "steps": [
@@ -438,9 +438,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Analysis und Lineare Algebra`. Generated title `Ein- und mehrdimensionale Analysis und lineare Algebra`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Analysis und Lineare Algebra`. Generated title `Ein- und mehrdimensionale Analysis und lineare Algebra`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Analysis und Lineare Algebra`. Generated title `Ein- und mehrdimensionale Analysis und lineare Algebra`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": { "acceptedTitles": ["Analysis und Lineare Algebra"] },
@@ -2472,16 +2484,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
           "acceptedTitles": [
             "Futurismo e Foresight",
             "Futurismo",
-            "Futurismo e Prospecção Estratégica"
+            "Futurismo e Prospecção Estratégica",
+            "Futurismo e Prospecção de Futuros"
           ]
         },
         "id": "futurismo-e-foresight-1",
@@ -2490,16 +2515,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
           "acceptedTitles": [
             "Futurismo e Foresight",
             "Futurismo",
-            "Futurismo e Prospecção Estratégica"
+            "Futurismo e Prospecção Estratégica",
+            "Futurismo e Prospecção de Futuros"
           ]
         },
         "id": "futurismo-e-foresight-2",
@@ -2508,16 +2546,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Futurismo e Foresight`, `Futurismo`, `Futurismo e Prospecção Estratégica`, `Futurismo e Prospecção de Futuros`. Generated title `Futurismo e Prospectiva`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
           "acceptedTitles": [
             "Futurismo e Foresight",
             "Futurismo",
-            "Futurismo e Prospecção Estratégica"
+            "Futurismo e Prospecção Estratégica",
+            "Futurismo e Prospecção de Futuros"
           ]
         },
         "id": "futurismo-e-foresight-3",
