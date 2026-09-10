@@ -1,49 +1,54 @@
 import { defineRule } from "@oxlint/plugins";
+import { getPromiseAllTranslationBindings } from "../utils/translation-bindings.js";
 
 const PROMISE_METHODS = new Set(["all", "allSettled", "race", "any"]);
 
-function containsGetExtractedCall(node) {
+function containsGetExtractedCall(node, supportedCalls) {
   if (!node) {
     return false;
   }
 
   if (node.type === "CallExpression") {
     if (node.callee.type === "Identifier" && node.callee.name === "getExtracted") {
-      return true;
+      return !supportedCalls.has(node);
     }
 
     return (
-      node.arguments.some((arg) => containsGetExtractedCall(arg)) ||
-      containsGetExtractedCall(node.callee)
+      node.arguments.some((arg) => containsGetExtractedCall(arg, supportedCalls)) ||
+      containsGetExtractedCall(node.callee, supportedCalls)
     );
   }
 
-  if (node.type === "AwaitExpression") {
-    return containsGetExtractedCall(node.argument);
+  if (
+    node.type === "AwaitExpression" ||
+    node.type === "SpreadElement" ||
+    node.type === "ReturnStatement"
+  ) {
+    return containsGetExtractedCall(node.argument, supportedCalls);
   }
 
   if (node.type === "ArrayExpression") {
-    return node.elements.some((element) => containsGetExtractedCall(element));
+    return node.elements.some((element) => containsGetExtractedCall(element, supportedCalls));
   }
 
   if (node.type === "ArrowFunctionExpression" || node.type === "FunctionExpression") {
-    return containsGetExtractedCall(node.body);
+    return containsGetExtractedCall(node.body, supportedCalls);
   }
 
   if (node.type === "BlockStatement") {
-    return node.body.some((statement) => containsGetExtractedCall(statement));
+    return node.body.some((statement) => containsGetExtractedCall(statement, supportedCalls));
   }
 
-  if (node.type === "ReturnStatement" || node.type === "ExpressionStatement") {
-    return containsGetExtractedCall(node.expression);
+  if (node.type === "ExpressionStatement") {
+    return containsGetExtractedCall(node.expression, supportedCalls);
   }
 
   if (node.type === "VariableDeclaration") {
-    return node.declarations.some((decl) => containsGetExtractedCall(decl));
+    return node.declarations.some((decl) => containsGetExtractedCall(decl, supportedCalls));
   }
 
   if (node.type === "VariableDeclarator") {
-    return containsGetExtractedCall(node.init);
+    return containsGetExtractedCall(node.init, supportedCalls);
   }
 
   return false;
@@ -63,7 +68,22 @@ function isPromiseCombinator(node) {
 
 export default defineRule({
   createOnce(context) {
+    let supportedCalls;
+
     return {
+      before() {
+        supportedCalls = new WeakSet();
+      },
+
+      VariableDeclarator(node) {
+        for (const { call } of getPromiseAllTranslationBindings({
+          node,
+          sourceCode: context.sourceCode,
+        })) {
+          supportedCalls.add(call);
+        }
+      },
+
       CallExpression(node) {
         if (!isPromiseCombinator(node)) {
           return;
@@ -72,7 +92,7 @@ export default defineRule({
         const methodName = node.callee.property.name;
 
         for (const arg of node.arguments) {
-          if (containsGetExtractedCall(arg)) {
+          if (containsGetExtractedCall(arg, supportedCalls)) {
             context.report({
               loc: arg.loc,
               messageId: "noGetExtractedInPromise",
@@ -87,10 +107,11 @@ export default defineRule({
   meta: {
     docs: {
       description:
-        "Disallow getExtracted() inside Promise.all, Promise.allSettled, Promise.race, or Promise.any",
+        "Disallow getExtracted() in Promise combinators unless next-intl can extract its translator binding",
     },
     messages: {
-      noGetExtractedInPromise: "getExtracted() cannot be used inside Promise.{{method}}().",
+      noGetExtractedInPromise:
+        "next-intl cannot extract this getExtracted() usage inside Promise.{{method}}(). Await it directly or use const [t, data] = await Promise.all([getExtracted(), fetchData()]) with an inline array without spreads and an identifier binding for each translator.",
     },
     schema: [],
     type: "problem",

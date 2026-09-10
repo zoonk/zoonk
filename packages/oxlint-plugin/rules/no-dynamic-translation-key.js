@@ -1,44 +1,5 @@
 import { defineRule } from "@oxlint/plugins";
-
-function isGetExtractedCall(node) {
-  if (!node) {
-    return false;
-  }
-
-  if (node.type === "AwaitExpression") {
-    return isGetExtractedCall(node.argument);
-  }
-
-  if (node.type !== "CallExpression") {
-    return false;
-  }
-
-  if (node.callee.type === "Identifier" && node.callee.name === "getExtracted") {
-    return true;
-  }
-
-  return false;
-}
-
-function isUseExtractedCall(node) {
-  if (!node) {
-    return false;
-  }
-
-  if (node.type !== "CallExpression") {
-    return false;
-  }
-
-  if (node.callee.type === "Identifier" && node.callee.name === "useExtracted") {
-    return true;
-  }
-
-  return false;
-}
-
-function isTVariable(node) {
-  return isGetExtractedCall(node) || isUseExtractedCall(node);
-}
+import { getTranslationVariableNames } from "../utils/translation-bindings.js";
 
 function isStringLiteral(node) {
   if (!node) {
@@ -116,12 +77,8 @@ export default defineRule({
       },
 
       VariableDeclarator(node) {
-        if (!node.id || node.id.type !== "Identifier") {
-          return;
-        }
-
-        if (isTVariable(node.init)) {
-          tVariableNames.add(node.id.name);
+        for (const name of getTranslationVariableNames({ node, sourceCode: context.sourceCode })) {
+          tVariableNames.add(name);
         }
       },
 
