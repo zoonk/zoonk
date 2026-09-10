@@ -192,7 +192,7 @@ test.describe("Energy Page", () => {
 
         const averageEnergyCard = page.getByRole("article", { name: /average energy/iu });
         const energyBattery = page.getByRole("progressbar", { name: /your energy/iu });
-        const fullEnergyCard = page.getByRole("article", { name: /days at 100% energy/iu });
+        const fullEnergyCard = page.getByRole("article", { name: /days at max energy/iu });
         const energyChart = page.getByRole("figure", { name: /energy history/iu });
 
         const recordedEnergyDay = energyChart.getByRole("button", {
@@ -210,9 +210,7 @@ test.describe("Energy Page", () => {
         await expect(energyChart).toBeVisible();
         await expect(recordedEnergyDay).toBeVisible();
 
-        await expect(energyChart.getByRole("button", { name: /^100% energy on /iu })).toHaveCount(
-          0,
-        );
+        await expect(energyChart.getByRole("button", { name: /^max energy on /iu })).toHaveCount(0);
 
         await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
 

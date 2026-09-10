@@ -25,7 +25,7 @@ export async function Energy({ energy }: { energy: number }) {
   const energyMenu = getMenu("energy");
   const formattedEnergy = formatMetricPercent({ format, value: energy });
 
-  const description = energy < MAX_ENERGY ? t("Reach 100%") : t("Stay at 100%");
+  const description = energy < MAX_ENERGY ? t("Reach Max Energy") : t("Stay at Max Energy");
 
   return (
     <FeatureCardLink render={<Link href={energyMenu.url} prefetch />}>

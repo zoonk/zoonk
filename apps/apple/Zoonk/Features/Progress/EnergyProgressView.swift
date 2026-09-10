@@ -111,7 +111,7 @@ private struct EnergyProgressContent: View {
 
           ProgressDetailMetric(
             label: Text(
-              "Days at 100% Energy",
+              "Days at Max Energy",
               tableName: "Progress",
               comment: "Label for the number of days the learner reached full Energy"),
             value: Text(insights.fullEnergyDays, format: .number),
@@ -161,7 +161,7 @@ private struct EnergyProgressContent: View {
     }
 
     return Text(
-      "Keep learning to reach 100%.",
+      "Keep learning to reach Max Energy.",
       tableName: "Progress",
       comment: "Encouragement shown while the learner builds Energy.")
   }
@@ -172,6 +172,13 @@ private struct EnergyProgressContent: View {
         "No Energy recorded",
         tableName: "Progress",
         comment: "Accessible value for a day without recorded Energy")
+    }
+
+    if energy >= 100 {
+      return Text(
+        "Max Energy",
+        tableName: "Progress",
+        comment: "Accessible daily value for maximum Energy in the contribution calendar")
     }
 
     return Text(

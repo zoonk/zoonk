@@ -47,7 +47,7 @@ async function FullEnergyCard({ count }: { count: number }) {
         <ZapIcon />
       </ProgressMetricCardIcon>
       <ProgressMetricCardLabel id={DAYS_AT_FULL_ENERGY_LABEL_ID}>
-        {t("Days at 100% Energy")}
+        {t("Days at Max Energy")}
       </ProgressMetricCardLabel>
       <ProgressMetricCardValue>{countLabel}</ProgressMetricCardValue>
     </ProgressMetricCard>
