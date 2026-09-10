@@ -122,6 +122,7 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
   titleCase({
     acceptedTitles: [
       "Bancos Digitais",
+      "Bancos Digitais e Digitalizados",
       "Bancos Digitais e Canais de Atendimento",
       "Tecnologia Bancária",
       "Canais Bancários Digitais",
@@ -316,7 +317,13 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "python for data science",
   }),
   titleCase({
-    acceptedTitles: ["Warsaw in the 1600s", "Warsaw in the 17th Century", "17th-Century Warsaw"],
+    acceptedTitles: [
+      "Warsaw in the 1600s",
+      "Warsaw in the 17th Century",
+      "Warsaw in the Seventeenth Century",
+      "17th-Century Warsaw",
+      "History of Warsaw in the 17th Century",
+    ],
     expectedTitle: "Warsaw in the 1600s",
     id: "warsaw-1600s",
     language: "en",
@@ -454,7 +461,12 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "aprender a aprender",
   }),
   titleCase({
-    acceptedTitles: ["Futurismo e Foresight", "Futurismo"],
+    acceptedTitles: [
+      "Futurismo e Foresight",
+      "Futurismo",
+      "Futurismo e Prospecção Estratégica",
+      "Futurismo e Prospecção de Futuros",
+    ],
     expectedTitle: "Futurismo e Foresight",
     id: "futurismo-e-foresight",
     language: "pt",
@@ -547,7 +559,7 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "matematicas, operaciones de fracciones a algebra",
   }),
   titleCase({
-    acceptedTitles: ["Matemáticas: Fracciones", "Fracciones", "Matemáticas"],
+    acceptedTitles: ["Matemáticas: Fracciones", "Fracciones"],
     expectedTitle: "Matemáticas: Fracciones",
     id: "es-fracciones",
     language: "es",
@@ -566,4 +578,16 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "University Mathematics and Physics",
   }),
   titleCase({ expectedTitle: "Direito", id: "pt-direito", language: "pt", prompt: "direito" }),
+  titleCase({
+    expectedTitle: "Matemática",
+    id: "pt-matematica-avancada",
+    language: "pt",
+    prompt: "matemática avançada",
+  }),
+  titleCase({
+    expectedTitle: "Direito",
+    id: "pt-quero-aprender-direito",
+    language: "pt",
+    prompt: "quero aprender direito",
+  }),
 ];

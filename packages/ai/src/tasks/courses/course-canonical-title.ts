@@ -9,8 +9,8 @@ const defaultModel = "google/gemini-3.1-flash-lite";
 
 const fallbackModels = [
   "openai/gpt-5.6-luna",
+  "google/gemini-3.8-flash",
   "openai/gpt-5.6-terra",
-  "openai/gpt-5.6-sol",
 ] as const;
 
 const schema = z.object({ title: z.string() });
