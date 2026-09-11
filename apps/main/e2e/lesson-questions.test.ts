@@ -1619,6 +1619,8 @@ test("keeps saved history visible but blocks sending during a reopen refresh", a
   });
 
   await authenticatedPage.goto(scenario.url);
+  // The held second request must belong to the reopen, after the initial preload.
+  await expect.poll(() => api.completedGetRequests).toBe(1);
   await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
@@ -1668,6 +1670,7 @@ test("ignores an older reopen response that arrives after a newer refresh", asyn
   });
 
   await authenticatedPage.goto(scenario.url);
+  await expect.poll(() => api.completedGetRequests).toBe(1);
   await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(firstQuestion.question)).toBeVisible();
@@ -1762,6 +1765,7 @@ test("ignores an earlier page that finishes after the latest page refreshes", as
   });
 
   await authenticatedPage.goto(scenario.url);
+  await expect.poll(() => api.completedGetRequests).toBe(1);
 
   const openQuestions = authenticatedPage.getByRole("button", { name: "Ask about this lesson" });
 
