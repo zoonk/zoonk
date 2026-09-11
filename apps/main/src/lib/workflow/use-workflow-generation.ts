@@ -58,6 +58,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   const { autoTrigger = true, completionStep, entityId, target } = config;
 
   const hasTriggeredRef = useRef(false);
+  const triggerAttemptRef = useRef(0);
 
   // Wrapper preserves the TStep generic that useReducer would otherwise widen to string.
   const resolvedStatus = config.initialStatus ?? "idle";
@@ -150,10 +151,24 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   });
 
   const startTrigger = useEffectEvent(async () => {
+    triggerAttemptRef.current += 1;
+    const attempt = triggerAttemptRef.current;
+
+    /** Resuming another run supersedes every outcome of the pending trigger. */
+    function dispatchTriggerResult(action: GenerationAction<TStep>) {
+      if (triggerAttemptRef.current === attempt) {
+        dispatch(action);
+      }
+    }
+
     dispatch({ type: "triggerStart" });
 
     try {
       const authHeaders = await getWorkflowAuthHeaders();
+
+      if (triggerAttemptRef.current !== attempt) {
+        return;
+      }
 
       const response = await fetch(
         `${API_URL}/v1/generations`,
@@ -165,7 +180,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
         const limit = getGenerationLimit(data);
 
         if (limit) {
-          dispatch({ limit, type: "limitReached" });
+          dispatchTriggerResult({ limit, type: "limitReached" });
           return;
         }
 
@@ -179,9 +194,9 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
         throw new Error("Invalid response: missing generation ID");
       }
 
-      dispatch({ runId: generationId, type: "triggerSuccess" });
+      dispatchTriggerResult({ runId: generationId, type: "triggerSuccess" });
     } catch (error) {
-      dispatch({
+      dispatchTriggerResult({
         error: error instanceof Error ? error.message : "Failed to start",
         type: "setError",
       });
@@ -198,6 +213,8 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   }, [autoTrigger, state.status]);
 
   const retry = useCallback(() => {
+    triggerAttemptRef.current += 1;
+
     if (state.errorKind === "connection") {
       globalThis.location.reload();
       return;
@@ -211,6 +228,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   /** An identity match can transfer the requested content to an already-running workflow. */
   const resume = useCallback(
     (runId: string) => {
+      triggerAttemptRef.current += 1;
       hasTriggeredRef.current = true;
       resetIndex();
       dispatch({ type: "reset" });

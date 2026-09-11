@@ -17,7 +17,9 @@ Determine the requested comparison: index, unstaged changes, working tree, commi
 
 Follow the root instructions for fixing confirmed bugs during reviews. An explicitly findings-only or read-only review stays read-only. For authorized fixes, preserve the user's index and complete relevant verification before local review; the skill does not authorize commits or external publication.
 
-Treat each claim, including your own, as a hypothesis. Trace the reachable code path and its product assumptions, and seek evidence that could disprove it. A constructed reproduction proves that case occurs under its supplied conditions; verify that those conditions are possible in this product.
+Reconstruct the intended behavior independently of the implementation’s explanation. Identify the assumptions required for the design to work, then investigate reachable conditions that could invalidate them. Trace those assumptions across callers, shared state, and component boundaries; individually correct parts do not establish correct composition. A constructed reproduction proves that case occurs under its supplied conditions; verify that those conditions are possible in this product.
+
+A follow-up review must reassess the assumptions and coverage supporting the earlier conclusion. Reuse valid evidence, but investigate what the earlier review did not establish. Review fixes with the same scrutiny as the original change, including their effects on surrounding behavior.
 
 Classify concerns before reporting:
 
@@ -30,7 +32,7 @@ Classify concerns before reporting:
 Choose the relevant areas below rather than running a fixed audit of every subsystem:
 
 - **Product and correctness:** Trace input through validation, persistence, side effects, caching, and output. Examine retries, cancellation, concurrency, stale state, and partial failure where the changed path permits them. Preserve the product contract and remove leftovers from superseded requirements.
-- **Architecture and simplicity:** Check the core/app boundary, API parity, ownership of shared rules, and whether the added abstraction solves an actual need. Reject competing sources of truth and unnecessary compatibility layers. Check consumers when moving symbols or changing contracts.
+- **Architecture and simplicity:** Check the core/app boundary, API parity, ownership of shared rules, and whether the added abstraction solves an actual need. Evaluate reused abstractions against the guarantees their callers require. Establish those guarantees from their implementations and actual usage, rather than their names, proximity, or existing adoption. Reject competing sources of truth and unnecessary compatibility layers. Check consumers when moving symbols or changing contracts.
 - **Permissions and privacy:** Check authorization beside protected reads/writes, including resource ownership and publication state. Review cache scope, input handling, and exposure of private data through responses, logs, analytics, or client bundles. UI visibility is not authorization.
 - **Performance:** Preserve independent async work; examine added queries, model calls, unbounded results, or client payloads. Repeated cheap translation calls are expected. Require evidence before proposing performance machinery.
 - **Data and workflows:** Check uniqueness, transactions, retry safety, freshness, and invalidation. Public API changes must preserve the OpenAPI contract; distinguish public product endpoints from the same-origin transport exception in [API guidance](../../../apps/api/AGENTS.md).

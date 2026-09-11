@@ -9,7 +9,7 @@ metadata:
 
 # Zoonk testing
 
-Choose the smallest test boundary that proves the changed product behavior. Follow the root verification policy for scope, completion, and reruns; do not turn every edit into a full-suite exercise.
+Choose a test boundary capable of exercising the behavior under investigation. Choose the overall set of checks from the affected behavior and consumers. A small regression test may demonstrate one property while broader existing coverage remains necessary for the change. Follow the root verification policy for scope, completion, and reruns.
 
 For behavior changes, prefer a failing regression test before implementation when practical. Confirm it fails for the expected reason. If it already passes, investigate whether the defect is reproduced and whether the assertion distinguishes the intended outcome; do not weaken assertions or manufacture a failure.
 

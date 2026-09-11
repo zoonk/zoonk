@@ -38,18 +38,25 @@ describe(getCoursePromptStep, () => {
     );
   });
 
-  it("throws FatalError when a language request uses the same user and target language", async () => {
-    const request = await coursePromptFixture({
-      canonicalTitle: `Same Language Request ${randomUUID()}`,
-      courseFormat: "language",
-      language: "en",
-      targetLanguage: "en",
-    });
+  it.each([
+    ["en", "en"],
+    ["ja-JP", "ja"],
+    ["zh-Hant-TW", "zh"],
+  ])(
+    "rejects a persisted %s prompt that teaches the same %s language",
+    async (language, targetLanguage) => {
+      const request = await coursePromptFixture({
+        canonicalTitle: `Same Language Request ${randomUUID()}`,
+        courseFormat: "language",
+        language,
+        targetLanguage,
+      });
 
-    await expect(getCoursePromptStep(request.id)).rejects.toThrow(
-      "Language course source and target languages must be different",
-    );
-  });
+      await expect(getCoursePromptStep(request.id)).rejects.toThrow(
+        "Language course source and target languages must be different",
+      );
+    },
+  );
 
   it.each(["", "es"])(
     "throws FatalError when a core request has target language %j",

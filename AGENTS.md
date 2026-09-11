@@ -10,11 +10,11 @@
 
 ## Scope and completion
 
-- Own the user’s intended outcome through implementation and verification. Use the request, examples, and surrounding context to establish what successful completion requires. Evaluate the solution in the context of the surrounding system. Before handing work back, challenge the assumptions behind your approach and investigate evidence that the solution is incomplete or introduces regressions. Complete the supporting work necessary for the authorized goal. Apply simplicity and scope constraints to achieve the smallest complete solution.
+- Own the user’s intended outcome through implementation and verification. Before declaring completion, reconcile the intended outcome, the resulting implementation, and the evidence collected. Close material gaps that can be investigated within the authorized task. Passing selected checks establishes only what those checks exercise. Carry earlier evidence forward only while subsequent changes leave it applicable.
 - Keep changes within the requested scope. Refactor supporting code when needed for a complete solution, and remove code, tests, types, and layout left over from superseded requirements.
 - Treat review comments and specs as hypotheses. Verify the actual path, product assumptions, and impact. In review/assessment work, fix confirmed bugs unless the user asks for findings only or the fix requires a meaningful product or architecture decision. Explain unsupported claims without changing code to satisfy them.
 - Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
-- Report the outcome, relevant verification, and material limitations in plain language. Distinguish observed behavior, static review, passed checks, and anything unverified.
+- Report the outcome and verification in plain language, distinguishing observed behavior, static review, and passed checks. Base progress and completion claims on observed results, accounting for failures across the relevant run. Identify running, blocked, or unrun checks and material verification limits.
 
 ## Architecture shared by all workspaces
 
@@ -24,10 +24,10 @@
 
 ## Verification
 
-- Choose verification that could expose mistakes in your understanding or implementation. Judge completion against the intended behavior and available evidence; passing checks alone do not establish that the task is complete. For behavior changes, prefer a failing regression test before implementation when practical. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
+- Derive verification scope from the behavior and contracts being changed, including affected consumers and tests in unchanged files. Use focused checks when that scope is demonstrably bounded. When the impact is broad or uncertain, run the relevant containing suites. For behavior changes, prefer a failing regression test before implementation when practical. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
 - Use [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md) when writing or changing tests: E2E for user flows, real-database integration tests for persistence and business logic, and unit tests for non-trivial pure helpers. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
 - Run relevant local checks and fix failures caused by the requested change without pausing for review after each step. Investigate failures, including intermittent ones; do not rerun until green and dismiss them. Fix failures in the affected scope, and report unrelated failures with evidence instead of silently expanding the task.
-- Once affected checks pass, broaden or repeat them only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
+- Once the affected scope has been verified, broaden or repeat checks only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
 
 ## Task-specific guidance
 

@@ -55,35 +55,45 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("rejects language course requests with the same user and target language", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
+  for (const [language, targetLanguage] of [
+    ["en", "en"],
+    ["ja-JP", "ja"],
+    ["zh-Hant-TW", "zh"],
+  ] as const) {
+    test(`rejects language course requests with matching ${language} and ${targetLanguage}`, async () => {
+      const uniqueId = randomUUID().slice(0, 8);
 
-    const startRequest = await coursePromptFixture({
-      canonicalTitle: `E2E Same Language Course ${uniqueId}`,
-      courseFormat: "language",
-      generationStatus: "completed",
-      language: "en",
-      targetLanguage: "en",
+      const startRequest = await coursePromptFixture({
+        canonicalTitle: `E2E Same Language Course ${uniqueId}`,
+        courseFormat: "language",
+        generationStatus: "completed",
+        language,
+        targetLanguage,
+      });
+
+      const { apiContext } = await createAuthenticatedApiContext({
+        baseURL: process.env.E2E_BASE_URL ?? "",
+        prefix: "course-same-language",
+      });
+
+      const response = await apiContext.post("/v1/generations", {
+        data: { target: { id: startRequest.id, type: "coursePrompt" } },
+      });
+
+      expect(response.status()).toBe(400);
+
+      const body = await response.json();
+
+      expect(body.error).toBeDefined();
+      expect(body.error.code).toBe("BAD_REQUEST");
+
+      await expect(
+        prisma.coursePrompt.findUniqueOrThrow({ where: { id: startRequest.id } }),
+      ).resolves.toMatchObject({ generationRunId: null, generationStatus: "completed" });
+
+      await apiContext.dispose();
     });
-
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "course-same-language",
-    });
-
-    const response = await apiContext.post("/v1/generations", {
-      data: { target: { id: startRequest.id, type: "coursePrompt" } },
-    });
-
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("BAD_REQUEST");
-
-    await apiContext.dispose();
-  });
+  }
 
   test("returns validation error when coursePromptId is missing", async () => {
     const { apiContext } = await createAuthenticatedApiContext({

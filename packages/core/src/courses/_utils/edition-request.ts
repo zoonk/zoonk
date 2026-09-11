@@ -6,24 +6,26 @@ import { normalizeString } from "@zoonk/utils/string";
 import { type CourseEditionResult } from "../course-editions";
 import { getCompatibleCourseFormats } from "../course-prompt-generation";
 import { resolveLanguageCourse } from "../language-course";
-import { getCourseEditionOutcome, getEditionRestriction } from "./edition-discovery";
+import {
+  getCourseEditionOutcome,
+  getEditionRestriction,
+  getSourceCourse,
+} from "./edition-discovery";
 import { ensureCourseFamily, linkCourseEditions, lockCourseFamilies } from "./edition-family";
 import { getCourseEditionPrompt } from "./edition-prompt";
+
+type EditionRequestInput = { sourceCourseId: string; language: string; coursePromptId: string };
 
 /**
  * Classification is outside the lock. Concurrent callers can classify the same
  * topic, but only the winning request is returned to start a workflow. Request
  * ownership follows the source course through subsequent family merges.
  */
-export async function saveEditionRequest({
+async function persistEditionRequest({
   sourceCourseId,
   language,
   coursePromptId,
-}: {
-  sourceCourseId: string;
-  language: string;
-  coursePromptId: string;
-}): Promise<CourseEditionResult> {
+}: EditionRequestInput): Promise<CourseEditionResult> {
   return prisma.$transaction(async (transaction) => {
     await lockCourseFamilies(transaction);
     const source = await transaction.course.findUniqueOrThrow({ where: { id: sourceCourseId } });
@@ -88,6 +90,38 @@ export async function saveEditionRequest({
       kind: "generation",
     };
   });
+}
+
+/**
+ * Ordinary initialization can finish before its first edition request commits.
+ * Recheck after commit: either this read sees that course, or the workflow's
+ * later linking step sees this request. No prompt lock can invert the existing
+ * course-before-prompt lock order used by workflow claims and completion.
+ */
+export async function saveEditionRequest(input: EditionRequestInput): Promise<CourseEditionResult> {
+  const result = await persistEditionRequest(input);
+
+  if (result.kind !== "generation") {
+    return result;
+  }
+
+  const [prompt, source] = await Promise.all([
+    prisma.coursePrompt.findUniqueOrThrow({
+      include: { course: true },
+      where: { id: result.coursePromptId },
+    }),
+    getSourceCourse(input.sourceCourseId),
+  ]);
+
+  if (!source) {
+    return { kind: "notFound" };
+  }
+
+  if (prompt.course) {
+    return getCourseEditionOutcome({ course: prompt.course, language: input.language, source });
+  }
+
+  return result;
 }
 
 /**

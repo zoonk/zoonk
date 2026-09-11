@@ -931,7 +931,7 @@ test("confirms external links in a localized accessible dialog", async ({
 
   await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
-  await authenticatedPage.goto(scenario.url);
+  await authenticatedPage.goto(`/pt${scenario.url}`);
 
   await authenticatedPage.getByRole("button", { name: "Pergunte sobre esta aula" }).click();
 
@@ -1592,7 +1592,7 @@ test("announces the initial question history load", async ({
 
   await expect(loadingStatus).toBeVisible();
   await expect(loadingStatus).toHaveText("Loading questions…");
-  expect(api.getRequests).toBe(1);
+  await expect.poll(() => api.getRequests).toBe(1);
   api.releaseGetResponse(1);
   await expect(loadingStatus).toHaveCount(0);
   await expect(dialog.getByText("What would you like help with?")).toBeVisible();

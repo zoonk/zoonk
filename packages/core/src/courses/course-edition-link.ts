@@ -53,6 +53,28 @@ async function getEditionRequests({
 }
 
 /**
+ * Ordinary prompts do not need family serialization. Once provenance exists,
+ * reload it after locking because other edition requests can merge families.
+ * Requests added later reconcile the prompt's course after they commit.
+ */
+async function getLockedEditionRequests({
+  coursePromptId,
+  transaction,
+}: {
+  coursePromptId: string;
+  transaction: TransactionClient;
+}) {
+  const request = await transaction.courseEditionRequest.findFirst({ where: { coursePromptId } });
+
+  if (!request) {
+    return [];
+  }
+
+  await lockCourseFamilies(transaction);
+  return getEditionRequests({ coursePromptId, transaction });
+}
+
+/**
  * Called inside initialization's transaction. The lock remains held until the
  * row is saved, preventing different translated slugs from creating two new
  * editions after independently discovered families have merged.
@@ -64,8 +86,7 @@ export async function getCourseEditionForPrompt({
   coursePromptId: string;
   transaction: TransactionClient;
 }): Promise<{ familyId: string; course: Course | null } | null> {
-  await lockCourseFamilies(transaction);
-  const requests = await getEditionRequests({ coursePromptId, transaction });
+  const requests = await getLockedEditionRequests({ coursePromptId, transaction });
   const first = requests[0];
 
   if (!first) {
@@ -138,8 +159,7 @@ export async function linkCourseToEditionRequests({
   coursePromptId: string;
 }): Promise<void> {
   await prisma.$transaction(async (transaction) => {
-    await lockCourseFamilies(transaction);
-    const requests = await getEditionRequests({ coursePromptId, transaction });
+    const requests = await getLockedEditionRequests({ coursePromptId, transaction });
 
     for (const request of requests) {
       // eslint-disable-next-line no-await-in-loop -- Each attachment can merge the next source's family.

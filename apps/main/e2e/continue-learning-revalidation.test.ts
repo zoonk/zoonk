@@ -117,6 +117,10 @@ async function completeStaticLesson({
   page: Page;
   userId: string;
 }) {
+  await expect(
+    page.getByRole("region", { name: "Lesson content" }).getByRole("button", { name: "Next step" }),
+  ).toBeEnabled();
+
   const serverActionResponse = page.waitForResponse(
     (resp) => resp.request().method() === "POST" && resp.ok(),
   );
@@ -166,7 +170,6 @@ test.describe("Continue Learning Revalidation", () => {
     // 2. Click the continue learning card link (client-side navigation)
     await nextLink.first().click();
     await page.waitForURL(new RegExp(`/l/e2e-cl-reval-current-${uniqueId}$`, "u"));
-    await page.waitForLoadState("networkidle");
 
     // 3. Complete the static lesson and wait for durable progress before navigating again.
     await completeStaticLesson({ lessonId: lesson1.id, page, userId: user.id });
@@ -178,7 +181,6 @@ test.describe("Continue Learning Revalidation", () => {
     // 5. Click the Home link in the navbar (client-side navigation — Router Cache)
     await page.getByRole("link", { name: /home page/iu }).click();
     await page.waitForURL(/\/$/u);
-    await page.waitForLoadState("networkidle");
 
     // 6. Continue learning should show the NEW next lesson, not the old one
     await expect(

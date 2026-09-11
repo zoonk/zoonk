@@ -739,7 +739,7 @@ test.describe("Lesson Player Page", () => {
     const chapterPath = `/b/ai/c/${course.slug}/ch/${chapter.slug}`;
 
     await setLocale(authenticatedPage, "pt");
-    await authenticatedPage.goto(`${chapterPath}/l/${lesson.slug}`);
+    await authenticatedPage.goto(`/pt${chapterPath}/l/${lesson.slug}`);
 
     await expect(authenticatedPage).toHaveURL(
       new RegExp(`/pt${chapterPath}/l/${lesson.slug}$`, "u"),
@@ -1005,12 +1005,14 @@ test.describe("Lesson Player Page", () => {
     await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
-  test("uses stored lesson metadata and permits indexing", async ({ page }) => {
+  test("uses stored lesson metadata and indexes only the content locale", async ({ page }) => {
     const { chapter, course, lesson, lessonTitle, uniqueId } = await createTestLesson({
       generationStatus: "completed",
     });
 
-    await page.goto(`/pt/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    const lessonPath = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
+
+    await page.goto(lessonPath);
 
     await expect(page).toHaveTitle(new RegExp(`${lessonTitle}.*:.*${course.title}`, "u"));
 
@@ -1025,6 +1027,11 @@ test.describe("Lesson Player Page", () => {
       );
 
     await expectRobotsMeta({ page, value: "index, follow" });
+
+    await page.goto(`/pt${lessonPath}`);
+
+    await expect(page).toHaveTitle(new RegExp(`${lessonTitle}.*:.*${course.title}`, "u"));
+    await expectRobotsMeta({ page, value: "noindex, follow" });
   });
 
   test("page title uses the source topic for an indexable companion lesson", async ({ page }) => {

@@ -147,6 +147,8 @@ test.describe("Course language editions", () => {
     await page.getByRole("button", { name: "Learn in English" }).click();
 
     const request = await authRequest;
+    await expect(page.getByText("Auth app", { exact: true })).toBeVisible();
+
     const authUrl = new URL(request.url());
     const callbackUrl = new URL(authUrl.searchParams.get("redirectTo") ?? "");
 
@@ -232,6 +234,8 @@ test.describe("Course language editions", () => {
     await page.getByRole("button", { name: "Auf Deutsch lernen" }).click();
 
     const request = await authRequest;
+    await expect(page.getByText("Auth app", { exact: true })).toBeVisible();
+
     const authUrl = new URL(request.url());
     const callbackUrl = new URL(authUrl.searchParams.get("redirectTo") ?? "");
 
