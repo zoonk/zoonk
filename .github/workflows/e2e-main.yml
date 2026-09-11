@@ -6,6 +6,21 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      shards:
+        description: Number of test shards
+        type: choice
+        default: "4"
+        options: ["3", "4", "6"]
+      rebuild:
+        description: Build without Turbo or Next.js caches
+        type: boolean
+        default: false
+      fresh:
+        description: Run tests even when a successful result is cached
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -21,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
+        shard: ${{ fromJSON(inputs.shards == '3' && '[1, 2, 3]' || inputs.shards == '6' && '[1, 2, 3, 4, 5, 6]' || '[1, 2, 3, 4]') }}
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
@@ -49,17 +64,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
-      - name: Cache turbo build setup
-        uses: actions/cache@v6
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
-            ${{ runner.os }}-turbo-
-
-      - name: Cache Next.js build
-        uses: actions/cache@v6
+      - name: Restore Next.js build cache
+        if: ${{ !inputs.rebuild }}
+        id: nextjs-cache
+        uses: actions/cache/restore@v6
         with:
           path: apps/main/.next-e2e/cache
           key: ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
@@ -76,5 +84,35 @@ jobs:
       - name: Setup database
         run: pnpm --filter @zoonk/db db:setup:e2e
 
+      - name: Build E2E app for a fresh run
+        if: ${{ inputs.fresh || inputs.rebuild }}
+        run: pnpm build:e2e --filter main ${{ inputs.rebuild && '--force' || '' }}
+
       - name: Run E2E tests
-        run: pnpm e2e --filter main -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        env:
+          E2E_SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
+          PLAYWRIGHT_HTML_OPEN: never
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/results.json
+        run: |
+          if [ "${{ inputs.fresh || inputs.rebuild }}" = "true" ]; then
+            pnpm --filter main e2e:ci
+          else
+            pnpm exec turbo run e2e:ci --filter main
+          fi
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-main-${{ matrix.shard }}
+          path: |
+            apps/main/playwright-report/
+            apps/main/test-results/results.json
+          retention-days: 7
+
+      - name: Save Next.js build cache
+        if: ${{ !inputs.rebuild && matrix.shard == 1 && steps.nextjs-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: apps/main/.next-e2e/cache
+          key: ${{ steps.nextjs-cache.outputs.cache-primary-key }}

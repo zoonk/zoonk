@@ -10,6 +10,7 @@
     "dev:app": "next dev",
     "dev:direct": "next dev",
     "e2e": "node ../../scripts/run-test-env.mts e2e playwright test",
+    "e2e:ci": "pnpm e2e --shard=$E2E_SHARD --workers=2 --reporter=github,html,json",
     "e2e:ui": "node ../../scripts/run-test-env.mts e2e playwright test --ui",
     "i18n:lint": "eloqnt lint --strict",
     "i18n": "eloqnt translate",

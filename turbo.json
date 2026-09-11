@@ -46,7 +46,12 @@
     },
     "build:e2e": {
       "dependsOn": ["db:generate", "^build:e2e"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/db/.env.e2e.local",
+        "$TURBO_ROOT$/scripts/run-test-env.mts",
+        "$TURBO_ROOT$/scripts/dev/process.mts"
+      ],
       "outputs": [
         ".next-e2e/**",
         "!.next-e2e/cache/**",
@@ -71,7 +76,12 @@
     },
     "e2e": {
       "dependsOn": ["build:e2e"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/db/.env.e2e.local",
+        "$TURBO_ROOT$/scripts/run-test-env.mts",
+        "$TURBO_ROOT$/scripts/dev/process.mts"
+      ],
       "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"]
     },
     "i18n:lint": {},

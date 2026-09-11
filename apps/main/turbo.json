@@ -1,0 +1,13 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "e2e:ci": {
+      "dependsOn": ["build:e2e"],
+      "env": ["CI", "E2E_SHARD"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.github/workflows/e2e-main.yml"],
+      "outputs": ["playwright-report/**", "test-results/results.json"],
+      "outputLogs": "new-only",
+      "passThroughEnv": ["PLAYWRIGHT_HTML_OPEN", "PLAYWRIGHT_JSON_OUTPUT_NAME"]
+    }
+  }
+}
