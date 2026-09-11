@@ -5,13 +5,20 @@ import {
   resolveCourseIdentity,
 } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
+import {
+  getCourseEditionPrompt,
+  getExistingCourseEditionForPrompt,
+} from "@zoonk/core/courses/edition-link";
 import { getCompatibleCourseFormats } from "@zoonk/core/courses/prompt-generation";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseGetPayload, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { courseContentInclude } from "../_internal/existing-course-content";
-import { assertCourseMatchesPromptIdentity } from "../_utils/course-identity-validation";
+import {
+  assertCourseMatchesPromptIdentity,
+  matchesCoursePromptLanguage,
+} from "../_utils/course-identity-validation";
 import { type GeneratableCoursePrompt } from "./get-course-prompt-step";
 
 const IDENTITY_SEARCH_STEP = "generateCourseIdentitySearchQueries";
@@ -58,12 +65,21 @@ function toIdentityCandidate(course: ExistingCourse): CourseIdentityCandidate {
 }
 
 /**
- * Converts a course prompt into the model input shape. Keeping this mapper
- * local to the workflow prevents the AI package from depending on Prisma types.
+ * An edition's source language and scope disambiguate translated titles. The
+ * request provenance is persisted by Core, and sources sharing a prompt belong
+ * to the same course family. Use one source context consistently for both calls.
  */
-function toIdentityRequest(request: GeneratableCoursePrompt): CourseIdentityProposedCourse {
+async function toIdentityRequest(
+  request: GeneratableCoursePrompt,
+): Promise<CourseIdentityProposedCourse> {
+  const editionRequest = await prisma.courseEditionRequest.findFirst({
+    include: { sourceCourse: true },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    where: { coursePromptId: request.id, sourceCourse: { isPublished: true } },
+  });
+
   return {
-    description: null,
+    description: editionRequest ? getCourseEditionPrompt(editionRequest.sourceCourse) : null,
     language: request.language,
     targetLanguage: request.targetLanguage,
     title: request.canonicalTitle,
@@ -120,14 +136,14 @@ function getCandidateWhereClauses({
 }
 
 /**
- * Builds the mandatory database identity shared by cached and searched course
- * lookups. Language targets are never an optional recall signal because two
- * learned languages cannot represent the same generated course.
+ * Builds the database constraints shared by cached and searched lookups.
+ * Instructional language is checked after retrieval so valid regional tags
+ * and aliases use the same locale policy as course routing and validation.
  */
 function getCourseIdentityWhere(request: GeneratableCoursePrompt): CourseWhereInput {
   return {
     format: { in: getCompatibleCourseFormats(request.courseFormat) },
-    language: request.language,
+    isPublished: true,
     targetLanguage: request.targetLanguage,
   };
 }
@@ -184,10 +200,17 @@ async function findCandidateCourses({
     return [];
   }
 
-  return prisma.course.findMany({
+  const courses = await prisma.course.findMany({
     include: courseContentInclude,
     where: getAiGenerationCourseWhere(where),
   });
+
+  return courses.filter((course) =>
+    matchesCoursePromptLanguage({
+      courseLanguage: course.language,
+      promptLanguage: request.language,
+    }),
+  );
 }
 
 /**
@@ -226,10 +249,46 @@ async function getCachedCourse(request: GeneratableCoursePrompt): Promise<Existi
     return null;
   }
 
-  return prisma.course.findFirst({
+  const course = await prisma.course.findFirst({
     include: courseContentInclude,
     where: getAiGenerationCourseWhere({ ...getCourseIdentityWhere(request), id: request.courseId }),
   });
+
+  return course &&
+    matchesCoursePromptLanguage({
+      courseLanguage: course.language,
+      promptLanguage: request.language,
+    })
+    ? course
+    : null;
+}
+
+/** Resolves editions through stored family identity before doing title-based model work. */
+async function getFamilyCourse(request: GeneratableCoursePrompt): Promise<ExistingCourse | null> {
+  const edition = await getExistingCourseEditionForPrompt({ coursePromptId: request.id });
+
+  if (!edition) {
+    return null;
+  }
+
+  assertCourseMatchesPromptIdentity({ course: edition, prompt: request });
+
+  return prisma.course.findFirst({
+    include: courseContentInclude,
+    where: getAiGenerationCourseWhere({ id: edition.id, isPublished: true }),
+  });
+}
+
+/** A family can acquire a winning edition after this prompt was first resolved. */
+async function getKnownCourse(request: GeneratableCoursePrompt): Promise<ExistingCourse | null> {
+  const course = await getFamilyCourse(request);
+
+  if (course) {
+    await linkRequestToCourse({ courseId: course.id, promptId: request.id });
+    return course;
+  }
+
+  return getCachedCourse(request);
 }
 
 /**
@@ -289,17 +348,15 @@ async function streamSkippedIdentityClassification(stream: CourseIdentityStream)
  * learner can see that duplicate-course search is doing model work.
  */
 async function generateSearchQueriesWithStatus({
-  request,
+  proposedCourse,
   stream,
 }: {
-  request: GeneratableCoursePrompt;
+  proposedCourse: CourseIdentityProposedCourse;
   stream: CourseIdentityStream;
 }): ReturnType<typeof generateCourseIdentitySearchQueries> {
   await stream.status({ status: "started", step: IDENTITY_SEARCH_STEP });
 
-  const search = await generateCourseIdentitySearchQueries({
-    proposedCourse: toIdentityRequest(request),
-  });
+  const search = await generateCourseIdentitySearchQueries({ proposedCourse });
 
   await stream.status({ status: "completed", step: IDENTITY_SEARCH_STEP });
 
@@ -313,18 +370,18 @@ async function generateSearchQueriesWithStatus({
  */
 async function resolveIdentityWithStatus({
   candidates,
-  request,
+  proposedCourse,
   stream,
 }: {
   candidates: ExistingCourse[];
-  request: GeneratableCoursePrompt;
+  proposedCourse: CourseIdentityProposedCourse;
   stream: CourseIdentityStream;
 }): ReturnType<typeof resolveCourseIdentity> {
   await stream.status({ status: "started", step: IDENTITY_CLASSIFICATION_STEP });
 
   const identity = await resolveCourseIdentity({
     candidates: candidates.map((course) => toIdentityCandidate(course)),
-    proposedCourse: toIdentityRequest(request),
+    proposedCourse,
   });
 
   await stream.status({ status: "completed", step: IDENTITY_CLASSIFICATION_STEP });
@@ -344,7 +401,7 @@ export async function resolveCourseIdentityStep(
 
   await using stream = createStepStream<CourseWorkflowStepName>();
 
-  const cachedCourse = await getCachedCourse(request);
+  const cachedCourse = await getKnownCourse(request);
 
   if (cachedCourse) {
     assertCourseMatchesPromptIdentity({ course: cachedCourse, prompt: request });
@@ -373,7 +430,8 @@ export async function resolveCourseIdentityStep(
     return null;
   }
 
-  const search = await generateSearchQueriesWithStatus({ request, stream });
+  const proposedCourse = await toIdentityRequest(request);
+  const search = await generateSearchQueriesWithStatus({ proposedCourse, stream });
 
   const aiCandidates = await findCandidateCourses({ request, searchTexts: search.data.queries });
 
@@ -384,7 +442,7 @@ export async function resolveCourseIdentityStep(
     return null;
   }
 
-  const identity = await resolveIdentityWithStatus({ candidates, request, stream });
+  const identity = await resolveIdentityWithStatus({ candidates, proposedCourse, stream });
 
   const selectedCourse =
     identity.data.decision === "useExisting"

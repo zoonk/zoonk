@@ -35,6 +35,8 @@ const CANONICAL_OPERATIONS = [
   { method: "get", operationId: "searchCatalog", path: "/catalog/search" },
   { method: "get", operationId: "listCourses", path: "/courses" },
   { method: "get", operationId: "getCourse", path: "/courses/{courseId}" },
+  { method: "get", operationId: "getCourseEdition", path: "/courses/{courseId}/editions" },
+  { method: "post", operationId: "resolveCourseEdition", path: "/courses/{courseId}/editions" },
   { method: "get", operationId: "listCourseChapters", path: "/courses/{courseId}/chapters" },
   { method: "get", operationId: "getChapter", path: "/chapters/{chapterId}" },
   { method: "get", operationId: "listChapterLessons", path: "/chapters/{chapterId}/lessons" },

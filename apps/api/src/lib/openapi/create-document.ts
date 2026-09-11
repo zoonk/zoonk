@@ -9,6 +9,7 @@ import {
 import { accountPaths } from "./paths/account";
 import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
+import { courseEditionPaths } from "./paths/course-editions";
 import { coursePromptPaths } from "./paths/course-prompts";
 import { currentLearningPaths } from "./paths/current-learning";
 import { currentUserProgressPaths } from "./paths/current-user-progress";
@@ -70,6 +71,7 @@ const paths = withInternalErrorResponses({
   ...accountPaths,
   ...catalogPaths,
   ...catalogResourcePaths,
+  ...courseEditionPaths,
   ...coursePromptPaths,
   ...currentLearningPaths,
   ...generationPaths,

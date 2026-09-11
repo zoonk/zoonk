@@ -11,3 +11,14 @@ export type AiCourseHref = `/b/${typeof AI_ORG_SLUG}/c/${string}`;
 export function getAiCourseHref(course: Pick<Course, "slug">): AiCourseHref {
   return `/b/${AI_ORG_SLUG}/c/${course.slug}`;
 }
+
+/** Learning history and parent navigation must keep the selected course edition. */
+export function getOriginalCourseHref({
+  brandSlug,
+  courseSlug,
+}: {
+  brandSlug: string;
+  courseSlug: string;
+}) {
+  return `/b/${brandSlug}/c/${courseSlug}?edition=original` as const;
+}

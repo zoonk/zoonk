@@ -19,6 +19,7 @@ import { getPlayerProgressSnapshot } from "@zoonk/core/player/queries/get-player
 import { getSession } from "@zoonk/core/users/session";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { getContentLocale } from "@zoonk/utils/locale";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -100,7 +101,7 @@ async function getSubscriptionRequiredContent({
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { brandSlug, chapterSlug, courseSlug, lessonSlug } = await params;
+  const { brandSlug, chapterSlug, courseSlug, lang: locale, lessonSlug } = await params;
   const lessonShell = await getCatalogLesson({ brandSlug, chapterSlug, courseSlug, lessonSlug });
 
   if (!lessonShell) {
@@ -120,13 +121,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     robots: {
       follow: true,
-      index: isLessonSeoIndexable({
-        description: lessonShell.description,
-        kind: lessonShell.kind,
-        slug: lessonShell.slug,
-        sourceTitle,
-        title: lessonShell.title,
-      }),
+      index:
+        getContentLocale(lessonShell.chapter.course.language) === locale &&
+        isLessonSeoIndexable({
+          description: lessonShell.description,
+          kind: lessonShell.kind,
+          slug: lessonShell.slug,
+          sourceTitle,
+          title: lessonShell.title,
+        }),
     },
   };
 }

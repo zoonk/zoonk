@@ -207,6 +207,7 @@ describe(courseGenerationWorkflow, () => {
       const course = await courseFixture({
         generationRunId: "test-run-id",
         generationStatus: "running",
+        isPublished: true,
         organizationId,
         slug: getCourseSlugForTitle({ language: "en", title }),
         title,
@@ -249,6 +250,7 @@ describe(courseGenerationWorkflow, () => {
       const course = await courseFixture({
         generationRunId: "completed-run-id",
         generationStatus: "completed",
+        isPublished: true,
         organizationId,
         slug: getCourseSlugForTitle({ language: "en", title }),
         title,
@@ -288,6 +290,7 @@ describe(courseGenerationWorkflow, () => {
       await courseFixture({
         generationRunId,
         generationStatus: "running",
+        isPublished: true,
         organizationId,
         slug,
         title,
@@ -318,7 +321,13 @@ describe(courseGenerationWorkflow, () => {
       const title = `Existing Completed Course ${randomUUID()}`;
       const slug = getCourseSlugForTitle({ language: "en", title });
 
-      await courseFixture({ generationStatus: "completed", organizationId, slug, title });
+      await courseFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId,
+        slug,
+        title,
+      });
 
       const request = await coursePromptFixture({
         canonicalTitle: title,
@@ -352,6 +361,7 @@ describe(courseGenerationWorkflow, () => {
           format: "language",
           generationRunId: unrelatedGenerationRunId,
           generationStatus,
+          isPublished: true,
           language,
           organizationId,
           slug,
@@ -602,6 +612,7 @@ describe(courseGenerationWorkflow, () => {
       const existingCourse = await courseFixture({
         format: "language",
         generationStatus: "failed",
+        isPublished: true,
         organizationId,
         targetLanguage: "es",
         title,
@@ -645,6 +656,230 @@ describe(courseGenerationWorkflow, () => {
       expect(generateCourseIntroduction).not.toHaveBeenCalled();
 
       expect(startMock).toHaveBeenCalledExactlyOnceWith(chapterImagesWorkflow, [course.id]);
+    });
+  });
+
+  describe("language editions", () => {
+    it("fails a hidden target slug without completing the prompt or changing publication", async () => {
+      const title = `Hidden Edition ${randomUUID()}`;
+
+      const [source, hidden, request] = await Promise.all([
+        courseFixture({ isPublished: true, language: "en", organizationId }),
+        courseFixture({
+          generationStatus: "completed",
+          isPublished: false,
+          language: "pt",
+          organizationId,
+          slug: getCourseSlugForTitle({ language: "pt", title }),
+          title,
+        }),
+        coursePromptFixture({ canonicalTitle: title, language: "pt" }),
+      ]);
+
+      await prisma.courseEditionRequest.create({
+        data: { coursePromptId: request.id, language: "pt", sourceCourseId: source.id },
+      });
+
+      await expect(generateCourse(request.id)).rejects.toThrow("Course is not published");
+
+      const [persistedSource, persistedHidden, persistedPrompt] = await Promise.all([
+        prisma.course.findUniqueOrThrow({ where: { id: source.id } }),
+        prisma.course.findUniqueOrThrow({ where: { id: hidden.id } }),
+        prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+      ]);
+
+      expect(persistedSource.familyId).toBeNull();
+      expect(persistedHidden.isPublished).toBe(false);
+      expect(persistedHidden.generationStatus).toBe("completed");
+      expect(persistedPrompt.courseId).toBeNull();
+      expect(persistedPrompt.generationStatus).toBe("failed");
+      expect(generateCourseDescription).not.toHaveBeenCalled();
+    });
+
+    it.each(["running", "completed"] as const)(
+      "links the source family before returning from %s course reuse",
+      async (generationStatus) => {
+        const title = `Ciência da Computação ${randomUUID()}`;
+        const targetFamily = await prisma.courseFamily.create({ data: {} });
+
+        const [source, target, request] = await Promise.all([
+          courseFixture({
+            isPublished: true,
+            language: "en",
+            organizationId,
+            title: `Computer Science ${randomUUID()}`,
+          }),
+          courseFixture({
+            familyId: targetFamily.id,
+            generationRunId: `existing-${randomUUID()}`,
+            generationStatus,
+            isPublished: true,
+            language: "pt",
+            organizationId,
+            slug: getCourseSlugForTitle({ language: "pt", title }),
+            title,
+          }),
+          coursePromptFixture({ canonicalTitle: title, language: "pt" }),
+        ]);
+
+        await prisma.courseEditionRequest.create({
+          data: { coursePromptId: request.id, language: "pt", sourceCourseId: source.id },
+        });
+
+        await generateCourse(request.id);
+
+        const [persistedSource, persistedTarget, persistedPrompt] = await Promise.all([
+          prisma.course.findUniqueOrThrow({ where: { id: source.id } }),
+          prisma.course.findUniqueOrThrow({ where: { id: target.id } }),
+          prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+        ]);
+
+        expect(persistedSource.familyId).not.toBeNull();
+        expect(persistedSource.familyId).toBe(persistedTarget.familyId);
+        expect(persistedSource.slug).toBe(source.slug);
+        expect(persistedTarget.slug).toBe(target.slug);
+        expect(persistedPrompt.courseId).toBe(target.id);
+        expect(persistedPrompt.generationStatus).toBe(generationStatus);
+        expect(generateCourseDescription).not.toHaveBeenCalled();
+      },
+    );
+
+    it("links a newly generated edition without changing either localized slug", async () => {
+      const source = await courseFixture({
+        isPublished: true,
+        language: "en",
+        organizationId,
+        slug: `computer-science-${randomUUID()}`,
+        title: `Computer Science ${randomUUID()}`,
+      });
+
+      const title = `Ciência da Computação ${randomUUID()}`;
+
+      const request = await coursePromptFixture({
+        canonicalTitle: title,
+        language: "pt",
+        prompt: source.title,
+      });
+
+      await prisma.courseEditionRequest.create({
+        data: { coursePromptId: request.id, language: "pt", sourceCourseId: source.id },
+      });
+
+      await generateCourse(request.id);
+
+      const persistedPrompt = await prisma.coursePrompt.findUniqueOrThrow({
+        include: { course: true },
+        where: { id: request.id },
+      });
+
+      const persistedSource = await prisma.course.findUniqueOrThrow({ where: { id: source.id } });
+
+      expect(persistedSource.familyId).not.toBeNull();
+      expect(persistedPrompt.course?.familyId).toBe(persistedSource.familyId);
+      expect(persistedPrompt.course?.slug).toBe(getCourseSlugForTitle({ language: "pt", title }));
+      expect(persistedPrompt.course?.language).toBe("pt");
+      expect(persistedPrompt.generationStatus).toBe("completed");
+      expect(persistedSource.slug).toBe(source.slug);
+    });
+
+    it("links a semantically matched existing edition returned by identity search", async () => {
+      const title = `Ciência da Computação ${randomUUID()}`;
+
+      const [source, target, request] = await Promise.all([
+        courseFixture({
+          isPublished: true,
+          language: "en",
+          organizationId,
+          title: `Computer Science ${randomUUID()}`,
+        }),
+        courseFixture({
+          isPublished: true,
+          language: "pt",
+          normalizedTitle: normalizeString(title),
+          organizationId,
+          slug: getCourseSlugForTitle({ language: "pt", title }),
+          title,
+        }),
+        coursePromptFixture({ canonicalTitle: `Computação ${randomUUID()}`, language: "pt" }),
+      ]);
+
+      await prisma.courseEditionRequest.create({
+        data: { coursePromptId: request.id, language: "pt", sourceCourseId: source.id },
+      });
+
+      const usage = {
+        inputTokenDetails: {
+          cacheReadTokens: undefined,
+          cacheWriteTokens: undefined,
+          noCacheTokens: undefined,
+        },
+        inputTokens: 1,
+        outputTokenDetails: { reasoningTokens: undefined, textTokens: undefined },
+        outputTokens: 1,
+        totalTokens: 2,
+      };
+
+      vi.mocked(generateCourseIdentitySearchQueries).mockResolvedValueOnce({
+        data: { queries: [title] },
+        systemPrompt: "system",
+        usage,
+        userPrompt: "user",
+      });
+
+      vi.mocked(resolveCourseIdentity).mockResolvedValueOnce({
+        data: { courseSlug: target.slug, decision: "useExisting", reason: "same subject" },
+        systemPrompt: "system",
+        usage,
+        userPrompt: "user",
+      });
+
+      await generateCourse(request.id);
+
+      const [persistedSource, persistedTarget, persistedPrompt] = await Promise.all([
+        prisma.course.findUniqueOrThrow({ where: { id: source.id } }),
+        prisma.course.findUniqueOrThrow({ where: { id: target.id } }),
+        prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+      ]);
+
+      expect(persistedSource.familyId).not.toBeNull();
+      expect(persistedSource.familyId).toBe(persistedTarget.familyId);
+      expect(persistedTarget.slug).toBe(target.slug);
+      expect(persistedPrompt.courseId).toBe(target.id);
+      expect(generateCourseDescription).not.toHaveBeenCalled();
+    });
+
+    it("fails an invalid edition request without creating a course or merging families", async () => {
+      const source = await courseFixture({
+        format: "language",
+        isPublished: true,
+        language: "en",
+        organizationId,
+        targetLanguage: "ja",
+      });
+
+      const request = await coursePromptFixture({
+        canonicalTitle: `Incorrect target ${randomUUID()}`,
+        courseFormat: "language",
+        language: "pt",
+        targetLanguage: "fr",
+      });
+
+      await prisma.courseEditionRequest.create({
+        data: { coursePromptId: request.id, language: "pt", sourceCourseId: source.id },
+      });
+
+      await expect(generateCourse(request.id)).rejects.toThrow();
+
+      const [persistedSource, persistedPrompt] = await Promise.all([
+        prisma.course.findUniqueOrThrow({ where: { id: source.id } }),
+        prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+      ]);
+
+      expect(persistedSource.familyId).toBeNull();
+      expect(persistedPrompt.courseId).toBeNull();
+      expect(persistedPrompt.generationStatus).toBe("failed");
+      expect(generateCourseIdentitySearchQueries).not.toHaveBeenCalled();
+      expect(generateCourseDescription).not.toHaveBeenCalled();
     });
   });
 
@@ -697,6 +932,7 @@ describe(courseGenerationWorkflow, () => {
         description: "Existing description",
         generationStatus: "failed",
         imageUrl: "https://example.com/existing-image.webp",
+        isPublished: true,
         landingPage: {
           audience: ["Existing audience"],
           opportunities: ["Existing opportunity"],

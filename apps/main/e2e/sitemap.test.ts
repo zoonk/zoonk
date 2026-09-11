@@ -8,17 +8,25 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
 
 /**
- * Checks each generated lesson sitemap page because a new fixture may sort
- * after the first 5,000 lesson URLs in a long-lived E2E database.
+ * Checks every sitemap page because a new fixture may sort after the first
+ * 5,000 URLs in a long-lived E2E database. Next.js returns 404 for IDs beyond
+ * generateSitemaps(), while page zero must always exist.
  */
-async function lessonSitemapContainsUrl({
+async function sitemapContainsUrl({
   expectedUrl,
   page = 0,
+  resource,
 }: {
   expectedUrl: string;
   page?: number;
+  resource: "courses" | "chapters" | "lessons";
 }): Promise<boolean> {
-  const response = await fetch(`${getBaseURL()}/sitemaps/lessons/sitemap/${page}.xml`);
+  const response = await fetch(`${getBaseURL()}/sitemaps/${resource}/sitemap/${page}.xml`);
+
+  if (page > 0 && response.status === 404) {
+    return false;
+  }
+
   expect(response.status).toBe(200);
 
   const body = await response.text();
@@ -32,7 +40,22 @@ async function lessonSitemapContainsUrl({
     return false;
   }
 
-  return lessonSitemapContainsUrl({ expectedUrl, page: page + 1 });
+  return sitemapContainsUrl({ expectedUrl, page: page + 1, resource });
+}
+
+async function expectPortugueseSitemapUrl({
+  path,
+  resource,
+}: {
+  path: string;
+  resource: "courses" | "chapters" | "lessons";
+}) {
+  const matches = await Promise.all([
+    sitemapContainsUrl({ expectedUrl: `<loc>https://www.zoonk.com/pt${path}</loc>`, resource }),
+    sitemapContainsUrl({ expectedUrl: `<loc>https://www.zoonk.com${path}</loc>`, resource }),
+  ]);
+
+  expect(matches).toStrictEqual([true, false]);
 }
 
 test.describe("robots.txt", () => {
@@ -75,8 +98,8 @@ test.describe("course sitemaps", () => {
   });
 });
 
-test.describe("lesson sitemaps", () => {
-  test("returns canonical URLs for indexable lessons", async () => {
+test.describe("catalog sitemaps", () => {
+  test("returns only matching locale URLs for indexable course content", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const organization = await getAiOrganization();
 
@@ -108,7 +131,44 @@ test.describe("lesson sitemaps", () => {
 
     await stepFixture({ isPublished: true, lessonId: lesson.id });
 
-    const expectedUrl = `<loc>https://www.zoonk.com/pt/b/${organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}</loc>`;
-    expect(await lessonSitemapContainsUrl({ expectedUrl })).toBe(true);
+    const coursePath = `/b/${organization.slug}/c/${course.slug}`;
+    const chapterPath = `${coursePath}/ch/${chapter.slug}`;
+    const lessonPath = `${chapterPath}/l/${lesson.slug}`;
+
+    await Promise.all([
+      expectPortugueseSitemapUrl({ path: coursePath, resource: "courses" }),
+      expectPortugueseSitemapUrl({ path: chapterPath, resource: "chapters" }),
+      expectPortugueseSitemapUrl({ path: lessonPath, resource: "lessons" }),
+    ]);
+  });
+
+  test("excludes unsupported course languages throughout the catalog", async () => {
+    const organization = await getAiOrganization();
+
+    const course = await courseFixture({
+      isPublished: true,
+      language: "ja-JP",
+      organizationId: organization.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const matches = await Promise.all(
+      (["courses", "chapters", "lessons"] as const).map((resource) =>
+        sitemapContainsUrl({ expectedUrl: course.slug, resource }),
+      ),
+    );
+
+    expect(matches).toStrictEqual([false, false, false]);
   });
 });

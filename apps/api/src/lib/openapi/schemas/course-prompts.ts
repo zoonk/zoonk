@@ -3,22 +3,11 @@ import {
   COURSE_PROMPT_MAX_LENGTH,
 } from "@zoonk/core/courses/prompt-contract";
 import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
+import { getLanguageSubtag } from "@zoonk/utils/locale";
 import { z } from "zod";
 import { courseFormatSchema, generationStatusSchema } from "./curriculum";
 
 const unsupportedIntentSchema = z.enum(["ambiguous", "learn", "question"]);
-
-/**
- * Extracts the canonical language subtag from a BCP 47 locale so boundary
- * validation can reject malformed tags and compare regional variants safely.
- */
-function getLanguageSubtag(locale: string): string | null {
-  try {
-    return new Intl.Locale(locale).language;
-  } catch {
-    return null;
-  }
-}
 
 const sourceLanguageSchema = z
   .string()

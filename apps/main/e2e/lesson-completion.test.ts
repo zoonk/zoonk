@@ -301,7 +301,6 @@ test.describe("Lesson Completion UX", () => {
     const { lessonUrl, lesson2, uniqueId } = await createLessonCompleteScenario("lnext");
 
     await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
     await expect(page.getByText("Lesson 1 of 2")).toBeVisible();
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
@@ -330,7 +329,6 @@ test.describe("Lesson Completion UX", () => {
     const { chapter, lessonUrl, uniqueId } = await createLessonCompleteScenario("lrev");
 
     await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
@@ -354,7 +352,6 @@ test.describe("Lesson Completion UX", () => {
       await createChapterCompleteScenario("chnext");
 
     await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
@@ -378,7 +375,6 @@ test.describe("Lesson Completion UX", () => {
     const { lessonUrl, chapter1, uniqueId } = await createChapterCompleteScenario("chrev");
 
     await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
@@ -395,7 +391,6 @@ test.describe("Lesson Completion UX", () => {
     const { lessonUrl, uniqueId } = await createChapterCompleteScenario("chrestart");
 
     await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     await page
@@ -421,7 +416,6 @@ test.describe("Lesson Completion UX", () => {
       await createChapterCompleteWithUngeneratedNextChapterScenario("chpending");
 
     await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
@@ -451,7 +445,6 @@ test.describe("Lesson Completion UX", () => {
     const { lessonUrl, course, uniqueId } = await createCourseCompleteScenario("crsrev");
 
     await page.goto(lessonUrl);
-    await page.waitForLoadState("networkidle");
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
@@ -518,7 +511,6 @@ test.describe("Lesson Completion UX", () => {
     await createQuizLesson(lesson1.id, uniqueId);
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}`);
-    await page.waitForLoadState("networkidle");
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");

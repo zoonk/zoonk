@@ -52,7 +52,8 @@ export async function getCoursePromptGeneration({ coursePromptId }: { courseProm
   if (
     !coursePrompt?.canonicalTitle ||
     !coursePrompt.courseFormat ||
-    !coursePrompt.generationStatus
+    !coursePrompt.generationStatus ||
+    coursePrompt.course?.isPublished === false
   ) {
     return { status: "notFound" as const };
   }
@@ -102,7 +103,8 @@ export async function getCoursePromptGenerationResource({
   if (
     !coursePrompt?.canonicalTitle ||
     !coursePrompt.courseFormat ||
-    !coursePrompt.generationStatus
+    !coursePrompt.generationStatus ||
+    coursePrompt.course?.isPublished === false
   ) {
     return { status: "notFound" as const };
   }

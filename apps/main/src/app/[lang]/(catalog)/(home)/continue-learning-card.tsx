@@ -1,3 +1,4 @@
+import { getOriginalCourseHref } from "@/data/courses/course-href";
 import { Link } from "@/i18n/navigation";
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import { type ContinueLearningItem } from "@zoonk/core/courses/list-current-user-continue-learning";
@@ -40,7 +41,11 @@ function getHrefs(item: ContinueLearningItem) {
     return { chapterHref: href, courseHref: href, headerHref: href, prefetch: true };
   }
 
-  const courseHref = `/b/${course.organization.slug}/c/${course.slug}` as const;
+  const courseHref = getOriginalCourseHref({
+    brandSlug: course.organization.slug,
+    courseSlug: course.slug,
+  });
+
   const chapterHref = `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}` as const;
 
   const lessonHref = lesson

@@ -73,6 +73,7 @@ describe(getOrCreateCourse, () => {
     const existingCourse = await courseFixture({
       generationRunId: winningWorkflowRunId,
       generationStatus: "running",
+      isPublished: true,
       language,
       organizationId,
       slug,
@@ -114,6 +115,7 @@ describe(getOrCreateCourse, () => {
       format: "core",
       generationRunId: winningWorkflowRunId,
       generationStatus: "running",
+      isPublished: true,
       language,
       organizationId,
       slug,
@@ -162,6 +164,7 @@ describe(getOrCreateCourse, () => {
     const existingCourse = await courseFixture({
       generationRunId: workflowRunId,
       generationStatus: "running",
+      isPublished: true,
       language,
       organizationId,
       slug,
@@ -213,6 +216,7 @@ describe(getOrCreateCourse, () => {
 
       await courseFixture({
         format: courseFormat,
+        isPublished: true,
         language: courseLanguage,
         organizationId,
         slug,
@@ -245,6 +249,7 @@ describe(getOrCreateCourse, () => {
       description: "Existing description",
       generationStatus: "failed",
       imageUrl: "https://example.com/img.webp",
+      isPublished: true,
       organizationId,
       title: `Existing Course ${randomUUID()}`,
     });
@@ -301,6 +306,7 @@ describe(getOrCreateCourse, () => {
       const course = await courseFixture({
         generationRunId: null,
         generationStatus,
+        isPublished: true,
         organizationId,
         title: `Concurrent Resume ${randomUUID()}`,
       });

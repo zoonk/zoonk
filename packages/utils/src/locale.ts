@@ -13,6 +13,24 @@ export function isValidLocale(value: string): value is SupportedLocale {
   return SUPPORTED_LOCALES.some((locale) => locale === value);
 }
 
+/** Canonical language identity must also support languages outside the UI catalog. */
+export function getLanguageSubtag(language: string): string | null {
+  try {
+    return new Intl.Locale(language).language ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Content matching and indexing need a real supported language. A navigation
+ * fallback would incorrectly identify unsupported content as English.
+ */
+export function getContentLocale(language: string): SupportedLocale | null {
+  const locale = getLanguageSubtag(language);
+  return locale && isValidLocale(locale) ? locale : null;
+}
+
 /**
  * Stored content languages can include regional tags such as `pt-BR`, while
  * app routes only support base locales such as `pt`. Falling back to English
@@ -20,12 +38,7 @@ export function isValidLocale(value: string): value is SupportedLocale {
  * invalid locale prefix.
  */
 export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {
-  try {
-    const locale = new Intl.Locale(language).language;
-    return isValidLocale(locale) ? locale : DEFAULT_LOCALE;
-  } catch {
-    return DEFAULT_LOCALE;
-  }
+  return getContentLocale(language) ?? DEFAULT_LOCALE;
 }
 
 /**

@@ -37,6 +37,7 @@ describe(getCoursePromptGeneration, () => {
   it("targets the first published lesson as soon as a core course becomes useful", async () => {
     const course = await courseFixture({
       generationStatus: "running",
+      isPublished: true,
       organizationId,
       title: `Core generation ${randomUUID()}`,
     });
@@ -73,6 +74,7 @@ describe(getCoursePromptGeneration, () => {
   it("falls back to a completed core course when no intro lesson exists", async () => {
     const course = await courseFixture({
       generationStatus: "completed",
+      isPublished: true,
       organizationId,
       title: `Completed core generation ${randomUUID()}`,
     });
@@ -89,6 +91,7 @@ describe(getCoursePromptGeneration, () => {
     const course = await courseFixture({
       format: "language",
       generationStatus: "running",
+      isPublished: true,
       organizationId,
       title: `Language generation ${randomUUID()}`,
     });
@@ -108,6 +111,7 @@ describe(getCoursePromptGeneration, () => {
     const course = await courseFixture({
       format: "language",
       generationStatus: "completed",
+      isPublished: true,
       organizationId,
       title: `Completed language generation ${randomUUID()}`,
     });
@@ -118,6 +122,36 @@ describe(getCoursePromptGeneration, () => {
       status: "redirect",
       target: { courseSlug: course.slug, kind: "course" },
     });
+  });
+
+  it.each([
+    { format: "core", generationStatus: "running" },
+    { format: "core", generationStatus: "completed" },
+    { format: "language", generationStatus: "completed" },
+  ] as const)("hides an unpublished $format course while $generationStatus", async (attrs) => {
+    const course = await courseFixture({ ...attrs, isPublished: false, organizationId });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId,
+      position: 0,
+    });
+
+    await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId, position: 0 });
+
+    const prompt = await coursePromptFixture({
+      courseFormat: attrs.format,
+      courseId: course.id,
+      generationStatus: attrs.generationStatus,
+    });
+
+    const resources = await Promise.all([
+      getCoursePromptGeneration({ coursePromptId: prompt.id }),
+      getCoursePromptGenerationResource({ coursePromptId: prompt.id }),
+    ]);
+
+    expect(resources).toStrictEqual([{ status: "notFound" }, { status: "notFound" }]);
   });
 
   it("hides malformed and incomplete prompt resources", async () => {

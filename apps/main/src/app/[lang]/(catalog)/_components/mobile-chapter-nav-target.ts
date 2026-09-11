@@ -1,3 +1,5 @@
+import { getOriginalCourseHref } from "@/data/courses/course-href";
+
 export type MobileChapterNavTarget = { courseHref: `/b/${string}/c/${string}` };
 
 const CHAPTER_PAGE_PATH_PATTERN = /^\/b\/(?<brandSlug>[^/]+)\/c\/(?<courseSlug>[^/]+)\/ch\/[^/]+$/u;
@@ -15,5 +17,10 @@ export function getMobileChapterNavTarget(pathname: string): MobileChapterNavTar
     return null;
   }
 
-  return { courseHref: `/b/${groups.brandSlug}/c/${groups.courseSlug}` as const };
+  return {
+    courseHref: getOriginalCourseHref({
+      brandSlug: groups.brandSlug,
+      courseSlug: groups.courseSlug,
+    }),
+  };
 }

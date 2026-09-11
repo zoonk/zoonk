@@ -1,4 +1,5 @@
 import { type CourseFormat, type CoursePrompt } from "@zoonk/db";
+import { getLanguageSubtag } from "@zoonk/utils/locale";
 
 const SAME_LANGUAGE_COURSE_ERROR = "Language course source and target languages must be different";
 const UNSUPPORTED_COURSE_PROMPT_ERROR = "Course prompt is not generatable";
@@ -48,7 +49,13 @@ export function getCompatibleCourseFormats(courseFormat: CourseFormat): CourseFo
 function isSameLanguageCourseRequest(
   prompt: Pick<CoursePromptGenerationInput, "courseFormat" | "language" | "targetLanguage">,
 ): boolean {
-  return prompt.courseFormat === "language" && prompt.targetLanguage === prompt.language;
+  const language = getLanguageSubtag(prompt.language);
+
+  return (
+    prompt.courseFormat === "language" &&
+    (prompt.targetLanguage === prompt.language ||
+      (language !== null && language === getLanguageSubtag(prompt.targetLanguage ?? "")))
+  );
 }
 
 /**

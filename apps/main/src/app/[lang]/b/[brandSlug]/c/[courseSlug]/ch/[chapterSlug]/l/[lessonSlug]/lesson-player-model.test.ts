@@ -124,7 +124,7 @@ describe(buildLessonPlayerModel, () => {
 
     expect(model.milestone).toStrictEqual({
       chapterHref: "/b/brand/c/course/ch/chapter-1",
-      courseHref: "/b/brand/c/course",
+      courseHref: "/b/brand/c/course?edition=original",
       kind: "course",
     });
 

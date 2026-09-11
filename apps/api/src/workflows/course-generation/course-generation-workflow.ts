@@ -7,8 +7,13 @@ import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
 import { enrollCourseUserStep } from "./steps/enroll-course-user-step";
-import { assertGeneratableCoursePrompt, getCoursePromptStep } from "./steps/get-course-prompt-step";
+import {
+  type GeneratableCoursePrompt,
+  assertGeneratableCoursePrompt,
+  getCoursePromptStep,
+} from "./steps/get-course-prompt-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
+import { linkCourseEditionStep } from "./steps/link-course-edition-step";
 import { resolveCourseIdentityStep } from "./steps/resolve-course-identity-step";
 import { startChapterImagesWorkflowStep } from "./steps/start-chapter-images-workflow-step";
 
@@ -79,6 +84,20 @@ async function startChapterImagesAndGenerateFirstLanguageChapter({
   }
 }
 
+/** Keeps identity validation failures inside the same retryable initialization outcome. */
+async function prepareCourseForPrompt({
+  coursePromptId,
+  prompt,
+  workflowRunId,
+}: {
+  coursePromptId: string;
+  prompt: GeneratableCoursePrompt;
+  workflowRunId: string;
+}) {
+  const existingCourse = await resolveCourseIdentityStep(prompt);
+  return getOrCreateCourse({ coursePromptId, existingCourse, prompt, workflowRunId });
+}
+
 /**
  * Generates or resumes a course and enrolls the authenticated requester once
  * the workflow resolves the concrete course. Enrollment runs before completed
@@ -100,25 +119,35 @@ export async function courseGenerationWorkflow({
 
   assertGeneratableCoursePrompt(prompt);
 
-  const existingCourse = await resolveCourseIdentityStep(prompt);
+  const courseSetup = await prepareCourseForPrompt({ coursePromptId, prompt, workflowRunId }).catch(
+    async (error: unknown) => {
+      await handleCourseFailureStep({
+        courseId: null,
+        coursePromptId,
+        error: serializeWorkflowError(error),
+        workflowRunId,
+      });
 
-  const courseSetup = await getOrCreateCourse({
-    coursePromptId,
-    existingCourse,
-    prompt,
-    workflowRunId,
-  }).catch(async (error: unknown) => {
-    await handleCourseFailureStep({
-      courseId: null,
-      coursePromptId,
-      error: serializeWorkflowError(error),
-      workflowRunId,
-    });
+      logError(`[workflow ${workflowRunId}] Course initialization failed`, error);
 
-    logError(`[workflow ${workflowRunId}] Course initialization failed`, error);
+      throw error;
+    },
+  );
 
-    throw error;
-  });
+  await linkCourseEditionStep({ courseId: courseSetup.course.courseId, coursePromptId }).catch(
+    async (error: unknown) => {
+      await handleCourseFailureStep({
+        courseId: courseSetup.course.courseId,
+        coursePromptId,
+        error: serializeWorkflowError(error),
+        workflowRunId,
+      });
+
+      logError(`[workflow ${workflowRunId}] Course edition linking failed`, error);
+
+      throw error;
+    },
+  );
 
   if (userId) {
     await enrollCourseUserStep({ courseId: courseSetup.course.courseId, userId });

@@ -31,15 +31,37 @@ describe(getCoursePromptGenerationError, () => {
     expect(getCoursePromptGenerationError(prompt)).toBe("Course prompt is not generatable");
   });
 
-  it("rejects a language prompt whose source and target languages match", () => {
+  it.each([
+    ["en", "en"],
+    ["en-US", "en"],
+    ["EN", "en"],
+    ["ja-JP", "ja"],
+    ["zh-Hant-TW", "zh"],
+    ["JA-jp", "ja"],
+  ])("rejects a language prompt whose %s source matches its target", (language, targetLanguage) => {
     const prompt = {
       ...generatableCorePrompt,
       courseFormat: "language" as const,
-      targetLanguage: "en",
+      language,
+      targetLanguage,
     };
 
     expect(getCoursePromptGenerationError(prompt)).toBe(
       "Language course source and target languages must be different",
     );
+  });
+
+  it.each([
+    ["ja-JP", "ko"],
+    ["zh-Hant-TW", "ja"],
+  ])("accepts %s language courses with a different %s target", (language, targetLanguage) => {
+    expect(
+      getCoursePromptGenerationError({
+        ...generatableCorePrompt,
+        courseFormat: "language",
+        language,
+        targetLanguage,
+      }),
+    ).toBeNull();
   });
 });

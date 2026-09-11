@@ -3,7 +3,9 @@ import {
   COURSE_COMPLETION_STEP,
   INTRODUCTION_LESSON_COMPLETION_STEP,
 } from "@zoonk/core/workflows/steps";
+import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
@@ -164,12 +166,14 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
 async function createPublishedCourseWithLesson({
   format,
   generationStatus,
+  language = "en",
   slug,
   targetLanguage,
   title,
 }: {
   format?: "core" | "language";
   generationStatus?: "completed" | "running";
+  language?: string;
   slug: string;
   targetLanguage?: string;
   title: string;
@@ -180,6 +184,7 @@ async function createPublishedCourseWithLesson({
     ...(format ? { format } : {}),
     ...(generationStatus ? { generationStatus } : {}),
     isPublished: true,
+    language,
     organizationId: org.id,
     slug,
     ...(targetLanguage ? { targetLanguage } : {}),
@@ -189,6 +194,7 @@ async function createPublishedCourseWithLesson({
   const chapter = await chapterFixture({
     courseId: course.id,
     isPublished: true,
+    language,
     organizationId: org.id,
     position: 0,
   });
@@ -196,6 +202,7 @@ async function createPublishedCourseWithLesson({
   const lesson = await lessonFixture({
     chapterId: chapter.id,
     isPublished: true,
+    language,
     organizationId: org.id,
     position: 0,
   });
@@ -216,7 +223,282 @@ function getIntroLessonCompletionTarget({
   return `${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
 }
 
+/** The workflow fails durably but its error event never reaches the browser. */
+async function setupFailedRunWithoutEvent({
+  beforeRunStatus,
+  page,
+  runStatus = "failed",
+}: {
+  beforeRunStatus?: (coursePromptId: string) => Promise<void>;
+  page: Page;
+  runStatus?: "completed" | "failed";
+}) {
+  const runId = `failed-progress-${randomUUID()}`;
+
+  const prompt = await coursePromptFixture({
+    canonicalTitle: `Failed course ${randomUUID()}`,
+    courseFormat: "language",
+    generationRunId: runId,
+    generationStatus: "running",
+    language: "en",
+    targetLanguage: "ja",
+  });
+
+  await routeGenerationApis({
+    handler: async (route) => {
+      const url = new URL(route.request().url());
+
+      if (isGenerationEvents(url.toString())) {
+        await prisma.coursePrompt.updateMany({
+          data: { generationRunId: null, generationStatus: "failed" },
+          where: { generationRunId: runId, id: prompt.id },
+        });
+
+        await route.abort("failed");
+        return;
+      }
+
+      if (url.pathname === `/v1/generations/${runId}`) {
+        await beforeRunStatus?.(prompt.id);
+
+        await route.fulfill({
+          body: JSON.stringify({ id: runId, status: runStatus }),
+          contentType: "application/json",
+          status: 200,
+        });
+
+        return;
+      }
+
+      await route.continue();
+    },
+    page,
+  });
+
+  return prompt;
+}
+
 test.describe("Generate Course Page", () => {
+  for (const language of ["en", "pt"] as const) {
+    test(`refreshes a warmed empty ${language} course after generation finishes`, async ({
+      authenticatedPage,
+    }) => {
+      const organization = await getAiOrganization();
+      const runId = `warm-course-${randomUUID()}`;
+      const releaseStream = Promise.withResolvers<null>();
+
+      const course = await courseFixture({
+        format: "language",
+        generationRunId: runId,
+        generationStatus: "running",
+        isPublished: true,
+        language,
+        organizationId: organization.id,
+        slug: `warm-course-${randomUUID()}-${language}`,
+        targetLanguage: "ja",
+        title: `Japanese ${randomUUID()}`,
+      });
+
+      const prompt = await coursePromptFixture({
+        canonicalTitle: course.title,
+        courseFormat: "language",
+        courseId: course.id,
+        generationRunId: runId,
+        generationStatus: "running",
+        language,
+        targetLanguage: "ja",
+      });
+
+      await routeGenerationApis({
+        handler: async (route) => {
+          if (!isGenerationEvents(route.request().url())) {
+            await route.continue();
+            return;
+          }
+
+          await releaseStream.promise;
+
+          await route.fulfill({
+            body: createSSEStream([
+              { entityId: course.slug, status: "completed", step: COURSE_COMPLETION_STEP },
+            ]),
+            contentType: "text/event-stream",
+            status: 200,
+          });
+        },
+        page: authenticatedPage,
+      });
+
+      const prefix = language === "en" ? "" : `/${language}`;
+      const courseHref = `${prefix}/b/ai/c/${course.slug}?edition=original`;
+      await setLocale(authenticatedPage, "de");
+
+      // Visiting the empty course first warms the exact cache entries that
+      // completion must expire before returning to the selected edition.
+      await authenticatedPage.goto(courseHref);
+      await expect(authenticatedPage).toHaveURL(`${prefix}/generate/course/${prompt.id}`);
+      await expect(authenticatedPage.getByRole("progressbar")).toBeVisible();
+
+      await expect(authenticatedPage.evaluate(() => document.documentElement.lang)).resolves.toBe(
+        language,
+      );
+
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        language,
+        organizationId: organization.id,
+        title: `Completed curriculum ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        prisma.course.update({ data: { generationStatus: "completed" }, where: { id: course.id } }),
+        prisma.coursePrompt.update({
+          data: { generationStatus: "completed" },
+          where: { id: prompt.id },
+        }),
+      ]);
+
+      releaseStream.resolve(null);
+
+      await expect(
+        authenticatedPage.getByRole("link", { name: new RegExp(chapter.title, "u") }),
+      ).toBeVisible({ timeout: 15_000 });
+
+      await expect(authenticatedPage).toHaveURL(courseHref);
+    });
+  }
+
+  test("keeps an English edition action in English despite a saved German preference", async ({
+    authenticatedPage,
+  }) => {
+    const { course } = await createPublishedCourseWithLesson({
+      language: "pt",
+      slug: `english-edition-action-${randomUUID()}-pt`,
+      title: `Portuguese course ${randomUUID()}`,
+    });
+
+    const prompt = await coursePromptFixture({
+      canonicalTitle: `English edition ${randomUUID()}`,
+      generationStatus: "pending",
+      language: "en",
+    });
+
+    await prisma.courseEditionRequest.create({
+      data: { coursePromptId: prompt.id, language: "en", sourceCourseId: course.id },
+    });
+
+    await setupMockApis(authenticatedPage, {
+      streamMessages: [{ status: "started", step: "getCoursePrompt" }],
+    });
+
+    await setLocale(authenticatedPage, "de");
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
+    await authenticatedPage.getByRole("button", { name: "Learn in English" }).click();
+
+    await expect(authenticatedPage).toHaveURL(`/generate/course/${prompt.id}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", {
+        name: `Creating the ${prompt.canonicalTitle} course`,
+      }),
+    ).toBeVisible();
+
+    await expect(authenticatedPage.evaluate(() => document.documentElement.lang)).resolves.toBe(
+      "en",
+    );
+  });
+
+  test("keeps English edition sign-in in English despite a saved German preference", async ({
+    page,
+  }) => {
+    const { course } = await createPublishedCourseWithLesson({
+      language: "pt",
+      slug: `english-edition-login-${randomUUID()}-pt`,
+      title: `Portuguese course ${randomUUID()}`,
+    });
+
+    const courseHref = `/b/ai/c/${course.slug}`;
+    const authUrls: URL[] = [];
+
+    await page.route("**/auth/login**", async (route) => {
+      authUrls.push(new URL(route.request().url()));
+      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
+    });
+
+    await setLocale(page, "de");
+    await page.goto(courseHref);
+    await page.getByRole("button", { name: "Learn in English" }).click();
+    await expect.poll(() => authUrls.length).toBe(1);
+
+    const authUrl = authUrls.at(0);
+    expect(authUrl?.searchParams.get("locale")).toBe("en");
+
+    const callbackUrl = new URL(authUrl?.searchParams.get("redirectTo") ?? "");
+    expect(callbackUrl.searchParams.get("next")).toBe(courseHref);
+  });
+
+  test("lets guests follow an existing run without starting generation", async ({ page }) => {
+    const { course } = await createPublishedCourseWithLesson({
+      format: "language",
+      generationStatus: "running",
+      slug: `guest-progress-${randomUUID()}`,
+      targetLanguage: "ja",
+      title: `Japanese ${randomUUID()}`,
+    });
+
+    const runId = `guest-progress-${randomUUID()}`;
+
+    const prompt = await coursePromptFixture({
+      canonicalTitle: course.title,
+      courseFormat: "language",
+      courseId: course.id,
+      generationRunId: runId,
+      generationStatus: "running",
+      language: "en",
+      targetLanguage: "ja",
+    });
+
+    // Only the external workflow service is replaced. Readiness remains a real
+    // server-action read of the persisted course and prompt.
+    await routeGenerationApis({
+      handler: async (route) => {
+        if (!isGenerationEvents(route.request().url())) {
+          await route.continue();
+          return;
+        }
+
+        await Promise.all([
+          prisma.course.update({
+            data: { generationStatus: "completed" },
+            where: { id: course.id },
+          }),
+          prisma.coursePrompt.update({
+            data: { generationStatus: "completed" },
+            where: { id: prompt.id },
+          }),
+        ]);
+
+        await route.fulfill({
+          body: createSSEStream([{ status: "started", step: "getCoursePrompt" }]),
+          contentType: "text/event-stream",
+          status: 200,
+        });
+      },
+      page,
+    });
+
+    await page.goto(`/generate/course/${prompt.id}`);
+    await expect(page.getByRole("progressbar")).toBeVisible();
+
+    await expect(page).toHaveURL(`/b/ai/c/${course.slug}?edition=original`, { timeout: 15_000 });
+    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+
+    await expect(
+      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
+    ).resolves.toHaveLength(0);
+  });
+
   test("asks unauthenticated users to log in without starting generation", async ({ page }) => {
     const coursePrompt = await coursePromptFixture({
       canonicalTitle: "E2E Unauth Course Generation",
@@ -518,7 +800,9 @@ test.describe("Generate Course Page", () => {
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}`, { timeout: 10_000 });
+      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}?edition=original`, {
+        timeout: 10_000,
+      });
     });
 
     test("shows completion state and redirects to the first intro lesson", async ({
@@ -634,7 +918,9 @@ test.describe("Generate Course Page", () => {
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}`, { timeout: 10_000 });
+      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}?edition=original`, {
+        timeout: 10_000,
+      });
     });
 
     test("redirects to suffixed slug intro lesson for non-English courses", async ({
@@ -671,6 +957,210 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Error handling", () => {
+    test("recovers the actual failed run when its error event is lost", async ({
+      authenticatedPage,
+    }) => {
+      const prompt = await setupFailedRunWithoutEvent({ page: authenticatedPage });
+      await authenticatedPage.goto(`/generate/course/${prompt.id}`);
+
+      await expect(authenticatedPage.getByRole("button", { name: "Try again" })).toBeVisible({
+        timeout: 15_000,
+      });
+
+      await expect(
+        prisma.coursePrompt.findUniqueOrThrow({ where: { id: prompt.id } }),
+      ).resolves.toMatchObject({ generationRunId: null, generationStatus: "failed" });
+
+      await expect(
+        getGenerationTriggerRequests({ page: authenticatedPage, targetType: "coursePrompt" }),
+      ).resolves.toHaveLength(0);
+    });
+
+    test("detects a failed joined winner after the initiating run already completed", async ({
+      authenticatedPage,
+    }) => {
+      // An identity handoff completes the initiating workflow before the first
+      // poll. Its winner then fails, clearing the prompt's winning run ID.
+      const prompt = await setupFailedRunWithoutEvent({
+        page: authenticatedPage,
+        runStatus: "completed",
+      });
+
+      await authenticatedPage.goto(`/generate/course/${prompt.id}`);
+
+      await expect(authenticatedPage.getByRole("button", { name: "Try again" })).toBeVisible({
+        timeout: 15_000,
+      });
+
+      await expect(
+        getGenerationTriggerRequests({ page: authenticatedPage, targetType: "coursePrompt" }),
+      ).resolves.toHaveLength(0);
+    });
+
+    test("rereads a failed prompt after its followed run finishes before showing an error", async ({
+      authenticatedPage,
+    }) => {
+      const { course } = await createPublishedCourseWithLesson({
+        format: "language",
+        slug: `completed-during-status-${randomUUID()}`,
+        targetLanguage: "ja",
+        title: `Japanese ${randomUUID()}`,
+      });
+
+      const prompt = await setupFailedRunWithoutEvent({
+        beforeRunStatus: async (coursePromptId) => {
+          await prisma.coursePrompt.update({
+            data: { courseId: course.id, generationStatus: "completed" },
+            where: { id: coursePromptId },
+          });
+        },
+        page: authenticatedPage,
+        runStatus: "completed",
+      });
+
+      await authenticatedPage.goto(`/generate/course/${prompt.id}`);
+
+      await expect(authenticatedPage.getByRole("button", { name: "Try again" })).toHaveCount(0);
+
+      await expect(authenticatedPage).toHaveURL(`/b/ai/c/${course.slug}?edition=original`, {
+        timeout: 15_000,
+      });
+
+      await expect(
+        authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+      ).toBeVisible();
+    });
+
+    test("requires guest sign-in before retrying a followed run that failed", async ({ page }) => {
+      const prompt = await setupFailedRunWithoutEvent({ page });
+      await page.goto(`/generate/course/${prompt.id}`);
+
+      await expect(page.getByRole("button", { name: "Try again" })).toBeVisible({
+        timeout: 15_000,
+      });
+
+      await page.getByRole("button", { name: "Try again" }).click();
+
+      await expect(page).toHaveURL(
+        `/login?next=${encodeURIComponent(`/en/generate/course/${prompt.id}`)}`,
+      );
+
+      await expect(
+        getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
+      ).resolves.toHaveLength(0);
+    });
+
+    test("accepts prompt readiness when a retry starts during an older run status read", async ({
+      authenticatedPage,
+    }) => {
+      const oldRunId = `older-status-${randomUUID()}`;
+      const retryRunId = `retry-status-${randomUUID()}`;
+      const oldStatusRequested = Promise.withResolvers<null>();
+      const releaseOldStatus = Promise.withResolvers<null>();
+      const retryStarted = Promise.withResolvers<null>();
+
+      const { course } = await createPublishedCourseWithLesson({
+        format: "language",
+        slug: `retry-during-status-${randomUUID()}`,
+        targetLanguage: "ja",
+        title: `Japanese ${randomUUID()}`,
+      });
+
+      const prompt = await coursePromptFixture({
+        canonicalTitle: course.title,
+        courseFormat: "language",
+        generationRunId: oldRunId,
+        generationStatus: "running",
+        language: "en",
+        targetLanguage: "ja",
+      });
+
+      // Hold only the external run resource. Prompt readiness stays a real
+      // server-action read, including the read that crosses a local retry.
+      await routeGenerationApis({
+        handler: async (route) => {
+          const request = route.request();
+          const pathname = new URL(request.url()).pathname;
+
+          if (isGenerationTrigger({ request, targetType: "coursePrompt" })) {
+            await route.fulfill({
+              body: JSON.stringify({ id: retryRunId, status: "pending" }),
+              contentType: "application/json",
+              status: 202,
+            });
+
+            return;
+          }
+
+          if (pathname === `/v1/generations/${oldRunId}/events`) {
+            await prisma.coursePrompt.updateMany({
+              data: { generationRunId: null, generationStatus: "failed" },
+              where: { generationRunId: oldRunId, id: prompt.id },
+            });
+
+            await oldStatusRequested.promise;
+
+            await route.fulfill({
+              body: createSSEStream([
+                { reason: "notFound", status: "error", step: "getCoursePrompt" },
+              ]),
+              contentType: "text/event-stream",
+              status: 200,
+            });
+
+            return;
+          }
+
+          if (pathname === `/v1/generations/${oldRunId}`) {
+            oldStatusRequested.resolve(null);
+            await releaseOldStatus.promise;
+
+            await route.fulfill({
+              body: JSON.stringify({ id: oldRunId, status: "completed" }),
+              contentType: "application/json",
+              status: 200,
+            });
+
+            return;
+          }
+
+          if (pathname === `/v1/generations/${retryRunId}/events`) {
+            await prisma.coursePrompt.update({
+              data: { courseId: course.id, generationStatus: "completed" },
+              where: { id: prompt.id },
+            });
+
+            retryStarted.resolve(null);
+
+            await route.fulfill({
+              body: createSSEStream([{ status: "started", step: "getCoursePrompt" }]),
+              contentType: "text/event-stream",
+              status: 200,
+            });
+
+            return;
+          }
+
+          await route.continue();
+        },
+        page: authenticatedPage,
+      });
+
+      await authenticatedPage.goto(`/generate/course/${prompt.id}`);
+      await oldStatusRequested.promise;
+      await authenticatedPage.getByRole("button", { name: "Try again" }).click();
+      await retryStarted.promise;
+      releaseOldStatus.resolve(null);
+
+      await expect(authenticatedPage).toHaveURL(`/b/ai/c/${course.slug}?edition=original`, {
+        timeout: 15_000,
+      });
+
+      await expect(
+        authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+      ).toBeVisible();
+    });
+
     test("shows error when stream returns error status", async ({ authenticatedPage }) => {
       const request = await coursePromptFixture({
         canonicalTitle: "E2E Error Handling Test",

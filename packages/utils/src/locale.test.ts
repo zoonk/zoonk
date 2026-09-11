@@ -1,10 +1,50 @@
 import { describe, expect, it } from "vitest";
 import {
+  getContentLocale,
   getCountryFromAcceptLanguage,
+  getLanguageSubtag,
   getLocaleFromRequest,
   getSupportedLocaleFromLanguage,
   isValidLocale,
 } from "./locale";
+
+describe(getLanguageSubtag, () => {
+  it.each([
+    ["ja-JP", "ja"],
+    ["JA-jp", "ja"],
+    ["zh-Hant-TW", "zh"],
+    ["iw-IL", "he"],
+  ])("preserves language identity outside supported UI locales for %s", (language, subtag) => {
+    expect(getLanguageSubtag(language)).toBe(subtag);
+  });
+
+  it.each(["", "en_US", "invalid_language", "und", "und-Latn"])(
+    "returns no language identity for %s",
+    (language) => {
+      expect(getLanguageSubtag(language)).toBeNull();
+    },
+  );
+});
+
+describe(getContentLocale, () => {
+  it.each([
+    ["en", "en"],
+    ["es-419", "es"],
+    ["pt-BR", "pt"],
+    ["PT-pt", "pt"],
+    ["fr-Latn-CA", "fr"],
+    ["de-DE", "de"],
+  ])("matches the supported route locale for %s", (language, locale) => {
+    expect(getContentLocale(language)).toBe(locale);
+  });
+
+  it.each(["it", "ja-JP", "", "en_US", "pt-invalid_tag", "und", "und-Latn"])(
+    "does not invent an English content locale for %s",
+    (language) => {
+      expect(getContentLocale(language)).toBeNull();
+    },
+  );
+});
 
 describe(isValidLocale, () => {
   it("accepts every app locale", () => {

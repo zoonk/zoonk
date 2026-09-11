@@ -1,3 +1,4 @@
+import { getOriginalCourseHref } from "@/data/courses/course-href";
 import { getChapter } from "@zoonk/core/chapters/get-by-slug";
 import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
 import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
@@ -30,7 +31,10 @@ export async function ChapterLessonGrid({
 
   if (brandSlug === AI_ORG_SLUG && lessons.length === 0) {
     return (
-      <ChapterNotGenerated chapterId={chapter.id} courseHref={`/b/${brandSlug}/c/${courseSlug}`} />
+      <ChapterNotGenerated
+        chapterId={chapter.id}
+        courseHref={getOriginalCourseHref({ brandSlug, courseSlug })}
+      />
     );
   }
 

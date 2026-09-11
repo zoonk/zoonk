@@ -20,6 +20,8 @@
     "./chapters/search": "./src/chapters/search-chapters.ts",
     "./courses/continue-learning-contract": "./src/courses/continue-learning-contract.ts",
     "./courses/generation-access": "./src/courses/course-generation-access.ts",
+    "./courses/editions": "./src/courses/course-editions.ts",
+    "./courses/edition-link": "./src/courses/course-edition-link.ts",
     "./courses/get-by-id": "./src/courses/get-course-by-id.ts",
     "./courses/get-by-slug": "./src/courses/get-course-by-slug.ts",
     "./courses/get-first-lesson": "./src/courses/get-first-course-lesson.ts",

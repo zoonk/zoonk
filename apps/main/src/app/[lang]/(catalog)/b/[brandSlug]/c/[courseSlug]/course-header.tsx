@@ -48,15 +48,21 @@ export async function CourseHeader({
       <MediaCardContent>
         <MediaCardTrigger>
           <MediaCardHeader>
-            <MediaCardTitle>{course.title}</MediaCardTitle>
+            <MediaCardTitle>
+              <span lang={course.language}>{course.title}</span>
+            </MediaCardTitle>
             <MediaCardIndicator />
           </MediaCardHeader>
-          <MediaCardDescription>{course.description}</MediaCardDescription>
+          <MediaCardDescription>
+            <span lang={course.language}>{course.description}</span>
+          </MediaCardDescription>
         </MediaCardTrigger>
       </MediaCardContent>
 
       <MediaCardPopover>
-        <MediaCardPopoverText>{course.description}</MediaCardPopoverText>
+        <MediaCardPopoverText>
+          <span lang={course.language}>{course.description}</span>
+        </MediaCardPopoverText>
 
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>

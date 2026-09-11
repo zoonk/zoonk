@@ -12,7 +12,8 @@ import {
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
 import { WorkflowGenerationError } from "@/components/generation/workflow-generation-error";
-import { isGenerationInProgress } from "@/lib/workflow/generation-store";
+import { getPathname } from "@/i18n/navigation";
+import { type GenerationErrorKind, isGenerationInProgress } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
@@ -25,9 +26,10 @@ import {
 } from "@zoonk/core/workflows/steps";
 import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { type ReactNode } from "react";
 import { invalidateGeneratedCourse } from "./invalidate-generated-course";
+import { useCoursePromptReconciliation } from "./use-course-prompt-reconciliation";
 import { useGenerationPhases } from "./use-generation-phases";
 
 /**
@@ -46,7 +48,81 @@ function getCourseGenerationCompletionStep({
   return INTRODUCTION_LESSON_COMPLETION_STEP;
 }
 
+function getReadyTargetPath(target: ReturnType<typeof useCoursePromptReconciliation>["target"]) {
+  if (!target) {
+    return null;
+  }
+
+  if (target.kind === "course") {
+    return `${target.courseSlug}?edition=original`;
+  }
+
+  return `${target.courseSlug}/ch/${target.chapterSlug}/l/${target.lessonSlug}`;
+}
+
+function getCompletionTargetPath({
+  completionEntityId,
+  completionKind,
+  courseSlug,
+  linkedCourseSlug,
+}: {
+  completionEntityId: string | null;
+  completionKind: CoursePromptGenerationCompletionKind;
+  courseSlug: string;
+  linkedCourseSlug: string | null;
+}) {
+  const target = completionEntityId ?? linkedCourseSlug ?? courseSlug;
+
+  if (completionKind === "course" || !completionEntityId) {
+    return `${target}?edition=original`;
+  }
+
+  return target;
+}
+
+/** Viewing an existing run is public; retrying generation requires a session. */
+function retryCourseGeneration({
+  canGenerate,
+  errorKind,
+  loginHref,
+  onRetry,
+  reload,
+}: {
+  canGenerate: boolean;
+  errorKind: GenerationErrorKind | null;
+  loginHref: string;
+  onRetry: () => void;
+  reload: boolean;
+}) {
+  if (!canGenerate && errorKind !== "connection") {
+    globalThis.location.href = loginHref;
+    return;
+  }
+
+  if (reload) {
+    globalThis.location.reload();
+    return;
+  }
+
+  onRetry();
+}
+
+function CourseGenerationCompleted({ isLanguageCourse }: { isLanguageCourse: boolean }) {
+  const t = useExtracted();
+
+  return (
+    <GenerationProgressCompleted
+      subtitle={
+        isLanguageCourse ? t("Taking you to your course...") : t("Taking you to your first lesson…")
+      }
+    >
+      {isLanguageCourse ? t("Your course is ready") : t("Your lesson is ready")}
+    </GenerationProgressCompleted>
+  );
+}
+
 export function GenerationClient({
+  canGenerate,
   children,
   completionKind,
   courseSlug,
@@ -57,6 +133,7 @@ export function GenerationClient({
   linkedCourseSlug,
   requestId,
 }: {
+  canGenerate: boolean;
   children: ReactNode;
   completionKind: CoursePromptGenerationCompletionKind;
   courseSlug: string;
@@ -68,14 +145,25 @@ export function GenerationClient({
   requestId: string;
 }) {
   const t = useExtracted();
+  const locale = useLocale();
   const completionStep = getCourseGenerationCompletionStep({ completionKind });
 
   const generation = useWorkflowGeneration<CourseWorkflowStepName>({
+    autoTrigger: canGenerate,
     completionStep,
     initialRunId: generationRunId,
-    initialStatus: generationStatus === "running" ? "streaming" : "idle",
+    initialStatus: generationStatus === "running" && generationRunId ? "streaming" : "idle",
     target: { id: requestId, type: "coursePrompt" },
   });
+
+  const reconciliation = useCoursePromptReconciliation({
+    onResume: generation.resume,
+    requestId,
+    runId: generation.runId,
+    status: generation.status,
+  });
+
+  const status = reconciliation.target ? "completed" : generation.status;
 
   const {
     activePhaseDurationMs,
@@ -91,7 +179,7 @@ export function GenerationClient({
     isLanguageCourse,
   );
 
-  const isActive = isGenerationInProgress(generation.status);
+  const isActive = isGenerationInProgress(status) && !reconciliation.hasError;
 
   const displayProgress = useAnimatedProgress({
     estimatedDurationMs: activePhaseDurationMs,
@@ -105,20 +193,28 @@ export function GenerationClient({
     isActive ? activePhaseNames : [],
   );
 
-  const destinationTarget = generation.completionEntityId ?? linkedCourseSlug ?? courseSlug;
-  const redirectHref = `/b/${AI_ORG_SLUG}/c/${destinationTarget}`;
+  const completionPath = getCompletionTargetPath({
+    completionEntityId: generation.completionEntityId,
+    completionKind,
+    courseSlug,
+    linkedCourseSlug,
+  });
 
-  const completedTitle = isLanguageCourse ? t("Your course is ready") : t("Your lesson is ready");
+  const destinationTarget = getReadyTargetPath(reconciliation.target) ?? completionPath;
 
-  const completedSubtitle = isLanguageCourse
-    ? t("Taking you to your course...")
-    : t("Taking you to your first lesson…");
+  const redirectHref = getPathname({ href: `/b/${AI_ORG_SLUG}/c/${destinationTarget}`, locale });
 
-  const loginHref = `/login?next=${encodeURIComponent(`/generate/course/${requestId}`)}` as const;
+  const returnHref = getPathname({
+    forcePrefix: true,
+    href: `/generate/course/${requestId}`,
+    locale,
+  });
+
+  const loginHref = `/login?next=${encodeURIComponent(returnHref)}` as const;
 
   useCompletionRedirect({
     beforeRedirect: () => invalidateGeneratedCourse(redirectHref),
-    status: generation.status,
+    status,
     url: redirectHref,
   });
 
@@ -155,15 +251,11 @@ export function GenerationClient({
     );
   }
 
-  if (generation.status === "completed") {
-    return (
-      <GenerationProgressCompleted subtitle={completedSubtitle}>
-        {completedTitle}
-      </GenerationProgressCompleted>
-    );
+  if (status === "completed") {
+    return <CourseGenerationCompleted isLanguageCourse={isLanguageCourse} />;
   }
 
-  if (generation.status === "limitReached" && generation.limit) {
+  if (status === "limitReached" && generation.limit) {
     return (
       <GenerationLimitCTA
         backHref="/"
@@ -174,13 +266,21 @@ export function GenerationClient({
     );
   }
 
-  if (generation.status === "error") {
+  if (status === "error" || reconciliation.hasError) {
     return (
       <>
         <WorkflowGenerationError
-          error={generation.error}
-          errorKind={generation.errorKind}
-          onRetry={generation.retry}
+          error={reconciliation.hasError ? null : generation.error}
+          errorKind={reconciliation.errorKind ?? generation.errorKind}
+          onRetry={() =>
+            retryCourseGeneration({
+              canGenerate,
+              errorKind: reconciliation.errorKind ?? generation.errorKind,
+              loginHref: getPathname({ forcePrefix: true, href: loginHref, locale }),
+              onRetry: generation.retry,
+              reload: reconciliation.hasError,
+            })
+          }
         />
         {children}
       </>
