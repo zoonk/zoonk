@@ -1,30 +1,33 @@
 model Course {
-  id               String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId   String?            @map("organization_id") @db.Uuid
-  organization     Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId           String?            @map("user_id") @db.Uuid
-  user             User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  format           CourseFormat       @default(core)
-  completedAt      DateTime?          @map("completed_at")
-  isPublished      Boolean            @default(false) @map("is_published")
-  language         String             @db.VarChar(10)
+  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  familyId         String?                @map("family_id") @db.Uuid
+  family           CourseFamily?          @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  organizationId   String?                @map("organization_id") @db.Uuid
+  organization     Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId           String?                @map("user_id") @db.Uuid
+  user             User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  format           CourseFormat           @default(core)
+  completedAt      DateTime?              @map("completed_at")
+  isPublished      Boolean                @default(false) @map("is_published")
+  language         String                 @db.VarChar(10)
   slug             String
   title            String
-  normalizedTitle  String             @map("normalized_title")
+  normalizedTitle  String                 @map("normalized_title")
   description      String?
-  landingPage      Json?              @map("landing_page")
-  targetLanguage   String?            @map("target_language") @db.VarChar(10)
-  generationStatus GenerationStatus   @default(completed) @map("generation_status")
-  generationRunId  String?            @map("generation_run_id")
-  imageUrl         String?            @map("image_url")
-  userCount        Int                @default(0) @map("user_count")
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
+  landingPage      Json?                  @map("landing_page")
+  targetLanguage   String?                @map("target_language") @db.VarChar(10)
+  generationStatus GenerationStatus       @default(completed) @map("generation_status")
+  generationRunId  String?                @map("generation_run_id")
+  imageUrl         String?                @map("image_url")
+  userCount        Int                    @default(0) @map("user_count")
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
   categories       CourseCategory[]
   chapters         Chapter[]
   completions      CourseCompletion[]
   prompts          CoursePrompt[]
   users            CourseUser[]
+  editionRequests  CourseEditionRequest[]
 
   @@unique([organizationId, slug], name: "orgSlug")
   @@unique([userId, slug], name: "userSlug")
@@ -33,24 +36,48 @@ model Course {
   @@index([isPublished, normalizedTitle])
   @@index([isPublished, language, userCount, id])
   @@index([userId, format])
+  @@index([familyId, language])
   @@map("courses")
 }
 
+model CourseFamily {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courses   Course[]
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("course_families")
+}
+
+model CourseEditionRequest {
+  id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  sourceCourseId String       @map("source_course_id") @db.Uuid
+  sourceCourse   Course       @relation(fields: [sourceCourseId], references: [id], onDelete: Cascade)
+  language       String       @db.VarChar(10)
+  coursePromptId String       @map("course_prompt_id") @db.Uuid
+  coursePrompt   CoursePrompt @relation(fields: [coursePromptId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  @@unique([sourceCourseId, language], name: "sourceLanguage")
+  @@index([coursePromptId])
+  @@map("course_edition_requests")
+}
+
 model CoursePrompt {
-  id               String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  courseId         String?            @map("course_id") @db.Uuid
-  course           Course?            @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  language         String             @db.VarChar(10)
+  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courseId         String?                @map("course_id") @db.Uuid
+  course           Course?                @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  language         String                 @db.VarChar(10)
   prompt           String
-  normalizedPrompt String             @map("normalized_prompt")
+  normalizedPrompt String                 @map("normalized_prompt")
   intent           CoursePromptIntent
-  courseFormat     CourseFormat?      @map("course_format")
-  canonicalTitle   String?            @map("canonical_title")
-  targetLanguage   String?            @map("target_language") @db.VarChar(10)
-  generationStatus GenerationStatus?  @map("generation_status")
-  generationRunId  String?            @map("generation_run_id")
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
+  courseFormat     CourseFormat?          @map("course_format")
+  canonicalTitle   String?                @map("canonical_title")
+  targetLanguage   String?                @map("target_language") @db.VarChar(10)
+  generationStatus GenerationStatus?      @map("generation_status")
+  generationRunId  String?                @map("generation_run_id")
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
+  editionRequests  CourseEditionRequest[]
 
   @@unique([language, normalizedPrompt], name: "languageNormalizedPrompt")
   @@index([courseId])

@@ -435,6 +435,84 @@ msgctxt "Pf4uqS"
 msgid "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
 msgstr "El capítulo de introducción está listo. Aún estamos creando el plan completo, así que pronto aparecerán más capítulos aquí."
 
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
+msgctxt "qzAEFi"
+msgid "Finding your course…"
+msgstr "Buscando tu curso…"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
+#: src/components/generation/workflow-generation-error.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Inténtalo de nuevo"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "o3ujZ5"
+msgid "Learn in {language}"
+msgstr "Aprende en {language}"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
+msgctxt "DLssby"
+msgid "This course isn't available in {language} yet."
+msgstr "Este curso aún no está disponible en {language}."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
+msgctxt "fpKX8o"
+msgid "We couldn't prepare your course. Please try again."
+msgstr "No pudimos preparar tu curso. Inténtalo de nuevo."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "IPMgvJ"
+msgid "View progress"
+msgstr "Ver el progreso"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "1eG4JB"
+msgid "This course teaches {language}, with explanations in {sourceLanguage}."
+msgstr "Este curso enseña {language}, con explicaciones en {sourceLanguage}."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "0G8GRg"
+msgid "This course is taught in {sourceLanguage}. It isn't available in {language} yet."
+msgstr "Este curso se imparte en {sourceLanguage}. Aún no está disponible en {language}."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "KgG3PI"
+msgid "Your {language} course is being prepared. You can follow its progress."
+msgstr "Estamos preparando tu curso en {language}. Puedes seguir su progreso."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "rUYK7J"
+msgid "We couldn't finish preparing this course in {language}. You can try again."
+msgstr "No pudimos terminar de preparar este curso en {language}. Puedes intentarlo de nuevo."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "_LY-RG"
+msgid "Switching languages opens a separate course. Your progress stays here."
+msgstr "Al cambiar de idioma, se abre otro curso. Tu progreso se queda aquí."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "ALdIan"
+msgid "This course is taught in {sourceLanguage}. We'll find it in {language} or create it for you."
+msgstr "Este curso se imparte en {sourceLanguage}. Lo buscaremos en {language} o lo crearemos para ti."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "KYeXR4"
+msgid "Course language"
+msgstr "Idioma del curso"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "c5dUwC"
+msgid "This course is in {language}"
+msgstr "Este curso está en {language}"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
+msgctxt "QN-YqC"
+msgid "Continue in {language}"
+msgstr "Continuar en {language}"
+
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
 msgctxt "KjYOfT"
 msgid "You found a course that hasn't been written yet"
@@ -500,12 +578,6 @@ msgstr "Cargando más cursos…"
 msgctxt "W_5hwr"
 msgid "Something went wrong. Please try again."
 msgstr "Algo salió mal. Inténtalo de nuevo."
-
-#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
-#: src/components/generation/workflow-generation-error.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Inténtalo de nuevo"
 
 #: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "WgPMAP"
@@ -1826,6 +1898,16 @@ msgid "Back home"
 msgstr "Volver al inicio"
 
 #: src/app/[lang]/generate/course/[id]/generation-client.tsx
+msgctxt "0o41MR"
+msgid "Taking you to your course..."
+msgstr "Te llevamos a tu curso…"
+
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
+msgctxt "RMDr0s"
+msgid "Taking you to your first lesson…"
+msgstr "Te llevamos a tu primera lección…"
+
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "15FsdE"
 msgid "Your course is ready"
 msgstr "Tu curso está listo"
@@ -1835,16 +1917,6 @@ msgstr "Tu curso está listo"
 msgctxt "4Wktrz"
 msgid "Your lesson is ready"
 msgstr "Tu lección está lista"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "0o41MR"
-msgid "Taking you to your course..."
-msgstr "Te llevamos a tu curso…"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "RMDr0s"
-msgid "Taking you to your first lesson…"
-msgstr "Te llevamos a tu primera lección…"
 
 #: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "u6ROZF"

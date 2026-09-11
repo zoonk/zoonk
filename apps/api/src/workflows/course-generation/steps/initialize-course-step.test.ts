@@ -117,6 +117,7 @@ describe(initializeCourseStep, () => {
     const existingCourse = await courseFixture({
       generationRunId: winningWorkflowRunId,
       generationStatus: "running",
+      isPublished: true,
       language: request.language,
       organizationId: organization.id,
       slug: getCourseSlugForTitle({ language: request.language, title: canonicalTitle }),
@@ -134,5 +135,131 @@ describe(initializeCourseStep, () => {
     expect(persistedPrompt.courseId).toBeNull();
     expect(persistedPrompt.generationRunId).toBeNull();
     expect(persistedPrompt.generationStatus).toBe("pending");
+  });
+
+  it("creates only one family edition when equivalent prompts have different translated titles", async () => {
+    const organization = await aiOrganizationFixture();
+    const family = await prisma.courseFamily.create({ data: {} });
+
+    const [englishCourse, spanishCourse] = await Promise.all([
+      courseFixture({
+        familyId: family.id,
+        isPublished: true,
+        language: "en",
+        organizationId: organization.id,
+      }),
+      courseFixture({
+        familyId: family.id,
+        isPublished: true,
+        language: "es",
+        organizationId: organization.id,
+      }),
+    ]);
+
+    const [firstPrompt, secondPrompt] = await Promise.all([
+      generatableCoursePromptFixture({
+        canonicalTitle: `Computação ${randomUUID()}`,
+        language: "pt",
+      }),
+      generatableCoursePromptFixture({
+        canonicalTitle: `Ciência da Computação ${randomUUID()}`,
+        language: "pt",
+      }),
+    ]);
+
+    assertGeneratableCoursePrompt(firstPrompt);
+    assertGeneratableCoursePrompt(secondPrompt);
+
+    await prisma.courseEditionRequest.createMany({
+      data: [
+        { coursePromptId: firstPrompt.id, language: "pt", sourceCourseId: englishCourse.id },
+        { coursePromptId: secondPrompt.id, language: "pt", sourceCourseId: spanishCourse.id },
+      ],
+    });
+
+    const [first, second] = await Promise.all([
+      initializeCourseStep({ request: firstPrompt, workflowRunId: `first-${randomUUID()}` }),
+      initializeCourseStep({ request: secondPrompt, workflowRunId: `second-${randomUUID()}` }),
+    ]);
+
+    const editions = await prisma.course.findMany({
+      where: { familyId: family.id, language: "pt" },
+    });
+
+    expect(editions).toHaveLength(1);
+    expect(first.course.courseId).toBe(second.course.courseId);
+    expect([first, second].filter((result) => result.existing === null)).toHaveLength(1);
+    expect(editions[0]?.slug).toBe(first.course.courseSlug);
+    expect(editions[0]?.slug).toMatch(/-pt$/u);
+  });
+
+  it("rejects a hidden same-slug course without exposing it or linking the prompt", async () => {
+    const organization = await aiOrganizationFixture();
+    const title = `Hidden Slug ${randomUUID()}`;
+
+    const [hidden, request] = await Promise.all([
+      courseFixture({
+        generationStatus: "completed",
+        isPublished: false,
+        language: "pt",
+        organizationId: organization.id,
+        slug: getCourseSlugForTitle({ language: "pt", title }),
+        title,
+      }),
+      generatableCoursePromptFixture({ canonicalTitle: title, language: "pt" }),
+    ]);
+
+    assertGeneratableCoursePrompt(request);
+
+    await expect(
+      initializeCourseStep({ request, workflowRunId: `hidden-${randomUUID()}` }),
+    ).rejects.toThrow("Course is not published");
+
+    const [persistedCourse, persistedPrompt] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: hidden.id } }),
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+    ]);
+
+    expect(persistedCourse.isPublished).toBe(false);
+    expect(persistedCourse.generationStatus).toBe("completed");
+    expect(persistedPrompt.courseId).toBeNull();
+    expect(persistedPrompt.generationStatus).toBe("pending");
+  });
+
+  it("rejects an edition prompt that changes the language being learned before creating a course", async () => {
+    const organization = await aiOrganizationFixture();
+
+    const source = await courseFixture({
+      format: "language",
+      isPublished: true,
+      language: "en",
+      organizationId: organization.id,
+      targetLanguage: "ja",
+    });
+
+    const request = await generatableCoursePromptFixture({
+      canonicalTitle: `Different target ${randomUUID()}`,
+      courseFormat: "language",
+      language: "pt",
+      targetLanguage: "fr",
+    });
+
+    assertGeneratableCoursePrompt(request);
+
+    await prisma.courseEditionRequest.create({
+      data: { coursePromptId: request.id, language: "pt", sourceCourseId: source.id },
+    });
+
+    await expect(
+      initializeCourseStep({ request, workflowRunId: `invalid-${randomUUID()}` }),
+    ).rejects.toThrow();
+
+    const [persistedPrompt, courses] = await Promise.all([
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+      prisma.course.findMany({ where: { title: request.canonicalTitle } }),
+    ]);
+
+    expect(persistedPrompt.courseId).toBeNull();
+    expect(courses).toHaveLength(0);
   });
 });

@@ -1,4 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getCourseEditionForPrompt } from "@zoonk/core/courses/edition-link";
 import {
   type RegularCourseFormat,
   isRegularCourseFormat,
@@ -85,11 +86,13 @@ export function getCourseContext({
  * This is a pure save step — one DB operation.
  */
 async function createCourseEntity({
+  familyId,
   organizationId,
   prompt,
   transaction,
   workflowRunId,
 }: {
+  familyId: string | null;
   organizationId: string;
   prompt: GeneratableCoursePrompt;
   transaction: TransactionClient;
@@ -100,6 +103,7 @@ async function createCourseEntity({
 
   return transaction.course.create({
     data: {
+      familyId,
       format: prompt.courseFormat,
       generationRunId: workflowRunId,
       generationStatus: "running",
@@ -115,8 +119,9 @@ async function createCourseEntity({
 }
 
 /**
- * Runs course creation and prompt linking atomically so Workflow can safely
- * retry after a database or response failure without leaving partial state.
+ * Claims the family edition before creating a localized course. Titles can
+ * differ between equivalent requests, so the existing slug constraint alone
+ * cannot prevent two requests from generating different editions together.
  */
 async function createCourseAndLinkPrompt({
   organizationId,
@@ -126,16 +131,36 @@ async function createCourseAndLinkPrompt({
   organizationId: string;
   prompt: GeneratableCoursePrompt;
   workflowRunId: string;
-}): Promise<Course> {
+}): Promise<InitializedCourse> {
   return prisma.$transaction(async (transaction) => {
-    const course = await createCourseEntity({ organizationId, prompt, transaction, workflowRunId });
+    const edition = await getCourseEditionForPrompt({ coursePromptId: prompt.id, transaction });
+
+    if (edition?.course) {
+      const course = await transaction.course.findUniqueOrThrow({
+        include: courseContentInclude,
+        where: { id: edition.course.id },
+      });
+
+      return {
+        course: getCourseContext({ course, organizationId, prompt }),
+        existing: getExistingCourseContent(course),
+      };
+    }
+
+    const course = await createCourseEntity({
+      familyId: edition?.familyId ?? null,
+      organizationId,
+      prompt,
+      transaction,
+      workflowRunId,
+    });
 
     await transaction.coursePrompt.update({
       data: { courseId: course.id, generationRunId: workflowRunId, generationStatus: "running" },
       where: { id: prompt.id },
     });
 
-    return course;
+    return { course: getCourseContext({ course, organizationId, prompt }), existing: null };
   });
 }
 
@@ -168,6 +193,12 @@ async function getRecoveredCourse({
     throw error;
   }
 
+  // A hidden row can still reserve its slug. Do not expose it or publish it
+  // implicitly when the public identity search correctly ignored it.
+  if (!course.isPublished) {
+    throw new FatalError("Course is not published");
+  }
+
   assertCourseMatchesPromptIdentity({ course, prompt });
 
   return course;
@@ -191,9 +222,7 @@ async function createOrRecoverCourse({
   const slug = getCourseSlugForTitle({ language: prompt.language, title: prompt.canonicalTitle });
 
   try {
-    const course = await createCourseAndLinkPrompt({ organizationId, prompt, workflowRunId });
-
-    return { course: getCourseContext({ course, organizationId, prompt }), existing: null };
+    return await createCourseAndLinkPrompt({ organizationId, prompt, workflowRunId });
   } catch (error) {
     const course = await getRecoveredCourse({ error, organizationId, prompt, slug });
 

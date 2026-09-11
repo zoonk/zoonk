@@ -14,18 +14,26 @@ export function isValidLocale(value: string): value is SupportedLocale {
 }
 
 /**
+ * Content matching and indexing need a real supported language. A navigation
+ * fallback would incorrectly identify unsupported content as English.
+ */
+export function getContentLocale(language: string): SupportedLocale | null {
+  try {
+    const locale = new Intl.Locale(language).language;
+    return isValidLocale(locale) ? locale : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Stored content languages can include regional tags such as `pt-BR`, while
  * app routes only support base locales such as `pt`. Falling back to English
  * keeps unsupported content languages on a real route instead of inventing an
  * invalid locale prefix.
  */
 export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {
-  try {
-    const locale = new Intl.Locale(language).language;
-    return isValidLocale(locale) ? locale : DEFAULT_LOCALE;
-  } catch {
-    return DEFAULT_LOCALE;
-  }
+  return getContentLocale(language) ?? DEFAULT_LOCALE;
 }
 
 /**

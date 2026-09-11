@@ -6,6 +6,7 @@ import {
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getChapter } from "@zoonk/core/chapters/get-by-slug";
 import { Grid } from "@zoonk/ui/components/grid";
+import { getContentLocale } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -15,7 +16,7 @@ import { ChapterSidebar } from "./chapter-sidebar";
 export async function generateMetadata({
   params,
 }: PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">): Promise<Metadata> {
-  const { brandSlug, chapterSlug, courseSlug } = await params;
+  const { brandSlug, chapterSlug, courseSlug, lang: locale } = await params;
 
   const chapter = await getChapter({ brandSlug, chapterSlug, courseSlug });
 
@@ -23,7 +24,8 @@ export async function generateMetadata({
     return {};
   }
 
-  const t = await getExtracted({ locale: chapter.course.language });
+  const contentLocale = getContentLocale(chapter.course.language);
+  const t = await getExtracted({ locale: contentLocale ?? locale });
 
   return {
     alternates: {
@@ -37,7 +39,7 @@ export async function generateMetadata({
       course: chapter.course.title,
       description: chapter.description,
     }),
-    robots: { follow: true, index: true },
+    robots: { follow: true, index: contentLocale === locale },
     title: t("{chapter}: {course} course", {
       chapter: chapter.title,
       course: chapter.course.title,

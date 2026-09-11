@@ -27,6 +27,8 @@ export type {
   Course,
   CourseCategory,
   CourseCompletion,
+  CourseEditionRequest,
+  CourseFamily,
   CoursePrompt,
   CourseUser,
   GenerationStatus,

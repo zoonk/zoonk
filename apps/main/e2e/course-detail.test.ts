@@ -262,15 +262,17 @@ test.describe("Course Detail Page", () => {
       page.getByRole("heading", { level: 1, name: testData.regionalCourseTitle }),
     ).toBeVisible();
 
-    await expect(page).toHaveTitle(`Learn ${testData.regionalCourseTitle} | Zoonk`);
+    await expect(page).toHaveTitle(`Aprenda ${testData.regionalCourseTitle} | Zoonk`);
   });
 });
 
 test.describe("Course Detail Page - Locale", () => {
   test("course page renders in Portuguese locale", async ({ page }) => {
     await setLocale(page, "pt");
-    await page.goto(testData.ptCourseUrl);
+    await page.goto(`/pt${testData.ptCourseUrl}`);
 
-    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/`, "u"));
+    await expect(page).toHaveURL(`/pt${testData.ptCourseUrl}`);
+    await expect(page.locator("html")).toHaveAttribute("lang", "pt");
+    await expect(page.getByRole("searchbox", { name: "Buscar capítulos…" })).toBeVisible();
   });
 });

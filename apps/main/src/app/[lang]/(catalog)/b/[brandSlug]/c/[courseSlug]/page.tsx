@@ -1,28 +1,23 @@
-import { CatalogDetailLayout } from "@/components/catalog/catalog-detail-layout";
-import {
-  CatalogGridSkeleton,
-  CatalogSidebarSkeleton,
-} from "@/components/catalog/catalog-skeletons";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getCourse } from "@zoonk/core/courses/get-by-slug";
-import { Grid } from "@zoonk/ui/components/grid";
+import { getContentLocale } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { CourseChapterGrid } from "./course-chapter-grid";
-import { CourseSidebar } from "./course-sidebar";
+import { CourseContent, CourseContentSkeleton } from "./course-content";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">): Promise<Metadata> {
-  const { brandSlug, courseSlug } = await params;
+  const { brandSlug, courseSlug, lang: locale } = await params;
   const course = await getCourse({ brandSlug, courseSlug });
 
   if (!course) {
     return {};
   }
 
-  const t = await getExtracted({ locale: course.language });
+  const contentLocale = getContentLocale(course.language);
+  const t = await getExtracted({ locale: contentLocale ?? locale });
 
   return {
     alternates: {
@@ -35,24 +30,15 @@ export async function generateMetadata({
       "Learn {course} online with practical examples and everyday language. {description}",
       { course: course.title, description: course.description ?? "" },
     ),
+    robots: { follow: true, index: contentLocale === locale },
     title: t("Learn {course}", { course: course.title }),
   };
 }
 
-export default function CoursePage({ params }: PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">) {
+export default function CoursePage(props: PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">) {
   return (
-    <CatalogDetailLayout
-      sidebar={
-        <Suspense fallback={<CatalogSidebarSkeleton />}>
-          <CourseSidebar params={params} />
-        </Suspense>
-      }
-    >
-      <Grid variant="pane">
-        <Suspense fallback={<CatalogGridSkeleton count={5} groupVariant="pane" search />}>
-          <CourseChapterGrid params={params} />
-        </Suspense>
-      </Grid>
-    </CatalogDetailLayout>
+    <Suspense fallback={<CourseContentSkeleton />}>
+      <CourseContent {...props} />
+    </Suspense>
   );
 }

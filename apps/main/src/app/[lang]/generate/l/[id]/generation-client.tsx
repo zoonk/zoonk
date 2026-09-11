@@ -12,6 +12,7 @@ import {
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
 import { WorkflowGenerationError } from "@/components/generation/workflow-generation-error";
+import { getPathname } from "@/i18n/navigation";
 import { type GenerationStatus, isGenerationInProgress } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
@@ -20,7 +21,7 @@ import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { type GeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { LESSON_COMPLETION_STEP, type LessonStepName } from "@zoonk/core/workflows/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { type ReactNode } from "react";
 import { useGenerationPhases } from "./use-generation-phases";
 
@@ -48,6 +49,7 @@ export function GenerationClient({
   lessonTitle: string;
 }) {
   const t = useExtracted();
+  const locale = useLocale();
   const backHref = `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}` as const;
   const loginHref = `/login?next=${encodeURIComponent(`/generate/l/${lessonId}`)}` as const;
 
@@ -89,7 +91,10 @@ export function GenerationClient({
   useCompletionRedirect({
     beforeRedirect: invalidateContent,
     status: generation.status,
-    url: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
+    url: getPathname({
+      href: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
+      locale,
+    }),
   });
 
   if (isActive) {

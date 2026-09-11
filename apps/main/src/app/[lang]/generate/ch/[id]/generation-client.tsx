@@ -12,6 +12,8 @@ import {
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
 import { WorkflowGenerationError } from "@/components/generation/workflow-generation-error";
+import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getPathname } from "@/i18n/navigation";
 import { type GenerationStatus, isGenerationInProgress } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
@@ -19,7 +21,7 @@ import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { CHAPTER_COMPLETION_STEP, type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { type ReactNode } from "react";
 import { useGenerationPhases } from "./use-generation-phases";
 
@@ -43,7 +45,8 @@ export function GenerationClient({
   invalidateContent: () => Promise<void>;
 }) {
   const t = useExtracted();
-  const backHref = `/b/${AI_ORG_SLUG}/c/${courseSlug}` as const;
+  const locale = useLocale();
+  const backHref = getOriginalCourseHref({ brandSlug: AI_ORG_SLUG, courseSlug });
   const loginHref = `/login?next=${encodeURIComponent(`/generate/ch/${chapterId}`)}` as const;
 
   const generation = useWorkflowGeneration<ChapterWorkflowStepName>({
@@ -83,7 +86,7 @@ export function GenerationClient({
   useCompletionRedirect({
     beforeRedirect: invalidateContent,
     status: generation.status,
-    url: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}`,
+    url: getPathname({ href: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}`, locale }),
   });
 
   if (isActive) {

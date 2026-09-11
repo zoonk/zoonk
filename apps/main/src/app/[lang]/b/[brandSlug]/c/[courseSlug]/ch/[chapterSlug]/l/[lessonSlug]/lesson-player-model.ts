@@ -1,3 +1,5 @@
+import { getOriginalCourseHref } from "@/data/courses/course-href";
+
 type NextLesson = { chapterSlug: string; lessonSlug: string; lessonTitle: string | null };
 type OrderedItem = { id: string };
 type OrderedChapter = OrderedItem & { slug: string };
@@ -224,7 +226,7 @@ export function buildLessonPlayerModel({
   nextLesson: NextLesson | null;
 }) {
   const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
-  const courseHref = `/b/${brandSlug}/c/${courseSlug}` as const;
+  const courseHref = getOriginalCourseHref({ brandSlug, courseSlug });
 
   const currentLessonHref = getCurrentLessonHref({
     brandSlug,

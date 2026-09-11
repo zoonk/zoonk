@@ -391,7 +391,7 @@ test.describe("Chapter Navbar - Mobile", () => {
 
     await expect(courseLink).toHaveCount(1);
     await expect(courseLink).toBeVisible();
-    await expect(courseLink).toHaveAttribute("href", courseUrl);
+    await expect(courseLink).toHaveAttribute("href", `${courseUrl}?edition=original`);
 
     await expect(homeLink).toHaveCount(1);
     await expect(homeLink).toBeVisible();
@@ -655,7 +655,7 @@ test.describe("Chapter - No Lessons", () => {
     await expect(courseLink).toBeVisible();
     await expect(courseLink.getByText(/^Esc$/u)).toBeVisible();
     await expect(courseLink).toHaveAttribute("aria-keyshortcuts", "Escape");
-    await expect(courseLink).toHaveAttribute("href", courseUrl);
+    await expect(courseLink).toHaveAttribute("href", `${courseUrl}?edition=original`);
 
     const actionsButton = page.getByRole("main").getByRole("button", { name: /more options/iu });
 
@@ -670,7 +670,11 @@ test.describe("Chapter - No Lessons", () => {
     await page.goto(noLessonsChapterUrl);
     await expect(page.getByRole("link", { name: /back to course/iu })).toBeVisible();
 
-    await pressShortcutAndWaitForUrl({ expectedUrl: courseUrl, key: "Escape", page });
+    await pressShortcutAndWaitForUrl({
+      expectedUrl: `${courseUrl}?edition=original`,
+      key: "Escape",
+      page,
+    });
   });
 
   test("non-AI chapters with no lessons stay on the chapter page", async ({ page }) => {

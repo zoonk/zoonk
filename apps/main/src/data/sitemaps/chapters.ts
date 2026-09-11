@@ -1,17 +1,18 @@
 import "server-only";
 import { getPublishedChapterWhere, prisma } from "@zoonk/db";
+import { getSitemapCourseWhere } from "./course-where";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 
 /**
  * Every published brand chapter is a public catalog page worth discovering,
  * including chapters whose lesson generation has not completed yet.
  */
-const sitemapChapterWhere = getPublishedChapterWhere({
-  courseWhere: { organization: { kind: "brand" } },
-});
+async function getSitemapChapterWhere() {
+  return getPublishedChapterWhere({ courseWhere: await getSitemapCourseWhere() });
+}
 
 export async function countSitemapChapters(): Promise<number> {
-  return prisma.chapter.count({ where: sitemapChapterWhere });
+  return prisma.chapter.count({ where: await getSitemapChapterWhere() });
 }
 
 export async function listSitemapChapters(
@@ -30,7 +31,7 @@ export async function listSitemapChapters(
     orderBy: { id: "asc" },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
-    where: sitemapChapterWhere,
+    where: await getSitemapChapterWhere(),
   });
 
   return chapters.map((chapter) => ({

@@ -6,6 +6,7 @@ import {
 } from "@/lib/lessons/seo";
 import { SPLIT_LESSON_SLUG_MARKER } from "@zoonk/core/lessons/split-lessons";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
+import { getSitemapCourseWhere } from "./course-where";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 
 /**
@@ -15,10 +16,10 @@ import { SITEMAP_BATCH_SIZE } from "./courses";
  * chapter title. Reading and listening stay excluded because they span several
  * topics without standalone metadata.
  */
-function getSitemapLessonWhere() {
+async function getSitemapLessonWhere() {
   return {
     AND: [
-      getPublishedLessonWhere({ courseWhere: { organization: { kind: "brand" } } }),
+      getPublishedLessonWhere({ courseWhere: await getSitemapCourseWhere() }),
       { NOT: { slug: { contains: SPLIT_LESSON_SLUG_MARKER } } },
       {
         OR: [
@@ -55,7 +56,7 @@ function getSitemapLessonWhere() {
  * lesson page's robots metadata.
  */
 export async function countSitemapLessons(): Promise<number> {
-  return prisma.lesson.count({ where: getSitemapLessonWhere() });
+  return prisma.lesson.count({ where: await getSitemapLessonWhere() });
 }
 
 /**
@@ -79,7 +80,7 @@ export async function listSitemapLessons(
     orderBy: { id: "asc" },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
-    where: getSitemapLessonWhere(),
+    where: await getSitemapLessonWhere(),
   });
 
   return lessons.map((lesson) => ({

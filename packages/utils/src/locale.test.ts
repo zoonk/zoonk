@@ -1,10 +1,31 @@
 import { describe, expect, it } from "vitest";
 import {
+  getContentLocale,
   getCountryFromAcceptLanguage,
   getLocaleFromRequest,
   getSupportedLocaleFromLanguage,
   isValidLocale,
 } from "./locale";
+
+describe(getContentLocale, () => {
+  it.each([
+    ["en", "en"],
+    ["es-419", "es"],
+    ["pt-BR", "pt"],
+    ["PT-pt", "pt"],
+    ["fr-Latn-CA", "fr"],
+    ["de-DE", "de"],
+  ])("matches the supported route locale for %s", (language, locale) => {
+    expect(getContentLocale(language)).toBe(locale);
+  });
+
+  it.each(["it", "ja-JP", "", "en_US", "pt-invalid_tag"])(
+    "does not invent an English content locale for %s",
+    (language) => {
+      expect(getContentLocale(language)).toBeNull();
+    },
+  );
+});
 
 describe(isValidLocale, () => {
   it("accepts every app locale", () => {

@@ -139,7 +139,7 @@ test.beforeAll(async () => {
     }),
   ]);
 
-  ptCourseUrl = `/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
+  ptCourseUrl = `/pt/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
 });
 
 test.describe("Course Chapters List", () => {

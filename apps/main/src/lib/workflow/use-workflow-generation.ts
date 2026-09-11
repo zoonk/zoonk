@@ -208,6 +208,17 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     dispatch({ type: "reset" });
   }, [resetIndex, state.errorKind]);
 
+  /** An identity match can transfer the requested content to an already-running workflow. */
+  const resume = useCallback(
+    (runId: string) => {
+      hasTriggeredRef.current = true;
+      resetIndex();
+      dispatch({ type: "reset" });
+      dispatch({ runId, type: "triggerSuccess" });
+    },
+    [resetIndex],
+  );
+
   return {
     completedSteps: state.completedSteps,
     completionEntityId: state.completionEntityId,
@@ -215,7 +226,9 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     error: state.error,
     errorKind: state.errorKind,
     limit: state.limit,
+    resume,
     retry,
+    runId: state.runId,
     startedSteps: state.startedSteps,
     status: state.status,
   };
