@@ -14,7 +14,7 @@ on:
         default: "4"
         options: ["3", "4", "6"]
       rebuild:
-        description: Rebuild instead of restoring Turbo build outputs
+        description: Build without Turbo or Next.js caches
         type: boolean
         default: false
 
@@ -61,6 +61,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Restore Next.js build cache
+        if: ${{ !inputs.rebuild }}
         id: nextjs-cache
         uses: actions/cache/restore@v6
         with:
@@ -101,7 +102,7 @@ jobs:
           retention-days: 7
 
       - name: Save Next.js build cache
-        if: ${{ matrix.shard == 1 && steps.nextjs-cache.outputs.cache-hit != 'true' }}
+        if: ${{ !inputs.rebuild && matrix.shard == 1 && steps.nextjs-cache.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v6
         with:
           path: apps/main/.next-e2e/cache

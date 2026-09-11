@@ -991,10 +991,11 @@ test.describe("Lesson Player Page", () => {
 
     await expectGuestProgressWarning(page);
 
-    await page.waitForLoadState("networkidle");
-    await page.keyboard.press("Escape");
-
-    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}$`, "u"));
+    await pressShortcutAndWaitForUrl({
+      expectedUrl: new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}$`, "u"),
+      key: "Escape",
+      page,
+    });
   });
 
   test("non-existent lesson shows 404 page", async ({ page }) => {
