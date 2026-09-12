@@ -78,7 +78,7 @@ function MilestoneHeading({ milestone }: { milestone: PlayerMilestone }) {
 
   function getHeading() {
     if (milestone.kind === "course") {
-      return t("Course Complete");
+      return t("Path complete");
     }
 
     return t("Chapter Complete");
@@ -119,16 +119,15 @@ function CompletionContextTitle({ className, ...props }: React.ComponentProps<"p
 }
 
 /**
- * Converts 1-based chapter position into a bounded percentage for the progress
- * bar. The route already guards stale curriculum lists, but this keeps the UI
- * readable if a fallback payload reaches the shared player.
+ * Bounds confirmed chapter completion. Authored position alone cannot prove progress.
  */
 function getChapterProgressValue({
   currentLessonNumber,
+  completedLessonsInChapter,
   totalLessonsInChapter,
 }: PlayerLessonProgress) {
   const total = Math.max(totalLessonsInChapter, currentLessonNumber, 1);
-  const current = Math.min(Math.max(currentLessonNumber, 1), total);
+  const current = Math.min(Math.max(completedLessonsInChapter ?? 0, 0), total);
 
   return Math.round((current / total) * 100);
 }
@@ -140,23 +139,31 @@ function getChapterProgressValue({
 function CompletionChapterProgress({ lessonProgress }: { lessonProgress: PlayerLessonProgress }) {
   const t = useExtracted();
 
-  const progressLabel = t("Lesson {current} of {total}", {
-    current: String(lessonProgress.currentLessonNumber),
-    total: String(lessonProgress.totalLessonsInChapter),
-  });
+  const progressLabel =
+    lessonProgress.completedLessonsInChapter === undefined
+      ? t("Lesson {current} of {total}", {
+          current: String(lessonProgress.currentLessonNumber),
+          total: String(lessonProgress.totalLessonsInChapter),
+        })
+      : t("{completed} of {total} lessons completed", {
+          completed: String(lessonProgress.completedLessonsInChapter),
+          total: String(lessonProgress.totalLessonsInChapter),
+        });
 
   return (
     <div className="flex w-full max-w-xs flex-col items-center gap-2">
-      <ProgressRoot
-        aria-label={t("Chapter progress")}
-        aria-valuetext={progressLabel}
-        className="w-full gap-0"
-        value={getChapterProgressValue(lessonProgress)}
-      >
-        <ProgressTrack className="h-1.5 rounded-full">
-          <ProgressIndicator className="rounded-full" />
-        </ProgressTrack>
-      </ProgressRoot>
+      {lessonProgress.completedLessonsInChapter !== undefined && (
+        <ProgressRoot
+          aria-label={t("Chapter progress")}
+          aria-valuetext={progressLabel}
+          className="w-full gap-0"
+          value={getChapterProgressValue(lessonProgress)}
+        >
+          <ProgressTrack className="h-1.5 rounded-full">
+            <ProgressIndicator className="rounded-full" />
+          </ProgressTrack>
+        </ProgressRoot>
+      )}
 
       <PlayerSupportingText>{progressLabel}</PlayerSupportingText>
     </div>
@@ -175,7 +182,7 @@ function CompletionLessonContext() {
     <CompletionContext>
       <CompletionContextTitle className="text-base">{lessonTitle}</CompletionContextTitle>
 
-      <CompletionChapterProgress lessonProgress={lessonProgress} />
+      {!lessonProgress.isOptional && <CompletionChapterProgress lessonProgress={lessonProgress} />}
     </CompletionContext>
   );
 }
@@ -233,8 +240,9 @@ export function CompletionScreenContent({
   onRestart: () => void;
 }) {
   const t = useExtracted();
-  const milestone = usePlayerMilestone();
-  const { completionFooter } = usePlayerViewer();
+  const suppliedMilestone = usePlayerMilestone();
+  const { completionFooter, isAuthenticated } = usePlayerViewer();
+  const milestone = isAuthenticated ? suppliedMilestone : null;
 
   if (milestone) {
     return (

@@ -8,18 +8,18 @@ export const getAvgTimeByLessonKind = cacheAdminData(async (start: Date, end: Da
     { kind: string; avg_duration: number; completed: bigint; started: bigint }[]
   >`
     SELECT
-      l.kind,
+      COALESCE(l.kind::text, lp.content_snapshot->>'lessonKind', 'unknown') AS kind,
       AVG(lp.duration_seconds) as avg_duration,
       COUNT(*) FILTER (WHERE lp.completed_at IS NOT NULL) as completed,
       COUNT(*) as started
     FROM lesson_progress lp
-    JOIN lessons l ON l.id = lp.lesson_id
+    LEFT JOIN lessons l ON l.id = lp.lesson_id
     JOIN users ON users.id = lp.user_id
     WHERE
       ${trackedAnalyticsUserSql}
       AND lp.started_at >= ${start}
       AND lp.started_at <= ${end}
-    GROUP BY l.kind
+    GROUP BY COALESCE(l.kind::text, lp.content_snapshot->>'lessonKind', 'unknown')
     ORDER BY avg_duration DESC
   `;
 

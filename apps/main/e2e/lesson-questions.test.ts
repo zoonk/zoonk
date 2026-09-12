@@ -2364,7 +2364,6 @@ test("keeps the mobile guest flow focused on sign-in or copying lesson content",
 
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Continue without saving" }).click();
   await page.getByRole("button", { name: "Ask about this lesson" }).click();
 
   const dialog = page.getByRole("dialog");

@@ -99,7 +99,7 @@ async function createLessonCompleteScenario(prefix: string) {
   const lesson1 = await lessonFixture({
     chapterId: chapter.id,
     isPublished: true,
-    kind: "quiz",
+    kind: "custom",
     organizationId: org.id,
     position: 0,
     slug: `e2e-${prefix}-l1-${uniqueId}`,
@@ -136,7 +136,7 @@ async function createLessonCompleteScenario(prefix: string) {
 
 /**
  * One lesson per chapter, two chapters. Completing chapter1's lesson → "Chapter Complete".
- * "Next Chapter" → chapter2 page. "Back to Chapter" → chapter1 page. "Review" restarts
+ * "Next Chapter" → chapter2 page. "Back to Chapter" → chapter1 page. "Repeat lesson" restarts
  * the lesson that completed chapter1.
  */
 async function createChapterCompleteScenario(prefix: string) {
@@ -170,7 +170,7 @@ async function createChapterCompleteScenario(prefix: string) {
   const lesson = await lessonFixture({
     chapterId: chapter1.id,
     isPublished: true,
-    kind: "quiz",
+    kind: "custom",
     organizationId: org.id,
     position: 0,
     slug: `e2e-${prefix}-lesson-${uniqueId}`,
@@ -222,6 +222,7 @@ async function createChapterCompleteWithUngeneratedNextChapterScenario(prefix: s
     }),
     chapterFixture({
       courseId: course.id,
+      generationStatus: "pending",
       isPublished: true,
       organizationId: org.id,
       position: 1,
@@ -233,7 +234,7 @@ async function createChapterCompleteWithUngeneratedNextChapterScenario(prefix: s
   const lesson = await lessonFixture({
     chapterId: chapter1.id,
     isPublished: true,
-    kind: "quiz",
+    kind: "custom",
     organizationId: org.id,
     position: 0,
     slug: `e2e-${prefix}-lesson-${uniqueId}`,
@@ -251,7 +252,7 @@ async function createChapterCompleteWithUngeneratedNextChapterScenario(prefix: s
 
 /**
  * One chapter, one lesson. Completing it → "Course Complete".
- * "Back to course" uses Escape, while "Review" restarts the completed lesson.
+ * "Back to course" uses Escape, while "Repeat lesson" restarts the completed lesson.
  */
 async function createCourseCompleteScenario(prefix: string) {
   const org = await getAiOrganization();
@@ -276,7 +277,7 @@ async function createCourseCompleteScenario(prefix: string) {
   const lesson = await lessonFixture({
     chapterId: chapter.id,
     isPublished: true,
-    kind: "quiz",
+    kind: "custom",
     organizationId: org.id,
     position: 0,
     slug: `e2e-${prefix}-lesson-${uniqueId}`,
@@ -308,7 +309,7 @@ test.describe("Lesson Completion UX", () => {
     await expect(completionScreen.getByText("100%")).toBeVisible();
     await expect(completionScreen.getByText(/correct/iu)).toBeVisible();
     await expect(completionScreen.getByText(`First Lesson ${uniqueId}`)).toBeVisible();
-    await expect(completionScreen.getByText("Lesson 1 of 2")).toBeVisible();
+    await expect(completionScreen.getByText("1 of 2 lessons completed")).toBeVisible();
 
     const chapterProgress = completionScreen.getByRole("progressbar", {
       name: /chapter progress/iu,
@@ -395,7 +396,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page
       .getByRole("status")
-      .getByRole("button", { name: /review/iu })
+      .getByRole("button", { name: /repeat lesson/iu })
       .click();
 
     await expect(
@@ -420,7 +421,7 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/chapter complete/iu)).toBeVisible();
-    await expect(completionScreen.getByText(/course complete/iu)).not.toBeVisible();
+    await expect(completionScreen.getByText(/path complete/iu)).not.toBeVisible();
 
     await completionScreen.getByRole("link", { name: /next chapter/iu }).click();
     await expect(page).toHaveURL(nextChapterUrl);
@@ -448,7 +449,7 @@ test.describe("Lesson Completion UX", () => {
     await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
-    await expect(completionScreen.getByText(/course complete/iu)).toBeVisible();
+    await expect(completionScreen.getByText(/path complete/iu)).toBeVisible();
     await expect(completionScreen.getByText(course.title)).toBeVisible();
     await expect(completionScreen.getByText(`Final Lesson ${uniqueId}`)).not.toBeVisible();
     await expect(completionScreen.getByText("No chapters left in this course")).not.toBeVisible();
@@ -463,6 +464,91 @@ test.describe("Lesson Completion UX", () => {
     await page.keyboard.press("Escape");
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
 
+    await browserContext.close();
+  });
+
+  test("optional practice stays beside its source and resumes the next teaching lesson", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      format: "question",
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const source = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      kind: "explanation",
+      position: 0,
+      title: `Source idea ${uniqueId}`,
+    });
+
+    const next = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      kind: "explanation",
+      position: 1,
+      title: `Next idea ${uniqueId}`,
+    });
+
+    const optional = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      kind: "quiz",
+      position: 2,
+      sourceLessonId: source.id,
+    });
+
+    await Promise.all([
+      stepFixture({
+        content: { text: "One focused idea.", title: "Source idea", variant: "text" },
+        isPublished: true,
+        kind: "static",
+        lessonId: source.id,
+      }),
+      stepFixture({
+        content: { text: "The next focused idea.", title: "Next idea", variant: "text" },
+        isPublished: true,
+        kind: "static",
+        lessonId: next.id,
+      }),
+      createQuizLesson(optional.id, uniqueId),
+    ]);
+
+    const chapterHref = `/b/ai/c/${course.slug}/ch/${chapter.slug}`;
+    await page.goto(chapterHref);
+    await expect(page.getByRole("listitem")).toHaveCount(2);
+    await page.getByText("Optional practice", { exact: true }).click();
+
+    await page
+      .locator(`#optional-${source.id}`)
+      .getByRole("link", { name: "Check understanding" })
+      .click();
+
+    await expect(page.getByText("Optional practice", { exact: true })).toBeVisible();
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
+    const completion = page.getByRole("status");
+    await expect(completion.getByText("100%", { exact: true })).toBeVisible();
+
+    await expect(
+      completion.getByRole("heading", { name: /chapter complete|path complete/iu }),
+    ).toHaveCount(0);
+
+    await completion.getByRole("link", { exact: true, name: "Next" }).click();
+    await expect(page).toHaveURL(`${chapterHref}/l/${next.slug}`);
     await browserContext.close();
   });
 
@@ -494,7 +580,7 @@ test.describe("Lesson Completion UX", () => {
     const lesson1 = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
-      kind: "quiz",
+      kind: "custom",
       organizationId: org.id,
       position: 0,
       slug: `e2e-pend-lesson1-${uniqueId}`,
@@ -547,7 +633,7 @@ test.describe("Lesson Completion UX", () => {
       chapterId: chapter.id,
       description: `Completed lesson ${uniqueId}`,
       isPublished: true,
-      kind: "quiz",
+      kind: "custom",
       organizationId: org.id,
       position: 0,
       slug: `e2e-mute-done-${uniqueId}`,
@@ -560,7 +646,7 @@ test.describe("Lesson Completion UX", () => {
       chapterId: chapter.id,
       description: `Pending lesson ${uniqueId}`,
       isPublished: true,
-      kind: "quiz",
+      kind: "custom",
       organizationId: org.id,
       position: 1,
       slug: `e2e-mute-pending-${uniqueId}`,

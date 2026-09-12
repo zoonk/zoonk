@@ -5,7 +5,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./step-image-prompts.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
+const defaultModel = "openai/gpt-5.6-sol";
 
 const fallbackModels = [
   "openai/gpt-5.6-sol",
@@ -13,15 +13,42 @@ const fallbackModels = [
   "google/gemini-3.1-pro-preview",
 ] as const;
 
-const imagePromptSchema = z.string().min(1);
+const imagePromptSchema = z.object({
+  alt: z
+    .string()
+    .min(1)
+    .describe(
+      "A concise description of the visible teaching content in LANGUAGE, without instructions for generating or styling the image.",
+    ),
+  prompt: z.string().min(1),
+  stepIndex: z.number().int().min(0),
+});
 
-/**
- * The workflow generates exactly one image for each readable teaching step.
- * Matching the schema length to the input keeps prompt generation aligned with
- * the saved step order, which prevents image/step mismatches downstream.
- */
+/** Explicit indices keep a selected illustration attached to the intended screen. */
 function buildSchema(stepCount: number) {
-  return z.object({ prompts: z.array(imagePromptSchema).length(stepCount) });
+  return z.object({
+    images: z
+      .array(
+        imagePromptSchema.extend({
+          stepIndex: z
+            .number()
+            .int()
+            .min(0)
+            .max(stepCount - 1),
+        }),
+      )
+      .max(1),
+    visualLearningGoal: z
+      .string()
+      .describe(
+        "The lesson skill from LESSON_TITLE and LESSON_DESCRIPTION, never the example topic. Explain the visible information needed to learn that skill, or say none.",
+      ),
+    visualNeed: z
+      .enum(["none", "appearance", "spatial", "motion", "mechanism"])
+      .describe(
+        "Does the actual lesson skill require seeing appearance, spatial layout, physical movement or a mechanism? Communication, wording, reasoning and abstract contrasts are none even if the example mentions a visible object. Decide before writing an image prompt.",
+      ),
+  });
 }
 
 type StepImagePromptsParams = {
@@ -31,16 +58,13 @@ type StepImagePromptsParams = {
   courseTitle: string;
   language: string;
   steps: { title: string; text: string }[];
+  imageMode?: "key" | "instructional";
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
 };
 
-/**
- * Generates one illustration prompt per step. The downstream image task owns
- * rendering style and file generation; this task only decides what scene each
- * step should show.
- */
+/** Chooses one useful illustration, or none when text communicates the concept. */
 export async function generateStepImagePrompts({
   lessonTitle,
   lessonDescription,
@@ -48,6 +72,7 @@ export async function generateStepImagePrompts({
   courseTitle,
   language,
   steps,
+  imageMode = "key",
   model = defaultModel,
   useFallback = true,
   reasoning,
@@ -65,6 +90,7 @@ export async function generateStepImagePrompts({
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
     STEPS: ${formattedSteps}
+    IMAGE_MODE: ${imageMode}
   `;
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
@@ -78,5 +104,6 @@ export async function generateStepImagePrompts({
     reasoning,
   });
 
-  return { data: output, systemPrompt, usage, userPrompt };
+  const images = imageMode === "instructional" && output.visualNeed === "none" ? [] : output.images;
+  return { data: { images }, systemPrompt, usage, userPrompt };
 }

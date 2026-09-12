@@ -3,6 +3,7 @@ import { type LessonKind } from "@zoonk/db";
 import { getCourseById } from "../courses/get-course-by-id";
 import { getSession } from "../users/get-session";
 import { getLessonVisibility } from "../users/lesson-visibility";
+import { getLearningPathPercent, getLearningPathScope } from "./_utils/learning-path-scope";
 import { getProgressSession, tagProgressScope } from "./_utils/progress-cache";
 import { calculateCourseContinueProgressPercent } from "./calculate-continue-progress";
 import { getChapterProgress as calculateChapterProgress } from "./get-chapter-progress";
@@ -45,10 +46,12 @@ async function loadCourseProgress({
   courseId,
   excludedLessonKinds,
   userId,
+  view = "path",
 }: {
   courseId: string;
   excludedLessonKinds: LessonKind[];
   userId: string | null;
+  view?: "path" | "curriculum";
 }) {
   const scope = { courseId } as const;
 
@@ -56,10 +59,28 @@ async function loadCourseProgress({
     return { chapters: [], percentComplete: null };
   }
 
+  const path = await getLearningPathScope(scope);
+
+  if (view === "path" && path !== undefined) {
+    return {
+      chapters:
+        path?.chapters.map(({ id, completedLessons, totalLessons }) => ({
+          chapterId: id,
+          completedLessons,
+          totalLessons,
+        })) ?? [],
+      percentComplete: path ? getLearningPathPercent(path) : null,
+    };
+  }
+
+  const kinds = view === "curriculum" ? [] : excludedLessonKinds;
+
   const [publishedChapters, durableChapterCompletionIds, rows] = await Promise.all([
-    listPublishedCourseChapters({ courseId }),
-    listDurableChapterCompletionIds({ excludedLessonKinds, scope, userId }),
-    listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId }),
+    listPublishedCourseChapters({ courseId, userId }),
+    path === undefined
+      ? listDurableChapterCompletionIds({ excludedLessonKinds: kinds, scope, userId })
+      : Promise.resolve([]),
+    listPublishedLessonProgressRows({ excludedLessonKinds: kinds, scope, userId }),
   ]);
 
   const chapters = calculateChapterProgress({
@@ -76,7 +97,10 @@ async function loadCourseProgress({
 
   return {
     chapters,
-    percentComplete: calculateCourseContinueProgressPercent({ chapters: percentageChapters }),
+    percentComplete:
+      path !== undefined && chapters.some((chapter) => chapter.totalLessons === 0)
+        ? null
+        : calculateCourseContinueProgressPercent({ chapters: percentageChapters }),
   };
 }
 
@@ -87,9 +111,11 @@ async function loadCourseProgress({
 export async function getCourseProgress({
   courseId,
   excludedLessonKinds = [],
+  view = "path",
 }: {
   courseId: string;
   excludedLessonKinds?: LessonKind[];
+  view?: "path" | "curriculum";
 }) {
   "use cache: private";
 
@@ -101,6 +127,7 @@ export async function getCourseProgress({
     courseId,
     excludedLessonKinds,
     userId: session?.user.id ?? null,
+    view,
   });
 
   return progress.chapters;
@@ -111,7 +138,13 @@ export async function getCourseProgress({
  * learner's durable lesson visibility. Core owns both preference resolution
  * and progress calculation so delivery apps cannot accidentally diverge.
  */
-export async function getCourseProgressResource({ courseId }: { courseId: string }) {
+export async function getCourseProgressResource({
+  courseId,
+  view = "path",
+}: {
+  courseId: string;
+  view?: "path" | "curriculum";
+}) {
   const [course, session, { hiddenLessonKinds }] = await Promise.all([
     getCourseById({ courseId }),
     getSession(),
@@ -126,5 +159,6 @@ export async function getCourseProgressResource({ courseId }: { courseId: string
     courseId,
     excludedLessonKinds: hiddenLessonKinds,
     userId: session?.user.id ?? null,
+    view,
   });
 }

@@ -2,8 +2,9 @@ model LessonProgress {
   id              String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId          String    @map("user_id") @db.Uuid
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lessonId        String    @map("lesson_id") @db.Uuid
-  lesson          Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId        String?   @map("lesson_id") @db.Uuid
+  lesson          Lesson?   @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  contentSnapshot Json?     @map("content_snapshot")
   startedAt       DateTime  @default(now()) @map("started_at")
   completedAt     DateTime? @map("completed_at")
   completedDate   DateTime? @map("completed_date") @db.Date
@@ -18,12 +19,13 @@ model LessonProgress {
 }
 
 model ChapterCompletion {
-  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chapterId   String   @map("chapter_id") @db.Uuid
-  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  completedAt DateTime @default(now()) @map("completed_at")
+  id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId       String?  @map("chapter_id") @db.Uuid
+  chapter         Chapter? @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  contentSnapshot Json?    @map("content_snapshot")
+  completedAt     DateTime @default(now()) @map("completed_at")
 
   @@unique([userId, chapterId], name: "userChapterCompletion")
   @@index([chapterId])
@@ -32,12 +34,13 @@ model ChapterCompletion {
 }
 
 model CourseCompletion {
-  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId    String   @map("course_id") @db.Uuid
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  completedAt DateTime @default(now()) @map("completed_at")
+  id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId        String?  @map("course_id") @db.Uuid
+  course          Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  contentSnapshot Json?    @map("content_snapshot")
+  completedAt     DateTime @default(now()) @map("completed_at")
 
   @@unique([userId, courseId], name: "userCourseCompletion")
   @@index([courseId])
@@ -49,8 +52,9 @@ model StepAttempt {
   id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId           String   @map("user_id") @db.Uuid
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stepId           String   @map("step_id") @db.Uuid
-  step             Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  stepId           String?  @map("step_id") @db.Uuid
+  step             Step?    @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  contentSnapshot  Json?    @map("content_snapshot")
   isCorrect        Boolean  @map("is_correct")
   correctAnswers   Int?     @map("correct_answers")
   incorrectAnswers Int?     @map("incorrect_answers")
@@ -98,4 +102,18 @@ model DailyProgress {
   @@index([userId, dayOfWeek])
   @@index([date])
   @@map("daily_progress")
+}
+
+// Idempotent completion results survive curriculum replacement and network retries.
+model LessonCompletionReceipt {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  originalLessonId String   @map("original_lesson_id") @db.Uuid
+  startedAt        DateTime @map("started_at") @db.Timestamptz(3)
+  result           Json
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, originalLessonId, startedAt], name: "userOriginalLessonStartedAt")
+  @@map("lesson_completion_receipts")
 }

@@ -25,10 +25,6 @@ async function getLessonContentRoute(
     return errors.notFound();
   }
 
-  if (result.status === "subscriptionRequired") {
-    return errors.paymentRequired();
-  }
-
   if (result.status === "notGenerated") {
     const generationTarget = result.generationTarget
       ? { kind: result.generationTarget.kind, lessonId: result.generationTarget.lessonId }

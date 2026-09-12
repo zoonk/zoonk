@@ -39,7 +39,10 @@ export async function generateMetadata({
       course: chapter.course.title,
       description: chapter.description,
     }),
-    robots: { follow: true, index: contentLocale === locale },
+    robots: {
+      follow: !chapter.course.userId,
+      index: !chapter.course.userId && contentLocale === locale,
+    },
     title: t("{chapter}: {course} course", {
       chapter: chapter.title,
       course: chapter.course.title,
@@ -49,18 +52,19 @@ export async function generateMetadata({
 
 export default function ChapterPage({
   params,
+  searchParams,
 }: PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">) {
   return (
     <CatalogDetailLayout
       sidebar={
         <Suspense fallback={<CatalogSidebarSkeleton />}>
-          <ChapterSidebar params={params} />
+          <ChapterSidebar params={params} searchParams={searchParams} />
         </Suspense>
       }
     >
       <Grid variant="pane">
         <Suspense fallback={<CatalogGridSkeleton count={5} groupVariant="pane" search />}>
-          <ChapterLessonGrid params={params} />
+          <ChapterLessonGrid params={params} searchParams={searchParams} />
         </Suspense>
       </Grid>
     </CatalogDetailLayout>

@@ -310,34 +310,20 @@ test.describe("Course language editions", () => {
     ).toBeVisible();
   });
 
-  test("recovers the original zero-chapter course in the current UI language", async ({
+  test("prepares an empty original curriculum only after an explicit localized action", async ({
     userWithoutProgress,
   }) => {
     const source = await createCourse({ language: "en" });
 
-    await Promise.all([
-      prisma.chapter.delete({ where: { id: source.chapter.id } }),
-      prisma.course.update({
-        data: { generationStatus: "running" },
-        where: { id: source.course.id },
-      }),
-    ]);
+    await prisma.chapter.delete({ where: { id: source.chapter.id } });
 
-    const prompt = await coursePromptFixture({
-      canonicalTitle: source.course.title,
-      courseId: source.course.id,
-      generationRunId: null,
-      generationStatus: "running",
-      language: "en",
-    });
-
-    // Exercise the real source-prompt lookup and recovery trigger while keeping
-    // the external generation service from producing content during E2E.
+    // Reading an empty legacy course preserves the catalog page. The explicit
+    // prepare action starts its current curriculum in the learner's UI language.
     await routeGenerationApis({
       handler: async (route) => {
-        if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
+        if (isGenerationTrigger({ request: route.request(), targetType: "curriculum" })) {
           await route.fulfill({
-            body: JSON.stringify({ id: `recovery-${prompt.id}`, status: "pending" }),
+            body: JSON.stringify({ id: `recovery-${source.course.id}`, status: "pending" }),
             contentType: "application/json",
             status: 202,
           });
@@ -361,20 +347,36 @@ test.describe("Course language editions", () => {
     });
 
     await userWithoutProgress.goto(`/pt${source.href}?edition=original`);
-    await expect(userWithoutProgress).toHaveURL(`/pt/generate/course/${prompt.id}`);
+    await expect(userWithoutProgress).toHaveURL(`/pt${source.href}?edition=original`);
+
+    const prepareLink = userWithoutProgress.getByRole("link", { name: "Preparar o curso" });
+    await expect(prepareLink).toBeVisible();
+
+    await expect(
+      getGenerationTriggerRequests({ page: userWithoutProgress, targetType: "curriculum" }),
+    ).resolves.toHaveLength(0);
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: source.course.id } }),
+    ).resolves.toMatchObject({ generationRunId: null, generationStatus: "completed" });
+
+    await prepareLink.click();
+    await expect(userWithoutProgress).toHaveURL(`/pt/generate/curriculum/${source.course.id}`);
 
     await expect
       .poll(() =>
-        getGenerationTriggerRequests({ page: userWithoutProgress, targetType: "coursePrompt" }),
+        getGenerationTriggerRequests({ page: userWithoutProgress, targetType: "curriculum" }),
       )
       .toHaveLength(1);
 
     const [trigger] = await getGenerationTriggerRequests({
       page: userWithoutProgress,
-      targetType: "coursePrompt",
+      targetType: "curriculum",
     });
 
-    expect(trigger?.postDataJSON()).toEqual({ target: { id: prompt.id, type: "coursePrompt" } });
+    expect(trigger?.postDataJSON()).toEqual({
+      target: { id: source.course.id, type: "curriculum" },
+    });
   });
 
   test("follows a winning generation run and its real Portuguese slug without a completion event", async ({
@@ -440,13 +442,15 @@ test.describe("Course language editions", () => {
 
     await userWithoutProgress.goto(`/pt/generate/course/${prompt.id}`);
 
-    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}?edition=original`, {
-      timeout: 20_000,
-    });
+    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}/start`, { timeout: 20_000 });
 
     await expect(
       userWithoutProgress.getByRole("heading", { level: 1, name: target.course.title }),
     ).toBeVisible();
+
+    await expect(
+      userWithoutProgress.getByRole("link", { name: "Voltar para o curso" }),
+    ).toHaveAttribute("href", `/pt${target.href}?edition=original`);
 
     await expect(
       getGenerationTriggerRequests({ page: userWithoutProgress, targetType: "coursePrompt" }),
@@ -567,13 +571,15 @@ test.describe("Course language editions", () => {
 
     releaseRetryStream.resolve(null);
 
-    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}?edition=original`, {
-      timeout: 20_000,
-    });
+    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}/start`, { timeout: 20_000 });
 
     await expect(
       userWithoutProgress.getByRole("heading", { level: 1, name: target.course.title }),
     ).toBeVisible();
+
+    await expect(
+      userWithoutProgress.getByRole("link", { name: "Voltar para o curso" }),
+    ).toHaveAttribute("href", `/pt${target.href}?edition=original`);
 
     await expect(
       getGenerationTriggerRequests({ page: userWithoutProgress, targetType: "coursePrompt" }),

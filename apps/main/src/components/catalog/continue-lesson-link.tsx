@@ -4,6 +4,7 @@ import {
   getCourseContinueProgress,
 } from "@/data/progress/continue-progress";
 import { getContinueLessonTarget } from "@/data/progress/get-catalog-target";
+import { getPendingGenerationHref } from "@/data/progress/get-pending-generation-href";
 import { type AppRoute, Link } from "@/i18n/navigation";
 import { type LessonScope } from "@zoonk/core/lessons/scope";
 import { type LessonKind } from "@zoonk/db";
@@ -179,6 +180,15 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
   };
 
   const label = getLabel();
+  const generationHref = await getPendingGenerationHref(data);
+
+  if (generationHref) {
+    return (
+      <Link className={className} href={generationHref} prefetch={false}>
+        <ContinueLessonLinkContent label={label} progress={progressContent} />
+      </Link>
+    );
+  }
 
   /**
    * Once the current scope is fully completed, the parent can provide the next

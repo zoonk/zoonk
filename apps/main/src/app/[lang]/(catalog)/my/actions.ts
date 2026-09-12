@@ -1,6 +1,7 @@
 "use server";
 
 import { removeCurrentUserCourse } from "@zoonk/core/courses/remove-current-user";
+import { listCurrentUserTracks } from "@zoonk/core/courses/tracks";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
@@ -32,4 +33,9 @@ export async function removeCurrentUserCourseAction(
 
   revalidatePath("/[lang]/(catalog)/my", "page");
   return { status: "success" as const };
+}
+
+export async function loadMoreTracks(cursor: string) {
+  const { data, error } = await safeAsync(() => listCurrentUserTracks({ cursor, limit: 30 }));
+  return error ? { status: "unavailable" as const } : data;
 }

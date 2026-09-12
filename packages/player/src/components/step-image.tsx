@@ -2,38 +2,33 @@
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 import Image from "next/image";
-import { useState } from "react";
 import { STEP_IMAGE_SIZES } from "../image-config";
 
-function StepImageFallback({ prompt }: { prompt: string }) {
-  return (
-    <div className="flex h-full w-full items-center justify-center p-6">
-      <span className="text-muted-foreground text-center text-sm font-medium">{prompt}</span>
-    </div>
-  );
-}
-
 /**
- * Readable lesson steps now own their illustration directly. This component
- * keeps the render/fallback behavior shared between explanation and tutorial
- * steps so a missing upload still leaves the learner with the intended prompt.
- * Images are contained so diagrams and screenshots are not clipped.
+ * Teaching illustrations use descriptive alternatives, never production prompts.
+ * The owning scene removes unavailable artwork so its complete text can use the space.
  */
-export function StepImageView({ image }: { image: StepImage }) {
-  const [errorUrl, setErrorUrl] = useState<string | null>(null);
-
-  if (!image.url || errorUrl === image.url) {
-    return <StepImageFallback prompt={image.prompt} />;
+export function StepImageView({
+  alt,
+  image,
+  onError,
+}: {
+  alt: string;
+  image: StepImage;
+  onError: () => void;
+}) {
+  if (!image.url) {
+    return null;
   }
 
   return (
     <div className="relative h-full w-full" data-slot="step-image-view">
       <Image
-        alt={image.prompt}
+        alt={image.alt?.trim() || alt}
         className="object-contain"
         fill
         loading="eager"
-        onError={() => setErrorUrl(image.url ?? null)}
+        onError={onError}
         sizes={STEP_IMAGE_SIZES}
         src={image.url}
       />

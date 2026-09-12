@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type VocabularyWord } from "@zoonk/ai/tasks/lessons/language/vocabulary";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
@@ -88,6 +89,7 @@ export async function saveVocabularyLessonStep({
     lessonId: context.id,
     persistGroups: ({ groups, transaction }) =>
       persistVocabularyGroups({ context, distractors, groups, transaction, wordGroups, wordIds }),
+    revisionContext: getLessonRevisionContext(context),
     workflowRunId,
   });
 

@@ -5,10 +5,11 @@ import {
   trackLessonCompleted,
   trackLessonSecondStep,
 } from "@/lib/track-events";
+import { type CourseLearningTarget } from "@zoonk/core/courses/learning-plan";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { type PlayerStepChangeEvent } from "@zoonk/player/provider";
-import { useCallback, useEffect, useRef } from "react";
+import { type PlayerCompletionOutcome, type PlayerStepChangeEvent } from "@zoonk/player/provider";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { preloadNextLesson } from "./preload-next-lesson-action";
 import { submitCompletion } from "./submit-completion-action";
 import { useTrackLessonStarted } from "./use-track-lesson-started";
@@ -22,7 +23,8 @@ export function useLessonPlayerHandlers({
   chapterPosition,
   chapterSlug,
   courseSlug,
-  hasMilestone,
+  courseId,
+  isPrivate,
   isAuthenticated,
   lesson,
   lessonPosition,
@@ -31,7 +33,8 @@ export function useLessonPlayerHandlers({
   chapterPosition: number;
   chapterSlug: string;
   courseSlug: string;
-  hasMilestone: boolean;
+  courseId: string;
+  isPrivate: boolean;
   isAuthenticated: boolean;
   lesson: SerializedLesson;
   lessonPosition: number;
@@ -39,6 +42,12 @@ export function useLessonPlayerHandlers({
 }) {
   const hasRequestedNextLessonPreload = useRef(false);
   const hasTrackedSecondStep = useRef(false);
+  const [isSuperseded, setIsSuperseded] = useState(false);
+  const [completionMilestone, setCompletionMilestone] = useState<"chapter" | "course" | null>(null);
+
+  const [completionNextTarget, setCompletionNextTarget] = useState<CourseLearningTarget | null>(
+    null,
+  );
 
   useEffect(() => {
     hasRequestedNextLessonPreload.current = false;
@@ -50,35 +59,54 @@ export function useLessonPlayerHandlers({
     chapterPosition,
     courseSlug,
     isAuthenticated,
+    isPrivate,
     lesson,
     lessonPosition,
     lessonSlug,
   });
 
   const handleComplete = useCallback(
-    (input: CompletionInput) => {
-      trackLessonCompleted({
-        chapterPosition,
-        courseSlug,
-        lessonKind: lesson.kind,
-        lessonPosition,
-        lessonSlug,
-      });
+    async (input: CompletionInput): Promise<PlayerCompletionOutcome> => {
+      const outcome = isAuthenticated
+        ? await submitCompletion(input, courseId)
+        : { status: "completed" as const };
 
-      if (hasMilestone) {
-        trackChapterCompleted({ chapterPosition, chapterSlug, courseSlug });
+      if (outcome.status !== "completed") {
+        if (outcome.status === "superseded") {
+          setIsSuperseded(true);
+        }
+
+        return outcome;
       }
 
-      if (isAuthenticated) {
-        void submitCompletion(input);
+      if ("completionMilestone" in outcome) {
+        setCompletionMilestone(outcome.completionMilestone);
+        setCompletionNextTarget(outcome.nextTarget);
       }
+
+      if (!isPrivate) {
+        trackLessonCompleted({
+          chapterPosition,
+          courseSlug,
+          lessonKind: lesson.kind,
+          lessonPosition,
+          lessonSlug,
+        });
+
+        if ("completionMilestone" in outcome && outcome.completionMilestone) {
+          trackChapterCompleted({ chapterPosition, chapterSlug, courseSlug });
+        }
+      }
+
+      return outcome;
     },
     [
       chapterPosition,
       chapterSlug,
+      courseId,
       courseSlug,
-      hasMilestone,
       isAuthenticated,
+      isPrivate,
       lesson.kind,
       lessonPosition,
       lessonSlug,
@@ -87,7 +115,7 @@ export function useLessonPlayerHandlers({
 
   const handleStepChange = useCallback(
     (event: PlayerStepChangeEvent) => {
-      if (isSecondStepForwardEvent(event) && !hasTrackedSecondStep.current) {
+      if (!isPrivate && isSecondStepForwardEvent(event) && !hasTrackedSecondStep.current) {
         hasTrackedSecondStep.current = true;
 
         trackLessonSecondStep({
@@ -116,6 +144,7 @@ export function useLessonPlayerHandlers({
       chapterPosition,
       courseSlug,
       isAuthenticated,
+      isPrivate,
       lesson.kind,
       lessonPosition,
       lessonSlug,
@@ -123,5 +152,11 @@ export function useLessonPlayerHandlers({
     ],
   );
 
-  return { handleComplete, handleStepChange };
+  return {
+    completionMilestone,
+    completionNextTarget,
+    handleComplete,
+    handleStepChange,
+    isSuperseded,
+  };
 }

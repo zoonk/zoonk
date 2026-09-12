@@ -3,6 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toGenerationResource } from "@/lib/generation-resource";
 import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { getGenerationReadAccess } from "@zoonk/core/workflows/generation-read-access";
 import { NextResponse } from "next/server";
 import { getRun } from "workflow/api";
 
@@ -24,6 +25,12 @@ async function getGeneration(
   }
 
   const run = getRun(path.data.generationId);
+
+  const access = await getGenerationReadAccess(path.data);
+
+  if (access.status === "notFound") {
+    return errors.notFound("Generation not found");
+  }
 
   if (!(await run.exists)) {
     return errors.notFound("Generation not found");

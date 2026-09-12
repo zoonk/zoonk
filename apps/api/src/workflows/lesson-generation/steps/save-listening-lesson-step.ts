@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { getGeneratedCompanionForSourceLesson } from "@zoonk/core/lessons/generated-companions";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
@@ -35,11 +36,13 @@ function getListeningResource(step: {
  * attached to the same generated sentence rows.
  */
 async function saveListeningLesson({
+  context,
   listeningLessonId,
   sourceLessonId,
 }: {
   listeningLessonId: string;
   sourceLessonId: string;
+  context: LessonContext;
 }): Promise<void> {
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveListeningLesson" });
@@ -69,6 +72,7 @@ async function saveListeningLesson({
 
   await replaceLessonSteps({
     lessonId: listeningLesson.id,
+    revisionContext: getLessonRevisionContext(context),
     saveSteps: async (transaction) => {
       await transaction.step.createMany({
         data: sentenceSteps.map((readingStep) => ({
@@ -108,5 +112,9 @@ export async function saveListeningLessonStep(context: LessonContext): Promise<v
     return;
   }
 
-  await saveListeningLesson({ listeningLessonId: listeningLesson.id, sourceLessonId: context.id });
+  await saveListeningLesson({
+    context,
+    listeningLessonId: listeningLesson.id,
+    sourceLessonId: context.id,
+  });
 }

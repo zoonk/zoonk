@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
@@ -12,6 +13,24 @@ describe(setLessonAsRunningStep, () => {
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
     organizationId = organization.id;
+  });
+
+  it("retains background generation access after a failed lesson clears its active claim", async () => {
+    const lesson = await createLessonContext({ generationStatus: "pending", organizationId });
+    const workflowRunId = `child-${randomUUID()}`;
+
+    await expect(setLessonAsRunningStep({ lessonId: lesson.id, workflowRunId })).resolves.toBe(
+      "claimed",
+    );
+
+    await prisma.lesson.update({
+      data: { generationRunId: null, generationStatus: "failed" },
+      where: { id: lesson.id },
+    });
+
+    await expect(
+      prisma.generationRun.findUnique({ where: { id: workflowRunId } }),
+    ).resolves.toMatchObject({ courseId: lesson.chapter.courseId });
   });
 
   it("marks a lesson as running and clears stale steps when requested", async () => {

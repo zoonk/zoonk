@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type generateLessonGrammar } from "@zoonk/ai/tasks/lessons/language/grammar";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
@@ -26,6 +27,7 @@ export async function saveGrammarLessonStep({
 
   await replaceLessonSteps({
     lessonId: context.id,
+    revisionContext: getLessonRevisionContext(context),
     saveSteps: (transaction) =>
       saveGrammarLessonContent({ content, context, romanizations, transaction }),
   });

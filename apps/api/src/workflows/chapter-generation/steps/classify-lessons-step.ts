@@ -1,3 +1,4 @@
+import { getCourseGenerationPolicy } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ChapterLesson } from "@zoonk/ai/tasks/chapters/lessons";
 import { type LessonKindSchema, generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
@@ -59,6 +60,7 @@ async function classifyChapterLesson({
     language: context.language,
     lessonDescription: lesson.description,
     lessonTitle: lesson.title,
+    ...getCourseGenerationPolicy(context.course),
   });
 
   return { ...lesson, kind: result.data.kind };

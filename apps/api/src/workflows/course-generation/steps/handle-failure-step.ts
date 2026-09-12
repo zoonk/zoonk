@@ -119,6 +119,7 @@ export async function handleCourseFailureStep(input: {
  */
 export async function handleChapterFailureStep(input: {
   chapterId: string;
+  workflowRunId: string;
   error?: WorkflowErrorLog;
 }): Promise<void> {
   "use step";
@@ -132,10 +133,18 @@ export async function handleChapterFailureStep(input: {
     workflowName: "chapterGenerationWorkflow",
   });
 
-  await prisma.chapter.update({
-    data: { generationRunId: null, generationStatus: "failed" },
-    where: { id: input.chapterId },
+  const failure = await prisma.chapter.updateMany({
+    data: { generationStatus: "failed" },
+    where: {
+      generationRunId: input.workflowRunId,
+      generationStatus: { in: ["running", "failed"] },
+      id: input.chapterId,
+    },
   });
+
+  if (failure.count === 0) {
+    return;
+  }
 
   await using stream = createStepStream<CourseWorkflowStepName>();
   await stream.error({ reason: "aiGenerationFailed", step: WORKFLOW_ERROR_STEP });

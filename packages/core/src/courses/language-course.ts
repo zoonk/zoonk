@@ -58,7 +58,7 @@ function getCompletedLanguageCourseEntry(course: Course): CompletedLanguageCours
  * target language, so this direct lookup avoids starting generation just to
  * discover a course that already exists.
  */
-async function getCompletedLanguageCourse({
+export async function getCompletedLanguageCourse({
   language,
   targetLanguage,
 }: LanguageCourseInput): Promise<Course | null> {

@@ -7,8 +7,8 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { type LessonContext } from "../get-lesson-step";
 import {
-  getOtherExplanationLessonTitles,
-  getPreviousExplanationSourceLesson,
+  getOptionalActivitySourceLesson,
+  getOtherTeachingLessonTitles,
 } from "./explanation-source-steps";
 
 /**
@@ -98,6 +98,35 @@ describe("explanation source lesson helpers", () => {
     organizationId = organization.id;
   });
 
+  it.each(["tutorial", "custom"] as const)(
+    "uses an explicit %s source even when another teaching lesson is nearer",
+    async (kind) => {
+      const context = await createContext({ organizationId, position: 4 });
+
+      const source = await lessonFixture({
+        chapterId: context.chapterId,
+        description: "Locate the working file without changing it",
+        isPublished: true,
+        kind,
+        organizationId,
+        position: 0,
+        title: "Find the working file",
+      });
+
+      await createSourceExplanation({
+        chapterId: context.chapterId,
+        organizationId,
+        position: 3,
+        text: "A different topic",
+        title: "Unrelated neighboring explanation",
+      });
+
+      await expect(
+        getOptionalActivitySourceLesson({ ...context, sourceLessonId: source.id }),
+      ).resolves.toStrictEqual({ description: source.description, title: source.title });
+    },
+  );
+
   it("returns other explanation lesson titles in chapter order", async () => {
     const context = await createContext({ organizationId, position: 2 });
 
@@ -120,7 +149,7 @@ describe("explanation source lesson helpers", () => {
       }),
     ]);
 
-    await expect(getOtherExplanationLessonTitles(context)).resolves.toStrictEqual([
+    await expect(getOtherTeachingLessonTitles(context)).resolves.toStrictEqual([
       "First explanation",
       "Second explanation",
     ]);
@@ -164,7 +193,7 @@ describe("explanation source lesson helpers", () => {
       }),
     ]);
 
-    const sourceLesson = await getPreviousExplanationSourceLesson(context);
+    const sourceLesson = await getOptionalActivitySourceLesson(context);
 
     expect(sourceLesson).toStrictEqual({
       description: "Test lesson description",
@@ -201,7 +230,7 @@ describe("explanation source lesson helpers", () => {
       }),
     ]);
 
-    const sourceLesson = await getPreviousExplanationSourceLesson(context);
+    const sourceLesson = await getOptionalActivitySourceLesson(context);
 
     expect(sourceLesson).toStrictEqual({ description: "New quiz source", title: "New" });
   });

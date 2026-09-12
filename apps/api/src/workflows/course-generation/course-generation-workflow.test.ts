@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
+import { curriculumChapters } from "@/workflows/_test-utils/curriculum";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
-import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
+import { generateCourseCurriculumLevel as generateCourseChapters } from "@zoonk/ai/tasks/courses/curriculum";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
@@ -11,10 +12,7 @@ import { generateCourseIntroduction } from "@zoonk/ai/tasks/courses/introduction
 import { generateCourseLandingPage } from "@zoonk/ai/tasks/courses/landing-page";
 import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
-import {
-  COURSE_COMPLETION_STEP,
-  INTRODUCTION_LESSON_COMPLETION_STEP,
-} from "@zoonk/core/workflows/steps";
+import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
@@ -53,15 +51,10 @@ vi.mock("@zoonk/ai/tasks/courses/landing-page", () => ({
     }),
 }));
 
-vi.mock("@zoonk/ai/tasks/courses/chapters", () => ({
-  generateCourseChapters: vi.fn().mockResolvedValue({
-    data: {
-      chapters: [
-        { description: "Chapter 1 description", title: "Chapter 1" },
-        { description: "Chapter 2 description", title: "Chapter 2" },
-      ],
-    },
-  }),
+vi.mock("@zoonk/ai/tasks/courses/curriculum", () => ({
+  generateCourseCurriculumLevel: vi.fn(({ level }) =>
+    Promise.resolve({ data: { chapters: curriculumChapters(level) } }),
+  ),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/introduction", () => ({
@@ -232,7 +225,11 @@ describe(courseGenerationWorkflow, () => {
         expect.objectContaining({ coursePromptId: request.id, workflowRunId: "test-run-id" }),
       );
 
-      expect(generateCourseDescription).toHaveBeenCalledWith({ language: "en", title });
+      expect(generateCourseDescription).toHaveBeenCalledWith({
+        format: "core",
+        language: "en",
+        title,
+      });
 
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
@@ -421,12 +418,11 @@ describe(courseGenerationWorkflow, () => {
     });
 
     it.each(["coding", "core", "practical"] as const)(
-      "creates an intro chapter without triggering chapter generation for %s courses",
+      "creates every required level without generating unfunded lessons for %s courses",
       async (courseFormat) => {
         vi.mocked(chapterGenerationWorkflow).mockClear();
-
-        const title = `Intro Chapter ${courseFormat} Course ${randomUUID()}`;
-        const slug = getCourseSlugForTitle({ language: "en", title });
+        vi.mocked(lessonGenerationWorkflow).mockClear();
+        const title = `Complete ${courseFormat} Course ${randomUUID()}`;
 
         const request = await coursePromptFixture({
           canonicalTitle: title,
@@ -436,173 +432,34 @@ describe(courseGenerationWorkflow, () => {
 
         await generateCourse(request.id);
 
-        const course = await prisma.course.findFirstOrThrow({
-          include: {
-            chapters: {
-              include: { lessons: { orderBy: { position: "asc" } } },
-              orderBy: { position: "asc" },
-            },
-          },
-          where: { slug },
+        const persisted = await prisma.coursePrompt.findUniqueOrThrow({
+          where: { id: request.id },
         });
 
-        expect(course.format).toBe(courseFormat);
+        const course = await prisma.course.findUniqueOrThrow({
+          include: { chapters: { include: { lessons: true }, orderBy: { position: "asc" } } },
+          where: { id: persisted.courseId! },
+        });
 
-        const introductionChapter = course.chapters[0]!;
-        expect(introductionChapter.generationStatus).toBe("completed");
-        expect(introductionChapter.title).toBe("A quick guide to the field");
+        expect(course.format).toBe("core");
 
-        expect(introductionChapter.lessons.map((lesson) => lesson.kind)).toStrictEqual([
-          "explanation",
-          "quiz",
-          "practice",
-          "explanation",
-          "quiz",
-          "practice",
-          "explanation",
-          "quiz",
-          "practice",
-          "review",
+        expect(course.chapters.map((chapter) => chapter.level)).toStrictEqual([
+          "overview",
+          "overview",
+          "overview",
+          "basic",
+          "intermediate",
+          "advanced",
         ]);
 
-        expect(introductionChapter.imageUrl).toBeNull();
-
-        const firstMainChapter = course.chapters[1]!;
-        expect(firstMainChapter.position).toBe(1);
-        expect(firstMainChapter.title).toBe("Chapter 1");
-        expect(firstMainChapter.imageUrl).toBeNull();
-
-        const thirdChapter = course.chapters[2]!;
-        expect(thirdChapter.position).toBe(2);
-        expect(thirdChapter.title).toBe("Chapter 2");
-
-        const firstLesson = introductionChapter.lessons[0]!;
-        const secondLesson = introductionChapter.lessons[1]!;
-        const thirdLesson = introductionChapter.lessons[2]!;
-
-        expect(lessonGenerationWorkflow).toHaveBeenCalledWith(firstLesson.id);
-        expect(startMock).toHaveBeenCalledWith(lessonGenerationWorkflow, [secondLesson.id]);
-        expect(startMock).toHaveBeenCalledWith(lessonGenerationWorkflow, [thirdLesson.id]);
-
-        expect(startMock).toHaveBeenCalledWith(chapterImagesWorkflow, [course.id]);
-
-        expect(generateCourseIntroduction).toHaveBeenCalledWith({
-          courseTitle: title,
-          language: "en",
-        });
-
+        expect(course.chapters.every((chapter) => chapter.lessons.length === 0)).toBe(true);
         expect(chapterGenerationWorkflow).not.toHaveBeenCalled();
+        expect(lessonGenerationWorkflow).not.toHaveBeenCalled();
+        expect(startMock).toHaveBeenCalledWith(chapterImagesWorkflow, [course.id]);
       },
     );
 
-    it("starts the first intro lesson before the main course setup finishes", async () => {
-      startMock.mockClear();
-      vi.mocked(lessonGenerationWorkflow).mockClear();
-
-      const title = `Parallel Intro Course ${randomUUID()}`;
-      type ChapterOutlineResult = Awaited<ReturnType<typeof generateCourseChapters>>;
-
-      const chapterOutline = Promise.withResolvers<ChapterOutlineResult>();
-
-      vi.mocked(generateCourseChapters).mockReturnValueOnce(chapterOutline.promise);
-
-      const request = await coursePromptFixture({
-        canonicalTitle: title,
-        generationStatus: "pending",
-      });
-
-      const workflow = generateCourse(request.id);
-
-      try {
-        await vi.waitFor(() => {
-          expect(generateCourseIntroduction).toHaveBeenCalledWith({
-            courseTitle: title,
-            language: "en",
-          });
-        });
-
-        await vi.waitFor(
-          () => {
-            expect(lessonGenerationWorkflow).toHaveBeenCalledWith(expect.any(String));
-          },
-          { timeout: 500 },
-        );
-      } finally {
-        chapterOutline.resolve({
-          data: { chapters: [{ description: "Main chapter description", title: "Main chapter" }] },
-          systemPrompt: "",
-          usage: {} as ChapterOutlineResult["usage"],
-          userPrompt: "",
-        });
-
-        await workflow.catch(() => {});
-      }
-    });
-
-    it("streams the first intro lesson target before the chapter outline finishes", async () => {
-      startMock.mockClear();
-      vi.mocked(lessonGenerationWorkflow).mockClear();
-
-      const title = `Intro Ready Redirect Course ${randomUUID()}`;
-      const slug = getCourseSlugForTitle({ language: "en", title });
-      type ChapterOutlineResult = Awaited<ReturnType<typeof generateCourseChapters>>;
-
-      const firstIntroLesson = Promise.withResolvers<"ready">();
-      const chapterOutline = Promise.withResolvers<ChapterOutlineResult>();
-
-      vi.mocked(lessonGenerationWorkflow).mockReturnValueOnce(firstIntroLesson.promise);
-      vi.mocked(generateCourseChapters).mockReturnValueOnce(chapterOutline.promise);
-
-      const request = await coursePromptFixture({
-        canonicalTitle: title,
-        generationStatus: "pending",
-      });
-
-      const workflow = generateCourse(request.id);
-
-      try {
-        await vi.waitFor(() => {
-          expect(lessonGenerationWorkflow).toHaveBeenCalledWith(expect.any(String));
-        });
-
-        const completionBeforeFirstLesson = getStreamedEvents().find(
-          (event) =>
-            event.step === INTRODUCTION_LESSON_COMPLETION_STEP && event.status === "completed",
-        );
-
-        expect(completionBeforeFirstLesson).toBeUndefined();
-
-        firstIntroLesson.resolve("ready");
-
-        await vi.waitFor(() => {
-          const completionAfterFirstLesson = getStreamedEvents().find(
-            (event) =>
-              event.step === INTRODUCTION_LESSON_COMPLETION_STEP && event.status === "completed",
-          );
-
-          expect(completionAfterFirstLesson?.entityId).toBe(
-            `${slug}/ch/a-quick-guide-to-the-field/l/what-this-field-does`,
-          );
-        });
-
-        const courseCompletionEvent = getStreamedEvents().find(
-          (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
-        );
-
-        expect(courseCompletionEvent).toBeUndefined();
-      } finally {
-        chapterOutline.resolve({
-          data: { chapters: [{ description: "Main chapter description", title: "Main chapter" }] },
-          systemPrompt: "",
-          usage: {} as ChapterOutlineResult["usage"],
-          userPrompt: "",
-        });
-
-        await workflow.catch(() => {});
-      }
-    });
-
-    it("triggers first chapter generation while keeping the language course completion path", async () => {
+    it("creates every CEFR level and leaves chapter generation to the selected start", async () => {
       vi.mocked(generateCourseIntroduction).mockClear();
       vi.mocked(chapterGenerationWorkflow).mockClear();
       startMock.mockClear();
@@ -640,13 +497,16 @@ describe(courseGenerationWorkflow, () => {
 
       expect(course.targetLanguage).toBe("es");
 
-      expect(course.chapters.map((chapter) => chapter.title)).toStrictEqual([
-        "Lang Chapter 1",
-        "Lang Chapter 2",
+      expect(course.chapters.map((chapter) => chapter.level)).toStrictEqual([
+        "a1",
+        "a2",
+        "b1",
+        "b2",
+        "c1",
+        "c2",
       ]);
 
-      const firstChapter = course.chapters[0]!;
-      expect(chapterGenerationWorkflow).toHaveBeenCalledExactlyOnceWith(firstChapter.id);
+      expect(chapterGenerationWorkflow).not.toHaveBeenCalled();
 
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
@@ -1066,7 +926,7 @@ describe(courseGenerationWorkflow, () => {
       });
 
       expect(course?.generationStatus).toBe("completed");
-      expect(course?.chapters[0]?.generationStatus).toBe("completed");
+      expect(course?.chapters[0]?.generationStatus).toBe("pending");
       expect(course?.chapters[0]?.imageUrl).toBeNull();
       expect(course?.chapters[1]?.imageUrl).toBeNull();
     });

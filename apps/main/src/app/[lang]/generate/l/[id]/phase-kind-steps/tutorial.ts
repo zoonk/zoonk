@@ -7,29 +7,17 @@ type TutorialSteps =
   | "setLessonAsRunning"
   | "generateTutorialContent"
   | "generateImagePrompts"
-  | "generateStepImages"
   | "saveTutorialLesson"
-  | "generateLessonImage"
   | "setLessonAsCompleted";
 
 export const TUTORIAL_PHASE_STEPS = {
-  creatingImages: ["generateStepImages"],
-  creatingLessonImage: ["generateLessonImage"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
-  preparingImages: ["generateImagePrompts"],
   saving: ["saveTutorialLesson", "setLessonAsCompleted"],
-  writingContent: ["generateTutorialContent"],
+  writingContent: ["generateTutorialContent", "generateImagePrompts"],
 } as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidateTutorial = AssertAllCovered<
   Exclude<TutorialSteps, (typeof TUTORIAL_PHASE_STEPS)[keyof typeof TUTORIAL_PHASE_STEPS][number]>
 >;
 
-export const TUTORIAL_PHASE_ORDER: PhaseName[] = [
-  "gettingStarted",
-  "creatingLessonImage",
-  "writingContent",
-  "preparingImages",
-  "creatingImages",
-  "saving",
-];
+export const TUTORIAL_PHASE_ORDER: PhaseName[] = ["gettingStarted", "writingContent", "saving"];

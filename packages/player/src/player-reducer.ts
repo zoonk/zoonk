@@ -16,7 +16,7 @@ import { describePlayerStep } from "./player-step";
 import { getPlayerStepBehavior } from "./player-step-behavior";
 import { canNavigatePrev } from "./step-navigation";
 
-export type PlayerPhase = "startWarning" | "playing" | "feedback" | "completed";
+export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
@@ -57,7 +57,7 @@ export type PlayerState = {
 };
 
 export type PlayerAction =
-  | { type: "START" }
+  | { type: "CONFIRM_COMPLETION"; state: PlayerState }
   | { type: "SELECT_ANSWER"; stepId: string; answer: SelectedAnswer }
   | { type: "CLEAR_ANSWER"; stepId: string }
   | { type: "CHECK_ANSWER"; stepId: string; result: AnswerResult }
@@ -72,10 +72,6 @@ function handleSelectAnswer(
   state: PlayerState,
   action: Extract<PlayerAction, { type: "SELECT_ANSWER" }>,
 ): PlayerState {
-  if (state.phase === "startWarning") {
-    return state;
-  }
-
   return {
     ...state,
     selectedAnswers: { ...state.selectedAnswers, [action.stepId]: action.answer },
@@ -86,27 +82,8 @@ function handleClearAnswer(
   state: PlayerState,
   action: Extract<PlayerAction, { type: "CLEAR_ANSWER" }>,
 ): PlayerState {
-  if (state.phase === "startWarning") {
-    return state;
-  }
-
   const { [action.stepId]: _, ...rest } = state.selectedAnswers;
   return { ...state, selectedAnswers: rest };
-}
-
-/**
- * Moves a pre-lesson warning into active play and starts the lesson timers at
- * that moment. Signed-out learners can spend time deciding whether to log in,
- * and that hesitation should not inflate answer duration or lesson duration.
- */
-function handleStart(state: PlayerState): PlayerState {
-  if (state.phase !== "startWarning") {
-    return state;
-  }
-
-  const now = Date.now();
-
-  return { ...state, phase: "playing", startedAt: now, stepStartedAt: now };
 }
 
 function recordStepTiming(state: PlayerState, stepId: string): Record<string, StepTiming> {
@@ -316,9 +293,6 @@ function handleComplete(state: PlayerState): PlayerState {
 
 export function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
   switch (action.type) {
-    case "START":
-      return handleStart(state);
-
     case "SELECT_ANSWER":
       return handleSelectAnswer(state, action);
 
@@ -337,6 +311,10 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
     case "COMPLETE":
       return handleComplete(state);
 
+    case "CONFIRM_COMPLETION":
+      return action.state.lessonId === state.lessonId && action.state.phase === "completed"
+        ? action.state
+        : state;
     case "RESTART":
       return handleRestart(state);
 

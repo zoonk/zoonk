@@ -17,7 +17,7 @@ function getCompletedLanguageCourseHrefEntry({
 }: Awaited<
   ReturnType<typeof listCompletedLanguageCourses>
 >[number]): CompletedLanguageCourseHrefEntry {
-  return [targetLanguage, getAiCourseHref(course)];
+  return [targetLanguage, `${getAiCourseHref(course)}/start`];
 }
 
 /**

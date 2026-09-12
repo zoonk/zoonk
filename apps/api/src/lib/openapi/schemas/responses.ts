@@ -35,11 +35,6 @@ export const notFoundResponse = {
   description: "Resource not found",
 } as const;
 
-export const paymentRequiredResponse = {
-  content: { "application/json": { schema: errorSchema } },
-  description: "Subscription required",
-} as const;
-
 export const tooManyRequestsResponse = {
   content: { "application/json": { schema: errorSchema } },
   description: "Too many requests",

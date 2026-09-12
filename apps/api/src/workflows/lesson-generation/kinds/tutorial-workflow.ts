@@ -1,5 +1,5 @@
+import { prepareLessonIllustrations } from "../prepare-lesson-illustrations";
 import { generateImagePromptsStep } from "../steps/generate-image-prompts-step";
-import { generateStepImagesStep } from "../steps/generate-step-images-step";
 import { generateTutorialContentStep } from "../steps/generate-tutorial-content-step";
 import { type LessonContext } from "../steps/get-lesson-step";
 import { saveTutorialLessonStep } from "../steps/save-static-lesson-step";
@@ -12,8 +12,8 @@ export async function tutorialLessonWorkflow(context: LessonContext): Promise<vo
   "use workflow";
 
   const { steps } = await generateTutorialContentStep(context);
-  const { prompts } = await generateImagePromptsStep({ context, steps });
-  const { images } = await generateStepImagesStep({ context, prompts });
+  const { alts, prompts } = await generateImagePromptsStep({ context, steps });
+  await saveTutorialLessonStep({ context, images: steps.map(() => null), steps });
 
-  await saveTutorialLessonStep({ context, images, steps });
+  await prepareLessonIllustrations({ alts, context, prompts });
 }

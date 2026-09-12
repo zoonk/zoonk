@@ -37,6 +37,7 @@ export const workflowStep = vi.fn((_name: string, fn: unknown) => fn);
  */
 export function resetWorkflowMockState(): void {
   workflowMetadata = { ...defaultWorkflowMetadata };
+  createHook.mockClear();
 
   workflowReleaseLockMock.mockReset();
   workflowWriteMock.mockReset().mockResolvedValue(null);
@@ -44,3 +45,6 @@ export function resetWorkflowMockState(): void {
   getWritable.mockReset().mockReturnValue(createWritable());
   workflowStep.mockReset().mockImplementation((_name: string, fn: unknown) => fn);
 }
+
+/** Workflow hook claims are isolated by the runtime; tests default to the winning run. */
+export const createHook = vi.fn(() => ({ getConflict: vi.fn(), [Symbol.dispose]: vi.fn() }));

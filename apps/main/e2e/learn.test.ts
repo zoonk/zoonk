@@ -1,395 +1,180 @@
 import { randomUUID } from "node:crypto";
-import { COURSE_PROMPT_MAX_LENGTH } from "@zoonk/core/courses/prompt-contract";
-import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
+import { CURRENT_CURRICULUM_VERSION } from "@zoonk/core/courses/learning-plan-contract";
 import { prisma } from "@zoonk/db";
-import { type Page, type Route } from "@zoonk/e2e/fixtures";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
-import {
-  getGenerationTriggerRequests,
-  isGenerationEvents,
-  isGenerationTrigger,
-  routeGenerationApis,
-} from "./generation-api";
 
-const TEST_RUN_ID = "test-run-id-learn-generate-link";
+test("hydrates a focused request form and lets a suggestion fill the editable draft", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/start/learn");
+  const input = page.getByRole("textbox", { name: "What do you want to learn?" });
+  await expect(input).toBeFocused();
+  const suggestions = page.getByRole("navigation", { name: "Suggested subjects" });
+  const subjects = await suggestions.getByRole("button").allTextContents();
+  expect(subjects.length).toBeGreaterThan(0);
+  const selected = subjects[0]!;
+  await suggestions.getByRole("button", { exact: true, name: selected }).click();
+  await expect(input).toHaveValue(selected);
+  await expect(input).toBeFocused();
+  await expect(page).toHaveURL("/start/learn");
+  await page.reload();
+  await expect(input).toHaveValue(selected);
+  expect(errors).toEqual([]);
+});
 
-/**
- * The learn-flow tests only verify navigation into the generation page. Mocking
- * the generation API keeps that page from starting real course generation after
- * the URL assertion has already proved the behavior under test.
- */
-async function mockCourseGenerationWorkflow(page: Page): Promise<void> {
-  await routeGenerationApis({ handler: handleCourseGenerationRoute, page });
-}
+test("keeps a personal guest request out of the URL and preserves it through sign-in navigation", async ({
+  page,
+}) => {
+  const prompt = `Help me prepare a private family project ${randomUUID()}`;
+  await page.goto("/start/learn");
+  const input = page.getByRole("textbox", { name: "What do you want to learn?" });
+  await input.fill(prompt);
+  await input.press("Enter");
+  await expect(page.getByRole("link", { name: "Sign in to continue" })).toBeVisible();
+  await expect(page).toHaveURL("/start/learn");
+  expect(await prisma.courseDiscovery.count({ where: { prompt } })).toBe(0);
+  expect(await prisma.coursePrompt.count({ where: { prompt } })).toBe(0);
 
-/**
- * The generation client expects the trigger endpoint to return a generation ID and
- * the status endpoint to speak SSE. Returning an empty stream is enough for
- * navigation tests while preventing the API app from touching AI providers.
- */
-async function handleCourseGenerationRoute(route: Route): Promise<void> {
-  const url = route.request().url();
+  await page.route("**/auth/login**", (route) =>
+    route.fulfill({ body: "Auth service", contentType: "text/html" }),
+  );
 
-  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
-    await route.fulfill({
-      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
-      contentType: "application/json",
-      status: 202,
-    });
+  const authRequest = page.waitForRequest("**/auth/login**");
+  await page.getByRole("link", { name: "Sign in to continue" }).click();
+  const request = await authRequest;
+  await expect(page.getByText("Auth service", { exact: true })).toBeVisible();
+  const authUrl = new URL(request.url());
+  const callbackUrl = new URL(authUrl.searchParams.get("redirectTo") ?? "");
+  expect(callbackUrl.searchParams.get("next")).toBe("/start/learn");
+  expect(authUrl.href).not.toContain(encodeURIComponent(prompt));
+  await page.goto("/start/learn");
+  await expect(input).toHaveValue(prompt);
+});
 
-    return;
-  }
+test("disables submission while routing and retains the request after a network failure", async ({
+  page,
+}) => {
+  const prompt = `A personal learning goal ${randomUUID()}`;
+  await page.goto("/start/learn");
+  const input = page.getByRole("textbox", { name: "What do you want to learn?" });
+  const submit = page.getByRole("button", { name: "Find my next step" });
+  const requestStarted = Promise.withResolvers<null>();
+  const finishRequest = Promise.withResolvers<null>();
 
-  if (isGenerationEvents(url)) {
-    await route.fulfill({ body: "", contentType: "text/event-stream", status: 200 });
-    return;
-  }
+  await page.route("**/start/learn", async (route) => {
+    if (!route.request().headers()["next-action"]) {
+      await route.continue();
+      return;
+    }
 
-  await route.continue();
-}
-
-/**
- * Seeds one already-routed topic request so E2E can exercise the public page
- * without making an AI Gateway request, which is intentionally disabled in E2E.
- */
-async function cacheTopicPrompt({
-  generationStatus = "pending",
-  rawPrompt,
-}: {
-  generationStatus?: "pending" | null;
-  rawPrompt: string;
-}) {
-  const uniqueId = randomUUID().slice(0, 8);
-  const language = "en";
-  const title = `E2E Topic ${uniqueId}`;
-  const normalizedPrompt = normalizeString(rawPrompt);
-
-  const request = await prisma.coursePrompt.upsert({
-    create: {
-      canonicalTitle: title,
-      courseFormat: "core",
-      generationStatus,
-      intent: "learn",
-      language,
-      normalizedPrompt,
-      prompt: rawPrompt,
-    },
-    update: {
-      canonicalTitle: title,
-      courseFormat: "core",
-      generationStatus,
-      intent: "learn",
-      prompt: rawPrompt,
-      targetLanguage: null,
-    },
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+    requestStarted.resolve(null);
+    await finishRequest.promise;
+    await route.abort("failed");
   });
 
-  return { prompt: rawPrompt, request };
-}
+  await input.fill(prompt);
+  await submit.click();
+  await requestStarted.promise;
 
-/**
- * Seeds one unsupported request so E2E can verify the waitlist surface without
- * calling the AI router or relying on model output to choose that branch.
- */
-async function cacheWaitlistedPrompt({
-  courseFormat = "question",
-  rawPrompt,
-}: {
-  courseFormat?: "instrument" | "personalized" | "question";
-  rawPrompt: string;
-}) {
-  const language = "en";
-  const intent = courseFormat === "question" ? "question" : "learn";
-  const normalizedPrompt = normalizeString(rawPrompt);
+  try {
+    await expect(submit).toBeDisabled();
+    await expect(page.getByRole("status")).toHaveText("Finding a useful place to start…");
+    await expect(input).toHaveValue(prompt);
+  } finally {
+    finishRequest.resolve(null);
+  }
 
-  const request = await prisma.coursePrompt.upsert({
-    create: {
-      canonicalTitle: rawPrompt,
-      courseFormat,
-      generationStatus: null,
-      intent,
-      language,
-      normalizedPrompt,
-      prompt: rawPrompt,
-    },
-    update: {
-      canonicalTitle: rawPrompt,
-      courseFormat,
-      generationStatus: null,
-      intent,
-      prompt: rawPrompt,
-      targetLanguage: null,
-    },
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
-  });
+  await expect(
+    page.getByRole("alert").filter({ hasText: "We couldn't prepare your next step" }),
+  ).toBeVisible();
 
-  return { prompt: rawPrompt, request };
-}
+  await expect(input).toHaveValue(prompt);
+  await expect(submit).toBeEnabled();
+  await page.unroute("**/start/learn");
+  await submit.click();
+  await expect(page.getByRole("link", { name: "Sign in to continue" })).toBeVisible();
+});
 
-/**
- * Seeds the reusable-course branch without calling the AI router. This proves
- * the learn route can skip generation when the cached decision points to a
- * completed course that already exists in the AI catalog.
- */
-async function cacheExistingCoursePrompt(rawPrompt: string) {
-  const language = "en";
-  const uniqueId = randomUUID().slice(0, 8);
-  const title = `E2E Existing Course ${uniqueId}`;
-  const slug = getCourseSlugForTitle({ language, title });
-  const organization = await aiOrganizationFixture();
+test("guests can find an already generated exact subject and choose their starting point", async ({
+  page,
+}) => {
+  const organization = await getAiOrganization();
+  const title = `A reusable subject ${randomUUID()}`;
 
   const course = await courseFixture({
-    generationStatus: "completed",
+    curriculumVersion: CURRENT_CURRICULUM_VERSION,
     isPublished: true,
-    language,
     normalizedTitle: normalizeString(title),
     organizationId: organization.id,
-    slug,
     title,
   });
 
-  await chapterFixture({
-    courseId: course.id,
-    generationStatus: "completed",
+  await page.goto("/start/learn");
+  await page.getByRole("textbox", { name: "What do you want to learn?" }).fill(course.title);
+  await page.getByRole("button", { name: "Find my next step" }).click();
+  await expect(page).toHaveURL(`/b/ai/c/${course.slug}/start`);
+  await expect(page.getByRole("group", { name: "How would you like to learn?" })).toBeVisible();
+  expect(await prisma.courseLearningPlan.count({ where: { courseId: course.id } })).toBe(0);
+});
+
+test("an existing narrow question opens its course directly without a broad-course questionnaire", async ({
+  page,
+}) => {
+  const organization = await getAiOrganization();
+  const title = `Why is this useful ${randomUUID()}`;
+
+  const course = await courseFixture({
+    curriculumVersion: CURRENT_CURRICULUM_VERSION,
+    format: "question",
     isPublished: true,
-    language,
+    normalizedTitle: normalizeString(title),
     organizationId: organization.id,
-    slug: `e2e-existing-chapter-${uniqueId}`,
-    title: `E2E Existing Chapter ${uniqueId}`,
+    title,
   });
 
-  await prisma.coursePrompt.create({
-    data: {
-      canonicalTitle: title,
-      courseFormat: "core",
-      courseId: course.id,
-      generationStatus: "completed",
-      intent: "learn",
-      language,
-      normalizedPrompt: normalizeString(rawPrompt),
-      prompt: rawPrompt,
-    },
-  });
+  await page.goto("/start/learn");
+  await page.getByRole("textbox", { name: "What do you want to learn?" }).fill(course.title);
+  await page.getByRole("button", { name: "Find my next step" }).click();
+  await expect(page).toHaveURL(`/b/ai/c/${course.slug}`);
+  await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+});
 
-  return { course, prompt: rawPrompt };
+// oxlint-disable-next-line vitest/prefer-each -- Playwright has no test.each API.
+for (const { legacyPrompt, prefix } of [
+  { legacyPrompt: "100% attention", prefix: "/start/learn" },
+  { legacyPrompt: "paths / and + and #", prefix: "/start/learn" },
+  { legacyPrompt: "literal %20 and %2F", prefix: "/start/learn" },
+  { legacyPrompt: "100% attention", prefix: "/learn" },
+]) {
+  test(`a ${prefix} bookmark preserves ${legacyPrompt} without starting generation`, async ({
+    authenticatedPage: page,
+  }) => {
+    const prompt = `My personal goal with ${legacyPrompt} ${randomUUID()}`;
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.goto("/start/learn");
+    await page.getByRole("textbox", { name: "What do you want to learn?" }).fill("Older draft");
+    await page.goto(`${prefix}/${encodeURIComponent(prompt)}`);
+    await expect(page).toHaveURL("/start/learn");
+
+    await expect(page.getByRole("textbox", { name: "What do you want to learn?" })).toHaveValue(
+      prompt,
+    );
+
+    await expect(page.getByRole("textbox", { name: "What do you want to learn?" })).toBeFocused();
+    await page.reload();
+
+    await expect(page.getByRole("textbox", { name: "What do you want to learn?" })).toHaveValue(
+      prompt,
+    );
+
+    expect(await prisma.courseDiscovery.count({ where: { prompt } })).toBe(0);
+    expect(await prisma.coursePrompt.count({ where: { prompt } })).toBe(0);
+    expect(errors).toEqual([]);
+  });
 }
-
-test.describe("Learn Form", () => {
-  test("hydrates form with auto-focused input without errors", async ({ page }) => {
-    const pageErrors: Error[] = [];
-    page.on("pageerror", (error) => pageErrors.push(error));
-
-    await page.goto("/start/learn");
-
-    await expect(page.getByRole("heading", { name: /what do you want to learn/iu })).toBeVisible();
-
-    const input = page.getByRole("textbox");
-    await expect(input).toBeFocused();
-    await page.waitForLoadState("networkidle");
-    expect(pageErrors).toEqual([]);
-  });
-
-  test("submits by button and shows its pending state while the prompt is routing", async ({
-    page,
-  }) => {
-    const cached = await cacheWaitlistedPrompt({ rawPrompt: `e2e pending topic ${randomUUID()}` });
-
-    await page.goto("/start/learn");
-
-    const pendingNavigation = Promise.withResolvers<null>();
-
-    await page.route("**/start/learn/**", async (route) => {
-      await pendingNavigation.promise;
-      await route.continue();
-    });
-
-    try {
-      await page.getByRole("textbox").fill(cached.prompt);
-      const submitButton = page.getByRole("button", { name: /start a course/iu });
-
-      await submitButton.click();
-
-      await expect(submitButton).toBeDisabled();
-      await expect(submitButton.getByRole("status", { name: "Loading" })).toBeVisible();
-    } finally {
-      pendingNavigation.resolve(null);
-    }
-  });
-
-  test("clicking a suggested subject starts topic course generation", async ({
-    authenticatedPage,
-  }) => {
-    await mockCourseGenerationWorkflow(authenticatedPage);
-    await authenticatedPage.goto("/start/learn");
-    await authenticatedPage.waitForLoadState("networkidle");
-
-    const suggestions = authenticatedPage.getByRole("navigation", { name: /suggested subjects/iu });
-    const subject = await suggestions.getByRole("link").first().textContent();
-
-    if (!subject) {
-      throw new Error("No subject link text found");
-    }
-
-    const cached = await cacheTopicPrompt({ rawPrompt: subject });
-
-    await suggestions.getByRole("link", { exact: true, name: subject }).click();
-
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/generate/course/${cached.request.id}$`, "u"),
-    );
-  });
-
-  test("submitting prompt starts topic course generation for signed-in users", async ({
-    authenticatedPage,
-  }) => {
-    await mockCourseGenerationWorkflow(authenticatedPage);
-
-    const cached = await cacheTopicPrompt({ rawPrompt: `e2e signed-in topic ${randomUUID()}` });
-
-    await authenticatedPage.goto("/start/learn");
-    await authenticatedPage.getByRole("textbox").fill(cached.prompt);
-    await authenticatedPage.keyboard.press("Enter");
-
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/generate/course/${cached.request.id}$`, "u"),
-    );
-  });
-
-  test("requires login for classified guest prompts without starting generation", async ({
-    page,
-  }) => {
-    const cached = await cacheTopicPrompt({
-      generationStatus: null,
-      rawPrompt: `e2e classified guest topic ${randomUUID()}`,
-    });
-
-    const prompt = cached.prompt;
-    const promptPath = `/start/learn/${encodeURIComponent(prompt)}`;
-
-    await page.goto("/start/learn");
-    await page.getByRole("textbox").fill(prompt);
-    await page.keyboard.press("Enter");
-
-    await expect(page).toHaveURL(new RegExp(`${promptPath}$`, "u"));
-    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
-
-    await expect(page.getByRole("link", { name: "Explore courses" })).toHaveAttribute(
-      "href",
-      "/courses",
-    );
-
-    await expect(page.getByRole("link", { name: "Log in" })).toHaveAttribute(
-      "href",
-      `/login?next=${encodeURIComponent(promptPath)}`,
-    );
-
-    await expect(
-      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
-    ).resolves.toHaveLength(0);
-
-    await expect(
-      prisma.coursePrompt.findUniqueOrThrow({ where: { id: cached.request.id } }),
-    ).resolves.toMatchObject({ generationStatus: null });
-  });
-});
-
-test.describe("Course Start Routing", () => {
-  test("returns an oversized direct prompt to the bounded learn form", async ({ page }) => {
-    const prompt = "a".repeat(COURSE_PROMPT_MAX_LENGTH + 1);
-
-    await page.goto(`/start/learn/${encodeURIComponent(prompt)}`);
-
-    await expect(page).toHaveURL(/\/start\/learn$/u);
-    await expect(page.getByRole("textbox")).toBeVisible();
-  });
-
-  test("promotes classified topic prompts to generation for signed-in users", async ({
-    authenticatedPage,
-  }) => {
-    await mockCourseGenerationWorkflow(authenticatedPage);
-
-    const cached = await cacheTopicPrompt({
-      generationStatus: null,
-      rawPrompt: `e2e direct Python 3.12 topic ${randomUUID()}`,
-    });
-
-    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
-
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/generate/course/${cached.request.id}$`, "u"),
-    );
-
-    await expect(
-      prisma.coursePrompt.findUniqueOrThrow({ where: { id: cached.request.id } }),
-    ).resolves.toMatchObject({ generationStatus: "pending" });
-  });
-
-  test("redirects classified guest prompts to existing reusable courses", async ({ page }) => {
-    const cached = await cacheExistingCoursePrompt(`e2e existing topic ${randomUUID()}`);
-
-    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
-
-    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${cached.course.slug}$`, "u"));
-    await expect(page.getByRole("heading", { level: 1, name: cached.course.title })).toBeVisible();
-  });
-
-  test("shows the waitlist for personalized guest prompts without requiring login", async ({
-    page,
-  }) => {
-    const cached = await cacheWaitlistedPrompt({
-      courseFormat: "personalized",
-      rawPrompt: `e2e personalized guest goal ${randomUUID()}`,
-    });
-
-    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
-
-    await expect(
-      page.getByRole("heading", { name: /this option isn't available yet/iu }),
-    ).toBeVisible();
-
-    await expect(page.getByRole("button", { name: /notify me/iu })).toBeVisible();
-    await expect(page.getByText(cached.prompt, { exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toHaveCount(0);
-  });
-
-  test("shows the waitlist for cached instrument prompts", async ({ page }) => {
-    const cached = await cacheWaitlistedPrompt({
-      courseFormat: "instrument",
-      rawPrompt: `e2e instrument goal ${randomUUID()}`,
-    });
-
-    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
-
-    await expect(
-      page.getByRole("heading", { name: /this option isn't available yet/iu }),
-    ).toBeVisible();
-
-    await expect(page.getByRole("button", { name: /notify me/iu })).toBeVisible();
-    await expect(page.getByText(cached.prompt, { exact: true })).toBeVisible();
-  });
-
-  test("prefills the waitlist email for signed-in users", async ({
-    authenticatedPage,
-    withProgressUser,
-  }) => {
-    const cached = await cacheWaitlistedPrompt({ rawPrompt: `e2e waitlist goal ${randomUUID()}` });
-
-    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /this option isn't available yet/iu }),
-    ).toBeVisible();
-
-    await expect(authenticatedPage.getByLabel(/email address/iu)).toHaveValue(
-      withProgressUser.email,
-    );
-
-    await expect(authenticatedPage.getByText(cached.prompt, { exact: true })).toBeVisible();
-  });
-});

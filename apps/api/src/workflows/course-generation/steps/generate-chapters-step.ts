@@ -1,30 +1,8 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CourseChapter, generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
-import { generateLanguageCourseChapters } from "@zoonk/ai/tasks/courses/language-chapters";
-import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
+import { generateCurriculumOutline } from "../_internal/generate-curriculum-outline";
+import { getCurriculumCourseStep } from "./get-curriculum-course-step";
 import { type CourseContext } from "./initialize-course-step";
 
-function generateChapters(course: CourseContext) {
-  if (course.format === "language") {
-    return generateLanguageCourseChapters({
-      targetLanguage: course.targetLanguage,
-      userLanguage: course.language,
-    });
-  }
-
-  return generateCourseChapters({ courseTitle: course.courseTitle, language: course.language });
-}
-
-export async function generateChaptersStep(course: CourseContext): Promise<CourseChapter[]> {
-  "use step";
-
-  await using stream = createStepStream<CourseWorkflowStepName>();
-
-  await stream.status({ status: "started", step: "generateChapters" });
-
-  const result = await generateChapters(course);
-
-  await stream.status({ status: "completed", step: "generateChapters" });
-
-  return result.data.chapters;
+export async function generateChaptersStep(course: CourseContext) {
+  const currentCourse = await getCurriculumCourseStep(course.courseId);
+  return generateCurriculumOutline(currentCourse);
 }

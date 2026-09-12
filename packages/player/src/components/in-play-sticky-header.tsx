@@ -23,11 +23,17 @@ function HeaderLessonTitle() {
   return (
     <div className="flex w-full min-w-0 items-baseline justify-center gap-2 sm:flex-col sm:items-center sm:gap-0.5">
       <p
-        aria-label={fullPositionLabel}
+        aria-label={lessonProgress.isOptional ? t("Optional practice") : fullPositionLabel}
         className="text-muted-foreground shrink-0 text-sm leading-none font-medium tabular-nums sm:text-xs sm:leading-normal"
       >
-        <span className="sm:hidden">{lessonProgress.currentLessonNumber}</span>
-        <span className="hidden sm:inline">{fullPositionLabel}</span>
+        {lessonProgress.isOptional ? (
+          t("Optional practice")
+        ) : (
+          <>
+            <span className="sm:hidden">{lessonProgress.currentLessonNumber}</span>
+            <span className="hidden sm:inline">{fullPositionLabel}</span>
+          </>
+        )}
       </p>
       <p className="text-foreground min-w-0 truncate text-sm leading-none font-medium sm:leading-normal">
         {lessonTitle}

@@ -55,6 +55,15 @@ describe(setChapterAsRunningStep, () => {
     expect(updated.generationStatus).toBe("running");
     expect(updated.generationRunId).toBe(workflowRunId);
 
+    await prisma.chapter.update({
+      data: { generationRunId: null, generationStatus: "failed" },
+      where: { id: chapter.id },
+    });
+
+    await expect(
+      prisma.generationRun.findUnique({ where: { id: workflowRunId } }),
+    ).resolves.toMatchObject({ courseId });
+
     const events = getStreamedEvents();
 
     expect(events).toContainEqual(

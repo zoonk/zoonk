@@ -1,4 +1,5 @@
 import { type TransactionClient } from "@zoonk/db";
+import { CURRENT_CURRICULUM_VERSION } from "../../../courses/learning-plan-contract";
 import {
   getLessonCurriculumContext,
   listDurableCourseChapterIds,
@@ -23,7 +24,11 @@ export async function syncDurableCurriculumCompletion(
   tx: TransactionClient,
   params: { lessonId: string; userId: string },
 ): Promise<{ courseId: string }> {
-  const context = await getLessonCurriculumContext({ lessonId: params.lessonId, tx });
+  const context = await getLessonCurriculumContext({
+    lessonId: params.lessonId,
+    tx,
+    userId: params.userId,
+  });
 
   const [chapters, rows, durableLessonIds, durableChapterIds] = await Promise.all([
     listPublishedCourseChapters({ courseId: context.courseId, tx }),
@@ -58,9 +63,14 @@ export async function syncDurableCurriculumCompletion(
     isChapterCompleted: chapterCompleted,
   });
 
+  const isCurrentCurriculum = context.curriculumVersion >= CURRENT_CURRICULUM_VERSION;
+
   const courseCompleted = isCurrentCourseCompleted({
-    chapters,
-    durableChapterIds: effectiveDurableChapterIds,
+    chapters:
+      isCurrentCurriculum && context.format === "core"
+        ? chapters.filter((chapter) => chapter.level !== "overview")
+        : chapters,
+    durableChapterIds: isCurrentCurriculum ? new Set() : effectiveDurableChapterIds,
     durableLessonIds: effectiveDurableLessonIds,
     rowsByChapter,
   });

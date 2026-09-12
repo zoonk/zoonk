@@ -8,6 +8,7 @@ import {
   getLessonRouteCacheTag,
 } from "../cache/tags";
 import { decodeRouteParam } from "../navigation/decode-route-param";
+import { getSession } from "../users/get-session";
 
 export type CatalogLesson = LessonGetPayload<{
   include: { chapter: { include: { course: true } } };
@@ -35,6 +36,7 @@ async function getCachedLesson(params: LessonRouteParams) {
       courseWhere: {
         organization: { kind: "brand", slug: params.brandSlug },
         slug: params.courseSlug,
+        userId: null,
       },
       lessonWhere: { slug: params.lessonSlug },
     }),
@@ -51,12 +53,48 @@ async function getCachedLesson(params: LessonRouteParams) {
   return lesson;
 }
 
+async function getPrivateLesson(params: LessonRouteParams) {
+  "use cache: private";
+  const session = await getSession();
+
+  if (!session) {
+    return null;
+  }
+
+  const lesson = await prisma.lesson.findFirst({
+    include: { chapter: { include: { course: true } } },
+    where: getPublishedLessonWhere({
+      chapterWhere: { slug: decodeRouteParam(params.chapterSlug) },
+      courseWhere: {
+        organizationId: null,
+        slug: decodeRouteParam(params.courseSlug),
+        userId: session.user.id,
+      },
+      lessonWhere: { slug: decodeRouteParam(params.lessonSlug) },
+    }),
+  });
+
+  if (lesson) {
+    cacheTag(
+      getCourseCacheTag(lesson.chapter.courseId),
+      getChapterCacheTag(lesson.chapterId),
+      getLessonCacheTag(lesson.id),
+    );
+  }
+
+  return lesson;
+}
+
 /**
  * Loads the published lesson identified by its complete catalog route. Route
  * normalization happens before caching while the query enforces the lesson,
  * chapter, course, and brand publication hierarchy together.
  */
 export async function getLesson(params: LessonRouteParams) {
+  if (decodeRouteParam(params.brandSlug) === "me") {
+    return getPrivateLesson(params);
+  }
+
   return getCachedLesson({
     brandSlug: decodeRouteParam(params.brandSlug),
     chapterSlug: decodeRouteParam(params.chapterSlug),

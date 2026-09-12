@@ -20,9 +20,8 @@ import {
  * Test Architecture for Chapter Generation Page
  *
  * The generation page has 3 access states:
- * 1. Unauthenticated - Shows the login gate
- * 2. Authenticated without subscription - Shows upgrade CTA
- * 3. Authenticated with subscription - Shows generation UI
+ * 1. Unauthenticated - Shows the login gate for new generation
+ * 2. Authenticated - Shows generation UI and the actual chapter allowance gate
  *
  * The generation flow interacts with 2 APIs on the API server:
  * 1. POST ${API_BASE_URL}/v1/generations - Starts the workflow, returns the generation resource
@@ -227,9 +226,10 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await page.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
-      timeout: 10_000,
-    });
+    await page.waitForURL(
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/e2e-ready-public-lesson-${uniqueId}`,
+      { timeout: 10_000 },
+    );
 
     await expect(
       getGenerationTriggerRequests({ page, targetType: "chapter" }),
@@ -237,21 +237,31 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
   });
 });
 
-test.describe("Generate Chapter Page - No Subscription", () => {
-  test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
+test.describe("Generate Chapter Page - Free account", () => {
+  test("can create a later chapter within the chapter allowance", async ({ authenticatedPage }) => {
     const { chapter } = await createPendingChapter(1);
+
+    await setupMockApis(authenticatedPage, {
+      streamMessages: [{ status: "started", step: "generateLessons" }],
+    });
+
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toBeVisible();
+    await expect
+      .poll(async () => {
+        const requests = await getGenerationTriggerRequests({
+          page: authenticatedPage,
+          targetType: "chapter",
+        });
 
-    const upgradeLink = authenticatedPage.getByRole("link", { name: /^subscribe$/iu });
-    await expect(upgradeLink).toBeVisible();
-    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
+        return requests.length;
+      })
+      .toBe(1);
+
+    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
   });
 
-  test("requires subscription to retry failed later-chapter generation", async ({
-    authenticatedPage,
-  }) => {
+  test("can retry a failed later chapter without a subscription", async ({ authenticatedPage }) => {
     const { chapter } = await createPendingChapter(1);
 
     await prisma.chapter.update({
@@ -260,13 +270,23 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     });
 
     await setupMockApis(authenticatedPage, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getChapter" }],
+      streamMessages: [{ status: "started", step: "generateLessons" }],
     });
 
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toBeVisible();
+    await expect
+      .poll(async () => {
+        const requests = await getGenerationTriggerRequests({
+          page: authenticatedPage,
+          targetType: "chapter",
+        });
+
+        return requests.length;
+      })
+      .toBe(1);
+
+    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
   });
 });
 
@@ -290,13 +310,14 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/your lessons are ready/iu)).toBeVisible();
-    await expect(authenticatedPage.getByText(/taking you to your chapter/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/your chapter is ready/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/opening your next step/iu)).toBeVisible();
     expect(await authenticatedPage.getByRole("link", { name: /back to course/iu }).count()).toBe(0);
 
-    await authenticatedPage.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
-      timeout: 10_000,
-    });
+    await authenticatedPage.waitForURL(
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/e2e-ready-lesson-${uniqueId}`,
+      { timeout: 10_000 },
+    );
   });
 
   test("shows generation UI and completes workflow", async ({
@@ -335,11 +356,11 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
     // Should show completion message
-    await expect(userWithoutProgress.getByText(/your lessons are ready/iu)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your chapter is ready/iu)).toBeVisible({
       timeout: 10_000,
     });
 
-    await expect(userWithoutProgress.getByText(/taking you to your chapter/iu)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/opening your next step/iu)).toBeVisible();
 
     // Update chapter status - the redirect will happen in ~1.5s via location.href
     await prisma.chapter.update({
@@ -421,7 +442,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(userWithoutProgress.getByText(/your lessons are ready/iu)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your chapter is ready/iu)).toBeVisible({
       timeout: 15_000,
     });
 
@@ -493,7 +514,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await expect(userWithoutProgress.getByText(/something went wrong/iu)).toHaveCount(0);
 
-    await expect(userWithoutProgress.getByText(/your lessons are ready/iu)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your chapter is ready/iu)).toBeVisible({
       timeout: 15_000,
     });
 

@@ -7,6 +7,7 @@ import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapte
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { getNextPreloadTargetResource } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
 import { getChapterGenerationAccess } from "@zoonk/core/workflows/chapter-generation-access";
+import { registerGenerationRun } from "@zoonk/core/workflows/internal/register-generation-run";
 import { getLessonGenerationAccess } from "@zoonk/core/workflows/lesson-generation-access";
 import { NextResponse } from "next/server";
 import { start } from "workflow/api";
@@ -38,6 +39,11 @@ async function startPreloadGeneration(target: PreloadTarget) {
 
     const generation = await start(chapterGenerationWorkflow, [target.chapterId]);
 
+    await registerGenerationRun({
+      generationId: generation.runId,
+      target: { courseId: access.chapter.courseId },
+    });
+
     return { chapterId: target.chapterId, generationId: generation.runId, kind: target.kind };
   }
 
@@ -63,6 +69,11 @@ async function startPreloadGeneration(target: PreloadTarget) {
   }
 
   const generation = await start(lessonGenerationWorkflow, [target.lessonId]);
+
+  await registerGenerationRun({
+    generationId: generation.runId,
+    target: { courseId: access.lesson.chapter.courseId },
+  });
 
   return { generationId: generation.runId, kind: target.kind, lessonId: target.lessonId };
 }

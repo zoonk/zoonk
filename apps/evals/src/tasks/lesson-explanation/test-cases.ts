@@ -1,5 +1,54 @@
 export const TEST_CASES = [
   {
+    expectations:
+      "Teach hardware and software together in a short approachable explanation. One note-typing example is enough. No formula, chip instruction jargon, OS/network/database tour or repeated recap. Aim for 150–250 words and 4–7 substantive steps plus an anchor; assess completeness and readability rather than exact counts.",
+    id: "overview-hardware-software-short",
+    userInput: {
+      chapterTitle: "What Computers Actually Do",
+      courseTitle: "Computer Science",
+      language: "en",
+      learningContext: {
+        format: "core" as const,
+        level: "overview",
+        outcomes: ["Explain why a computer needs physical parts and instructions"],
+      },
+      lessonDescription:
+        "Explain hardware as the physical parts and software as encoded instructions. Use typing a note as one everyday example, without cataloging operating systems, networks or databases.",
+      lessonTitle: "Hardware and Software Work Together",
+      otherLessonTitles: [
+        "Computers Follow Encoded Instructions",
+        "Processor, Memory, and Storage",
+        "The Operating System Coordinates the Device",
+      ],
+    },
+  },
+  {
+    expectations:
+      "Teach the host HOW to communicate a game's goal before its rules. Do not merely invent and explain a game's complete rulebook. Every step must advance the communication skill. Use a small fictional example, short everyday wording, and one useful payoff. Optional science-fiction context must not replace the teaching skill or cause new scope.",
+    id: "private-meta-skill-explaining-rules",
+    userInput: {
+      chapterTitle: "A Clear First Explanation",
+      courseTitle: "Teaching an Invented Board Game",
+      language: "en",
+      learningContext: {
+        format: "personalized" as const,
+        level: null,
+        outcomes: ["Teach an invented board game in five minutes"],
+        privateBrief: {
+          description: "Wholly fictional agent-authored fixture",
+          learningGoal: "Teach an invented token-collection board game to a fictional group",
+          requirements: ["Five minutes", "No slides", "Optional familiar context: science fiction"],
+          startingKnowledge: "The fictional host knows the game but has not taught it",
+          title: "Synthetic QA board-game gathering",
+        },
+      },
+      lessonDescription:
+        "Help the host explain what players are trying to achieve before describing turns and detailed rules. Teach a communication technique, using an invented board game as the example.",
+      lessonTitle: "Explain the Goal Before the Rules",
+      otherLessonTitles: ["Demonstrate One Turn", "Check Understanding Without a Quiz"],
+    },
+  },
+  {
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 

@@ -192,6 +192,7 @@ async function searchCourseRows({
 }): Promise<CourseWithOrganization[]> {
   const baseWhere = getPublishedCourseWhere({
     organization: { kind: "brand" } as const,
+    userId: null,
     ...getSearchLanguageFilter({ filterByLanguage, language }),
   });
 

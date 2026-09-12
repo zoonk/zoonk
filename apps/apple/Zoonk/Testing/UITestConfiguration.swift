@@ -119,6 +119,9 @@
   }
 
   private actor UITestMyCoursesAPI: MyCoursesAPIClient {
+    func listTracks(cursor: String?, token: String) async throws -> MyTracksPage {
+      MyTracksPage(tracks: [], nextCursor: nil)
+    }
     let snapshot: UITestCourseCatalogSnapshot
     private var didHoldPagination = false
     private var paginationContinuation: CheckedContinuation<Void, Never>?
@@ -180,13 +183,24 @@
         id: course.id,
         imageURL: course.imageURL,
         language: course.language,
-        organization: course.organization,
+        organization: course.organization!,
         slug: course.slug,
         title: course.title)
     }
   }
 
   private actor UITestCourseCatalogAPI: CourseCatalogAPIClient {
+    func canPrepareCourseContent(courseID: String, token: String?) async throws -> Bool { false }
+    func listChapterOptionalActivities(chapterID: String, token: String?) async throws
+      -> ChapterOptionalActivities
+    {
+      ChapterOptionalActivities(
+        sourceIDs: snapshot.lessons.filter {
+          $0.chapterID == chapterID && snapshot.completedLessonIDs.contains($0.id)
+            && $0.isPrimaryTeaching
+        }.map(\.id),
+        reviews: snapshot.lessons.filter { $0.chapterID == chapterID && $0.kind == .review })
+    }
     let snapshot: UITestCourseCatalogSnapshot
 
     init(snapshot: UITestCourseCatalogSnapshot) {
@@ -211,7 +225,18 @@
         nextCursor: hasMore ? String(endIndex) : nil)
     }
 
-    func getCourse(id: String) async throws -> Course {
+    func getCourseLearningPath(courseID: String, token: String?) async throws
+      -> CatalogLearningPath?
+    { nil }
+
+    func getCourse(id: String, token: String?) async throws -> Course {
+      if let personal = snapshot.personalCourses.first(where: { $0.id == id }) {
+        return Course(
+          categories: [], description: personal.description ?? "", id: personal.id,
+          imageURL: personal.imageURL, language: personal.language, organization: nil,
+          slug: personal.slug, targetLanguage: nil, title: personal.title, brandSlug: "me",
+          curriculumVersion: 2, format: "personalized")
+      }
       guard let course = snapshot.courses.first(where: { $0.id == id }) else {
         throw CourseCatalogFailure.notFound
       }
@@ -219,7 +244,7 @@
       return course
     }
 
-    func getChapter(id: String) async throws -> CourseChapter {
+    func getChapter(id: String, token: String?) async throws -> CourseChapter {
       guard let chapter = snapshot.chapters.first(where: { $0.id == id }) else {
         throw CourseCatalogFailure.notFound
       }
@@ -227,11 +252,11 @@
       return chapter
     }
 
-    func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+    func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
       snapshot.chapters.filter { $0.courseID == courseID }
     }
 
-    func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
+    func listChapterLessons(chapterID: String, token: String?) async throws -> [CourseLesson] {
       snapshot.lessons.filter { $0.chapterID == chapterID }
     }
 
@@ -338,7 +363,7 @@
         id: course.id,
         imageURL: course.imageURL,
         language: course.language,
-        organization: course.organization,
+        organization: course.organization!,
         slug: course.slug,
         title: course.title)
     }
@@ -437,7 +462,7 @@
           lessonID: source.lesson.id,
           lessonPosition: source.lesson.position,
           lessonSlug: source.lesson.slug,
-          organizationSlug: source.course.organization.slug))
+          organizationSlug: source.course.resolvedBrandSlug))
     }
 
     private func matchesSearch(
@@ -453,7 +478,7 @@
         id: course.id,
         imageURL: course.imageURL,
         language: course.language,
-        organizationSlug: course.organization.slug,
+        organizationSlug: course.resolvedBrandSlug,
         slug: course.slug,
         title: course.title)
     }
@@ -473,7 +498,7 @@
         id: chapter.id,
         imageURL: chapter.imageURL,
         language: chapter.language,
-        organizationSlug: course.organization.slug,
+        organizationSlug: course.resolvedBrandSlug,
         slug: chapter.slug,
         title: chapter.title)
     }

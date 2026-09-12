@@ -1,6 +1,4 @@
 import "server-only";
-import { hasActiveSubscription } from "../auth/subscription";
-import { getLessonAccessRequirement } from "../lessons/access";
 import {
   type GeneratedLessonKind,
   isGeneratedCompanionLessonKind,
@@ -54,7 +52,7 @@ async function getReadyLessonGenerationView({
 /**
  * Resolves the route-neutral state needed to render a lesson generation page.
  * Delivery apps only translate the result into navigation and presentation;
- * authentication, subscription rules, companion ownership, and readiness
+ * authentication, companion ownership, and readiness
  * remain consistent across web, API, and future native clients. The read
  * remains uncached because generation pages disable prefetching and API
  * handlers call it only once.
@@ -66,23 +64,17 @@ export async function getLessonGenerationView(lessonId: string) {
     return { status: "notFound" as const };
   }
 
-  const requiresSubscription = getLessonAccessRequirement({ lesson }) === "subscription";
-
   const isPubliclyVisible =
     lesson.isPublished && lesson.chapter.isPublished && lesson.chapter.course.isPublished;
 
   if (!session) {
-    if (requiresSubscription || lesson.generationStatus !== "completed" || !isPubliclyVisible) {
+    if (lesson.generationStatus !== "completed" || !isPubliclyVisible) {
       return getUnauthorizedLessonGenerationView(lesson);
     }
 
     const readyView = await getReadyLessonGenerationView({ lesson, lessonKind: lesson.kind });
 
     return readyView.isReadyForRedirect ? readyView : getUnauthorizedLessonGenerationView(lesson);
-  }
-
-  if (requiresSubscription && !(await hasActiveSubscription())) {
-    return { lesson, lessonKind: lesson.kind, status: "subscriptionRequired" as const };
   }
 
   if (lesson.generationStatus !== "completed" && isGeneratedCompanionLessonKind(lesson.kind)) {

@@ -1,12 +1,11 @@
 "use server";
 
+import { getSession } from "@zoonk/core/users/session";
 import { logError } from "@zoonk/utils/logger";
 import { API_URL } from "@zoonk/utils/url";
-import { headers } from "next/headers";
 import { after } from "next/server";
 
-type NextPreloadInput = { cookieHeader: string; lessonId: string };
-const API_ORIGIN = new URL(API_URL).origin;
+type NextPreloadInput = { lessonId: string; sessionToken: string };
 
 /**
  * Delegates preload target selection and workflow starts to the same API
@@ -17,7 +16,7 @@ async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
   try {
     const response = await fetch(
       `${API_URL}/v1/lessons/${encodeURIComponent(input.lessonId)}/preloads`,
-      { headers: { Cookie: input.cookieHeader, Origin: API_ORIGIN }, method: "POST" },
+      { headers: { Authorization: `Bearer ${input.sessionToken}` }, method: "POST" },
     );
 
     if (!response.ok) {
@@ -39,7 +38,13 @@ async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
  * checks so this cannot be used as a generic generation proxy.
  */
 export async function preloadNextLesson(lessonId: string): Promise<void> {
-  const reqHeaders = await headers();
+  const session = await getSession();
 
-  after(() => triggerNextPreload({ cookieHeader: reqHeaders.get("cookie") ?? "", lessonId }));
+  if (!session) {
+    return;
+  }
+
+  // The API's bearer contract works across public/proxied origins without
+  // forwarding browser cookies or bypassing its same-origin cookie guard.
+  after(() => triggerNextPreload({ lessonId, sessionToken: session.session.token }));
 }

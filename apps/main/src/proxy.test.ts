@@ -80,3 +80,53 @@ describe("proxy matcher", () => {
     expect(unstable_doesMiddlewareMatch({ config, url })).toBe(false);
   });
 });
+
+describe("legacy learning request encoding", () => {
+  it.each(["100%25%20attention", "paths%20and%20%2F%20slashes", "literal%20%2520"])(
+    "moves the original encoded request to a temporary fragment: %s",
+    (prompt) => {
+      const path = `/start/learn/${prompt}`;
+      const response = proxy(new NextRequest(`https://www.zoonk.com${path}`));
+      expect(response.status).toBe(307);
+
+      expect(response.headers.get("location")).toBe(
+        `https://www.zoonk.com/start/learn#request=${prompt}`,
+      );
+
+      expect(response.headers.get("x-middleware-rewrite")).toBeNull();
+      expect(response.headers.get("cache-control")).toBe("private, no-store");
+      expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+      expect(response.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+      expect(response.headers.get("link")).toBeNull();
+    },
+  );
+
+  it("preserves a percent sign while redirecting to the preferred locale", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/start/learn/100%25%20attention", {
+        headers: { cookie: "ZOONK_LOCALE=pt" },
+      }),
+    );
+
+    expect(response.headers.get("location")).toBe(
+      "https://www.zoonk.com/pt/start/learn#request=100%25%20attention",
+    );
+  });
+
+  it.each([
+    ["en", "/start/learn"],
+    ["pt", "/pt/start/learn"],
+  ])("preserves an explicit %s locale over a different saved preference", (locale, path) => {
+    const response = proxy(
+      new NextRequest(`https://www.zoonk.com/${locale}/start/learn/100%25?from=bookmark`, {
+        headers: { cookie: "ZOONK_LOCALE=de" },
+      }),
+    );
+
+    expect(response.headers.get("location")).toBe(
+      `https://www.zoonk.com${path}?from=bookmark#request=100%25`,
+    );
+
+    expect(response.cookies.get("ZOONK_LOCALE")?.value).toBe(locale);
+  });
+});

@@ -1,8 +1,10 @@
 "use client";
 
 import { GenerationLimitAction } from "@/components/generation/generation-limit-cta";
+import { OptionalPractice } from "@/components/learning/optional-practice";
 import { Link, useRouter } from "@/i18n/navigation";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
+import { type getLessonOptionalActivities } from "@zoonk/core/lessons/optional-activities";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
 import { PlayerProvider } from "@zoonk/player/provider";
@@ -13,7 +15,9 @@ import {
   LessonQuestionProvider,
 } from "@zoonk/player/questions";
 import { PlayerShell } from "@zoonk/player/shell";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { API_URL } from "@zoonk/utils/url";
+import { useExtracted } from "next-intl";
 import { useMemo } from "react";
 import { getPlayerViewer } from "./get-player-viewer";
 import {
@@ -49,6 +53,9 @@ type LessonPlayerClientProps = {
   chapterPosition: number;
   chapterTitle: string;
   courseTitle: string;
+  courseId: string;
+  view: "path" | "curriculum";
+  optionalPractice: Awaited<ReturnType<typeof getLessonOptionalActivities>>;
   courseSlug: string;
   chapterSlug: string;
   isAuthenticated: boolean;
@@ -70,6 +77,9 @@ export function LessonPlayerClient({
   chapterPosition,
   chapterTitle,
   courseTitle,
+  courseId,
+  optionalPractice,
+  view,
   courseSlug,
   chapterSlug,
   isAuthenticated,
@@ -84,18 +94,51 @@ export function LessonPlayerClient({
   userEmail,
   userName,
 }: LessonPlayerClientProps) {
+  const {
+    completionMilestone,
+    completionNextTarget,
+    handleComplete,
+    handleStepChange,
+    isSuperseded,
+  } = useLessonPlayerHandlers({
+    chapterPosition,
+    chapterSlug,
+    courseId,
+    courseSlug,
+    isAuthenticated,
+    isPrivate: brandSlug === "me",
+    lesson,
+    lessonPosition,
+    lessonSlug,
+  });
+
   const model = useMemo(
     () =>
       buildLessonPlayerModel({
         brandSlug,
         chapterSlug,
+        completionMilestone,
+        completionNextTarget:
+          view === "path" && !lessonProgress.isOptional ? completionNextTarget : null,
         courseSlug,
         lessonProgress,
         lessonSlug,
         nextChapter,
         nextLesson,
+        view,
       }),
-    [brandSlug, chapterSlug, courseSlug, lessonProgress, lessonSlug, nextChapter, nextLesson],
+    [
+      brandSlug,
+      completionMilestone,
+      completionNextTarget,
+      view,
+      chapterSlug,
+      courseSlug,
+      lessonProgress,
+      lessonSlug,
+      nextChapter,
+      nextLesson,
+    ],
   );
 
   const router = useRouter();
@@ -103,16 +146,19 @@ export function LessonPlayerClient({
   const onNextHref = model.onNextHref;
   const handleNext = onNextHref ? () => router.push(onNextHref) : undefined;
 
-  const { handleComplete, handleStepChange } = useLessonPlayerHandlers({
-    chapterPosition,
+  const viewer = getPlayerViewer({
     chapterSlug,
     courseSlug,
-    hasMilestone: Boolean(model.milestone),
     isAuthenticated,
-    lesson,
-    lessonPosition,
+    isPrivate: brandSlug === "me",
     lessonSlug,
+    userEmail,
+    userName,
   });
+
+  if (isSuperseded) {
+    return <SupersededLesson brandSlug={brandSlug} courseSlug={courseSlug} />;
+  }
 
   return (
     <PlayerProvider
@@ -131,14 +177,17 @@ export function LessonPlayerClient({
       onStepChange={handleStepChange}
       progressSnapshot={initialProgress?.progressSnapshot ?? null}
       totalBrainPower={initialProgress?.totalBrainPower ?? 0}
-      viewer={getPlayerViewer({
-        chapterSlug,
-        courseSlug,
-        isAuthenticated,
-        lessonSlug,
-        userEmail,
-        userName,
-      })}
+      viewer={{
+        ...viewer,
+        completionFooter:
+          optionalPractice.status === "ready" ? (
+            <div className="w-full">
+              <OptionalPractice groups={[optionalPractice]} isAuthenticated={isAuthenticated} />
+            </div>
+          ) : (
+            viewer.completionFooter
+          ),
+      }}
     >
       <LessonQuestionProvider connection={questionConnection} lessonId={lesson.id}>
         <PlayerShell />
@@ -159,5 +208,26 @@ export function LessonPlayerClient({
         />
       </LessonQuestionProvider>
     </PlayerProvider>
+  );
+}
+
+function SupersededLesson({ brandSlug, courseSlug }: { brandSlug: string; courseSlug: string }) {
+  const t = useExtracted();
+
+  return (
+    <main
+      className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-5 px-6"
+      role="status"
+    >
+      <h1 className="text-2xl font-semibold tracking-tight">{t("This course has been updated")}</h1>
+      <p className="text-muted-foreground">
+        {t(
+          "Your earlier progress is saved. This lesson changed before this attempt could be saved. Continue with the current course.",
+        )}
+      </p>
+      <Link className={buttonVariants()} href={`/b/${brandSlug}/c/${courseSlug}?edition=original`}>
+        {t("Continue to course")}
+      </Link>
+    </main>
   );
 }

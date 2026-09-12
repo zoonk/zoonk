@@ -45,7 +45,6 @@ describe(getOrCreateCourse, () => {
       chapterCount: 0,
       description: null,
       hasCategories: false,
-      hasIntroductionLessons: false,
       hasMainCurriculum: false,
       imageUrl: null,
       landingPage: null,
@@ -257,15 +256,7 @@ describe(getOrCreateCourse, () => {
     const request = await generatableCoursePromptFixture({ canonicalTitle: course.title });
     assertGeneratableCoursePrompt(request);
 
-    const existingCourse: ExistingCourse = {
-      ...course,
-      _count: { categories: 1, chapters: 3 },
-      chapters: [
-        { _count: { lessons: 1 }, position: 0 },
-        { _count: { lessons: 0 }, position: 1 },
-        { _count: { lessons: 0 }, position: 2 },
-      ],
-    };
+    const existingCourse: ExistingCourse = { ...course, _count: { categories: 1, chapters: 3 } };
 
     const workflowRunId = `run-${randomUUID()}`;
 
@@ -283,7 +274,6 @@ describe(getOrCreateCourse, () => {
       chapterCount: 3,
       description: "Existing description",
       hasCategories: true,
-      hasIntroductionLessons: true,
       hasMainCurriculum: true,
       imageUrl: "https://example.com/img.webp",
       landingPage: null,
@@ -319,11 +309,7 @@ describe(getOrCreateCourse, () => {
       assertGeneratableCoursePrompt(firstPrompt);
       assertGeneratableCoursePrompt(secondPrompt);
 
-      const existingCourse: ExistingCourse = {
-        ...course,
-        _count: { categories: 0, chapters: 0 },
-        chapters: [],
-      };
+      const existingCourse: ExistingCourse = { ...course, _count: { categories: 0, chapters: 0 } };
 
       const firstWorkflowRunId = `first-${randomUUID()}`;
       const secondWorkflowRunId = `second-${randomUUID()}`;

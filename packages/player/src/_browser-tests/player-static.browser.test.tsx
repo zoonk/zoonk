@@ -240,7 +240,7 @@ describe("player browser integration: static steps", () => {
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByRole("status")).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /try again/iu }).click();
+    await page.getByRole("button", { name: /repeat lesson/iu }).click();
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
   });
 
@@ -331,6 +331,7 @@ describe("player browser integration: static steps", () => {
             buildSerializedStep({
               content: {
                 image: {
+                  alt: "A tablet-safe static explanation image",
                   prompt: "A tablet-safe static explanation image",
                   url: buildInlineImageUrl({ label: "A tablet-safe static explanation image" }),
                 },
@@ -573,6 +574,7 @@ describe("player browser integration: static steps", () => {
           buildSerializedStep({
             content: {
               image: {
+                alt: "A lantern lighting up one idea at a time",
                 prompt: "A lantern lighting up one idea at a time",
                 url: buildInlineImageUrl({ label: "A lantern lighting up one idea at a time" }),
               },
@@ -615,6 +617,7 @@ describe("player browser integration: static steps", () => {
           buildSerializedStep({
             content: {
               image: {
+                alt: "A lantern lighting up one idea at a time",
                 prompt: "A lantern lighting up one idea at a time",
                 url: buildInlineImageUrl({ label: "A lantern lighting up one idea at a time" }),
               },
@@ -648,6 +651,7 @@ describe("player browser integration: static steps", () => {
           buildSerializedStep({
             content: {
               image: {
+                alt: "A lantern lighting up one idea at a time",
                 prompt: "A lantern lighting up one idea at a time",
                 url: buildInlineImageUrl({ label: "A lantern lighting up one idea at a time" }),
               },
@@ -707,6 +711,7 @@ describe("player browser integration: static steps", () => {
           buildSerializedStep({
             content: {
               image: {
+                alt: "A lantern lighting up one idea at a time",
                 prompt: "A lantern lighting up one idea at a time",
                 url: buildInlineImageUrl({ label: "A lantern lighting up one idea at a time" }),
               },

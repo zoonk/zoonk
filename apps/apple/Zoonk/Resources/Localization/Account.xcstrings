@@ -204,6 +204,35 @@
         }
       }
     },
+    "Add one interest per line, or leave this blank." : {
+      "comment" : "Guidance for entering custom learning interests",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib pro Zeile ein Interesse ein oder lass das Feld leer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade un interés por línea o deja este campo en blanco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute un centre d’intérêt par ligne, ou laisse ce champ vide."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione um interesse por linha ou deixe em branco."
+          }
+        }
+      }
+    },
     "App Store" : {
       "comment" : "Status shown when an active subscription is managed by the App Store",
       "localizations" : {
@@ -436,6 +465,35 @@
         }
       }
     },
+    "Choose any that interest you. These help us choose familiar examples in your personal courses. You can skip this or change it anytime." : {
+      "comment" : "Explains the purpose and optional nature of suggested learning interests",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle alles aus, was dich interessiert. So können wir in deinen persönlichen Kursen Beispiele nutzen, die dir vertraut sind. Du kannst das überspringen oder jederzeit ändern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige los que te interesen. Nos ayudan a elegir ejemplos que te resulten familiares en tus cursos personales. Puedes saltarte este paso o cambiarlo cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis les sujets qui t’intéressent. Tes choix nous aident à utiliser des exemples que tu connais bien dans tes cours personnalisés. Tu peux passer cette étape ou modifier tes choix à tout moment."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha os que te interessam. Eles ajudam a gente a escolher exemplos conhecidos para seus cursos personalizados. Você pode pular esta etapa ou mudar isso quando quiser."
+          }
+        }
+      }
+    },
     "Choose how your name appears before you continue." : {
       "comment" : "Explains why first-time profile setup is required",
       "localizations" : {
@@ -548,6 +606,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuar com email"
+          }
+        }
+      }
+    },
+    "Cooking" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kochen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cocina"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuisine"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Culinária"
           }
         }
       }
@@ -871,6 +958,35 @@
         }
       }
     },
+    "Fashion" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moda"
+          }
+        }
+      }
+    },
     "Feedback & Support" : {
       "comment" : "Account option for feedback and support",
       "localizations" : {
@@ -925,6 +1041,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Concluir configuração"
+          }
+        }
+      }
+    },
+    "Football\nGardening\nBoard games" : {
+      "comment" : "Examples of custom interests, one per line",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fußball\nGärtnern\nBrettspiele"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fútbol\nJardinería\nJuegos de mesa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Football\nJardinage\nJeux de société"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Futebol\nJardinagem\nJogos de tabuleiro"
           }
         }
       }
@@ -1016,6 +1161,35 @@
         }
       }
     },
+    "Interests" : {
+      "comment" : "Account option for learning interests\nLearning interests screen title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interessen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intereses"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centres d’intérêt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interesses"
+          }
+        }
+      }
+    },
     "Keep your courses and progress available on all your devices." : {
       "comment" : "Explains the benefit of signing in",
       "localizations" : {
@@ -1099,6 +1273,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estudo pensado para seus objetivos"
+          }
+        }
+      }
+    },
+    "Loading interests…" : {
+      "comment" : "Loading state for learning interests",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interessen werden geladen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando intereses…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement des centres d’intérêt…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carregando interesses…"
           }
         }
       }
@@ -1215,6 +1418,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gerenciada pelo Google Play"
+          }
+        }
+      }
+    },
+    "Music" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Musik"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Música"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Musique"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Música"
           }
         }
       }
@@ -1364,6 +1596,35 @@
         }
       }
     },
+    "Other interests" : {
+      "comment" : "Label for optional custom learning interests",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weitere Interessen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otros intereses"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autres centres d’intérêt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outros interesses"
+          }
+        }
+      }
+    },
     "Permanently deleted" : {
       "comment" : "Heading above the data removed during account deletion",
       "localizations" : {
@@ -1418,6 +1679,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cursos personalizados"
+          }
+        }
+      }
+    },
+    "Photography" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photographie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografia"
           }
         }
       }
@@ -1713,7 +2003,7 @@
       }
     },
     "Save" : {
-      "comment" : "Button that saves profile changes",
+      "comment" : "Button that saves profile changes\nSaves learning interests",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1737,6 +2027,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salvar"
+          }
+        }
+      }
+    },
+    "Science" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wissenschaft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sciences"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciência"
+          }
+        }
+      }
+    },
+    "Science fiction" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Science-Fiction"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciencia ficción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Science-fiction"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ficção científica"
           }
         }
       }
@@ -2002,6 +2350,35 @@
         }
       }
     },
+    "Sports" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sport"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deportes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sports"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esportes"
+          }
+        }
+      }
+    },
     "Subscription" : {
       "comment" : "Account option for subscription\nHeading for mobile-store billing guidance during account deletion",
       "localizations" : {
@@ -2027,6 +2404,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Assinatura"
+          }
+        }
+      }
+    },
+    "Technology" : {
+      "comment" : "Suggested learning interest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technologie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tecnología"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technologie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tecnologia"
           }
         }
       }
@@ -2264,7 +2670,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Retries loading the saved account",
+      "comment" : "Retries loading learning interests\nRetries loading the saved account",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2437,31 +2843,31 @@
         }
       }
     },
-    "username" : {
-      "comment" : "Placeholder for the username field",
+    "Use up to 50 interests, with 120 characters or fewer each." : {
+      "comment" : "Explains the limits for learning interest entries",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "benutzername"
+            "value" : "Du kannst bis zu 50 Interessen mit jeweils höchstens 120 Zeichen eingeben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nombre de usuario"
+            "value" : "Añade un máximo de 50 intereses, de hasta 120 caracteres cada uno."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nom d’utilisateur"
+            "value" : "Ajoute jusqu’à 50 centres d’intérêt, de 120 caractères maximum chacun."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nome de usuário"
+            "value" : "Use no máximo 50 interesses, com até 120 caracteres cada."
           }
         }
       }
@@ -2491,6 +2897,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nome de usuário"
+          }
+        }
+      }
+    },
+    "username" : {
+      "comment" : "Placeholder for the username field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "benutzername"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nom d’utilisateur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome de usuário"
           }
         }
       }
@@ -2553,6 +2988,35 @@
         }
       }
     },
+    "We couldn't save or load your interests. Your changes are still here. Please try again." : {
+      "comment" : "Recoverable learning interests network failure",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten deine Interessen nicht speichern oder laden. Deine Änderungen sind noch da. Bitte versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos guardar ni cargar tus intereses. Tus cambios siguen aquí. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu enregistrer ni charger tes centres d’intérêt. Tes modifications sont toujours là. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível salvar ou carregar seus interesses. Suas alterações ainda estão aqui. Tente de novo."
+          }
+        }
+      }
+    },
     "We sent a sign-in code to your email. It expires in 5 minutes." : {
       "comment" : "Explains where the email code was sent and when it expires",
       "localizations" : {
@@ -2578,6 +3042,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviamos um código de acesso para seu email. Ele expira em 5 minutos."
+          }
+        }
+      }
+    },
+    "What do you enjoy?" : {
+      "comment" : "Label for optional learning interests",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was interessiert dich?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué te gusta?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu’est-ce que tu aimes ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do que você gosta?"
           }
         }
       }

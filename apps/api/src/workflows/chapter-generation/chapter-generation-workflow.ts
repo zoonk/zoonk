@@ -1,8 +1,6 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
-import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
-import { isStandaloneGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { type Lesson } from "@zoonk/db";
 import { getWorkflowMetadata } from "workflow";
@@ -16,8 +14,6 @@ import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getChapterGenerationTargetLanguage, getChapterStep } from "./steps/get-chapter-step";
 import { setChapterAsCompletedStep } from "./steps/set-chapter-as-completed-step";
 import { setChapterAsRunningStep } from "./steps/set-chapter-as-running-step";
-
-const INITIAL_LESSON_GENERATION_TARGET_COUNT = 3;
 
 async function generateExpandedLessons(
   context: Awaited<ReturnType<typeof getChapterStep>>,
@@ -51,19 +47,6 @@ async function generateLessonsAndCompleteChapter({
   return createdLessons;
 }
 
-/**
- * Initial lesson generation should warm up the first standalone lesson
- * workflows without serializing on each one. Translation and listening rows are
- * materialized by vocabulary and reading generation, respectively.
- */
-async function generateInitialLessons(createdLessons: Lesson[]): Promise<void> {
-  const initialLessons = createdLessons
-    .filter((lesson) => isStandaloneGeneratedLessonKind(lesson.kind))
-    .slice(0, INITIAL_LESSON_GENERATION_TARGET_COUNT);
-
-  await Promise.allSettled(initialLessons.map((lesson) => lessonGenerationWorkflow(lesson.id)));
-}
-
 export async function chapterGenerationWorkflow(chapterId: string): Promise<void> {
   "use workflow";
 
@@ -83,13 +66,6 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
     return;
   }
 
-  // If chapter has lessons but status is not completed, fix the status
-  if (context._count.lessons > 0) {
-    await setChapterAsCompletedStep({ context, workflowRunId });
-
-    return;
-  }
-
   // Mark chapter as running
   const isClaimed = await setChapterAsRunningStep({ chapterId, workflowRunId });
 
@@ -97,16 +73,27 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
     return;
   }
 
+  // A recovered complete plan still claims the chapter before repairing its status.
+  if (context._count.lessons > 0) {
+    await setChapterAsCompletedStep({
+      context: { ...context, generationRunId: workflowRunId },
+      workflowRunId,
+    });
+
+    return;
+  }
+
   // Chapter-specific work with failure handling
-  const createdLessons = await generateLessonsAndCompleteChapter({ context, workflowRunId }).catch(
-    async (error: unknown) => {
-      await handleChapterFailureStep({ chapterId, error: serializeWorkflowError(error) });
+  await generateLessonsAndCompleteChapter({
+    context: { ...context, generationRunId: workflowRunId },
+    workflowRunId,
+  }).catch(async (error: unknown) => {
+    await handleChapterFailureStep({
+      chapterId,
+      error: serializeWorkflowError(error),
+      workflowRunId,
+    });
 
-      throw error;
-    },
-  );
-
-  // Generate the initial standalone lessons outside chapter failure handling so
-  // lesson failures do not roll back the completed chapter plan.
-  await generateInitialLessons(createdLessons);
+    throw error;
+  });
 }

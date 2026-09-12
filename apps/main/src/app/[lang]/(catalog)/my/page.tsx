@@ -29,6 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: t(
       "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons.",
     ),
+    robots: { follow: false, index: false },
     title: t("My Courses"),
   };
 }

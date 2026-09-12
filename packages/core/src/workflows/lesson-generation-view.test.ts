@@ -219,7 +219,7 @@ describe(getLessonGenerationView, () => {
     });
   });
 
-  it("returns the lesson when a subscription gate must be shown", async () => {
+  it("returns generated later lessons without a subscription", async () => {
     const course = await courseFixture({
       organizationId,
       title: `Subscription generation view ${randomUUID()}`,
@@ -235,11 +235,11 @@ describe(getLessonGenerationView, () => {
 
     await expect(getLessonGenerationView(lesson.id)).resolves.toMatchObject({
       lesson: { id: lesson.id },
-      status: "subscriptionRequired",
+      status: "ready",
     });
   });
 
-  it("checks subscription before routing a companion through its source", async () => {
+  it("routes later companions through their source without a subscription", async () => {
     const course = await courseFixture({
       organizationId,
       title: `Gated companion view ${randomUUID()}`,
@@ -266,7 +266,7 @@ describe(getLessonGenerationView, () => {
 
     await expect(getLessonGenerationView(companionLesson.id)).resolves.toMatchObject({
       lesson: { id: companionLesson.id },
-      status: "subscriptionRequired",
+      status: "redirectToSource",
     });
   });
 

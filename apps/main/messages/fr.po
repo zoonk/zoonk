@@ -131,6 +131,7 @@ msgid "Help"
 msgstr "Aide"
 
 #: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
 msgctxt "Do1Pfd"
 msgid "Chapters"
 msgstr "Chapitres"
@@ -235,12 +236,19 @@ msgid "Next: {lesson}"
 msgstr "Ensuite : {lesson}"
 
 #: src/app/[lang]/(catalog)/(home)/continue-learning-card.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start-action.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-question.tsx
 #: src/components/catalog/continue-lesson-link.tsx
+#: src/components/courses/course-preferences-form.tsx
+#: src/components/courses/course-setup-form.tsx
+#: src/components/courses/resume-course-button.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuer"
 
 #: src/app/[lang]/(catalog)/(home)/continue-learning.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+#: src/app/[lang]/(catalog)/tracks/[id]/track-start-button.tsx
 msgctxt "0X-xfW"
 msgid "Continue learning"
 msgstr "Continuer à apprendre"
@@ -326,6 +334,16 @@ msgctxt "_lCW0j"
 msgid "{percentage} correct answers"
 msgstr "{percentage} de bonnes réponses"
 
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lesson-grid.tsx
+msgctxt "8pmqmY"
+msgid "Review what you've learned"
+msgstr "Révise ce que tu as appris"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lesson-grid.tsx
+msgctxt "dyUQII"
+msgid "Review {number}"
+msgstr "Révision {number}"
+
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgctxt "QhvU1f"
 msgid "Create this chapter"
@@ -342,36 +360,20 @@ msgid "Create chapter"
 msgstr "Créer le chapitre"
 
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/preferences/page.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/start/page.tsx
 #: src/app/[lang]/generate/ch/[id]/generate-chapter-content.tsx
 #: src/app/[lang]/generate/ch/[id]/generation-client.tsx
+#: src/app/[lang]/generate/curriculum/[id]/curriculum-generation-client.tsx
 msgctxt "qrEiLa"
 msgid "Back to course"
 msgstr "Retour au cours"
 
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "Ap-oRa"
-msgid "Could not apply lesson filters. Please try again."
-msgstr "Impossible d’appliquer les filtres des leçons. Réessaie."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "d6tcJn"
-msgid "Filter lesson types"
-msgstr "Filtrer les types de leçons"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "kxP9GJ"
-msgid "Types"
-msgstr "Types"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "wi5osl"
-msgid "Show lesson types"
-msgstr "Afficher les types de leçons"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "OhgOkH"
-msgid "Clear filter"
-msgstr "Effacer le filtre"
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-sidebar.tsx
+msgctxt "KB3HBm"
+msgid "Start chapter"
+msgstr "Commencer le chapitre"
 
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "orGV_i"
@@ -430,10 +432,46 @@ msgctxt "vcaAXp"
 msgid "{completed, number}/{total, number} done"
 msgstr "{completed, number}/{total, number} terminés"
 
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-curriculum-pending-notice.tsx
-msgctxt "Pf4uqS"
-msgid "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
-msgstr "Le chapitre d’introduction est prêt. Nous créons encore le programme complet, donc d’autres chapitres apparaîtront bientôt ici."
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+msgctxt "C5Qy7G"
+msgid "Full course"
+msgstr "Cours complet"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+#: src/components/courses/course-level-label.tsx
+msgctxt "O8FaxJ"
+msgid "Your learning path"
+msgstr "Ton parcours d’apprentissage"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+msgctxt "F5mqFW"
+msgid "Your choices need an update before we can show your path."
+msgstr "Tu dois mettre à jour tes choix avant que nous puissions afficher ton parcours."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+msgctxt "4yv___"
+msgid "Update learning path"
+msgstr "Mettre à jour le parcours"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+msgctxt "Zyv6OM"
+msgid "Your chapters will appear here when your course is ready."
+msgstr "Tes chapitres apparaîtront ici une fois ton cours prêt."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+msgctxt "S0EKit"
+msgid "Prepare course"
+msgstr "Préparer le cours"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+msgctxt "PGLR79"
+msgid "View full course"
+msgstr "Voir le cours complet"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-chapter-grid.tsx
+msgctxt "LT5n4C"
+msgid "Back to your path"
+msgstr "Retour à ton parcours"
 
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
 msgctxt "qzAEFi"
@@ -442,6 +480,8 @@ msgstr "Recherche de ton cours…"
 
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
 #: src/app/[lang]/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -513,6 +553,39 @@ msgctxt "QN-YqC"
 msgid "Continue in {language}"
 msgstr "Continuer en {language}"
 
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-sidebar.tsx
+msgctxt "OShhYh"
+msgid "Change learning path"
+msgstr "Modifier le parcours"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-sidebar.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/preferences/page.tsx
+msgctxt "TKMMMZ"
+msgid "Learning preferences"
+msgstr "Préférences d’apprentissage"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-sidebar.tsx
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "S5OpIY"
+msgid "{count, plural, one {# lesson completed} other {# lessons completed}}"
+msgstr "{count, plural, one {# leçon terminée} other {# leçons terminées}}"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start-action.tsx
+#: src/components/catalog/continue-lesson-link.tsx
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Commencer"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start-action.tsx
+msgctxt "Zs8uNJ"
+msgid "Revisit lessons"
+msgstr "Revoir les leçons"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start-action.tsx
+msgctxt "c9YI-R"
+msgid "Choose your next steps"
+msgstr "Choisir la suite"
+
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
 msgctxt "KjYOfT"
 msgid "You found a course that hasn't been written yet"
@@ -542,6 +615,14 @@ msgstr "Apprends {course} en ligne avec des exemples pratiques et un langage du 
 msgctxt "gyGolN"
 msgid "Learn {course}"
 msgstr "Apprends {course}"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/start/page.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+#: src/app/[lang]/(catalog)/tracks/[id]/track-start-button.tsx
+#: src/components/courses/course-setup-form.tsx
+msgctxt "8Orgfi"
+msgid "Start learning"
+msgstr "Commencer à apprendre"
 
 #: src/app/[lang]/(catalog)/courses/category-pills.tsx
 msgctxt "tuZsq-"
@@ -600,12 +681,29 @@ msgctxt "hUF3bo"
 msgid "Start learning something new today"
 msgstr "Commence à apprendre quelque chose de nouveau aujourd'hui"
 
+#: src/app/[lang]/(catalog)/my/library-track-list.tsx
+msgctxt "f5nDVJ"
+msgid "Track · {count, plural, one {# course} other {# courses}}"
+msgstr "Parcours · {count, plural, other {# cours}}"
+
+#: src/app/[lang]/(catalog)/my/library-track-list.tsx
+msgctxt "_26_Do"
+msgid "More tracks"
+msgstr "Plus de parcours"
+
+#: src/app/[lang]/(catalog)/my/library-track-list.tsx
+msgctxt "0udTXp"
+msgid "We couldn't load more tracks. Please try again."
+msgstr "Impossible de charger d’autres parcours. Réessaie."
+
 #: src/app/[lang]/(catalog)/my/page.tsx
 msgctxt "riE3I5"
 msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons."
 msgstr "Vois tous les cours que tu as commencés sur Zoonk. Reprends là où tu t'es arrêté et suis ta progression dans les leçons interactives."
 
 #: src/app/[lang]/(catalog)/my/page.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
 msgctxt "eeNr_Y"
 msgid "My Courses"
 msgstr "Mes cours"
@@ -621,6 +719,7 @@ msgid "Keep your courses and progress in one place by logging in to your account
 msgstr "Connecte-toi à ton compte pour retrouver tes cours et ta progression au même endroit."
 
 #: src/app/[lang]/(catalog)/my/page.tsx
+#: src/app/[lang]/generate/curriculum/[id]/page.tsx
 #: src/components/generation/generation-authentication-cta.tsx
 #: src/components/generation/generation-limit-cta.tsx
 msgctxt "odXlk8"
@@ -658,7 +757,8 @@ msgid "We couldn't remove this course. Please try again."
 msgstr "Impossible de retirer ce cours. Réessaie."
 
 #: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-edit-form.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Annuler"
@@ -684,33 +784,158 @@ msgid "Start learning something new today."
 msgstr "Commence à apprendre quelque chose de nouveau aujourd'hui."
 
 #: src/app/[lang]/(catalog)/my/user-course-list.tsx
-#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
 msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "Commencer un cours"
 
-#: src/app/[lang]/(catalog)/p/[courseId]/page.tsx
-#: src/app/[lang]/(catalog)/start/exam/page.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "e61Jf3"
-msgid "Coming soon"
-msgstr "Bientôt disponible"
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "-9BdKm"
+msgid "Change answer: {question}"
+msgstr "Modifier la réponse : {question}"
 
-#: src/app/[lang]/(catalog)/p/[courseId]/page.tsx
-msgctxt "dtRj3N"
-msgid "Personalized courses are coming soon."
-msgstr "Les cours personnalisés arrivent bientôt."
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "Ni91I-"
+msgid "Change answer"
+msgstr "Modifier la réponse"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "heLLPB"
+msgid "Your updated answer"
+msgstr "Ta réponse mise à jour"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "mDvwqc"
+msgid "We'll revisit any later questions that depend on this answer."
+msgstr "Nous reviendrons sur les questions suivantes qui dépendent de cette réponse."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "N-rROV"
+msgid "We couldn't update your answer. Your changes are still here. Try again."
+msgstr "Nous n’avons pas pu mettre à jour ta réponse. Tes modifications sont toujours là. Réessaie."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "f9d6-B"
+msgid "Update answer"
+msgstr "Mettre à jour la réponse"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "0ArivZ"
+msgid "Review or change your answers"
+msgstr "Relis ou modifie tes réponses"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-answers.tsx
+msgctxt "5m07cc"
+msgid "Your answers"
+msgstr "Tes réponses"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+msgctxt "K787hm"
+msgid "Shaping your learning plan"
+msgstr "Nous construisons ton plan d’apprentissage"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+msgctxt "uvSAoH"
+msgid "Thinking about what will help you most…"
+msgstr "Nous réfléchissons à ce qui t’aidera le plus…"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+#: src/app/[lang]/(catalog)/start/discovery/[id]/page.tsx
+msgctxt "6f8xv5"
+msgid "Your learning plan"
+msgstr "Ton plan d’apprentissage"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+msgctxt "8Z_f9d"
+msgid "Let's try that again"
+msgstr "Réessayons"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+msgctxt "RoxAA-"
+msgid "Your answers are saved. We couldn't finish preparing the next step."
+msgstr "Tes réponses sont enregistrées. Nous n’avons pas pu finir de préparer l’étape suivante."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+msgctxt "5DZYgN"
+msgid "We can't create this course"
+msgstr "Nous ne pouvons pas créer ce cours"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-content.tsx
+msgctxt "PDFZz6"
+msgid "Try another goal"
+msgstr "Essayer un autre objectif"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "tlmqne"
+msgid "You've made many requests today. Your answers are saved; please come back later."
+msgstr "Tu as fait beaucoup de demandes aujourd’hui. Tes réponses sont enregistrées ; reviens plus tard."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "lG88rC"
+msgid "You've finished this learning path. You can revisit it in My courses."
+msgstr "Tu as terminé ce parcours d’apprentissage. Tu peux le revoir dans Mes cours."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "_P2I8A"
+msgid "Sign in again to continue with your saved answers."
+msgstr "Reconnecte-toi pour continuer avec tes réponses enregistrées."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "Dir2Uq"
+msgid "This learning request is no longer available."
+msgstr "Cette demande d’apprentissage n’est plus disponible."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "YiAM0b"
+msgid "Your learning request changed in another tab. We’ve loaded the latest version."
+msgstr "Ta demande d’apprentissage a été modifiée dans un autre onglet. Nous avons chargé la dernière version."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "2b9dAE"
+msgid "This question changed in another tab. Refresh to continue."
+msgstr "Cette question a été modifiée dans un autre onglet. Actualise la page pour continuer."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "DUb7qm"
+msgid "We couldn't prepare your next step. Your saved answers are still here."
+msgstr "Nous n’avons pas pu préparer l’étape suivante. Tes réponses restent enregistrées."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-feedback.tsx
+msgctxt "SQJto2"
+msgid "Sign in"
+msgstr "Se connecter"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-question.tsx
+msgctxt "qm_eL5"
+msgid "Something else"
+msgstr "Autre chose"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-question.tsx
+msgctxt "EOdBhk"
+msgid "Tell us what you have in mind"
+msgstr "Dis-nous ce que tu as en tête"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-question.tsx
+msgctxt "gOYfRY"
+msgid "Choose an answer or add your own to continue."
+msgstr "Choisis une réponse ou ajoute la tienne pour continuer."
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/discovery-question.tsx
+msgctxt "LTldLR"
+msgid "No preference"
+msgstr "Aucune préférence"
+
+#: src/app/[lang]/(catalog)/start/discovery/[id]/page.tsx
+msgctxt "1y-CX7"
+msgid "Your request"
+msgstr "Ta demande"
 
 #: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgctxt "hJZwTS"
 msgid "Email address"
 msgstr "Adresse e-mail"
 
 #: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgctxt "OiSL94"
 msgid "myemail@gmail.com"
@@ -737,7 +962,6 @@ msgid "Tell us the test, certification, or school exam you care about."
 msgstr "Dis-nous le test, la certification ou l'examen scolaire qui t'intéresse."
 
 #: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgctxt "6eV4UR"
 msgid "We couldn't add you to the waitlist. Please try again."
 msgstr "Nous n'avons pas pu t'ajouter à la liste d'attente. Réessaie."
@@ -748,7 +972,6 @@ msgid "You're on the list. We'll let you know when exam prep is ready."
 msgstr "Tu es sur la liste. Nous te préviendrons quand la préparation aux examens sera prête."
 
 #: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgctxt "ipGe-B"
 msgid "Notify me"
 msgstr "Me prévenir"
@@ -764,64 +987,15 @@ msgid "Online AI Exam Prep"
 msgstr "Préparation aux examens en ligne avec l'IA"
 
 #: src/app/[lang]/(catalog)/start/exam/page.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
+msgctxt "e61Jf3"
+msgid "Coming soon"
+msgstr "Bientôt disponible"
+
+#: src/app/[lang]/(catalog)/start/exam/page.tsx
 msgctxt "CzV5fE"
 msgid "Exam prep is not available yet. Tell us what you're preparing for and we'll notify you when it launches."
 msgstr "La préparation aux examens n'est pas encore disponible. Dis-nous ce que tu prépares et nous te préviendrons au lancement."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "8Zy06C"
-msgid "This option isn't available yet"
-msgstr "Cette option n'est pas encore disponible"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "TV5hlz"
-msgid "Join the waitlist and we'll let you know when you can learn <strong>{title}</strong> with Zoonk."
-msgstr "Rejoins la liste d'attente et nous te préviendrons quand tu pourras apprendre <strong>{title}</strong> avec Zoonk."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "cPhKTw"
-msgid "Not available"
-msgstr "Non disponible"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "5DZYgN"
-msgid "We can't create this course"
-msgstr "Nous ne pouvons pas créer ce cours"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "m6ju4Q"
-msgid "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a different subject instead."
-msgstr "Zoonk ne peut pas aider avec les demandes liées à une activité dangereuse, illégale ou nuisible. Essaie plutôt un autre sujet."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "PDFZz6"
-msgid "Try another goal"
-msgstr "Essayer un autre objectif"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
-msgctxt "hCixWc"
-msgid "You're on the list. We'll email you when it's available."
-msgstr "Tu es sur la liste. Nous t'enverrons un e-mail quand ce sera disponible."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
-msgctxt "UdDpuW"
-msgid "Finding the best way to help"
-msgstr "Nous cherchons la meilleure façon de t'aider"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
-msgctxt "1A36NM"
-msgid "We're checking your learning goal. This may take a few seconds."
-msgstr "Nous vérifions ton objectif d'apprentissage. Cela peut prendre quelques secondes."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/page.tsx
-msgctxt "CaU_nf"
-msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons tailored to you."
-msgstr "Découvre des cours personnalisés et des ressources pour apprendre {prompt}. Zoonk utilise l'IA pour créer des leçons interactives adaptées à toi."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/page.tsx
-msgctxt "X2b6pH"
-msgid "Learn {prompt} with AI"
-msgstr "Apprends {prompt} avec l'IA"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "l450Bl"
@@ -840,45 +1014,15 @@ msgid "Economics"
 msgstr "Économie"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
 msgctxt "cHCwbF"
 msgid "Photography"
 msgstr "Photographie"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "zE1J_t"
-msgid "Philosophy"
-msgstr "Philosophie"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "y68y7h"
-msgid "Data Science"
-msgstr "Science des données"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "1qsU2j"
 msgid "Creative Writing"
 msgstr "Écriture créative"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "RGkBg_"
-msgid "Biology"
-msgstr "Biologie"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "oiUZCZ"
-msgid "Graphic Design"
-msgstr "Design graphique"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-#: src/lib/categories/category.ts
-msgctxt "djJp6c"
-msgid "History"
-msgstr "Histoire"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "O9mDkA"
-msgid "Marketing"
-msgstr "Marketing"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "zfDq-e"
@@ -971,19 +1115,50 @@ msgid "Harry Potter"
 msgstr "Harry Potter"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
 msgctxt "9zLpJ_"
 msgid "What do you want to learn?"
 msgstr "Qu'est-ce que tu veux apprendre ?"
 
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
+msgctxt "pBnniU"
+msgid "Find my next step"
+msgstr "Trouver ma prochaine étape"
+
+#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
+msgctxt "JBUMH8"
+msgid "Finding a useful place to start…"
+msgstr "Nous cherchons un bon point de départ…"
+
+#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
 msgctxt "NvSCuG"
 msgid "Suggested subjects"
 msgstr "Sujets suggérés"
 
-#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
-msgctxt "uCb1nG"
-msgid "Enter a subject"
-msgstr "Saisis un sujet"
+#: src/app/[lang]/(catalog)/start/learn/learning-request-feedback.tsx
+msgctxt "0YF66q"
+msgid "We can't help with this request. Try a different learning goal."
+msgstr "Nous ne pouvons pas t’aider avec cette demande. Essaie un autre objectif d’apprentissage."
+
+#: src/app/[lang]/(catalog)/start/learn/learning-request-feedback.tsx
+msgctxt "n8arma"
+msgid "You've made many requests today. Please try again later."
+msgstr "Tu as envoyé beaucoup de demandes aujourd’hui. Réessaie plus tard."
+
+#: src/app/[lang]/(catalog)/start/learn/learning-request-feedback.tsx
+msgctxt "PZ5_yY"
+msgid "We couldn't prepare your next step. Please try again."
+msgstr "Impossible de préparer ta prochaine étape. Réessaie."
+
+#: src/app/[lang]/(catalog)/start/learn/learning-request-feedback.tsx
+msgctxt "uoggSX"
+msgid "Sign in to create a course or a personal learning path. Your request is saved in this browser."
+msgstr "Connecte-toi pour créer un cours ou un parcours d’apprentissage personnalisé. Ta demande est enregistrée dans ce navigateur."
+
+#: src/app/[lang]/(catalog)/start/learn/learning-request-feedback.tsx
+msgctxt "szo7Rq"
+msgid "Sign in to continue"
+msgstr "Connecte-toi pour continuer"
 
 #: src/app/[lang]/(catalog)/start/learn/page.tsx
 msgctxt "JlJVf1"
@@ -1006,16 +1181,35 @@ msgid "Online Courses to Learn Languages and More"
 msgstr "Cours en ligne pour apprendre des langues et plus encore"
 
 #: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+msgctxt "hvXXXQ"
+msgid "Learn {language}"
+msgstr "Apprends à parler {language}"
+
+#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
+msgctxt "NFCigV"
+msgid "Create your course, then choose where to start."
+msgstr "Crée ton cours, puis choisis par où commencer."
+
+#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
 msgctxt "d2xrsv"
 msgid "Preparing your course"
 msgstr "Préparation de ton cours"
 
 #: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "uw23V-"
 msgid "Checking whether this course already exists..."
 msgstr "Vérification de l’existence de ce cours…"
+
+#: src/app/[lang]/(catalog)/start/speak/create-language-course.tsx
+msgctxt "dCKXDB"
+msgid "Create course"
+msgstr "Créer un cours"
+
+#: src/app/[lang]/(catalog)/start/speak/create-language-course.tsx
+#: src/app/[lang]/(catalog)/start/speak/language-list.tsx
+msgctxt "P1DV67"
+msgid "Couldn't start this course. Please try again."
+msgstr "Impossible de commencer ce cours. Réessaie."
 
 #: src/app/[lang]/(catalog)/start/speak/language-list-content.tsx
 msgctxt "ptPPVk"
@@ -1061,6 +1255,130 @@ msgstr "Nous préparerons un parcours d’étude pour t’aider à réussir un c
 msgctxt "AaFZIp"
 msgid "What's your goal?"
 msgstr "Quel est ton objectif ?"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/page.tsx
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "4Uhbkg"
+msgid "Edit track"
+msgstr "Modifier le parcours"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/page.tsx
+msgctxt "ppkzVn"
+msgid "Back to track"
+msgstr "Retour au parcours"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-edit-form.tsx
+msgctxt "NF2aov"
+msgid "Track name"
+msgstr "Nom du parcours"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-edit-form.tsx
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
+#: src/components/courses/course-preferences-form.tsx
+msgctxt "X0ha1a"
+msgid "Save changes"
+msgstr "Enregistrer les changements"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-edit-form.tsx
+msgctxt "NwYXQ6"
+msgid "Remove this track? Courses you've started and your learning progress will stay in My Courses."
+msgstr "Supprimer ce parcours ? Les cours que tu as commencés et ta progression resteront dans Mes cours."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-edit-form.tsx
+msgctxt "QdZ4BS"
+msgid "Remove track"
+msgstr "Supprimer le parcours"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-edit-form.tsx
+msgctxt "tAgtwG"
+msgid "We couldn't save this change. Your changes are still here. Try again."
+msgstr "Impossible d’enregistrer cette modification. Tes changements sont toujours là. Réessaie."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "-X0yKT"
+msgid "Move {course} up"
+msgstr "Déplacer {course} vers le haut"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "3oEKV1"
+msgid "Move {course} down"
+msgstr "Déplacer {course} vers le bas"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "iLJ0Yy"
+msgid "Remove {course} from track"
+msgstr "Retirer {course} du parcours"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "vjF3lw"
+msgid "{course} moved to position {position, number}."
+msgstr "{course} est maintenant en position {position, number}."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "Tr_t9v"
+msgid "{course} removed from this track."
+msgstr "{course} ne fait plus partie de ce parcours."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "W3SQoK"
+msgid "Course order"
+msgstr "Ordre des cours"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "7O4sLm"
+msgid "Add a course"
+msgstr "Ajouter un cours"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/edit/track-members-editor.tsx
+msgctxt "vQFqe_"
+msgid "Removing a course from this track preserves your learning progress. Courses you've started stay in My Courses."
+msgstr "Si tu retires un cours de ce parcours, ta progression est conservée. Les cours que tu as commencés restent dans Mes cours."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "86N693"
+msgid "Your learning track"
+msgstr "Ton parcours d’apprentissage"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "R2DApL"
+msgid "Learning track"
+msgstr "Parcours d’apprentissage"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "1aeEkw"
+msgid "{count, plural, one {# course} other {# courses}} · {completed, number} completed"
+msgstr "{count, plural, other {# cours}} · terminés : {completed, number}"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "nAhUc1"
+msgid "You've finished your selected paths. You can revisit any course or explore it further."
+msgstr "Tu as terminé les parcours choisis. Tu peux revenir sur n’importe quel cours ou aller plus loin."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "gAwlW7"
+msgid "Ready when you are"
+msgstr "Quand tu veux"
+
+#: src/app/[lang]/(catalog)/tracks/[id]/page.tsx
+msgctxt "tCJLNe"
+msgid "We'll prepare this course when you reach it."
+msgstr "On préparera ce cours quand tu y arriveras."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/track-start-button.tsx
+msgctxt "ywCPr-"
+msgid "You've finished the selected paths in this track. Revisit a course or choose a new path below."
+msgstr "Tu as terminé tout ce que tu avais choisi dans ce parcours. Reviens sur un cours ou fais un nouveau choix ci-dessous."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/track-start-button.tsx
+msgctxt "CtNui0"
+msgid "You've reached your limit for preparing new courses. Your track is saved. You can still open a course below."
+msgstr "Tu as atteint la limite de nouveaux cours que tu peux préparer. Ton parcours est enregistré. Tu peux quand même ouvrir un cours ci-dessous."
+
+#: src/app/[lang]/(catalog)/tracks/[id]/track-start-button.tsx
+msgctxt "sb242J"
+msgid "We couldn't open your next step. Please try again."
+msgstr "Impossible d’ouvrir ta prochaine étape. Réessaie."
 
 #: src/app/[lang]/(progress)/_components/metric-pills.tsx
 #: src/app/[lang]/(progress)/activity/page.tsx
@@ -1395,6 +1713,104 @@ msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
 msgstr "Choisis la langue de l'appli que tu préfères pour cet appareil."
 
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+#: src/lib/categories/category.ts
+msgctxt "I1ZCPK"
+msgid "Technology"
+msgstr "Technologie"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "qEuXjx"
+msgid "Sports"
+msgstr "Sport"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+#: src/lib/categories/category.ts
+msgctxt "qydxOd"
+msgid "Science"
+msgstr "Sciences"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "5_tvzh"
+msgid "Fashion"
+msgstr "Mode"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "aILLQp"
+msgid "Science fiction"
+msgstr "Science-fiction"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "79lLl-"
+msgid "Music"
+msgstr "Musique"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "v93Pi4"
+msgid "Cooking"
+msgstr "Cuisine"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "WclNyR"
+msgid "What do you enjoy?"
+msgstr "Qu’est-ce que tu aimes ?"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "gF0HBt"
+msgid "Choose any interests you like. These help us use familiar examples in your personal courses. You can leave this blank or change it anytime."
+msgstr "Choisis les centres d’intérêt que tu veux. Ils nous aident à utiliser des exemples qui te parlent dans tes cours personnalisés. Tu peux ne rien indiquer ou modifier tes choix quand tu veux."
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "KC0hrQ"
+msgid "Other interests"
+msgstr "Autres centres d’intérêt"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "Z833NO"
+msgid "Gardening\nBoard games"
+msgstr "Jardinage\nJeux de société"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "wkF6IG"
+msgid "Add one interest per line."
+msgstr "Ajoute un centre d’intérêt par ligne."
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "MHNx1d"
+msgid "Use up to 50 interests, with 120 characters or fewer each."
+msgstr "Tu peux ajouter jusqu’à 50 centres d’intérêt, de 120 caractères maximum chacun."
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "pw5M03"
+msgid "We couldn't save your interests. Please try again."
+msgstr "Impossible d’enregistrer tes centres d’intérêt. Réessaie."
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "WG-9X1"
+msgid "Sign in again to save your interests"
+msgstr "Reconnecte-toi pour enregistrer tes centres d’intérêt"
+
+#: src/app/[lang]/(settings)/profile/interests/interests-form.tsx
+msgctxt "zvuCn3"
+msgid "Your interests are saved."
+msgstr "Tes centres d’intérêt sont enregistrés."
+
+#: src/app/[lang]/(settings)/profile/interests/page.tsx
+#: src/app/[lang]/(settings)/profile/page.tsx
+msgctxt "dDDm0f"
+msgid "Interests"
+msgstr "Centres d’intérêt"
+
+#: src/app/[lang]/(settings)/profile/interests/page.tsx
+msgctxt "XQYDsg"
+msgid "Back to profile"
+msgstr "Retour au profil"
+
+#: src/app/[lang]/(settings)/profile/interests/page.tsx
+msgctxt "qLfA2e"
+msgid "Learn through examples that feel familiar."
+msgstr "Apprends avec des exemples qui te parlent."
+
 #: src/app/[lang]/(settings)/profile/page.tsx
 msgctxt "dSVD13"
 msgid "Update your name and username on Zoonk."
@@ -1404,6 +1820,11 @@ msgstr "Mets à jour ton nom et ton nom d'utilisateur sur Zoonk."
 msgctxt "wjIStY"
 msgid "Your name and username as they appear to others."
 msgstr "Ton nom et ton nom d'utilisateur tels qu'ils apparaissent aux autres."
+
+#: src/app/[lang]/(settings)/profile/page.tsx
+msgctxt "rPEkwC"
+msgid "Choose familiar contexts for personal examples."
+msgstr "Choisis des contextes qui te parlent pour personnaliser les exemples."
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
@@ -1449,11 +1870,6 @@ msgstr "Impossible de mettre ton profil à jour. Réessaie ou contacte hello@zoo
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Nom d’utilisateur"
-
-#: src/app/[lang]/(settings)/profile/profile-form.tsx
-msgctxt "X0ha1a"
-msgid "Save changes"
-msgstr "Enregistrer les changements"
 
 #: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
 msgctxt "1qALXt"
@@ -1654,7 +2070,6 @@ msgstr "Connecte-toi pour t’abonner"
 
 #: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 #: src/components/generation/generation-limit-cta.tsx
-#: src/components/subscription/upgrade-cta.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "S’abonner"
@@ -1772,17 +2187,26 @@ msgid "Create lesson"
 msgstr "Créer la leçon"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 #: src/app/[lang]/generate/l/[id]/generate-lesson-content.tsx
 #: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "_N8rYN"
 msgid "Back to chapter"
 msgstr "Retour au chapitre"
 
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgctxt "qmXr1f"
-msgid "This lesson is included with Plus."
-msgstr "Cette leçon est incluse avec Plus."
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-client.tsx
+msgctxt "im9HrG"
+msgid "This course has been updated"
+msgstr "Ce cours a été mis à jour"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-client.tsx
+msgctxt "IFNy32"
+msgid "Your earlier progress is saved. This lesson changed before this attempt could be saved. Continue with the current course."
+msgstr "Ta progression précédente a bien été enregistrée. Cette leçon a été modifiée avant que cette tentative puisse être enregistrée. Poursuis avec la version actuelle du cours."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-client.tsx
+msgctxt "ybKS7j"
+msgid "Continue to course"
+msgstr "Continuer le cours"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "4w9Y_P"
@@ -1793,6 +2217,19 @@ msgstr "La révision se débloque une fois que les leçons précédentes de ce c
 msgctxt "9AOq2-"
 msgid "There are no practice questions to review yet."
 msgstr "Il n’y a pas encore de questions d’entraînement à réviser."
+
+#: src/app/[lang]/generate/ch/[id]/generate-chapter-content.tsx
+#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generate-course-prompt-content.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/curriculum/[id]/curriculum-generation-client.tsx
+#: src/app/[lang]/generate/l/[id]/generate-lesson-content.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
+#: src/components/courses/course-preferences-form.tsx
+#: src/components/courses/course-setup-form.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "Retour"
 
 #: src/app/[lang]/generate/ch/[id]/generation-client.tsx
 msgctxt "txNTbP"
@@ -1805,14 +2242,17 @@ msgid "This usually takes about a minute"
 msgstr "Ça prend généralement environ une minute"
 
 #: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-msgctxt "5c2xtK"
-msgid "Taking you to your chapter..."
-msgstr "On t’emmène vers ton chapitre…"
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/curriculum/[id]/curriculum-generation-client.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
+msgctxt "bSuhQp"
+msgid "Opening your next step…"
+msgstr "Ouverture de ta prochaine étape…"
 
 #: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-msgctxt "45uo73"
-msgid "Your lessons are ready"
-msgstr "Tes leçons sont prêtes"
+msgctxt "RDHw9G"
+msgid "Your chapter is ready"
+msgstr "Ton chapitre est prêt"
 
 #: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "gnxL73"
@@ -1820,7 +2260,6 @@ msgid "Choosing lesson types"
 msgstr "Choix des types de leçons"
 
 #: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 #: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "EKtClK"
 msgid "Getting started"
@@ -1852,7 +2291,6 @@ msgid "Reviewing the lesson mix..."
 msgstr "Vérification de l’ensemble des leçons…"
 
 #: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 #: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "5342HA"
 msgid "Getting started..."
@@ -1879,13 +2317,11 @@ msgid "Reviewing the flow so far..."
 msgstr "Vérification du parcours jusqu’ici…"
 
 #: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "txvxwS"
 msgid "Saving your progress..."
 msgstr "Enregistrement de ta progression…"
 
 #: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 #: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "JUr8Er"
 msgid "Finishing up..."
@@ -1903,20 +2339,10 @@ msgid "Taking you to your course..."
 msgstr "On t’emmène vers ton cours…"
 
 #: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "RMDr0s"
-msgid "Taking you to your first lesson…"
-msgstr "Direction ta première leçon…"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/curriculum/[id]/curriculum-generation-client.tsx
 msgctxt "15FsdE"
 msgid "Your course is ready"
 msgstr "Ton cours est prêt"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "4Wktrz"
-msgid "Your lesson is ready"
-msgstr "Ta leçon est prête"
 
 #: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "u6ROZF"
@@ -1924,204 +2350,49 @@ msgid "Creating the {title} course"
 msgstr "Création du cours {title}"
 
 #: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "GJKrUK"
-msgid "This usually takes about 2 minutes"
-msgstr "Ça prend généralement environ 2 minutes"
+msgctxt "Ux5HOC"
+msgid "This may take a few minutes"
+msgstr "Cela peut prendre quelques minutes"
 
 #: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "i3JgLB"
-msgid "Categorizing your course"
-msgstr "Classement de ton cours"
+msgctxt "pZScE-"
+msgid "Finding your course"
+msgstr "Recherche de ton cours"
 
 #: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "WOe-OA"
-msgid "Checking for duplicates"
-msgstr "Recherche de doublons"
+msgctxt "isQ4pS"
+msgid "Planning your chapters"
+msgstr "Organisation de tes chapitres"
 
 #: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Gjutu-"
-msgid "Creating the cover image"
-msgstr "Création de l’image de couverture"
+msgctxt "-GC_ia"
+msgid "Getting your course ready"
+msgstr "Préparation de ton cours"
 
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "SQFyKH"
-msgid "Finding similar courses"
-msgstr "Recherche de cours similaires"
+#: src/app/[lang]/generate/curriculum/[id]/curriculum-generation-client.tsx
+msgctxt "Q3UfsQ"
+msgid "Preparing {course}"
+msgstr "Préparation de {course}"
 
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "WZpB8D"
-msgid "Writing chapters"
-msgstr "Rédaction des chapitres"
+#: src/app/[lang]/generate/curriculum/[id]/curriculum-generation-client.tsx
+msgctxt "9jiVee"
+msgid "We're organizing the chapters for your learning path. You can leave this page and come back later."
+msgstr "Nous organisons les chapitres de ton parcours d’apprentissage. Tu peux quitter cette page et revenir plus tard."
 
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "vEOpTk"
-msgid "Planning the introduction"
-msgstr "Préparation de l’introduction"
+#: src/app/[lang]/generate/curriculum/[id]/curriculum-generation-client.tsx
+msgctxt "_GmQQC"
+msgid "Preparing your chapters…"
+msgstr "Préparation de tes chapitres…"
 
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "CFWOGF"
-msgid "Saving your course"
-msgstr "Enregistrement de ton cours"
+#: src/app/[lang]/generate/curriculum/[id]/page.tsx
+msgctxt "hrIkh_"
+msgid "Log in to prepare your course"
+msgstr "Connecte-toi pour préparer ton cours"
 
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "XPla-v"
-msgid "Preparing the introduction"
-msgstr "Préparation de l’introduction"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "HbhIvm"
-msgid "Writing your course description"
-msgstr "Rédaction de la description de ton cours"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Y4F0xn"
-msgid "Writing the first lesson"
-msgstr "Rédaction de la première leçon"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "e1myvm"
-msgid "Writing your course page"
-msgstr "Rédaction de la page de ton cours"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "aev_pt"
-msgid "Figuring out the right categories..."
-msgstr "Recherche des bonnes catégories…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "EKAN6s"
-msgid "Tagging your course..."
-msgstr "Ajout de tags à ton cours…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "JJrUOR"
-msgid "Comparing nearby courses..."
-msgstr "Comparaison avec des cours proches…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "qFmZfG"
-msgid "Avoiding duplicate courses..."
-msgstr "Évitement des cours en double…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "lxBtcx"
-msgid "Designing the cover..."
-msgstr "Création de la couverture…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "W8n2i3"
-msgid "Picking the right look..."
-msgstr "Choix du bon style…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "At4rk1"
-msgid "Adding finishing touches..."
-msgstr "Ajout des dernières touches…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "NgONb4"
-msgid "Searching for matching topics..."
-msgstr "Recherche de sujets correspondants…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Auz1tl"
-msgid "Looking for alternate names..."
-msgstr "Recherche d’autres noms…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Gt_VNO"
-msgid "Expanding the course search..."
-msgstr "On élargit la recherche de cours…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "AEG3Ol"
-msgid "Planning the course structure..."
-msgstr "On prépare la structure du cours…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "OW9vMd"
-msgid "Writing chapter {number}..."
-msgstr "On écrit le chapitre {number}…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "tXkuD8"
-msgid "Reviewing the overall flow..."
-msgstr "On vérifie l’enchaînement global…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "8-bhNP"
-msgid "Finding the best first hook..."
-msgstr "On cherche la meilleure accroche pour commencer…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "xrFhkn"
-msgid "Writing a friendly guide to the field..."
-msgstr "On écrit un guide simple pour découvrir le sujet…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "c_e4hk"
-msgid "Keeping the first chapter easy to start..."
-msgstr "On rend le premier chapitre facile à commencer…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "4LsE_n"
-msgid "Creating the course shell..."
-msgstr "On crée la structure de base du cours…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "3hEaI4"
-msgid "Preparing the workspace..."
-msgstr "On prépare l’espace de travail…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "7Pw3r5"
-msgid "Saving the intro chapter..."
-msgstr "On enregistre le chapitre d’introduction…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "cc6_Yn"
-msgid "Preparing the first lessons..."
-msgstr "On prépare les premières leçons…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "a7FJJd"
-msgid "Summarizing what you'll learn..."
-msgstr "On résume ce que tu vas apprendre…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "9r_4zz"
-msgid "Writing the overview..."
-msgstr "On écrit l’aperçu…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "QqKzYM"
-msgid "Writing the first lesson..."
-msgstr "On écrit la première leçon…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "XxRMuO"
-msgid "Adding examples and visuals..."
-msgstr "On ajoute des exemples et des images…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "kmuvIN"
-msgid "Getting the first lesson ready..."
-msgstr "On prépare la première leçon…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "chqN-J"
-msgid "Framing why this course is useful..."
-msgstr "On explique pourquoi ce cours est utile…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "twf4n2"
-msgid "Writing the course page..."
-msgstr "On écrit la page du cours…"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "k15wFf"
-msgid "Shaping the starting point..."
-msgstr "On prépare le point de départ…"
+#: src/app/[lang]/generate/curriculum/[id]/page.tsx
+msgctxt "IHn7G1"
+msgid "Save your learning path and create the chapters you need."
+msgstr "Enregistre ton parcours d’apprentissage et crée les chapitres dont tu as besoin."
 
 #: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "WihX6L"
@@ -2137,6 +2408,11 @@ msgstr "Cela prend généralement 1 à 2 minutes"
 msgctxt "T2TGxR"
 msgid "Taking you to your lesson..."
 msgstr "On t’emmène vers ta leçon…"
+
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "Ta leçon est prête"
 
 #: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "cVoRCh"
@@ -2707,15 +2983,550 @@ msgid "{percent}% complete"
 msgstr "{percent} % terminé"
 
 #: src/components/catalog/continue-lesson-link.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Commencer"
-
-#: src/components/catalog/continue-lesson-link.tsx
 #: src/lib/lessons.ts
 msgctxt "R-J5ox"
 msgid "Review"
 msgstr "Réviser"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "9uOFF3"
+msgid "Overview"
+msgstr "Vue d’ensemble"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "fNCCY7"
+msgid "Basic"
+msgstr "Notions de base"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "o5_DJA"
+msgid "Intermediate"
+msgstr "Intermédiaire"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "3Rx6Qo"
+msgid "Advanced"
+msgstr "Avancé"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "F13TgC"
+msgid "A1 · Getting started"
+msgstr "A1 · Premiers pas"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "fDHEtm"
+msgid "A2 · Everyday conversations"
+msgstr "A2 · Conversations du quotidien"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "Fi6q6R"
+msgid "B1 · Independent conversations"
+msgstr "B1 · Conversations en autonomie"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "QiGXqC"
+msgid "B2 · Expressing complex ideas"
+msgstr "B2 · Exprimer des idées complexes"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "3Z7mXZ"
+msgid "C1 · Flexible, fluent expression"
+msgstr "C1 · S’exprimer avec aisance et souplesse"
+
+#: src/components/courses/course-level-label.tsx
+#: src/components/courses/course-level-select.tsx
+msgctxt "3hFekH"
+msgid "C2 · Nuanced communication"
+msgstr "C2 · Communication nuancée"
+
+#: src/components/courses/course-level-select.tsx
+msgctxt "ysmJF6"
+msgid "All levels"
+msgstr "Tous les niveaux"
+
+#: src/components/courses/course-level-select.tsx
+msgctxt "zkyeX4"
+msgid "Course level"
+msgstr "Niveau du cours"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "k4-KiL"
+msgid "Learn for as long as you like."
+msgstr "Apprends aussi longtemps que tu veux."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "JjWc21"
+msgid "No daily target"
+msgstr "Aucun objectif quotidien"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "aqs6pA"
+msgid "{minutes, number} minutes"
+msgstr "{minutes, number} minutes"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "Emmcbk"
+msgid "Your current target."
+msgstr "Ton objectif actuel."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "RfJbgH"
+msgid "How much time would you like to spend each day?"
+msgstr "Combien de temps veux-tu consacrer chaque jour ?"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "m3Rxsp"
+msgid "Choose a daily commitment that fits your routine. You can always learn for longer or change it later."
+msgstr "Choisis un objectif quotidien adapté à ton rythme. Tu peux toujours apprendre plus longtemps ou le modifier plus tard."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "SyUGMH"
+msgid "Keep the full mix of reading, listening, words, and sentence activities."
+msgstr "Garde toutes les activités de lecture, d’écoute, de vocabulaire et de construction de phrases."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "P969_w"
+msgid "Use the recommended activities"
+msgstr "Utiliser les activités recommandées"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "PFhWEh"
+msgid "See what each activity involves and choose which ones to include."
+msgstr "Découvre le contenu de chaque activité et choisis celles que tu veux inclure."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "OFUSyY"
+msgid "Choose activities"
+msgstr "Choisir les activités"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "qcCn6V"
+msgid "Which activities would you like to include?"
+msgstr "Quelles activités veux-tu inclure ?"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "lhkUk8"
+msgid "These choices apply only to this course. You can change them anytime."
+msgstr "Ces choix ne s’appliquent qu’à ce cours. Tu peux les modifier à tout moment."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "InGuTH"
+msgid "Learn useful words, like ordering a coffee or greeting someone."
+msgstr "Apprends des mots utiles, par exemple pour commander un café ou saluer quelqu’un."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "1mx0B-"
+msgid "Words and phrases"
+msgstr "Mots et expressions"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "pdxjHc"
+msgid "See patterns in examples, then use them to build sentences."
+msgstr "Repère des structures dans des exemples, puis sers-t’en pour construire des phrases."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "Mc2gI2"
+msgid "How sentences work"
+msgstr "Comment fonctionnent les phrases"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "QN8glr"
+msgid "Read a short text and work out what it means."
+msgstr "Lis un court texte et essaie d’en comprendre le sens."
+
+#: src/components/courses/course-preference-questions.tsx
+#: src/lib/lessons.ts
+msgctxt "MOK_yK"
+msgid "Reading"
+msgstr "Lecture"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "y0m20z"
+msgid "Hear words and conversations, then check what you understood."
+msgstr "Écoute des mots et des conversations, puis vérifie ce que tu as compris."
+
+#: src/components/courses/course-preference-questions.tsx
+#: src/lib/lessons.ts
+msgctxt "1TOMnj"
+msgid "Listening"
+msgstr "Écoute"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "LJ6TWN"
+msgid "Express the same idea in your language and the language you're learning."
+msgstr "Exprime la même idée dans ta langue et dans celle que tu apprends."
+
+#: src/components/courses/course-preference-questions.tsx
+#: src/lib/lessons.ts
+msgctxt "_vCXIP"
+msgid "Translation"
+msgstr "Traduction"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "Bp6bjB"
+msgid "Connect written letters with how they sound, when the course includes them."
+msgstr "Associe les lettres écrites aux sons correspondants, si le cours en propose."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "jZknoM"
+msgid "Letters and sounds"
+msgstr "Lettres et sons"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "_KsnjO"
+msgid "Choose your activity mix"
+msgstr "Choisis ta combinaison d’activités"
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "I-UCqG"
+msgid "Keep at least one. Skipped activities stay available in the full curriculum, and your progress is preserved."
+msgstr "Garde au moins une activité. Celles que tu laisses de côté restent disponibles dans le programme complet, et ta progression est conservée."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "gscjI8"
+msgid "Keep at least one activity to continue."
+msgstr "Garde au moins une activité pour continuer."
+
+#: src/components/courses/course-preference-questions.tsx
+msgctxt "-u1Iet"
+msgid "Your path will reflect this mix. Finishing it doesn't assess skills you skip or certify a language level."
+msgstr "Ton parcours sera adapté à cette sélection. Le terminer ne permet ni d’évaluer les compétences que tu as laissées de côté ni de certifier un niveau de langue."
+
+#: src/components/courses/course-preferences-form.tsx
+msgctxt "FKGzEW"
+msgid "Keep an activity that's available in your path, or use the recommended activities."
+msgstr "Garde une activité disponible dans ton parcours ou utilise les activités recommandées."
+
+#: src/components/courses/course-preferences-form.tsx
+msgctxt "BFKGbK"
+msgid "Your course needs an updated learning plan. You can request more plans tomorrow; your current path is still available."
+msgstr "Le plan d’apprentissage de ton cours doit être mis à jour. Tu pourras demander d’autres plans demain ; ton parcours actuel reste disponible."
+
+#: src/components/courses/course-preferences-form.tsx
+msgctxt "CbG5bS"
+msgid "Your learning path changed in another tab. Reload this page to edit its latest preferences."
+msgstr "Ton parcours d’apprentissage a changé dans un autre onglet. Recharge cette page pour modifier les préférences les plus récentes."
+
+#: src/components/courses/course-preferences-form.tsx
+msgctxt "bTgCy2"
+msgid "We couldn't save your preferences. Your choices are still here. Try again."
+msgstr "Nous n’avons pas pu enregistrer tes préférences. Tes choix sont toujours là. Réessaie."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "sVBycM"
+msgid "Understand the main ideas through everyday examples."
+msgstr "Comprends les idées principales grâce à des exemples du quotidien."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "2ne17k"
+msgid "Get an overview"
+msgstr "Découvrir l’essentiel"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "G-wa60"
+msgid "Learn step by step, from the basics to advanced ideas."
+msgstr "Apprends pas à pas, des bases aux notions avancées."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "QxQo0n"
+msgid "Explore the full subject"
+msgstr "Explorer le sujet en profondeur"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "X-K7al"
+msgid "Focus on what you want to be able to do."
+msgstr "Concentre-toi sur ce que tu veux savoir faire."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "ZUyzLJ"
+msgid "Work toward a goal"
+msgstr "Avancer vers un objectif"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "Av_0DP"
+msgid "Build a project using this subject: {goal}"
+msgstr "Réaliser un projet avec ces connaissances : {goal}"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "urb_P3"
+msgid "Prepare for further study: {goal}"
+msgstr "Me préparer à poursuivre mon apprentissage : {goal}"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "jV-a8D"
+msgid "Use this subject in my work: {goal}"
+msgstr "Utiliser ces connaissances dans mon travail : {goal}"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "_Itq1T"
+msgid "How would you like to learn?"
+msgstr "Comment aimerais-tu apprendre ?"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "oH2-k7"
+msgid "Start with what you need today. The full course will always be here."
+msgstr "Commence par ce dont tu as besoin aujourd’hui. Le cours complet restera toujours disponible."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "UD353_"
+msgid "Choose an option to continue."
+msgstr "Choisis une option pour continuer."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "KEHtOu"
+msgid "Preparing your next step…"
+msgstr "Préparation de ta prochaine étape…"
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "Q2B6CN"
+msgid "You've reached today's limit for new learning plans. Your choices are saved in this browser. Try again tomorrow, or keep learning from your current path."
+msgstr "Tu as atteint la limite de nouveaux plans d’apprentissage pour aujourd’hui. Tes choix sont enregistrés dans ce navigateur. Réessaie demain ou continue d’apprendre avec ton parcours actuel."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "rsATcM"
+msgid "Your course changed while you were choosing. Refresh the page and try again."
+msgstr "Ton cours a été modifié pendant que tu faisais tes choix. Recharge la page et réessaie."
+
+#: src/components/courses/course-setup-form.tsx
+msgctxt "2hNwzf"
+msgid "We couldn't save your choices. Please try again."
+msgstr "Nous n’avons pas pu enregistrer tes choix. Réessaie."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "ko9T04"
+msgid "Start with clear, everyday explanations."
+msgstr "Commencer par des explications claires avec des mots simples."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "h_7IdO"
+msgid "I'm new to this"
+msgstr "Je débute"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "YeDQa9"
+msgid "Build on the ideas I already know."
+msgstr "Approfondir les notions que je connais déjà."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "kvvAhE"
+msgid "I know the basics"
+msgstr "Je connais les bases"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "emQ-5E"
+msgid "Explore more advanced ideas and applications."
+msgstr "Explorer des notions et des applications plus avancées."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "4Lv9S2"
+msgid "I use it confidently"
+msgstr "Je suis à l’aise avec ce sujet"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "NcmuMR"
+msgid "Start with the basics. You can move ahead anytime."
+msgstr "Commencer par les bases. Tu pourras avancer quand tu veux."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "XUx7zX"
+msgid "I'm not sure"
+msgstr "Je ne sais pas trop"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "eRG_f_"
+msgid "How familiar are you with this subject?"
+msgstr "Quel est ton niveau sur ce sujet ?"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "sB0bMd"
+msgid "Choose a comfortable starting point. You can change it later."
+msgstr "Choisis un point de départ qui te convient. Tu pourras le changer plus tard."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "M9xqkY"
+msgid "Choose a starting point to continue."
+msgstr "Choisis un point de départ pour continuer."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "SpJ-3p"
+msgid "Everyday words and simple introductions."
+msgstr "Des mots courants et des façons simples de te présenter."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "0HvQeJ"
+msgid "Simple conversations about familiar things."
+msgstr "Des conversations simples sur des sujets familiers."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "Gy49Fk"
+msgid "A2 · Everyday basics"
+msgstr "A2 · Bases du quotidien"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "5HeN_G"
+msgid "Handle common situations and share experiences."
+msgstr "Faire face aux situations courantes et parler de ses expériences."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "5ijrMN"
+msgid "Discuss ideas and follow more detailed conversations."
+msgstr "Échanger sur des idées et suivre des conversations plus approfondies."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "ZKtwvK"
+msgid "B2 · Confident conversations"
+msgstr "B2 · Conversations fluides"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "ehw6yA"
+msgid "Express complex ideas clearly and flexibly."
+msgstr "Exprimer des idées complexes avec clarté et souplesse."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "qBc10Q"
+msgid "C1 · Advanced language"
+msgstr "C1 · Niveau avancé"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "-l-qWk"
+msgid "Understand nuance and communicate with precision."
+msgstr "Comprendre les nuances et communiquer avec précision."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "cVoOrn"
+msgid "C2 · Precise expression"
+msgstr "C2 · Expression précise"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "A5oyFm"
+msgid "Try A1. You can choose another level anytime."
+msgstr "Essaie A1. Tu pourras choisir un autre niveau quand tu veux."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "5rcaud"
+msgid "Where would you like to begin?"
+msgstr "Par où aimerais-tu commencer ?"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "6PuUKu"
+msgid "These levels describe what you'll study. Choose the one that feels right for you."
+msgstr "Ces niveaux indiquent ce que tu vas étudier. Choisis celui qui te convient le mieux."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "Fpze2n"
+msgid "Choose a level to continue."
+msgstr "Choisis un niveau pour continuer."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "-GcDLd"
+msgid "Focus on useful skills and practical decisions."
+msgstr "Te concentrer sur des compétences utiles et des choix concrets."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "6SMSwM"
+msgid "Use it at work"
+msgstr "L’utiliser au travail"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "b6Szq2"
+msgid "Learn by turning an idea into a project."
+msgstr "Apprendre en transformant une idée en projet."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "XBiExl"
+msgid "Make something"
+msgstr "Créer quelque chose"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "1NsqW6"
+msgid "Understand the foundations and how ideas connect."
+msgstr "Comprendre les bases et les liens entre les idées."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "PuF_jd"
+msgid "Prepare for further study"
+msgstr "Me préparer à poursuivre mes études"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "_hSqyH"
+msgid "What would you like to be able to do?"
+msgstr "Qu’aimerais-tu savoir faire ?"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "9BF2At"
+msgid "We'll choose chapters that help you get there. Include anything you already know or want to skip."
+msgstr "Nous choisirons les chapitres qui t’aideront à atteindre ton objectif. Indique aussi les sujets que tu connais déjà ou que tu veux passer."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "sxO_jj"
+msgid "Another goal"
+msgstr "Un autre objectif"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "kh8pQr"
+msgid "Describe what you want to do…"
+msgstr "Décris ce que tu veux faire…"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "gb1UDr"
+msgid "Choose a goal or describe your own."
+msgstr "Choisis un objectif ou décris le tien."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "8q_PoP"
+msgid "A little detail helps us choose useful chapters. Include anything you already know or want to skip."
+msgstr "Quelques précisions nous aideront à choisir des chapitres utiles. Indique aussi les sujets que tu connais déjà ou que tu veux passer."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "Madelq"
+msgid "Tell us what you have in mind…"
+msgstr "Dis-nous ce que tu as en tête…"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "wF5EPG"
+msgid "Describe your goal to continue."
+msgstr "Décris ton objectif pour continuer."
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "RK44Se"
+msgid "What will you use this for at work?"
+msgstr "À quoi cela te servira au travail ?"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "OIF7tF"
+msgid "What would you like to make?"
+msgstr "Qu’aimerais-tu créer ?"
+
+#: src/components/courses/course-setup-questions.tsx
+msgctxt "4FB5Yq"
+msgid "What would you like to study next?"
+msgstr "Qu’aimerais-tu étudier ensuite ?"
+
+#: src/components/courses/resume-course-button.tsx
+msgctxt "LDXc80"
+msgid "You've finished your selected path. Choose your next steps below."
+msgstr "Tu as terminé le parcours choisi. Choisis les prochaines étapes ci-dessous."
+
+#: src/components/courses/resume-course-button.tsx
+msgctxt "ZWjh_3"
+msgid "You've reached today's limit for new learning plans. Try again tomorrow. You can still open lessons from your course."
+msgstr "Tu as atteint la limite de nouveaux plans d’apprentissage pour aujourd’hui. Réessaie demain. Tu peux toujours ouvrir les leçons de ton cours."
+
+#: src/components/courses/resume-course-button.tsx
+msgctxt "hqnWWe"
+msgid "We couldn't prepare your next lesson. Please try again."
+msgstr "Nous n’avons pas pu préparer ta prochaine leçon. Réessaie."
 
 #: src/components/feedback/contact-form.tsx
 msgctxt "WzCvaN"
@@ -2807,6 +3618,26 @@ msgctxt "JqiqNj"
 msgid "Something went wrong"
 msgstr "Un problème est survenu"
 
+#: src/components/learning/optional-practice.tsx
+msgctxt "WejU5T"
+msgid "Optional practice"
+msgstr "Entraînement facultatif"
+
+#: src/components/learning/optional-practice.tsx
+msgctxt "eihmLH"
+msgid "Check understanding"
+msgstr "Vérifier ta compréhension"
+
+#: src/components/learning/optional-practice.tsx
+msgctxt "GhcMNW"
+msgid "Try a scenario"
+msgstr "Essayer une mise en situation"
+
+#: src/components/learning/optional-practice.tsx
+msgctxt "qcWJwr"
+msgid "Could not open this activity. Please try again."
+msgstr "Impossible d’ouvrir cette activité. Réessaie."
+
 #: src/components/progress/learning-days-card.tsx
 msgctxt "8F6teD"
 msgid "Learning days"
@@ -2852,21 +3683,6 @@ msgctxt "-V74AY"
 msgid "Learning time"
 msgstr "Temps d’apprentissage"
 
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "NU-lfu"
-msgid "Keep learning with Plus"
-msgstr "Continue d’apprendre avec Plus"
-
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "X4sblx"
-msgid "Plus gives you unlimited courses and lessons for whatever you want to learn."
-msgstr "Plus te donne accès à des cours et des leçons en illimité sur tout ce que tu veux apprendre."
-
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "Y9LULP"
-msgid "Try free chapter"
-msgstr "Essayer un chapitre gratuitement"
-
 #: src/lib/belt-colors.ts
 msgctxt "znY9eW"
 msgid "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}"
@@ -2908,6 +3724,11 @@ msgid "Health"
 msgstr "Santé"
 
 #: src/lib/categories/category.ts
+msgctxt "djJp6c"
+msgid "History"
+msgstr "Histoire"
+
+#: src/lib/categories/category.ts
 msgctxt "GsBRWL"
 msgid "Languages"
 msgstr "Langues"
@@ -2923,19 +3744,9 @@ msgid "Math"
 msgstr "Maths"
 
 #: src/lib/categories/category.ts
-msgctxt "qydxOd"
-msgid "Science"
-msgstr "Sciences"
-
-#: src/lib/categories/category.ts
 msgctxt "OV_2-4"
 msgid "Society"
 msgstr "Société"
-
-#: src/lib/categories/category.ts
-msgctxt "I1ZCPK"
-msgid "Technology"
-msgstr "Technologie"
 
 #: src/lib/categories/category.ts
 msgctxt "XL8IWT"
@@ -2978,11 +3789,6 @@ msgid "Grammar"
 msgstr "Grammaire"
 
 #: src/lib/lessons.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Écoute"
-
-#: src/lib/lessons.ts
 msgctxt "KV-O0y"
 msgid "Practice"
 msgstr "Entraînement"
@@ -2991,16 +3797,6 @@ msgstr "Entraînement"
 msgctxt "OuR_Ij"
 msgid "Quiz"
 msgstr "Quiz"
-
-#: src/lib/lessons.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "Lecture"
-
-#: src/lib/lessons.ts
-msgctxt "_vCXIP"
-msgid "Translation"
-msgstr "Traduction"
 
 #: src/lib/lessons.ts
 msgctxt "Ox-Z-K"

@@ -1,4 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { registerGenerationRun } from "@zoonk/core/workflows/internal/register-generation-run";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 
@@ -21,7 +22,8 @@ async function claimChapterGeneration(input: {
     return true;
   }
 
-  return false;
+  const current = await prisma.chapter.findUnique({ where: { id: input.chapterId } });
+  return current?.generationStatus === "running" && current.generationRunId === input.workflowRunId;
 }
 
 export async function setChapterAsRunningStep(input: {
@@ -32,6 +34,15 @@ export async function setChapterAsRunningStep(input: {
 
   await using stream = createStepStream<ChapterStepName>();
   await stream.status({ status: "started", step: "setChapterAsRunning" });
+
+  const chapter = await prisma.chapter.findUnique({ where: { id: input.chapterId } });
+
+  if (chapter) {
+    await registerGenerationRun({
+      generationId: input.workflowRunId,
+      target: { courseId: chapter.courseId },
+    });
+  }
 
   const isClaimed = await claimChapterGeneration(input);
 

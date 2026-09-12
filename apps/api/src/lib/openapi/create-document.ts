@@ -15,11 +15,15 @@ import { currentLearningPaths } from "./paths/current-learning";
 import { currentUserProgressPaths } from "./paths/current-user-progress";
 import { feedbackPaths } from "./paths/feedback";
 import { generationPaths } from "./paths/generations";
+import { learningDiscoveryPaths } from "./paths/learning-discovery";
+import { learningPlanPaths } from "./paths/learning-plan";
+import { learningProfilePaths } from "./paths/learning-profile";
 import { lessonQuestionPaths } from "./paths/lesson-questions";
 import { lessonResourcePaths } from "./paths/lesson-resources";
 import { progressPaths } from "./paths/progress";
 import { sessionPaths } from "./paths/sessions";
 import { subscriptionPaths } from "./paths/subscriptions";
+import { trackPaths } from "./paths/tracks";
 import { usernamePaths } from "./paths/usernames";
 import { internalErrorResponse } from "./schemas/responses";
 import { SECURITY_SCHEMES, createSecuritySchemes } from "./security";
@@ -75,6 +79,9 @@ const paths = withInternalErrorResponses({
   ...coursePromptPaths,
   ...currentLearningPaths,
   ...generationPaths,
+  ...learningDiscoveryPaths,
+  ...learningPlanPaths,
+  ...learningProfilePaths,
   ...lessonResourcePaths,
   ...lessonQuestionPaths,
   ...currentUserProgressPaths,
@@ -83,6 +90,7 @@ const paths = withInternalErrorResponses({
   ...progressPaths,
   ...sessionPaths,
   ...subscriptionPaths,
+  ...trackPaths,
 });
 
 /** OpenAPI 3.0 uses singular `example`, while the canonical 3.1 schemas use JSON Schema's `examples` array. */

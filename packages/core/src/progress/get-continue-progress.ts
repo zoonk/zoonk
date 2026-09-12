@@ -1,5 +1,6 @@
 import "server-only";
 import { type LessonKind } from "@zoonk/db";
+import { getLearningPathPercent, getLearningPathScope } from "./_utils/learning-path-scope";
 import { getProgressSession, tagProgressScope } from "./_utils/progress-cache";
 import {
   type CourseContinueProgressChapter,
@@ -66,11 +67,17 @@ export async function getCourseContinueProgress({
   const scope = { courseId } as const;
   tagProgressScope(scope);
 
+  const path = await getLearningPathScope(scope);
+
+  if (path !== undefined) {
+    return toContinueProgress(path ? getLearningPathPercent(path) : null);
+  }
+
   const session = await getProgressSession();
   const userId = session?.user.id ?? null;
 
   const [chapters, durableChapterCompletionIds, rows] = await Promise.all([
-    listPublishedCourseChapters({ courseId }),
+    listPublishedCourseChapters({ courseId, userId }),
     listDurableChapterCompletionIds({ excludedLessonKinds, scope, userId }),
     listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId }),
   ]);
@@ -101,6 +108,12 @@ export async function getChapterContinueProgress({
 
   const scope = { chapterId } as const;
   tagProgressScope(scope);
+
+  const path = await getLearningPathScope(scope);
+
+  if (path !== undefined) {
+    return toContinueProgress(path ? getLearningPathPercent(path) : null);
+  }
 
   const session = await getProgressSession();
 

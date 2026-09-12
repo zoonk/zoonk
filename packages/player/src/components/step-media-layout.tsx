@@ -11,11 +11,15 @@ import { StepImageView } from "./step-image";
  * cover the text.
  */
 export function StepMediaLayout({
+  alt,
   children,
   image,
+  onImageError,
 }: {
+  alt: string;
   children: React.ReactNode;
   image: StepImage;
+  onImageError: () => void;
 }) {
   return (
     <div
@@ -23,7 +27,7 @@ export function StepMediaLayout({
       data-slot="step-media-layout"
     >
       <div className="min-h-0" data-slot="step-media-stage">
-        <StepImageView image={image} />
+        <StepImageView alt={alt} image={image} onError={onImageError} />
       </div>
 
       <div

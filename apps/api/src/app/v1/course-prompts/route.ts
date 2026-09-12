@@ -1,34 +1,11 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
+import { learningRequestResponse } from "@/lib/learning-discovery-responses";
 import { resolveCoursePromptRequestSchema } from "@/lib/openapi/schemas/course-prompts";
 import { resolveLanguageCourse } from "@zoonk/core/courses/language";
-import { resolveCoursePrompt } from "@zoonk/core/courses/resolve-prompt";
+import { resolveLearningRequest } from "@zoonk/core/courses/learning-request";
 import { type NextRequest, NextResponse } from "next/server";
-
-/**
- * Maps Core's complete topic-routing outcome to a stable public API resource.
- */
-function getTopicPromptResponse(result: Awaited<ReturnType<typeof resolveCoursePrompt>>) {
-  if (result.kind === "course") {
-    return { courseId: result.course.id, kind: result.kind };
-  }
-
-  if (result.kind === "generate") {
-    return { coursePromptId: result.prompt.id, kind: "generation" as const };
-  }
-
-  if (result.kind === "unsupported") {
-    return {
-      courseFormat: result.prompt.courseFormat,
-      intent: result.prompt.intent,
-      kind: result.kind,
-      title: result.title,
-    };
-  }
-
-  return { kind: result.kind };
-}
 
 /**
  * Resolves a topic or supported language request into either an existing course,
@@ -42,20 +19,9 @@ async function createCoursePrompt(request: NextRequest) {
   }
 
   if (parsed.data.kind === "topic") {
-    const result = await resolveCoursePrompt({
-      language: parsed.data.language,
-      prompt: parsed.data.prompt,
-    });
-
-    if (result.kind === "unauthorized") {
-      return errors.unauthorized();
-    }
-
-    if (result.kind === "invalid") {
-      return errors.badRequest("Invalid course prompt");
-    }
-
-    return NextResponse.json(getTopicPromptResponse(result));
+    return learningRequestResponse(
+      await resolveLearningRequest({ language: parsed.data.language, prompt: parsed.data.prompt }),
+    );
   }
 
   const result = await resolveLanguageCourse({

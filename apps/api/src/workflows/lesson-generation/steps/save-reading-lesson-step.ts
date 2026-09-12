@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { normalizePunctuation } from "@zoonk/utils/string";
@@ -76,6 +77,7 @@ export async function saveReadingLessonStep(params: SaveReadingLessonInput): Pro
     lessonId: params.context.id,
     persistGroups: ({ groups, transaction }) =>
       persistReadingGroups({ groups, params, sentenceGroups, sentenceIds, transaction, wordIds }),
+    revisionContext: getLessonRevisionContext(params.context),
     workflowRunId: params.workflowRunId,
   });
 

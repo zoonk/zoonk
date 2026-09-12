@@ -173,11 +173,6 @@ async function runLessonGeneration(input: {
     return "ready";
   }
 
-  if (shouldRepairExistingSteps(input.context)) {
-    await setLessonAsCompletedStep({ context: input.context });
-    return "ready";
-  }
-
   if (!isGeneratedLessonContext(input.context)) {
     return "filtered";
   }
@@ -197,21 +192,28 @@ async function runLessonGeneration(input: {
     return "ready";
   }
 
+  const ownedContext = { ...input.context, generationRunId: input.workflowRunId };
+
+  if (shouldRepairExistingSteps(input.context)) {
+    await setLessonAsCompletedStep({ context: ownedContext });
+    return "ready";
+  }
+
   try {
     const [completion, imageUrl] = await Promise.all([
-      generateLessonForKind({ context: input.context, workflowRunId: input.workflowRunId }),
-      generateLessonImageStep(input.context),
+      generateLessonForKind({ context: ownedContext, workflowRunId: input.workflowRunId }),
+      generateLessonImageStep(ownedContext),
     ]);
 
     if (completion.lifecycle === "needsCompletion") {
       await setLessonAsCompletedStep({
-        context: input.context,
+        context: ownedContext,
         description: completion.description,
         imageUrl,
         title: completion.title,
       });
     } else {
-      await streamAtomicLanguagePersistence(input.context);
+      await streamAtomicLanguagePersistence(ownedContext);
     }
 
     return "ready";

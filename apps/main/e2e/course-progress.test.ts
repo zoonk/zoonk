@@ -160,7 +160,7 @@ async function createCourseWithIncompleteChapter() {
  * card details. The only unfinished lesson is hidden by the user's preference,
  * so the chapter should count as complete in both places.
  */
-async function createCourseWithHiddenIncompleteLesson() {
+async function createCourseWithHiddenTeachingLesson() {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -193,10 +193,10 @@ async function createCourseWithHiddenIncompleteLesson() {
     lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
-      kind: "quiz",
+      kind: "tutorial",
       organizationId: org.id,
       position: 1,
-      title: `Hidden Quiz ${uniqueId}`,
+      title: `Hidden Tutorial ${uniqueId}`,
     }),
   ]);
 
@@ -222,7 +222,7 @@ async function completeLessons({ lessons, userId }: { lessons: { id: string }[];
 
 /**
  * Some scenarios still need durable chapter completions to cover the path
- * where previously finished chapters stay complete after lesson changes.
+ * where old durable badges coexist with current lesson completion.
  */
 async function completeChapters({
   chapters,
@@ -278,14 +278,14 @@ test.describe("Course Progress Indicators", () => {
 
     const main = authenticatedPage.getByRole("main");
 
-    const reviewLink = main.getByRole("link", { name: "Review 100% complete" });
+    const reviewLink = main.getByRole("link", { exact: true, name: "Choose your next steps" });
     await expect(reviewLink).toBeVisible();
 
-    await expect(reviewLink.getByText("100%", { exact: true })).toBeVisible();
+    await expect(main.getByText("7 lessons completed", { exact: true })).toBeVisible();
     await expect(authenticatedPage.getByRole("main").getByText(/^completed$/iu)).toHaveCount(3);
   });
 
-  test("shows lesson percentage when only lessons are partially completed", async ({
+  test("shows lesson progress when only some lessons are completed", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
@@ -304,10 +304,10 @@ test.describe("Course Progress Indicators", () => {
 
     const main = authenticatedPage.getByRole("main");
 
-    const continueLink = main.getByRole("link", { name: "Continue 29% complete" });
+    const continueLink = main.getByRole("link", { exact: true, name: "Continue" });
     await expect(continueLink).toBeVisible();
 
-    await expect(continueLink.getByText("29%", { exact: true })).toBeVisible();
+    await expect(main.getByText("2 lessons completed", { exact: true })).toBeVisible();
     await expect(authenticatedPage.getByText("1/3 done")).toBeVisible();
     await expect(authenticatedPage.getByText("1/2 done")).toBeVisible();
   });
@@ -353,17 +353,26 @@ test.describe("Course Progress Indicators", () => {
     await expect(chapterLink.getByText(/^completed$/iu)).toHaveCount(0);
   });
 
-  test("ignores hidden lesson types in course progress", async ({ browser }) => {
+  test("respects course-specific hidden teaching formats in course progress", async ({
+    browser,
+  }) => {
     const [{ chapter, course, visibleLesson }, user] = await Promise.all([
-      createCourseWithHiddenIncompleteLesson(),
+      createCourseWithHiddenTeachingLesson(),
       createE2EUser(getBaseURL(), { orgRole: "member" }),
     ]);
 
     const [context] = await Promise.all([
       browser.newContext({ storageState: user.storageState }),
       completeLessons({ lessons: [visibleLesson], userId: user.id }),
-      prisma.userLearningProfile.create({
-        data: { preferences: { hiddenLessonKinds: ["quiz"] }, userId: user.id },
+      prisma.courseLearningPlan.create({
+        data: {
+          chapterIds: [chapter.id],
+          contentRevision: course.contentRevision,
+          courseId: course.id,
+          depth: "complete",
+          hiddenLessonKinds: ["tutorial"],
+          userId: user.id,
+        },
       }),
     ]);
 
@@ -373,7 +382,7 @@ test.describe("Course Progress Indicators", () => {
 
     const main = page.getByRole("main");
 
-    await expect(main.getByRole("link", { name: "Review 100% complete" })).toBeVisible();
+    await expect(main.getByText("1 lesson completed", { exact: true })).toBeVisible();
 
     const chapterLink = main.getByRole("link", { name: new RegExp(chapter.title, "u") });
 

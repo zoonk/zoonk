@@ -14,6 +14,7 @@ final class MyCoursesAPITests: XCTestCase {
           "cursor": "opaque-cursor",
           "limit": "24",
           "query": "night sky",
+          "standaloneOnly": "true",
         ],
         expectedToken: "session-token",
         responseBody:
@@ -22,6 +23,8 @@ final class MyCoursesAPITests: XCTestCase {
             "data": [
               {
                 "description": "Understand the night sky.",
+                "brandSlug": "zoonk",
+                "isPrivate": false,
                 "id": "00000000-0000-7000-8000-000000000002",
                 "imageUrl": "https://cdn.zoonk.test/course.png",
                 "language": "en",
@@ -36,6 +39,8 @@ final class MyCoursesAPITests: XCTestCase {
               },
               {
                 "description": null,
+                "brandSlug": "me",
+                "isPrivate": true,
                 "id": "00000000-0000-7000-8000-000000000003",
                 "imageUrl": null,
                 "language": "pt",
@@ -68,7 +73,7 @@ final class MyCoursesAPITests: XCTestCase {
       transport: MyCoursesResponseTransport(
         expectedOperationID: "listCurrentUserCourses",
         expectedPath: "/me/courses",
-        expectedQuery: [:],
+        expectedQuery: ["standaloneOnly": "true"],
         expectedToken: "expired-session",
         responseBody:
           #"{"error":{"code":"UNAUTHORIZED","message":"Sign in to continue"}}"#,
@@ -134,7 +139,8 @@ extension UserCourseSummary {
     language: "en",
     organization: .myCoursesTestFixture,
     slug: "astronomy",
-    title: "Astronomy")
+    title: "Astronomy",
+    brandSlug: "zoonk")
 
   static let personalMyCoursesTestFixture = UserCourseSummary(
     description: nil,
@@ -143,7 +149,8 @@ extension UserCourseSummary {
     language: "pt",
     organization: nil,
     slug: "personal-course",
-    title: "Personal Course")
+    title: "Personal Course",
+    brandSlug: "me")
 }
 
 private func makeMyCoursesAPI(transport: any ClientTransport) -> MyCoursesAPI {

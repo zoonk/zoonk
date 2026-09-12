@@ -21,13 +21,16 @@ function countCreatedSitemapChapters(chapterIds: string[]): Promise<number> {
   });
 }
 
-/**
- * Sitemap routes are split into fixed-size pages, so tests need the final page
- * number to find rows that were just inserted with the highest auto-incremented
- * IDs.
- */
-function lastPage(count: number): number {
-  return Math.max(Math.ceil(count / SITEMAP_BATCH_SIZE) - 1, 0);
+/** UUID fixtures can appear on any sitemap page in the shared test database. */
+async function listAllSitemapChapters() {
+  const count = await countSitemapChapters();
+  const pageCount = Math.ceil(count / SITEMAP_BATCH_SIZE);
+
+  const pages = await Promise.all(
+    Array.from({ length: pageCount }, (_, page) => listSitemapChapters(page)),
+  );
+
+  return pages.flat();
 }
 
 describe(countSitemapChapters, () => {
@@ -73,8 +76,7 @@ describe(listSitemapChapters, () => {
       organizationId: org.id,
     });
 
-    const count = await countSitemapChapters();
-    const chapters = await listSitemapChapters(lastPage(count));
+    const chapters = await listAllSitemapChapters();
     const found = chapters.find((item) => item.chapterSlug === chapter.slug);
 
     expect(found).toStrictEqual({
@@ -99,8 +101,7 @@ describe(listSitemapChapters, () => {
         organizationId: organization.id,
       });
 
-      const count = await countSitemapChapters();
-      const chapters = await listSitemapChapters(lastPage(count));
+      const chapters = await listAllSitemapChapters();
       const found = chapters.find((item) => item.chapterSlug === chapter.slug);
 
       expect(found).toBeDefined();
@@ -118,8 +119,7 @@ describe(listSitemapChapters, () => {
       organizationId: org.id,
     });
 
-    const count = await countSitemapChapters();
-    const chapters = await listSitemapChapters(lastPage(count));
+    const chapters = await listAllSitemapChapters();
     const found = chapters.find((item) => item.chapterSlug === chapter.slug);
 
     expect(found).toBeUndefined();
@@ -134,8 +134,7 @@ describe(listSitemapChapters, () => {
       organizationId: null,
     });
 
-    const count = await countSitemapChapters();
-    const chapters = await listSitemapChapters(lastPage(count));
+    const chapters = await listAllSitemapChapters();
     const found = chapters.find((item) => item.chapterSlug === chapter.slug);
 
     expect(found).toBeUndefined();
@@ -152,8 +151,7 @@ describe(listSitemapChapters, () => {
       organizationId: org.id,
     });
 
-    const count = await countSitemapChapters();
-    const chapters = await listSitemapChapters(lastPage(count));
+    const chapters = await listAllSitemapChapters();
     const found = chapters.find((item) => item.chapterSlug === chapter.slug);
 
     expect(found).toBeUndefined();
@@ -170,8 +168,7 @@ describe(listSitemapChapters, () => {
       organizationId: org.id,
     });
 
-    const count = await countSitemapChapters();
-    const chapters = await listSitemapChapters(lastPage(count));
+    const chapters = await listAllSitemapChapters();
     const found = chapters.find((item) => item.chapterSlug === chapter.slug);
 
     expect(found).toBeUndefined();

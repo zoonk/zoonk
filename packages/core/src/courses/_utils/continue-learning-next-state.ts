@@ -36,7 +36,7 @@ async function getContinueLearningProgressState({
   const scope = { courseId: row.courseId } as const;
 
   const [chapters, courseCompleted, durableChapterCompletionIds, rows] = await Promise.all([
-    listPublishedCourseChapters({ courseId: row.courseId }),
+    listPublishedCourseChapters({ courseId: row.courseId, userId }),
     hasDurableCourseCompletion({ courseId: row.courseId, userId }),
     listDurableChapterCompletionIds({ excludedLessonKinds, scope, userId }),
     listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId }),

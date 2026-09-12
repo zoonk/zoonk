@@ -143,49 +143,43 @@ test.beforeAll(async () => {
 });
 
 test.describe("Course Chapters List", () => {
-  test("shows the completed curriculum without a manual refresh", async ({ page }) => {
+  test("keeps a published legacy curriculum readable while its replacement is being prepared", async ({
+    page,
+  }) => {
     const org = await getAiOrganization();
-    const uniqueId = randomUUID();
 
     const course = await courseFixture({
+      curriculumVersion: 1,
       generationStatus: "running",
       isPublished: true,
       organizationId: org.id,
-      slug: `e2e-refresh-course-${uniqueId}`,
-      title: `E2E Refresh Course ${uniqueId}`,
+      title: `E2E Refresh Course ${randomUUID()}`,
     });
 
-    const introTitle = `E2E Intro Chapter ${uniqueId}`;
-    const mainChapterTitle = `E2E Main Chapter ${uniqueId}`;
-
-    await chapterFixture({
+    const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: org.id,
-      position: 0,
-      slug: `e2e-refresh-intro-${uniqueId}`,
-      title: introTitle,
+      title: `E2E Existing Chapter ${randomUUID()}`,
     });
 
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+    await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId: org.id });
+    const url = `/b/${AI_ORG_SLUG}/c/${course.slug}`;
+    await page.goto(url);
 
-    await expect(page.getByRole("link", { name: new RegExp(introTitle, "u") })).toBeVisible();
-    await expect(page.getByText(/still creating the full curriculum/iu)).toBeVisible();
+    await expect(page).toHaveURL(url);
+    await expect(page.getByRole("link", { name: new RegExp(chapter.title, "u") })).toBeVisible();
+    await page.getByRole("link", { name: new RegExp(chapter.title, "u") }).click();
+    await expect(page).toHaveURL(`${url}/ch/${chapter.slug}`);
 
-    await Promise.all([
-      chapterFixture({
-        courseId: course.id,
-        isPublished: true,
-        organizationId: org.id,
-        position: 1,
-        slug: `e2e-refresh-main-${uniqueId}`,
-        title: mainChapterTitle,
-      }),
-      prisma.course.update({ data: { generationStatus: "completed" }, where: { id: course.id } }),
-    ]);
+    await expect(
+      page.getByRole("heading", { level: 1, name: new RegExp(chapter.title, "u") }),
+    ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: new RegExp(mainChapterTitle, "u") })).toBeVisible({
-      timeout: 15_000,
+    await expect(prisma.course.findUnique({ where: { id: course.id } })).resolves.toMatchObject({
+      curriculumVersion: 1,
+      generationRunId: null,
+      generationStatus: "running",
     });
   });
 

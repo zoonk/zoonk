@@ -5,6 +5,29 @@ import XCTest
 @testable import Zoonk
 
 final class CourseCatalogAPITests: XCTestCase {
+  func testPreparationAffordanceUsesCoreEligibilityIncludingGuestSignIn() async throws {
+    let cases: [(HTTPResponse.Status, Bool)] = [
+      (.ok, true), (.unauthorized, true), (.notFound, false),
+    ]
+    for (status, expected) in cases {
+      let api = makeCourseCatalogAPI(
+        transport: CourseCatalogResponseTransport(
+          expectedOperationID: "getCourseCurriculumGenerationView",
+          expectedPath: "/courses/\(Course.testFixture.id)/curriculum-generation",
+          expectedQuery: [:],
+          responseBody:
+            status == .ok
+            ? #"{"status":"ready","needsGeneration":true,"course":{"contentRevision":1,"curriculumVersion":1,"format":"core","generationId":null,"generationStatus":"pending","id":"00000000-0000-7000-8000-000000000002","title":"Astronomy"}}"#
+            : errorResponseBody,
+          status: status))
+
+      let canPrepare = try await api.canPrepareCourseContent(
+        courseID: Course.testFixture.id, token: nil)
+
+      XCTAssertEqual(canPrepare, expected)
+    }
+  }
+
   func testListCoursesUsesPublicCatalogQueryAndMapsPage() async throws {
     let api = makeCourseCatalogAPI(
       transport: CourseCatalogResponseTransport(
@@ -62,6 +85,9 @@ final class CourseCatalogAPITests: XCTestCase {
           #"""
           {
             "categories": ["science"],
+            "contentRevision": 1,
+            "curriculumVersion": 1,
+            "isPrivate": false,
             "coursePromptId": null,
             "description": "Understand the night sky.",
             "format": "core",
@@ -105,6 +131,8 @@ final class CourseCatalogAPITests: XCTestCase {
             "imageUrl": null,
             "language": "en",
             "position": 0,
+            "level": null,
+            "outcomes": [],
             "slug": "solar-system",
             "title": "The Solar System"
           }
@@ -136,6 +164,8 @@ final class CourseCatalogAPITests: XCTestCase {
                 "language": "en",
                 "lessonCount": 2,
                 "position": 0,
+            "level": null,
+            "outcomes": [],
                 "slug": "solar-system",
                 "title": "The Solar System"
               }
@@ -154,7 +184,7 @@ final class CourseCatalogAPITests: XCTestCase {
       transport: CourseCatalogResponseTransport(
         expectedOperationID: "listChapterLessons",
         expectedPath: "/chapters/00000000-0000-7000-8000-000000000004/lessons",
-        expectedQuery: [:],
+        expectedQuery: ["view": "teaching"],
         responseBody:
           #"""
           {
@@ -170,6 +200,7 @@ final class CourseCatalogAPITests: XCTestCase {
                 "kind": "explanation",
                 "language": "en",
                 "position": 0,
+            "sourceLessonId": null,
                 "slug": "the-sun",
                 "title": "The Sun"
               }
@@ -181,6 +212,49 @@ final class CourseCatalogAPITests: XCTestCase {
     let lessons = try await api.listChapterLessons(chapterID: CourseChapter.testFixture.id)
 
     XCTAssertEqual(lessons, [.testFixture])
+  }
+
+  func testOptionalActivitiesPreserveEligibleSourcesAndAuthoredReviews() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "listChapterOptionalActivities",
+        expectedPath: "/chapters/00000000-0000-7000-8000-000000000004/optional-activities",
+        expectedQuery: [:],
+        expectedToken: "session-token",
+        responseBody:
+          #"""
+          {
+            "status":"ready",
+            "courseId":"00000000-0000-7000-8000-000000000002",
+            "groups":[{
+              "status":"ready","title":"The Sun","activities":[],
+              "source":{
+                "brandSlug":"zoonk","courseSlug":"astronomy","chapterSlug":"solar-system",
+                "courseId":"00000000-0000-7000-8000-000000000002",
+                "chapterId":"00000000-0000-7000-8000-000000000004",
+                "lessonId":"00000000-0000-7000-8000-000000000005"
+              }
+            }],
+            "reviews":[{
+              "chapterId":"00000000-0000-7000-8000-000000000004",
+              "courseId":"00000000-0000-7000-8000-000000000002",
+              "id":"00000000-0000-7000-8000-000000000006",
+              "description":null,"generationId":null,"generationStatus":"completed",
+              "imageUrl":null,"kind":"review","language":"en","position":5,
+              "sourceLessonId":null,"slug":"solar-system-review","title":"Solar System Review"
+            }]
+          }
+          """#,
+        status: .ok))
+
+    let activities = try await api.listChapterOptionalActivities(
+      chapterID: CourseChapter.testFixture.id, token: "session-token")
+
+    XCTAssertEqual(activities.sourceIDs, [CourseLesson.testFixture.id])
+    XCTAssertEqual(activities.reviews.count, 1)
+    XCTAssertEqual(activities.reviews.first?.kind, .review)
+    XCTAssertEqual(activities.reviews.first?.slug, "solar-system-review")
+    XCTAssertEqual(activities.reviews.first?.title, "Solar System Review")
   }
 
   func testGetCourseNextLessonMapsConcreteLessonTarget() async throws {
@@ -275,7 +349,7 @@ final class CourseCatalogAPITests: XCTestCase {
       transport: CourseCatalogResponseTransport(
         expectedOperationID: "getCourseProgress",
         expectedPath: "/courses/00000000-0000-7000-8000-000000000002/progress",
-        expectedQuery: [:],
+        expectedQuery: ["view": "curriculum"],
         expectedToken: "session-token",
         responseBody:
           #"""

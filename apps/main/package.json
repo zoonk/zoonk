@@ -19,7 +19,6 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@next/third-parties": "catalog:",
     "@sentry/nextjs": "catalog:",
     "@vercel/analytics": "catalog:",
     "@zoonk/auth": "workspace:*",

@@ -218,13 +218,16 @@ test.describe("Catalog resource API", () => {
 
     await expect(courseResponse.json()).resolves.toEqual({
       categories: ["tech"],
+      contentRevision: course.contentRevision,
       coursePromptId: generationPrompt.id,
+      curriculumVersion: course.curriculumVersion,
       description: course.description,
       format: course.format,
       generationId: course.generationRunId,
       generationStatus: course.generationStatus,
       id: course.id,
       imageUrl: course.imageUrl,
+      isPrivate: false,
       language: course.language,
       organization: {
         id: organization.id,

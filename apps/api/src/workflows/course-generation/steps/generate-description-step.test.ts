@@ -12,10 +12,12 @@ vi.mock("@zoonk/ai/tasks/courses/description", () => ({
 }));
 
 const course: CourseContext = {
+  contentRevision: 1,
   courseId: "1",
   courseSlug: "test-course",
   courseTitle: "Test Course",
   format: "core",
+  generationRunId: null,
   language: "en",
   organizationId: "org-1",
   targetLanguage: null,
@@ -36,6 +38,7 @@ describe(generateDescriptionStep, () => {
     expect(result).toBe("A great course about testing");
 
     expect(generateCourseDescriptionMock).toHaveBeenCalledWith({
+      format: "core",
       language: "en",
       title: "Test Course",
     });

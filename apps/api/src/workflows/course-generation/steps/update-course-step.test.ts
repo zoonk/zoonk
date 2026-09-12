@@ -19,12 +19,14 @@ describe(updateCourseStep, () => {
     vi.clearAllMocks();
   });
 
-  it("throws without streaming error when course does not exist", async () => {
+  it("ignores deleted courses without failing the workflow", async () => {
     const brokenContext: CourseContext = {
+      contentRevision: 1,
       courseId: randomUUID(),
       courseSlug: "broken",
       courseTitle: "Broken",
       format: "core",
+      generationRunId: null,
       language: "en",
       organizationId,
       targetLanguage: null,
@@ -42,7 +44,7 @@ describe(updateCourseStep, () => {
           valueProposition: "Value.",
         },
       }),
-    ).rejects.toThrow();
+    ).resolves.toBeUndefined();
 
     const events = getStreamedEvents();
 
@@ -59,10 +61,12 @@ describe(updateCourseStep, () => {
     });
 
     const courseContext: CourseContext = {
+      contentRevision: 1,
       courseId: course.id,
       courseSlug: course.slug,
       courseTitle: course.title,
       format: "core",
+      generationRunId: null,
       language: "en",
       organizationId,
       targetLanguage: null,
@@ -113,10 +117,12 @@ describe(updateCourseStep, () => {
     });
 
     const courseContext: CourseContext = {
+      contentRevision: 1,
       courseId: course.id,
       courseSlug: course.slug,
       courseTitle: course.title,
       format: "core",
+      generationRunId: null,
       language: "en",
       organizationId,
       targetLanguage: null,

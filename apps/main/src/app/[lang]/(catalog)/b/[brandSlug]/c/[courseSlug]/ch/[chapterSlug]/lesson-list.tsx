@@ -2,16 +2,15 @@ import {
   CatalogGridContent,
   CatalogGridEmpty,
   CatalogGridItem,
+  CatalogGridSearch,
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
 import { getCatalogLessonProgress } from "@/data/progress/catalog-progress";
 import { getActiveCatalogTarget } from "@/data/progress/get-catalog-target";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
-import { type LessonDisplayMeta, getLessonDisplayMeta, getLessonKindLabels } from "@/lib/lessons";
-import { getFilterableLessonKinds } from "@zoonk/core/lessons/visibility";
-import { getSession } from "@zoonk/core/users/session";
-import { type Lesson, type LessonKind } from "@zoonk/db";
+import { type LessonDisplayMeta, getLessonDisplayMeta } from "@/lib/lessons";
+import { type Lesson } from "@zoonk/db";
 import {
   GridGroup,
   GridItemContent,
@@ -24,7 +23,6 @@ import {
 } from "@zoonk/ui/components/grid";
 import { getExtracted } from "next-intl/server";
 import { getLessonKindTone } from "./_utils/lesson-kind-tones";
-import { LessonListFilters } from "./lesson-list-filters";
 import { LessonListPosition } from "./lesson-list-position";
 
 type LessonRow = { display: LessonDisplayMeta; lesson: Lesson };
@@ -63,6 +61,7 @@ function LessonTile({
   lesson,
   notStartedLabel,
   position,
+  view,
 }: {
   brandSlug: string;
   chapterSlug: string;
@@ -73,10 +72,11 @@ function LessonTile({
   lesson: Lesson;
   notStartedLabel: string;
   position: number;
+  view: "teaching" | "curriculum";
 }) {
   return (
     <CatalogGridItem
-      href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
+      href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}${view === "curriculum" ? "?view=curriculum" : ""}`}
       id={lesson.id}
       prefetch={lesson.generationStatus === "completed"}
     >
@@ -125,17 +125,15 @@ export async function LessonList({
   chapterId,
   chapterSlug,
   courseSlug,
-  hiddenLessonKinds,
-  isLanguageCourse,
   lessons,
+  view,
 }: {
   brandSlug: string;
   chapterId: string;
   chapterSlug: string;
   courseSlug: string;
-  hiddenLessonKinds: LessonKind[];
-  isLanguageCourse: boolean;
   lessons: Lesson[];
+  view: "teaching" | "curriculum";
 }) {
   if (lessons.length === 0) {
     return null;
@@ -143,13 +141,11 @@ export async function LessonList({
 
   const t = await getExtracted();
 
-  const [activeTarget, completionData, session] = await Promise.all([
-    getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { chapterId } }),
-    getCatalogLessonProgress({ chapterId, excludedLessonKinds: hiddenLessonKinds }),
-    getSession(),
+  const [activeTarget, completionData] = await Promise.all([
+    getActiveCatalogTarget({ scope: { chapterId } }),
+    getCatalogLessonProgress({ chapterId }),
   ]);
 
-  const lessonKindLabels = await getLessonKindLabels();
   const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
   const lessonRows = await getLessonRows(lessons);
 
@@ -165,25 +161,9 @@ export async function LessonList({
     title: display.title,
   }));
 
-  const filterableLessonKinds = getFilterableLessonKinds({
-    isLanguageCourse,
-    lessonKinds: lessons.map((lesson) => lesson.kind),
-  });
-
-  const lessonKindOptions = filterableLessonKinds.map((kind) => ({
-    kind,
-    label: lessonKindLabels[kind],
-  }));
-
   return (
     <CatalogGridContent activeItemKey={activeLessonKey} activeLabel={t("Current lesson")}>
-      <LessonListFilters
-        canPersistFilters={Boolean(session)}
-        initialHiddenLessonKinds={hiddenLessonKinds}
-        items={searchItems}
-        lessonKindOptions={lessonKindOptions}
-        placeholder={t("Search lessons...")}
-      >
+      <CatalogGridSearch items={searchItems} placeholder={t("Search lessons...")}>
         <CatalogGridEmpty>{t("No lessons found")}</CatalogGridEmpty>
         <GridGroup variant="pane">
           {lessonRows.map(({ display, lesson }, index) => {
@@ -202,11 +182,12 @@ export async function LessonList({
                 lesson={lesson}
                 notStartedLabel={t("Not started")}
                 position={index + 1}
+                view={view}
               />
             );
           })}
         </GridGroup>
-      </LessonListFilters>
+      </CatalogGridSearch>
     </CatalogGridContent>
   );
 }

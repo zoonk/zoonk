@@ -1,4 +1,6 @@
 import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getLearningTargetHref } from "@/data/courses/learning-target-href";
+import { type CourseLearningTarget } from "@zoonk/core/courses/learning-plan";
 
 type NextLesson = { chapterSlug: string; lessonSlug: string; lessonTitle: string | null };
 type OrderedItem = { id: string };
@@ -7,6 +9,8 @@ type OrderedChapter = OrderedItem & { slug: string };
 export type NextChapterTarget = { brandSlug: string; chapterSlug: string; courseSlug: string };
 
 export type LessonProgressMeta = {
+  isOptional?: boolean;
+  completedLessonsInChapter?: number;
   currentLessonNumber: number;
   remainingChaptersInCourse: number;
   remainingLessonsInChapter: number;
@@ -204,9 +208,8 @@ function getNextChapterHref({
 }
 
 /**
- * Builds the player route model from course structure. The screen should only
- * say "Course Complete" when there is no later published chapter, even if the
- * next chapter has not generated a lesson yet.
+ * Builds navigation from the selected sequence. Completion labels require an
+ * explicit confirmed progress outcome rather than the current lesson position.
  */
 export function buildLessonPlayerModel({
   brandSlug,
@@ -216,7 +219,13 @@ export function buildLessonPlayerModel({
   lessonProgress = DEFAULT_LESSON_PROGRESS,
   nextChapter = null,
   nextLesson,
+  completionMilestone = null,
+  completionNextTarget = null,
+  view = "path",
 }: {
+  completionMilestone?: "chapter" | "course" | null;
+  completionNextTarget?: CourseLearningTarget | null;
+  view?: "path" | "curriculum";
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
@@ -225,7 +234,9 @@ export function buildLessonPlayerModel({
   nextChapter?: NextChapterTarget | null;
   nextLesson: NextLesson | null;
 }) {
-  const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
+  const chapterHref =
+    `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}${view === "curriculum" ? "?view=curriculum" : ""}` as const;
+
   const courseHref = getOriginalCourseHref({ brandSlug, courseSlug });
 
   const currentLessonHref = getCurrentLessonHref({
@@ -235,7 +246,12 @@ export function buildLessonPlayerModel({
     lessonSlug,
   });
 
-  const nextLessonHref = getNextLessonHref({ brandSlug, courseSlug, nextLesson });
+  const nextLessonBase = getNextLessonHref({ brandSlug, courseSlug, nextLesson });
+
+  const nextLessonHref =
+    nextLessonBase && view === "curriculum"
+      ? (`${nextLessonBase}?view=curriculum` as const)
+      : nextLessonBase;
 
   const nextChapterHref = getNextChapterHref({
     brandSlug,
@@ -246,16 +262,21 @@ export function buildLessonPlayerModel({
   });
 
   const milestone = (() => {
-    if (nextChapterHref) {
+    if (completionMilestone === "chapter") {
       return { chapterHref, kind: "chapter" as const, nextHref: nextChapterHref };
     }
 
-    if (!nextLesson) {
+    if (completionMilestone === "course") {
       return { chapterHref, courseHref, kind: "course" as const };
     }
 
     return null;
   })();
+
+  const continuationHref =
+    completionNextTarget && !completionMilestone
+      ? getLearningTargetHref(completionNextTarget)
+      : (nextLessonHref ?? nextChapterHref);
 
   return {
     lessonProgress,
@@ -266,9 +287,9 @@ export function buildLessonPlayerModel({
       energyHref: "/energy",
       levelHref: "/level",
       loginHref: getLoginHref({ currentLessonHref }),
-      nextLessonHref,
+      nextLessonHref: continuationHref,
       patternsHref: "/patterns",
     },
-    onNextHref: nextLessonHref ?? nextChapterHref,
+    onNextHref: continuationHref,
   };
 }

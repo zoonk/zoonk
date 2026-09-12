@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { chapterImagesWorkflow } from "./chapter-images-workflow";
 
@@ -22,6 +23,41 @@ describe(chapterImagesWorkflow, () => {
   beforeAll(async () => {
     const org = await aiOrganizationFixture();
     organizationId = org.id;
+  });
+
+  it("creates missing thumbnails for every private outline chapter, including chapters without lessons", async () => {
+    const owner = await userFixture();
+
+    const course = await courseFixture({
+      format: "personalized",
+      organizationId: null,
+      userId: owner.id,
+    });
+
+    const chapters = await Promise.all(
+      [0, 1, 2].map((position) =>
+        chapterFixture({
+          courseId: course.id,
+          organizationId: null,
+          position,
+          title: `Private thumbnail ${position} ${randomUUID()}`,
+        }),
+      ),
+    );
+
+    await chapterImagesWorkflow(course.id);
+
+    const saved = await prisma.chapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(saved).toHaveLength(chapters.length);
+    expect(saved.every((chapter) => chapter.imageUrl !== null)).toBe(true);
+
+    await expect(
+      prisma.lesson.count({ where: { chapterId: { in: chapters.map((chapter) => chapter.id) } } }),
+    ).resolves.toBe(0);
   });
 
   it("loads missing chapter images from the course and runs them independently", async () => {
@@ -61,7 +97,7 @@ describe(chapterImagesWorkflow, () => {
       });
     });
 
-    await expect(chapterImagesWorkflow(course.id)).resolves.toBeUndefined();
+    await expect(chapterImagesWorkflow(course.id)).rejects.toThrow("Image generation failed");
 
     const [updatedSuccessfulChapter, updatedFailedChapter, updatedExistingImageChapter] =
       await Promise.all([

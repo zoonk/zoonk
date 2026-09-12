@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { getAdminLessonKind } from "@/lib/lesson-label";
 import { type LessonKind, prisma } from "@zoonk/db";
 
 type CompletedLessonRow = Awaited<ReturnType<typeof findUserCompletedLessonRows>>[number];
@@ -14,7 +15,7 @@ type LessonKindTotals = {
 export type UserLearningKindStat = {
   avgDurationSeconds: number | null;
   completedLessons: number;
-  kind: LessonKind;
+  kind: LessonKind | "unknown";
   totalDurationSeconds: number;
 };
 
@@ -46,7 +47,7 @@ export async function getUserLearningStats(params: { userId: string }) {
 
 /**
  * LessonProgress is the source of truth for completed lesson counts and
- * duration by kind because each completion row points at the exact lesson type.
+ * duration by kind. Detached rows retain their original type in the content snapshot.
  */
 function findUserCompletedLessonRows({ userId }: { userId: string }) {
   return prisma.lessonProgress.findMany({
@@ -112,10 +113,10 @@ function buildLessonKindStats({ rows }: { rows: CompletedLessonRow[] }) {
  * total completions and the number of rows that can safely contribute to an average.
  */
 function groupCompletedLessonsByKind({ rows }: { rows: CompletedLessonRow[] }) {
-  const grouped = new Map<LessonKind, LessonKindTotals>();
+  const grouped = new Map<UserLearningKindStat["kind"], LessonKindTotals>();
 
   for (const row of rows) {
-    const kind = row.lesson.kind;
+    const kind = getCompletedLessonKind(row);
     const totals = grouped.get(kind) ?? createEmptyLessonKindTotals();
 
     grouped.set(
@@ -125,6 +126,21 @@ function groupCompletedLessonsByKind({ rows }: { rows: CompletedLessonRow[] }) {
   }
 
   return grouped;
+}
+
+/** Unknown historical kinds remain counted without being attributed to a different lesson type. */
+function getCompletedLessonKind(row: CompletedLessonRow): UserLearningKindStat["kind"] {
+  if (row.lesson) {
+    return row.lesson.kind;
+  }
+
+  const snapshot = row.contentSnapshot;
+
+  if (snapshot && typeof snapshot === "object" && !Array.isArray(snapshot)) {
+    return getAdminLessonKind(snapshot.lessonKind);
+  }
+
+  return "unknown";
 }
 
 /**
@@ -164,7 +180,7 @@ function buildLessonKindStat({
   kind,
   totals,
 }: {
-  kind: LessonKind;
+  kind: UserLearningKindStat["kind"];
   totals: LessonKindTotals;
 }): UserLearningKindStat {
   return {

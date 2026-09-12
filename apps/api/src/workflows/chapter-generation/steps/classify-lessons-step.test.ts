@@ -59,6 +59,8 @@ describe(classifyLessonsStep, () => {
       language: context.language,
       lessonDescription: "Intro",
       lessonTitle: "Lesson 1",
+      model: "openai/gpt-5.6-sol",
+      useFallback: true,
     });
 
     expect(generateLessonKindMock).toHaveBeenNthCalledWith(2, {
@@ -67,6 +69,8 @@ describe(classifyLessonsStep, () => {
       language: context.language,
       lessonDescription: "Basics",
       lessonTitle: "Lesson 2",
+      model: "openai/gpt-5.6-sol",
+      useFallback: true,
     });
 
     const events = getStreamedEvents();

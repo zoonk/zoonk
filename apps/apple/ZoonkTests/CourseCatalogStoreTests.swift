@@ -871,6 +871,12 @@ final class CourseCatalogStoreTests: XCTestCase {
 }
 
 private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
+  func canPrepareCourseContent(courseID: String, token: String?) async throws -> Bool { false }
+  func listChapterOptionalActivities(chapterID: String, token: String?) async throws
+    -> ChapterOptionalActivities
+  {
+    throw CourseCatalogFailure.unavailable
+  }
   private var chapterDetailResults: [Result<CourseChapter, Error>]
   private var chapterContinuationResults: [Result<CatalogContinuationTarget, Error>]
   private var chapterProgressResults: [Result<ChapterProgress, Error>]
@@ -921,22 +927,25 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
     return try takeFirstResult(from: &coursePageResults).get()
   }
 
-  func getCourse(id: String) async throws -> Course {
+  func getCourseLearningPath(courseID: String, token: String?) async throws -> CatalogLearningPath?
+  { nil }
+
+  func getCourse(id: String, token: String?) async throws -> Course {
     courseRequestCount += 1
     return try takeFirstResult(from: &courseResults).get()
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
+  func getChapter(id: String, token: String?) async throws -> CourseChapter {
     chapterRequestCount += 1
     return try takeFirstResult(from: &chapterDetailResults).get()
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
     chapterListRequestCount += 1
     return try takeFirstResult(from: &chapterResults).get()
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
+  func listChapterLessons(chapterID: String, token: String?) async throws -> [CourseLesson] {
     lessonListRequestCount += 1
     return try takeFirstResult(from: &lessonResults).get()
   }
@@ -982,6 +991,12 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
 }
 
 private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
+  func canPrepareCourseContent(courseID: String, token: String?) async throws -> Bool { false }
+  func listChapterOptionalActivities(chapterID: String, token: String?) async throws
+    -> ChapterOptionalActivities
+  {
+    throw CourseCatalogFailure.unavailable
+  }
   private struct CourseRequest {
     let continuation: CheckedContinuation<CourseCatalogPage, any Error>
   }
@@ -1029,19 +1044,22 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
     }
   }
 
-  func getCourse(id: String) async throws -> Course {
+  func getCourseLearningPath(courseID: String, token: String?) async throws -> CatalogLearningPath?
+  { nil }
+
+  func getCourse(id: String, token: String?) async throws -> Course {
     throw CourseCatalogFailure.unavailable
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
+  func getChapter(id: String, token: String?) async throws -> CourseChapter {
     throw CourseCatalogFailure.unavailable
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
     throw CourseCatalogFailure.unavailable
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
+  func listChapterLessons(chapterID: String, token: String?) async throws -> [CourseLesson] {
     throw CourseCatalogFailure.unavailable
   }
 
@@ -1074,6 +1092,12 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
 }
 
 private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
+  func canPrepareCourseContent(courseID: String, token: String?) async throws -> Bool { false }
+  func listChapterOptionalActivities(chapterID: String, token: String?) async throws
+    -> ChapterOptionalActivities
+  {
+    throw CourseCatalogFailure.unavailable
+  }
   private let chaptersDidStart: @Sendable () -> Void
   private let courseDidStart: @Sendable () -> Void
   private var chaptersContinuation: CheckedContinuation<[CourseChapter], any Error>?
@@ -1101,25 +1125,28 @@ private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
     throw CourseCatalogFailure.unavailable
   }
 
-  func getCourse(id: String) async throws -> Course {
+  func getCourseLearningPath(courseID: String, token: String?) async throws -> CatalogLearningPath?
+  { nil }
+
+  func getCourse(id: String, token: String?) async throws -> Course {
     try await withCheckedThrowingContinuation { continuation in
       courseContinuation = continuation
       courseDidStart()
     }
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
+  func getChapter(id: String, token: String?) async throws -> CourseChapter {
     throw CourseCatalogFailure.unavailable
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
     try await withCheckedThrowingContinuation { continuation in
       chaptersContinuation = continuation
       chaptersDidStart()
     }
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
+  func listChapterLessons(chapterID: String, token: String?) async throws -> [CourseLesson] {
     throw CourseCatalogFailure.unavailable
   }
 

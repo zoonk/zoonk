@@ -56,6 +56,8 @@ export const resolveCoursePromptResponseSchema = z
   .discriminatedUnion("kind", [
     z.object({ courseId: z.uuid(), kind: z.literal("course") }),
     z.object({ coursePromptId: z.uuid(), kind: z.literal("generation") }),
+    z.object({ discoveryId: z.uuid(), kind: z.literal("discovery") }),
+    z.object({ kind: z.literal("track"), trackId: z.uuid() }),
     z.object({ kind: z.literal("exam") }),
     z.object({ kind: z.literal("language") }),
     z.object({ kind: z.literal("unsafe") }),
@@ -81,7 +83,7 @@ const coursePromptTargetSchema = z.discriminatedUnion("kind", [
 export const coursePromptGenerationResponseSchema = z
   .discriminatedUnion("status", [
     z.object({
-      completionKind: z.enum(["course", "introductionLesson"]),
+      completionKind: z.literal("course"),
       courseFormat: courseFormatSchema,
       coursePromptId: z.uuid(),
       generationId: z.string().nullable(),

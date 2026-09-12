@@ -39,6 +39,7 @@ async function chapterAttrs(
   const position = await getChapterPosition(attrs);
 
   return {
+    conceptKey: null,
     courseId: "",
     description: "Test chapter description",
     generationRunId: null,
@@ -47,9 +48,12 @@ async function chapterAttrs(
     isLocked: false,
     isPublished: false,
     language: "en",
+    level: null,
     normalizedTitle,
     organizationId: null,
+    outcomes: [],
     position,
+    prerequisiteIds: [],
     slug: `test-chapter-${randomUUID()}`,
     title,
     ...attrs,

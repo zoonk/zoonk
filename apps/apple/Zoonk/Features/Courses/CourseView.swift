@@ -70,6 +70,9 @@ private struct CourseDetailContent: View {
 }
 
 private struct CourseDetailList: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @State private var showsFullCourse = false
+  @State private var selectedLevel = "all"
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isSearching) private var isSearching
 
@@ -81,17 +84,25 @@ private struct CourseDetailList: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      if !showsSearchResultsOnly {
+      if !showsSearchResultsOnly && !dynamicTypeSize.isAccessibilitySize {
         detailHeader
       }
 
-      CatalogCurriculumHeader(
-        title: Text(
-          "Chapters",
-          tableName: "Courses",
-          comment: "Heading above the ordered chapter list on a course screen."))
+      if !dynamicTypeSize.isAccessibilitySize {
+        curriculumControls
+      }
 
       List {
+        if dynamicTypeSize.isAccessibilitySize {
+          if !showsSearchResultsOnly {
+            detailHeader
+              .listRowInsets(EdgeInsets())
+              .listRowSeparator(.hidden)
+          }
+          curriculumControls
+            .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
+        }
         if filteredChapters.isEmpty {
           emptyChaptersView
             .listRowSeparator(.hidden)
@@ -104,13 +115,16 @@ private struct CourseDetailList: View {
               CatalogNumberedRow(
                 description: chapter.description,
                 imageURL: chapter.imageURL ?? detail.course.imageURL,
-                number: chapter.position + 1,
+                number: showsFullCourse && selectedLevel == "all"
+                  ? chapter.position + 1
+                  : (filteredChapters.firstIndex(where: { $0.id == chapter.id }) ?? 0) + 1,
                 systemImage: "rectangle.stack.fill",
                 title: chapter.title
               ) {
                 if let progress = catalogChapterProgress(
                   chapter: chapter,
-                  progress: detail.progress)
+                  progress: showsFullCourse ? detail.progress : detail.pathProgress),
+                  progress != .notStarted
                 {
                   CatalogProgressLabel(progress: progress)
                 }
@@ -139,7 +153,9 @@ private struct CourseDetailList: View {
   }
 
   private var detailHeader: some View {
-    let horizontalInset = CatalogDetailLayout.horizontalInset(for: horizontalSizeClass)
+    let horizontalInset =
+      dynamicTypeSize.isAccessibilitySize
+      ? 0 : CatalogDetailLayout.horizontalInset(for: horizontalSizeClass)
 
     return VStack(alignment: .leading, spacing: 16) {
       CatalogDetailHeader(
@@ -158,11 +174,24 @@ private struct CourseDetailList: View {
         .presentationCompactAdaptation(.sheet)
       }
 
-      CatalogDetailActions(
-        continuation: detail.continuation,
-        destination: continuationDestination,
-        percentComplete: detail.progress?.percentComplete,
-        showFeedback: showFeedback)
+      if needsWebSetup {
+        CourseWebLearningLink(
+          course: detail.course, isResuming: detail.learningPath?.requiresFocusedReselection == true
+        )
+        .frame(maxWidth: horizontalSizeClass == .regular ? 280 : .infinity)
+      } else {
+        CatalogDetailActions(
+          continuation: detail.continuation,
+          destination: continuationDestination,
+          percentComplete: detail.pathProgress?.percentComplete,
+          showFeedback: showFeedback,
+          course: detail.course,
+          supportsLearningPlan: detail.learningPath?.supportsLearningPlan == true)
+      }
+
+      if let summary = detail.learningPath?.summary, !summary.isEmpty {
+        Text(summary).font(.subheadline).foregroundStyle(.secondary)
+      }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, horizontalInset)
@@ -174,12 +203,39 @@ private struct CourseDetailList: View {
     isSearching || catalogText(searchText) != nil
   }
 
+  private var curriculumControls: some View {
+    CourseCurriculumControls(
+      detail: detail, showsFullCourse: $showsFullCourse, level: $selectedLevel
+    )
+    .padding(
+      .horizontal,
+      dynamicTypeSize.isAccessibilitySize
+        ? 0
+        : CatalogDetailLayout.horizontalInset(for: horizontalSizeClass)
+    )
+    .padding(.vertical, 8)
+  }
+
   private var continuationDestination: CourseDestination? {
     courseContinuationDestination(detail)
   }
 
+  private var needsWebSetup: Bool {
+    if detail.chapters.isEmpty { return detail.canPrepareContent }
+    if detail.learningPath?.supportsLearningPlan == false { return false }
+    guard !detail.course.isPrivate else { return false }
+    if detail.learningPath?.requiresFocusedReselection == true { return true }
+    return detail.learningPath?.needsPlan == true && detail.continuation?.hasStarted != true
+  }
+
   private var filteredChapters: [CourseChapter] {
-    filterCourseChapters(CatalogSearchRequest(items: detail.chapters, query: searchText))
+    let chapters =
+      showsFullCourse
+      ? detail.chapters.filter { selectedLevel == "all" || $0.level == selectedLevel }
+      : detail.selectedChapters
+    let matchingIDs = Set(
+      filterCourseChapters(CatalogSearchRequest(items: chapters, query: searchText)).map(\.id))
+    return chapters.filter { matchingIDs.contains($0.id) }
   }
 
   @ViewBuilder
@@ -225,9 +281,14 @@ private struct CourseInformationView: View {
         }
 
         VStack(alignment: .leading, spacing: 12) {
-          Text(course.organization.name)
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(.secondary)
+          Text(
+            course.organization?.name
+              ?? String(
+                localized: "Personal course", table: "Courses",
+                comment: "Owner-private course information label")
+          )
+          .font(.subheadline.weight(.semibold))
+          .foregroundStyle(.secondary)
 
           if !course.categories.isEmpty {
             Text(categoryDescription)
@@ -238,7 +299,7 @@ private struct CourseInformationView: View {
               .background(.quaternary, in: Capsule())
           }
 
-          if course.organization.slug == "ai" {
+          if course.resolvedBrandSlug == "ai" {
             Label {
               Text(
                 "Created with AI",

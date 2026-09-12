@@ -4,6 +4,7 @@ import Observation
 @MainActor
 @Observable
 final class MyCoursesStore {
+  let tracks: MyTracksStore
   private(set) var coursesState: MyCoursesLoadState<MyCoursesPage> = .idle
   private(set) var coursesRevision: UUID?
   private(set) var isLoadingCourses = false
@@ -17,6 +18,7 @@ final class MyCoursesStore {
   private var sessionIdentity: AuthenticatedSession?
 
   init(api: any MyCoursesAPIClient, session: SessionStore) {
+    tracks = MyTracksStore(api: api, session: session)
     self.api = api
     self.session = session
     sessionIdentity = session.authenticatedSession

@@ -2,10 +2,12 @@
 
 import { Link } from "@/i18n/navigation";
 import { Input } from "@zoonk/ui/components/input";
-import { cn } from "@zoonk/ui/lib/utils";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useExtracted, useLocale } from "next-intl";
+import { useActionState, useState } from "react";
+import { startLanguageCourse } from "./actions";
 import { type LanguageOption } from "./language-options";
 
 /**
@@ -28,35 +30,63 @@ function getVisibleLanguages({
   return languages.filter((language) => language.searchText.includes(normalizedQuery));
 }
 
-/**
- * Renders one compact language row as the link target so selecting a language
- * uses normal navigation, prefetching, and keyboard behavior.
- */
-function LanguageOptionLink({ language }: { language: LanguageOption }) {
-  const hasNativeName = language.nativeName !== language.name;
+const LANGUAGE_ROW_CLASS =
+  "border-border/40 bg-background hover:border-foreground/20 hover:bg-muted/30 focus-visible:border-ring focus-visible:ring-ring/40 flex w-full min-w-0 items-center gap-3 rounded-lg border px-4 py-3 text-left transition-colors duration-150 outline-none focus-visible:ring-[3px] disabled:opacity-50";
+
+function LanguageLabel({ language }: { language: LanguageOption }) {
+  return (
+    <>
+      <span aria-hidden="true" className="text-2xl leading-none">
+        {language.flag}
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="truncate text-sm font-medium">{language.name}</span>
+        {language.nativeName !== language.name && (
+          <span className="text-muted-foreground truncate text-xs">{language.nativeName}</span>
+        )}
+      </span>
+    </>
+  );
+}
+
+function LanguageOptionRow({
+  language,
+  pending,
+  selected,
+  select,
+}: {
+  language: LanguageOption;
+  pending: boolean;
+  selected: string | null;
+  select: (code: string) => void;
+}) {
+  const label =
+    language.nativeName === language.name
+      ? language.name
+      : `${language.name}, ${language.nativeName}`;
+
+  const content = <LanguageLabel language={language} />;
 
   return (
     <div className="flex min-w-0" role="listitem">
-      <Link
-        aria-label={hasNativeName ? `${language.name}, ${language.nativeName}` : language.name}
-        className={cn(
-          "border-border/40 bg-background hover:border-foreground/20 hover:bg-muted/30 focus-visible:border-ring focus-visible:ring-ring/40 flex w-full min-w-0 items-center gap-3 rounded-lg border px-4 py-3 text-left transition-all duration-150 outline-none focus-visible:ring-[3px]",
-        )}
-        href={language.href}
-        prefetch={language.prefetch}
-        rel={language.rel}
-      >
-        <span aria-hidden="true" className="text-2xl leading-none">
-          {language.flag}
-        </span>
-
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-medium">{language.name}</span>
-          {hasNativeName && (
-            <span className="text-muted-foreground truncate text-xs">{language.nativeName}</span>
-          )}
-        </span>
-      </Link>
+      {language.prefetch && !pending ? (
+        <Link aria-label={label} className={LANGUAGE_ROW_CLASS} href={language.href} prefetch>
+          {content}
+        </Link>
+      ) : (
+        <button
+          aria-label={label}
+          className={LANGUAGE_ROW_CLASS}
+          disabled={pending}
+          name="language"
+          onClick={() => select(language.code)}
+          type="submit"
+          value={language.code}
+        >
+          {content}
+          {pending && selected === language.code && <Spinner />}
+        </button>
+      )}
     </div>
   );
 }
@@ -75,6 +105,14 @@ export function LanguageList({
   searchPlaceholder: string;
 }) {
   const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<string | null>(null);
+  const locale = useLocale();
+
+  const [state, action, pending] = useActionState(startLanguageCourse.bind(null, locale), {
+    error: false,
+  });
+
+  const t = useExtracted();
   const visibleLanguages = getVisibleLanguages({ languages, query });
 
   return (
@@ -95,13 +133,26 @@ export function LanguageList({
       </div>
 
       {visibleLanguages.length > 0 ? (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="list">
-          {visibleLanguages.map((language) => (
-            <LanguageOptionLink key={language.code} language={language} />
-          ))}
-        </div>
+        <form action={action}>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="list">
+            {visibleLanguages.map((language) => (
+              <LanguageOptionRow
+                key={language.code}
+                language={language}
+                pending={pending}
+                selected={selected}
+                select={setSelected}
+              />
+            ))}
+          </div>
+        </form>
       ) : (
         <p className="text-muted-foreground py-8 text-center text-sm">{emptyLabel}</p>
+      )}
+      {state.error && (
+        <p className="text-destructive text-sm" role="alert">
+          {t("Couldn't start this course. Please try again.")}
+        </p>
       )}
     </section>
   );

@@ -86,6 +86,7 @@ private struct ChapterDetailContent: View {
 }
 
 private struct ChapterDetailList: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isSearching) private var isSearching
 
@@ -98,17 +99,27 @@ private struct ChapterDetailList: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      if !showsSearchResultsOnly {
+      if !showsSearchResultsOnly && !dynamicTypeSize.isAccessibilitySize {
         detailHeader
       }
 
-      CatalogCurriculumHeader(
-        title: Text(
-          "Lessons",
-          tableName: "Courses",
-          comment: "Heading above the ordered lesson list on a chapter screen."))
+      if !dynamicTypeSize.isAccessibilitySize {
+        CatalogCurriculumHeader(title: lessonsTitle)
+      }
 
       List {
+        if dynamicTypeSize.isAccessibilitySize {
+          if !showsSearchResultsOnly {
+            detailHeader
+              .listRowInsets(EdgeInsets())
+              .listRowSeparator(.hidden)
+          }
+          lessonsTitle
+            .font(.headline)
+            .accessibilityAddTraits(.isHeader)
+            .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
+        }
         if filteredLessons.isEmpty {
           emptyLessonsView
             .listRowSeparator(.hidden)
@@ -121,14 +132,15 @@ private struct ChapterDetailList: View {
               CatalogNumberedRow(
                 description: lesson.displayDescription(),
                 imageURL: lesson.imageURL,
-                number: lesson.position + 1,
+                number: (detail.primaryLessons.firstIndex(where: { $0.id == lesson.id })
+                  ?? lesson.position) + 1,
                 symbolTint: lesson.kind.symbolTint,
                 systemImage: lesson.kind.systemImage,
                 title: lesson.displayTitle()
               ) {
                 if let progress = catalogLessonProgress(
                   lesson: lesson,
-                  progress: detail.progress)
+                  progress: detail.progress), progress != .notStarted
                 {
                   CatalogProgressLabel(progress: progress)
                 }
@@ -145,6 +157,10 @@ private struct ChapterDetailList: View {
                 trailing: 0))
           }
         }
+        if !showsSearchResultsOnly, let course = detail.course, let chapter = detail.chapter {
+          ChapterOptionalPractice(detail: detail, course: course, chapter: chapter)
+            .listRowSeparator(.hidden)
+        }
       }
       .listStyle(.plain)
       .scrollContentBackground(.hidden)
@@ -158,7 +174,9 @@ private struct ChapterDetailList: View {
   }
 
   private var detailHeader: some View {
-    let horizontalInset = CatalogDetailLayout.horizontalInset(for: horizontalSizeClass)
+    let horizontalInset =
+      dynamicTypeSize.isAccessibilitySize
+      ? 0 : CatalogDetailLayout.horizontalInset(for: horizontalSizeClass)
 
     return VStack(alignment: .leading, spacing: 16) {
       CatalogDetailHeader(
@@ -177,11 +195,30 @@ private struct ChapterDetailList: View {
         .presentationCompactAdaptation(.sheet)
       }
 
-      CatalogDetailActions(
-        continuation: detail.continuation,
-        destination: continuationDestination,
-        percentComplete: detail.progress?.percentComplete,
-        showFeedback: showFeedback)
+      if detail.primaryLessons.isEmpty && detail.canPrepareContent,
+        let course = detail.course, let chapter = detail.chapter
+      {
+        Link(
+          destination: courseWebURL(course).appending(component: "ch").appending(
+            component: chapter.slug)
+        ) {
+          Label {
+            Text(
+              "Open chapter on web", tableName: "Courses",
+              comment: "Opens a chapter on the website where missing lessons can be created")
+          } icon: {
+            Image(systemName: "arrow.up.right")
+          }
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+      } else {
+        CatalogDetailActions(
+          continuation: detail.continuation,
+          destination: continuationDestination,
+          percentComplete: detail.progress?.percentComplete,
+          showFeedback: showFeedback)
+      }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, horizontalInset)
@@ -190,11 +227,14 @@ private struct ChapterDetailList: View {
   }
 
   private var numberedTitle: String {
-    guard let position = chapter.position else {
-      return chapter.title
-    }
+    chapter.title
+  }
 
-    return "\((position + 1).formatted()). \(chapter.title)"
+  private var lessonsTitle: Text {
+    Text(
+      "Lessons",
+      tableName: "Courses",
+      comment: "Heading above the ordered lesson list on a chapter screen.")
   }
 
   private var showsSearchResultsOnly: Bool {
@@ -206,7 +246,7 @@ private struct ChapterDetailList: View {
   }
 
   private var filteredLessons: [CourseLesson] {
-    filterCourseLessons(CatalogSearchRequest(items: detail.lessons, query: searchText))
+    filterCourseLessons(CatalogSearchRequest(items: detail.primaryLessons, query: searchText))
   }
 
   @ViewBuilder
@@ -281,8 +321,7 @@ private struct ChapterLoadingView: View {
             imageURL: chapter.imageURL,
             description: chapter.description,
             systemImage: "rectangle.stack.fill",
-            title: chapter.position.map { "\(($0 + 1).formatted()). \(chapter.title)" }
-              ?? chapter.title))
+            title: chapter.title))
 
         HStack(spacing: 8) {
           Text(verbatim: "Start")

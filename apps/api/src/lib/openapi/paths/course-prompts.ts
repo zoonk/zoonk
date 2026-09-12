@@ -7,6 +7,7 @@ import {
 import {
   forbiddenResponse,
   notFoundResponse,
+  tooManyRequestsResponse,
   unauthorizedResponse,
   validationErrorResponse,
 } from "../schemas/responses";
@@ -16,7 +17,7 @@ export const coursePromptPaths = {
   "/course-prompts": {
     post: {
       description:
-        "Classifies and stores topic prompts publicly, returning existing courses and unsupported outcomes without authentication. Authentication is required before a prompt can create a generation request.",
+        "Resolves an existing exact public subject for guests. AI classification, discovery, Tracks, and new generation require authentication. Personal request details remain owner-private.",
       operationId: "createCoursePrompt",
       requestBody: {
         content: { "application/json": { schema: resolveCoursePromptRequestSchema } },
@@ -30,6 +31,7 @@ export const coursePromptPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "403": forbiddenResponse,
+        "429": tooManyRequestsResponse,
       },
       security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Resolve a course request",

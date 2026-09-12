@@ -1,8 +1,10 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toChapterLesson } from "@/lib/catalog-responses";
+import { chapterLessonViewsQuerySchema } from "@/lib/openapi/schemas/learning-discovery";
 import { chapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { parseQueryParams } from "@/lib/query-params";
 import { getChapterById } from "@zoonk/core/chapters/get-by-id";
 import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
 import { NextResponse } from "next/server";
@@ -11,7 +13,7 @@ import { NextResponse } from "next/server";
  * Lists one published chapter's lesson-shell resources in authored order.
  */
 async function listChapterLessonResources(
-  _request: Request,
+  request: Request,
   context: RouteContext<"/v1/chapters/[chapterId]/lessons">,
 ) {
   const path = parsePathParams({ params: await context.params, schema: chapterPathParamsSchema });
@@ -20,9 +22,15 @@ async function listChapterLessonResources(
     return errors.validation(path.error);
   }
 
+  const query = parseQueryParams(new URL(request.url).searchParams, chapterLessonViewsQuerySchema);
+
+  if (!query.success) {
+    return errors.validation(query.error);
+  }
+
   const [chapter, lessons] = await Promise.all([
     getChapterById({ chapterId: path.data.chapterId }),
-    listChapterLessons({ chapterId: path.data.chapterId }),
+    listChapterLessons({ chapterId: path.data.chapterId, ...query.data }),
   ]);
 
   if (!chapter) {

@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
@@ -38,6 +39,7 @@ describe(persistGeneratedLessonGroups, () => {
         groupCount: 2,
         lessonId: context.id,
         persistGroups: () => Promise.reject(new Error("content persistence failed")),
+        revisionContext: getLessonRevisionContext(context),
         workflowRunId,
       }),
     ).rejects.toThrow("content persistence failed");
@@ -74,6 +76,7 @@ describe(persistGeneratedLessonGroups, () => {
       groupCount: 2,
       lessonId: context.id,
       persistGroups,
+      revisionContext: getLessonRevisionContext(context),
       workflowRunId,
     };
 
@@ -108,6 +111,7 @@ describe(persistGeneratedLessonGroups, () => {
       groupCount: 2,
       lessonId: context.id,
       persistGroups: async () => {},
+      revisionContext: getLessonRevisionContext(context),
       workflowRunId,
     });
 
@@ -141,6 +145,7 @@ describe(persistGeneratedLessonGroups, () => {
       groupCount: 3,
       lessonId: context.id,
       persistGroups: async () => {},
+      revisionContext: getLessonRevisionContext(context),
       workflowRunId,
     });
 
@@ -196,6 +201,7 @@ describe(persistGeneratedLessonGroups, () => {
         groupCount: 2,
         lessonId: firstContext.id,
         persistGroups: async () => {},
+        revisionContext: getLessonRevisionContext(firstContext),
         workflowRunId: firstRunId,
       }),
       persistGeneratedLessonGroups({
@@ -203,6 +209,7 @@ describe(persistGeneratedLessonGroups, () => {
         groupCount: 2,
         lessonId: secondLesson.id,
         persistGroups: async () => {},
+        revisionContext: getLessonRevisionContext({ ...firstContext, ...secondLesson }),
         workflowRunId: secondRunId,
       }),
     ]);
@@ -244,6 +251,7 @@ describe(persistGeneratedLessonGroups, () => {
         groupCount: 1,
         lessonId: context.id,
         persistGroups: vi.fn(),
+        revisionContext: getLessonRevisionContext(context),
         workflowRunId,
       }),
     ).rejects.toThrow("Completed companion cannot be replaced by source generation");

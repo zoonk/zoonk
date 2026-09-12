@@ -13,11 +13,13 @@ async function findCurrentUserCourses({
   offset,
   query,
   take,
+  standaloneOnly,
   userId,
 }: {
   offset?: number;
   query?: string;
   take?: number;
+  standaloneOnly?: boolean;
   userId: string;
 }) {
   const rows = await prisma.courseUser.findMany({
@@ -27,7 +29,11 @@ async function findCurrentUserCourses({
     ...(offset !== undefined && { skip: Math.max(Math.trunc(offset), 0) }),
     where: {
       course: {
-        OR: [{ organization: { kind: "brand" } }, { organizationId: null }],
+        ...(standaloneOnly && { tracks: { none: { track: { userId } } } }),
+        OR: [
+          { organization: { kind: "brand" }, userId: null },
+          { organizationId: null, userId },
+        ],
         ...(query && {
           AND: [
             {
@@ -51,7 +57,9 @@ async function findCurrentUserCourses({
  * acting user ID. Main keeps its existing empty guest result while repeated
  * callers in one request share the same private-cache execution.
  */
-export async function listCurrentUserCourses() {
+export async function listCurrentUserCourses({
+  standaloneOnly = false,
+}: { standaloneOnly?: boolean } = {}) {
   "use cache: private";
 
   const session = await getSession();
@@ -61,7 +69,7 @@ export async function listCurrentUserCourses() {
   }
 
   cacheTag(COURSE_LIST_CACHE_TAG, getUserProgressCacheTag(session.user.id));
-  return findCurrentUserCourses({ userId: session.user.id });
+  return findCurrentUserCourses({ standaloneOnly, userId: session.user.id });
 }
 
 /**
@@ -74,10 +82,12 @@ export async function listCurrentUserCoursesPage({
   limit,
   offset = 0,
   query,
+  standaloneOnly,
 }: {
   limit: number;
   offset?: number;
   query?: string;
+  standaloneOnly?: boolean;
 }) {
   const session = await getSession();
 
@@ -90,6 +100,7 @@ export async function listCurrentUserCoursesPage({
   const courses = await findCurrentUserCourses({
     offset,
     query: query?.trim(),
+    standaloneOnly,
     take: pageSize + 1,
     userId: session.user.id,
   });

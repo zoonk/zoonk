@@ -4,6 +4,7 @@ import SwiftUI
 private enum AccountDestination: Hashable {
   case deleteAccount(AccountDeletionDestination)
   case profile
+  case interests
   case subscription(UUID)
 }
 
@@ -39,6 +40,8 @@ struct AccountSheet: View {
               email: deletion.email,
               hasAppleAccount: deletion.hasAppleAccount,
               storeSubscriptionProvider: deletion.storeSubscriptionProvider)
+          case .interests:
+            LearningInterestsView()
           case .profile:
             if let account = session.account {
               ProfileEditorView(account: account, isRequiredSetup: false)
@@ -114,6 +117,7 @@ struct AccountSheet: View {
           account: account,
           deleteAccount: { path.append(.deleteAccount(makeDeletionDestination(account))) },
           editProfile: { path.append(.profile) },
+          editInterests: { path.append(.interests) },
           manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
           openMyCourses: showMyCourses,
           openSubscription: { showSubscription(for: account) },
@@ -164,7 +168,7 @@ struct AccountSheet: View {
       path.removeAll()
     case .signedOut, .unavailable:
       switch path.last {
-      case .profile, .subscription:
+      case .profile, .interests, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -196,6 +200,7 @@ private struct SignedInAccountView: View {
   let account: CurrentAccount
   let deleteAccount: () -> Void
   let editProfile: () -> Void
+  let editInterests: () -> Void
   let manageAppStoreSubscription: () -> Void
   let openMyCourses: () -> Void
   let openSubscription: () -> Void
@@ -236,6 +241,13 @@ private struct SignedInAccountView: View {
           AccountRowLabel(
             title: Text("Profile", tableName: "Account", comment: "Account option for profile"),
             systemImage: "person")
+        }
+
+        Button(action: editInterests) {
+          AccountRowLabel(
+            title: Text(
+              "Interests", tableName: "Account", comment: "Account option for learning interests"),
+            systemImage: "sparkles")
         }
 
         AccountSubscriptionRow(

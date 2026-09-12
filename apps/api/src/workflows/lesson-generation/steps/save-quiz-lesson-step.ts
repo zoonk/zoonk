@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
@@ -25,6 +26,7 @@ export async function saveQuizLessonStep({
 
   await replaceLessonSteps({
     lessonId: context.id,
+    revisionContext: getLessonRevisionContext(context),
     saveSteps: (transaction) => saveQuizLessonContent({ context, questions, transaction }),
   });
 

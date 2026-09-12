@@ -4,7 +4,6 @@ import {
   badRequestResponse,
   forbiddenResponse,
   notFoundResponse,
-  paymentRequiredResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
   validationErrorResponse,
@@ -15,13 +14,13 @@ import {
   generationResourceSchema,
   workflowEventsQuerySchema,
 } from "../schemas/workflows";
-import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
+import { AUTHENTICATED_SECURITY, OPTIONAL_AUTHENTICATION_SECURITY } from "../security";
 
 export const generationPaths = {
   "/generations": {
     post: {
       description:
-        "Starts authenticated course, chapter, or lesson generation. Daily and monthly limits depend on the caller's entitlement. Chapter and lesson targets also require an active subscription when the free first-chapter rule does not apply.",
+        "Starts authenticated course, curriculum, chapter, or lesson generation. Chapter allowances cover the whole chapter, including later missing lessons and optional activities. Generated public content remains readable after the allowance is used. Private generation is restricted to the owner.",
       operationId: "createGeneration",
       requestBody: {
         content: { "application/json": { schema: createGenerationRequestSchema } },
@@ -37,7 +36,6 @@ export const generationPaths = {
         },
         "400": badRequestResponse,
         "401": unauthorizedResponse,
-        "402": paymentRequiredResponse,
         "403": forbiddenResponse,
         "404": notFoundResponse,
         "429": tooManyRequestsResponse,
@@ -59,14 +57,15 @@ export const generationPaths = {
         "400": validationErrorResponse,
         "404": notFoundResponse,
       },
-      security: PUBLIC_SECURITY,
+      security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Get a generation",
       tags: ["Workflows"],
     },
   },
   "/generations/{generationId}/events": {
     get: {
-      description: "Returns a resumable Server-Sent Events stream with generation step updates.",
+      description:
+        "Returns a resumable Server-Sent Events stream with generation step updates. Public content generation is readable by guests; private generation requires its owner. Unknown and inaccessible runs return 404.",
       operationId: "streamGenerationEvents",
       requestParams: { path: generationPathParamsSchema, query: workflowEventsQuerySchema },
       responses: {
@@ -77,7 +76,7 @@ export const generationPaths = {
         "400": validationErrorResponse,
         "404": notFoundResponse,
       },
-      security: PUBLIC_SECURITY,
+      security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Stream generation events (SSE)",
       tags: ["Workflows"],
     },

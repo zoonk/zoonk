@@ -136,3 +136,5 @@ const preloadGenerationSchema = z.discriminatedUnion("kind", [
 export const lessonPreloadResponseSchema = z
   .object({ generations: z.array(preloadGenerationSchema) })
   .meta({ id: "LessonPreloadResponse" });
+
+export const lessonNextQuerySchema = z.object({ view: z.enum(["path", "curriculum"]).optional() });

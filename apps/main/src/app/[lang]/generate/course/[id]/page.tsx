@@ -9,7 +9,7 @@ export const prefetch = "force-disabled";
 export default function GenerateCoursePage(props: PageProps<"/[lang]/generate/course/[id]">) {
   return (
     <Suspense fallback={<GenerateCoursePromptFallback />}>
-      <GenerateCoursePromptContent params={props.params} />
+      <GenerateCoursePromptContent params={props.params} searchParams={props.searchParams} />
     </Suspense>
   );
 }

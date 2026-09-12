@@ -1,6 +1,12 @@
+import { getCourseCurriculumCacheTag } from "@zoonk/core/cache-tags";
 import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
+import {
+  type CourseRevisionContext,
+  withCurrentCourseRevision,
+} from "@zoonk/core/workflows/internal/course-curriculum";
 import { type Chapter, prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
+import { revalidateTag } from "next/cache";
 
 export type ChapterImageInput = Pick<Chapter, "description" | "id" | "imageUrl" | "title">;
 
@@ -12,11 +18,20 @@ export type ChapterImageInput = Pick<Chapter, "description" | "id" | "imageUrl" 
 async function saveGeneratedChapterImage(input: {
   chapter: ChapterImageInput;
   imageUrl: string;
+  revisionContext: CourseRevisionContext;
 }): Promise<void> {
-  await prisma.chapter.updateMany({
-    data: { imageUrl: input.imageUrl },
-    where: { id: input.chapter.id, imageUrl: null },
+  const result = await withCurrentCourseRevision({
+    context: input.revisionContext,
+    operation: (transaction) =>
+      transaction.chapter.updateMany({
+        data: { imageUrl: input.imageUrl },
+        where: { id: input.chapter.id, imageUrl: null },
+      }),
   });
+
+  if (result.status === "applied") {
+    revalidateTag(getCourseCurriculumCacheTag(input.revisionContext.courseId), { expire: 0 });
+  }
 }
 
 /**
@@ -27,14 +42,19 @@ async function saveGeneratedChapterImage(input: {
 export async function generateChapterImageStep(chapter: ChapterImageInput): Promise<void> {
   "use step";
 
-  if (chapter.imageUrl) {
+  const currentChapter = await prisma.chapter.findUnique({
+    include: { course: true },
+    where: { id: chapter.id },
+  });
+
+  if (!currentChapter || currentChapter.imageUrl) {
     return;
   }
 
   const { data: imageUrl, error } = await generateContentThumbnailImage({
-    description: chapter.description,
+    description: currentChapter.description,
     kind: "chapter",
-    title: chapter.title,
+    title: currentChapter.title,
   });
 
   if (error) {
@@ -59,5 +79,12 @@ export async function generateChapterImageStep(chapter: ChapterImageInput): Prom
     throw missingImageError;
   }
 
-  await saveGeneratedChapterImage({ chapter, imageUrl });
+  await saveGeneratedChapterImage({
+    chapter: currentChapter,
+    imageUrl,
+    revisionContext: {
+      contentRevision: currentChapter.course.contentRevision,
+      courseId: currentChapter.courseId,
+    },
+  });
 }

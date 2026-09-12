@@ -39,12 +39,21 @@ async function createLessonCompletion(
     return errors.notFound();
   }
 
-  if (completion.status === "subscriptionRequired") {
-    return errors.paymentRequired();
-  }
-
   if (completion.status === "invalid") {
     return errors.unprocessableEntity("Answers do not complete the lesson");
+  }
+
+  if (completion.status === "superseded") {
+    return NextResponse.json(
+      {
+        error: {
+          code: "CURRICULUM_UPDATED",
+          details: { courseId: completion.courseId },
+          message: "The course was updated during this lesson. Continue from the current course.",
+        },
+      },
+      { status: 409 },
+    );
   }
 
   return NextResponse.json({

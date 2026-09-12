@@ -11,6 +11,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 import {
   type GenerationTriggerResponse,
+  getGenerationLimitResponse,
   getGenerationTriggerRequests,
   isGenerationEvents,
   isGenerationTrigger,
@@ -21,9 +22,9 @@ import {
  * Test Architecture for Lesson Generation Page
  *
  * The generation page has 3 access states:
- * 1. First chapter - Shows generation UI without subscription
- * 2. Authenticated later chapter without subscription - Shows upgrade CTA
- * 3. Authenticated with subscription - Shows generation UI
+ * 1. Guests read completed content and sign in before generating.
+ * 2. Authenticated learners can generate in any chapter within their allowance.
+ * 3. An exhausted chapter allowance shows an upgrade or period-specific limit.
  *
  * The generation flow interacts with 2 APIs on the API server:
  * 1. POST ${API_BASE_URL}/v1/generations - Starts the workflow, returns the generation resource
@@ -333,7 +334,7 @@ test.describe("Generate Lesson Page - Unauthenticated", () => {
     await expectLessonAuthenticationGate({ lessonId: lesson.id, page });
   });
 
-  test("requires login before checking a later lesson subscription", async ({ page }) => {
+  test("requires login before generating in a later chapter", async ({ page }) => {
     const { lesson } = await createPendingLesson({ chapterPosition: 1 });
     await page.goto(`/generate/l/${lesson.id}`);
 
@@ -366,24 +367,41 @@ test.describe("Generate Lesson Page - Unauthenticated", () => {
     });
 
     await expect(
+      page.getByRole("heading", { name: `E2E Ready Public Lesson ${uniqueId}` }),
+    ).toBeVisible();
+
+    await expect(
       getGenerationTriggerRequests({ page, targetType: "lesson" }),
     ).resolves.toHaveLength(0);
   });
 });
 
 test.describe("Generate Lesson Page - No Subscription", () => {
-  test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
+  test("shows an upgrade when the chapter allowance is exhausted", async ({
+    authenticatedPage,
+  }) => {
     const { lesson } = await createPendingLesson({ chapterPosition: 1 });
+
+    await setupMockApis(authenticatedPage, {
+      triggerResponse: getGenerationLimitResponse({
+        period: "month",
+        resource: "chapter",
+        viewer: "authenticated",
+      }),
+    });
+
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { name: "Monthly chapter limit reached" }),
+    ).toBeVisible();
 
     const upgradeLink = authenticatedPage.getByRole("link", { name: /^subscribe$/iu });
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
 
-  test("requires subscription to retry failed later-chapter generation", async ({
+  test("allows a free learner to retry failed generation in a later chapter", async ({
     authenticatedPage,
   }) => {
     const { lesson } = await createPendingLesson({ chapterPosition: 1 });
@@ -395,13 +413,28 @@ test.describe("Generate Lesson Page - No Subscription", () => {
       streamMessages: [{ status: "started", step: "getLesson" }],
     });
 
+    // The heading renders before the client resolves its bearer session and
+    // sends the generation command, so wait for that actual boundary.
+    const generationResponse = authenticatedPage.waitForResponse((response) =>
+      isGenerationTrigger({ request: response.request(), targetType: "lesson" }),
+    );
+
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { name: lesson.title ?? "" }),
+    ).toBeVisible();
+
+    const response = await generationResponse;
+    expect(response.status()).toBe(202);
+
+    await expect(
+      getGenerationTriggerRequests({ page: authenticatedPage, targetType: "lesson" }),
+    ).resolves.toHaveLength(1);
   });
 });
 
-test.describe("Generate Lesson Page - First Chapter Free", () => {
+test.describe("Generate Lesson Page - Chapter Allowance", () => {
   test("authenticated user without subscription sees generation UI for every first-chapter lesson", async ({
     authenticatedPage,
   }) => {
@@ -515,6 +548,10 @@ test.describe("Generate Lesson Page - With Subscription", () => {
       new RegExp(`/b/${AI_ORG_SLUG}/c/.+/ch/.+/l/${lesson.slug}`, "u"),
       { timeout: 10_000 },
     );
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: `E2E Ready Lesson ${uniqueId}` }),
+    ).toBeVisible();
   });
 
   test("shows generation UI and completes workflow", async ({
@@ -570,6 +607,10 @@ test.describe("Generate Lesson Page - With Subscription", () => {
     });
 
     await userWithoutProgress.waitForURL(/\/b\/ai\/c\/.+\/ch\/.+\/l\/.+$/u, { timeout: 10_000 });
+
+    await expect(
+      userWithoutProgress.getByRole("heading", { name: `E2E Generated Lesson ${uniqueId}` }),
+    ).toBeVisible();
   });
 
   test("shows time estimate during generation", async ({ userWithoutProgress, noProgressUser }) => {

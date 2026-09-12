@@ -9,7 +9,6 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
-import { openLessonTypeFilterMenu } from "./lesson-type-filter";
 
 type ContinueActionLabel = "Continue" | "Review" | "Start";
 
@@ -239,17 +238,28 @@ async function createTestCourseWithReviewChapters() {
  */
 async function createPageWithHiddenLessonKinds({
   browser,
+  chapterId,
+  course,
   hiddenLessonKinds,
 }: {
   browser: Browser;
+  chapterId: string;
+  course: { id: string; contentRevision: number };
   hiddenLessonKinds: LessonKind[];
 }) {
   const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
 
   const [context] = await Promise.all([
     browser.newContext({ storageState: user.storageState }),
-    prisma.userLearningProfile.create({
-      data: { preferences: { hiddenLessonKinds }, userId: user.id },
+    prisma.courseLearningPlan.create({
+      data: {
+        chapterIds: [chapterId],
+        contentRevision: course.contentRevision,
+        courseId: course.id,
+        depth: "overview",
+        hiddenLessonKinds,
+        userId: user.id,
+      },
     }),
   ]);
 
@@ -268,8 +278,8 @@ test.describe("Continue Lesson Link", () => {
     await expect(startLink).toBeVisible();
   });
 
-  test("course page Start link navigates to a lesson URL", async ({ page }) => {
-    const { course, chapter, lesson } = await createTestCourseWithLesson();
+  test("course page Start link guides new learners through setup", async ({ page }) => {
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -277,9 +287,7 @@ test.describe("Continue Lesson Link", () => {
     await expect(startLink).toBeVisible();
     await startLink.click();
 
-    await expect(page).toHaveURL(
-      new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}$`, "u"),
-    );
+    await expect(page).toHaveURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/start`);
   });
 
   test("chapter page shows Start link for unauthenticated user", async ({ page }) => {
@@ -302,18 +310,49 @@ test.describe("Continue Lesson Link", () => {
     await expect(createLessonLink).toHaveAttribute("href", `/generate/l/${lesson.id}`);
   });
 
-  test("course page falls back to first chapter when no playable step data", async ({ page }) => {
-    const { chapter, course } = await createTestCourseWithoutPlayableSteps();
+  test("chapter Start carries a guest's pending lesson intent directly to the login gate", async ({
+    page,
+  }) => {
+    const { chapter, course, lesson } = await createTestCourseWithPendingFirstLesson();
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
+    const startLink = getContinueActionLink({ label: "Start", page });
+    await expect(startLink).toHaveAttribute("href", `/generate/l/${lesson.id}`);
+    await startLink.click();
+    await expect(page).toHaveURL(`/generate/l/${lesson.id}`);
+
+    await expect(page.getByRole("link", { name: /log in/iu })).toHaveAttribute(
+      "href",
+      `/login?next=${encodeURIComponent(`/generate/l/${lesson.id}`)}`,
+    );
+
+    expect(await prisma.generationQuotaClaim.count({ where: { targetId: lesson.id } })).toBe(0);
+  });
+
+  test("chapter Start carries an authenticated pending lesson directly to generation", async ({
+    userWithoutProgress: page,
+  }) => {
+    const { chapter, course, lesson } = await createTestCourseWithPendingFirstLesson();
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
+
+    await expect(getContinueActionLink({ label: "Start", page })).toHaveAttribute(
+      "href",
+      `/generate/l/${lesson.id}`,
+    );
+
+    expect(await prisma.generationQuotaClaim.count({ where: { targetId: lesson.id } })).toBe(0);
+  });
+
+  test("course setup remains available when lessons have no playable step data", async ({
+    page,
+  }) => {
+    const { course } = await createTestCourseWithoutPlayableSteps();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
 
-    await expect(startLink).toHaveAttribute(
-      "href",
-      expect.stringContaining(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`),
-    );
+    await expect(startLink).toHaveAttribute("href", `/b/${AI_ORG_SLUG}/c/${course.slug}/start`);
   });
 
   test("chapter page falls back to first lesson when no playable step data", async ({ page }) => {
@@ -330,7 +369,7 @@ test.describe("Continue Lesson Link", () => {
     );
   });
 
-  test("shows Continue linking to the player when next lesson is ungenerated", async ({
+  test("a returning legacy learner continues directly to pending lesson generation", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
@@ -360,10 +399,7 @@ test.describe("Continue Lesson Link", () => {
     const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
     await expect(continueLink).toBeVisible();
 
-    await expect(continueLink).toHaveAttribute(
-      "href",
-      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${pendingLesson.slug}`,
-    );
+    await expect(continueLink).toHaveAttribute("href", `/generate/l/${pendingLesson.id}`);
   });
 
   test("authenticated user with progress sees Continue on course page", async ({
@@ -430,13 +466,14 @@ test.describe("Continue Lesson Link", () => {
     );
   });
 
-  test("hidden lesson types do not drive continue links or lesson progress", async ({
+  test("course-specific hidden teaching formats do not drive continuation or progress", async ({
     browser,
   }) => {
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
     const course = await courseFixture({
+      curriculumVersion: 2,
       isPublished: true,
       organizationId: org.id,
       slug: `e2e-cal-filter-course-${uniqueId}`,
@@ -446,6 +483,7 @@ test.describe("Continue Lesson Link", () => {
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
+      level: "overview",
       organizationId: org.id,
       position: 0,
       slug: `e2e-cal-filter-ch-${uniqueId}`,
@@ -467,7 +505,7 @@ test.describe("Continue Lesson Link", () => {
         chapterId: chapter.id,
         generationStatus: "completed",
         isPublished: true,
-        kind: "quiz",
+        kind: "tutorial",
         organizationId: org.id,
         position: 1,
         slug: `e2e-cal-filter-l2-${uniqueId}`,
@@ -487,7 +525,9 @@ test.describe("Continue Lesson Link", () => {
 
     const { context, page, user } = await createPageWithHiddenLessonKinds({
       browser,
-      hiddenLessonKinds: ["quiz"],
+      chapterId: chapter.id,
+      course,
+      hiddenLessonKinds: ["tutorial"],
     });
 
     await lessonProgressFixture({
@@ -515,11 +555,6 @@ test.describe("Continue Lesson Link", () => {
     await expect(chapterLink.getByText("1/2 done")).toBeVisible();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
-
-    await openLessonTypeFilterMenu({ page });
-    await expect(page.getByRole("menuitemcheckbox", { name: "Explanation" })).toBeDisabled();
-    await expect(page.getByRole("menuitemcheckbox", { name: "Quiz" })).toBeEnabled();
-    await page.keyboard.press("Escape");
 
     const chapterContinueLink = page
       .getByRole("main")
@@ -601,16 +636,13 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: "Continue 50% complete" });
+    const continueLink = authenticatedPage.getByRole("link", { exact: true, name: "Continue" });
     await expect(continueLink).toBeVisible();
 
-    await expect(continueLink).toHaveAttribute(
-      "href",
-      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter2.slug}`,
-    );
+    await expect(continueLink).toHaveAttribute("href", `/generate/ch/${chapter2.id}`);
   });
 
-  test("chapter page shows Review linking to the current chapter review when completed", async ({
+  test("a completed chapter revisits its teaching without requiring the optional review", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
@@ -651,7 +683,7 @@ test.describe("Continue Lesson Link", () => {
 
     await expect(reviewLink).toHaveAttribute(
       "href",
-      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${firstChapter.slug}/l/${firstReviewLesson.slug}`,
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${firstChapter.slug}/l/${firstMiddleLesson.slug}`,
     );
 
     await expect(reviewLink).not.toHaveAttribute(
@@ -704,7 +736,7 @@ test.describe("Continue Lesson Link", () => {
     );
   });
 
-  test("course page shows Review when all lessons completed", async ({
+  test("course page offers new learning choices after all lessons are complete", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
@@ -713,7 +745,6 @@ test.describe("Continue Lesson Link", () => {
       firstLesson,
       firstMiddleLesson,
       firstReviewLesson,
-      secondChapter,
       secondLesson,
       secondReviewLesson,
     } = await createTestCourseWithReviewChapters();
@@ -753,12 +784,13 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const reviewLink = getContinueActionLink({ label: "Review", page: authenticatedPage });
+    const reviewLink = authenticatedPage.getByRole("link", {
+      exact: true,
+      name: "Choose your next steps",
+    });
+
     await expect(reviewLink).toBeVisible();
 
-    await expect(reviewLink).toHaveAttribute(
-      "href",
-      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${secondChapter.slug}/l/${secondReviewLesson.slug}`,
-    );
+    await expect(reviewLink).toHaveAttribute("href", `/b/${AI_ORG_SLUG}/c/${course.slug}/start`);
   });
 });

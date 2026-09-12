@@ -137,7 +137,11 @@ test.describe("Lesson Start Tracking", () => {
     const { lesson, url } = await createTestLesson();
 
     await page.goto(url);
-    await expect(page.getByRole("heading", { name: "Progress won't be saved" })).toBeVisible();
+
+    await expect(page.locator('[data-slot="player-stage"]')).toHaveAttribute(
+      "data-phase",
+      "playing",
+    );
 
     const progress = await prisma.lessonProgress.findFirst({ where: { lessonId: lesson.id } });
 

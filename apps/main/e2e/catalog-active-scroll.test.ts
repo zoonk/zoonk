@@ -72,7 +72,7 @@ async function recordScrollIntoViewOptions(page: Page) {
 }
 
 /**
- * Toolbar shortcuts should animate for users who have not asked the browser to
+ * Current-item shortcuts should animate for users who have not asked the browser to
  * reduce motion.
  */
 async function expectSmoothScrollRequest(page: Page) {
@@ -267,37 +267,19 @@ test.describe("Catalog Active Scroll", () => {
     await expectTargetNearTop({ page: authenticatedPage, title: target.title });
   });
 
-  test("course page toolbar jumps to the current chapter", async ({
+  test("course page current-chapter shortcut uses smooth scrolling", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
     const target = await createScrollableCourseTarget({ userId: withProgressUser.id });
 
-    await authenticatedPage.emulateMedia({ reducedMotion: "reduce" });
-    await authenticatedPage.goto(target.url);
-    await expect(authenticatedPage.getByRole("heading", { level: 1 })).toBeVisible();
-
-    const currentChapterLink = authenticatedPage.getByRole("link", {
-      name: /^go to current chapter$/iu,
-    });
-
-    await expect(currentChapterLink).toBeVisible();
-
-    await currentChapterLink.click();
-    await expectTargetNearTop({ page: authenticatedPage, title: target.title });
-  });
-
-  test("course page toolbar uses smooth scrolling", async ({
-    authenticatedPage,
-    withProgressUser,
-  }) => {
-    const target = await createScrollableCourseTarget({ userId: withProgressUser.id });
-
+    await authenticatedPage.emulateMedia({ reducedMotion: "no-preference" });
     await recordScrollIntoViewOptions(authenticatedPage);
     await authenticatedPage.goto(target.url);
     await expect(authenticatedPage.getByRole("heading", { level: 1 })).toBeVisible();
 
-    await authenticatedPage.getByRole("link", { name: /^go to current chapter$/iu }).click();
+    await scrollDown(authenticatedPage);
+    await authenticatedPage.getByRole("link", { name: /^current chapter$/iu }).click();
 
     await expectSmoothScrollRequest(authenticatedPage);
   });

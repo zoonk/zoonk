@@ -1,6 +1,5 @@
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
-import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
-import { type Chapter, type Course } from "@zoonk/db";
+import { type Chapter } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
@@ -35,7 +34,11 @@ async function setupCourseContent({
   existing: Awaited<ReturnType<typeof getOrCreateCourse>>["existing"];
   workflowRunId: string;
 }): Promise<Chapter[]> {
-  const chapters = await setupCourse(course, description, existing);
+  const chapters = await setupCourse(
+    { ...course, generationRunId: workflowRunId },
+    description,
+    existing,
+  );
 
   await completeCourseSetupStep({
     courseId: course.courseId,
@@ -48,40 +51,13 @@ async function setupCourseContent({
 }
 
 /**
- * Starts optional chapter thumbnail generation without letting artwork setup
+ * Starts required chapter thumbnail generation without letting artwork setup
  * failures change the already-completed course status.
  */
 async function startChapterImagesWithoutFailingCourse(courseId: string): Promise<void> {
   await startChapterImagesWorkflowStep({ courseId }).catch((error: unknown) => {
     logError("Chapter image workflow failed to start after course setup completed", error);
   });
-}
-
-/**
- * Starts the optional image workflow for every course and generates the first
- * chapter only for language courses. Regular courses already generate their
- * introduction lessons during setup, so they no longer need another chapter
- * workflow to start automatically.
- */
-async function startChapterImagesAndGenerateFirstLanguageChapter({
-  chapters,
-  courseId,
-  format,
-}: {
-  chapters: Chapter[];
-  courseId: string;
-  format: Course["format"];
-}): Promise<void> {
-  const firstLanguageChapter = format === "language" ? chapters[0] : null;
-
-  const [, chapterResult] = await Promise.allSettled([
-    startChapterImagesWithoutFailingCourse(courseId),
-    firstLanguageChapter ? chapterGenerationWorkflow(firstLanguageChapter.id) : Promise.resolve(),
-  ]);
-
-  if (chapterResult.status === "rejected") {
-    throw chapterResult.reason;
-  }
 }
 
 /** Keeps identity validation failures inside the same retryable initialization outcome. */
@@ -168,7 +144,7 @@ export async function courseGenerationWorkflow({
     return;
   }
 
-  const chapters = await setupCourseContent({
+  await setupCourseContent({
     course: courseSetup.course,
     coursePromptId,
     description: null,
@@ -187,12 +163,6 @@ export async function courseGenerationWorkflow({
     throw error;
   });
 
-  // Start post-setup workflows outside the course error handling.
-  // Language chapter generation has its own error handling that marks the chapter as failed.
-  // We don't want chapter failures to mark the entire course as failed.
-  await startChapterImagesAndGenerateFirstLanguageChapter({
-    chapters,
-    courseId: courseSetup.course.courseId,
-    format: courseSetup.course.format,
-  });
+  // Artwork retries must not change the completed curriculum's status.
+  await startChapterImagesWithoutFailingCourse(courseSetup.course.courseId);
 }

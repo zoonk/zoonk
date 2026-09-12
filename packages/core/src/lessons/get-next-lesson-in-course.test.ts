@@ -322,13 +322,13 @@ describe(getNextLessonInCourse, () => {
         chapterId: testChapter.id,
         generationStatus: "completed",
         isPublished: true,
-        kind: "practice",
+        kind: "tutorial",
         organizationId: testOrg.id,
         position: 2,
       }),
     ]);
 
-    const practiceLesson = lessons[2];
+    const tutorialLesson = lessons[2];
 
     const result = await getNextLessonInCourse({
       courseId: testCourse.id,
@@ -338,10 +338,10 @@ describe(getNextLessonInCourse, () => {
 
     expect(result).toMatchObject({
       chapterSlug: testChapter.slug,
-      lessonId: practiceLesson.id,
-      lessonKind: "practice",
+      lessonId: tutorialLesson.id,
+      lessonKind: "tutorial",
       lessonPosition: 2,
-      lessonSlug: practiceLesson.slug,
+      lessonSlug: tutorialLesson.slug,
     });
   });
 

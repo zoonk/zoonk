@@ -221,7 +221,7 @@ describe("lesson question answer lifecycle", () => {
     ).resolves.toMatchObject([{ status: "running" }, { status: "pending" }]);
   });
 
-  it("rechecks paid lesson access before starting answer generation", async () => {
+  it("keeps generated lesson access after a subscription ends", async () => {
     const { question, user } = await createLessonQuestionFixture({ chapterPosition: 1 });
 
     await prisma.subscription.updateMany({
@@ -231,11 +231,11 @@ describe("lesson question answer lifecycle", () => {
 
     await expect(
       claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-5.6-luna" }),
-    ).resolves.toStrictEqual({ status: "subscriptionRequired" });
+    ).resolves.toMatchObject({ status: "ready" });
 
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
-    ).resolves.toMatchObject({ generationRevision: 0, status: "pending" });
+    ).resolves.toMatchObject({ generationRevision: 1, status: "running" });
   });
 
   it("does not answer retained history after its lesson is removed", async () => {

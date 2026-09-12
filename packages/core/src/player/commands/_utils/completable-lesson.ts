@@ -1,4 +1,5 @@
 import { type GenerationStatus, getPublishedLessonWhere } from "@zoonk/db";
+import { getReadableCourseWhere } from "../../../courses/course-access";
 
 /**
  * Player write commands must only act on lessons the learner can reach through
@@ -15,7 +16,7 @@ export function getCompletableLessonWhere({
   userId: string;
 }) {
   return getPublishedLessonWhere({
-    courseWhere: { OR: [{ organization: { kind: "brand" } }, { organizationId: null, userId }] },
+    courseWhere: getReadableCourseWhere(userId),
     lessonWhere: { generationStatus, id: lessonId },
   });
 }

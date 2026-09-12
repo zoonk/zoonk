@@ -10,10 +10,14 @@ function lessonTitleForPrompt(lesson: { title: string | null }): string[] {
   return lesson.title ? [lesson.title] : [];
 }
 
-export async function getOtherExplanationLessonTitles(context: LessonContext): Promise<string[]> {
+export async function getOtherTeachingLessonTitles(context: LessonContext): Promise<string[]> {
   const lessons = await prisma.lesson.findMany({
     orderBy: { position: "asc" },
-    where: { chapterId: context.chapterId, id: { not: context.id }, kind: "explanation" },
+    where: {
+      chapterId: context.chapterId,
+      id: { not: context.id },
+      kind: { in: ["explanation", "tutorial", "custom"] },
+    },
   });
 
   return lessons.flatMap((lesson) => lessonTitleForPrompt(lesson));
@@ -24,13 +28,15 @@ export async function getOtherExplanationLessonTitles(context: LessonContext): P
  * assess. Using the nearest previous explanation keeps generation 1:1 instead
  * of inheriting the older multi-explanation range behavior.
  */
-export async function getPreviousExplanationSourceLesson(context: LessonContext) {
+export async function getOptionalActivitySourceLesson(context: LessonContext) {
   const lesson = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
     where: {
       chapterId: context.chapterId,
-      kind: "explanation",
-      position: { lt: context.position },
+      kind: { in: ["explanation", "tutorial", "custom"] },
+      ...(context.sourceLessonId
+        ? { id: context.sourceLessonId }
+        : { position: { lt: context.position } }),
     },
   });
 

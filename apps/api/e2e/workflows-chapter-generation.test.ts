@@ -191,7 +191,7 @@ test.describe("Chapter Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns 402 when user has no active subscription", async () => {
+  test("allows a free learner to start beyond chapter one within their chapter allowance", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Chapter Test ${uniqueId}`;
 
@@ -231,14 +231,11 @@ test.describe("Chapter Generation Workflow API", () => {
       data: { target: { id: chapter.id, type: "chapter" } },
     });
 
-    // Non-first chapter without subscription should return 402
-    expect(response.status()).toBe(402);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("PAYMENT_REQUIRED");
-    expect(body.error.message).toBe("Active subscription required");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     // Cleanup
     await prisma.chapter.delete({ where: { id: chapter.id } });
@@ -398,7 +395,7 @@ test.describe("Chapter Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("rechecks subscription access before each workflow start", async () => {
+  test("keeps the free chapter allowance available after a subscription is canceled", async () => {
     const { apiContext, user } = await createSubscribedApiContext({
       baseURL,
       prefix: "chapter-subscription-refresh",
@@ -421,7 +418,7 @@ test.describe("Chapter Generation Workflow API", () => {
       data: { target: { id: secondChapter.id, type: "chapter" } },
     });
 
-    expect(secondResponse.status()).toBe(402);
+    expect(secondResponse.status()).toBe(202);
 
     await apiContext.dispose();
   });

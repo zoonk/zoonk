@@ -1,4 +1,5 @@
 import { getPublishedLessonWhere } from "@zoonk/db";
+import { getReadableCourseWhere } from "../courses/course-access";
 
 /**
  * Restricts raw-ID player reads to curriculum that is public today. Brand
@@ -14,9 +15,7 @@ export function getReadableLessonWhere({
   userId: string | null;
 }) {
   return getPublishedLessonWhere({
-    courseWhere: userId
-      ? { OR: [{ organization: { kind: "brand" } }, { organizationId: null, userId }] }
-      : { organization: { kind: "brand" } },
+    courseWhere: getReadableCourseWhere(userId),
     lessonWhere: { id: lessonId },
   });
 }

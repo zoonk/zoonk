@@ -9,8 +9,8 @@ type ResourceLimits = Record<GenerationQuotaResource, PeriodLimits>;
 type GenerationQuotaRule = { limit: number; period: GenerationQuotaPeriod; periodStart: Date };
 
 const LESSON_GENERATION_LIMITS: Record<GenerationQuotaViewer, PeriodLimits> = {
-  authenticated: { day: 50, month: 300 },
-  guest: { day: 20 },
+  authenticated: { day: 100 },
+  guest: { day: 0 },
   subscriber: { day: 400, month: 5000 },
 };
 
@@ -22,20 +22,23 @@ const LESSON_QUESTION_LIMITS: Record<GenerationQuotaViewer, PeriodLimits> = {
 
 const GENERATION_LIMITS: Record<GenerationQuotaViewer, ResourceLimits> = {
   authenticated: {
-    chapter: { day: 50 },
-    course: { day: 5, month: 10 },
+    chapter: { month: 3 },
+    course: { day: 1, month: 1 },
+    learningRequest: { day: 100 },
     lesson: LESSON_GENERATION_LIMITS.authenticated,
     lessonQuestion: LESSON_QUESTION_LIMITS.authenticated,
   },
   guest: {
-    chapter: { day: 50 },
-    course: { day: 3, month: 10 },
+    chapter: { day: 0, month: 0 },
+    course: { day: 0, month: 0 },
+    learningRequest: { day: 0 },
     lesson: LESSON_GENERATION_LIMITS.guest,
     lessonQuestion: LESSON_QUESTION_LIMITS.guest,
   },
   subscriber: {
-    chapter: { day: 50 },
-    course: { day: 20, month: 60 },
+    chapter: { day: 20, month: 100 },
+    course: { day: 2, month: 2 },
+    learningRequest: { day: 500 },
     lesson: LESSON_GENERATION_LIMITS.subscriber,
     lessonQuestion: LESSON_QUESTION_LIMITS.subscriber,
   },

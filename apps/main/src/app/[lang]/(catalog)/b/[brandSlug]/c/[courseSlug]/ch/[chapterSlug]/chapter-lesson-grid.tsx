@@ -1,8 +1,13 @@
+import { OptionalPractice } from "@/components/learning/optional-practice";
 import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { Link } from "@/i18n/navigation";
 import { getChapter } from "@zoonk/core/chapters/get-by-slug";
 import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
-import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
+import { listChapterOptionalActivities } from "@zoonk/core/lessons/optional-activities";
+import { getSession } from "@zoonk/core/users/session";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ChapterNotGenerated } from "./chapter-not-generated";
 import { LessonList } from "./lesson-list";
@@ -13,23 +18,32 @@ import { LessonList } from "./lesson-list";
  */
 export async function ChapterLessonGrid({
   params,
-}: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">, "params">) {
+  searchParams,
+}: Pick<
+  PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">,
+  "params" | "searchParams"
+>) {
   const { brandSlug, chapterSlug, courseSlug } = await params;
+  const search = await searchParams;
+  const view = search.view === "curriculum" ? "curriculum" : "teaching";
 
-  const [chapter, lessonVisibility] = await Promise.all([
-    getChapter({ brandSlug, chapterSlug, courseSlug }),
-    getLessonVisibility(),
-  ]);
-
-  const { hiddenLessonKinds } = lessonVisibility;
+  const chapter = await getChapter({ brandSlug, chapterSlug, courseSlug });
 
   if (!chapter) {
     notFound();
   }
 
-  const lessons = await listChapterLessons({ chapterId: chapter.id });
+  const [lessons, optional, session] = await Promise.all([
+    listChapterLessons({ chapterId: chapter.id, view }),
+    listChapterOptionalActivities({ chapterId: chapter.id, view }),
+    getSession(),
+  ]);
 
-  if (brandSlug === AI_ORG_SLUG && lessons.length === 0) {
+  if (
+    (brandSlug === AI_ORG_SLUG || brandSlug === "me") &&
+    chapter.generationStatus !== "completed" &&
+    lessons.length === 0
+  ) {
     return (
       <ChapterNotGenerated
         chapterId={chapter.id}
@@ -38,15 +52,37 @@ export async function ChapterLessonGrid({
     );
   }
 
+  const t = await getExtracted();
+
   return (
-    <LessonList
-      brandSlug={brandSlug}
-      chapterId={chapter.id}
-      chapterSlug={chapterSlug}
-      courseSlug={courseSlug}
-      hiddenLessonKinds={hiddenLessonKinds}
-      isLanguageCourse={Boolean(chapter.course.targetLanguage)}
-      lessons={lessons}
-    />
+    <>
+      <LessonList
+        brandSlug={brandSlug}
+        chapterId={chapter.id}
+        chapterSlug={chapterSlug}
+        courseSlug={courseSlug}
+        lessons={lessons}
+        view={view}
+      />
+      {optional.status === "ready" && (
+        <OptionalPractice groups={optional.groups} isAuthenticated={Boolean(session)}>
+          {optional.reviews.length > 0 && (
+            <div className="space-y-2 py-4">
+              {optional.reviews.map((review, index) => (
+                <Link
+                  className={buttonVariants({ className: "min-h-11", variant: "outline" })}
+                  key={review.id}
+                  href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${review.slug}`}
+                >
+                  {optional.reviews.length === 1
+                    ? t("Review what you've learned")
+                    : review.title || t("Review {number}", { number: String(index + 1) })}
+                </Link>
+              ))}
+            </div>
+          )}
+        </OptionalPractice>
+      )}
+    </>
   );
 }

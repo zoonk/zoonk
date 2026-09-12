@@ -6,6 +6,7 @@ type LessonPlayerViewerInput = {
   chapterSlug: string;
   courseSlug: string;
   isAuthenticated: boolean;
+  isPrivate?: boolean;
   lessonSlug: string;
   userEmail?: string;
   userName: string | null;
@@ -19,12 +20,13 @@ export function getPlayerViewer({
   chapterSlug,
   courseSlug,
   isAuthenticated,
+  isPrivate = false,
   lessonSlug,
   userEmail,
   userName,
 }: LessonPlayerViewerInput) {
   return {
-    completionFooter: (
+    completionFooter: isPrivate ? undefined : (
       <ContentFeedback
         className="pt-8"
         defaultEmail={userEmail}

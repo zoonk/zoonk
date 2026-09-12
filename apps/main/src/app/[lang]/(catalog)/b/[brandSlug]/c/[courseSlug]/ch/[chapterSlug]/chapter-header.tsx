@@ -28,8 +28,6 @@ export function ChapterHeader({
   courseSlug: string;
   variant?: "default" | "sidebar";
 }) {
-  const chapterNumber = chapter.position + 1;
-
   const chapterImage =
     chapter.imageUrl ?? getDefaultChapterImage({ categories: chapter.course.categories });
 
@@ -50,9 +48,7 @@ export function ChapterHeader({
 
         <MediaCardTrigger>
           <MediaCardHeader>
-            <MediaCardTitle>
-              <span className="text-muted-foreground">{chapterNumber}.</span> {chapter.title}
-            </MediaCardTitle>
+            <MediaCardTitle>{chapter.title}</MediaCardTitle>
             <MediaCardIndicator />
           </MediaCardHeader>
           <MediaCardDescription>{chapter.description}</MediaCardDescription>

@@ -417,7 +417,7 @@ describe(getContinueLessonTarget, () => {
     });
   });
 
-  it("returns the last chapter review lesson when a durable course is complete", async () => {
+  it("returns the last teaching lesson when a durable course is complete", async () => {
     const [user, tree] = await Promise.all([userFixture(), createTwoChapterCourseTree()]);
 
     await prisma.courseCompletion.create({ data: { courseId: tree.course.id, userId: user.id } });
@@ -432,8 +432,8 @@ describe(getContinueLessonTarget, () => {
       completed: true,
       courseSlug: tree.course.slug,
       hasStarted: true,
-      lessonPosition: 1,
-      lessonSlug: tree.reviewLesson.slug,
+      lessonPosition: 0,
+      lessonSlug: tree.secondLesson.slug,
     });
   });
 

@@ -1,13 +1,24 @@
 "use client";
 
-import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
-import { type Dispatch, useCallback } from "react";
+import {
+  type CompletionInput,
+  type CompletionResult,
+} from "@zoonk/core/player/contracts/completion-input-schema";
+import { type Dispatch, useCallback, useRef, useState } from "react";
 import { checkStep } from "./check-step";
 import {
   rememberCompletionMilestones,
   rememberCompletionProgress,
 } from "./completion-milestone-storage";
-import { getCompletionMilestones } from "./completion-milestones";
+import {
+  getCompletionMilestones,
+  getInitialCompletionMilestoneIndex,
+} from "./completion-milestones";
+import {
+  type CompletionPersistence,
+  type PlayerCompletionHandler,
+  type PlayerCompletionOutcome,
+} from "./completion-persistence";
 import { buildCompletionInput, getPlayerTransition } from "./player-controller";
 import { type PlayerStepChangeEvent, getPlayerStepChangeEvent } from "./player-events";
 import {
@@ -23,8 +34,8 @@ export type PlayerActions = {
   navigateNext: () => void;
   navigatePrev: () => void;
   restart: () => void;
+  retryCompletion: () => void;
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  start: () => void;
 };
 
 /**
@@ -65,29 +76,85 @@ export function usePlayerActions({
   state,
 }: {
   dispatch: Dispatch<Parameters<typeof playerReducer>[1]>;
-  onComplete: (input: CompletionInput) => void;
+  onComplete: PlayerCompletionHandler;
   onStepChange?: (event: PlayerStepChangeEvent) => void;
   state: PlayerState;
 }) {
   const currentStep = state.steps[state.currentStepIndex];
+  const [completionPersistence, setCompletionPersistence] = useState<CompletionPersistence>("idle");
+  const pendingCompletion = useRef<{ input: CompletionInput; state: PlayerState } | null>(null);
+  const saving = useRef(false);
+
+  const finishPersistence = useCallback(
+    (outcome: PlayerCompletionOutcome | undefined) => {
+      saving.current = false;
+      const pending = pendingCompletion.current;
+
+      if (!pending) {
+        return;
+      }
+
+      if (outcome && outcome.status !== "completed") {
+        setCompletionPersistence(outcome.status);
+        return;
+      }
+
+      const completedState = confirmCompletion(pending.state, outcome?.result);
+      rememberCompletedStateMilestones(completedState);
+      dispatch({ state: completedState, type: "CONFIRM_COMPLETION" });
+      pendingCompletion.current = null;
+      setCompletionPersistence("idle");
+    },
+    [dispatch],
+  );
+
+  const persistCompletion = useCallback(() => {
+    if (saving.current || !pendingCompletion.current) {
+      return;
+    }
+
+    saving.current = true;
+    setCompletionPersistence("saving");
+
+    try {
+      const outcome = onComplete(pendingCompletion.current.input);
+
+      if (outcome instanceof Promise) {
+        void outcome.then(finishPersistence).catch(() => finishPersistence({ status: "failed" }));
+      } else {
+        finishPersistence(outcome ?? undefined);
+      }
+    } catch {
+      finishPersistence({ status: "failed" });
+    }
+  }, [finishPersistence, onComplete]);
 
   const dispatchTransition = useCallback(
     (action: PlayerAction) => {
-      const transition = getPlayerTransition(state, action);
-      dispatch(action);
-
-      if (transition.shouldPersistCompletion) {
-        rememberCompletedStateMilestones(transition.nextState);
-        onComplete(buildCompletionInput({ state: transition.nextState }));
+      if (pendingCompletion.current) {
+        return;
       }
 
+      const transition = getPlayerTransition(state, action);
+
+      if (transition.shouldPersistCompletion) {
+        pendingCompletion.current = {
+          input: buildCompletionInput({ state: transition.nextState }),
+          state: transition.nextState,
+        };
+
+        persistCompletion();
+        return;
+      }
+
+      dispatch(action);
       const stepChangeEvent = getPlayerStepChangeEvent({ nextState: transition.nextState, state });
 
       if (stepChangeEvent) {
         onStepChange?.(stepChangeEvent);
       }
     },
-    [dispatch, onComplete, onStepChange, state],
+    [dispatch, onStepChange, persistCompletion, state],
   );
 
   const selectAnswer = useCallback(
@@ -133,17 +200,37 @@ export function usePlayerActions({
     dispatchTransition({ type: "RESTART" });
   }, [dispatchTransition]);
 
-  const start = useCallback(() => {
-    dispatchTransition({ type: "START" });
-  }, [dispatchTransition]);
-
   return {
     check,
+    completionPersistence,
     continue: handleContinue,
     navigateNext,
     navigatePrev,
     restart,
+    retryCompletion: persistCompletion,
     selectAnswer,
-    start,
+  };
+}
+
+/** The captured timing stays stable through a retry while rewards come from the persisted receipt. */
+function confirmCompletion(state: PlayerState, result?: CompletionResult): PlayerState {
+  const completion =
+    state.completion && result ? { ...state.completion, ...result } : state.completion;
+
+  if (!completion) {
+    return state;
+  }
+
+  return {
+    ...state,
+    completion,
+    completionMilestoneIndex: getInitialCompletionMilestoneIndex({
+      completion,
+      lessonDurationSeconds: completion?.lessonDurationSeconds,
+      localDate: state.localDate,
+      previousTotalBrainPower: state.totalBrainPower,
+      progressSnapshot: state.progressSnapshot,
+      shownMilestoneKeys: state.shownCompletionMilestoneKeys,
+    }),
   };
 }

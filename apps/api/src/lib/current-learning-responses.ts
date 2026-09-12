@@ -12,9 +12,11 @@ type CurrentUserCourse = NonNullable<
  */
 export function toCurrentUserCourse(course: CurrentUserCourse) {
   return {
+    brandSlug: course.userId ? "me" : (course.organization?.slug ?? ""),
     description: course.description,
     id: course.id,
     imageUrl: course.imageUrl,
+    isPrivate: course.userId !== null,
     language: course.language,
     organization: course.organization ? toOrganizationSummary(course.organization) : null,
     slug: course.slug,

@@ -21,37 +21,8 @@ import {
   GridItemStatusIdle,
   GridItemStatusProgress,
   GridItemTitle,
-  type GridItemTone,
 } from "@zoonk/ui/components/grid";
 import { getExtracted } from "next-intl/server";
-import { CourseCurriculumPendingNotice } from "./course-curriculum-pending-notice";
-
-const CHAPTERS_PER_DIFFICULTY_BAND = 10;
-
-const CHAPTER_DIFFICULTY_TONES = [
-  "white",
-  "yellow",
-  "orange",
-  "green",
-  "blue",
-  "purple",
-  "brown",
-  "red",
-  "gray",
-  "black",
-] as const;
-
-/**
- * Chapter order is the closest signal we have for difficulty, so we map every
- * ten chapters onto the belt progression from easy to hard.
- */
-function getChapterPositionTone({ position }: { position: number }): GridItemTone {
-  const bandIndex = Math.floor(position / CHAPTERS_PER_DIFFICULTY_BAND);
-
-  return (
-    CHAPTER_DIFFICULTY_TONES[Math.min(bandIndex, CHAPTER_DIFFICULTY_TONES.length - 1)] ?? "black"
-  );
-}
 
 /**
  * Chapter progress has one visual status, but the rules depend on both the
@@ -112,6 +83,7 @@ function ChapterListItemStatus({
 function ChapterTile({
   brandSlug,
   chapter,
+  chapterNumber,
   completedLabel,
   completedLessons,
   courseSlug,
@@ -119,9 +91,11 @@ function ChapterTile({
   inProgressLabel,
   notStartedLabel,
   totalLessons,
+  view,
 }: {
   brandSlug: string;
   chapter: CourseChapter;
+  chapterNumber: number;
   completedLabel: string;
   completedLessons: number;
   courseSlug: string;
@@ -129,13 +103,16 @@ function ChapterTile({
   inProgressLabel: string;
   notStartedLabel: string;
   totalLessons: number;
+  view: "path" | "curriculum";
 }) {
-  const chapterNumber = chapter.position + 1;
-
   return (
     <CatalogGridItem
       className="min-h-64"
-      href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
+      href={
+        view === "curriculum"
+          ? `/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}?view=curriculum`
+          : `/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`
+      }
       id={chapter.id}
       prefetch={chapter.generationStatus === "completed"}
     >
@@ -144,9 +121,7 @@ function ChapterTile({
       </GridItemMedia>
 
       <GridItemContent>
-        <GridItemPosition tone={getChapterPositionTone({ position: chapter.position })}>
-          {chapterNumber}
-        </GridItemPosition>
+        <GridItemPosition tone="white">{chapterNumber}</GridItemPosition>
         <GridItemTitle>{chapter.title}</GridItemTitle>
         {chapter.description && <GridItemDescription>{chapter.description}</GridItemDescription>}
       </GridItemContent>
@@ -170,7 +145,7 @@ export async function ChapterList({
   courseSlug,
   defaultChapterImage,
   hiddenLessonKinds,
-  isCurriculumPending,
+  view,
 }: {
   brandSlug: string;
   chapters: CourseChapter[];
@@ -178,7 +153,7 @@ export async function ChapterList({
   courseSlug: string;
   defaultChapterImage: string;
   hiddenLessonKinds: LessonKind[];
-  isCurriculumPending: boolean;
+  view: "path" | "curriculum";
 }) {
   if (chapters.length === 0) {
     return null;
@@ -188,7 +163,7 @@ export async function ChapterList({
 
   const [activeTarget, completionData] = await Promise.all([
     getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { courseId } }),
-    getCatalogChapterProgress({ courseId, excludedLessonKinds: hiddenLessonKinds }),
+    getCatalogChapterProgress({ courseId, excludedLessonKinds: hiddenLessonKinds, view }),
   ]);
 
   const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));
@@ -200,11 +175,10 @@ export async function ChapterList({
 
   return (
     <CatalogGridContent activeItemKey={activeChapterKey} activeLabel={t("Current chapter")}>
-      {isCurriculumPending && <CourseCurriculumPendingNotice />}
       <CatalogGridSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogGridEmpty>{t("No chapters found")}</CatalogGridEmpty>
         <GridGroup variant="pane">
-          {chapters.map((chapter) => {
+          {chapters.map((chapter, index) => {
             const completion = completionMap.get(chapter.id);
             const completedLessons = completion?.completedLessons ?? 0;
             const totalLessons = completion?.totalLessons ?? chapter._count.lessons;
@@ -213,6 +187,7 @@ export async function ChapterList({
               <ChapterTile
                 brandSlug={brandSlug}
                 chapter={chapter}
+                chapterNumber={index + 1}
                 completedLabel={t("Completed")}
                 completedLessons={completedLessons}
                 courseSlug={courseSlug}
@@ -224,6 +199,7 @@ export async function ChapterList({
                 key={chapter.id}
                 notStartedLabel={t("Not started")}
                 totalLessons={totalLessons}
+                view={view}
               />
             );
           })}

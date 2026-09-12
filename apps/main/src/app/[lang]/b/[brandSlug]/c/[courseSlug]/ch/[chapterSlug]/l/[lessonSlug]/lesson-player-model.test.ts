@@ -67,6 +67,30 @@ describe(buildLessonProgressMeta, () => {
 });
 
 describe(buildLessonPlayerModel, () => {
+  it("continues the confirmed unfinished path after visiting the last authored lesson first", () => {
+    const model = buildLessonPlayerModel({
+      brandSlug: "ai",
+      chapterSlug: "chapter",
+      completionNextTarget: {
+        brandSlug: "ai",
+        chapterId: "chapter-id",
+        chapterSlug: "chapter",
+        courseId: "course-id",
+        courseSlug: "course",
+        generationStatus: "completed",
+        lessonId: "first-id",
+        lessonSlug: "first",
+      },
+      courseSlug: "course",
+      lessonSlug: "last",
+      nextLesson: null,
+    });
+
+    expect(model.milestone).toBeNull();
+    expect(model.navigation.nextLessonHref).toBe("/b/ai/c/course/ch/chapter/l/first");
+    expect(model.onNextHref).toBe(model.navigation.nextLessonHref);
+  });
+
   it("returns no milestone when another lesson exists in the same chapter", () => {
     const model = buildLessonPlayerModel({
       brandSlug: "brand",
@@ -99,6 +123,7 @@ describe(buildLessonPlayerModel, () => {
     const model = buildLessonPlayerModel({
       brandSlug: "brand",
       chapterSlug: "chapter-1",
+      completionMilestone: "chapter",
       courseSlug: "course",
       lessonSlug: "current-lesson",
       nextLesson: { chapterSlug: "chapter-2", lessonSlug: "lesson-2", lessonTitle: "Lesson 2" },
@@ -117,6 +142,7 @@ describe(buildLessonPlayerModel, () => {
     const model = buildLessonPlayerModel({
       brandSlug: "brand",
       chapterSlug: "chapter-1",
+      completionMilestone: "course",
       courseSlug: "course",
       lessonSlug: "current-lesson",
       nextLesson: null,
@@ -135,6 +161,7 @@ describe(buildLessonPlayerModel, () => {
     const model = buildLessonPlayerModel({
       brandSlug: "brand",
       chapterSlug: "chapter-1",
+      completionMilestone: "chapter",
       courseSlug: "course",
       lessonSlug: "current-lesson",
       nextChapter: { brandSlug: "brand", chapterSlug: "chapter-2", courseSlug: "course" },
@@ -148,6 +175,35 @@ describe(buildLessonPlayerModel, () => {
     });
 
     expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-2");
+  });
+
+  it("never infers completion from visiting the final lesson", () => {
+    const model = buildLessonPlayerModel({
+      brandSlug: "brand",
+      chapterSlug: "chapter",
+      courseSlug: "course",
+      lessonSlug: "final",
+      nextLesson: null,
+    });
+
+    expect(model.milestone).toBeNull();
+  });
+
+  it("keeps full curriculum browsing separate from saved path navigation", () => {
+    const model = buildLessonPlayerModel({
+      brandSlug: "me",
+      chapterSlug: "chapter",
+      courseSlug: "course",
+      lessonSlug: "first",
+      nextLesson: { chapterSlug: "chapter", lessonSlug: "next", lessonTitle: null },
+      view: "curriculum",
+    });
+
+    expect(model.navigation.chapterHref).toBe("/b/me/c/course/ch/chapter?view=curriculum");
+
+    expect(model.navigation.nextLessonHref).toBe(
+      "/b/me/c/course/ch/chapter/l/next?view=curriculum",
+    );
   });
 
   it("returns a login href that brings learners back to the current lesson", () => {

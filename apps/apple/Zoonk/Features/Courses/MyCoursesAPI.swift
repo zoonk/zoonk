@@ -9,6 +9,7 @@ enum MyCoursesAPIError: Error, Equatable, Sendable {
 
 protocol MyCoursesAPIClient: Sendable {
   func listCourses(request: MyCoursesRequest) async throws -> MyCoursesPage
+  func listTracks(cursor: String?, token: String) async throws -> MyTracksPage
 }
 
 struct MyCoursesAPI: MyCoursesAPIClient, @unchecked Sendable {
@@ -26,7 +27,8 @@ struct MyCoursesAPI: MyCoursesAPIClient, @unchecked Sendable {
           let output = try await client.listCurrentUserCourses(
             .init(
               query: .init(
-                cursor: request.query.cursor, limit: request.query.limit, query: request.query.query
+                cursor: request.query.cursor, limit: request.query.limit,
+                query: request.query.query, standaloneOnly: ._true
               )))
 
           switch output {
@@ -36,6 +38,27 @@ struct MyCoursesAPI: MyCoursesAPIClient, @unchecked Sendable {
             throw MyCoursesAPIError.unauthorized
           case .badRequest, .internalServerError, .undocumented:
             throw MyCoursesAPIError.unavailable
+          }
+        }
+      ))
+  }
+
+  func listTracks(cursor: String?, token: String) async throws -> MyTracksPage {
+    try await perform(
+      (
+        token: token,
+        operation: { client in
+          let output = try await client.listCurrentUserTracks(
+            .init(query: .init(cursor: cursor, limit: 24)))
+          switch output {
+          case .ok(let response):
+            let payload = try response.body.json
+            return MyTracksPage(
+              tracks: payload.data.map {
+                MyTrack(id: $0.id, title: $0.title, totalCourses: $0.progress.totalCourses)
+              }, nextCursor: payload.pagination.nextCursor)
+          case .unauthorized: throw MyCoursesAPIError.unauthorized
+          case .badRequest, .internalServerError, .undocumented: throw MyCoursesAPIError.unavailable
           }
         }
       ))
@@ -115,5 +138,6 @@ private func makeUserCourseSummary(
     language: payload.language,
     organization: payload.organization.map { makeCourseOrganization($0.value1) },
     slug: payload.slug,
-    title: payload.title)
+    title: payload.title,
+    brandSlug: payload.brandSlug)
 }

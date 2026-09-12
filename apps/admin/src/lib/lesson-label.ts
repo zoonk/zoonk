@@ -21,8 +21,8 @@ const lessonKindLabels: Record<LessonKind, string> = {
  * Admin tables need the same lesson kind wording in stats, review queues, and
  * lesson lists so generated content logs do not drift across pages.
  */
-export function getAdminLessonKindLabel(kind: LessonKind): string {
-  return lessonKindLabels[kind];
+export function getAdminLessonKindLabel(kind: LessonKind | "unknown"): string {
+  return kind === "unknown" ? "Unknown" : lessonKindLabels[kind];
 }
 
 /**
@@ -36,4 +36,11 @@ export function getAdminLessonLabel({ kind, title }: LessonLabelInput): string {
   }
 
   return getAdminLessonKindLabel(kind);
+}
+
+/** Stored historical metadata may be absent or refer to a no-longer-supported kind. */
+export function getAdminLessonKind(value: unknown): LessonKind | "unknown" {
+  return (
+    Object.keys(lessonKindLabels).find((kind): kind is LessonKind => kind === value) ?? "unknown"
+  );
 }

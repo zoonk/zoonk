@@ -59,6 +59,7 @@ async function findCourses({
     where: getPublishedCourseWhere({
       language,
       organization: { kind: "brand" },
+      userId: null,
       ...(category && { categories: { some: { category } } }),
     }),
   });

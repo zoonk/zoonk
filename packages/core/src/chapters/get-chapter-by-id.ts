@@ -2,6 +2,8 @@ import "server-only";
 import { getPublishedChapterWhere, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getChapterCacheTag, getCourseCacheTag } from "../cache/tags";
+import { getReadableCourseWhere } from "../courses/course-access";
+import { getSession } from "../users/get-session";
 
 /**
  * Loads one published chapter by its stable resource ID while enforcing the
@@ -10,7 +12,8 @@ import { getChapterCacheTag, getCourseCacheTag } from "../cache/tags";
  * lookup.
  */
 export async function getChapterById({ chapterId }: { chapterId: string }) {
-  "use cache";
+  "use cache: private";
+  const session = await getSession();
 
   cacheTag(getChapterCacheTag(chapterId));
 
@@ -18,7 +21,7 @@ export async function getChapterById({ chapterId }: { chapterId: string }) {
     include: { course: true },
     where: getPublishedChapterWhere({
       chapterWhere: { id: chapterId },
-      courseWhere: { organization: { kind: "brand" } },
+      courseWhere: getReadableCourseWhere(session?.user.id ?? null),
     }),
   });
 

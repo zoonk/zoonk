@@ -1,4 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { registerGenerationRun } from "@zoonk/core/workflows/internal/register-generation-run";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type TransactionClient, prisma } from "@zoonk/db";
 
@@ -83,6 +84,18 @@ export async function setLessonAsRunningStep(
   await using stream = createStepStream<LessonStepName>();
 
   await stream.status({ status: "started", step: "setLessonAsRunning" });
+
+  const lesson = await prisma.lesson.findUnique({
+    include: { chapter: true },
+    where: { id: input.lessonId },
+  });
+
+  if (lesson) {
+    await registerGenerationRun({
+      generationId: input.workflowRunId,
+      target: { courseId: lesson.chapter.courseId },
+    });
+  }
 
   const result = await claimLessonGeneration(input);
 

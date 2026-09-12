@@ -32,7 +32,7 @@ function getCatalogSearchText(item: CatalogGridSearchItem): string {
  * Normalizing the combined tile text once per candidate keeps chapter and lesson
  * search accent-insensitive without each page rebuilding the same rules.
  */
-export function matchesCatalogSearchQuery({
+function matchesCatalogSearchQuery({
   item,
   query,
 }: {
@@ -116,7 +116,7 @@ export function CatalogGridSearch({
  * Search controls keep the same icon, sizing, and responsive row behavior while
  * letting specialized catalog pages place small filter actions beside the field.
  */
-export function CatalogGridSearchField({
+function CatalogGridSearchField({
   children,
   className,
   onSearchChange,

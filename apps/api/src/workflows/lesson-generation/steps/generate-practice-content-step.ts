@@ -1,3 +1,7 @@
+import {
+  getCourseGenerationPolicy,
+  getLessonLearningContext,
+} from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import {
   type LessonPracticeSchema,
@@ -5,7 +9,7 @@ import {
 } from "@zoonk/ai/tasks/lessons/core/practice";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { FatalError } from "workflow";
-import { getPreviousExplanationSourceLesson } from "./_utils/explanation-source-steps";
+import { getOptionalActivitySourceLesson } from "./_utils/explanation-source-steps";
 import {
   type PracticeLessonContent,
   type PracticeLessonStep,
@@ -42,7 +46,7 @@ export async function generatePracticeContentStep(
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "generatePracticeContent" });
 
-  const sourceLesson = await getPreviousExplanationSourceLesson(context);
+  const sourceLesson = await getOptionalActivitySourceLesson(context);
 
   if (!sourceLesson) {
     throw new FatalError("Practice generation needs explanation lesson metadata");
@@ -52,7 +56,9 @@ export async function generatePracticeContentStep(
     chapterTitle: context.chapter.title,
     courseTitle: context.chapter.course.title,
     language: context.language,
+    learningContext: getLessonLearningContext(context),
     lesson: sourceLesson,
+    ...getCourseGenerationPolicy(context.chapter.course),
   });
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });

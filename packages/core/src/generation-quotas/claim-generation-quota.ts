@@ -136,6 +136,7 @@ async function claimQuotaInTransaction({
   targetId,
   transaction,
   viewer,
+  now,
 }: {
   actorKeys: string[];
   resource: GenerationQuotaResource;
@@ -143,6 +144,7 @@ async function claimQuotaInTransaction({
   targetId: string;
   transaction: TransactionClient;
   viewer: GenerationQuotaViewer;
+  now: Date;
 }): Promise<GenerationQuotaResult> {
   const actorKey = getPrimaryActorKey(actorKeys);
 
@@ -155,18 +157,69 @@ async function claimQuotaInTransaction({
     return { status: "ready" };
   }
 
+  if ((resource === "chapter" || resource === "lesson") && viewer !== "guest") {
+    const lesson =
+      resource === "lesson"
+        ? await transaction.lesson.findUnique({ where: { id: targetId } })
+        : null;
+
+    const chapterId = resource === "chapter" ? targetId : lesson?.chapterId;
+
+    if (chapterId) {
+      const grant = await transaction.chapterGenerationGrant.createMany({
+        data: { chapterId, userId: actorKey.slice("user:".length) },
+        skipDuplicates: true,
+      });
+
+      if (grant.count > 0) {
+        const chapterRules = getGenerationQuotaRules({ now, resource: "chapter", viewer });
+
+        await chargeCounterRules({
+          actorKeys,
+          resource: "chapter",
+          rules: chapterRules,
+          transaction,
+          viewer,
+        });
+      }
+
+      if (resource === "chapter") {
+        return { status: "ready" };
+      }
+    }
+  }
+
+  await chargeCounterRules({ actorKeys, resource, rules, transaction, viewer });
+  return { status: "ready" };
+}
+
+/** A chapter grant and the winning target claim commit together; losing requests spend no allowance. */
+async function chargeCounterRules({
+  actorKeys,
+  resource,
+  rules,
+  transaction,
+  viewer,
+}: {
+  actorKeys: string[];
+  resource: GenerationQuotaResource;
+  rules: GenerationQuotaRule[];
+  transaction: TransactionClient;
+  viewer: GenerationQuotaViewer;
+}) {
   const counterTargets = getQuotaCounterTargets({ actorKeys, rules });
   await ensureQuotaCounters({ counterTargets, resource, transaction });
   const increments = await incrementQuotaCounters({ counterTargets, resource, transaction });
-  const blockedIncrement = increments.find(({ increment }) => increment.count === 0);
+  const blockedIncrements = increments.filter(({ increment }) => increment.count === 0);
+
+  const blockedIncrement =
+    blockedIncrements.find(({ rule }) => rule.period === "month") ?? blockedIncrements[0];
 
   if (blockedIncrement) {
     throw new Error("Generation quota reached", {
       cause: getReachedLimitSignal({ period: blockedIncrement.rule.period, resource, viewer }),
     });
   }
-
-  return { status: "ready" };
 }
 
 /**
@@ -187,7 +240,7 @@ async function claimGenerationQuota({
 
   try {
     return await prisma.$transaction((transaction) =>
-      claimQuotaInTransaction({ actorKeys, resource, rules, targetId, transaction, viewer }),
+      claimQuotaInTransaction({ actorKeys, now, resource, rules, targetId, transaction, viewer }),
     );
   } catch (error) {
     if (error instanceof Error && isReachedLimitSignal(error.cause)) {

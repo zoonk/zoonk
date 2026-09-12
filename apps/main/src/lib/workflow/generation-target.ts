@@ -4,4 +4,5 @@
 export type GenerationTarget =
   | { id: string; type: "chapter" }
   | { id: string; type: "coursePrompt" }
+  | { id: string; type: "curriculum" }
   | { id: string; type: "lesson" };

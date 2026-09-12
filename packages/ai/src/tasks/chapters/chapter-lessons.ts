@@ -2,6 +2,7 @@ import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type LearningContext, formatLearningContext } from "../_utils/learning-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./chapter-lessons.prompt.md";
 
@@ -31,6 +32,7 @@ export async function generateChapterLessons({
   courseTitle,
   language,
   neighboringChapters,
+  learningContext,
   model = defaultModel,
   useFallback = true,
   reasoning,
@@ -40,6 +42,7 @@ export async function generateChapterLessons({
   courseTitle: string;
   language: string;
   neighboringChapters?: { title: string; description: string }[];
+  learningContext?: LearningContext;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -55,6 +58,7 @@ export async function generateChapterLessons({
     COURSE_TITLE: ${courseTitle}
     CHAPTER_TITLE: ${chapterTitle}
     CHAPTER_DESCRIPTION: ${chapterDescription}${neighboringSection}
+    LEARNING_CONTEXT: ${formatLearningContext(learningContext)}
   `;
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });

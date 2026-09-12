@@ -396,7 +396,7 @@ describe("course-prompt", () => {
     },
   );
 
-  it("keeps a cached instrument prompt on the waitlist without calling model tasks", async () => {
+  it("enables a cached instrument prompt without calling model tasks", async () => {
     const prompt = `cached instrument topic ${randomUUID()}`;
     const title = `Cached Instrument Course ${randomUUID()}`;
 
@@ -415,15 +415,14 @@ describe("course-prompt", () => {
 
     const result = await resolveCoursePrompt({ language: "en", prompt });
 
-    expect(result).toStrictEqual({
-      kind: "unsupported",
+    expect(result).toMatchObject({
+      kind: "generate",
       prompt: { courseFormat: "instrument", intent: "learn" },
-      title,
     });
 
     await expect(
       prisma.coursePrompt.findUniqueOrThrow({ where: { id: cached.id } }),
-    ).resolves.toMatchObject({ courseFormat: "instrument", generationStatus: null });
+    ).resolves.toMatchObject({ courseFormat: "instrument", generationStatus: "pending" });
 
     expect(intentSpy).not.toHaveBeenCalled();
     expect(personalizationSpy).not.toHaveBeenCalled();
@@ -637,17 +636,16 @@ describe("course-prompt", () => {
     },
   );
 
-  it("persists instrument prompts as waitlist requests", async () => {
+  it("enables instrument prompts as reusable course requests", async () => {
     const prompt = `instrument prompt ${randomUUID()}`;
     const title = `Instrument course ${randomUUID()}`;
     mockPromptTasks({ courseFormat: "instrument", title });
 
     const result = await resolveCoursePrompt({ language: "en", prompt });
 
-    expect(result).toStrictEqual({
-      kind: "unsupported",
+    expect(result).toMatchObject({
+      kind: "generate",
       prompt: { courseFormat: "instrument", intent: "learn" },
-      title,
     });
 
     const storedPrompt = await prisma.coursePrompt.findUnique({
@@ -659,7 +657,7 @@ describe("course-prompt", () => {
     expect(storedPrompt).toMatchObject({
       canonicalTitle: title,
       courseFormat: "instrument",
-      generationStatus: null,
+      generationStatus: "pending",
       intent: "learn",
     });
   });

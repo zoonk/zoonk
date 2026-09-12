@@ -26,7 +26,7 @@ describe(getCoursePromptGeneration, () => {
     });
 
     await expect(getCoursePromptGeneration({ coursePromptId: prompt.id })).resolves.toMatchObject({
-      completionKind: "introductionLesson",
+      completionKind: "course",
       coursePromptId: prompt.id,
       isLanguageCourse: false,
       linkedCourseSlug: null,

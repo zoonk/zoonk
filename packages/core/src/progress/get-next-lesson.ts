@@ -1,10 +1,12 @@
 import "server-only";
 import { type LessonKind } from "@zoonk/db";
 import { getChapterById } from "../chapters/get-chapter-by-id";
+import { getCourseBrandSlug } from "../courses/course-access";
 import { getCourseById } from "../courses/get-course-by-id";
 import { getLessonById } from "../lessons/get-lesson-by-id";
 import { type LessonScope } from "../lessons/lesson-scope";
 import { getLessonVisibility } from "../users/lesson-visibility";
+import { type LearningPathScope, getLearningPathScope } from "./_utils/learning-path-scope";
 import { getProgressSession, tagProgressScope } from "./_utils/progress-cache";
 import {
   type ActiveCatalogTarget,
@@ -25,6 +27,39 @@ export type ActiveLessonTarget = ActiveCatalogTarget;
 export type NextLesson = ContinueTarget;
 
 type NextLessonInput = { excludedLessonKinds?: LessonKind[]; scope: LessonScope };
+
+function getNextPathTarget({ chapters, course }: LearningPathScope): NextLesson | null {
+  const nextChapter = chapters.find((chapter) => !chapter.isCompleted);
+  const chapter = nextChapter ?? chapters.at(-1);
+
+  if (!chapter) {
+    return null;
+  }
+
+  const lesson =
+    nextChapter?.lessons.find((item) => !item.isCompleted) ??
+    (nextChapter ? undefined : chapter.lessons.at(-1));
+
+  const common = {
+    brandSlug: getCourseBrandSlug(course),
+    chapterId: chapter.id,
+    chapterSlug: chapter.slug,
+    courseId: course.id,
+    courseSlug: course.slug,
+    hasStarted: chapters.some((item) => item.completedLessons > 0),
+  };
+
+  return lesson
+    ? {
+        ...common,
+        canPrefetch: lesson.generationStatus === "completed",
+        completed: !nextChapter,
+        lessonId: lesson.id,
+        lessonPosition: lesson.position,
+        lessonSlug: lesson.slug,
+      }
+    : { ...common, canPrefetch: false, completed: false };
+}
 
 /**
  * Resolves whether a progress scope belongs to the published brand catalog.
@@ -47,12 +82,18 @@ async function getPublicProgressScope(scope: LessonScope) {
  * Course continuation can advance into a later empty chapter. Other scopes do
  * not need the course outline.
  */
-function listTargetChapters({ scope }: { scope: LessonScope }): Promise<PublishedCourseChapter[]> {
+function listTargetChapters({
+  scope,
+  userId,
+}: {
+  scope: LessonScope;
+  userId: string | null;
+}): Promise<PublishedCourseChapter[]> {
   if (!("courseId" in scope)) {
     return Promise.resolve([]);
   }
 
-  return listPublishedCourseChapters({ courseId: scope.courseId });
+  return listPublishedCourseChapters({ courseId: scope.courseId, userId });
 }
 
 /**
@@ -85,6 +126,12 @@ export async function getNextLesson({
 
   tagProgressScope(scope);
 
+  const path = await getLearningPathScope(scope);
+
+  if (path !== undefined) {
+    return path ? getNextPathTarget(path) : null;
+  }
+
   const [session, visibility] = await Promise.all([
     getProgressSession(),
     excludedLessonKinds ? Promise.resolve(null) : getLessonVisibility(),
@@ -94,7 +141,7 @@ export async function getNextLesson({
   const resolvedExcludedLessonKinds = excludedLessonKinds ?? visibility?.hiddenLessonKinds ?? [];
 
   const [chapters, courseCompleted, durableChapterCompletionIds, rows] = await Promise.all([
-    listTargetChapters({ scope }),
+    listTargetChapters({ scope, userId }),
     getTargetCourseCompletion({ scope, userId }),
     listDurableChapterCompletionIds({
       excludedLessonKinds: resolvedExcludedLessonKinds,

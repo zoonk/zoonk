@@ -12,7 +12,10 @@ import { type LessonContext } from "./get-lesson-step";
 export async function generateLessonImageStep(context: LessonContext): Promise<string | null> {
   "use step";
 
-  if (context.kind !== "explanation" && context.kind !== "tutorial") {
+  if (
+    context.chapter.course.curriculumVersion >= 2 ||
+    (context.kind !== "explanation" && context.kind !== "tutorial")
+  ) {
     return null;
   }
 

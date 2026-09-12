@@ -10,7 +10,8 @@ type StepImagePromptsInput = Omit<
 type StepImagePromptsOutput = Awaited<ReturnType<typeof generateStepImagePrompts>>["data"];
 
 export const stepImagePromptsTask: Task<StepImagePromptsInput, StepImagePromptsOutput> = {
-  description: "Generate one focused educational illustration prompt for every static lesson step",
+  description:
+    "Select one useful educational illustration by step index, or no image when unnecessary",
   generate: generateStepImagePrompts,
   id: "step-image-prompts",
   name: "Step Image Prompts",

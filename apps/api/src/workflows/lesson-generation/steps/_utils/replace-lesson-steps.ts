@@ -1,4 +1,8 @@
-import { type Lesson, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type CourseRevisionContext,
+  withCurrentCourseRevision,
+} from "@zoonk/core/workflows/internal/course-curriculum";
+import { type Lesson, type TransactionClient } from "@zoonk/db";
 
 /**
  * Replaces one lesson's visible step batch while holding a lock on the lesson.
@@ -11,23 +15,28 @@ import { type Lesson, type TransactionClient, prisma } from "@zoonk/db";
 export async function replaceLessonSteps({
   lessonId,
   saveSteps,
+  revisionContext,
 }: {
   lessonId: string;
+  revisionContext: CourseRevisionContext;
   saveSteps: (transaction: TransactionClient) => Promise<void>;
 }): Promise<void> {
-  await prisma.$transaction(async (transaction) => {
-    const [lesson] = await transaction.$queryRaw<Pick<Lesson, "generationStatus">[]>`
+  await withCurrentCourseRevision({
+    context: revisionContext,
+    operation: async (transaction) => {
+      const [lesson] = await transaction.$queryRaw<Pick<Lesson, "generationStatus">[]>`
       SELECT "generation_status" AS "generationStatus"
       FROM "lessons"
       WHERE "id" = ${lessonId}::uuid
       FOR UPDATE
     `;
 
-    if (lesson?.generationStatus === "completed") {
-      return;
-    }
+      if (!lesson || lesson.generationStatus === "completed") {
+        return;
+      }
 
-    await transaction.step.deleteMany({ where: { lessonId } });
-    await saveSteps(transaction);
+      await transaction.step.deleteMany({ where: { lessonId } });
+      await saveSteps(transaction);
+    },
   });
 }

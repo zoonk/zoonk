@@ -275,7 +275,7 @@ describe(handleChapterFailureStep, () => {
     vi.clearAllMocks();
   });
 
-  it("marks chapter as failed and clears run ID", async () => {
+  it("marks the owned chapter as failed and retains its run for replay", async () => {
     const chapter = await chapterFixture({
       courseId,
       generationRunId: "old-run",
@@ -284,12 +284,12 @@ describe(handleChapterFailureStep, () => {
       title: `Fail Chapter ${randomUUID()}`,
     });
 
-    await handleChapterFailureStep({ chapterId: chapter.id });
+    await handleChapterFailureStep({ chapterId: chapter.id, workflowRunId: "old-run" });
 
     const updated = await prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } });
 
     expect(updated.generationStatus).toBe("failed");
-    expect(updated.generationRunId).toBeNull();
+    expect(updated.generationRunId).toBe("old-run");
 
     const events = getStreamedEvents();
 

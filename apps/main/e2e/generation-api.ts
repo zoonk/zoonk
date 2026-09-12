@@ -3,7 +3,7 @@ import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { isJsonObject } from "@zoonk/utils/json";
 
 type GenerationRouteHandler = (route: Route) => Promise<void>;
-type GenerationTargetType = "chapter" | "coursePrompt" | "lesson";
+type GenerationTargetType = "chapter" | "coursePrompt" | "curriculum" | "lesson";
 
 export type GenerationTriggerResponse = {
   body?: unknown;

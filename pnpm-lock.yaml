@@ -297,6 +297,9 @@ overrides:
   nanoid@>=4.0.0 <5.1.11: ^5.1.11
   nanoid@>=4.0.0 <5.1.16: ^5.1.16
 
+patchedDependencies:
+  '@shadcn/react@0.3.1': b3e5da95084effd33d137ad2e76c6bdb58f0dee22008c5d37290c3017d1cc3d7
+
 importers:
 
   .:
@@ -690,9 +693,6 @@ importers:
 
   apps/main:
     dependencies:
-      '@next/third-parties':
-        specifier: 'catalog:'
-        version: 16.3.4(next@16.3.4(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@sentry/nextjs':
         specifier: 'catalog:'
         version: 10.73.0(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.4(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(webpack@5.110.3(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@24.13.3)))
@@ -1001,6 +1001,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.0(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(@vitest/browser-playwright@5.0.0)(@vitest/ui@5.0.0)(jsdom@30.0.1(@noble/hashes@2.4.0))(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(tsx@4.23.13))
 
   packages/e2e:
     dependencies:
@@ -1199,7 +1202,7 @@ importers:
         version: 1.8.0(@types/react@19.2.18)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@shadcn/react':
         specifier: 0.3.1
-        version: 0.3.1(@types/react@19.2.18)(react@19.2.8)
+        version: 0.3.1(patch_hash=b3e5da95084effd33d137ad2e76c6bdb58f0dee22008c5d37290c3017d1cc3d7)(@types/react@19.2.18)(react@19.2.8)
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../utils
@@ -10584,7 +10587,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@shadcn/react@0.3.1(@types/react@19.2.18)(react@19.2.8)':
+  '@shadcn/react@0.3.1(patch_hash=b3e5da95084effd33d137ad2e76c6bdb58f0dee22008c5d37290c3017d1cc3d7)(@types/react@19.2.18)(react@19.2.8)':
     optionalDependencies:
       '@types/react': 19.2.18
       react: 19.2.8

@@ -18,6 +18,7 @@ import {
 } from "../player-selectors";
 import { usePlayerHaptics } from "../use-player-haptics";
 import { usePlayerKeyboard } from "../use-player-keyboard";
+import { CompletionSaveControl } from "./completion-save-control";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayAudioButton } from "./play-audio-button";
 import { PlayerBottomBar } from "./player-bottom-bar";
@@ -99,7 +100,7 @@ function getAudioProviderKey({ audioUrl, stepId }: { audioUrl: string | null; st
 
 export function PlayerShell() {
   const t = useExtracted();
-  const { actions, screen, state } = usePlayerRuntime();
+  const { actions, completionPersistence, screen, state } = usePlayerRuntime();
   const interactionState = usePlayerInteractionState();
   const milestone = usePlayerMilestone();
   const navigation = usePlayerNavigation();
@@ -149,7 +150,11 @@ export function PlayerShell() {
 
   return (
     <main className="ph-no-rageclick flex h-dvh flex-col overflow-hidden">
-      {screen.showChrome && <InPlayStickyHeader progressValue={progressValue} />}
+      {screen.showChrome && (
+        <div inert={completionPersistence === "saving"}>
+          <InPlayStickyHeader progressValue={progressValue} />
+        </div>
+      )}
 
       <PlayerAudioProvider
         audioUrl={bottomBarAudioUrl}
@@ -166,6 +171,14 @@ export function PlayerShell() {
         >
           <StageContent />
         </PlayerStage>
+
+        {completionPersistence !== "idle" && screen.bottomBar?.kind === "navigation" && (
+          <PlayerBottomBar className="hidden lg:flex">
+            <PlayerContentFrame>
+              <CompletionSaveControl />
+            </PlayerContentFrame>
+          </PlayerBottomBar>
+        )}
 
         {shouldShowStickyBottomBar && (
           <PlayerBottomBar aria-label={t("Lesson controls")} className="lg:hidden" role="toolbar">

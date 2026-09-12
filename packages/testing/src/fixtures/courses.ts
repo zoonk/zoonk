@@ -17,12 +17,13 @@ type CourseFixtureLandingPage = {
 
 type CourseFixtureAttrs = Omit<
   Partial<Course>,
-  "createdAt" | "format" | "generationStatus" | "landingPage" | "updatedAt"
+  "createdAt" | "format" | "generationStatus" | "landingPage" | "discoveryBrief" | "updatedAt"
 > & {
   createdAt?: Date | string;
   format?: CourseFormat;
   generationStatus?: GenerationStatus;
   landingPage?: CourseFixtureLandingPage;
+  discoveryBrief?: NonNullable<Course["discoveryBrief"]>;
   updatedAt?: Date | string;
 };
 

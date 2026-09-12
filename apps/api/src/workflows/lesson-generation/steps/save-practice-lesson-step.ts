@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
@@ -17,7 +18,7 @@ export async function savePracticeLessonStep({
 }: {
   content: PracticeLessonContent;
   context: LessonContext;
-  images: StepImage[];
+  images: (StepImage | null)[];
 }): Promise<void> {
   "use step";
 
@@ -26,6 +27,7 @@ export async function savePracticeLessonStep({
 
   await replaceLessonSteps({
     lessonId: context.id,
+    revisionContext: getLessonRevisionContext(context),
     saveSteps: (transaction) =>
       savePracticeLessonContent({ content, context, images, transaction }),
   });

@@ -187,14 +187,14 @@ describe(submitLessonCompletion, () => {
       lessonFixture({
         chapterId: chapter.id,
         isPublished: true,
-        kind: "quiz",
+        kind: "explanation",
         organizationId: org.id,
         position: 0,
       }),
       lessonFixture({
         chapterId: chapter.id,
         isPublished: true,
-        kind: "quiz",
+        kind: "explanation",
         organizationId: org.id,
         position: 1,
       }),
@@ -318,14 +318,14 @@ describe(submitLessonCompletion, () => {
       lessonFixture({
         chapterId: firstChapter.id,
         isPublished: true,
-        kind: "quiz",
+        kind: "explanation",
         organizationId: org.id,
         position: 0,
       }),
       lessonFixture({
         chapterId: finalChapter.id,
         isPublished: true,
-        kind: "quiz",
+        kind: "explanation",
         organizationId: org.id,
         position: 0,
       }),
@@ -593,7 +593,11 @@ describe(submitLessonCompletion, () => {
     };
 
     await submitLessonCompletion(baseInput);
-    await submitLessonCompletion(baseInput);
+
+    await submitLessonCompletion({
+      ...baseInput,
+      startedAt: new Date(baseInput.startedAt.getTime() + 1),
+    });
 
     const attempts = await prisma.stepAttempt.findMany({ where: { stepId: step.id, userId } });
     expect(attempts).toHaveLength(2);
@@ -1021,7 +1025,10 @@ describe(submitLessonCompletion, () => {
       userId: user.id,
     };
 
-    await Promise.all([submitLessonCompletion(input), submitLessonCompletion(input)]);
+    await Promise.all([
+      submitLessonCompletion(input),
+      submitLessonCompletion({ ...input, startedAt: new Date(input.startedAt.getTime() + 1) }),
+    ]);
 
     const [progress, rows] = await Promise.all([
       prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),

@@ -18,9 +18,11 @@ export const size = catalogOpenGraphImageSize;
  */
 export default async function Image({ params }: Props) {
   const { brandSlug, chapterSlug, courseSlug } = await params;
-  const chapter = await getChapter({ brandSlug, chapterSlug, courseSlug });
 
-  if (!chapter) {
+  const chapter =
+    brandSlug === "me" ? null : await getChapter({ brandSlug, chapterSlug, courseSlug });
+
+  if (!chapter || chapter.course.userId) {
     return createCatalogOpenGraphImage({
       description: null,
       fallbackImagePath: "/catalog/chapters/general.webp",

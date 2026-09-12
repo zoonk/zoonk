@@ -12,7 +12,7 @@ function isExpectedResponseInterruption(error: unknown): boolean {
 }
 
 export function useCompletionRedirect(config: {
-  beforeRedirect: () => Promise<void>;
+  beforeRedirect: () => Promise<void> | Promise<string | null | undefined>;
   delay?: number;
   status: GenerationStatus;
   url: string;
@@ -20,7 +20,7 @@ export function useCompletionRedirect(config: {
   const { beforeRedirect, delay = DEFAULT_REDIRECT_DELAY_MS, status, url } = config;
 
   const onRedirect = useEffectEvent(async () => {
-    await beforeRedirect().catch((error: unknown) => {
+    const destination = await beforeRedirect().catch((error: unknown) => {
       if (isExpectedResponseInterruption(error)) {
         return;
       }
@@ -28,7 +28,7 @@ export function useCompletionRedirect(config: {
       logError("Generation cache invalidation failed before redirect", error);
     });
 
-    globalThis.location.href = url;
+    globalThis.location.href = destination ?? url;
   });
 
   useEffect(() => {

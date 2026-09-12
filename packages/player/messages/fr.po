@@ -60,10 +60,20 @@ msgid "Exit"
 msgstr "Quitter"
 
 #: src/components/completion-actions.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Réessayer"
+#: src/components/completion-milestone-actions.tsx
+msgctxt "Du2A_7"
+msgid "Repeat lesson"
+msgstr "Refaire la leçon"
+
+#: src/components/completion-actions.tsx
+msgctxt "Q9H1qc"
+msgid "This lesson's progress wasn't saved. Log in to save your next lessons."
+msgstr "La progression de cette leçon n’a pas été enregistrée. Connecte-toi pour enregistrer la progression de tes prochaines leçons."
+
+#: src/components/completion-actions.tsx
+msgctxt "czygLT"
+msgid "Log in to save progress"
+msgstr "Connecte-toi pour sauvegarder ta progression"
 
 #: src/components/completion-actions.tsx
 #: src/components/step-navigation-button-group.tsx
@@ -172,11 +182,6 @@ msgid "You're halfway to {belt}, level {level}. {count, plural, one {One more le
 msgstr "Tu es à mi-chemin de {belt}, niveau {level}. {count, plural, one {Encore une leçon et tu y seras} other {Encore # leçons et tu y seras}}."
 
 #: src/components/completion-milestone-actions.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Réviser"
-
-#: src/components/completion-milestone-actions.tsx
 msgctxt "qrEiLa"
 msgid "Back to course"
 msgstr "Retour au cours"
@@ -222,15 +227,35 @@ msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuer"
 
+#: src/components/completion-save-control.tsx
+msgctxt "LqfJvW"
+msgid "Saving progress…"
+msgstr "Enregistrement de ta progression…"
+
+#: src/components/completion-save-control.tsx
+msgctxt "-U93oh"
+msgid "Retry save"
+msgstr "Réessayer d’enregistrer"
+
+#: src/components/completion-save-control.tsx
+msgctxt "LWpJ4M"
+msgid "Saving your progress before continuing."
+msgstr "Enregistrement de ta progression avant de continuer."
+
+#: src/components/completion-save-control.tsx
+msgctxt "1Zhbt-"
+msgid "Your progress hasn't been saved yet. Try again to save your progress."
+msgstr "Ta progression n’a pas encore été enregistrée. Réessaie de l’enregistrer."
+
 #: src/components/completion-screen.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Terminé"
 
 #: src/components/completion-screen.tsx
-msgctxt "2wDWd0"
-msgid "Course Complete"
-msgstr "Cours terminé"
+msgctxt "qHtln1"
+msgid "Path complete"
+msgstr "Parcours terminé"
 
 #: src/components/completion-screen.tsx
 msgctxt "t2VOpl"
@@ -242,6 +267,11 @@ msgstr "Chapitre terminé"
 msgctxt "qXzoF7"
 msgid "Lesson {current} of {total}"
 msgstr "Leçon {current} sur {total}"
+
+#: src/components/completion-screen.tsx
+msgctxt "grFxqs"
+msgid "{completed} of {total} lessons completed"
+msgstr "{completed} leçons terminées sur {total}"
 
 #: src/components/completion-screen.tsx
 msgctxt "9wxMoj"
@@ -288,6 +318,11 @@ msgstr "Case {position} : {item}. Appuie pour retirer."
 msgctxt "FmmJ_j"
 msgid "Blank {position}"
 msgstr "Case {position}"
+
+#: src/components/in-play-sticky-header.tsx
+msgctxt "WejU5T"
+msgid "Optional practice"
+msgstr "Entraînement facultatif"
 
 #: src/components/inline-feedback.tsx
 msgctxt "HvLGEN"
@@ -437,26 +472,6 @@ msgctxt "MxLxkr"
 msgid "Translate this word:"
 msgstr "Traduis ce mot :"
 
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "czygLT"
-msgid "Log in to save progress"
-msgstr "Connecte-toi pour sauvegarder ta progression"
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "yBJVJw"
-msgid "Continue without saving"
-msgstr "Continuer sans sauvegarder"
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "O781mu"
-msgid "Progress won't be saved"
-msgstr "La progression ne sera pas sauvegardée"
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "JDumQX"
-msgid "You can try this lesson without an account, but your score, course progress, levels, and Energy won't be saved."
-msgstr "Tu peux essayer cette leçon sans compte, mais ton score, ta progression dans le cours, tes niveaux et ton Énergie ne seront pas enregistrés."
-
 #: src/components/verdict-label.tsx
 msgctxt "xmF49T"
 msgid "Correct!"
@@ -598,6 +613,11 @@ msgstr "Se connecter"
 msgctxt "EaucLA"
 msgid "View plans"
 msgstr "Voir les offres"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Réessayer"
 
 #: src/questions/lesson-question-markdown.tsx
 msgctxt "13bnyN"

@@ -40,16 +40,12 @@ struct CourseReference: Hashable {
     title = course.title
   }
 
-  init?(_ course: UserCourseSummary) {
-    guard let organization = course.organization else {
-      return nil
-    }
-
+  init(_ course: UserCourseSummary) {
     description = course.description
     id = course.id
     imageURL = course.imageURL
-    organizationName = organization.name
-    organizationSlug = organization.slug
+    organizationName = course.organization?.name ?? ""
+    organizationSlug = course.brandSlug ?? course.organization?.slug ?? "me"
     title = course.title
   }
 
@@ -57,8 +53,8 @@ struct CourseReference: Hashable {
     description = course.description
     id = course.id
     imageURL = course.imageURL
-    organizationName = course.organization.name
-    organizationSlug = course.organization.slug
+    organizationName = course.organization?.name ?? ""
+    organizationSlug = course.resolvedBrandSlug
     title = course.title
   }
 
@@ -88,7 +84,7 @@ struct ChapterReference: Hashable {
     description = source.chapter.description
     id = source.chapter.id
     imageURL = source.chapter.imageURL ?? source.course.imageURL
-    organizationSlug = source.course.organization.slug
+    organizationSlug = source.course.resolvedBrandSlug
     position = source.chapter.position
     title = source.chapter.title
   }
@@ -172,6 +168,7 @@ struct LessonReference: Hashable {
 }
 
 func courseContinuationDestination(_ detail: CourseDetail) -> CourseDestination? {
+  guard detail.learningPath?.requiresFocusedReselection != true else { return nil }
   guard let continuation = detail.continuation else {
     return firstChapterDestination(detail)
   }
@@ -217,7 +214,7 @@ func chapterContinuationDestination(
   case .chapter:
     return .chapter(chapter)
   case .lesson(let target):
-    if let lesson = detail.lessons.first(where: { $0.id == target.lessonID }) {
+    if let lesson = detail.primaryLessons.first(where: { $0.id == target.lessonID }) {
       return .lesson(LessonReference((chapter: chapter, lesson: lesson)))
     }
 
@@ -228,7 +225,7 @@ func chapterContinuationDestination(
 private func firstLessonDestination(
   _ source: (chapter: ChapterReference, detail: ChapterDetail)
 ) -> CourseDestination? {
-  guard let lesson = source.detail.lessons.first else {
+  guard let lesson = source.detail.primaryLessons.first else {
     return nil
   }
 

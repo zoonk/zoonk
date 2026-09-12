@@ -128,4 +128,6 @@ type AssignedLessonStep =
   | (typeof TUTORIAL_PHASE_STEPS)[keyof typeof TUTORIAL_PHASE_STEPS][number]
   | (typeof VOCABULARY_PHASE_STEPS)[keyof typeof VOCABULARY_PHASE_STEPS][number];
 
-type _ValidateLesson = AssertAllCovered<Exclude<LessonStepName, AssignedLessonStep>>;
+type _ValidateLesson = AssertAllCovered<
+  Exclude<LessonStepName, AssignedLessonStep | "generateLessonImage">
+>;

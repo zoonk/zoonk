@@ -23,6 +23,10 @@ Make the user's next action clear with restrained interfaces inspired by Apple, 
 
 Design around the user's task: what they need to understand, what they can do next, and how they recover from errors. Remove steps, competing actions, and decoration that do not serve that task. Preserve clear loading, empty, disabled, and error states in the changed flow.
 
+The main UX rule is: "Don't make me think." Avoid overwhelming users with too many choices at once.
+
+Guide unfamiliar choices instead of listing unexplained options. Explain what each choice changes with a concrete example or preview before asking the user to choose. Prefer one decision per step and reveal related controls only when needed, keeping the primary action clear. Offer meaningful defaults and a way to skip optional customization; let users revisit their choices later without starting over.
+
 Keep layout, typography, and action priority consistent with neighboring screens. Account for small screens, long translations, dark mode, keyboard navigation, visible focus, semantic labels, contrast, and usable touch targets where the change affects them.
 
 Inspect visible or interactive changes in the running application at relevant sizes. Judge whether the assembled flow is understandable and useful. State any runtime or accessibility behavior that remains unverified; a build alone does not establish visual quality.

@@ -9,9 +9,11 @@ const startIndexSchema = z.coerce
 
 const generationTargetSchema = z
   .object({
-    id: z.uuid().meta({ description: "Course prompt, chapter, or lesson ID to generate" }),
+    id: z
+      .uuid()
+      .meta({ description: "Course prompt, course curriculum, chapter, or lesson ID to generate" }),
     type: z
-      .enum(["coursePrompt", "chapter", "lesson"])
+      .enum(["coursePrompt", "chapter", "lesson", "curriculum"])
       .meta({ description: "Resource type to generate" }),
   })
   .meta({ id: "GenerationTarget" });

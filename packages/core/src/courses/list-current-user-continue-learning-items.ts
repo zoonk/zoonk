@@ -9,6 +9,7 @@ import {
   getUserProgressCacheTag,
 } from "../cache/tags";
 import { type NextLessonInCourse } from "../lessons/get-next-lesson-in-course";
+import { getLearningPathScope } from "../progress/_utils/learning-path-scope";
 import { getSession } from "../users/get-session";
 import { getLessonVisibility } from "../users/lesson-visibility";
 import {
@@ -46,6 +47,7 @@ type ContinueLearningPendingLesson = Pick<
 type ContinueLearningChapter = Pick<Chapter, "id" | "slug" | "title">;
 
 type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl"> & {
+  brandSlug: string;
   organization: Pick<Organization, "slug"> | null;
 };
 
@@ -74,6 +76,7 @@ type ContinueLearningListOptions = { requireAuthentication: true };
  */
 function toCourse(row: ContinueLearningRow): ContinueLearningCourse {
   return {
+    brandSlug: row.brandSlug,
     id: row.courseId,
     imageUrl: row.courseImageUrl,
     organization: row.orgSlug ? { slug: row.orgSlug } : null,
@@ -300,14 +303,53 @@ async function loadContinueLearning(): Promise<{
     return { candidateCourseIds: [], items: [], userId: session.user.id };
   }
 
+  const paths = await Promise.all(
+    rows.map((row) => getLearningPathScope({ courseId: row.courseId })),
+  );
+
+  const legacyRows = rows.filter((_row, index) => paths[index] === undefined);
+
   const candidates = await listContinueLearningCandidates({
     excludedLessonKinds: hiddenLessonKinds,
-    rows,
+    rows: legacyRows,
     userId: session.user.id,
   });
 
-  const items = candidates
-    .map((candidate) => toContinueLearningItem({ candidate }))
+  const legacyItems = new Map(
+    candidates.map((candidate) => [candidate.row.courseId, toContinueLearningItem({ candidate })]),
+  );
+
+  const items = rows
+    .map((row, index): ContinueLearningItem | null => {
+      const path = paths[index];
+
+      if (path === undefined) {
+        return legacyItems.get(row.courseId) ?? null;
+      }
+
+      if (!path) {
+        return null;
+      }
+
+      const chapter = path.chapters.find((item) => !item.isCompleted);
+
+      if (!chapter) {
+        return null;
+      }
+
+      const lesson = chapter.lessons.find((item) => !item.isCompleted);
+
+      const common = {
+        chapter: { id: chapter.id, slug: chapter.slug, title: chapter.title },
+        course: toCourse(row),
+      };
+
+      if (!lesson || lesson.generationStatus !== "completed") {
+        return { ...common, lesson: lesson ?? null, status: "pending" };
+      }
+
+      return { ...common, lesson, status: "ready" };
+    })
     .filter((item): item is ContinueLearningItem => item !== null)
     .slice(0, MAX_CONTINUE_LEARNING_ITEMS);
 

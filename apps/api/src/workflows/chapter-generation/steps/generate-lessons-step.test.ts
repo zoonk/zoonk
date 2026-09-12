@@ -75,7 +75,10 @@ describe(generateLessonsStep, () => {
       chapterTitle: context.title,
       courseTitle: context.course.title,
       language: context.language,
+      learningContext: { format: "core", level: context.level, outcomes: context.outcomes },
+      model: "openai/gpt-5.6-sol",
       neighboringChapters: context.neighboringChapters,
+      useFallback: true,
     });
 
     const events = getStreamedEvents();
@@ -103,7 +106,14 @@ describe(generateLessonsStep, () => {
     expect(generateLanguageChapterLessonsMock).toHaveBeenCalledWith({
       chapterDescription: languageContext.description,
       chapterTitle: languageContext.title,
+      learningContext: {
+        format: "language",
+        level: languageContext.level,
+        outcomes: languageContext.outcomes,
+      },
+      model: "openai/gpt-5.6-sol",
       targetLanguage: "es",
+      useFallback: true,
       userLanguage: languageContext.language,
     });
 

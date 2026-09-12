@@ -1,6 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getGeneratedCourseWhere } from "@zoonk/core/workflows/internal/generated-course-filter";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { getAiGenerationLessonWhere, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 
 async function getLessonForGeneration(lessonId: string) {
@@ -9,7 +10,7 @@ async function getLessonForGeneration(lessonId: string) {
       _count: { select: { steps: true } },
       chapter: { include: { course: { include: { organization: true } } } },
     },
-    where: getAiGenerationLessonWhere({ lessonWhere: { id: lessonId } }),
+    where: { chapter: { course: getGeneratedCourseWhere() }, id: lessonId },
   });
 }
 

@@ -46,29 +46,29 @@ function findUserCompletedLessonCourseRows({ userId }: { userId: string }) {
   return prisma.$queryRaw<CompletedLessonCourseRow[]>`
     WITH completed_lesson_courses AS (
       SELECT
-        courses.id AS "courseId",
-        courses.title AS "courseTitle",
+        COALESCE(courses.id::text, lesson_progress.content_snapshot->>'courseId', 'unknown') AS "courseId",
+        COALESCE(MAX(courses.title), MAX(lesson_progress.content_snapshot->>'courseTitle'), 'Unknown course') AS "courseTitle",
         COUNT(*)::bigint AS "completedLessonCount",
         MAX(lesson_progress.completed_at) AS "lastCompletedAt"
       FROM lesson_progress
-      JOIN lessons ON lessons.id = lesson_progress.lesson_id
-      JOIN chapters ON chapters.id = lessons.chapter_id
-      JOIN courses ON courses.id = chapters.course_id
+      LEFT JOIN lessons ON lessons.id = lesson_progress.lesson_id
+      LEFT JOIN chapters ON chapters.id = lessons.chapter_id
+      LEFT JOIN courses ON courses.id = chapters.course_id
       WHERE
         lesson_progress.user_id = ${userId}::uuid
         AND lesson_progress.completed_at IS NOT NULL
-      GROUP BY courses.id, courses.title
+      GROUP BY COALESCE(courses.id::text, lesson_progress.content_snapshot->>'courseId', 'unknown')
     ),
     completed_chapter_courses AS (
       SELECT
-        chapters.course_id AS "courseId",
+        COALESCE(chapters.course_id::text, chapter_completions.content_snapshot->>'courseId', 'unknown') AS "courseId",
         COUNT(*)::bigint AS "completedChapterCount"
       FROM chapter_completions
-      JOIN chapters ON chapters.id = chapter_completions.chapter_id
-      JOIN completed_lesson_courses ON completed_lesson_courses."courseId" = chapters.course_id
+      LEFT JOIN chapters ON chapters.id = chapter_completions.chapter_id
+      JOIN completed_lesson_courses ON completed_lesson_courses."courseId" = COALESCE(chapters.course_id::text, chapter_completions.content_snapshot->>'courseId', 'unknown')
       WHERE
         chapter_completions.user_id = ${userId}::uuid
-      GROUP BY chapters.course_id
+      GROUP BY COALESCE(chapters.course_id::text, chapter_completions.content_snapshot->>'courseId', 'unknown')
     )
     SELECT
       completed_lesson_courses."courseId",

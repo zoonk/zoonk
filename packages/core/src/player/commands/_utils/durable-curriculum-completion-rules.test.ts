@@ -35,6 +35,7 @@ function createRow(
  */
 function createChapters(ids: string[]): Parameters<typeof isCurrentCourseCompleted>[0]["chapters"] {
   return ids.map((id, index) => ({
+    conceptKey: null,
     courseId: createTestUuid(900),
     createdAt: new Date(),
     description: `Description ${id}`,
@@ -45,9 +46,12 @@ function createChapters(ids: string[]): Parameters<typeof isCurrentCourseComplet
     isLocked: false,
     isPublished: true,
     language: "en",
+    level: null,
     normalizedTitle: `chapter ${id}`,
     organizationId: createTestUuid(901),
+    outcomes: [],
     position: index,
+    prerequisiteIds: [],
     slug: `chapter-${id}`,
     title: `Chapter ${id}`,
     updatedAt: new Date(),

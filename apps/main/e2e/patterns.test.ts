@@ -65,6 +65,11 @@ function buildStepAttemptRows({
 async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; browser: Browser }) {
   const user = await createE2EUser(baseURL, { orgRole: "member", withProgress: true });
   const existingAttempt = await prisma.stepAttempt.findFirstOrThrow({ where: { userId: user.id } });
+
+  if (!existingAttempt.stepId) {
+    throw new Error("The patterns fixture requires a current lesson step");
+  }
+
   const now = new Date();
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const yesterday = new Date(today.getTime() - MS_PER_DAY);

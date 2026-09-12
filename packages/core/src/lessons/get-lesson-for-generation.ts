@@ -1,5 +1,7 @@
-import { getAiGenerationLessonWhere, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { isUuid } from "@zoonk/utils/uuid";
+import { getSession } from "../users/get-session";
 
 /**
  * Loads the AI-owned lesson that can be resumed by a generation workflow.
@@ -11,8 +13,20 @@ export async function getLessonForGeneration(lessonId: string) {
     return null;
   }
 
+  const session = await getSession();
+
   return prisma.lesson.findFirst({
     include: { _count: { select: { steps: true } }, chapter: { include: { course: true } } },
-    where: getAiGenerationLessonWhere({ lessonWhere: { id: lessonId } }),
+    where: {
+      chapter: {
+        course: {
+          OR: [
+            { organization: { slug: AI_ORG_SLUG }, userId: null },
+            ...(session ? [{ organizationId: null, userId: session.user.id }] : []),
+          ],
+        },
+      },
+      id: lessonId,
+    },
   });
 }

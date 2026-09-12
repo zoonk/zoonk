@@ -1,7 +1,9 @@
+import { z } from "zod";
 import {
   lessonCompletionRequestSchema,
   lessonCompletionResponseSchema,
   lessonContentResponseSchema,
+  lessonNextQuerySchema,
   lessonPreloadResponseSchema,
   lessonSuccessorResponseSchema,
 } from "../schemas/lesson-resources";
@@ -9,7 +11,6 @@ import { lessonPathParamsSchema } from "../schemas/paths";
 import {
   forbiddenResponse,
   notFoundResponse,
-  paymentRequiredResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
@@ -32,9 +33,23 @@ export const lessonResourcePaths = {
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
-        "402": paymentRequiredResponse,
         "403": forbiddenResponse,
         "404": notFoundResponse,
+        "409": {
+          content: {
+            "application/json": {
+              schema: z.object({
+                error: z.object({
+                  code: z.literal("CURRICULUM_UPDATED"),
+                  details: z.object({ courseId: z.uuid() }),
+                  message: z.string(),
+                }),
+              }),
+            },
+          },
+          description:
+            "The curriculum was replaced after this learner started the lesson. No unverifiable completion is credited; resume the current course.",
+        },
         "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -52,7 +67,6 @@ export const lessonResourcePaths = {
           description: "Playable lesson content or a generation outcome",
         },
         "400": validationErrorResponse,
-        "402": paymentRequiredResponse,
         "404": notFoundResponse,
       },
       security: OPTIONAL_AUTHENTICATION_SECURITY,
@@ -63,7 +77,7 @@ export const lessonResourcePaths = {
   "/lessons/{lessonId}/next-lesson": {
     get: {
       operationId: "getLessonSuccessor",
-      requestParams: { path: lessonPathParamsSchema },
+      requestParams: { path: lessonPathParamsSchema, query: lessonNextQuerySchema },
       responses: {
         "200": {
           content: { "application/json": { schema: lessonSuccessorResponseSchema } },

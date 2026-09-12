@@ -15,6 +15,7 @@ describe("player browser integration: explanation lesson flow", () => {
           buildSerializedStep({
             content: {
               image: {
+                alt: "A wrapped network packet moving through layered labels",
                 prompt: "A wrapped network packet moving through layered labels",
                 url: buildInlineImageUrl({
                   label: "A wrapped network packet moving through layered labels",
@@ -29,6 +30,7 @@ describe("player browser integration: explanation lesson flow", () => {
           buildSerializedStep({
             content: {
               image: {
+                alt: "Different network layers adding their own labels to the same payload",
                 prompt: "Different network layers adding their own labels to the same payload",
                 url: buildInlineImageUrl({
                   label: "Different network layers adding their own labels to the same payload",
@@ -66,6 +68,7 @@ describe("player browser integration: explanation lesson flow", () => {
           buildSerializedStep({
             content: {
               image: {
+                alt: "A message reaching its destination after moving through several network hops",
                 prompt:
                   "A message reaching its destination after moving through several network hops",
                 url: buildInlineImageUrl({

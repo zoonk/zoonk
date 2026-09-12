@@ -22,7 +22,7 @@ export async function getCatalogLessonProgress(
  * transient read fails. Authentication and data selection remain in core.
  */
 export async function getCatalogChapterProgress(
-  input: CatalogProgressInput & { courseId: string },
+  input: CatalogProgressInput & { courseId: string; view?: "path" | "curriculum" },
 ) {
   const { data } = await safeAsync(() => getCourseProgress(input));
   return data ?? [];

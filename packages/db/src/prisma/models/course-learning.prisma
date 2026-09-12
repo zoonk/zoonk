@@ -1,0 +1,87 @@
+model CourseLearningPlan {
+  id                String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId            String          @map("user_id") @db.Uuid
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId          String          @map("course_id") @db.Uuid
+  course            Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  goal              String?
+  startingKnowledge String?         @map("starting_knowledge")
+  depth             CoursePlanDepth @default(complete)
+  startingLevel     CourseLevel?    @map("starting_level")
+  dailyMinutes      Int?            @map("daily_minutes")
+  hiddenLessonKinds LessonKind[]    @default([]) @map("hidden_lesson_kinds")
+  chapterIds        String[]        @default([]) @map("chapter_ids") @db.Uuid
+  contentRevision   Int             @map("content_revision")
+  revision          Int             @default(1)
+  summary           String?
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, courseId], name: "userCoursePlan")
+  @@index([courseId])
+  @@map("course_learning_plans")
+}
+
+model CourseDiscovery {
+  id              String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String                @map("user_id") @db.Uuid
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language        String                @db.VarChar(10)
+  prompt          String
+  answers         Json                  @default("[]")
+  brief           Json?
+  nextQuestion    Json?                 @map("next_question")
+  resolution      Json?
+  revision        Int                   @default(1)
+  status          CourseDiscoveryStatus @default(pending)
+  courseId        String?               @map("course_id") @db.Uuid
+  course          Course?               @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  generationRunId String?               @map("generation_run_id")
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId, updatedAt])
+  @@index([courseId])
+  @@map("course_discoveries")
+}
+
+model Track {
+  id        String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String        @map("user_id") @db.Uuid
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  request   Json?
+  courses   TrackCourse[]
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId, updatedAt])
+  @@map("tracks")
+}
+
+model TrackCourse {
+  id       String @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  trackId  String @map("track_id") @db.Uuid
+  track    Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  courseId String @map("course_id") @db.Uuid
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  position Int
+
+  @@unique([trackId, courseId], name: "trackCourse")
+  @@unique([trackId, position], name: "trackPosition")
+  @@index([courseId])
+  @@map("track_courses")
+}
+
+model ChapterGenerationGrant {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId String   @map("chapter_id") @db.Uuid
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, chapterId], name: "userChapterGenerationGrant")
+  @@index([chapterId])
+  @@map("chapter_generation_grants")
+}

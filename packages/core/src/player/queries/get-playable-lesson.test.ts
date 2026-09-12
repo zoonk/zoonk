@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -85,7 +84,7 @@ describe(getLessonContent, () => {
     expect(result).toMatchObject({ lesson: { id: lesson.id }, status: "ready" });
   });
 
-  it("requires a subscription after the first chapter", async () => {
+  it("allows generated content after the first chapter", async () => {
     const [{ chapter, organization }, user] = await Promise.all([
       createPlayableChapter(1),
       userFixture(),
@@ -99,14 +98,6 @@ describe(getLessonContent, () => {
     });
 
     authenticateUser(user.id);
-
-    await expect(getLessonContent(lesson.id)).resolves.toStrictEqual({
-      status: "subscriptionRequired",
-    });
-
-    await prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-    });
 
     await expect(getLessonContent(lesson.id)).resolves.toMatchObject({
       lesson: { id: lesson.id },

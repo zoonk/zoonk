@@ -2,6 +2,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { countSitemapChapters, listSitemapChapters } from "./chapters";
 import { SITEMAP_BATCH_SIZE, countSitemapCourses, listSitemapCourses } from "./courses";
@@ -23,13 +24,14 @@ async function listSitemapPages<T>({
   return rows.flat();
 }
 
-async function createLocalizedCatalog(language: string) {
+async function createLocalizedCatalog(language: string, userId?: string) {
   const organization = await organizationFixture({ kind: "brand" });
 
   const course = await courseFixture({
     isPublished: true,
     language,
     organizationId: organization.id,
+    userId,
   });
 
   const chapter = await chapterFixture({
@@ -48,6 +50,25 @@ async function createLocalizedCatalog(language: string) {
 }
 
 describe("sitemap content languages", () => {
+  it("excludes owner-only content throughout the catalog even when a brand is attached", async () => {
+    const user = await userFixture();
+    const privateCatalog = await createLocalizedCatalog("en", user.id);
+
+    const [courses, chapters, lessons] = await Promise.all([
+      listSitemapPages({ count: countSitemapCourses, list: listSitemapCourses }),
+      listSitemapPages({ count: countSitemapChapters, list: listSitemapChapters }),
+      listSitemapPages({ count: countSitemapLessons, list: listSitemapLessons }),
+    ]);
+
+    expect(courses.map((course) => course.courseSlug)).not.toContain(privateCatalog.course.slug);
+
+    expect(chapters.map((chapter) => chapter.chapterSlug)).not.toContain(
+      privateCatalog.chapter.slug,
+    );
+
+    expect(lessons.map((lesson) => lesson.lessonSlug)).not.toContain(privateCatalog.lesson.slug);
+  });
+
   it("includes regional teaching languages and excludes unsupported or malformed languages throughout the catalog", async () => {
     const [regional, unsupported, malformed] = await Promise.all([
       createLocalizedCatalog("pt-BR"),

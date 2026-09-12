@@ -2,6 +2,7 @@ import "server-only";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { type LearningContext, formatLearningContext } from "../../_utils/learning-context";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { insertLessonFeedbackPrompt } from "../_utils/append-lesson-feedback-prompt";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
@@ -40,7 +41,9 @@ function hasExactlyOneCorrectOption(situation: z.infer<typeof practiceSituationS
   return situation.options.filter((option) => option.isCorrect).length === 1;
 }
 
-const generatedPracticeSchema = z.object({ situations: z.array(practiceSituationSchema).min(1) });
+const generatedPracticeSchema = z.object({
+  situations: z.array(practiceSituationSchema).min(1).max(3),
+});
 
 const normalizedPracticeSituationSchema = practiceSituationSchema
   .extend({ options: z.array(normalizedPracticeOptionSchema).length(practiceOptionLimit) })
@@ -50,7 +53,7 @@ const normalizedPracticeSituationSchema = practiceSituationSchema
   });
 
 const normalizedPracticeSchema = z.object({
-  situations: z.array(normalizedPracticeSituationSchema).min(1),
+  situations: z.array(normalizedPracticeSituationSchema).min(1).max(3),
 });
 
 export type LessonPracticeSchema = z.infer<typeof normalizedPracticeSchema>;
@@ -60,6 +63,7 @@ export type LessonPracticeParams = {
   courseTitle: string;
   language: string;
   lesson: SourceLesson;
+  learningContext?: LearningContext;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -86,6 +90,7 @@ export async function generateLessonPractice({
   courseTitle,
   language,
   lesson,
+  learningContext,
   model = defaultModel,
   useFallback = true,
   reasoning,
@@ -98,6 +103,7 @@ export async function generateLessonPractice({
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
     LESSON: ${formattedLesson}
+    LEARNING_CONTEXT: ${formatLearningContext(learningContext)}
   `;
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });

@@ -28,6 +28,7 @@ async function listCurrentUserCourses(request: Request) {
     limit: parsed.data.limit,
     offset,
     query: parsed.data.query,
+    standaloneOnly: parsed.data.standaloneOnly,
   });
 
   if (!page) {

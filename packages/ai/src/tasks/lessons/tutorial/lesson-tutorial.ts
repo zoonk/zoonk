@@ -2,6 +2,7 @@ import "server-only";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { type LearningContext, formatLearningContext } from "../../_utils/learning-context";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
 import baseSystemPrompt from "./lesson-tutorial.prompt.md";
@@ -22,6 +23,8 @@ export type LessonTutorialParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
+  otherLessonTitles?: string[];
+  learningContext?: LearningContext;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -33,6 +36,8 @@ export async function generateLessonTutorial({
   chapterTitle,
   courseTitle,
   language,
+  otherLessonTitles = [],
+  learningContext,
   model = defaultModel,
   useFallback = true,
   reasoning,
@@ -45,6 +50,8 @@ export async function generateLessonTutorial({
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
+    LEARNING_CONTEXT: ${formatLearningContext(learningContext)}
+    OTHER_LESSON_TITLES: ${JSON.stringify(otherLessonTitles)}
   `;
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });

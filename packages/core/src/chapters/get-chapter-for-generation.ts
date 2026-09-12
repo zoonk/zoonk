@@ -1,5 +1,7 @@
-import { getAiGenerationChapterWhere, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { isUuid } from "@zoonk/utils/uuid";
+import { getSession } from "../users/get-session";
 
 /**
  * Loads the AI-owned chapter that can be resumed by a generation workflow.
@@ -11,8 +13,18 @@ export async function getChapterForGeneration(chapterId: string) {
     return null;
   }
 
+  const session = await getSession();
+
   return prisma.chapter.findFirst({
     include: { _count: { select: { lessons: true } }, course: true },
-    where: getAiGenerationChapterWhere({ chapterWhere: { id: chapterId } }),
+    where: {
+      course: {
+        OR: [
+          { organization: { slug: AI_ORG_SLUG }, userId: null },
+          ...(session ? [{ organizationId: null, userId: session.user.id }] : []),
+        ],
+      },
+      id: chapterId,
+    },
   });
 }

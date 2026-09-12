@@ -3,6 +3,7 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { type ReactNode, createContext, useContext } from "react";
+import { type CompletionPersistence } from "./completion-persistence";
 import { type PlayerState, type SelectedAnswer, type StepResult } from "./player-reducer";
 import { type PlayerScreenModel } from "./player-screen";
 import { type PlayerActions } from "./use-player-actions";
@@ -36,6 +37,8 @@ export type PlayerNavigation = {
 };
 
 export type PlayerLessonProgress = {
+  isOptional?: boolean;
+  completedLessonsInChapter?: number;
   currentLessonNumber: number;
   remainingChaptersInCourse: number;
   remainingLessonsInChapter: number;
@@ -74,6 +77,7 @@ export type PlayerMilestone = ChapterMilestone | CourseMilestone;
 
 export type PlayerRuntimeContextValue = {
   actions: PlayerActions;
+  completionPersistence: CompletionPersistence;
   screen: PlayerScreenModel;
   state: PlayerState;
 };
@@ -171,7 +175,9 @@ export function usePlayerQuestionSupport(): PlayerQuestionSupport | null {
 }
 
 export function usePlayerInteractionState(): PlayerQuestionSupport["interactionState"] {
-  return usePlayerQuestionSupport()?.interactionState ?? "active";
+  const support = usePlayerQuestionSupport();
+  const { completionPersistence } = usePlayerRuntime();
+  return completionPersistence === "idle" ? (support?.interactionState ?? "active") : "paused";
 }
 
 export function usePlayerRuntime(): PlayerRuntimeContextValue {

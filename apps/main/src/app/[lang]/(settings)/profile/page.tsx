@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session";
 import {
   Container,
@@ -7,6 +8,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { ChevronRightIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -50,6 +52,18 @@ export default async function ProfilePage() {
         <Suspense fallback={<ProfileFormSkeleton />}>
           <ProfileContent />
         </Suspense>
+        <Link
+          className="hover:bg-muted mt-8 flex min-h-16 max-w-md items-center justify-between gap-4 rounded-xl border p-4"
+          href="/profile/interests"
+        >
+          <span>
+            <span className="block font-medium">{t("Interests")}</span>
+            <span className="text-muted-foreground text-sm">
+              {t("Choose familiar contexts for personal examples.")}
+            </span>
+          </span>
+          <ChevronRightIcon className="size-4 shrink-0" />
+        </Link>
       </ContainerBody>
     </Container>
   );

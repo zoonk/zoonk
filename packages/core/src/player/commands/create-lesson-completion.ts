@@ -1,9 +1,8 @@
 import { type LessonKind, type StepKind, prisma } from "@zoonk/db";
+import { getString } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateTag } from "next/cache";
-import { hasActiveSubscription } from "../../auth/subscription";
 import { getUserProgressCacheTag } from "../../cache/tags";
-import { getLessonAccessRequirement } from "../../lessons/access";
 import { getSession } from "../../users/get-session";
 import {
   getCappedLessonDurationSeconds,
@@ -18,7 +17,8 @@ import {
 import { countAnswerableSteps, validateAnswers } from "../contracts/validate-answers";
 import { getReviewValidationData } from "../queries/get-review-steps";
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
-import { submitLessonCompletion } from "./submit-lesson-completion";
+import { getCompletionReceipt } from "./_utils/completion-receipt";
+import { LessonSupersededError, submitLessonCompletion } from "./submit-lesson-completion";
 
 type StepWithSentence = {
   id: string;
@@ -130,7 +130,24 @@ async function getCompletionRequestContext(input: CompletionInput) {
     return { outcome: { status: "notFound" as const }, status: "terminal" as const };
   }
 
-  return { lessonId, status: "ready" as const, userId };
+  const startedAt = new Date(input.startedAt);
+
+  if (Number.isNaN(startedAt.getTime())) {
+    return { outcome: { status: "invalid" as const }, status: "terminal" as const };
+  }
+
+  const receipt = await getCompletionReceipt({ lessonId, startedAt, userId });
+
+  if (receipt) {
+    revalidateTag(getUserProgressCacheTag(userId), { expire: 0 });
+
+    return {
+      outcome: { result: receipt, status: "completed" as const },
+      status: "terminal" as const,
+    };
+  }
+
+  return { lessonId, startedAt, status: "ready" as const, userId };
 }
 
 /**
@@ -147,7 +164,7 @@ async function getAuthorizedCompletionLesson({
 }) {
   const lesson = await prisma.lesson.findFirst({
     include: {
-      chapter: true,
+      chapter: { include: { course: true } },
       steps: {
         include: { chapterSentence: true, sentence: true, word: true },
         orderBy: { position: "asc" },
@@ -161,13 +178,7 @@ async function getAuthorizedCompletionLesson({
     return { status: "notFound" as const };
   }
 
-  if (getLessonAccessRequirement({ lesson }) === "free") {
-    return { lesson, status: "ready" as const };
-  }
-
-  return (await hasActiveSubscription())
-    ? { lesson, status: "ready" as const }
-    : { status: "subscriptionRequired" as const };
+  return { lesson, status: "ready" as const };
 }
 
 /**
@@ -183,11 +194,17 @@ export async function completeLesson(input: CompletionInput) {
     return context.outcome;
   }
 
-  const { lessonId, userId } = context;
+  const { lessonId, startedAt, userId } = context;
   const access = await getAuthorizedCompletionLesson({ lessonId, userId });
 
   if (access.status !== "ready") {
-    return access;
+    const prior = await prisma.lessonProgress.findFirst({
+      where: { contentSnapshot: { equals: lessonId, path: ["lessonId"] }, lessonId: null, userId },
+    });
+
+    const priorCourseId = getString(prior?.contentSnapshot, "courseId");
+
+    return priorCourseId ? { courseId: priorCourseId, status: "superseded" as const } : access;
   }
 
   const lesson = access.lesson;
@@ -243,24 +260,31 @@ export async function completeLesson(input: CompletionInput) {
     };
   });
 
-  const completion = await submitLessonCompletion({
-    durationSeconds,
-    lessonId: lesson.id,
-    score,
-    startedAt: new Date(input.startedAt),
-    stepResults: mergedStepResults,
-    timeZone: input.timeZone,
-    userId,
-  });
+  let completion: Awaited<ReturnType<typeof submitLessonCompletion>>;
+
+  try {
+    completion = await submitLessonCompletion({
+      courseRevision: {
+        contentRevision: lesson.chapter.course.contentRevision,
+        courseId: lesson.chapter.courseId,
+      },
+      durationSeconds,
+      lessonId: lesson.id,
+      score,
+      startedAt,
+      stepResults: mergedStepResults,
+      timeZone: input.timeZone,
+      userId,
+    });
+  } catch (error) {
+    if (error instanceof LessonSupersededError) {
+      return { courseId: lesson.chapter.courseId, status: "superseded" as const };
+    }
+
+    throw error;
+  }
 
   revalidateTag(getUserProgressCacheTag(userId), { expire: 0 });
 
-  return {
-    result: {
-      ...completion,
-      correctCount: score.correctCount,
-      incorrectCount: score.incorrectCount,
-    },
-    status: "completed" as const,
-  };
+  return { result: completion, status: "completed" as const };
 }

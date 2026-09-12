@@ -20,7 +20,8 @@
     "db:setup:e2e": "node ../../scripts/run-test-env.mts e2e prisma migrate deploy",
     "db:setup:test": "node ../../scripts/run-test-env.mts test prisma migrate deploy",
     "db:studio": "prisma studio",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
@@ -35,7 +36,8 @@
     "dotenv": "17.4.2",
     "prisma": "7.10.0",
     "tsx": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "server-only": "catalog:"

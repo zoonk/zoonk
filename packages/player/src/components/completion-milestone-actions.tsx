@@ -13,12 +13,12 @@ import { CompletionPrimaryActionGroup } from "./lesson-question-actions";
  * Keeps lesson review inside the player. Going back to the chapter is a separate
  * navigation action, while this callback resets the completed lesson from its first step.
  */
-function ReviewButton({ onRestart }: { onRestart: () => void }) {
+function RepeatLessonButton({ onRestart }: { onRestart: () => void }) {
   const t = useExtracted();
 
   return (
     <SecondaryActionButton onClick={onRestart} shortcut="R">
-      {t("Review")}
+      {t("Repeat lesson")}
     </SecondaryActionButton>
   );
 }
@@ -43,7 +43,7 @@ function CourseCompleteActions({ onRestart }: { onRestart: () => void }) {
         </PrimaryActionLink>
       </CompletionPrimaryActionGroup>
 
-      <ReviewButton onRestart={onRestart} />
+      <RepeatLessonButton onRestart={onRestart} />
     </>
   );
 }
@@ -73,7 +73,7 @@ function ChapterCompleteActions({ onRestart }: { onRestart: () => void }) {
           {t("Back to chapter")}
         </SecondaryActionLink>
 
-        <ReviewButton onRestart={onRestart} />
+        <RepeatLessonButton onRestart={onRestart} />
       </>
     );
   }
@@ -86,7 +86,7 @@ function ChapterCompleteActions({ onRestart }: { onRestart: () => void }) {
         </PrimaryActionLink>
       </CompletionPrimaryActionGroup>
 
-      <ReviewButton onRestart={onRestart} />
+      <RepeatLessonButton onRestart={onRestart} />
     </>
   );
 }

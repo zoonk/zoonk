@@ -212,6 +212,9 @@ final class MyCoursesStoreTests: XCTestCase {
 
 /// Delays an older network response to verify that a newer search owns the visible result.
 private actor SupersededMyCoursesSearchAPI: MyCoursesAPIClient {
+  func listTracks(cursor: String?, token: String) async throws -> MyTracksPage {
+    MyTracksPage(tracks: [], nextCursor: nil)
+  }
   let latestPage: MyCoursesPage
   let requestDidStart: @Sendable () -> Void
   private var continuation: CheckedContinuation<MyCoursesPage, Never>?
@@ -251,6 +254,9 @@ private func makeMyCoursesTestAccount() -> CurrentAccount {
 }
 
 private actor MyCoursesAPIStub: MyCoursesAPIClient {
+  func listTracks(cursor: String?, token: String) async throws -> MyTracksPage {
+    MyTracksPage(tracks: [], nextCursor: nil)
+  }
   private var results: [Result<MyCoursesPage, Error>]
   private(set) var requests: [MyCoursesRequest] = []
 
@@ -270,6 +276,9 @@ private actor MyCoursesAPIStub: MyCoursesAPIClient {
 }
 
 private actor SuspendedMyCoursesAPIStub: MyCoursesAPIClient {
+  func listTracks(cursor: String?, token: String) async throws -> MyTracksPage {
+    MyTracksPage(tracks: [], nextCursor: nil)
+  }
   private let requestDidStart: @Sendable () -> Void
   private var continuation: CheckedContinuation<MyCoursesPage, any Error>?
 

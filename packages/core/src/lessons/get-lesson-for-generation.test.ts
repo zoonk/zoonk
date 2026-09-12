@@ -3,8 +3,10 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getLessonForGeneration } from "./get-lesson-for-generation";
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn().mockResolvedValue(null) }));
 
 describe(getLessonForGeneration, () => {
   let organizationId: string;

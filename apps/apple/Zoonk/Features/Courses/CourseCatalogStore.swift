@@ -205,8 +205,11 @@ final class CourseCatalogStore {
       CourseCatalogRequest(
         isEmpty: { _ in false },
         load: { api in
-          async let course = api.getCourse(id: id)
-          async let chapters = api.listCourseChapters(courseID: id)
+          async let course = api.getCourse(id: id, token: authenticatedSession?.bearerToken)
+          async let chapters = api.listCourseChapters(
+            courseID: id, token: authenticatedSession?.bearerToken)
+          async let learningPath = api.getCourseLearningPath(
+            courseID: id, token: authenticatedSession?.bearerToken)
           async let continuation = loadCatalogSupplement {
             try await api.getCourseNextLesson(
               courseID: id,
@@ -217,13 +220,24 @@ final class CourseCatalogStore {
               courseID: id,
               token: authenticatedSession?.bearerToken)
           }
-          let (loadedCourse, loadedChapters, loadedContinuation, loadedProgress) =
-            try await (course, chapters, continuation, progress)
+          let (loadedCourse, loadedChapters, loadedContinuation, loadedProgress, loadedPath) =
+            try await (course, chapters, continuation, progress, learningPath)
+          let canPrepare: Bool?
+          if loadedChapters.isEmpty {
+            canPrepare = try await loadCatalogSupplement {
+              try await api.canPrepareCourseContent(
+                courseID: id, token: authenticatedSession?.bearerToken)
+            }
+          } else {
+            canPrepare = false
+          }
           return CourseDetail(
             continuation: loadedContinuation,
             course: loadedCourse,
             chapters: loadedChapters,
-            progress: loadedProgress)
+            progress: loadedProgress,
+            learningPath: loadedPath,
+            canPrepareContent: canPrepare == true)
         }))
 
     guard isCurrent(requestIdentity), session.authenticatedSession == authenticatedSession else {
@@ -266,9 +280,14 @@ final class CourseCatalogStore {
         isEmpty: { _ in false },
         load: { api in
           async let chapter = loadCatalogSupplement {
-            try await api.getChapter(id: id)
+            try await api.getChapter(id: id, token: authenticatedSession?.bearerToken)
           }
-          async let lessons = api.listChapterLessons(chapterID: id)
+          async let lessons = api.listChapterLessons(
+            chapterID: id, token: authenticatedSession?.bearerToken)
+          async let optional = loadCatalogSupplement {
+            try await api.listChapterOptionalActivities(
+              chapterID: id, token: authenticatedSession?.bearerToken)
+          }
           async let continuation = loadCatalogSupplement {
             try await api.getChapterNextLesson(
               chapterID: id,
@@ -276,16 +295,36 @@ final class CourseCatalogStore {
           }
           async let progress = loadCatalogSupplement {
             try await api.getChapterProgress(
-              chapterID: id,
-              token: authenticatedSession?.bearerToken)
+              chapterID: id, token: authenticatedSession?.bearerToken)
           }
           let (loadedChapter, loadedLessons, loadedContinuation, loadedProgress) =
             try await (chapter, lessons, continuation, progress)
+          let course: Course?
+          if let loadedChapter {
+            course = try await loadCatalogSupplement {
+              try await api.getCourse(
+                id: loadedChapter.courseID, token: authenticatedSession?.bearerToken)
+            }
+          } else {
+            course = nil
+          }
+          let canPrepare: Bool?
+          if loadedLessons.isEmpty, let course {
+            canPrepare = try await loadCatalogSupplement {
+              try await api.canPrepareCourseContent(
+                courseID: course.id, token: authenticatedSession?.bearerToken)
+            }
+          } else {
+            canPrepare = false
+          }
           return ChapterDetail(
             chapter: loadedChapter,
             continuation: loadedContinuation,
             lessons: loadedLessons,
-            progress: loadedProgress)
+            progress: loadedProgress,
+            course: course,
+            optionalActivities: try await optional,
+            canPrepareContent: canPrepare == true)
         }))
 
     guard isCurrent(requestIdentity), session.authenticatedSession == authenticatedSession else {

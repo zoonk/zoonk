@@ -1,5 +1,4 @@
 import { GeneratedCourseCacheRefresher } from "@/components/catalog/generated-course-cache-refresher";
-import { UpgradeCTA } from "@/components/subscription/upgrade-cta";
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
 import { getLessonSeoSource } from "@/data/lessons/get-lesson-seo-source";
 import { redirect } from "@/i18n/navigation";
@@ -7,28 +6,29 @@ import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { isLessonSeoIndexable } from "@/lib/lessons/seo";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { listCourseChapters } from "@zoonk/core/chapters/list-by-course";
-import { getFirstCourseLesson } from "@zoonk/core/courses/get-first-lesson";
+import { getCourseLearningPath } from "@zoonk/core/courses/learning-plan";
+import { OPTIONAL_LESSON_KINDS } from "@zoonk/core/courses/learning-plan-contract";
 import { type CatalogLesson, getLesson as getCatalogLesson } from "@zoonk/core/lessons/get-by-slug";
 import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
+import { getLessonOptionalActivities } from "@zoonk/core/lessons/optional-activities";
 import {
   getLessonContent,
   getLessonContentAccess,
 } from "@zoonk/core/player/queries/get-playable-lesson";
 import { getPlayerProgressSnapshot } from "@zoonk/core/player/queries/get-player-progress-snapshot";
 import { getSession } from "@zoonk/core/users/session";
-import { Container, ContainerBody } from "@zoonk/ui/components/container";
+import { type Chapter, type Lesson } from "@zoonk/db";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getContentLocale } from "@zoonk/utils/locale";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
-import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LessonNotGenerated } from "./lesson-not-generated";
 import { LessonPlayerClient } from "./lesson-player-client";
 import { buildLessonProgressMeta, getNextChapterTarget } from "./lesson-player-model";
-import { LessonPageSummary, LessonSummaryStatus } from "./lesson-summary";
+import { LessonPageSummary } from "./lesson-summary";
 import { ReviewLessonEmpty } from "./review-lesson-empty";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
@@ -59,47 +59,6 @@ function LessonPlayerSkeleton() {
   );
 }
 
-/**
- * Renders the web-specific upgrade response for a subscription decision that
- * the shared playable-lesson capability already authorized.
- */
-async function getSubscriptionRequiredContent({
-  brandSlug,
-  chapterSlug,
-  courseSlug,
-  lesson,
-}: {
-  brandSlug: string;
-  chapterSlug: string;
-  courseSlug: string;
-  lesson: CatalogLesson;
-}) {
-  const backHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
-  const firstLesson = await getFirstCourseLesson({ courseId: lesson.chapter.course.id });
-
-  const freeLessonHref = firstLesson
-    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${firstLesson.chapterSlug}/l/${firstLesson.lessonSlug}` as const)
-    : undefined;
-
-  const t = await getExtracted();
-
-  return (
-    <Container className="min-h-dvh" variant="narrow">
-      <ContainerBody className="justify-center sm:flex-1">
-        <UpgradeCTA
-          backHref={backHref}
-          backLabel={t("Back to chapter")}
-          freeLessonHref={freeLessonHref}
-        >
-          <LessonPageSummary lesson={lesson} />
-
-          <LessonSummaryStatus>{t("This lesson is included with Plus.")}</LessonSummaryStatus>
-        </UpgradeCTA>
-      </ContainerBody>
-    </Container>
-  );
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brandSlug, chapterSlug, courseSlug, lang: locale, lessonSlug } = await params;
   const lessonShell = await getCatalogLesson({ brandSlug, chapterSlug, courseSlug, lessonSlug });
@@ -120,8 +79,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       }),
     },
     robots: {
-      follow: true,
+      follow: !lessonShell.chapter.course.userId,
       index:
+        !lessonShell.chapter.course.userId &&
         getContentLocale(lessonShell.chapter.course.language) === locale &&
         isLessonSeoIndexable({
           description: lessonShell.description,
@@ -138,8 +98,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * Loads the runtime-specific lesson inside the page's explicit streaming
  * boundary so Cache Components can prerender the route shell.
  */
-async function LessonContent({ params }: Pick<Props, "params">) {
+async function LessonContent({ params, searchParams }: Pick<Props, "params" | "searchParams">) {
   const { brandSlug, chapterSlug, courseSlug, lang: locale, lessonSlug } = await params;
+
+  const search = await searchParams;
+  const view = search.view === "curriculum" ? "curriculum" : "path";
 
   const [lessonShell, session] = await Promise.all([
     getCatalogLesson({ brandSlug, chapterSlug, courseSlug, lessonSlug }),
@@ -156,35 +119,33 @@ async function LessonContent({ params }: Pick<Props, "params">) {
     notFound();
   }
 
-  if (access.status === "subscriptionRequired") {
-    return getSubscriptionRequiredContent({
-      brandSlug,
-      chapterSlug,
-      courseSlug,
-      lesson: lessonShell,
-    });
-  }
-
-  const [lessonContent, nextLesson, initialProgress, chapterLessons, courseChapters] =
-    await Promise.all([
-      getLessonContent(lessonShell.id),
-      getNextLessonInCourse({ courseId: lessonShell.chapter.course.id, lessonId: lessonShell.id }),
-      loadOptionalData(getPlayerProgressSnapshot),
-      listChapterLessons({ chapterId: lessonShell.chapter.id }),
-      listCourseChapters({ courseId: lessonShell.chapter.course.id }),
-    ]);
+  const [
+    lessonContent,
+    nextLesson,
+    initialProgress,
+    chapterLessons,
+    allCourseChapters,
+    path,
+    optionalPractice,
+  ] = await Promise.all([
+    getLessonContent(lessonShell.id),
+    getNextLessonInCourse({
+      courseId: lessonShell.chapter.course.id,
+      lessonId: lessonShell.id,
+      view,
+    }),
+    loadOptionalData(getPlayerProgressSnapshot),
+    listChapterLessons({
+      chapterId: lessonShell.chapter.id,
+      view: view === "curriculum" ? "curriculum" : "teaching",
+    }),
+    listCourseChapters({ courseId: lessonShell.chapter.course.id }),
+    getCourseLearningPath({ courseId: lessonShell.chapter.course.id }),
+    getLessonOptionalActivities({ lessonId: lessonShell.id }),
+  ]);
 
   if (lessonContent.status === "unavailable") {
     notFound();
-  }
-
-  if (lessonContent.status === "subscriptionRequired") {
-    return getSubscriptionRequiredContent({
-      brandSlug,
-      chapterSlug,
-      courseSlug,
-      lesson: lessonShell,
-    });
   }
 
   if (lessonContent.status === "notGenerated") {
@@ -215,7 +176,8 @@ async function LessonContent({ params }: Pick<Props, "params">) {
   }
 
   if (lessonContent.status === "reviewEmpty") {
-    const generationLessonId = brandSlug === AI_ORG_SLUG ? lessonContent.generationLessonId : null;
+    const generationLessonId =
+      brandSlug === AI_ORG_SLUG || brandSlug === "me" ? lessonContent.generationLessonId : null;
 
     return (
       <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-4">
@@ -229,18 +191,14 @@ async function LessonContent({ params }: Pick<Props, "params">) {
   const lesson = lessonContent.lesson;
   const lessonMeta = await getLessonDisplayMeta(lesson);
 
-  const lessonProgress = buildLessonProgressMeta({
-    chapterId: lessonShell.chapter.id,
-    chapterLessons,
-    courseChapters,
-    lessonId: lessonShell.id,
-  });
-
-  const nextChapter = getNextChapterTarget({
+  const { lessonProgress, nextChapter } = getLessonPresentation({
+    allCourseChapters,
     brandSlug,
-    chapterId: lessonShell.chapter.id,
-    courseChapters,
+    chapterLessons,
     courseSlug,
+    lessonShell,
+    path,
+    view,
   });
 
   return (
@@ -250,11 +208,15 @@ async function LessonContent({ params }: Pick<Props, "params">) {
       )}
 
       <LessonPlayerClient
+        key={lesson.id}
         lesson={lesson}
         brandSlug={brandSlug}
         chapterPosition={lessonShell.chapter.position}
         chapterTitle={lessonShell.chapter.title}
         courseTitle={lessonShell.chapter.course.title}
+        courseId={lessonShell.chapter.course.id}
+        optionalPractice={optionalPractice}
+        view={view}
         courseSlug={courseSlug}
         chapterSlug={chapterSlug}
         isAuthenticated={Boolean(session)}
@@ -273,10 +235,66 @@ async function LessonContent({ params }: Pick<Props, "params">) {
   );
 }
 
-export default function LessonPage({ params }: Props) {
+export default function LessonPage({ params, searchParams }: Props) {
   return (
     <Suspense fallback={<LessonPlayerSkeleton />}>
-      <LessonContent params={params} />
+      <LessonContent params={params} searchParams={searchParams} />
     </Suspense>
   );
+}
+
+function getLessonPresentation({
+  allCourseChapters,
+  brandSlug,
+  chapterLessons,
+  courseSlug,
+  lessonShell,
+  path,
+  view,
+}: {
+  allCourseChapters: Chapter[];
+  brandSlug: string;
+  chapterLessons: Lesson[];
+  courseSlug: string;
+  lessonShell: CatalogLesson;
+  path: Awaited<ReturnType<typeof getCourseLearningPath>>;
+  view: "path" | "curriculum";
+}) {
+  const courseChapters =
+    view === "path" && path.status === "ready" ? path.chapters : allCourseChapters;
+
+  const isOptional =
+    Boolean(lessonShell.sourceLessonId) ||
+    OPTIONAL_LESSON_KINDS.some((kind) => kind === lessonShell.kind);
+
+  const pathChapter =
+    path.status === "ready"
+      ? path.chapters.find((chapter) => chapter.id === lessonShell.chapter.id)
+      : null;
+
+  const lessonProgress = {
+    ...buildLessonProgressMeta({
+      chapterId: lessonShell.chapter.id,
+      chapterLessons,
+      courseChapters,
+      lessonId: lessonShell.id,
+    }),
+    isOptional,
+    ...(pathChapter && !isOptional && view === "path"
+      ? {
+          completedLessonsInChapter:
+            pathChapter.completedLessons +
+            (pathChapter.lessons.find((item) => item.id === lessonShell.id)?.isCompleted ? 0 : 1),
+        }
+      : {}),
+  };
+
+  const nextChapter = getNextChapterTarget({
+    brandSlug,
+    chapterId: lessonShell.chapter.id,
+    courseChapters,
+    courseSlug,
+  });
+
+  return { lessonProgress, nextChapter };
 }

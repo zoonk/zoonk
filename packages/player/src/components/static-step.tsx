@@ -2,6 +2,7 @@
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
+import { useState } from "react";
 import { usePlayerLessonMeta, usePlayerRuntime } from "../player-context";
 import { describePlayerStep, getPlayerStepImage } from "../player-step";
 import {
@@ -168,6 +169,7 @@ function TextOnlyStaticScene({ children }: { children: React.ReactNode }) {
 }
 
 export function StaticStep({ step }: { step: SerializedStep }) {
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const lessonMeta = usePlayerLessonMeta();
   const { state } = usePlayerRuntime();
   const descriptor = describePlayerStep(step);
@@ -181,13 +183,19 @@ export function StaticStep({ step }: { step: SerializedStep }) {
   const content = <StaticStepContent sentenceLines={sentenceLines} step={step} />;
   const image = getPlayerStepImage(descriptor);
 
-  if (!image) {
+  if (!image?.url || image.url === failedImageUrl) {
     return <TextOnlyStaticScene>{content}</TextOnlyStaticScene>;
   }
 
   return (
     <div className="flex h-full w-full flex-1">
-      <StaticStepLayout image={image}>{content}</StaticStepLayout>
+      <StaticStepLayout
+        alt={descriptor?.kind === "staticText" ? descriptor.content.title : ""}
+        image={image}
+        onImageError={() => setFailedImageUrl(image.url ?? null)}
+      >
+        {content}
+      </StaticStepLayout>
     </div>
   );
 }

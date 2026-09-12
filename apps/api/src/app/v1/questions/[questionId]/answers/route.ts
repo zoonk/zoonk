@@ -113,10 +113,6 @@ async function createLessonQuestionAnswer(
     return errors.notFound();
   }
 
-  if (result.status === "subscriptionRequired") {
-    return errors.paymentRequired();
-  }
-
   if (result.status === "conflict") {
     return errors.conflict("Question cannot be answered in the current thread state");
   }

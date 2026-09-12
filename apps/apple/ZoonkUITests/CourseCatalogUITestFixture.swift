@@ -132,7 +132,7 @@ let courseCatalogUITestSnapshotJSON =
         "description": "Trace water as it moves from the soil through a plant.",
         "id": "lesson-follow-water",
         "imageURL": null,
-        "kind": "practice",
+        "kind": "tutorial",
         "language": "en",
         "position": 1,
         "slug": "follow-the-water",

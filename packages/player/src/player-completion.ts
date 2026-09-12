@@ -7,9 +7,9 @@ import { type PlayerState } from "./player-reducer";
  * Computes the completion result from local player state.
  *
  * All inputs (correct/incorrect answers, totalBrainPower) are
- * already available on the client, so we can show metrics instantly without
- * waiting for a server round-trip. The server calls the same scoring function
- * so local preview and saved progress stay aligned.
+ * available locally for guest completion and preparing the final transition.
+ * Authenticated completion replaces these values with the server receipt before
+ * rewards are displayed.
  */
 export function computeLocalCompletion(state: PlayerState): CompletionResult {
   const score = computeLessonScore({

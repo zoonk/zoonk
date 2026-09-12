@@ -19,7 +19,6 @@ import { FeedbackScreenContent } from "./feedback-screen";
 import { StepActionGroup } from "./step-action-group";
 import { PlayerContentFrame } from "./step-layouts";
 import { StepRenderer } from "./step-renderer";
-import { UnauthenticatedStartWarningScreen } from "./unauthenticated-progress-prompt";
 
 /**
  * Renders the desktop inline action inside the shared player frame so the
@@ -137,20 +136,11 @@ function ActiveStepContent() {
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
 
-  const { chapterHref, energyHref, levelHref, loginHref, nextLessonHref, patternsHref } =
+  const { chapterHref, energyHref, levelHref, nextLessonHref, patternsHref } =
     usePlayerNavigation();
 
   const activeCompletionMilestone = getActiveCompletionMilestone(state);
   const completionResult = getCompletionResult(state);
-
-  if (screen.kind === "startWarning") {
-    return (
-      <UnauthenticatedStartWarningScreen
-        loginHref={loginHref ?? "/login"}
-        onContinue={actions.start}
-      />
-    );
-  }
 
   if (screen.kind === "completed") {
     if (activeCompletionMilestone) {

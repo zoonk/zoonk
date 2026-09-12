@@ -1,13 +1,25 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { clampEnergy } from "../../progress/energy";
 import { getStepAnswerCounts } from "../contracts/answer-counts";
 import { type AnswerResult } from "../contracts/check-answer";
+import { type CompletionResult } from "../contracts/completion-input-schema";
 import { type ScoreResult } from "../contracts/compute-score";
 import { getCompletionEnergyContext } from "./_utils/completion-energy";
+import { getCompletionReceipt } from "./_utils/completion-receipt";
 import { getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
 import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-completion";
+
+export class LessonSupersededError extends Error {
+  readonly courseId: string | null;
+
+  constructor(courseId: string | null) {
+    super("The lesson was replaced by a newer curriculum");
+    this.name = "LessonSupersededError";
+    this.courseId = courseId;
+  }
+}
 
 /**
  * Persists one validated lesson completion and its progress aggregates. Energy
@@ -15,6 +27,7 @@ import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-com
  * apply inactivity twice or lose either completion's Energy change.
  */
 export async function submitLessonCompletion(input: {
+  courseRevision?: { courseId: string; contentRevision: number };
   durationSeconds: number;
   lessonId: string;
   score: ScoreResult;
@@ -31,13 +44,56 @@ export async function submitLessonCompletion(input: {
   }[];
   timeZone: string;
   userId: string;
-}): Promise<{
-  belt: BeltLevelResult;
-  brainPower: number;
-  energyDelta: number;
-  newTotalBp: number;
-}> {
+}): Promise<CompletionResult> {
+  const receipt = await getCompletionReceipt(input);
+
+  if (receipt) {
+    return receipt;
+  }
+
+  const reference =
+    input.courseRevision ??
+    (await prisma.lesson
+      .findUnique({
+        include: { chapter: { include: { course: true } } },
+        where: { id: input.lessonId },
+      })
+      .then((lesson) =>
+        lesson
+          ? {
+              contentRevision: lesson.chapter.course.contentRevision,
+              courseId: lesson.chapter.courseId,
+            }
+          : null,
+      ));
+
+  if (!reference) {
+    throw new LessonSupersededError(null);
+  }
+
   return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM courses WHERE id = ${reference.courseId}::uuid FOR UPDATE`;
+
+    // Same-course completions share the lock; only the first identical attempt applies rewards.
+    const savedReceipt = await getCompletionReceipt({ ...input, database: tx });
+
+    if (savedReceipt) {
+      return savedReceipt;
+    }
+
+    const current = await tx.lesson.findUnique({
+      include: { chapter: { include: { course: true } } },
+      where: { id: input.lessonId },
+    });
+
+    if (
+      !current ||
+      current.chapter.courseId !== reference.courseId ||
+      current.chapter.course.contentRevision !== reference.contentRevision
+    ) {
+      throw new LessonSupersededError(reference.courseId);
+    }
+
     const { completedAt, completionDate, currentEnergy } = await getCompletionEnergyContext({
       timeZone: input.timeZone,
       transaction: tx,
@@ -111,11 +167,24 @@ export async function submitLessonCompletion(input: {
 
     const newTotalBp = Number(updatedProgress.totalBrainPower);
 
-    return {
+    const result: CompletionResult = {
       belt: calculateBeltLevel(newTotalBp),
       brainPower: input.score.brainPower,
+      correctCount: input.score.correctCount,
       energyDelta: input.score.energyDelta,
+      incorrectCount: input.score.incorrectCount,
       newTotalBp,
     };
+
+    await tx.lessonCompletionReceipt.create({
+      data: {
+        originalLessonId: input.lessonId,
+        result,
+        startedAt: input.startedAt,
+        userId: input.userId,
+      },
+    });
+
+    return result;
   });
 }

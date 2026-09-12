@@ -1,0 +1,12 @@
+model GenerationRun {
+  id             String        @id
+  courseId       String?       @map("course_id") @db.Uuid
+  course         Course?       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  coursePromptId String?       @map("course_prompt_id") @db.Uuid
+  coursePrompt   CoursePrompt? @relation(fields: [coursePromptId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  @@index([courseId])
+  @@index([coursePromptId])
+  @@map("generation_runs")
+}

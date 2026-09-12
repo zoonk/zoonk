@@ -50,21 +50,20 @@ export function toCourseSummary(course: CourseSummary) {
  * persistence-only fields and exposing only the first originating prompt ID.
  */
 export function toCourseResource(course: CourseResource) {
-  if (!course.organization) {
-    throw new Error("Published brand course is missing its organization");
-  }
-
   return {
     categories: course.categories.map((category) => category.category),
-    coursePromptId: course.prompts.at(0)?.id ?? null,
+    contentRevision: course.contentRevision,
+    coursePromptId: course.userId ? null : (course.prompts.at(0)?.id ?? null),
+    curriculumVersion: course.curriculumVersion,
     description: course.description,
     format: course.format,
     generationId: course.generationRunId,
     generationStatus: course.generationStatus,
     id: course.id,
     imageUrl: course.imageUrl,
+    isPrivate: course.userId !== null,
     language: course.language,
-    organization: toOrganizationSummary(course.organization),
+    organization: course.organization ? toOrganizationSummary(course.organization) : null,
     slug: course.slug,
     targetLanguage: course.targetLanguage,
     title: course.title,
@@ -85,6 +84,8 @@ export function toCourseChapter(chapter: CourseChapter) {
     imageUrl: chapter.imageUrl,
     language: chapter.language,
     lessonCount: chapter._count.lessons,
+    level: chapter.level,
+    outcomes: chapter.outcomes,
     position: chapter.position,
     slug: chapter.slug,
     title: chapter.title,
@@ -94,7 +95,7 @@ export function toCourseChapter(chapter: CourseChapter) {
 /**
  * Serializes the direct chapter resource and preserves its parent course ID.
  */
-export function toChapterResource(chapter: ChapterResource) {
+export function toChapterResource(chapter: Omit<ChapterResource, "course">) {
   return {
     courseId: chapter.courseId,
     description: chapter.description,
@@ -103,6 +104,8 @@ export function toChapterResource(chapter: ChapterResource) {
     id: chapter.id,
     imageUrl: chapter.imageUrl,
     language: chapter.language,
+    level: chapter.level,
+    outcomes: chapter.outcomes,
     position: chapter.position,
     slug: chapter.slug,
     title: chapter.title,
@@ -126,6 +129,7 @@ export function toChapterLesson({ courseId, lesson }: { courseId: string; lesson
     language: lesson.language,
     position: lesson.position,
     slug: lesson.slug,
+    sourceLessonId: lesson.sourceLessonId,
     title: lesson.title,
   };
 }

@@ -16,6 +16,11 @@ export async function advanceToCompletionSummary({
   page: Page;
   steps?: number;
 }) {
+  await expect(page.locator('[data-slot="player-stage"]')).toHaveAttribute(
+    "data-phase",
+    "completed",
+  );
+
   const completionScreen = page.getByRole("status");
 
   await expect(completionScreen).toBeVisible();

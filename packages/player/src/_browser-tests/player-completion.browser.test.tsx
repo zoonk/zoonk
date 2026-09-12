@@ -1,9 +1,11 @@
 import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
-import { describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { describe, expect, it, vi } from "vitest";
+import { page, userEvent } from "vitest/browser";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
+import { type PlayerCompletionOutcome } from "../completion-persistence";
 import { getLocalDate } from "../player-date";
 
 function buildProgressSnapshot(
@@ -79,6 +81,93 @@ function getCurrentLocalDayOfWeek() {
 }
 
 describe("player browser integration: completion", () => {
+  it("retains the final content during a failed save and retries exactly the same attempt before showing server rewards", async () => {
+    await page.viewport(390, 844);
+    const firstSave = Promise.withResolvers<PlayerCompletionOutcome>();
+
+    const onComplete = vi
+      .fn()
+      .mockReturnValueOnce(firstSave.promise)
+      .mockResolvedValueOnce({
+        result: {
+          belt: calculateBeltLevel(0),
+          brainPower: 0,
+          correctCount: 0,
+          energyDelta: 0,
+          incorrectCount: 1,
+          newTotalBp: 0,
+        },
+        status: "completed",
+      });
+
+    renderPlayer({ lesson: buildCompletionQuizLesson(), onComplete });
+    await completeSingleChoiceLesson();
+
+    await expect.element(page.getByRole("button", { name: "Saving progress…" })).toBeDisabled();
+    await expect.element(page.getByText("100%", { exact: true })).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("link", { exact: true, name: "Next" }))
+      .not.toBeInTheDocument();
+
+    await userEvent.keyboard("{Enter}");
+    expect(onComplete).toHaveBeenCalledOnce();
+
+    firstSave.resolve({ status: "failed" });
+    await expect.element(page.getByRole("button", { name: "Retry save" })).toBeEnabled();
+
+    await expect
+      .element(
+        page
+          .getByRole("toolbar", { name: "Lesson controls" })
+          .getByText("Your progress hasn't been saved yet. Try again to save your progress."),
+      )
+      .toBeInTheDocument();
+
+    await page.getByRole("button", { name: "Retry save" }).click();
+
+    await expect.element(page.getByText("0%", { exact: true })).toBeInTheDocument();
+    expect(onComplete).toHaveBeenCalledTimes(2);
+    expect(onComplete.mock.calls[1]?.[0]).toStrictEqual(onComplete.mock.calls[0]?.[0]);
+
+    expect(onComplete.mock.calls[1]?.[0].answers).toMatchObject({
+      "completion-step": { kind: "multipleChoice", selectedOptionId: "correct" },
+    });
+  });
+
+  it("keeps a completed static explanation visible until its save succeeds", async () => {
+    await page.viewport(1280, 720);
+    const save = Promise.withResolvers<PlayerCompletionOutcome>();
+
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: {
+              text: "A concrete explanation stays visible while saving.",
+              title: "One focused idea",
+              variant: "text",
+            },
+            kind: "static",
+          }),
+        ],
+      }),
+      onComplete: () => save.promise,
+    });
+
+    await userEvent.keyboard("{ArrowRight}");
+    await expect.element(page.getByRole("button", { name: "Saving progress…" })).toBeDisabled();
+
+    await expect
+      .element(page.getByText("A concrete explanation stays visible while saving."))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByText("Completed", { exact: true })).not.toBeInTheDocument();
+    save.resolve({ status: "completed" });
+    await expect.element(page.getByText("Completed", { exact: true })).toBeInTheDocument();
+  });
+
   it("renders authenticated lesson completion progress, actions, footer, and hidden chrome", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
@@ -110,8 +199,7 @@ describe("player browser integration: completion", () => {
       name: /chapter progress/iu,
     });
 
-    await expect.element(chapterProgress).toBeInTheDocument();
-    await expect.element(chapterProgress).toHaveAttribute("aria-valuenow", "40");
+    await expect.element(chapterProgress).not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByText(/lessons left in this chapter/iu))
@@ -132,7 +220,7 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /try again/iu }))
+      .element(completionScreen.getByRole("button", { name: /repeat lesson/iu }))
       .toBeInTheDocument();
 
     await expect.element(page.getByText("Custom completion footer")).toBeInTheDocument();
@@ -142,7 +230,7 @@ describe("player browser integration: completion", () => {
       .element(page.getByRole("progressbar", { name: /lesson progress/iu }))
       .not.toBeInTheDocument();
 
-    await completionScreen.getByRole("button", { name: /try again/iu }).click();
+    await completionScreen.getByRole("button", { name: /repeat lesson/iu }).click();
 
     await expect
       .element(page.getByRole("heading", { name: "Completion question" }))
@@ -352,7 +440,7 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /try again/iu }))
+      .element(completionScreen.getByRole("button", { name: /repeat lesson/iu }))
       .toBeInTheDocument();
 
     await expect
@@ -364,6 +452,26 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
 
     await expect.element(completionScreen.getByText(/belt/iu)).not.toBeInTheDocument();
+  });
+
+  it("lets Enter activate the focused guest sign-in link instead of the next-lesson shortcut", async () => {
+    const onNext = vi.fn();
+
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      onNext,
+      viewer: { isAuthenticated: false },
+    });
+
+    await completeSingleChoiceLesson();
+    const link = page.getByRole("link", { name: "Log in to save progress" }).element();
+    const activate = vi.fn((event: Event) => event.preventDefault());
+    link.addEventListener("click", activate);
+    link.focus();
+    await userEvent.keyboard("{Enter}");
+    expect(activate).toHaveBeenCalledOnce();
+    expect(onNext).not.toHaveBeenCalled();
+    link.removeEventListener("click", activate);
   });
 
   it("shows guests the same completion summary and actions", async () => {
@@ -383,20 +491,6 @@ describe("player browser integration: completion", () => {
         userName: null,
       },
     });
-
-    const startWarning = page.getByRole("status");
-
-    await expect.element(startWarning.getByText(/progress won't be saved/iu)).toBeInTheDocument();
-
-    const startLoginLink = startWarning.getByRole("link", { name: /log in to save progress/iu });
-
-    await expect.element(startLoginLink).toHaveAttribute("href", "/login");
-
-    await expect
-      .element(page.getByRole("heading", { name: "Completion question" }))
-      .not.toBeInTheDocument();
-
-    await startWarning.getByRole("button", { name: /continue without saving/iu }).click();
 
     await expect
       .element(page.getByRole("heading", { name: "Completion question" }))
@@ -424,10 +518,21 @@ describe("player browser integration: completion", () => {
       name: /chapter progress/iu,
     });
 
-    await expect.element(chapterProgress).toBeInTheDocument();
-    await expect.element(chapterProgress).toHaveAttribute("aria-valuenow", "40");
+    await expect.element(chapterProgress).not.toBeInTheDocument();
 
     await expect.element(completionScreen.getByText("Guest completion footer")).toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByRole("link", { name: "Log in to save progress" }))
+      .toHaveAttribute("href", "/login");
+
+    await expect
+      .element(
+        completionScreen.getByText(
+          "This lesson's progress wasn't saved. Log in to save your next lessons.",
+        ),
+      )
+      .toBeInTheDocument();
 
     await expect.element(nextLink).toBeInTheDocument();
     await expect.element(nextLink).toHaveAttribute("href", "/lesson/play");
@@ -441,7 +546,7 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /try again/iu }))
+      .element(completionScreen.getByRole("button", { name: /repeat lesson/iu }))
       .toBeInTheDocument();
 
     await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).not.toBeInTheDocument();
@@ -488,7 +593,7 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /review/iu }))
+      .element(completionScreen.getByRole("button", { name: /repeat lesson/iu }))
       .toBeInTheDocument();
 
     await expect
@@ -509,7 +614,7 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await expect.element(completionScreen.getByText(/course complete/iu)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/path complete/iu)).toBeInTheDocument();
     await expect.element(completionScreen.getByText("Completed Course")).toBeInTheDocument();
     await expect.element(completionScreen.getByText("Final Lesson")).not.toBeInTheDocument();
     await expect.element(completionScreen.getByText("Lesson 1 of 1")).not.toBeInTheDocument();
@@ -531,11 +636,11 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /review/iu }))
+      .element(completionScreen.getByRole("button", { name: /repeat lesson/iu }))
       .toBeInTheDocument();
   });
 
-  it("shows structural milestones for guest completion", async () => {
+  it("shows guests an honest save invitation without claiming curriculum milestones", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       milestone: { chapterHref: "/chapter", kind: "chapter", nextHref: "/next-chapter" },
@@ -543,31 +648,16 @@ describe("player browser integration: completion", () => {
       viewer: { isAuthenticated: false, userName: null },
     });
 
-    await page.getByRole("button", { name: /continue without saving/iu }).click();
     await completeSingleChoiceLesson();
-
     const completionScreen = page.getByRole("status");
+    await expect.element(completionScreen.getByText(/chapter complete/iu)).not.toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByText(/this lesson wasn't saved/iu))
-      .not.toBeInTheDocument();
-
-    await expect.element(completionScreen.getByText(/chapter complete/iu)).toBeInTheDocument();
+      .element(completionScreen.getByRole("link", { name: "Log in to save progress" }))
+      .toHaveAttribute("href", "/sign-in");
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /back to chapter/iu }))
+      .element(completionScreen.getByRole("link", { name: /exit/iu }))
       .toBeInTheDocument();
-
-    await expect
-      .element(completionScreen.getByRole("button", { name: /review/iu }))
-      .toBeInTheDocument();
-
-    await expect
-      .element(completionScreen.getByRole("link", { name: /next chapter/iu }))
-      .toBeInTheDocument();
-
-    await expect
-      .element(completionScreen.getByRole("link", { name: /^log in$/iu }))
-      .not.toBeInTheDocument();
   });
 });

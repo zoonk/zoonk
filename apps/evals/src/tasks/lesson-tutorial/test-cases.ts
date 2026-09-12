@@ -36,6 +36,36 @@ FINAL CHECK: Before penalizing anything, ask yourself: "Would a reasonable human
 
 export const TEST_CASES = [
   {
+    expectations: `Locate an imported photo's original on macOS without altering it. Lightroom Classic Go to Folder in Library selects its folder inside Lightroom; it does not open Finder. Show in Finder reveals the original in macOS Finder. Distinguish these commands and their visible results. A disconnected drive or missing original requires a truthful condition, not an assertion that Finder will show it. Do not turn identification into moving, copying, relinking, deleting, or backup setup. ${SHARED_EXPECTATIONS}`,
+    id: "en-lightroom-original-finder-command",
+    userInput: {
+      chapterTitle: "Identify the files to protect",
+      courseTitle: "Lightroom Classic backup fundamentals",
+      language: "en",
+      lessonDescription:
+        "Find the original file for an imported photo on macOS, then record its containing folder and drive. Identification only; the learner already uses Lightroom Classic.",
+      lessonTitle: "Locate an original photo in Finder",
+      otherLessonTitles: ["Find the active catalog", "Create the first backup", "Test recovery"],
+    },
+  },
+  {
+    expectations: `Stay within locating the active Lightroom Classic catalog on macOS. Catalog Settings > General > Show is the supported path. Identify the matching .lrcat and, if present, .lrcat-data companion; do not imply .lrcat alone preserves all editing data. Never move, rename or delete the active files in an identification lesson. Do not spill into the named sibling tasks of locating originals, sorting previews or setting recovery priorities. Brief safety/verification is useful, repeated conclusions are not. ${SHARED_EXPECTATIONS}`,
+    id: "en-lightroom-catalog-scope-and-companion",
+    userInput: {
+      chapterTitle: "Identify what needs protecting",
+      courseTitle: "Lightroom Classic backup fundamentals",
+      language: "en",
+      lessonDescription:
+        "Locate the currently open catalog on macOS and identify the files that preserve editing data. Identification only.",
+      lessonTitle: "Find the active Lightroom Classic catalog",
+      otherLessonTitles: [
+        "Locate original photo folders",
+        "Distinguish essential files from rebuildable previews",
+        "Set recovery priorities",
+      ],
+    },
+  },
+  {
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 

@@ -2,13 +2,11 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
-import { hasActiveSubscription } from "../../auth/subscription";
 import {
   getChapterLessonsCacheTag,
   getLessonCacheTag,
   getUserProgressCacheTag,
 } from "../../cache/tags";
-import { getLessonAccessRequirement } from "../../lessons/access";
 import { isStandaloneGeneratedLessonKind } from "../../lessons/generated-companion-kinds";
 import {
   getSourceLessonForGeneratedCompanion,
@@ -151,26 +149,12 @@ export async function getLessonContentAccess(lessonId: string) {
     return { status: "unavailable" as const };
   }
 
-  if (getLessonAccessRequirement({ lesson }) !== "subscription") {
-    return { status: "allowed" as const };
-  }
-
-  const hasSubscription = await hasActiveSubscription();
-
-  if (session) {
-    cacheTag(getUserProgressCacheTag(session.user.id));
-  }
-
-  if (!hasSubscription) {
-    return { status: "subscriptionRequired" as const };
-  }
-
   return { status: "allowed" as const };
 }
 
 /**
  * Resolves one presentation-neutral playable lesson outcome. Core owns
- * publication, subscription access, generation state, review selection, and
+ * publication, ownership, generation state, review selection, and
  * player resource hydration; routes remain responsible for navigation, copy,
  * progress composition, and serialization.
  */
@@ -231,7 +215,7 @@ async function getPlayableLesson(lessonId: string) {
 
   cacheTag(getLessonCacheTag(lessonId));
 
-  if (result.status !== "unavailable" && result.status !== "subscriptionRequired") {
+  if (result.status !== "unavailable") {
     cacheTag(getChapterLessonsCacheTag(result.lesson.chapterId));
   }
 

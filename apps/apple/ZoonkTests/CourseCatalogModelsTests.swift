@@ -124,7 +124,10 @@ extension Course {
     organization: .testFixture,
     slug: "astronomy",
     targetLanguage: nil,
-    title: "Astronomy")
+    title: "Astronomy",
+    brandSlug: "zoonk",
+    curriculumVersion: 1,
+    format: "core")
 }
 
 extension CourseChapter {

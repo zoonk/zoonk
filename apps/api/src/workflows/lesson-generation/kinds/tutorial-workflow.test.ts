@@ -5,6 +5,7 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { start } from "workflow/api";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { tutorialLessonWorkflow } from "./tutorial-workflow";
 
@@ -22,18 +23,23 @@ vi.mock("@zoonk/ai/tasks/lessons/tutorial", () => ({
 vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
   generateStepImagePrompts: vi
     .fn()
-    .mockResolvedValue({ data: { prompts: ["settings image prompt", "save image prompt"] } }),
+    .mockResolvedValue({
+      data: {
+        images: [
+          { alt: "A keyboard sends input to the processor.", prompt: "useful image", stepIndex: 1 },
+        ],
+      },
+    }),
 }));
 
 vi.mock("@zoonk/core/steps/content-image", () => ({
   generateContentStepImage: vi
     .fn()
-    .mockImplementation(({ prompt }) =>
-      Promise.resolve({
-        data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
-        error: null,
-      }),
-    ),
+    .mockResolvedValue({ data: "https://example.com/selected.webp", error: null }),
+}));
+
+vi.mock("workflow/api", () => ({
+  start: vi.fn().mockResolvedValue({ runId: "illustration-run" }),
 }));
 
 describe(tutorialLessonWorkflow, () => {
@@ -48,14 +54,15 @@ describe(tutorialLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  it("stores generated tutorial steps with generated images", async () => {
+  it("stores complete tutorial steps and the selected illustration before resolving", async () => {
     const context = await createLessonContext({ kind: "tutorial", organizationId });
 
     await tutorialLessonWorkflow(context);
 
     expect(generateLessonTutorial).toHaveBeenCalledOnce();
     expect(generateStepImagePrompts).toHaveBeenCalledOnce();
-    expect(generateContentStepImage).toHaveBeenCalledTimes(2);
+    expect(start).not.toHaveBeenCalled();
+    expect(generateContentStepImage).toHaveBeenCalledOnce();
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -70,19 +77,12 @@ describe(tutorialLessonWorkflow, () => {
     ]);
 
     expect(contents).toStrictEqual([
+      { text: "Click settings", title: "Settings", variant: "text" },
       {
         image: {
-          prompt: "settings image prompt",
-          url: "https://example.com/settings%20image%20prompt.webp",
-        },
-        text: "Click settings",
-        title: "Settings",
-        variant: "text",
-      },
-      {
-        image: {
-          prompt: "save image prompt",
-          url: "https://example.com/save%20image%20prompt.webp",
+          alt: "A keyboard sends input to the processor.",
+          prompt: "useful image",
+          url: "https://example.com/selected.webp",
         },
         text: "Save changes",
         title: "Save",

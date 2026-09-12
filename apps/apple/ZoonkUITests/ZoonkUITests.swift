@@ -343,18 +343,20 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5),
       "Expected pagination to retain a personal course in the learner's library")
-    XCTAssertEqual(
-      app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "My Backyard Field Notes"))
-        .count, 0,
-      "Expected a personal course without a public route to remain noninteractive")
-    XCTAssertEqual(
-      app.links.matching(NSPredicate(format: "label CONTAINS %@", "My Backyard Field Notes"))
-        .count, 0,
-      "Expected a personal course without a public route to avoid a broken link")
+    let privateCourse = app.buttons.matching(
+      NSPredicate(format: "label CONTAINS %@", "My Backyard Field Notes")
+    ).firstMatch
+    XCTAssertTrue(
+      privateCourse.isHittable, "Expected the owner to be able to open a private course")
     XCTAssertTrue(app.buttons["My Courses"].isSelected, "Expected My Courses to be selected")
     XCTAssertFalse(
       app.staticTexts["Everyday Numbers"].exists,
       "Expected the account shortcut to exclude courses outside the learner's library")
+    privateCourse.tap()
+    XCTAssertTrue(
+      app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Keep private observations"))
+        .firstMatch.waitForExistence(timeout: 5),
+      "Expected the private course to load through the authenticated detail route")
   }
 
   /// Proves signed-in learners can switch between the public catalog and their enrolled courses without leaving the Courses tab.
@@ -736,7 +738,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected the chapter action to use Main's continuation label and progress")
 
     if app.frame.width > 600 {
-      let chapterTitle = app.staticTexts["1. Roots and Water"].firstMatch
+      let chapterTitle = app.staticTexts["Roots and Water"].firstMatch
       XCTAssertEqual(
         chapterContinue.frame.minX,
         chapterTitle.frame.minX,
@@ -759,10 +761,9 @@ final class ZoonkUITests: XCTestCase {
     let nextLesson = app.buttons.matching(
       NSPredicate(format: "label CONTAINS %@", "Follow the Water")
     ).firstMatch
-    XCTAssertTrue(nextLesson.label.contains("Not started"))
     XCTAssertEqual(
       nextLesson.value as? String,
-      "Practice",
+      "Tutorial",
       "Expected VoiceOver to identify the lesson kind independently from its title")
     chapterContinue.tap()
 
@@ -839,9 +840,9 @@ final class ZoonkUITests: XCTestCase {
 
     app.staticTexts["Roots and Water"].firstMatch.tap()
     XCTAssertTrue(
-      app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "1. Roots and Water"))
+      app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Roots and Water"))
         .firstMatch.waitForExistence(timeout: 10),
-      "Expected a chapter search result to load its canonical position and metadata")
+      "Expected a chapter search result to load its canonical title and metadata")
   }
 
   /// Proves an empty category turns unmet demand into the existing course-creation flow.

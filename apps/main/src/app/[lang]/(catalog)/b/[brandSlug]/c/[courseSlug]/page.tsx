@@ -16,6 +16,10 @@ export async function generateMetadata({
     return {};
   }
 
+  if (course.userId) {
+    return { robots: { follow: false, index: false }, title: course.title };
+  }
+
   const contentLocale = getContentLocale(course.language);
   const t = await getExtracted({ locale: contentLocale ?? locale });
 

@@ -738,7 +738,7 @@ describe(completeLesson, () => {
     ).resolves.toHaveLength(0);
   });
 
-  it("requires an active subscription outside the first chapter", async () => {
+  it("accepts generated content outside the first chapter without a subscription", async () => {
     const [user, { course, organization }] = await Promise.all([
       userFixture(),
       createChapterContext(),
@@ -757,18 +757,6 @@ describe(completeLesson, () => {
     });
 
     const input = buildCompletionInput({ lessonId: lesson.id, stepId: step.id });
-
-    await submitCompletionForUser({ input, userId: user.id });
-
-    await expect(
-      prisma.lessonProgress.findUnique({
-        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
-      }),
-    ).resolves.toBeNull();
-
-    await prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-    });
 
     await submitCompletionForUser({ input, userId: user.id });
 

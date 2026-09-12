@@ -1,10 +1,10 @@
 "use client";
 
 import { render } from "@testing-library/react";
-import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import Link from "next/link";
+import { type PlayerCompletionHandler } from "../completion-persistence";
 import { PlayerShell } from "../components/player-shell";
 import {
   type PlayerLessonProgress,
@@ -61,7 +61,7 @@ export function renderPlayer({
   lessonTitle = getDefaultLessonTitle(lesson),
   milestone = null,
   navigation = buildNavigation(),
-  onComplete = noop,
+  onComplete = () => ({ status: "completed" }),
   onEscape = noop,
   onNext,
   progressSnapshot = null,
@@ -77,7 +77,7 @@ export function renderPlayer({
   lessonTitle?: string;
   milestone?: PlayerMilestone | null;
   navigation?: PlayerNavigation;
-  onComplete?: (input: CompletionInput) => void;
+  onComplete?: PlayerCompletionHandler;
   onEscape?: (href: PlayerRoute) => void;
   onNext?: () => void;
   progressSnapshot?: PlayerProgressSnapshot | null;

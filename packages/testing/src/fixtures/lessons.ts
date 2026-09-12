@@ -22,6 +22,7 @@ function lessonAttrs(
     organizationId: null,
     position: 0,
     slug: `test-lesson-${randomUUID()}`,
+    sourceLessonId: null,
     title,
     ...attrs,
   };
@@ -73,11 +74,10 @@ function getLessonProgressCompletedDate({
 }
 
 export async function lessonProgressFixture(
-  attrs: Omit<LessonProgress, "completedDate" | "id" | "startedAt" | "lessonId"> & {
-    completedDate?: Date | null;
-    lessonId?: string;
-    startedAt?: Date;
-  },
+  attrs: Omit<
+    LessonProgress,
+    "completedDate" | "id" | "startedAt" | "lessonId" | "contentSnapshot"
+  > & { completedDate?: Date | null; lessonId?: string; startedAt?: Date },
 ) {
   const lessonProgress = await prisma.lessonProgress.create({
     data: {

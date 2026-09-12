@@ -72,49 +72,6 @@ async function createTestLesson(options?: {
   return { chapter, course, lesson, lessonTitle, organizationId: org.id, uniqueId };
 }
 
-/** Creates the access-policy free target so gate tests prove navigation reaches playable content. */
-async function freeFirstLessonFixture({
-  courseId,
-  organizationId,
-  uniqueId,
-}: {
-  courseId: string;
-  organizationId: string;
-  uniqueId: string;
-}) {
-  const chapter = await chapterFixture({
-    courseId,
-    isPublished: true,
-    organizationId,
-    position: 0,
-    slug: `e2e-free-chapter-${uniqueId}`,
-    title: `E2E Free Chapter ${uniqueId}`,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    generationStatus: "completed",
-    isPublished: true,
-    kind: "explanation",
-    organizationId,
-    position: 0,
-    slug: `e2e-free-lesson-${uniqueId}`,
-    title: `E2E Free Lesson ${uniqueId}`,
-  });
-
-  await stepFixture({
-    content: {
-      text: `Free lesson content ${uniqueId}`,
-      title: `Free lesson step ${uniqueId}`,
-      variant: "text",
-    },
-    isPublished: true,
-    lessonId: lesson.id,
-  });
-
-  return { chapter, lesson };
-}
-
 /**
  * Builds two playable lessons so the player can prove its quiet skip action
  * follows the real published curriculum order instead of a test-only route.
@@ -144,15 +101,6 @@ async function createPlayerSkipScenario() {
   });
 
   return { ...scenario, nextLesson };
-}
-
-async function expectGuestProgressWarning(page: Page) {
-  await expect(page.getByRole("heading", { name: "Progress won't be saved" })).toBeVisible();
-}
-
-async function continueWithoutSaving(page: Page) {
-  await expectGuestProgressWarning(page);
-  await page.getByRole("button", { name: "Continue without saving" }).click();
 }
 
 /**
@@ -601,7 +549,6 @@ test.describe("Lesson Player Page", () => {
     });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
-    await continueWithoutSaving(page);
 
     await expect(page.getByRole("heading", { name: `Step ${uniqueId} #0` })).toBeVisible();
     await expect(page.getByText(`Test step content ${uniqueId} #0`)).toBeVisible();
@@ -661,77 +608,26 @@ test.describe("Lesson Player Page", () => {
     }
   });
 
-  test("subscription gate offers the free first chapter for later lessons", async ({
+  test("free learners enter generated later-chapter content immediately", async ({
     authenticatedPage,
   }) => {
-    const { chapter, course, lesson, lessonTitle, organizationId, uniqueId } =
-      await createTestLesson({
-        chapterPosition: 1,
-        generationStatus: "completed",
-        lessonPosition: 0,
-      });
-
-    const { chapter: freeChapter, lesson: freeLesson } = await freeFirstLessonFixture({
-      courseId: course.id,
-      organizationId,
-      uniqueId,
+    const { chapter, course, lesson, uniqueId } = await createTestLesson({
+      chapterPosition: 4,
+      generationStatus: "completed",
+      lessonPosition: 0,
     });
 
-    const lessonHref = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
-    const chapterHref = `/b/ai/c/${course.slug}/ch/${chapter.slug}`;
-    const freeLessonHref = `/b/ai/c/${course.slug}/ch/${freeChapter.slug}/l/${freeLesson.slug}`;
-
-    await authenticatedPage.goto(lessonHref);
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: lessonTitle }),
+      authenticatedPage.getByRole("heading", { name: `Step ${uniqueId} #0` }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByText(`E2E lesson description ${uniqueId}`)).toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /^subscribe$/iu })).toHaveCount(0);
 
-    await expect(authenticatedPage.getByText("This lesson is included with Plus.")).toBeVisible();
-
-    const backLink = authenticatedPage.getByRole("link", { name: /back to chapter/iu });
-    const freeChapterLink = authenticatedPage.getByRole("link", { name: /^try free chapter$/iu });
-    const upgradeLink = authenticatedPage.getByRole("link", { name: /^subscribe$/iu });
-
-    await expect(backLink).toBeVisible();
-    await expect(backLink.getByText(/^Esc$/u)).toBeVisible();
-    await expect(backLink).toHaveAttribute("aria-keyshortcuts", "Escape");
-    await expect(backLink).toHaveAttribute("href", chapterHref);
-
-    await expect(freeChapterLink).toBeVisible();
-    await expect(freeChapterLink).toHaveAttribute("href", freeLessonHref);
-
-    await expect(upgradeLink).toBeVisible();
-    await expect(upgradeLink.getByText(/^Enter$/u)).toBeVisible();
-    await expect(upgradeLink).toHaveAttribute("aria-keyshortcuts", "Enter");
-    await expect(upgradeLink).toHaveAttribute("href", "/subscription");
-
-    await freeChapterLink.click();
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: `Free lesson step ${uniqueId}` }),
-    ).toBeVisible();
-
-    await authenticatedPage.goto(lessonHref);
-    await expect(backLink).toBeVisible();
-
-    await pressShortcutAndWaitForUrl({
-      expectedUrl: chapterHref,
-      key: "Escape",
-      page: authenticatedPage,
-    });
-
-    await authenticatedPage.goto(lessonHref);
-
-    await expect(authenticatedPage.getByRole("link", { name: /^subscribe$/iu })).toBeVisible();
-
-    await pressShortcutAndWaitForUrl({
-      expectedUrl: "/subscription",
-      key: "Enter",
-      page: authenticatedPage,
-    });
+    await expect(authenticatedPage.getByRole("link", { name: /^try free chapter$/iu })).toHaveCount(
+      0,
+    );
   });
 
   test("close link preserves the active language", async ({ authenticatedPage }) => {
@@ -989,7 +885,10 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expectGuestProgressWarning(page);
+    await expect(page.locator('[data-slot="player-stage"]')).toHaveAttribute(
+      "data-phase",
+      "playing",
+    );
 
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("Escape");

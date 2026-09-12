@@ -1,9 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Browser } from "@playwright/test";
-import { type LessonKind, prisma } from "@zoonk/db";
-import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -12,7 +8,6 @@ import { normalizeString } from "@zoonk/utils/string";
 import { getSearchInputTop, scrollSearchInputToTop } from "./catalog-search";
 import { expect, test } from "./fixtures";
 import { pressShortcutAndWaitForUrl } from "./keyboard-shortcuts";
-import { openLessonTypeFilterMenu } from "./lesson-type-filter";
 
 const SEARCH_LESSONS_LABEL = /search lessons/iu;
 
@@ -28,51 +23,8 @@ let noLessonsChapterUrl: string;
 let lessonNames: { first: string; second: string };
 let lessonDescriptions: { first: string; second: string };
 let lessonSlugs: { first: string; second: string };
-let languageChapterUrl: string;
 let ptChapterUrl: string;
 let ptLessonNames: { first: string; second: string };
-
-/**
- * Lesson type filters are saved to the user profile, so filter tests need a
- * dedicated user instead of the shared worker auth fixture that parallel tests
- * may also be using.
- */
-async function createFilterTestPage({ browser }: { browser: Browser }) {
-  const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
-  const context = await browser.newContext({ storageState: user.storageState });
-  const page = await context.newPage();
-
-  return { context, page, user };
-}
-
-async function getSavedHiddenLessonKinds(userId: string) {
-  const profile = await prisma.userLearningProfile.findUnique({
-    select: { preferences: true },
-    where: { userId },
-  });
-
-  const preferences = profile?.preferences;
-
-  if (!preferences || typeof preferences !== "object" || Array.isArray(preferences)) {
-    return [];
-  }
-
-  const hiddenLessonKinds = (preferences as { hiddenLessonKinds?: unknown }).hiddenLessonKinds;
-
-  return Array.isArray(hiddenLessonKinds)
-    ? hiddenLessonKinds.filter((kind): kind is LessonKind => typeof kind === "string")
-    : [];
-}
-
-async function expectSavedHiddenLessonKinds({
-  hiddenLessonKinds,
-  userId,
-}: {
-  hiddenLessonKinds: LessonKind[];
-  userId: string;
-}) {
-  await expect.poll(() => getSavedHiddenLessonKinds(userId)).toEqual(hiddenLessonKinds);
-}
 
 test.beforeAll(async () => {
   const org = await getAiOrganization();
@@ -136,7 +88,7 @@ test.beforeAll(async () => {
       chapterId: chapter.id,
       description: lessonDescriptions.second,
       isPublished: true,
-      kind: "quiz",
+      kind: "tutorial",
       normalizedTitle: normalizeString(lessonNames.second),
       organizationId: org.id,
       position: 1,
@@ -154,64 +106,6 @@ test.beforeAll(async () => {
     }),
   ]);
 
-  const languageCourse = await courseFixture({
-    isPublished: true,
-    language: "en",
-    normalizedTitle: normalizeString(`E2E Language Course ${uniqueId}`),
-    organizationId: org.id,
-    slug: `e2e-language-course-${uniqueId}`,
-    targetLanguage: "es",
-    title: `E2E Language Course ${uniqueId}`,
-  });
-
-  const languageChapter = await chapterFixture({
-    courseId: languageCourse.id,
-    description: `Language learning chapter ${uniqueId}`,
-    isPublished: true,
-    normalizedTitle: normalizeString(`E2E Language Chapter ${uniqueId}`),
-    organizationId: org.id,
-    position: 0,
-    slug: `e2e-language-ch-${uniqueId}`,
-    title: `E2E Language Chapter ${uniqueId}`,
-  });
-
-  languageChapterUrl = `/b/${AI_ORG_SLUG}/c/${languageCourse.slug}/ch/${languageChapter.slug}`;
-
-  await Promise.all([
-    lessonFixture({
-      chapterId: languageChapter.id,
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId: org.id,
-      position: 0,
-      title: `Spanish Words ${uniqueId}`,
-    }),
-    lessonFixture({
-      chapterId: languageChapter.id,
-      isPublished: true,
-      kind: "grammar",
-      organizationId: org.id,
-      position: 1,
-      title: `Spanish Grammar ${uniqueId}`,
-    }),
-    lessonFixture({
-      chapterId: languageChapter.id,
-      isPublished: true,
-      kind: "quiz",
-      organizationId: org.id,
-      position: 2,
-      title: `Language Quiz ${uniqueId}`,
-    }),
-    lessonFixture({
-      chapterId: languageChapter.id,
-      isPublished: true,
-      kind: "explanation",
-      organizationId: org.id,
-      position: 3,
-      title: `Language Explanation ${uniqueId}`,
-    }),
-  ]);
-
   // Unpublished chapter for 404 test
   unpublishedChapterSlug = `e2e-unpub-ch-${uniqueId}`;
 
@@ -225,9 +119,10 @@ test.beforeAll(async () => {
     title: `Unpublished Chapter ${uniqueId}`,
   });
 
-  // Chapter with no lessons (for redirect test)
+  // A pending published chapter has an explicit generation affordance.
   const noLessonsChapter = await chapterFixture({
     courseId: course.id,
+    generationStatus: "pending",
     isPublished: true,
     normalizedTitle: normalizeString(`No Lessons Chapter ${uniqueId}`),
     organizationId: org.id,
@@ -308,7 +203,7 @@ test.describe("Chapter Detail Page", () => {
       );
 
     await expect(
-      page.getByRole("heading", { exact: true, level: 1, name: `1. ${chapterTitle}` }),
+      page.getByRole("heading", { exact: true, level: 1, name: chapterTitle }),
     ).toBeVisible();
 
     await expect(page.getByText(`Different types of learning ${uniqueId}`)).toBeVisible();
@@ -523,110 +418,6 @@ test.describe("Chapter Lesson Search - Mobile", () => {
     await expect
       .poll(() => getSearchInputTop({ label: SEARCH_LESSONS_LABEL, page }))
       .toBeLessThanOrEqual(matchingTop + 1);
-  });
-});
-
-test.describe("Chapter Lesson Type Filters", () => {
-  test("lets guests hide lesson types locally without a save error", async ({ page }) => {
-    await page.goto(chapterUrl);
-
-    await openLessonTypeFilterMenu({ page });
-    await expect(page.getByRole("menuitemcheckbox", { name: /^explanation$/iu })).toBeVisible();
-    await expect(page.getByRole("menuitemcheckbox", { name: /^quiz$/iu })).toBeVisible();
-    await expect(page.getByRole("menuitemcheckbox", { name: /^grammar$/iu })).not.toBeVisible();
-    await expect(page.getByRole("menuitemcheckbox", { name: /^vocabulary$/iu })).not.toBeVisible();
-    await page.getByRole("menuitemcheckbox", { name: /^quiz$/iu }).click();
-
-    await expect(
-      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
-    ).toBeVisible();
-
-    await expect(
-      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
-    ).not.toBeVisible();
-
-    await expect(page.getByRole("menuitem", { name: /clear filter/iu })).toBeVisible();
-    await expect(page.getByText(/could not update lesson filters/iu)).not.toBeVisible();
-  });
-
-  test("shows only language lesson types for language courses", async ({ page }) => {
-    await page.goto(languageChapterUrl);
-
-    await openLessonTypeFilterMenu({ page });
-
-    await expect(page.getByRole("menuitemcheckbox", { name: /^grammar$/iu })).toBeVisible();
-    await expect(page.getByRole("menuitemcheckbox", { name: /^vocabulary$/iu })).toBeVisible();
-    await expect(page.getByRole("menuitemcheckbox", { name: /^explanation$/iu })).not.toBeVisible();
-    await expect(page.getByRole("menuitemcheckbox", { name: /^quiz$/iu })).not.toBeVisible();
-  });
-
-  test("hides lesson types and clears filters from the filter menu", async ({ browser }) => {
-    const { context, page } = await createFilterTestPage({ browser });
-
-    await page.goto(chapterUrl);
-
-    const filterButton = await openLessonTypeFilterMenu({ page });
-    const quizFilterItem = page.getByRole("menuitemcheckbox", { name: /^quiz$/iu });
-
-    await quizFilterItem.click();
-
-    await expect(
-      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
-    ).toBeVisible();
-
-    await expect(
-      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
-    ).not.toBeVisible();
-
-    const clearFilterItem = page.getByRole("menuitem", { name: /clear filter/iu });
-
-    await expect(quizFilterItem).toBeEnabled();
-    await expect(clearFilterItem).toBeEnabled();
-    await expect(filterButton).toBeEnabled();
-
-    await clearFilterItem.click();
-
-    await expect(
-      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
-    ).toBeVisible();
-
-    await expect(filterButton).toBeEnabled();
-
-    await context.close();
-  });
-
-  test("persists hidden lesson types for the user", async ({ browser }) => {
-    const { context, page, user } = await createFilterTestPage({ browser });
-
-    await page.goto(chapterUrl);
-
-    await openLessonTypeFilterMenu({ page });
-    await page.getByRole("menuitemcheckbox", { name: /^quiz$/iu }).click();
-    await expectSavedHiddenLessonKinds({ hiddenLessonKinds: ["quiz"], userId: user.id });
-
-    const secondContext = await browser.newContext({ storageState: user.storageState });
-    const secondPage = await secondContext.newPage();
-
-    await secondPage.goto(chapterUrl);
-
-    await expect(
-      secondPage.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
-    ).not.toBeVisible();
-
-    await openLessonTypeFilterMenu({ page: secondPage });
-
-    const clearFilterItem = secondPage.getByRole("menuitem", { name: /clear filter/iu });
-
-    await expect(clearFilterItem).toBeEnabled();
-
-    await clearFilterItem.click();
-    await expectSavedHiddenLessonKinds({ hiddenLessonKinds: [], userId: user.id });
-
-    await expect(
-      secondPage.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
-    ).toBeVisible();
-
-    await Promise.all([context.close(), secondContext.close()]);
   });
 });
 

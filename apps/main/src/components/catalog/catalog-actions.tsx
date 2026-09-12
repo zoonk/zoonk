@@ -44,7 +44,9 @@ export function CatalogActions({
     }
 
     setFeedback(value);
+
     trackFeedback({ ...feedbackTarget, feedback: value });
+
     showSuccessToast(t("Thanks for your feedback"));
   }
 

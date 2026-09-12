@@ -1,7 +1,7 @@
 import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
-import { getOriginalCourseHref } from "@/data/courses/course-href";
 import { redirect } from "@/i18n/navigation";
+import { parseGenerationReturnTo } from "@/lib/workflow/generation-return-to";
 import { getCoursePromptGeneration } from "@zoonk/core/courses/get-prompt-generation";
 import { getSession } from "@zoonk/core/users/session";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
@@ -14,10 +14,14 @@ import { GenerationClient } from "./generation-client";
 
 export async function GenerateCoursePromptContent({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string; lang: string }>;
+  searchParams: Promise<{ returnTo?: string | string[] }>;
 }) {
-  const { id, lang: locale } = await params;
+  const [{ id, lang: locale }, query] = await Promise.all([params, searchParams]);
+  const returnTo = parseGenerationReturnTo(query.returnTo);
+  const generationHref = `/generate/course/${id}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`;
 
   const [generation, session] = await Promise.all([
     getCoursePromptGeneration({ coursePromptId: id }),
@@ -29,18 +33,8 @@ export async function GenerateCoursePromptContent({
   }
 
   if (generation.status === "redirect") {
-    if (generation.target.kind === "course") {
-      return redirect({
-        href: getOriginalCourseHref({
-          brandSlug: AI_ORG_SLUG,
-          courseSlug: generation.target.courseSlug,
-        }),
-        locale,
-      });
-    }
-
     return redirect({
-      href: `/b/${AI_ORG_SLUG}/c/${generation.target.courseSlug}/ch/${generation.target.chapterSlug}/l/${generation.target.lessonSlug}`,
+      href: returnTo ?? `/b/${AI_ORG_SLUG}/c/${generation.target.courseSlug}/start`,
       locale,
     });
   }
@@ -48,7 +42,7 @@ export async function GenerateCoursePromptContent({
   const canFollowRun = generation.generationStatus === "running" && generation.generationRunId;
 
   if (!session && !canFollowRun) {
-    const loginHref = `/login?next=${encodeURIComponent(`/generate/course/${id}`)}` as const;
+    const loginHref = `/login?next=${encodeURIComponent(generationHref)}` as const;
 
     return (
       <Container variant="narrow">
@@ -69,17 +63,16 @@ export async function GenerateCoursePromptContent({
       <ContainerBody>
         <GenerationClient
           canGenerate={Boolean(session)}
-          completionKind={generation.completionKind}
           courseSlug={generation.courseSlug}
           courseTitle={generation.courseTitle}
           linkedCourseSlug={generation.linkedCourseSlug}
           generationRunId={generation.generationRunId}
           generationStatus={generation.generationStatus}
-          isLanguageCourse={generation.isLanguageCourse}
           requestId={generation.coursePromptId}
+          returnTo={returnTo}
         >
-          <GenerationExitLink href="/" width="content">
-            {t("Back home")}
+          <GenerationExitLink href={returnTo ?? "/"} width="content">
+            {returnTo ? t("Back") : t("Back home")}
           </GenerationExitLink>
         </GenerationClient>
       </ContainerBody>

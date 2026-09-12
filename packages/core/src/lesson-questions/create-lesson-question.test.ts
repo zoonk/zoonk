@@ -1076,7 +1076,7 @@ describe(createLessonQuestion, () => {
     });
   });
 
-  it("requires an active subscription for questions in later chapters", async () => {
+  it("allows questions in later generated chapters on the free plan", async () => {
     const { course, organization, user } = await createPublishedCurriculum({ subscribed: false });
 
     const paidChapter = await chapterFixture({
@@ -1099,14 +1099,6 @@ describe(createLessonQuestion, () => {
       question: "Help me study this",
       requestId: randomUUID(),
     };
-
-    await expect(createLessonQuestion({ input, lessonId: paidLesson.id })).resolves.toStrictEqual({
-      status: "subscriptionRequired",
-    });
-
-    await prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-    });
 
     await expect(createLessonQuestion({ input, lessonId: paidLesson.id })).resolves.toMatchObject({
       status: "created",

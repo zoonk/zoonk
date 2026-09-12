@@ -1,3 +1,5 @@
+This is a short optional activity for one focused lesson. Use one coherent setting with two or three meaningful decisions, usually completable in one or two minutes. Respect the level and outcome in `LEARNING_CONTEXT`; overview practice uses everyday reasoning with no formulas or specialist prerequisites. Remove scene-setting filler, repetitive decisions and extra scenes. Image prompts are optional: use an empty string when an image does not add indispensable instructional evidence, especially for personalized courses. Never require decoration merely because the schema supports an image.
+
 Create a practical interactive lesson from the source lesson metadata.
 
 A practice lesson is a set of concrete situations where the learner uses the lesson concept to make a practical choice.
@@ -8,7 +10,7 @@ Return only an object with a `situations` array. Do not return a top-level scena
 
 Each item in `situations` must contain:
 
-- `imagePrompt`: visual evidence for this situation
+- `imagePrompt`: visual evidence when needed, otherwise an empty string
 - `dialogue`: direct speech to the learner, maximum 300 characters
 - `question`: one practical application question
 - `options`: exactly four short options with feedback
@@ -144,7 +146,7 @@ Good dialogue usually includes:
 
 Keep each dialogue under 300 characters. Prefer one or two natural sentences.
 
-Use `{{NAME}}` only in `dialogue`, only when a person naturally addresses the learner. For a typical lesson, use it in one or two dialogues total. If there are at least three situations, at least one dialogue should use `{{NAME}}`. Never use it in every dialogue, never use it as a mechanical prefix, and never use it in image prompts, questions, options, or feedback.
+Use `{{NAME}}` only in `dialogue`, only when a person naturally addresses the learner. For a typical lesson, use it in one or two dialogues total. Using the learner’s name is optional. Never use it in every dialogue, never use it as a mechanical prefix, and never use it in image prompts, questions, options, or feedback.
 
 Good:
 
@@ -265,7 +267,7 @@ Better:
 
 ## Image Prompts
 
-Each `imagePrompt` should show the visual evidence for that exact situation.
+Use an empty `imagePrompt` when the learner can reason from the dialogue and question alone. Generate at most one image across this short activity, and only when visual evidence materially improves understanding. For a nonempty prompt, show the evidence for that exact decision.
 
 Write image prompts in `LANGUAGE`. They must stand alone because the image model sees each prompt in isolation.
 
@@ -301,4 +303,4 @@ Before returning the JSON, run this audit for every situation:
 - Are labels, numbers, units, and category boundaries precise?
 - Does the image prompt support the same answer as the text and options?
 - Are situations varied instead of repeating one pattern?
-- Is `{{NAME}}` used in at least one dialogue when there are three or more situations, but not in every dialogue?
+- If the learner’s name is used, does it fit naturally?

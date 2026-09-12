@@ -1,9 +1,10 @@
 import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { getAiCourseHref } from "@/data/courses/course-href";
 import { redirect } from "@/i18n/navigation";
-import { resolveLanguageCourse } from "@zoonk/core/courses/language";
+import { getCompletedLanguageCourse } from "@zoonk/core/courses/language";
+import { getSession } from "@zoonk/core/users/session";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { getLanguageName, isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -14,14 +15,14 @@ import {
   StartSurfaceHeader,
   StartSurfaceTitle,
 } from "../../_components/start-surface";
+import { CreateLanguageCourse } from "../create-language-course";
 
 export const prefetch = "force-disabled";
 
 type StartSpeakLanguageParams = PageProps<"/[lang]/start/speak/[language]">["params"];
 
 /**
- * Turns a selected supported language into either the existing completed course
- * or the controlled workflow input that will generate that course.
+ * Reads an existing language destination; a missing course needs an explicit form submission.
  */
 async function StartSpeakLanguageRedirect({ params }: { params: StartSpeakLanguageParams }) {
   const { lang: locale, language: targetLanguage } = await params;
@@ -34,32 +35,49 @@ async function StartSpeakLanguageRedirect({ params }: { params: StartSpeakLangua
     return redirect({ href: "/start/speak", locale });
   }
 
-  const resolution = await resolveLanguageCourse({ language: locale, targetLanguage });
+  const [existing, session, t] = await Promise.all([
+    getCompletedLanguageCourse({ language: locale, targetLanguage }),
+    getSession(),
+    getExtracted(),
+  ]);
 
-  if (resolution.kind === "course") {
-    return redirect({ href: getAiCourseHref(resolution.course), locale });
+  if (existing) {
+    return redirect({ href: `${getAiCourseHref(existing)}/start`, locale });
   }
 
-  if (resolution.kind === "unauthorized") {
-    const loginHref =
-      `/login?next=${encodeURIComponent(`/start/speak/${targetLanguage}`)}` as const;
-
+  if (!session) {
     return (
       <StartSurface>
         <GenerationAuthenticationCTA
-          loginHref={loginHref}
+          loginHref={`/login?next=${encodeURIComponent(`/start/speak/${targetLanguage}`)}`}
           target={{ resource: "course", targetLanguage }}
         />
       </StartSurface>
     );
   }
 
-  return redirect({ href: `/generate/course/${resolution.coursePrompt.id}`, locale });
+  return (
+    <StartSurface>
+      <StartSurfaceHeader>
+        <StartSurfaceContent>
+          <StartSurfaceTitle>
+            {t("Learn {language}", {
+              language: getLanguageName({ targetLanguage, userLanguage: locale }),
+            })}
+          </StartSurfaceTitle>
+          <StartSurfaceDescription>
+            {t("Create your course, then choose where to start.")}
+          </StartSurfaceDescription>
+        </StartSurfaceContent>
+      </StartSurfaceHeader>
+      <CreateLanguageCourse language={targetLanguage} />
+    </StartSurface>
+  );
 }
 
 /**
  * Gives cold navigations a stable course-preparation surface while the runtime
- * redirect checks for an existing course or creates its generation request.
+ * redirect checks for an existing course.
  */
 async function StartSpeakLanguageFallback() {
   const t = await getExtracted();
@@ -84,8 +102,7 @@ async function StartSpeakLanguageFallback() {
 }
 
 /**
- * Keeps the side-effecting course request below Suspense so this page can
- * prerender only its fallback and never execute generation work in the shell.
+ * Keeps session-dependent availability beneath the shared static shell.
  */
 export default function StartSpeakLanguage(props: PageProps<"/[lang]/start/speak/[language]">) {
   return (

@@ -1,53 +1,22 @@
-import { Link } from "@/i18n/navigation";
-import { shuffle } from "@zoonk/utils/shuffle";
 import { getExtracted } from "next-intl/server";
-import { io } from "next/cache";
-import { Suspense } from "react";
 import { LearnForm } from "./learn-form";
 import { LEARN_TITLE_ID } from "./learn-title";
-
-const VISIBLE_SUGGESTIONS = 5;
-
-/**
- * Streams request-time suggestions into a navigation region that reserves its
- * responsive row count without rendering a visible fallback set.
- */
-async function RandomSuggestionLinks({ suggestions }: { suggestions: string[] }) {
-  await io();
-
-  return shuffle(suggestions)
-    .slice(0, VISIBLE_SUGGESTIONS)
-    .map((subject) => (
-      <Link
-        key={subject}
-        className="text-muted-foreground/70 hover:text-foreground text-sm transition-colors"
-        href={`/start/learn/${encodeURIComponent(subject)}`}
-        prefetch={false}
-      >
-        {subject}
-      </Link>
-    ));
-}
 
 /**
  * Renders the open-ended subject entry after learners choose the "learn
  * something" path from the start goal picker.
  */
 export async function LearnContent() {
+  "use cache";
+
   const t = await getExtracted();
 
-  const allSuggestions = [
+  const suggestions = [
     t("Computer Science"),
     t("Psychology"),
     t("Economics"),
     t("Photography"),
-    t("Philosophy"),
-    t("Data Science"),
     t("Creative Writing"),
-    t("Biology"),
-    t("Graphic Design"),
-    t("History"),
-    t("Marketing"),
   ];
 
   const placeholderOptions = [
@@ -77,16 +46,7 @@ export async function LearnContent() {
         {t("What do you want to learn?")}
       </h1>
 
-      <LearnForm placeholders={placeholderOptions} />
-
-      <nav
-        aria-label={t("Suggested subjects")}
-        className="flex min-h-19 flex-wrap items-center justify-center gap-x-4 gap-y-2 min-[390px]:min-h-12 min-[672px]:min-h-5"
-      >
-        <Suspense fallback={null}>
-          <RandomSuggestionLinks suggestions={allSuggestions} />
-        </Suspense>
-      </nav>
+      <LearnForm placeholders={placeholderOptions} suggestions={suggestions} />
     </main>
   );
 }

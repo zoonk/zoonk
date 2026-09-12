@@ -2,11 +2,15 @@ import Foundation
 import OpenAPIRuntime
 
 protocol CourseCatalogAPIClient: Sendable {
+  func canPrepareCourseContent(courseID: String, token: String?) async throws -> Bool
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage
-  func getCourse(id: String) async throws -> Course
-  func getChapter(id: String) async throws -> CourseChapter
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter]
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson]
+  func getCourse(id: String, token: String?) async throws -> Course
+  func getChapter(id: String, token: String?) async throws -> CourseChapter
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter]
+  func listChapterLessons(chapterID: String, token: String?) async throws -> [CourseLesson]
+  func listChapterOptionalActivities(chapterID: String, token: String?) async throws
+    -> ChapterOptionalActivities
+  func getCourseLearningPath(courseID: String, token: String?) async throws -> CatalogLearningPath?
   func getCourseNextLesson(courseID: String, token: String?) async throws
     -> CatalogContinuationTarget
   func getChapterNextLesson(chapterID: String, token: String?) async throws
@@ -21,6 +25,19 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
 
   init(clients: APIClientFactory) {
     self.clients = clients
+  }
+
+  func canPrepareCourseContent(courseID: String, token: String?) async throws -> Bool {
+    try await perform(token: token) { client in
+      let output = try await client.getCourseCurriculumGenerationView(
+        .init(path: .init(courseId: courseID)))
+      switch output {
+      case .ok, .unauthorized: return true
+      case .notFound: return false
+      case .badRequest, .internalServerError, .undocumented:
+        throw CourseCatalogFailure.unavailable
+      }
+    }
   }
 
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
@@ -42,8 +59,8 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func getCourse(id: String) async throws -> Course {
-    try await perform { client in
+  func getCourse(id: String, token: String? = nil) async throws -> Course {
+    try await perform(token: token) { client in
       let output = try await client.getCourse(.init(path: .init(courseId: id)))
 
       switch output {
@@ -57,8 +74,8 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
-    try await perform { client in
+  func getChapter(id: String, token: String? = nil) async throws -> CourseChapter {
+    try await perform(token: token) { client in
       let output = try await client.getChapter(.init(path: .init(chapterId: id)))
 
       switch output {
@@ -72,8 +89,8 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-    try await perform { client in
+  func listCourseChapters(courseID: String, token: String? = nil) async throws -> [CourseChapter] {
+    try await perform(token: token) { client in
       let output = try await client.listCourseChapters(
         .init(path: .init(courseId: courseID)))
 
@@ -88,10 +105,10 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
-    try await perform { client in
+  func listChapterLessons(chapterID: String, token: String? = nil) async throws -> [CourseLesson] {
+    try await perform(token: token) { client in
       let output = try await client.listChapterLessons(
-        .init(path: .init(chapterId: chapterID)))
+        .init(path: .init(chapterId: chapterID), query: .init(view: .teaching)))
 
       switch output {
       case .ok(let response):
@@ -99,6 +116,53 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .notFound:
         throw CourseCatalogFailure.notFound
       case .badRequest, .internalServerError, .undocumented:
+        throw CourseCatalogFailure.unavailable
+      }
+    }
+  }
+
+  func listChapterOptionalActivities(chapterID: String, token: String?) async throws
+    -> ChapterOptionalActivities
+  {
+    try await perform(token: token) { client in
+      let output = try await client.listChapterOptionalActivities(
+        .init(path: .init(chapterId: chapterID)))
+      switch output {
+      case .ok(let response):
+        let payload = try response.body.json
+        return ChapterOptionalActivities(
+          sourceIDs: payload.groups.map(\.source.lessonId),
+          reviews: try payload.reviews.map(makeCourseLesson))
+      case .notFound: throw CourseCatalogFailure.notFound
+      case .badRequest, .internalServerError, .undocumented: throw CourseCatalogFailure.unavailable
+      }
+    }
+  }
+
+  func getCourseLearningPath(courseID: String, token: String?) async throws -> CatalogLearningPath?
+  {
+    try await perform(token: token) { client in
+      let output = try await client.getCourseLearningPath(.init(path: .init(courseId: courseID)))
+      switch output {
+      case .ok(let response):
+        let payload = try response.body.json
+        return CatalogLearningPath(
+          chapterIDs: payload.chapters.map(\.id),
+          chapterProgress: payload.chapters.map {
+            CourseChapterProgress(
+              chapterID: $0.id, completedLessons: $0.completedLessons, totalLessons: $0.totalLessons
+            )
+          },
+          depth: payload.plan?.depth.rawValue,
+          hasPlan: payload.plan != nil,
+          needsCurriculumUpdate: payload.needsCurriculumUpdate,
+          needsPlan: payload.needsPlan,
+          nextChapterID: payload.nextTarget?.chapterId,
+          summary: payload.plan?.summary,
+          supportsLearningPlan: payload.supportsLearningPlan)
+      case .notFound: throw CourseCatalogFailure.notFound
+      case .badRequest, .unprocessableContent, .tooManyRequests, .internalServerError,
+        .undocumented:
         throw CourseCatalogFailure.unavailable
       }
     }
@@ -143,7 +207,7 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
   func getCourseProgress(courseID: String, token: String?) async throws -> CourseProgress {
     try await perform(token: token) { client in
       let output = try await client.getCourseProgress(
-        .init(path: .init(courseId: courseID)))
+        .init(path: .init(courseId: courseID), query: .init(view: .curriculum)))
 
       switch output {
       case .ok(let response):
@@ -292,10 +356,13 @@ private func makeCourse(
     id: payload.id,
     imageURL: payload.imageUrl.flatMap(URL.init(string:)),
     language: payload.language,
-    organization: makeCourseOrganization(payload.organization),
+    organization: payload.organization.map { makeCourseOrganization($0.value1) },
     slug: payload.slug,
     targetLanguage: payload.targetLanguage,
-    title: payload.title)
+    title: payload.title,
+    brandSlug: payload.organization?.value1.slug ?? "me",
+    curriculumVersion: payload.curriculumVersion,
+    format: payload.format.rawValue)
 }
 
 private func makeCourseCategory(
@@ -330,7 +397,8 @@ private func makeCourseChapter(
     lessonCount: payload.lessonCount,
     position: payload.position,
     slug: payload.slug,
-    title: payload.title)
+    title: payload.title,
+    level: payload.level?.rawValue)
 }
 
 private func makeCourseChapter(
@@ -345,7 +413,8 @@ private func makeCourseChapter(
     lessonCount: nil,
     position: payload.position,
     slug: payload.slug,
-    title: payload.title)
+    title: payload.title,
+    level: payload.level?.rawValue)
 }
 
 private func makeCourseLesson(
@@ -361,7 +430,8 @@ private func makeCourseLesson(
     language: payload.language,
     position: payload.position,
     slug: payload.slug,
-    title: payload.title)
+    title: payload.title,
+    sourceLessonID: payload.sourceLessonId)
 }
 
 private func makeLessonKind(

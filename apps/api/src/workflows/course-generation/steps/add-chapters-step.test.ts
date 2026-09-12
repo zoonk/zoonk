@@ -1,134 +1,77 @@
-import { randomUUID } from "node:crypto";
-import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { courseContext, curriculumChapters } from "@/workflows/_test-utils/curriculum";
 import { prisma } from "@zoonk/db";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { addChaptersStep } from "./add-chapters-step";
-import { type CourseContext } from "./initialize-course-step";
+
+const chapters = ["overview", "basic", "intermediate", "advanced"].flatMap((level) =>
+  curriculumChapters(level as "overview" | "basic" | "intermediate" | "advanced"),
+);
 
 describe(addChaptersStep, () => {
-  let organizationId: string;
-  let courseContext: CourseContext;
-
-  beforeAll(async () => {
+  it("atomically installs the complete outline, levels, outcomes and prerequisites from position zero", async () => {
     const organization = await aiOrganizationFixture();
-    organizationId = organization.id;
-    const course = await courseFixture({ organizationId });
 
-    courseContext = {
-      courseId: course.id,
-      courseSlug: course.slug,
-      courseTitle: course.title,
-      format: "core",
-      language: course.language,
-      organizationId,
-      targetLanguage: null,
-    };
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("throws without streaming error when DB save fails", async () => {
-    const brokenContext: CourseContext = { ...courseContext, courseId: randomUUID() };
-
-    const chapters = [{ description: "Desc", title: `Chapter ${randomUUID()}` }];
-
-    await expect(addChaptersStep({ chapters, course: brokenContext })).rejects.toThrow();
-
-    const events = getStreamedEvents();
-
-    expect(events).not.toContainEqual(
-      expect.objectContaining({ status: "error", step: "addChapters" }),
-    );
-  });
-
-  it("creates chapters in the database and returns them", async () => {
-    const course = await courseFixture({ organizationId });
-
-    const context: CourseContext = { ...courseContext, courseId: course.id };
-
-    const chapters = [
-      { description: "First chapter desc", title: `Chapter 1 ${randomUUID()}` },
-      { description: "Second chapter desc", title: `Chapter 2 ${randomUUID()}` },
-    ];
-
-    const result = await addChaptersStep({ chapters, course: context });
-
-    expect(result).toHaveLength(2);
-
-    const dbChapters = await prisma.chapter.findMany({
-      orderBy: { position: "asc" },
-      where: { courseId: course.id },
+    const course = await courseFixture({
+      generationRunId: "outline-run",
+      generationStatus: "running",
+      organizationId: organization.id,
     });
 
-    expect(dbChapters).toHaveLength(2);
-    expect(dbChapters[0]!.title).toBe(chapters[0]!.title);
-    expect(dbChapters[0]!.description).toBe("First chapter desc");
-    expect(dbChapters[0]!.generationStatus).toBe("pending");
-    expect(dbChapters[0]!.imageUrl).toBeNull();
-    expect(dbChapters[0]!.isPublished).toBe(true);
-    expect(dbChapters[0]!.position).toBe(0);
-    expect(dbChapters[1]!.position).toBe(1);
+    const result = await addChaptersStep({ chapters, course: courseContext(course) });
 
-    const events = getStreamedEvents();
-
-    expect(events).toContainEqual(
-      expect.objectContaining({ status: "started", step: "addChapters" }),
-    );
-
-    expect(events).toContainEqual(
-      expect.objectContaining({ status: "completed", step: "addChapters" }),
-    );
-  });
-
-  it("appends chapters after an existing introduction chapter", async () => {
-    const course = await courseFixture({ organizationId });
-
-    const context: CourseContext = { ...courseContext, courseId: course.id };
-
-    const chapters = [{ description: "Main chapter desc", title: `Main Chapter ${randomUUID()}` }];
-
-    await addChaptersStep({ chapters, course: context, positionOffset: 1 });
-
-    const dbChapters = await prisma.chapter.findMany({
-      orderBy: { position: "asc" },
-      where: { courseId: course.id },
-    });
-
-    expect(dbChapters[0]?.position).toBe(1);
-    expect(dbChapters[0]?.title).toBe(chapters[0]?.title);
-  });
-
-  it("deduplicates against already-saved chapter slugs", async () => {
-    const course = await courseFixture({ organizationId });
-
-    await chapterFixture({
-      courseId: course.id,
-      organizationId,
-      slug: "quick-guide",
-      title: "Quick guide",
-    });
-
-    const context: CourseContext = { ...courseContext, courseId: course.id };
-
-    await addChaptersStep({
-      chapters: [{ description: "Main chapter desc", title: "Quick guide" }],
-      course: context,
-      positionOffset: 1,
-    });
-
-    const dbChapters = await prisma.chapter.findMany({
-      orderBy: { position: "asc" },
-      where: { courseId: course.id },
-    });
-
-    expect(dbChapters.map((chapter) => chapter.slug)).toStrictEqual([
-      "quick-guide",
-      "quick-guide-1",
+    expect(result.map((chapter) => chapter.level)).toStrictEqual([
+      "overview",
+      "overview",
+      "overview",
+      "basic",
+      "intermediate",
+      "advanced",
     ]);
+
+    expect(result.map((chapter) => chapter.position)).toStrictEqual([0, 1, 2, 3, 4, 5]);
+    expect(result[1]?.prerequisiteIds).toStrictEqual([result[0]?.id]);
+    expect(result[0]?.outcomes).toStrictEqual(chapters[0]?.outcomes);
+
+    await expect(
+      prisma.lesson.count({ where: { chapter: { courseId: course.id } } }),
+    ).resolves.toBe(0);
+
+    const installed = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+    expect(installed.contentRevision).toBe(course.contentRevision + 1);
+    expect(installed.curriculumVersion).toBe(2);
+  });
+
+  it("rejects an incomplete outline without changing saved content or revision", async () => {
+    const organization = await aiOrganizationFixture();
+    const course = await courseFixture({ organizationId: organization.id });
+
+    await expect(
+      addChaptersStep({ chapters: curriculumChapters("overview"), course: courseContext(course) }),
+    ).rejects.toThrow();
+
+    await expect(prisma.chapter.count({ where: { courseId: course.id } })).resolves.toBe(0);
+
+    const savedSnapshot1 = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+
+    expect(savedSnapshot1.contentRevision).toBe(course.contentRevision);
+  });
+
+  it("ignores results from a superseded run", async () => {
+    const organization = await aiOrganizationFixture();
+
+    const course = await courseFixture({
+      generationRunId: "new-run",
+      organizationId: organization.id,
+    });
+
+    const result = await addChaptersStep({
+      chapters,
+      course: { ...courseContext(course), generationRunId: "old-run" },
+    });
+
+    expect(result).toStrictEqual([]);
+    await expect(prisma.chapter.count({ where: { courseId: course.id } })).resolves.toBe(0);
   });
 });

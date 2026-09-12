@@ -3,6 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getChapterStep } from "./get-chapter-step";
 
@@ -19,6 +20,32 @@ describe(getChapterStep, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("loads an authorized private chapter and neighbors from only its own course", async () => {
+    const user = await userFixture();
+
+    const course = await courseFixture({
+      format: "personalized",
+      organizationId: null,
+      userId: user.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId: null,
+      position: 0,
+    });
+
+    const neighbor = await chapterFixture({
+      courseId: course.id,
+      organizationId: null,
+      position: 1,
+    });
+
+    const result = await getChapterStep(chapter.id);
+    expect(result.course.userId).toBe(user.id);
+    expect(result.neighboringChapters.map((item) => item.title)).toStrictEqual([neighbor.title]);
   });
 
   it("returns chapter with course and lesson count", async () => {

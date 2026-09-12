@@ -3,6 +3,8 @@ import { type LessonQuizParams } from "@zoonk/ai/tasks/lessons/core/quiz";
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
+LENGTH AND LEVEL: Use 2–4 focused questions for a one-to-two-minute optional check. Respect learningContext when supplied, with no unsupported technical detail at overview. Repeating an appropriate format is fine; images must supply meaningful visual evidence.
+
 0. PRODUCTION-SHAPED SOURCE: Test cases provide one compact lesson title/description scope like production quiz generation. The quiz should cover the best learner-sized assessment for that single lesson.
 
 1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never saw this specific source lesson metadata should be able to answer correctly. Penalize questions that:
@@ -50,7 +52,6 @@ EVALUATION CRITERIA:
    - A select-image question is chosen for content that needs a complex or text-heavy image to be fair
    - A select-image option would be hard to understand on a small phone screen
    - One format dominates even though other formats could test the content well
-   - The same format appears twice in a row
 
    Do NOT penalize when:
    - Multiple-choice or select-image appears more often than the other formats because those are the default formats

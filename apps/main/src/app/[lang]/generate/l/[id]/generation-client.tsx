@@ -13,6 +13,11 @@ import {
 } from "@/components/generation/generation-progress";
 import { WorkflowGenerationError } from "@/components/generation/workflow-generation-error";
 import { getPathname } from "@/i18n/navigation";
+import {
+  type GenerationBackTo,
+  type GenerationReturnTo,
+  getGenerationNavigationQuery,
+} from "@/lib/workflow/generation-return-to";
 import { type GenerationStatus, isGenerationInProgress } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
@@ -20,12 +25,14 @@ import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { type GeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { LESSON_COMPLETION_STEP, type LessonStepName } from "@zoonk/core/workflows/steps";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { useExtracted, useLocale } from "next-intl";
 import { type ReactNode } from "react";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
+  brandSlug,
+  backTo,
+  returnTo,
   chapterSlug,
   children,
   courseSlug,
@@ -37,6 +44,9 @@ export function GenerationClient({
   lessonSlug,
   lessonTitle,
 }: {
+  brandSlug: string;
+  backTo: GenerationBackTo | null;
+  returnTo: GenerationReturnTo | null;
   chapterSlug: string;
   children: ReactNode;
   courseSlug: string;
@@ -50,8 +60,10 @@ export function GenerationClient({
 }) {
   const t = useExtracted();
   const locale = useLocale();
-  const backHref = `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}` as const;
-  const loginHref = `/login?next=${encodeURIComponent(`/generate/l/${lessonId}`)}` as const;
+  const backHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
+  const querySuffix = getGenerationNavigationQuery({ backTo, returnTo });
+  const generationHref = `/generate/l/${lessonId}${querySuffix}`;
+  const loginHref = `/login?next=${encodeURIComponent(generationHref)}` as const;
 
   const generation = useWorkflowGeneration<LessonStepName>({
     completionStep: LESSON_COMPLETION_STEP,
@@ -92,7 +104,7 @@ export function GenerationClient({
     beforeRedirect: invalidateContent,
     status: generation.status,
     url: getPathname({
-      href: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
+      href: returnTo ?? `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
       locale,
     }),
   });
@@ -132,7 +144,9 @@ export function GenerationClient({
 
   if (generation.status === "completed") {
     return (
-      <GenerationProgressCompleted subtitle={t("Taking you to your lesson...")}>
+      <GenerationProgressCompleted
+        subtitle={returnTo ? t("Opening your next step…") : t("Taking you to your lesson...")}
+      >
         {t("Your lesson is ready")}
       </GenerationProgressCompleted>
     );
@@ -141,8 +155,8 @@ export function GenerationClient({
   if (generation.status === "limitReached" && generation.limit) {
     return (
       <GenerationLimitCTA
-        backHref={backHref}
-        backLabel={t("Back to chapter")}
+        backHref={returnTo ?? backTo ?? backHref}
+        backLabel={returnTo ? t("Back") : t("Back to chapter")}
         limit={generation.limit}
         loginHref={loginHref}
       />

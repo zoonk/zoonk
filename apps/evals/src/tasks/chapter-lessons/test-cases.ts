@@ -3,9 +3,9 @@ const SHARED_EXPECTATIONS = `
 
   Evaluate whether the result is a usable lesson plan for the requested chapter.
 
-  A strong lesson plan turns the chapter scope into small, self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in 1-2 minutes, roughly 700-1,500 characters including spaces. The follow-up practice should fit in 3-4 minutes because it focuses on the same small capability. Coverage and lesson size both matter: splitting overloaded lessons should create more focused lessons, not a thinner chapter.
+  A strong lesson plan turns the chapter scope into small, self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in 1-2 minutes, roughly 700-1,500 characters including spaces. Optional practice should stay short and focus on the same capability. Coverage and lesson size both matter: splitting overloaded lessons should create more focused lessons, not a thinner chapter.
 
-  The app adds one practice lesson and one quiz after each explanation, then a final review. The generated lesson plan should still return only substantive lessons that teach new content, not practice, quiz, review, summary, or capstone lessons.
+  Quiz and practice are optional activities attached to explanations, not required lessons in the primary path. The generated lesson plan should still return only substantive lessons that teach new content, not practice, quiz, review, summary, or capstone lessons.
 
   # What Good Looks Like
 
@@ -56,6 +56,7 @@ const SHARED_EXPECTATIONS = `
   - splits small first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body
   - creates many adjacent lessons that would use the same example with slightly different labels
   - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive
+  - repeats one classification or decision rule in another lesson whose only new work is writing down the answer as a priority list or checklist
   - rewards glossary completeness over teachable lesson boundaries
 
   Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:
@@ -131,6 +132,46 @@ const SHARED_EXPECTATIONS = `
 `;
 
 export const TEST_CASES = [
+  {
+    expectations: `
+      - MUST be in US English.
+      - The chapter has two distinct identification procedures: locating the active catalog and locating an original photo. Preserve both useful procedures without forcing them into one overloaded lesson.
+      - Distinguishing irreplaceable source/editing data from rebuildable previews and writing a recovery-priority list are one decision with a written result. A separate classification lesson plus a priority-list lesson that repeats the same categories and reasoning is false granularity, even if their titles use different verbs. Cap majorErrors at 7.5 or lower for that repetition.
+      - Include essential catalog companion data when applicable. Do not treat a bare catalog file as necessarily sufficient to preserve all editing data.
+      - Keep actual copying, backup automation, and restoration testing in the neighboring chapters. Identifying what to protect does not need a separate recap or checklist lesson.
+      - Do not require exactly three lessons or any fixed count: assess distinct useful teaching and complete coverage.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-backup-inventory-decision-and-written-result",
+    userInput: {
+      chapterDescription:
+        "Locate the active Lightroom Classic catalog and its essential companion data, locate an imported photo's original folder, distinguish irreplaceable source/editing data from rebuildable previews, and record a short recovery-priority list. This chapter identifies what to protect; it does not create backups or perform recovery tests.",
+      chapterTitle: "Identify the files to protect",
+      courseTitle: "Practical photo backup fundamentals",
+      language: "en",
+      learningContext: {
+        format: "personalized" as const,
+        level: null,
+        outcomes: [
+          "Find and record the active catalog location and essential companion data.",
+          "Find and record the original photo folder and drive.",
+          "Distinguish essential data from rebuildable previews and record a recovery priority.",
+        ],
+      },
+      neighboringChapters: [
+        {
+          description: "Create and verify the first separate local backup copy.",
+          title: "Make the first backup",
+        },
+        {
+          description:
+            "Restore a small sample safely and verify that its edits and originals work.",
+          title: "Test recovery",
+        },
+      ],
+    },
+  },
   // Initial chapter: beginner-level programming
   {
     expectations: `

@@ -8,6 +8,8 @@ const REGULAR_COURSE_FORMATS = [
   "coding",
   "core",
   "practical",
+  "instrument",
+  "question",
 ] as const satisfies readonly CourseFormat[];
 
 export type RegularCourseFormat = (typeof REGULAR_COURSE_FORMATS)[number];
@@ -34,8 +36,8 @@ export function isRegularCourseFormat(
  * language and future format-specific workflows remain isolated.
  */
 export function getCompatibleCourseFormats(courseFormat: CourseFormat): CourseFormat[] {
-  if (isRegularCourseFormat(courseFormat)) {
-    return [...REGULAR_COURSE_FORMATS];
+  if (isRegularCourseFormat(courseFormat) && courseFormat !== "question") {
+    return REGULAR_COURSE_FORMATS.filter((format) => format !== "question");
   }
 
   return [courseFormat];
@@ -68,7 +70,10 @@ export function getCoursePromptGenerationError(prompt: CoursePromptGenerationInp
     return UNSUPPORTED_COURSE_PROMPT_ERROR;
   }
 
-  if (prompt.intent !== "learn") {
+  if (
+    prompt.intent !== "learn" &&
+    !(prompt.intent === "question" && prompt.courseFormat === "question")
+  ) {
     return UNSUPPORTED_COURSE_PROMPT_ERROR;
   }
 

@@ -3,8 +3,16 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, it } from "vitest";
 import { SITEMAP_BATCH_SIZE, countSitemapCourses, listSitemapCourses } from "./courses";
 
-function lastPage(count: number): number {
-  return Math.max(Math.ceil(count / SITEMAP_BATCH_SIZE) - 1, 0);
+/** UUID fixtures can appear on any sitemap page in the shared test database. */
+async function listAllSitemapCourses() {
+  const count = await countSitemapCourses();
+  const pageCount = Math.ceil(count / SITEMAP_BATCH_SIZE);
+
+  const pages = await Promise.all(
+    Array.from({ length: pageCount }, (_, page) => listSitemapCourses(page)),
+  );
+
+  return pages.flat();
 }
 
 describe(countSitemapCourses, () => {
@@ -24,8 +32,7 @@ describe(listSitemapCourses, () => {
       organizationId: org.id,
     });
 
-    const count = await countSitemapCourses();
-    const courses = await listSitemapCourses(lastPage(count));
+    const courses = await listAllSitemapCourses();
     const found = courses.find((item) => item.courseSlug === course.slug);
 
     expect(found).toStrictEqual({
@@ -41,8 +48,7 @@ describe(listSitemapCourses, () => {
 
     const course = await courseFixture({ isPublished: false, organizationId: org.id });
 
-    const count = await countSitemapCourses();
-    const courses = await listSitemapCourses(lastPage(count));
+    const courses = await listAllSitemapCourses();
     const found = courses.find((item) => item.courseSlug === course.slug);
 
     expect(found).toBeUndefined();
@@ -53,8 +59,7 @@ describe(listSitemapCourses, () => {
 
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
 
-    const count = await countSitemapCourses();
-    const courses = await listSitemapCourses(lastPage(count));
+    const courses = await listAllSitemapCourses();
     const found = courses.find((item) => item.courseSlug === course.slug);
 
     expect(found).toBeUndefined();
@@ -63,8 +68,7 @@ describe(listSitemapCourses, () => {
   it("excludes personal courses without an organization", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: null });
 
-    const count = await countSitemapCourses();
-    const courses = await listSitemapCourses(lastPage(count));
+    const courses = await listAllSitemapCourses();
     const found = courses.find((item) => item.courseSlug === course.slug);
 
     expect(found).toBeUndefined();
@@ -79,8 +83,7 @@ describe(listSitemapCourses, () => {
       courseFixture({ isPublished: true, language: "pt", organizationId: org.id }),
     ]);
 
-    const count = await countSitemapCourses();
-    const courses = await listSitemapCourses(lastPage(count));
+    const courses = await listAllSitemapCourses();
     const slugs = courses.map((item) => item.courseSlug);
 
     expect(slugs).toContain(enCourse.slug);

@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+export const courseProgressQuerySchema = z.object({
+  view: z
+    .enum(["path", "curriculum"])
+    .default("path")
+    .meta({
+      description:
+        "The selected learning path, or all teaching chapters when browsing the curriculum",
+    }),
+});
+
 export const courseCompletionResponseSchema = z
   .object({
     chapters: z
@@ -64,7 +74,9 @@ const nextLessonChapterResponseSchema = z
     completed: z.literal(false).meta({ description: "Whether all lessons are completed" }),
     courseId: z.uuid().meta({ description: "Course ID" }),
     courseSlug: z.string().meta({ description: "Course slug" }),
-    hasStarted: z.literal(true).meta({ description: "Whether the user has started" }),
+    hasStarted: z
+      .boolean()
+      .meta({ description: "Whether the user has completed learning in this path" }),
     organizationSlug: z.string().meta({ description: "Organization slug" }),
     type: z.literal("chapter").meta({ description: "Continue at a chapter awaiting lessons" }),
   })

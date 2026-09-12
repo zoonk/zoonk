@@ -1,6 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getGeneratedCourseWhere } from "@zoonk/core/workflows/internal/generated-course-filter";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
-import { type Course, getAiGenerationChapterWhere, prisma } from "@zoonk/db";
+import { type Course, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 
 /**
@@ -25,7 +26,7 @@ export function getChapterGenerationTargetLanguage(
 async function getChapterForGeneration(chapterId: string) {
   return prisma.chapter.findFirst({
     include: { _count: { select: { lessons: true } }, course: true },
-    where: getAiGenerationChapterWhere({ chapterWhere: { id: chapterId } }),
+    where: { course: getGeneratedCourseWhere(), id: chapterId },
   });
 }
 
@@ -35,12 +36,11 @@ async function getNeighboringChapters(courseId: string, position: number) {
   return prisma.chapter.findMany({
     orderBy: { position: "asc" },
     select: { description: true, title: true },
-    where: getAiGenerationChapterWhere({
-      chapterWhere: {
-        courseId,
-        position: { gte: position - NEIGHBOR_RANGE, lte: position + NEIGHBOR_RANGE, not: position },
-      },
-    }),
+    where: {
+      course: getGeneratedCourseWhere(),
+      courseId,
+      position: { gte: position - NEIGHBOR_RANGE, lte: position + NEIGHBOR_RANGE, not: position },
+    },
   });
 }
 

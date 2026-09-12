@@ -1,5 +1,3 @@
-import { hasActiveSubscription } from "../auth/subscription";
-import { getLessonAccessRequirement } from "../lessons/access";
 import { isStandaloneGeneratedLessonKind } from "../lessons/generated-companion-kinds";
 import { getLessonForGeneration } from "../lessons/get-lesson-for-generation";
 import { getSession } from "../users/get-session";
@@ -16,7 +14,7 @@ function shouldClaimLessonGenerationQuota(
 }
 
 /**
- * Applies AI ownership, standalone-kind, and chapter subscription rules before
+ * Applies AI or private ownership and standalone-kind rules before
  * a delivery app starts lesson generation or preloading.
  */
 export async function getLessonGenerationAccess(lessonId: string) {
@@ -30,12 +28,7 @@ export async function getLessonGenerationAccess(lessonId: string) {
     return { status: "notFound" as const };
   }
 
-  const requirement = getLessonAccessRequirement({ lesson });
   const isAdmin = session.user.role === "admin";
-
-  if (requirement === "subscription" && !isAdmin && !(await hasActiveSubscription())) {
-    return { status: "subscriptionRequired" as const };
-  }
 
   return {
     lesson,

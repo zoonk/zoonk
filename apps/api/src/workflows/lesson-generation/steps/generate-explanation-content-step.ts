@@ -1,7 +1,11 @@
+import {
+  getCourseGenerationPolicy,
+  getLessonLearningContext,
+} from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateLessonExplanation } from "@zoonk/ai/tasks/lessons/core/explanation";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { getOtherExplanationLessonTitles } from "./_utils/explanation-source-steps";
+import { getOtherTeachingLessonTitles } from "./_utils/explanation-source-steps";
 import { type StaticLessonStep } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -18,15 +22,17 @@ export async function generateExplanationContentStep(
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "generateExplanationContent" });
 
-  const otherLessonTitles = await getOtherExplanationLessonTitles(context);
+  const otherLessonTitles = await getOtherTeachingLessonTitles(context);
 
   const result = await generateLessonExplanation({
     chapterTitle: context.chapter.title,
     courseTitle: context.chapter.course.title,
     language: context.language,
+    learningContext: getLessonLearningContext(context),
     lessonDescription: context.description ?? "",
     lessonTitle: context.title ?? "",
     otherLessonTitles,
+    ...getCourseGenerationPolicy(context.chapter.course),
   });
 
   await stream.status({ status: "completed", step: "generateExplanationContent" });

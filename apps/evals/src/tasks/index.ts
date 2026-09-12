@@ -3,14 +3,18 @@ import { chapterLessonsTask } from "./chapter-lessons/task";
 import { courseCanonicalTitleTask } from "./course-canonical-title/task";
 import { courseCategoriesTask } from "./course-categories/task";
 import { courseChaptersTask } from "./course-chapters/task";
+import { courseCurriculumTask } from "./course-curriculum/task";
 import { courseDescriptionTask } from "./course-description/task";
+import { courseDiscoveryTask } from "./course-discovery/task";
 import { courseFormatTask } from "./course-format/task";
 import { courseIdentitySearchTask } from "./course-identity-search/task";
 import { courseIdentityClassificationTask } from "./course-identity/task";
 import { courseIntentTask } from "./course-intent/task";
 import { courseIntroductionTask } from "./course-introduction/task";
 import { courseLandingPageTask } from "./course-landing-page/task";
+import { coursePathTask } from "./course-path/task";
 import { coursePersonalizationTask } from "./course-personalization/task";
+import { courseRequestTask } from "./course-request/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
@@ -31,6 +35,10 @@ import { lessonVocabularyTask } from "./lesson-vocabulary/task";
 import { stepImagePromptsTask } from "./step-image-prompts/task";
 
 export const TASKS: readonly RegisteredTask[] = [
+  courseCurriculumTask,
+  courseRequestTask,
+  courseDiscoveryTask,
+  coursePathTask,
   lessonDistractorsTask,
   lessonQuizTask,
   lessonQuestionTask,

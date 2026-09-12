@@ -4,9 +4,14 @@
 
 import { init } from "@sentry/nextjs";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
+import { filterPrivateTelemetryEvent } from "./src/lib/analytics-privacy";
 
 if (process.env.NODE_ENV === "production") {
   init({
+    beforeBreadcrumb: filterPrivateTelemetryEvent,
+    beforeSend: filterPrivateTelemetryEvent,
+    beforeSendLog: filterPrivateTelemetryEvent,
+    beforeSendTransaction: filterPrivateTelemetryEvent,
     dataCollection: getSentryDataCollection(),
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enableLogs: true,

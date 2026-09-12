@@ -2,6 +2,7 @@ import { chapterPathParamsSchema, coursePathParamsSchema } from "../schemas/path
 import {
   chapterCompletionResponseSchema,
   courseCompletionResponseSchema,
+  courseProgressQuerySchema,
   nextLessonResponseSchema,
 } from "../schemas/progress";
 import { notFoundResponse, validationErrorResponse } from "../schemas/responses";
@@ -68,7 +69,7 @@ export const progressPaths = {
   "/courses/{courseId}/progress": {
     get: {
       operationId: "getCourseProgress",
-      requestParams: { path: coursePathParamsSchema },
+      requestParams: { path: coursePathParamsSchema, query: courseProgressQuerySchema },
       responses: courseProgressResponses,
       security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Get progress for a course",

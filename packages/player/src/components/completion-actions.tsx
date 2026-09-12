@@ -3,7 +3,12 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type PlayerRoute, usePlayerMilestone } from "../player-context";
+import {
+  type PlayerRoute,
+  usePlayerMilestone,
+  usePlayerNavigation,
+  usePlayerViewer,
+} from "../player-context";
 import { PlayerLink } from "../player-link";
 import {
   PrimaryActionLink,
@@ -66,7 +71,7 @@ function SecondaryActions({
       onClick={onRestart}
       shortcut="R"
     >
-      {t("Try again")}
+      {t("Repeat lesson")}
     </SecondaryActionButton>
   );
 
@@ -89,8 +94,7 @@ function SecondaryActions({
 
 /**
  * Selects completion actions from lesson navigation and curriculum milestones.
- * Authentication is intentionally absent: every learner who reaches completion
- * receives the same destinations and interaction hierarchy.
+ * Guests can save future progress by signing in after experiencing the lesson.
  */
 export function CompletionActions({
   chapterHref,
@@ -103,6 +107,34 @@ export function CompletionActions({
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
+  const { isAuthenticated } = usePlayerViewer();
+  const { loginHref } = usePlayerNavigation();
+
+  if (!isAuthenticated) {
+    return (
+      <CompletionActionsLayout>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          {t("This lesson's progress wasn't saved. Log in to save your next lessons.")}
+        </p>
+        <PlayerLink
+          className={buttonVariants({ className: "w-full" })}
+          href={loginHref ?? "/login"}
+          prefetch={false}
+        >
+          {t("Log in to save progress")}
+        </PlayerLink>
+        {nextLessonHref && (
+          <PlayerLink
+            className={buttonVariants({ className: "w-full", variant: "outline" })}
+            href={nextLessonHref}
+          >
+            {t("Next")}
+          </PlayerLink>
+        )}
+        <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
+      </CompletionActionsLayout>
+    );
+  }
 
   if (milestone) {
     return (

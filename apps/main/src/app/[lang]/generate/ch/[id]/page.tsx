@@ -6,7 +6,7 @@ export const prefetch = "force-disabled";
 export default function GenerateChapterPage(props: PageProps<"/[lang]/generate/ch/[id]">) {
   return (
     <Suspense fallback={<GenerateChapterFallback />}>
-      <GenerateChapterContent params={props.params} />
+      <GenerateChapterContent params={props.params} searchParams={props.searchParams} />
     </Suspense>
   );
 }

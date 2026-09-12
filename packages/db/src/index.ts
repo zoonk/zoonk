@@ -29,11 +29,17 @@ export type {
   CourseCompletion,
   CourseEditionRequest,
   CourseFamily,
+  CourseLearningPlan,
+  CourseDiscovery,
   CoursePrompt,
   CourseUser,
+  ChapterGenerationGrant,
+  Track,
+  TrackCourse,
   GenerationStatus,
   Lesson,
   LessonProgress,
+  LessonCompletionReceipt,
   LessonKind,
   LessonQuestion,
   LessonQuestionContextKind,
@@ -50,9 +56,13 @@ export type {
   WordPronunciation,
 } from "./generated/prisma/client";
 
-export { CourseFormat, CoursePromptIntent } from "./generated/prisma/client";
+export {
+  CourseFormat,
+  CoursePromptIntent,
+  CourseLevel,
+  CoursePlanDepth,
+} from "./generated/prisma/client";
 
-export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
 export type { ChapterGetPayload } from "./generated/prisma/models/Chapter";
 export type { ChapterSentenceGetPayload } from "./generated/prisma/models/ChapterSentence";
 export type { ChapterWordGetPayload } from "./generated/prisma/models/ChapterWord";
@@ -69,6 +79,7 @@ export type { StepGetPayload } from "./generated/prisma/models/Step";
 
 export { prisma };
 export const sql = Prisma.sql;
+export const databaseNull = Prisma.DbNull;
 export type Sql = Prisma.Sql;
 
 export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
@@ -76,9 +87,7 @@ export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction
 export { isPrismaUniqueConstraintError } from "./prisma-errors";
 
 export {
-  getAiGenerationChapterWhere,
   getAiGenerationCourseWhere,
-  getAiGenerationLessonWhere,
   getPublishedChapterWhere,
   getPublishedCourseWhere,
   getPublishedLessonWhere,

@@ -78,6 +78,10 @@ overrides:
   # Audit remediation: cover the additional nanoid advisory fixed in 5.1.16.
   nanoid@>=4.0.0 <5.1.16: ^5.1.16
 
+patchedDependencies:
+  # Preserve callback ref identity to prevent Questionnaire reload/hydration update loops.
+  "@shadcn/react@0.3.1": patches/@shadcn__react@0.3.1.patch
+
 peerDependencyRules:
   allowedVersions:
     # Better Auth uses this optional peer only in its test helpers; our Vitest 5 suites pass.

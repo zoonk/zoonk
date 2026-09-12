@@ -5,7 +5,7 @@ import {
 import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { type PlayerCompletionMilestoneKey } from "./completion-milestone-keys";
 import { getLocalDate } from "./player-date";
-import { type PlayerPhase, type PlayerState, type SelectedAnswer } from "./player-reducer";
+import { type PlayerState, type SelectedAnswer } from "./player-reducer";
 
 export function buildInitialAnswers(steps: SerializedStep[]): Record<string, SelectedAnswer> {
   const entries: [string, SelectedAnswer][] = [];
@@ -19,28 +19,9 @@ export function buildInitialAnswers(steps: SerializedStep[]): Record<string, Sel
   return Object.fromEntries(entries);
 }
 
-function getInitialPhase({
-  requiresStartConfirmation,
-  steps,
-}: {
-  requiresStartConfirmation: boolean;
-  steps: SerializedStep[];
-}): PlayerPhase {
-  if (steps.length === 0) {
-    return "completed";
-  }
-
-  if (requiresStartConfirmation) {
-    return "startWarning";
-  }
-
-  return "playing";
-}
-
 export type InitialStateInput = {
   lesson: SerializedLesson;
   progressSnapshot?: PlayerProgressSnapshot | null;
-  requiresStartConfirmation?: boolean;
   shownCompletionMilestoneKeys?: PlayerCompletionMilestoneKey[];
   totalBrainPower: number;
 };
@@ -48,7 +29,6 @@ export type InitialStateInput = {
 export function createInitialState({
   lesson,
   progressSnapshot = null,
-  requiresStartConfirmation = false,
   shownCompletionMilestoneKeys = [],
   totalBrainPower,
 }: InitialStateInput): PlayerState {
@@ -61,7 +41,7 @@ export function createInitialState({
     lessonId: lesson.id,
     lessonKind: lesson.kind,
     localDate: getLocalDate(new Date(now)),
-    phase: getInitialPhase({ requiresStartConfirmation, steps: lesson.steps }),
+    phase: lesson.steps.length === 0 ? "completed" : "playing",
     progressSnapshot,
     results: {},
     selectedAnswers: buildInitialAnswers(lesson.steps),

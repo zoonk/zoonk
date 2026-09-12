@@ -1,5 +1,5 @@
 import "server-only";
-import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateTag } from "next/cache";
 import {
@@ -8,38 +8,7 @@ import {
   getUserProgressCacheTag,
 } from "../../cache/tags";
 import { getSession } from "../../users/get-session";
-import { enrollUserInCourse } from "../../workflows/internal/enroll-user-in-course";
-
-/**
- * Performs the idempotent progress and enrollment writes after the public
- * command has authenticated the learner and resolved the target course.
- */
-async function persistLessonStart({
-  courseId,
-  lessonId,
-  userId,
-}: {
-  courseId: string;
-  lessonId: string;
-  userId: string;
-}) {
-  try {
-    await Promise.all([
-      prisma.lessonProgress.upsert({
-        create: { lessonId, userId },
-        update: {},
-        where: { userLesson: { lessonId, userId } },
-      }),
-      enrollUserInCourse({ courseId, userId }),
-    ]);
-  } catch (error) {
-    if (isPrismaUniqueConstraintError(error)) {
-      return;
-    }
-
-    throw error;
-  }
-}
+import { getCompletableLessonWhere } from "./_utils/completable-lesson";
 
 /**
  * Immediately expires every cached resource changed by a lesson start so
@@ -68,20 +37,66 @@ export async function startLesson(lessonId: string) {
     return { status: "notFound" as const };
   }
 
-  const lesson = await prisma.lesson.findUnique({
+  const userId = session.user.id;
+
+  const reference = await prisma.lesson.findFirst({
     include: { chapter: true },
-    where: { id: lessonId },
+    where: getCompletableLessonWhere({ generationStatus: "completed", lessonId, userId }),
   });
 
-  if (!lesson) {
+  if (!reference) {
     return { status: "notFound" as const };
   }
 
-  const userId = session.user.id;
-  const courseId = lesson.chapter.courseId;
+  const courseId = reference.chapter.courseId;
 
-  await persistLessonStart({ courseId, lessonId, userId });
+  const started = await prisma.$transaction(async (transaction) => {
+    await transaction.$queryRaw`SELECT id FROM courses WHERE id = ${courseId}::uuid FOR UPDATE`;
+
+    const lesson = await transaction.lesson.findFirst({
+      include: { chapter: { include: { course: true } } },
+      where: getCompletableLessonWhere({ generationStatus: "completed", lessonId, userId }),
+    });
+
+    if (!lesson) {
+      return false;
+    }
+
+    const contentSnapshot = {
+      chapterId: lesson.chapterId,
+      chapterTitle: lesson.chapter.title,
+      contentRevision: lesson.chapter.course.contentRevision,
+      courseId,
+      courseTitle: lesson.chapter.course.title,
+      lessonId,
+      lessonTitle: lesson.title,
+    };
+
+    await transaction.lessonProgress.upsert({
+      create: { contentSnapshot, lessonId, userId },
+      update: {},
+      where: { userLesson: { lessonId, userId } },
+    });
+
+    const membership = await transaction.courseUser.createMany({
+      data: { courseId, userId },
+      skipDuplicates: true,
+    });
+
+    if (membership.count > 0) {
+      await transaction.course.update({
+        data: { userCount: { increment: 1 } },
+        where: { id: courseId },
+      });
+    }
+
+    return true;
+  });
+
+  if (!started) {
+    return { status: "notFound" as const };
+  }
+
   revalidateLessonStart({ courseId, userId });
-
   return { status: "started" as const };
 }

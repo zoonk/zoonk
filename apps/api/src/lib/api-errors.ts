@@ -8,7 +8,6 @@ export const httpStatus = {
   forbidden: 403,
   internalError: 500,
   notFound: 404,
-  paymentRequired: 402,
   tooManyRequests: 429,
   unauthorized: 401,
   unprocessableEntity: 422,
@@ -50,8 +49,6 @@ export const errors = {
   internal: (msg = "Internal server error") =>
     errorResponse("INTERNAL_ERROR", msg, httpStatus.internalError),
   notFound: (msg = "Resource not found") => errorResponse("NOT_FOUND", msg, httpStatus.notFound),
-  paymentRequired: (msg = "Active subscription required") =>
-    errorResponse("PAYMENT_REQUIRED", msg, httpStatus.paymentRequired),
   unauthorized: (msg = "Authentication required") =>
     errorResponse("UNAUTHORIZED", msg, httpStatus.unauthorized),
   unprocessableEntity: (msg = "Request could not be applied") =>

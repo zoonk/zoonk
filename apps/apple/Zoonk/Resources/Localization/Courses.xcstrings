@@ -1,6 +1,35 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld courses" : {
+      "comment" : "Number of courses grouped in a learning track",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Kurse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cursos"
+          }
+        }
+      }
+    },
     "%lld/%lld done" : {
       "comment" : "Chapter progress. The first value is completed lessons and the second is total lessons.",
       "localizations" : {
@@ -36,6 +65,64 @@
         }
       }
     },
+    "A1 · Getting started" : {
+      "comment" : "CEFR A1 course level with a plain language description",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A1 · Erste Schritte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A1 · Primeros pasos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A1 · Premiers pas"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A1 · Primeiros passos"
+          }
+        }
+      }
+    },
+    "A2 · Everyday situations" : {
+      "comment" : "CEFR A2 course level with a plain language description",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A2 · Alltagssituationen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A2 · Situaciones cotidianas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A2 · Situations du quotidien"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A2 · Situações do dia a dia"
+          }
+        }
+      }
+    },
     "Account unavailable" : {
       "comment" : "Title when My Courses cannot determine the signed-in account.",
       "localizations" : {
@@ -61,6 +148,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conta indisponível"
+          }
+        }
+      }
+    },
+    "Advanced" : {
+      "comment" : "Advanced course chapters",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortgeschritten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avanzado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avancé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avançado"
           }
         }
       }
@@ -123,6 +239,35 @@
         }
       }
     },
+    "All levels" : {
+      "comment" : "Shows chapters across every course level",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Level"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los niveles"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les niveaux"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os níveis"
+          }
+        }
+      }
+    },
     "Alphabet" : {
       "comment" : "Fallback title for an alphabet lesson.",
       "localizations" : {
@@ -181,6 +326,93 @@
         }
       }
     },
+    "B1 · Independent conversations" : {
+      "comment" : "CEFR B1 course level with a plain language description",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B1 · Selbstständige Gespräche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B1 · Conversaciones con autonomía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B1 · Conversations en autonomie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B1 · Conversas com autonomia"
+          }
+        }
+      }
+    },
+    "B2 · Detailed conversations" : {
+      "comment" : "CEFR B2 course level with a plain language description",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2 · Ausführliche Gespräche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2 · Conversaciones detalladas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2 · Conversations détaillées"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2 · Conversas detalhadas"
+          }
+        }
+      }
+    },
+    "Basics" : {
+      "comment" : "Foundational course chapters",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grundlagen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fundamentos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bases"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Básico"
+          }
+        }
+      }
+    },
     "Business" : {
       "comment" : "Course category for business.",
       "localizations" : {
@@ -206,6 +438,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Negócios"
+          }
+        }
+      }
+    },
+    "C1 · Flexible communication" : {
+      "comment" : "CEFR C1 course level with a plain language description",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C1 · Flexible Kommunikation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C1 · Comunicación flexible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C1 · S’exprimer avec souplesse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C1 · Comunicação flexível"
+          }
+        }
+      }
+    },
+    "C2 · Subtle meanings" : {
+      "comment" : "CEFR C2 course level with a plain language description",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C2 · Feine Bedeutungsunterschiede"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C2 · Matices de significado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C2 · Nuances de sens"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C2 · Nuances de significado"
+          }
+        }
+      }
+    },
+    "Change learning path on web" : {
+      "comment" : "Opens guided course path editing on the website",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernpfad im Web ändern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar la ruta de estudio en la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier ton parcours d’apprentissage sur le site"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar trilha de estudo na web"
           }
         }
       }
@@ -327,7 +646,7 @@
       }
     },
     "Chapters" : {
-      "comment" : "Heading above matching chapter search results.\nHeading above the ordered chapter list on a course screen.",
+      "comment" : "Course chapter list heading\nHeading above matching chapter search results.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -496,6 +815,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuar"
+          }
+        }
+      }
+    },
+    "Continue on web" : {
+      "comment" : "Opens the website to resume an updated learning path",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Web fortfahren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar en la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer sur le site"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar na web"
           }
         }
       }
@@ -670,6 +1018,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Informações do curso"
+          }
+        }
+      }
+    },
+    "Course level" : {
+      "comment" : "Picker label for browsing course levels",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurslevel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel del curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau du cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nível do curso"
           }
         }
       }
@@ -1080,6 +1457,35 @@
         }
       }
     },
+    "Full course" : {
+      "comment" : "Heading for the entire course curriculum\nShows the entire course curriculum",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vollständiger Kurs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Curso completo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cours complet"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Curso completo"
+          }
+        }
+      }
+    },
     "Geography" : {
       "comment" : "Course category for geography.",
       "localizations" : {
@@ -1192,6 +1598,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "História"
+          }
+        }
+      }
+    },
+    "Intermediate" : {
+      "comment" : "Intermediate course chapters",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mittelstufe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermedio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermédiaire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermediário"
           }
         }
       }
@@ -1341,6 +1776,35 @@
         }
       }
     },
+    "Learning preferences on web" : {
+      "comment" : "Opens this course's learning preferences on the website",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lerneinstellungen im Web"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferencias de estudio en la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préférences d’apprentissage sur le site"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferências de estudo na web"
+          }
+        }
+      }
+    },
     "Lesson" : {
       "comment" : "Fallback title while the native lesson player is unavailable.",
       "localizations" : {
@@ -1482,6 +1946,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escuta"
+          }
+        }
+      }
+    },
+    "Load more tracks" : {
+      "comment" : "Loads the next page of learning tracks",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weitere Kursreihen laden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargar más itinerarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher plus de parcours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carregar mais trilhas"
           }
         }
       }
@@ -1892,6 +2385,35 @@
         }
       }
     },
+    "Open chapter on web" : {
+      "comment" : "Opens a chapter on the website where missing lessons can be created",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapitel im Web öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir capítulo en la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir le chapitre sur le Web"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir capítulo na web"
+          }
+        }
+      }
+    },
     "Opens the course" : {
       "comment" : "Accessibility hint for a course in the catalog.",
       "localizations" : {
@@ -1917,6 +2439,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abre o curso"
+          }
+        }
+      }
+    },
+    "Opens this track on the website" : {
+      "comment" : "Explains a native track link's destination",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet diese Kursreihe auf der Website"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre este itinerario en el sitio web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvre ce parcours sur le site"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre esta trilha no site"
+          }
+        }
+      }
+    },
+    "Optional practice" : {
+      "comment" : "Collapsed section for optional checks and scenarios",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionale Übungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Práctica opcional"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement facultatif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática opcional"
+          }
+        }
+      }
+    },
+    "Overview" : {
+      "comment" : "A short course overview",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überblick"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resumen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperçu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visão geral"
+          }
+        }
+      }
+    },
+    "Personal course" : {
+      "comment" : "Owner-private course information label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Persönlicher Kurs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Curso personal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cours privé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Curso personalizado"
           }
         }
       }
@@ -2037,6 +2675,35 @@
         }
       }
     },
+    "Practice on web" : {
+      "comment" : "Opens optional practice for this teaching lesson on the website",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Web üben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practicar en la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S’entraîner sur le site"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praticar na web"
+          }
+        }
+      }
+    },
     "Quiz" : {
       "comment" : "Fallback title for a quiz lesson.",
       "localizations" : {
@@ -2149,6 +2816,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Revisão"
+          }
+        }
+      }
+    },
+    "Review %lld" : {
+      "comment" : "Distinguishes optional reviews when a chapter has more than one without a title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholung %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repaso %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Révision %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisão %lld"
           }
         }
       }
@@ -2559,6 +3255,35 @@
         }
       }
     },
+    "Start on web" : {
+      "comment" : "Opens the website for guided course setup",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Web starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar en la web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer sur le site"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar na web"
+          }
+        }
+      }
+    },
     "Start, %lld%% complete" : {
       "comment" : "Accessible start action followed by the course or chapter completion percent.",
       "localizations" : {
@@ -2584,6 +3309,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Começar, %lld%% concluído"
+          }
+        }
+      }
+    },
+    "Starting chapters" : {
+      "comment" : "Returns to the introductory chapter preview",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstiegskapitel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulos iniciales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapitres d’introduction"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulos iniciais"
           }
         }
       }
@@ -2704,6 +3458,35 @@
         }
       }
     },
+    "Tracks" : {
+      "comment" : "Groups of courses in My Courses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursreihen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinerarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parcours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trilhas"
+          }
+        }
+      }
+    },
     "Translate words from your previous vocabulary lesson." : {
       "comment" : "Fallback description for a translation lesson.",
       "localizations" : {
@@ -2763,7 +3546,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Retries account restoration from My Courses.\nRetries loading My Courses after a failure.\nRetries loading catalog content after a failure.",
+      "comment" : "Retries account restoration from My Courses.\nRetries loading My Courses after a failure.\nRetries loading catalog content after a failure.\nRetries loading learning tracks",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2907,6 +3690,35 @@
         }
       }
     },
+    "We couldn't load your tracks. Try again." : {
+      "comment" : "Recoverable error when loading learning tracks",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten deine Kursreihen nicht laden. Versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos cargar tus itinerarios. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu charger tes parcours. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar suas trilhas. Tente de novo."
+          }
+        }
+      }
+    },
     "Work through a lesson created for your goal." : {
       "comment" : "Fallback description for a custom lesson.",
       "localizations" : {
@@ -3019,6 +3831,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seus cursos continuam salvos. Tente carregar de novo."
+          }
+        }
+      }
+    },
+    "Your learning path" : {
+      "comment" : "Heading for chapters selected for the learner's goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Lernpfad"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ruta de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton parcours d’apprentissage"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua trilha de estudo"
+          }
+        }
+      }
+    },
+    "Your path" : {
+      "comment" : "Returns to the saved learning path",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Lernpfad"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ruta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton parcours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua trilha"
           }
         }
       }

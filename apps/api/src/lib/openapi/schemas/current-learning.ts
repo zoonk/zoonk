@@ -13,14 +13,21 @@ export const currentUserCoursesQuerySchema = resourcePageQuerySchema
       .trim()
       .optional()
       .meta({ description: "Filter enrolled courses by title or description, ignoring case" }),
+    standaloneOnly: z
+      .enum(["true", "false"])
+      .optional()
+      .transform((value) => value === "true")
+      .meta({ description: "Omit courses grouped in one of the current learner's Tracks" }),
   })
   .meta({ id: "CurrentUserCoursesQuery" });
 
 const currentUserCourseSchema = z
   .object({
+    brandSlug: z.string(),
     description: z.string().nullable(),
     id: z.uuid(),
     imageUrl: z.string().nullable(),
+    isPrivate: z.boolean(),
     language: z.string(),
     organization: nullableOrganizationSummarySchema,
     slug: z.string(),
@@ -33,6 +40,7 @@ export const currentUserCourseListResponseSchema = z
   .meta({ id: "CurrentUserCourseListResponse" });
 
 const continuationCourseSchema = z.object({
+  brandSlug: z.string(),
   id: z.uuid(),
   imageUrl: z.string().nullable(),
   organization: z.object({ slug: z.string() }).nullable(),

@@ -3,9 +3,11 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { cacheTag } from "next/cache";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getChapterLessonsCacheTag } from "../cache/tags";
 import { listChapterLessons } from "./list-chapter-lessons";
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn().mockResolvedValue(null) }));
 
 describe(listChapterLessons, () => {
   let brandOrg: Awaited<ReturnType<typeof organizationFixture>>;

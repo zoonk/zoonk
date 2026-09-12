@@ -1,5 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { getCourseEditionForPrompt } from "@zoonk/core/courses/edition-link";
+import { CURRENT_CURRICULUM_VERSION } from "@zoonk/core/courses/learning-plan-contract";
 import {
   type RegularCourseFormat,
   isRegularCourseFormat,
@@ -29,9 +30,11 @@ type CourseContextBase = {
   courseTitle: string;
   language: string;
   organizationId: string;
+  contentRevision: number;
+  generationRunId: string | null;
 };
 
-export type RegularCourseContext = CourseContextBase & {
+type RegularCourseContext = CourseContextBase & {
   format: RegularCourseFormat;
   targetLanguage: null;
 };
@@ -52,16 +55,21 @@ export function getCourseContext({
   organizationId,
   prompt,
 }: {
-  course: Pick<Course, "format" | "id" | "language" | "slug" | "targetLanguage">;
+  course: Pick<
+    Course,
+    "format" | "id" | "language" | "slug" | "targetLanguage" | "contentRevision" | "generationRunId"
+  >;
   organizationId: string;
   prompt: GeneratableCoursePrompt;
 }): CourseContext {
   assertCourseMatchesPromptIdentity({ course, prompt });
 
   const context = {
+    contentRevision: course.contentRevision,
     courseId: course.id,
     courseSlug: course.slug,
     courseTitle: prompt.canonicalTitle,
+    generationRunId: course.generationRunId,
     language: prompt.language,
     organizationId,
   };
@@ -103,6 +111,7 @@ async function createCourseEntity({
 
   return transaction.course.create({
     data: {
+      curriculumVersion: CURRENT_CURRICULUM_VERSION,
       familyId,
       format: prompt.courseFormat,
       generationRunId: workflowRunId,

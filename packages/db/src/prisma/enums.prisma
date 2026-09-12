@@ -28,6 +28,7 @@ enum GenerationQuotaResource {
   chapter
   lesson
   lessonQuestion
+  learningRequest
 }
 
 enum LessonKind {
@@ -70,6 +71,35 @@ enum CourseFormat {
   personalized
   practical
   question
+}
+
+enum CourseLevel {
+  overview
+  basic
+  intermediate
+  advanced
+  a1
+  a2
+  b1
+  b2
+  c1
+  c2
+}
+
+enum CoursePlanDepth {
+  overview
+  complete
+  focused
+}
+
+enum CourseDiscoveryStatus {
+  pending
+  ask
+  ready
+  generating
+  completed
+  blocked
+  failed
 }
 
 enum CoursePromptIntent {

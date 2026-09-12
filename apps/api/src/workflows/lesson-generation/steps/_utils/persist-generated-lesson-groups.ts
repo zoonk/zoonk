@@ -1,6 +1,10 @@
 import { findGeneratedCompanionForSourceLesson } from "@zoonk/core/lessons/generated-companions";
 import { getSplitLessonSlug } from "@zoonk/core/lessons/split-lessons";
-import { type Lesson, type LessonCreateManyInput, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type CourseRevisionContext,
+  withCurrentCourseRevision,
+} from "@zoonk/core/workflows/internal/course-curriculum";
+import { type Lesson, type LessonCreateManyInput, type TransactionClient } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { lockChapterLessonOrder } from "./lock-chapter-lesson-order";
 
@@ -10,6 +14,7 @@ export type GeneratedLessonGroup = { companionLesson: Lesson | null; sourceLesso
 
 type PersistGeneratedLessonGroupsInput = {
   chapterId: string;
+  revisionContext: CourseRevisionContext;
   groupCount: number;
   lessonId: string;
   persistGroups: (input: {
@@ -232,6 +237,7 @@ function getRequiredSourceLesson({
  * completion; a failure therefore leaves neither partial lessons nor shifted order.
  */
 export async function persistGeneratedLessonGroups({
+  revisionContext,
   chapterId,
   groupCount,
   lessonId,
@@ -242,8 +248,9 @@ export async function persistGeneratedLessonGroups({
     throw new Error("Generated lesson persistence needs at least one group");
   }
 
-  await prisma.$transaction(
-    async (transaction) => {
+  await withCurrentCourseRevision({
+    context: revisionContext,
+    operation: async (transaction) => {
       await lockChapterLessonOrder({ chapterId, transaction });
 
       const chapterLessons = await transaction.lesson.findMany({
@@ -283,9 +290,9 @@ export async function persistGeneratedLessonGroups({
         where: { id: { in: rootLessonIds } },
       });
     },
-    {
+    transactionOptions: {
       maxWait: LESSON_PERSISTENCE_TRANSACTION_TIMEOUT_MS,
       timeout: LESSON_PERSISTENCE_TRANSACTION_TIMEOUT_MS,
     },
-  );
+  });
 }

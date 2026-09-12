@@ -1,5 +1,16 @@
 import Foundation
 
+struct MyTrack: Codable, Equatable, Identifiable, Sendable {
+  let id: String
+  let title: String
+  let totalCourses: Int
+}
+
+struct MyTracksPage: Codable, Equatable, Sendable {
+  let tracks: [MyTrack]
+  let nextCursor: String?
+}
+
 struct UserCourseSummary: Codable, Equatable, Identifiable, Sendable {
   let description: String?
   let id: String
@@ -8,6 +19,7 @@ struct UserCourseSummary: Codable, Equatable, Identifiable, Sendable {
   let organization: CourseOrganization?
   let slug: String
   let title: String
+  var brandSlug: String? = nil
 }
 
 struct MyCoursesPage: Codable, Equatable, Sendable {

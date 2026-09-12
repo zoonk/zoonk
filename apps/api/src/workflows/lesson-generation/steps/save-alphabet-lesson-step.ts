@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
@@ -196,6 +197,7 @@ export async function saveAlphabetLessonStep({
     lessonId: context.id,
     persistGroups: ({ groups, transaction }) =>
       persistAlphabetGroups({ audioUrls, content, groups, symbolGroups, transaction }),
+    revisionContext: getLessonRevisionContext(context),
     workflowRunId,
   });
 

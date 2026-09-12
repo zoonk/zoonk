@@ -14,7 +14,10 @@ export type QuizQuestionWithUrls =
       })[];
     });
 
-function getOptionalStepImage(images: StepImage[] | undefined, index: number): StepImage | null {
+function getOptionalStepImage(
+  images: (StepImage | null)[] | undefined,
+  index: number,
+): StepImage | null {
   return images?.[index] ?? null;
 }
 
@@ -22,7 +25,7 @@ function assertImageCount({
   images,
   stepCount,
 }: {
-  images: StepImage[] | undefined;
+  images: (StepImage | null)[] | undefined;
   stepCount: number;
 }): void {
   if (images && images.length !== stepCount) {
@@ -40,7 +43,7 @@ export async function saveStaticLessonContent({
   transaction,
 }: {
   context: LessonContext;
-  images?: StepImage[];
+  images?: (StepImage | null)[];
   steps: StaticLessonStep[];
   transaction: TransactionClient;
 }): Promise<void> {
@@ -75,7 +78,7 @@ export async function savePracticeLessonContent({
 }: {
   content: Extract<GeneratedLessonContent, { kind: "practice" }>;
   context: LessonContext;
-  images?: StepImage[];
+  images?: (StepImage | null)[];
   transaction: TransactionClient;
 }): Promise<void> {
   assertImageCount({ images, stepCount: content.steps.length });

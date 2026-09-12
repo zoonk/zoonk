@@ -145,7 +145,7 @@ describe("generation access", () => {
     expect(lessonAccess).toMatchObject({ shouldClaimQuota: false, status: "ready" });
   });
 
-  it("requires a subscription for later lessons when the learner is not subscribed", async () => {
+  it("allows later lessons to use the generation allowance without a subscription", async () => {
     const [chapter, user] = await Promise.all([
       chapterFixture({ courseId, organizationId, position: 3 }),
       userFixture(),
@@ -159,9 +159,7 @@ describe("generation access", () => {
       organizationId,
     });
 
-    await expect(getLessonGenerationAccess(lesson.id)).resolves.toStrictEqual({
-      status: "subscriptionRequired",
-    });
+    await expect(getLessonGenerationAccess(lesson.id)).resolves.toMatchObject({ status: "ready" });
   });
 
   it("lets admins retry failed later lessons without claiming learner quota", async () => {

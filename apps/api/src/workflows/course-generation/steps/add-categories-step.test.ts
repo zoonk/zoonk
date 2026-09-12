@@ -26,10 +26,12 @@ describe(addCategoriesStep, () => {
     });
 
     const courseContext: CourseContext = {
+      contentRevision: 1,
       courseId: course.id,
       courseSlug: course.slug,
       courseTitle: course.title,
       format: "core",
+      generationRunId: null,
       language: "en",
       organizationId,
       targetLanguage: null,
@@ -64,10 +66,12 @@ describe(addCategoriesStep, () => {
     });
 
     const courseContext: CourseContext = {
+      contentRevision: 1,
       courseId: course.id,
       courseSlug: course.slug,
       courseTitle: course.title,
       format: "core",
+      generationRunId: null,
       language: "en",
       organizationId,
       targetLanguage: null,

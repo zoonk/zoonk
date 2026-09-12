@@ -1,27 +1,21 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
-import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
+import { type CurriculumChapter } from "@zoonk/ai/tasks/courses/curriculum";
 import { type CourseLandingPageSchema } from "@zoonk/ai/tasks/courses/landing-page";
 import { type CourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { generateCategoriesStep } from "../steps/generate-categories-step";
 import { generateChaptersStep } from "../steps/generate-chapters-step";
 import { generateDescriptionStep } from "../steps/generate-description-step";
 import { generateImageStep } from "../steps/generate-image-step";
-import { generateIntroductionChapterStep } from "../steps/generate-introduction-chapter-step";
 import { generateLandingPageStep } from "../steps/generate-landing-page-step";
-import { getCourseIntroductionLessonsStep } from "../steps/get-introduction-lessons-step";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { type ExistingCourseContent } from "./existing-course-content";
-import {
-  generateIntroductionLessonContent,
-  persistIntroductionChapter,
-} from "./introduction-course-setup";
 
 export type GeneratedContent = {
   description: string;
   imageUrl: string;
   landingPage: CourseLandingPageContent | null;
   categories: string[];
-  chapters: CourseChapter[];
+  chapters: CurriculumChapter[];
 };
 
 type GenerateMissingContentInput = {
@@ -35,7 +29,7 @@ type ExistingCourseStepInput = { course: CourseContext; existing: ExistingCourse
 type ImageStepInput = ExistingCourseStepInput & { description: string | null };
 
 type LandingPageStepInput = ExistingCourseStepInput & {
-  chapters: CourseChapter[];
+  chapters: CurriculumChapter[];
   description: string;
 };
 
@@ -182,41 +176,13 @@ async function categoriesOrSkip({ course, existing }: ExistingCourseStepInput): 
 }
 
 /**
- * Generates and persists the fixed field-guide introduction for regular
- * courses, then waits for the first intro lesson to be generated. A retry may
- * find the chapter shell without lessons, and it still needs the plan to fill
- * those missing rows before a lesson workflow can start.
- */
-async function introductionOrSkip({ course, existing }: ExistingCourseStepInput): Promise<void> {
-  if (course.format === "language") {
-    await streamSkipStep("generateIntroductionChapter");
-    return;
-  }
-
-  if (existing.hasIntroductionLessons) {
-    await streamSkipStep("generateIntroductionChapter");
-    const lessons = await getCourseIntroductionLessonsStep(course.courseId);
-
-    await generateIntroductionLessonContent(lessons);
-    return;
-  }
-
-  const introduction = await generateIntroductionChapterStep(course);
-
-  const { lessons } = await persistIntroductionChapter({ course, introduction });
-
-  await generateIntroductionLessonContent(lessons);
-}
-
-/**
  * Generates the main curriculum until a saved main chapter already exists.
- * Regular-course intro chapters live at position zero and do not count as main
- * curriculum; language-course chapters do because they have no separate intro.
+ * Legacy curriculum replacement uses its explicit versioned workflow.
  */
 async function chaptersOrSkip({
   course,
   existing,
-}: ExistingCourseStepInput): Promise<CourseChapter[]> {
+}: ExistingCourseStepInput): Promise<CurriculumChapter[]> {
   if (existing.hasMainCurriculum) {
     await streamSkipStep("generateChapters");
     return [];
@@ -229,18 +195,36 @@ async function chaptersOrSkip({
  * Generates only the course pieces that are still missing so repeated setup
  * attempts preserve content that was already saved.
  */
+function settledValue<T>(result: PromiseSettledResult<T>): T {
+  if (result.status === "rejected") {
+    throw result.reason;
+  }
+
+  return result.value;
+}
+
 export async function generateMissingContent({
   course,
   description,
   existing,
 }: GenerateMissingContentInput): Promise<GeneratedContent> {
-  const [, generatedDescription, generatedImageUrl, categories, chapters] = await Promise.all([
-    introductionOrSkip({ course, existing }),
+  const results = await Promise.allSettled([
     descriptionOrSkip({ course, existing }),
     imageOrSkip({ course, description, existing }),
     categoriesOrSkip({ course, existing }),
     chaptersOrSkip({ course, existing }),
-  ]);
+  ] as const);
+
+  const failure = results.find((result) => result.status === "rejected");
+
+  if (failure?.status === "rejected") {
+    throw failure.reason;
+  }
+
+  const generatedDescription = settledValue(results[0]);
+  const generatedImageUrl = settledValue(results[1]);
+  const categories = settledValue(results[2]);
+  const chapters = settledValue(results[3]);
 
   const resolvedDescription = getResolvedDescription({
     existing,

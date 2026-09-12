@@ -1,7 +1,9 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { lessonNextQuerySchema } from "@/lib/openapi/schemas/lesson-resources";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { parseQueryParams } from "@/lib/query-params";
 import { getNextLessonAfter } from "@zoonk/core/lessons/next-in-course";
 import { NextResponse } from "next/server";
 
@@ -10,7 +12,7 @@ import { NextResponse } from "next/server";
  * learner-progress target represented by the requested lesson itself.
  */
 async function getLessonSuccessor(
-  _request: Request,
+  request: Request,
   context: RouteContext<"/v1/lessons/[lessonId]/next-lesson">,
 ) {
   const parsed = parsePathParams({ params: await context.params, schema: lessonPathParamsSchema });
@@ -19,7 +21,13 @@ async function getLessonSuccessor(
     return errors.validation(parsed.error);
   }
 
-  const result = await getNextLessonAfter({ lessonId: parsed.data.lessonId });
+  const query = parseQueryParams(new URL(request.url).searchParams, lessonNextQuerySchema);
+
+  if (!query.success) {
+    return errors.validation(query.error);
+  }
+
+  const result = await getNextLessonAfter({ lessonId: parsed.data.lessonId, ...query.data });
 
   if (result.status === "notFound") {
     return errors.notFound();

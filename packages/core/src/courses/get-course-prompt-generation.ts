@@ -3,8 +3,7 @@ import { type Course } from "@zoonk/db";
 import { getCourseSlugForTitle } from "./course-slug";
 import { getCoursePromptById } from "./get-course-prompt";
 import { getFirstCourseLesson, getFirstCourseLessonResource } from "./get-first-course-lesson";
-
-export type CoursePromptGenerationCompletionKind = "course" | "introductionLesson";
+import { CURRENT_CURRICULUM_VERSION } from "./learning-plan-contract";
 
 /**
  * Resolves the route-neutral destination that becomes available while a course
@@ -19,7 +18,7 @@ async function getCoursePromptGenerationTarget({
   course: Course;
   isLanguageCourse: boolean;
 }) {
-  if (isLanguageCourse) {
+  if (isLanguageCourse || course.curriculumVersion >= CURRENT_CURRICULUM_VERSION) {
     return course.generationStatus === "completed"
       ? ({ courseSlug: course.slug, kind: "course" } as const)
       : null;
@@ -68,12 +67,8 @@ export async function getCoursePromptGeneration({ coursePromptId }: { courseProm
     return { status: "redirect" as const, target };
   }
 
-  const completionKind: CoursePromptGenerationCompletionKind = isLanguageCourse
-    ? "course"
-    : "introductionLesson";
-
   return {
-    completionKind,
+    completionKind: "course" as const,
     coursePromptId: coursePrompt.id,
     courseSlug: getCourseSlugForTitle({
       language: coursePrompt.language,
@@ -112,14 +107,17 @@ export async function getCoursePromptGenerationResource({
   if (coursePrompt.course) {
     const isLanguageCourse = coursePrompt.courseFormat === "language";
 
-    if (isLanguageCourse && coursePrompt.course.generationStatus === "completed") {
+    if (
+      (isLanguageCourse || coursePrompt.course.curriculumVersion >= CURRENT_CURRICULUM_VERSION) &&
+      coursePrompt.course.generationStatus === "completed"
+    ) {
       return {
         status: "ready" as const,
         target: { courseId: coursePrompt.course.id, kind: "course" as const },
       };
     }
 
-    if (!isLanguageCourse) {
+    if (!isLanguageCourse && coursePrompt.course.curriculumVersion < CURRENT_CURRICULUM_VERSION) {
       const firstLesson = await getFirstCourseLessonResource({ courseId: coursePrompt.course.id });
 
       if (firstLesson) {
@@ -144,10 +142,7 @@ export async function getCoursePromptGenerationResource({
   }
 
   return {
-    completionKind:
-      coursePrompt.courseFormat === "language"
-        ? ("course" as const)
-        : ("introductionLesson" as const),
+    completionKind: "course" as const,
     courseFormat: coursePrompt.courseFormat,
     coursePromptId: coursePrompt.id,
     generationId: coursePrompt.generationRunId,

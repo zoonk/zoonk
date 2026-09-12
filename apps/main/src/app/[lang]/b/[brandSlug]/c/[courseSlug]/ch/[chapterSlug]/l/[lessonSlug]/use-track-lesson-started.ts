@@ -9,6 +9,7 @@ type LessonStartedTrackingInput = {
   chapterPosition: number;
   courseSlug: string;
   isAuthenticated: boolean;
+  isPrivate: boolean;
   lesson: SerializedLesson;
   lessonPosition: number;
   lessonSlug: string;
@@ -22,6 +23,7 @@ export function useTrackLessonStarted({
   chapterPosition,
   courseSlug,
   isAuthenticated,
+  isPrivate,
   lesson,
   lessonPosition,
   lessonSlug,
@@ -31,14 +33,16 @@ export function useTrackLessonStarted({
       return;
     }
 
-    trackLessonStarted({
-      chapterPosition,
-      courseSlug,
-      lessonKind: lesson.kind,
-      lessonPosition,
-      lessonSlug,
-      stepCount: lesson.steps.length,
-    });
+    if (!isPrivate) {
+      trackLessonStarted({
+        chapterPosition,
+        courseSlug,
+        lessonKind: lesson.kind,
+        lessonPosition,
+        lessonSlug,
+        stepCount: lesson.steps.length,
+      });
+    }
 
     if (isAuthenticated) {
       void recordLessonStart(lesson.id);
@@ -47,6 +51,7 @@ export function useTrackLessonStarted({
     chapterPosition,
     courseSlug,
     isAuthenticated,
+    isPrivate,
     lesson.id,
     lesson.kind,
     lessonPosition,

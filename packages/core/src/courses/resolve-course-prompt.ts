@@ -17,7 +17,7 @@ type PromptIntent = CoursePrompt["intent"];
 type PersistedCourseFormat = CoursePrompt["courseFormat"];
 type UnsupportedPromptIntent = Extract<PromptIntent, "ambiguous" | "learn" | "question">;
 
-export type UnsupportedCoursePrompt = {
+type UnsupportedCoursePrompt = {
   courseFormat: PersistedCourseFormat;
   intent: UnsupportedPromptIntent;
 };

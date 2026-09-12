@@ -1,46 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { type Route } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
 
-const TEST_RUN_ID = "test-run-id-course-detail";
 const UUID_SHORT_LENGTH = 8;
-
-/**
- * Mock the course-generation APIs to avoid hitting real services.
- */
-async function mockCourseGenerationApis(route: Route) {
-  const url = route.request().url();
-
-  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
-    await route.fulfill({
-      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
-      contentType: "application/json",
-      status: 202,
-    });
-
-    return;
-  }
-
-  if (isGenerationEvents(url)) {
-    await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "started", step: "getCoursePrompt" })}\n\n`,
-      contentType: "text/event-stream",
-      status: 200,
-    });
-
-    return;
-  }
-
-  await route.continue();
-}
 
 const testData: {
   courseNoImageTitle: string;
@@ -109,7 +77,7 @@ test.beforeAll(async () => {
     }),
   ]);
 
-  // Courses need at least one chapter to avoid the generate redirect
+  // Published chapter fixtures keep the catalog and chapter-search assertions meaningful.
   await Promise.all([
     chapterFixture({
       courseId: courseWithImage.id,
@@ -184,39 +152,44 @@ test.describe("Course Detail Page", () => {
     );
   });
 
-  test("redirects to generate page when course has no chapters", async ({ authenticatedPage }) => {
+  test("keeps an unprepared course readable until the learner chooses to start", async ({
+    authenticatedPage,
+  }) => {
     const org = await getAiOrganization();
 
-    const slug = `e2e-no-chapters-${randomUUID().slice(0, UUID_SHORT_LENGTH)}`;
-
-    const title = "E2E No Chapters Course";
-
     const course = await courseFixture({
-      generationStatus: "running",
+      generationStatus: "pending",
       isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString(title),
       organizationId: org.id,
-      slug,
-      title,
+      title: `E2E Unprepared Course ${randomUUID()}`,
     });
 
-    const request = await coursePromptFixture({
-      canonicalTitle: title,
-      courseId: course.id,
-      generationStatus: "running",
-      prompt: `Generate ${title} ${slug}`,
-    });
+    const url = `/b/${AI_ORG_SLUG}/c/${course.slug}`;
+    await authenticatedPage.goto(url);
 
-    await routeGenerationApis({ handler: mockCourseGenerationApis, page: authenticatedPage });
-
-    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${slug}`);
-
-    await authenticatedPage.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
+    await expect(authenticatedPage).toHaveURL(url);
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: `Creating the ${title} course` }),
-    ).toBeVisible({ timeout: 10_000 });
+      authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+    ).toBeVisible();
+
+    await expect(authenticatedPage.getByRole("link", { name: "Prepare course" })).toHaveAttribute(
+      "href",
+      `/generate/curriculum/${course.id}`,
+    );
+
+    await expect(prisma.course.findUnique({ where: { id: course.id } })).resolves.toMatchObject({
+      generationRunId: null,
+      generationStatus: "pending",
+    });
+
+    await authenticatedPage.getByRole("link", { exact: true, name: "Start" }).click();
+    await expect(authenticatedPage).toHaveURL(`${url}/start`);
+
+    await expect(prisma.course.findUnique({ where: { id: course.id } })).resolves.toMatchObject({
+      generationRunId: null,
+      generationStatus: "pending",
+    });
   });
 
   test("non-AI courses with no chapters stay on the course page", async ({ page }) => {
@@ -243,6 +216,7 @@ test.describe("Course Detail Page", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: /^start$/iu })).not.toBeVisible();
+    await expect(page.getByRole("link", { name: "Prepare course" })).not.toBeVisible();
   });
 
   test("shows fallback icon when course has no image", async ({ page }) => {

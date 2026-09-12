@@ -9,6 +9,8 @@ import {
 } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../cache/tags";
+import { getCourseBrandSlug, getReadableCourseWhere } from "../courses/course-access";
+import { OPTIONAL_LESSON_KINDS } from "../courses/learning-plan-contract";
 import {
   getLessonKindExclusionSql,
   getLessonKindExclusionWhere,
@@ -68,13 +70,20 @@ export async function listPublishedLessonProgressRows({
   tagProgressScope(scope);
   tagUserProgress(userId);
 
-  const lessonKindFilter = getLessonKindExclusionSql({ excludedLessonKinds });
+  const lessonKindFilter = getLessonKindExclusionSql({
+    excludedLessonKinds: [...(excludedLessonKinds ?? []), ...OPTIONAL_LESSON_KINDS],
+  });
+
   const scopeFilter = getPublishedLessonProgressScopeFilter({ scope });
   const progressUserFilter = userId ? sql`lp.user_id = ${userId}` : sql`FALSE`;
 
+  const privateCourseFilter = userId
+    ? sql`c.organization_id IS NULL AND c.user_id = ${userId}`
+    : sql`FALSE`;
+
   return prisma.$queryRaw<PublishedLessonProgressRow[]>`
     SELECT
-      o.slug AS "brandSlug",
+      CASE WHEN c.user_id IS NOT NULL THEN 'me' ELSE o.slug END AS "brandSlug",
       ch.id AS "chapterId",
       ch.position AS "chapterPosition",
       ch.slug AS "chapterSlug",
@@ -104,6 +113,8 @@ export async function listPublishedLessonProgressRows({
       AND ${progressUserFilter}
       AND lp.completed_at IS NOT NULL
     WHERE l.is_published = true
+      AND l.source_lesson_id IS NULL
+      AND ((c.user_id IS NULL AND o.kind = 'brand') OR (${privateCourseFilter}))
       AND ${scopeFilter}
       AND ${lessonKindFilter}
     GROUP BY o.slug, ch.id, c.id, l.id
@@ -118,8 +129,10 @@ export async function listPublishedLessonProgressRows({
  */
 export async function listPublishedCourseChapters({
   courseId,
+  userId = null,
 }: {
   courseId: string;
+  userId?: string | null;
 }): Promise<PublishedCourseChapter[]> {
   "use cache";
 
@@ -128,11 +141,11 @@ export async function listPublishedCourseChapters({
   const chapters = await prisma.chapter.findMany({
     include: { course: { include: { organization: true } } },
     orderBy: { position: "asc" },
-    where: { courseId, isPublished: true },
+    where: { course: getReadableCourseWhere(userId), courseId, isPublished: true },
   });
 
   return chapters.map((chapter) => ({
-    brandSlug: chapter.course.organization?.slug ?? "",
+    brandSlug: getCourseBrandSlug(chapter.course),
     chapterId: chapter.id,
     chapterPosition: chapter.position,
     chapterSlug: chapter.slug,
@@ -170,7 +183,7 @@ export async function listDurableChapterCompletionIds({
     },
   });
 
-  return completions.map((row) => row.chapterId);
+  return completions.flatMap((row) => (row.chapterId ? [row.chapterId] : []));
 }
 
 /**

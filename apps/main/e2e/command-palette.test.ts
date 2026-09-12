@@ -585,11 +585,12 @@ test.describe("Command Palette - Course Search", () => {
     await expect(createCourseLink).toBeVisible();
     await createCourseLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`/start/learn/${encodeURIComponent(prompt)}$`, "u"));
-
-    await expect(
-      page.getByRole("heading", { name: /this option isn't available yet/iu }),
-    ).toBeVisible();
+    await expect(page).toHaveURL("/start/learn");
+    const draft = page.getByRole("textbox", { name: "What do you want to learn?" });
+    await expect(draft).toHaveValue(prompt);
+    await expect(draft).toBeFocused();
+    await page.reload();
+    await expect(draft).toHaveValue(prompt);
   });
 
   test("handles rapid typing correctly", async ({ page }) => {

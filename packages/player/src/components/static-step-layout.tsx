@@ -9,14 +9,18 @@ import { StepMediaLayout } from "./step-media-layout";
  * only preserves the static-step slot used by the text renderer.
  */
 export function StaticStepLayout({
+  alt,
   children,
   image,
+  onImageError,
 }: {
+  alt: string;
   children: React.ReactNode;
   image: StepImage;
+  onImageError: () => void;
 }) {
   return (
-    <StepMediaLayout image={image}>
+    <StepMediaLayout alt={alt} image={image} onImageError={onImageError}>
       <div className="w-full" data-slot="static-step-copy">
         {children}
       </div>

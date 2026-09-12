@@ -10,7 +10,7 @@ import { FatalError } from "workflow";
 type GeneratableCoursePromptBase = CoursePrompt & {
   canonicalTitle: string;
   generationStatus: GenerationStatus;
-  intent: "learn";
+  intent: "learn" | "question";
 };
 
 export type GeneratableCoursePrompt =

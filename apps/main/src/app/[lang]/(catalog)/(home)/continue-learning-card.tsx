@@ -35,21 +35,15 @@ async function getHeaderLabel({ lessonTitle }: { lessonTitle: string | null }) {
 function getHrefs(item: ContinueLearningItem) {
   const { chapter, course, lesson } = item;
 
-  if (!course.organization) {
-    const href = `/p/${course.id}` as const;
-
-    return { chapterHref: href, courseHref: href, headerHref: href, prefetch: true };
-  }
-
   const courseHref = getOriginalCourseHref({
-    brandSlug: course.organization.slug,
+    brandSlug: course.brandSlug,
     courseSlug: course.slug,
   });
 
-  const chapterHref = `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}` as const;
+  const chapterHref = `/b/${course.brandSlug}/c/${course.slug}/ch/${chapter.slug}` as const;
 
   const lessonHref = lesson
-    ? (`/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}` as const)
+    ? (`/b/${course.brandSlug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}` as const)
     : chapterHref;
 
   if (item.status === "ready") {

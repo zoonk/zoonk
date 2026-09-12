@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
@@ -36,6 +37,7 @@ describe(replaceLessonSteps, () => {
 
     await replaceLessonSteps({
       lessonId: context.id,
+      revisionContext: getLessonRevisionContext(context),
       saveSteps: async (transaction) => {
         await transaction.step.create({
           data: {

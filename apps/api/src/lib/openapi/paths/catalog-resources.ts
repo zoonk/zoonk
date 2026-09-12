@@ -9,6 +9,7 @@ import {
   languageCourseQuerySchema,
   lessonResourceSchema,
 } from "../schemas/catalog-resources";
+import { chapterLessonViewsQuerySchema } from "../schemas/learning-discovery";
 import {
   chapterPathParamsSchema,
   coursePathParamsSchema,
@@ -55,7 +56,7 @@ export const catalogResourcePaths = {
   "/chapters/{chapterId}/lessons": {
     get: {
       operationId: "listChapterLessons",
-      requestParams: { path: chapterPathParamsSchema },
+      requestParams: { path: chapterPathParamsSchema, query: chapterLessonViewsQuerySchema },
       responses: {
         "200": {
           content: { "application/json": { schema: chapterLessonListResponseSchema } },

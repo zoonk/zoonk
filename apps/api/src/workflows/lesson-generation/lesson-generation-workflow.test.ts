@@ -26,6 +26,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { start } from "workflow/api";
 import { lessonGenerationWorkflow } from "./lesson-generation-workflow";
 import { type setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 
@@ -232,10 +233,12 @@ vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
     .mockImplementation(({ steps }) =>
       Promise.resolve({
         data: {
-          prompts:
-            steps.length === 2
-              ? ["tutorial first image prompt", "tutorial second image prompt"]
-              : ["first image prompt", "second image prompt", "anchor image prompt"],
+          images: [
+            {
+              prompt: steps.length === 2 ? "tutorial first image prompt" : "first image prompt",
+              stepIndex: 0,
+            },
+          ],
         },
       }),
     ),
@@ -402,7 +405,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  it("runs the explanation image workflow and saves images on static steps", async () => {
+  it("completes explanation text with the selected illustration before completion", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const lesson = await lessonFixture({
@@ -418,13 +421,13 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(generateLessonExplanation).toHaveBeenCalledOnce();
     expect(generateStepImagePrompts).toHaveBeenCalledOnce();
-    expect(generateContentStepImage).toHaveBeenCalledTimes(3);
+    expect(generateContentStepImage).toHaveBeenCalledOnce();
+    expect(start).not.toHaveBeenCalled();
 
     expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateExplanationContent",
         "generateImagePrompts",
-        "generateStepImages",
         "saveExplanationLesson",
         "generateLessonImage",
         "setLessonAsCompleted",
@@ -443,8 +446,8 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(imageUrls).toStrictEqual([
       "https://example.com/content/first%20image%20prompt.webp",
-      "https://example.com/content/second%20image%20prompt.webp",
-      "https://example.com/content/anchor%20image%20prompt.webp",
+      undefined,
+      undefined,
     ]);
 
     const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
@@ -460,7 +463,7 @@ describe(lessonGenerationWorkflow, () => {
     );
   });
 
-  it("runs the tutorial image workflow and saves generated procedural steps", async () => {
+  it("completes procedural steps with the selected illustration before completion", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const lesson = await lessonFixture({
@@ -485,13 +488,13 @@ describe(lessonGenerationWorkflow, () => {
       }),
     );
 
-    expect(generateContentStepImage).toHaveBeenCalledTimes(2);
+    expect(generateContentStepImage).toHaveBeenCalledOnce();
+    expect(start).not.toHaveBeenCalled();
 
     expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateTutorialContent",
         "generateImagePrompts",
-        "generateStepImages",
         "saveTutorialLesson",
         "setLessonAsCompleted",
       ]),
@@ -511,7 +514,7 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(contents.map((content) => content.image?.url)).toStrictEqual([
       "https://example.com/content/tutorial%20first%20image%20prompt.webp",
-      "https://example.com/content/tutorial%20second%20image%20prompt.webp",
+      undefined,
     ]);
   });
 
@@ -566,7 +569,6 @@ describe(lessonGenerationWorkflow, () => {
     expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generatePracticeContent",
-        "generateStepImages",
         "savePracticeLesson",
         "setLessonAsCompleted",
       ]),
@@ -1344,3 +1346,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(dbLesson.generationRunId).toBe("test-run-id");
   });
 });
+
+vi.mock("workflow/api", () => ({
+  start: vi.fn().mockResolvedValue({ runId: "illustration-run" }),
+}));

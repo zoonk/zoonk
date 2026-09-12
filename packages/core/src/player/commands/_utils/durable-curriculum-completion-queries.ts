@@ -1,6 +1,15 @@
 import { type TransactionClient, getPublishedLessonWhere } from "@zoonk/db";
+import { getReadableCourseWhere } from "../../../courses/course-access";
+import { OPTIONAL_LESSON_KINDS } from "../../../courses/learning-plan-contract";
+import { getLessonKindExclusionSql } from "../../../lessons/lesson-kind-exclusions";
 
-type LessonCurriculumContext = { chapterId: string; courseId: string; lessonId: string };
+type LessonCurriculumContext = {
+  chapterId: string;
+  courseId: string;
+  lessonId: string;
+  curriculumVersion: number;
+  format: string;
+};
 
 export type PublishedLessonCompletionRow = {
   chapterId: string;
@@ -16,20 +25,31 @@ export type PublishedLessonCompletionRow = {
 export async function getLessonCurriculumContext({
   lessonId,
   tx,
+  userId,
 }: {
   lessonId: string;
   tx: TransactionClient;
+  userId: string;
 }): Promise<LessonCurriculumContext> {
   const lesson = await tx.lesson.findFirst({
-    select: { chapter: { select: { courseId: true } }, chapterId: true, id: true },
-    where: getPublishedLessonWhere({ lessonWhere: { id: lessonId } }),
+    include: { chapter: { include: { course: true } } },
+    where: getPublishedLessonWhere({
+      courseWhere: getReadableCourseWhere(userId),
+      lessonWhere: { id: lessonId },
+    }),
   });
 
   if (!lesson) {
     throw new Error("Lesson is not completable");
   }
 
-  return { chapterId: lesson.chapterId, courseId: lesson.chapter.courseId, lessonId: lesson.id };
+  return {
+    chapterId: lesson.chapterId,
+    courseId: lesson.chapter.courseId,
+    curriculumVersion: lesson.chapter.course.curriculumVersion,
+    format: lesson.chapter.course.format,
+    lessonId: lesson.id,
+  };
 }
 
 /**
@@ -46,6 +66,10 @@ export async function listPublishedCourseLessonCompletionRows({
   tx: TransactionClient;
   userId: string;
 }): Promise<PublishedLessonCompletionRow[]> {
+  const requiredLessonFilter = getLessonKindExclusionSql({
+    excludedLessonKinds: [...OPTIONAL_LESSON_KINDS],
+  });
+
   return tx.$queryRaw<PublishedLessonCompletionRow[]>`
     SELECT
       l.chapter_id AS "chapterId",
@@ -58,11 +82,14 @@ export async function listPublishedCourseLessonCompletionRows({
     JOIN courses c
       ON c.id = ch.course_id
       AND c.is_published = true
+    LEFT JOIN organizations o ON o.id = c.organization_id
     LEFT JOIN lesson_progress lp
       ON lp.lesson_id = l.id
       AND lp.user_id = ${userId}
     WHERE c.id = ${courseId}
       AND l.is_published = true
+      AND ${requiredLessonFilter}
+      AND ((c.user_id IS NULL AND o.kind = 'brand') OR (c.organization_id IS NULL AND c.user_id = ${userId}))
   `;
 }
 
@@ -108,7 +135,7 @@ export async function listDurableCourseLessonIds({
     },
   });
 
-  return new Set(rows.map((row) => row.lessonId));
+  return new Set(rows.flatMap((row) => (row.lessonId ? [row.lessonId] : [])));
 }
 
 /**
@@ -129,5 +156,5 @@ export async function listDurableCourseChapterIds({
     where: { chapter: { course: { isPublished: true }, courseId, isPublished: true }, userId },
   });
 
-  return new Set(rows.map((row) => row.chapterId));
+  return new Set(rows.flatMap((row) => (row.chapterId ? [row.chapterId] : [])));
 }

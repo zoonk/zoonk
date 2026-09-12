@@ -3,6 +3,7 @@ import { getPublishedChapterWhere, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getChapterCacheTag, getChapterRouteCacheTag, getCourseCacheTag } from "../cache/tags";
 import { decodeRouteParam } from "../navigation/decode-route-param";
+import { getSession } from "../users/get-session";
 
 type ChapterRouteParams = { brandSlug: string; chapterSlug: string; courseSlug: string };
 
@@ -21,6 +22,7 @@ async function getCachedChapter(params: ChapterRouteParams) {
       courseWhere: {
         organization: { kind: "brand", slug: params.brandSlug },
         slug: params.courseSlug,
+        userId: null,
       },
     }),
   });
@@ -32,12 +34,43 @@ async function getCachedChapter(params: ChapterRouteParams) {
   return chapter;
 }
 
+async function getPrivateChapter(params: ChapterRouteParams) {
+  "use cache: private";
+  const session = await getSession();
+
+  if (!session) {
+    return null;
+  }
+
+  const chapter = await prisma.chapter.findFirst({
+    include: { course: { include: { categories: true } } },
+    where: getPublishedChapterWhere({
+      chapterWhere: { slug: decodeRouteParam(params.chapterSlug) },
+      courseWhere: {
+        organizationId: null,
+        slug: decodeRouteParam(params.courseSlug),
+        userId: session.user.id,
+      },
+    }),
+  });
+
+  if (chapter) {
+    cacheTag(getChapterCacheTag(chapter.id), getCourseCacheTag(chapter.courseId));
+  }
+
+  return chapter;
+}
+
 /**
  * Loads the published chapter identified by its complete brand course route.
  * Normalizing before the cached boundary gives encoded and decoded route
  * values one cache entry while preserving the full publication hierarchy.
  */
 export async function getChapter(params: ChapterRouteParams) {
+  if (decodeRouteParam(params.brandSlug) === "me") {
+    return getPrivateChapter(params);
+  }
+
   return getCachedChapter({
     brandSlug: decodeRouteParam(params.brandSlug),
     chapterSlug: decodeRouteParam(params.chapterSlug),

@@ -89,6 +89,14 @@ export function usePlayerKeyboard({
         return false;
       }
 
+      // Completed-screen links and buttons own Enter when focused. The page shortcut is for body focus.
+      if (
+        keyboard.enterAction === "next" &&
+        document.activeElement?.closest('a[href], button, summary, [role="button"]')
+      ) {
+        return false;
+      }
+
       return runKeyboardAction({
         action: keyboard.enterAction,
         onCheck,

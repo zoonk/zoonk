@@ -10,7 +10,7 @@ import { getContentLocale } from "@zoonk/utils/locale";
 export async function getSitemapCourseWhere() {
   const languages = await prisma.course.groupBy({
     by: ["language"],
-    where: getPublishedCourseWhere({ organization: { kind: "brand" } }),
+    where: getPublishedCourseWhere({ organization: { kind: "brand" }, userId: null }),
   });
 
   const supportedLanguages = languages
@@ -20,5 +20,6 @@ export async function getSitemapCourseWhere() {
   return getPublishedCourseWhere({
     language: { in: supportedLanguages },
     organization: { kind: "brand" },
+    userId: null,
   });
 }

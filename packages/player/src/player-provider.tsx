@@ -1,6 +1,5 @@
 "use client";
 
-import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerProgressSnapshot } from "@zoonk/core/player/contracts/progress-snapshot";
 import { useMemo, useReducer } from "react";
@@ -8,6 +7,7 @@ import {
   getEffectiveCompletionProgressSnapshot,
   getStoredCompletionMilestoneKeys,
 } from "./completion-milestone-storage";
+import { type PlayerCompletionHandler } from "./completion-persistence";
 import {
   PlayerConfigContext,
   type PlayerLessonProgress,
@@ -26,6 +26,7 @@ import { getPlayerScreenModel } from "./player-screen";
 import { usePlayerActions } from "./use-player-actions";
 import { UserNameProvider } from "./user-name-context";
 
+export type { PlayerCompletionOutcome, PlayerCompletionHandler } from "./completion-persistence";
 export type { PlayerStepChangeEvent } from "./player-events";
 
 export function PlayerProvider({
@@ -57,7 +58,7 @@ export function PlayerProvider({
   linkComponent: PlayerLinkComponent;
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
-  onComplete: (input: CompletionInput) => void;
+  onComplete: PlayerCompletionHandler;
   onEscape: (href: PlayerRoute) => void;
   onNext?: () => void;
   onStepChange?: (event: PlayerStepChangeEvent) => void;
@@ -74,7 +75,6 @@ export function PlayerProvider({
             progressSnapshot,
           })
         : null,
-      requiresStartConfirmation: !viewer.isAuthenticated,
       shownCompletionMilestoneKeys: viewer.isAuthenticated
         ? getStoredCompletionMilestoneKeys()
         : [],
@@ -126,7 +126,10 @@ export function PlayerProvider({
     ],
   );
 
-  const runtimeValue = useMemo(() => ({ actions, screen, state }), [actions, screen, state]);
+  const runtimeValue = useMemo(
+    () => ({ actions, completionPersistence: actions.completionPersistence, screen, state }),
+    [actions, screen, state],
+  );
 
   return (
     <PlayerConfigContext value={configValue}>

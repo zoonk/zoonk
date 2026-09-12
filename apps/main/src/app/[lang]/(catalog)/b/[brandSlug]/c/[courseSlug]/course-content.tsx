@@ -18,7 +18,8 @@ import { CourseSidebar } from "./course-sidebar";
 function CourseCatalog({
   notice,
   params,
-}: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">, "params"> & { notice?: ReactNode }) {
+  searchParams,
+}: PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]"> & { notice?: ReactNode }) {
   return (
     <CatalogDetailLayout
       sidebar={
@@ -32,7 +33,7 @@ function CourseCatalog({
     >
       <Grid variant="pane">
         <Suspense fallback={<CatalogGridSkeleton count={5} groupVariant="pane" search />}>
-          <CourseChapterGrid params={params} />
+          <CourseChapterGrid params={params} searchParams={searchParams} />
         </Suspense>
       </Grid>
     </CatalogDetailLayout>
@@ -54,8 +55,8 @@ export async function CourseContent({
     notFound();
   }
 
-  if (getContentLocale(course.language) === locale) {
-    return <CourseCatalog params={params} />;
+  if (course.userId || getContentLocale(course.language) === locale) {
+    return <CourseCatalog params={params} searchParams={searchParams} />;
   }
 
   const [edition, query] = await Promise.all([
@@ -80,6 +81,7 @@ export async function CourseContent({
           />
         }
         params={params}
+        searchParams={searchParams}
       />
     );
   }

@@ -86,7 +86,7 @@ export function RemoveCourseMenu({
           <form action={formAction} className="contents">
             <input name="courseId" type="hidden" value={courseId} />
             <AlertDialogAction disabled={isPending} type="submit" variant="destructive">
-              {isPending && <Spinner />}
+              {isPending && <Spinner aria-hidden="true" />}
               {isPending ? t("Removing...") : t("Remove course")}
             </AlertDialogAction>
           </form>

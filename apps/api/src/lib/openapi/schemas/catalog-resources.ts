@@ -1,3 +1,7 @@
+import {
+  CORE_COURSE_LEVELS,
+  LANGUAGE_COURSE_LEVELS,
+} from "@zoonk/core/courses/learning-plan-contract";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
 import { z } from "zod";
@@ -50,15 +54,18 @@ export const organizationSummarySchema = z
 export const courseResourceSchema = z
   .object({
     categories: z.array(z.enum(COURSE_CATEGORIES)),
+    contentRevision: z.number().int().positive(),
     coursePromptId: z.uuid().nullable(),
+    curriculumVersion: z.number().int().positive(),
     description: z.string().nullable(),
     format: courseFormatSchema,
     generationId: z.string().nullable(),
     generationStatus: generationStatusSchema,
     id: z.uuid(),
     imageUrl: z.string().nullable(),
+    isPrivate: z.boolean(),
     language: z.string(),
-    organization: organizationSummarySchema,
+    organization: organizationSummarySchema.nullable(),
     slug: z.string(),
     targetLanguage: z.string().nullable(),
     title: z.string(),
@@ -74,6 +81,8 @@ export const chapterResourceSchema = z
     id: z.uuid(),
     imageUrl: z.string().nullable(),
     language: z.string(),
+    level: z.enum([...CORE_COURSE_LEVELS, ...LANGUAGE_COURSE_LEVELS]).nullable(),
+    outcomes: z.array(z.string()),
     position: z.number().int().min(0),
     slug: z.string(),
     title: z.string(),
@@ -97,6 +106,7 @@ export const lessonResourceSchema = z
     language: z.string(),
     position: z.number().int().min(0),
     slug: z.string(),
+    sourceLessonId: z.uuid().nullable(),
     title: z.string().nullable(),
   })
   .meta({ id: "LessonResource" });

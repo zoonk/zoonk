@@ -199,7 +199,7 @@ test.describe("Lesson resources API", () => {
       chapterId: chapter.id,
       generationStatus: "completed",
       isPublished: true,
-      kind: "quiz",
+      kind: "explanation",
       organizationId: organization.id,
       position: 1,
       title: `E2E Successor ${randomUUID()}`,
@@ -211,7 +211,7 @@ test.describe("Lesson resources API", () => {
     expect(response.status()).toBe(200);
 
     await expect(response.json()).resolves.toMatchObject({
-      lesson: { chapterId: chapter.id, lessonId: nextLesson.id, lessonKind: "quiz" },
+      lesson: { chapterId: chapter.id, lessonId: nextLesson.id, lessonKind: "explanation" },
     });
 
     await apiContext.dispose();
@@ -613,7 +613,7 @@ test.describe("Lesson resources API", () => {
     await apiContext.dispose();
   });
 
-  test("rechecks paid lesson access before answering a saved question", async () => {
+  test("keeps saved questions accessible after subscription expiry while enforcing generation budgets", async () => {
     const { lesson } = await createPublishedLesson({ chapterPosition: 1 });
 
     const { apiContext, user } = await createSubscriberApiContext({
@@ -638,21 +638,23 @@ test.describe("Lesson resources API", () => {
       where: { referenceId: user.id },
     });
 
+    await exhaustLessonQuestionGenerationQuota(user.id);
+
     const [questionResponse, answerResponse] = await Promise.all([
       apiContext.get(`/v1/questions/${createdQuestion.id}`),
       apiContext.post(`/v1/questions/${createdQuestion.id}/answers`),
     ]);
 
-    expect(questionResponse.status()).toBe(402);
-    expect(answerResponse.status()).toBe(402);
+    expect(questionResponse.status()).toBe(200);
+    expect(answerResponse.status()).toBe(429);
 
     await expect(answerResponse.json()).resolves.toMatchObject({
-      error: { code: "PAYMENT_REQUIRED" },
+      error: { code: "GENERATION_LIMIT_REACHED" },
     });
 
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: createdQuestion.id } }),
-    ).resolves.toMatchObject({ generationRevision: 0, status: "pending" });
+    ).resolves.toMatchObject({ generationRevision: 1, status: "failed" });
 
     await apiContext.dispose();
   });
@@ -1118,15 +1120,30 @@ test.describe("Lesson resources API", () => {
       lessonId: nextLesson.id,
     });
 
-    const { apiContext } = await createBearerApiContext({ baseURL, prefix: "lesson-preload" });
+    const { apiContext, user } = await createBearerApiContext({
+      baseURL,
+      prefix: "lesson-preload",
+    });
+
+    await prisma.chapterGenerationGrant.create({
+      data: { chapterId: chapter.id, userId: user.id },
+    });
 
     const response = await apiContext.post(`/v1/lessons/${lesson.id}/preloads`);
 
     expect(response.status()).toBe(202);
 
-    await expect(response.json()).resolves.toMatchObject({
+    const result = await response.json();
+
+    expect(result).toMatchObject({
       generations: [{ generationId: expect.any(String), kind: "lesson", lessonId: nextLesson.id }],
     });
+
+    const generationResponse = await apiContext.get(
+      `/v1/generations/${result.generations[0].generationId}`,
+    );
+
+    expect(generationResponse.status()).toBe(200);
 
     await apiContext.dispose();
   });

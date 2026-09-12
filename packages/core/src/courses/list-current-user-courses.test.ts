@@ -4,7 +4,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { listCurrentUserCourses } from "./list-current-user-courses";
+import { listCurrentUserCourses, listCurrentUserCoursesPage } from "./list-current-user-courses";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
@@ -178,5 +178,54 @@ describe(listCurrentUserCourses, () => {
       expect(courses.some((item) => item.id === testUserCourse.id)).toBe(true);
       expect(courses.some((item) => item.id === otherUserCourse.id)).toBe(false);
     });
+  });
+});
+
+describe("standalone library filtering", () => {
+  it("filters the current learner's Track memberships before pagination and preserves other learners' courses", async () => {
+    const [owner, other, organization] = await Promise.all([
+      userFixture(),
+      userFixture(),
+      organizationFixture({ kind: "brand" }),
+    ]);
+
+    const courses = await Promise.all(
+      Array.from({ length: 3 }, () =>
+        courseFixture({ isPublished: true, organizationId: organization.id }),
+      ),
+    );
+
+    await prisma.courseUser.createMany({
+      data: courses.map((course, index) => ({
+        courseId: course.id,
+        startedAt: new Date(2026, 0, 3 - index),
+        userId: owner.id,
+      })),
+    });
+
+    await prisma.track.create({
+      data: {
+        courses: { create: { courseId: courses[0]!.id, position: 0 } },
+        title: "Owned track",
+        userId: owner.id,
+      },
+    });
+
+    await prisma.track.create({
+      data: {
+        courses: { create: { courseId: courses[1]!.id, position: 0 } },
+        title: "Other track",
+        userId: other.id,
+      },
+    });
+
+    mockSession(owner.id);
+    const first = await listCurrentUserCoursesPage({ limit: 1, standaloneOnly: true });
+    const second = await listCurrentUserCoursesPage({ limit: 1, offset: 1, standaloneOnly: true });
+    expect(first?.courses.map((course) => course.id)).toStrictEqual([courses[1]!.id]);
+    expect(first?.hasMore).toBe(true);
+    expect(second?.courses.map((course) => course.id)).toStrictEqual([courses[2]!.id]);
+    expect(second?.hasMore).toBe(false);
+    await expect(listCurrentUserCourses()).resolves.toHaveLength(3);
   });
 });

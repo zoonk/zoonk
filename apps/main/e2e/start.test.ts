@@ -116,15 +116,10 @@ test.describe("Start language path", () => {
 
     await authenticatedPage.getByRole("searchbox", { name: /search languages/iu }).fill("Javanese");
 
-    await expect(authenticatedPage.getByRole("link", { name: /javanese/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /javanese/iu })).toBeVisible();
     await expect(authenticatedPage.getByRole("link", { name: /^english/iu })).not.toBeVisible();
 
-    const javaneseLink = authenticatedPage.getByRole("link", { name: /javanese/iu });
-
-    await expect(javaneseLink).toHaveAttribute("href", "/start/speak/jv");
-    await expect(javaneseLink).toHaveAttribute("rel", "nofollow");
-
-    await javaneseLink.click();
+    await authenticatedPage.getByRole("button", { name: /javanese/iu }).click();
 
     await expect(authenticatedPage).toHaveURL(/\/generate\/course\/[-a-f0-9]+$/u);
 
@@ -182,12 +177,23 @@ test.describe("Start language path", () => {
   });
 
   test("opens an existing completed language course without generation", async ({ page }) => {
+    await page.goto("/start/speak");
+
+    await expect(
+      page.getByRole("heading", { name: /what language do you want to learn/iu }),
+    ).toBeVisible();
+
+    // An API workflow can finish after the picker was cached without a Main completion observer.
     const course = await createCompletedIcelandicCourseFixture();
 
     await page.goto("/start/speak/is");
 
-    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}$`, "u"));
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    await expect(page).toHaveURL(`/b/ai/c/${course.slug}/start`);
+    await expect(page.getByRole("radio", { name: /A1 · Getting started/u })).toBeVisible();
+
+    await expect(
+      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
+    ).resolves.toHaveLength(0);
   });
 });
 

@@ -29,9 +29,21 @@ describe(startLesson, () => {
 
   beforeAll(async () => {
     const org = await organizationFixture();
-    course = await courseFixture({ organizationId: org.id });
-    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
-    lesson = await lessonFixture({ chapterId: chapter.id, kind: "quiz", organizationId: org.id });
+    course = await courseFixture({ isPublished: true, organizationId: org.id });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "quiz",
+      organizationId: org.id,
+    });
   });
 
   beforeEach(() => {

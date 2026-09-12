@@ -1,3 +1,4 @@
+import { getCourseGenerationPolicy } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
@@ -5,8 +6,8 @@ import { type StaticLessonStep } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Generates one image prompt per readable static step so the later image step
- * can preserve the same order when it attaches generated images to content.
+ * Selects useful illustrations by explicit step index; empty slots preserve
+ * alignment without requiring an image on every screen.
  */
 export async function generateImagePromptsStep({
   context,
@@ -14,7 +15,7 @@ export async function generateImagePromptsStep({
 }: {
   context: LessonContext;
   steps: StaticLessonStep[];
-}): Promise<{ prompts: string[] }> {
+}): Promise<{ alts: string[]; prompts: string[] }> {
   "use step";
 
   await using stream = createStepStream<LessonStepName>();
@@ -22,19 +23,31 @@ export async function generateImagePromptsStep({
 
   if (steps.length === 0) {
     await stream.status({ status: "completed", step: "generateImagePrompts" });
-    return { prompts: [] };
+    return { alts: [], prompts: [] };
   }
 
   const result = await generateStepImagePrompts({
     chapterTitle: context.chapter.title,
     courseTitle: context.chapter.course.title,
+    imageMode:
+      context.chapter.course.userId || context.chapter.course.format === "personalized"
+        ? "instructional"
+        : "key",
     language: context.language,
     lessonDescription: context.description ?? "",
     lessonTitle: context.title ?? "",
     steps,
+    ...getCourseGenerationPolicy(context.chapter.course),
   });
 
   await stream.status({ status: "completed", step: "generateImagePrompts" });
 
-  return { prompts: result.data.prompts };
+  return {
+    alts: steps.map(
+      (_, index) => result.data.images.find((image) => image.stepIndex === index)?.alt ?? "",
+    ),
+    prompts: steps.map(
+      (_, index) => result.data.images.find((image) => image.stepIndex === index)?.prompt ?? "",
+    ),
+  };
 }

@@ -4,6 +4,7 @@ import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { workflowEventsQuerySchema } from "@/lib/openapi/schemas/workflows";
 import { parsePathParams } from "@/lib/path-params";
 import { parseQueryParams } from "@/lib/query-params";
+import { getGenerationReadAccess } from "@zoonk/core/workflows/generation-read-access";
 import { getRun } from "workflow/api";
 
 /**
@@ -31,6 +32,12 @@ async function streamGenerationEvents(
 
   const run = getRun(path.data.generationId);
 
+  const access = await getGenerationReadAccess(path.data);
+
+  if (access.status === "notFound") {
+    return errors.notFound("Generation not found");
+  }
+
   if (!(await run.exists)) {
     return errors.notFound("Generation not found");
   }
@@ -38,7 +45,10 @@ async function streamGenerationEvents(
   const stream = run.getReadable<string>({ startIndex: query.data.startIndex });
 
   return new Response(stream, {
-    headers: { "Cache-Control": "no-cache, no-transform", "Content-Type": "text/event-stream" },
+    headers: {
+      "Cache-Control": "private, no-store, no-transform",
+      "Content-Type": "text/event-stream",
+    },
   });
 }
 

@@ -1,3 +1,7 @@
+import {
+  getChapterLearningContext,
+  getCourseGenerationPolicy,
+} from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import {
   type LanguageChapterLesson,
@@ -23,8 +27,10 @@ export async function generateLessonsStep(context: ChapterContext): Promise<Chap
     const result = await generateLanguageChapterLessons({
       chapterDescription: context.description,
       chapterTitle: context.title,
+      learningContext: getChapterLearningContext(context),
       targetLanguage,
       userLanguage: context.language,
+      ...getCourseGenerationPolicy(context.course),
     });
 
     await stream.status({ status: "completed", step: "generateLessons" });
@@ -37,7 +43,9 @@ export async function generateLessonsStep(context: ChapterContext): Promise<Chap
     chapterTitle: context.title,
     courseTitle: context.course.title,
     language: context.language,
+    learningContext: getChapterLearningContext(context),
     neighboringChapters: context.neighboringChapters,
+    ...getCourseGenerationPolicy(context.course),
   });
 
   await stream.status({ status: "completed", step: "generateLessons" });

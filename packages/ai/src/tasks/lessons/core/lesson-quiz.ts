@@ -2,6 +2,7 @@ import "server-only";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { type LearningContext, formatLearningContext } from "../../_utils/learning-context";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { insertLessonFeedbackPrompt } from "../_utils/append-lesson-feedback-prompt";
 import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source-lessons";
@@ -17,8 +18,8 @@ const fallbackModels = [
 
 const systemPrompt = insertLessonFeedbackPrompt(baseSystemPrompt);
 
-const maximumQuestions = 15;
-const minimumQuestions = 5;
+const maximumQuestions = 4;
+const minimumQuestions = 2;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order; keep format first. */
 const multipleChoiceSchema = z.object({
@@ -80,6 +81,7 @@ export type LessonQuizParams = {
   courseTitle: string;
   language: string;
   lesson: SourceLesson;
+  learningContext?: LearningContext;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -90,6 +92,7 @@ export async function generateLessonQuiz({
   courseTitle,
   language,
   lesson,
+  learningContext,
   model = defaultModel,
   useFallback = true,
   reasoning,
@@ -102,6 +105,7 @@ export async function generateLessonQuiz({
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
     LESSON: ${formattedLesson}
+    LEARNING_CONTEXT: ${formatLearningContext(learningContext)}
   `;
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });

@@ -60,10 +60,20 @@ msgid "Exit"
 msgstr "Beenden"
 
 #: src/components/completion-actions.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Erneut versuchen"
+#: src/components/completion-milestone-actions.tsx
+msgctxt "Du2A_7"
+msgid "Repeat lesson"
+msgstr "Lektion wiederholen"
+
+#: src/components/completion-actions.tsx
+msgctxt "Q9H1qc"
+msgid "This lesson's progress wasn't saved. Log in to save your next lessons."
+msgstr "Der Fortschritt dieser Lektion wurde nicht gespeichert. Melde dich an, um deinen Fortschritt in den nächsten Lektionen zu speichern."
+
+#: src/components/completion-actions.tsx
+msgctxt "czygLT"
+msgid "Log in to save progress"
+msgstr "Melde dich an, um den Fortschritt zu speichern"
 
 #: src/components/completion-actions.tsx
 #: src/components/step-navigation-button-group.tsx
@@ -172,11 +182,6 @@ msgid "You're halfway to {belt}, level {level}. {count, plural, one {One more le
 msgstr "Du bist auf halbem Weg zu {belt}, Level {level}. {count, plural, one {Noch eine Lektion, dann hast du es geschafft} other {Noch # Lektionen, dann hast du es geschafft}}."
 
 #: src/components/completion-milestone-actions.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Wiederholen"
-
-#: src/components/completion-milestone-actions.tsx
 msgctxt "qrEiLa"
 msgid "Back to course"
 msgstr "Zurück zum Kurs"
@@ -222,15 +227,35 @@ msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Fortfahren"
 
+#: src/components/completion-save-control.tsx
+msgctxt "LqfJvW"
+msgid "Saving progress…"
+msgstr "Dein Fortschritt wird gespeichert…"
+
+#: src/components/completion-save-control.tsx
+msgctxt "-U93oh"
+msgid "Retry save"
+msgstr "Erneut speichern"
+
+#: src/components/completion-save-control.tsx
+msgctxt "LWpJ4M"
+msgid "Saving your progress before continuing."
+msgstr "Wir speichern deinen Fortschritt, bevor es weitergeht."
+
+#: src/components/completion-save-control.tsx
+msgctxt "1Zhbt-"
+msgid "Your progress hasn't been saved yet. Try again to save your progress."
+msgstr "Dein Fortschritt wurde noch nicht gespeichert. Versuche noch einmal, ihn zu speichern."
+
 #: src/components/completion-screen.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Abgeschlossen"
 
 #: src/components/completion-screen.tsx
-msgctxt "2wDWd0"
-msgid "Course Complete"
-msgstr "Kurs abgeschlossen"
+msgctxt "qHtln1"
+msgid "Path complete"
+msgstr "Pfad abgeschlossen"
 
 #: src/components/completion-screen.tsx
 msgctxt "t2VOpl"
@@ -242,6 +267,11 @@ msgstr "Kapitel abgeschlossen"
 msgctxt "qXzoF7"
 msgid "Lesson {current} of {total}"
 msgstr "Lektion {current} von {total}"
+
+#: src/components/completion-screen.tsx
+msgctxt "grFxqs"
+msgid "{completed} of {total} lessons completed"
+msgstr "{completed} von {total} Lektionen abgeschlossen"
 
 #: src/components/completion-screen.tsx
 msgctxt "9wxMoj"
@@ -288,6 +318,11 @@ msgstr "Lücke {position}: {item}. Tippe, um zu entfernen."
 msgctxt "FmmJ_j"
 msgid "Blank {position}"
 msgstr "Lücke {position}"
+
+#: src/components/in-play-sticky-header.tsx
+msgctxt "WejU5T"
+msgid "Optional practice"
+msgstr "Optionale Übung"
 
 #: src/components/inline-feedback.tsx
 msgctxt "HvLGEN"
@@ -437,26 +472,6 @@ msgctxt "MxLxkr"
 msgid "Translate this word:"
 msgstr "Übersetze dieses Wort:"
 
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "czygLT"
-msgid "Log in to save progress"
-msgstr "Melde dich an, um den Fortschritt zu speichern"
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "yBJVJw"
-msgid "Continue without saving"
-msgstr "Ohne Speichern fortfahren"
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "O781mu"
-msgid "Progress won't be saved"
-msgstr "Fortschritt wird nicht gespeichert"
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "JDumQX"
-msgid "You can try this lesson without an account, but your score, course progress, levels, and Energy won't be saved."
-msgstr "Du kannst diese Lektion ohne Konto ausprobieren, aber dein Score, dein Kursfortschritt, deine Level und deine Energie werden nicht gespeichert."
-
 #: src/components/verdict-label.tsx
 msgctxt "xmF49T"
 msgid "Correct!"
@@ -598,6 +613,11 @@ msgstr "Anmelden"
 msgctxt "EaucLA"
 msgid "View plans"
 msgstr "Abos ansehen"
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Erneut versuchen"
 
 #: src/questions/lesson-question-markdown.tsx
 msgctxt "13bnyN"

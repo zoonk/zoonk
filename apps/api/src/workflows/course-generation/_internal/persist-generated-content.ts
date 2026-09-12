@@ -62,25 +62,6 @@ function needsCourseMetadataUpdate({
   );
 }
 
-/**
- * Regular courses reserve position zero for the intro chapter forever. Language
- * courses do not have this generated intro, so their normal curriculum starts at
- * the current append offset.
- */
-function getMainChapterPositionOffset({
-  course,
-  existing,
-}: {
-  course: CourseContext;
-  existing: ExistingCourseContent;
-}): number {
-  if (course.format === "language") {
-    return existing.chapterCount;
-  }
-
-  return 1;
-}
-
 export async function persistGeneratedContent(
   course: CourseContext,
   content: GeneratedContent,
@@ -95,26 +76,26 @@ export async function persistGeneratedContent(
   await emitSkippedPersistSteps({ needsCategories, needsChapters, needsCourseUpdate });
 
   const metadataOps = [
-    needsCourseUpdate &&
-      updateCourseStep({
-        course,
-        description: content.description,
-        imageUrl: content.imageUrl,
-        landingPage: content.landingPage,
-      }),
-    needsCategories && addCategoriesStep({ categories: content.categories, course }),
-  ].filter(Boolean);
-
-  const [chapters] = await Promise.all([
-    needsChapters
-      ? addChaptersStep({
-          chapters: content.chapters,
+    needsCourseUpdate
+      ? updateCourseStep({
           course,
-          positionOffset: getMainChapterPositionOffset({ course, existing }),
+          description: content.description,
+          imageUrl: content.imageUrl,
+          landingPage: content.landingPage,
         })
-      : Promise.resolve<Chapter[]>([]),
-    ...metadataOps,
-  ]);
+      : Promise.resolve(),
+    needsCategories
+      ? addCategoriesStep({ categories: content.categories, course })
+      : Promise.resolve(),
+  ];
 
-  return chapters;
+  // Metadata uses the captured revision; install advances it only after those writes settle.
+  const results = await Promise.allSettled(metadataOps);
+  const failure = results.find((result) => result.status === "rejected");
+
+  if (failure?.status === "rejected") {
+    throw failure.reason;
+  }
+
+  return needsChapters ? addChaptersStep({ chapters: content.chapters, course }) : [];
 }

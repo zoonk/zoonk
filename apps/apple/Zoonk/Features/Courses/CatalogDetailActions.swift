@@ -8,6 +8,8 @@ struct CatalogDetailActions: View {
   let destination: CourseDestination?
   let percentComplete: Int?
   let showFeedback: () -> Void
+  var course: Course? = nil
+  var supportsLearningPlan = false
 
   var body: some View {
     HStack(spacing: 8) {
@@ -20,7 +22,8 @@ struct CatalogDetailActions: View {
         Spacer(minLength: 0)
       }
 
-      CatalogActionsMenu(showFeedback: showFeedback)
+      CatalogActionsMenu(
+        showFeedback: showFeedback, course: course, supportsLearningPlan: supportsLearningPlan)
 
       if horizontalSizeClass == .regular, destination != nil {
         Spacer(minLength: 0)

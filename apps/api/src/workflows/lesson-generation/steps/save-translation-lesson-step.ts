@@ -1,3 +1,4 @@
+import { getLessonRevisionContext } from "@/workflows/_shared/course-generation-context";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { getGeneratedCompanionForSourceLesson } from "@zoonk/core/lessons/generated-companions";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
@@ -29,10 +30,12 @@ function getTranslationResource(step: {
  * its completed vocabulary source, then completes the companion row.
  */
 async function saveTranslationLesson({
+  context,
   sourceLessonId,
   translationLessonId,
 }: {
   sourceLessonId: string;
+  context: LessonContext;
   translationLessonId: string;
 }): Promise<void> {
   await using stream = createStepStream<LessonStepName>();
@@ -63,6 +66,7 @@ async function saveTranslationLesson({
 
   await replaceLessonSteps({
     lessonId: translationLesson.id,
+    revisionContext: getLessonRevisionContext(context),
     saveSteps: async (transaction) => {
       await transaction.step.createMany({
         data: wordSteps.map((step, position) => ({
@@ -104,6 +108,7 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
   }
 
   await saveTranslationLesson({
+    context,
     sourceLessonId: context.id,
     translationLessonId: translationLesson.id,
   });

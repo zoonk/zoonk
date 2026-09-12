@@ -2,6 +2,8 @@ import { track as trackVercelEvent } from "@vercel/analytics";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { getPostHogConfig } from "@zoonk/utils/posthog";
 import posthog from "posthog-js";
+import { isPrivateLearningPage } from "./analytics-privacy";
+import { sendGoogleAdsConversion } from "./google-ads-conversion";
 
 type LessonProgressEventInput = {
   chapterPosition: number;
@@ -42,14 +44,6 @@ type FeedbackInput = FeedbackTarget & { feedback: FeedbackValue };
 type AnalyticsEventProperties = Record<string, boolean | number | string>;
 
 const FEEDBACK_VALUES: ReadonlySet<string> = new Set<FeedbackValue>(["upvote", "downvote"]);
-
-const googleAdsSubscriptionConversionId =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_SUBSCRIPTION_CONVERSION_ID;
-
-type GoogleTagScope = typeof globalThis & {
-  dataLayer?: unknown[];
-  gtag?: (...args: unknown[]) => void;
-};
 
 /**
  * Keeps menu values constrained to analytics values so malformed dropdown
@@ -123,11 +117,7 @@ export function trackStartContent() {
 export function trackGoogleAdsSubscriptionConversion({ plan }: { plan: string }) {
   trackEvent({ name: "Subscription Conversion", properties: { plan } });
 
-  if (!googleAdsSubscriptionConversionId) {
-    return;
-  }
-
-  getGoogleTag()("event", "conversion", { send_to: googleAdsSubscriptionConversionId });
+  sendGoogleAdsConversion();
 }
 
 /**
@@ -145,50 +135,11 @@ export function trackSubscriptionCheckoutStarted({
 }
 
 /**
- * Counts learners who hit the reusable generation paywall instead of inferring
- * the subscription funnel from pageviews that look the same for subscribed and
- * gated learners.
- */
-export function trackSubscriptionGateShown() {
-  trackEvent({ name: "Subscription Gate Shown" });
-}
-
-/**
  * Counts guests blocked from starting AI work and keeps durable generation
  * targets filterable without treating a free-text prompt as a course slug.
  */
 export function trackGenerationAuthenticationGateShown(target: GenerationAuthenticationGateTarget) {
   trackEvent({ name: "Generation Authentication Gate Shown", properties: target });
-}
-
-/**
- * Uses the same global queue shape as Google's snippet so conversion events are
- * not coupled to Next's module-scoped helper state. The Google tag script drains
- * this queue after it loads, so the event is still recorded if checkout returns
- * before the remote script has finished loading.
- */
-function getGoogleTag() {
-  const scope = getGoogleTagScope();
-  scope.dataLayer ??= [];
-  scope.gtag ??= queueGoogleTagArguments;
-
-  return scope.gtag;
-}
-
-/**
- * Narrows the browser global to the Google tag fields without making every
- * TypeScript consumer in the app believe those fields always exist.
- */
-function getGoogleTagScope(): GoogleTagScope {
-  return globalThis;
-}
-
-/**
- * Matches Google's queueing contract while using rest parameters so the
- * function can be shared safely by linted app code.
- */
-function queueGoogleTagArguments(...args: unknown[]) {
-  getGoogleTagScope().dataLayer?.push(args);
 }
 
 /**
@@ -204,6 +155,10 @@ function trackEvent({
   postHogOptions?: { send_instantly?: boolean; transport?: "sendBeacon" };
   properties?: AnalyticsEventProperties;
 }) {
+  if (isPrivateLearningPage()) {
+    return;
+  }
+
   trackVercelEvent(name, properties);
 
   if (!getPostHogConfig()) {

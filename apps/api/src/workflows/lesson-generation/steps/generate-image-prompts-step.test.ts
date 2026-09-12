@@ -7,7 +7,9 @@ import { generateImagePromptsStep } from "./generate-image-prompts-step";
 vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
   generateStepImagePrompts: vi
     .fn()
-    .mockResolvedValue({ data: { prompts: ["first prompt", "second prompt"] } }),
+    .mockResolvedValue({
+      data: { images: [{ alt: "Two connected objects", prompt: "second prompt", stepIndex: 1 }] },
+    }),
 }));
 
 describe(generateImagePromptsStep, () => {
@@ -32,7 +34,10 @@ describe(generateImagePromptsStep, () => {
 
     const result = await generateImagePromptsStep({ context, steps });
 
-    expect(result).toStrictEqual({ prompts: ["first prompt", "second prompt"] });
+    expect(result).toStrictEqual({
+      alts: ["", "Two connected objects"],
+      prompts: ["", "second prompt"],
+    });
 
     expect(generateStepImagePrompts).toHaveBeenCalledWith(
       expect.objectContaining({ lessonDescription: context.description, steps }),
@@ -44,7 +49,7 @@ describe(generateImagePromptsStep, () => {
 
     const result = await generateImagePromptsStep({ context, steps: [] });
 
-    expect(result).toStrictEqual({ prompts: [] });
+    expect(result).toStrictEqual({ alts: [], prompts: [] });
     expect(generateStepImagePrompts).not.toHaveBeenCalled();
   });
 });

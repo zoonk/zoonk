@@ -24,7 +24,10 @@ export async function LessonNotGenerated({
   generationLessonId?: string | null;
 }) {
   const t = await getExtracted();
-  const canGenerateLesson = brandSlug === AI_ORG_SLUG && Boolean(generationLessonId);
+
+  const canGenerateLesson =
+    (brandSlug === AI_ORG_SLUG || brandSlug === "me") && Boolean(generationLessonId);
+
   const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
 
   return (

@@ -11,6 +11,7 @@ export async function generateDescriptionStep(course: CourseContext): Promise<st
   await stream.status({ status: "started", step: "generateDescription" });
 
   const result = await generateCourseDescription({
+    format: course.format === "language" || course.format === "question" ? course.format : "core",
     language: course.language,
     title: course.courseTitle,
   });

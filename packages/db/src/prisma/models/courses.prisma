@@ -1,33 +1,40 @@
 model Course {
-  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  familyId         String?                @map("family_id") @db.Uuid
-  family           CourseFamily?          @relation(fields: [familyId], references: [id], onDelete: SetNull)
-  organizationId   String?                @map("organization_id") @db.Uuid
-  organization     Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId           String?                @map("user_id") @db.Uuid
-  user             User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  format           CourseFormat           @default(core)
-  completedAt      DateTime?              @map("completed_at")
-  isPublished      Boolean                @default(false) @map("is_published")
-  language         String                 @db.VarChar(10)
-  slug             String
-  title            String
-  normalizedTitle  String                 @map("normalized_title")
-  description      String?
-  landingPage      Json?                  @map("landing_page")
-  targetLanguage   String?                @map("target_language") @db.VarChar(10)
-  generationStatus GenerationStatus       @default(completed) @map("generation_status")
-  generationRunId  String?                @map("generation_run_id")
-  imageUrl         String?                @map("image_url")
-  userCount        Int                    @default(0) @map("user_count")
-  createdAt        DateTime               @default(now()) @map("created_at")
-  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
-  categories       CourseCategory[]
-  chapters         Chapter[]
-  completions      CourseCompletion[]
-  prompts          CoursePrompt[]
-  users            CourseUser[]
-  editionRequests  CourseEditionRequest[]
+  id                String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  familyId          String?                @map("family_id") @db.Uuid
+  family            CourseFamily?          @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  organizationId    String?                @map("organization_id") @db.Uuid
+  organization      Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId            String?                @map("user_id") @db.Uuid
+  user              User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  format            CourseFormat           @default(core)
+  curriculumVersion Int                    @default(1) @map("curriculum_version")
+  contentRevision   Int                    @default(1) @map("content_revision")
+  discoveryBrief    Json?                  @map("discovery_brief")
+  completedAt       DateTime?              @map("completed_at")
+  isPublished       Boolean                @default(false) @map("is_published")
+  language          String                 @db.VarChar(10)
+  slug              String
+  title             String
+  normalizedTitle   String                 @map("normalized_title")
+  description       String?
+  landingPage       Json?                  @map("landing_page")
+  targetLanguage    String?                @map("target_language") @db.VarChar(10)
+  generationStatus  GenerationStatus       @default(completed) @map("generation_status")
+  generationRunId   String?                @map("generation_run_id")
+  imageUrl          String?                @map("image_url")
+  userCount         Int                    @default(0) @map("user_count")
+  createdAt         DateTime               @default(now()) @map("created_at")
+  updatedAt         DateTime               @default(now()) @updatedAt @map("updated_at")
+  categories        CourseCategory[]
+  chapters          Chapter[]
+  completions       CourseCompletion[]
+  prompts           CoursePrompt[]
+  users             CourseUser[]
+  editionRequests   CourseEditionRequest[]
+  learningPlans     CourseLearningPlan[]
+  discoveries       CourseDiscovery[]
+  tracks            TrackCourse[]
+  generationRuns    GenerationRun[]
 
   @@unique([organizationId, slug], name: "orgSlug")
   @@unique([userId, slug], name: "userSlug")
@@ -78,6 +85,7 @@ model CoursePrompt {
   createdAt        DateTime               @default(now()) @map("created_at")
   updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
   editionRequests  CourseEditionRequest[]
+  generationRuns   GenerationRun[]
 
   @@unique([language, normalizedPrompt], name: "languageNormalizedPrompt")
   @@index([courseId])

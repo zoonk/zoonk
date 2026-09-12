@@ -14,6 +14,7 @@ export type CourseDescriptionSchema = z.infer<typeof schema>;
 
 export type CourseDescriptionParams = {
   title: string;
+  format?: "core" | "language" | "question" | "personalized";
   language: string;
   model?: string;
   useFallback?: boolean;
@@ -23,6 +24,7 @@ export type CourseDescriptionParams = {
 export async function generateCourseDescription({
   title,
   language,
+  format = "core",
   model = defaultModel,
   useFallback = true,
   reasoning,
@@ -31,6 +33,7 @@ export async function generateCourseDescription({
 
   const userPrompt = `
     COURSE_TITLE: ${title}
+    FORMAT: ${format}
     LANGUAGE: ${promptLanguage}
   `;
 

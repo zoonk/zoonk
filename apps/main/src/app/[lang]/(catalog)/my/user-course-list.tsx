@@ -1,6 +1,7 @@
 import { getOriginalCourseHref } from "@/data/courses/course-href";
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserCourses } from "@zoonk/core/courses/list-current-user";
+import { listCurrentUserTracks } from "@zoonk/core/courses/tracks";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -24,13 +25,20 @@ import {
 import { NotebookPenIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
+import { LibraryTrackList } from "./library-track-list";
 import { RemoveCourseMenu } from "./remove-course-menu";
 
 export async function UserCourseList() {
   const t = await getExtracted();
-  const courses = await listCurrentUserCourses();
 
-  if (courses.length === 0) {
+  const [courses, trackResult] = await Promise.all([
+    listCurrentUserCourses({ standaloneOnly: true }),
+    listCurrentUserTracks({ limit: 30 }),
+  ]);
+
+  const tracks = trackResult.status === "ready" ? trackResult.tracks : [];
+
+  if (courses.length === 0 && tracks.length === 0) {
     return (
       <Empty>
         <EmptyHeader>
@@ -52,6 +60,7 @@ export async function UserCourseList() {
 
   return (
     <ListGroup>
+      {trackResult.status === "ready" && <LibraryTrackList initialPage={trackResult} />}
       {courses.map((course) => (
         <ListItem className="gap-0 p-0" key={course.id}>
           <Link
@@ -62,7 +71,7 @@ export async function UserCourseList() {
                     brandSlug: course.organization.slug,
                     courseSlug: course.slug,
                   })
-                : `/p/${course.id}`
+                : `/b/me/c/${course.slug}`
             }
             prefetch
           >

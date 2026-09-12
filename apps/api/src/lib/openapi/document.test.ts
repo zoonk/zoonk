@@ -331,7 +331,11 @@ describe("OpenAPI document", () => {
       .parse(document.paths["/chapters/{chapterId}/lessons"]?.get?.parameters);
 
     expect(courseChapterParameters.map((parameter) => parameter.name)).toStrictEqual(["courseId"]);
-    expect(chapterLessonParameters.map((parameter) => parameter.name)).toStrictEqual(["chapterId"]);
+
+    expect(chapterLessonParameters.map((parameter) => parameter.name)).toStrictEqual([
+      "chapterId",
+      "view",
+    ]);
 
     expect(document.components.schemas.CourseChapterListResponse).not.toHaveProperty(
       "properties.pagination",
@@ -398,8 +402,13 @@ describe("OpenAPI document", () => {
       optionalAuthentication,
     );
 
-    expect(document.paths["/generations/{generationId}"]?.get?.security).toStrictEqual([]);
-    expect(document.paths["/generations/{generationId}/events"]?.get?.security).toStrictEqual([]);
+    expect(document.paths["/generations/{generationId}"]?.get?.security).toStrictEqual(
+      optionalAuthentication,
+    );
+
+    expect(document.paths["/generations/{generationId}/events"]?.get?.security).toStrictEqual(
+      optionalAuthentication,
+    );
   });
 
   it("documents every response status returned by account and feedback routes", () => {
@@ -428,7 +437,7 @@ describe("OpenAPI document", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
     expect(document.paths["/generations"]?.post?.responses).toHaveProperty("401");
-    expect(document.paths["/generations"]?.post?.responses).toHaveProperty("402");
+    expect(document.paths["/generations"]?.post?.responses).not.toHaveProperty("402");
     expect(document.paths["/generations"]?.post?.responses).toHaveProperty("404");
     expect(document.paths["/generations"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/generations/{generationId}"]?.get?.responses).toHaveProperty("400");
@@ -475,7 +484,10 @@ describe("OpenAPI document", () => {
     });
 
     expect(document.components.schemas.GenerationTarget).toMatchObject({
-      properties: { id: { format: "uuid" }, type: { enum: ["coursePrompt", "chapter", "lesson"] } },
+      properties: {
+        id: { format: "uuid" },
+        type: { enum: ["coursePrompt", "chapter", "lesson", "curriculum"] },
+      },
       required: ["id", "type"],
       type: "object",
     });
@@ -551,7 +563,6 @@ describe("OpenAPI document", () => {
       requestBody: { required: true },
       responses: {
         "201": expect.any(Object),
-        "402": expect.any(Object),
         "403": expect.any(Object),
         "409": expect.any(Object),
         "422": expect.any(Object),
@@ -563,7 +574,6 @@ describe("OpenAPI document", () => {
       operationId: "createLessonQuestionAnswer",
       responses: {
         "200": { content: { "text/event-stream": { schema: { type: "string" } } } },
-        "402": expect.any(Object),
         "403": expect.any(Object),
         "409": expect.any(Object),
         "429": expect.any(Object),
@@ -689,6 +699,7 @@ describe("OpenAPI response schemas", () => {
     const continuation = {
       chapter: { id: UUID, slug: "chapter", title: "Chapter" },
       course: {
+        brandSlug: "zoonk",
         id: UUID,
         imageUrl: null,
         organization: { slug: "zoonk" },

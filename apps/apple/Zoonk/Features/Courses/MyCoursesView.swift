@@ -26,7 +26,9 @@ struct MyCoursesView: View {
     .contentMargins(.top, 16, for: .scrollContent)
     .task(id: session.authenticatedSession) {
       guard isSelected else { return }
-      await myCourses.loadCoursesIfNeeded(query: query)
+      async let courses: Void = myCourses.loadCoursesIfNeeded(query: query)
+      async let tracks: Void = myCourses.tracks.load()
+      _ = await (courses, tracks)
     }
     .task(id: isSelected ? query : nil) {
       guard isSelected else { return }
@@ -63,12 +65,22 @@ struct MyCoursesView: View {
     }
     .scrollBounceBehavior(.basedOnSize)
     .refreshable {
-      await myCourses.loadCourses(query: query, force: true)
+      async let courses: Void = myCourses.loadCourses(query: query, force: true)
+      async let tracks: Void = myCourses.tracks.load(force: true)
+      _ = await (courses, tracks)
     }
   }
 
   @ViewBuilder
   private var signedInContent: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      MyTracksSection(query: query)
+      courseContent
+    }
+  }
+
+  @ViewBuilder
+  private var courseContent: some View {
     switch myCourses.coursesState {
     case .idle, .loading:
       CourseCatalogLoadingGrid()
@@ -77,7 +89,7 @@ struct MyCoursesView: View {
     case .empty:
       if let query = catalogText(query) {
         ContentUnavailableView.search(text: query)
-      } else {
+      } else if myCourses.tracks.items.isEmpty && myCourses.tracks.hasLoaded {
         MyCoursesEmptyView(onCreateCourse: onCreateCourse)
       }
     case .failed(let failure):

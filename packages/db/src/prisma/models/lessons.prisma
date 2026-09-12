@@ -8,6 +8,9 @@ model Lesson {
   isPublished      Boolean                @default(false) @map("is_published")
   language         String                 @db.VarChar(10)
   kind             LessonKind             @default(custom)
+  sourceLessonId   String?                @map("source_lesson_id") @db.Uuid
+  sourceLesson     Lesson?                @relation("LessonActivities", fields: [sourceLessonId], references: [id], onDelete: Cascade)
+  activities       Lesson[]               @relation("LessonActivities")
   slug             String
   title            String?
   normalizedTitle  String?                @map("normalized_title")

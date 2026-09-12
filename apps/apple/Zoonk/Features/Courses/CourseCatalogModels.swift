@@ -41,10 +41,16 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   let id: String
   let imageURL: URL?
   let language: String
-  let organization: CourseOrganization
+  let organization: CourseOrganization?
   let slug: String
   let targetLanguage: String?
   let title: String
+  var brandSlug: String? = nil
+  var curriculumVersion: Int? = nil
+  var format: String? = nil
+
+  var resolvedBrandSlug: String { brandSlug ?? organization?.slug ?? "me" }
+  var isPrivate: Bool { organization == nil }
 }
 
 struct CourseChapter: Codable, Equatable, Identifiable, Sendable {
@@ -57,6 +63,7 @@ struct CourseChapter: Codable, Equatable, Identifiable, Sendable {
   let position: Int
   let slug: String
   let title: String
+  var level: String? = nil
 }
 
 enum LessonKind: String, CaseIterable, Codable, Equatable, Sendable {
@@ -85,6 +92,11 @@ struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
   let position: Int
   let slug: String
   let title: String?
+  var sourceLessonID: String? = nil
+
+  var isPrimaryTeaching: Bool {
+    sourceLessonID == nil && ![LessonKind.quiz, .practice, .review].contains(kind)
+  }
 }
 
 struct CourseCatalogPage: Codable, Equatable, Sendable {
@@ -175,18 +187,29 @@ struct CourseDetail: Codable, Equatable, Sendable {
   let course: Course
   let chapters: [CourseChapter]
   let progress: CourseProgress?
+  var learningPath: CatalogLearningPath? = nil
+  var canPrepareContent = false
 
   init(
     continuation: CatalogContinuationTarget? = nil,
     course: Course,
     chapters: [CourseChapter],
-    progress: CourseProgress? = nil
+    progress: CourseProgress? = nil,
+    learningPath: CatalogLearningPath? = nil,
+    canPrepareContent: Bool = false
   ) {
     self.continuation = continuation
     self.course = course
     self.chapters = chapters
     self.progress = progress
+    self.learningPath = learningPath
+    self.canPrepareContent = canPrepareContent
   }
+}
+
+struct ChapterOptionalActivities: Codable, Equatable, Sendable {
+  let sourceIDs: [String]
+  let reviews: [CourseLesson]
 }
 
 struct ChapterDetail: Codable, Equatable, Sendable {
@@ -194,17 +217,30 @@ struct ChapterDetail: Codable, Equatable, Sendable {
   let continuation: CatalogContinuationTarget?
   let lessons: [CourseLesson]
   let progress: ChapterProgress?
+  var course: Course? = nil
+  var optionalActivities: ChapterOptionalActivities? = nil
+  var canPrepareContent = false
 
   init(
     chapter: CourseChapter? = nil,
     continuation: CatalogContinuationTarget? = nil,
     lessons: [CourseLesson],
-    progress: ChapterProgress? = nil
+    progress: ChapterProgress? = nil,
+    course: Course? = nil,
+    optionalActivities: ChapterOptionalActivities? = nil,
+    canPrepareContent: Bool = false
   ) {
     self.chapter = chapter
     self.continuation = continuation
     self.lessons = lessons
     self.progress = progress
+    self.course = course
+    self.optionalActivities = optionalActivities
+    self.canPrepareContent = canPrepareContent
+  }
+
+  var primaryLessons: [CourseLesson] {
+    lessons.filter(\.isPrimaryTeaching)
   }
 }
 

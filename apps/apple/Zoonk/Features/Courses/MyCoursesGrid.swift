@@ -64,9 +64,9 @@ private struct MyCoursesPaginationTaskID: Equatable {
   let isLoadingCourses: Bool
 }
 
-/// Personal courses remain visible in the learner's library, but only branded courses can use the public native detail route without producing a known not-found state.
+/// Public and owner-private courses use the same authenticated detail capability.
 private func courseDestination(_ course: UserCourseSummary) -> CourseDestination? {
-  CourseReference(course).map(CourseDestination.course)
+  CourseDestination.course(CourseReference(course))
 }
 
 private func courseGridLoadMoreFailure(

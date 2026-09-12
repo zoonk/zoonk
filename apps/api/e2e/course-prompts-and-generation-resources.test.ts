@@ -87,7 +87,7 @@ test.describe("Course prompt and generation resources API", () => {
     await apiContext.dispose();
   });
 
-  test("requires authentication before promoting a classified prompt to generation", async () => {
+  test("requires current authenticated resolution before promoting a legacy classification", async () => {
     const uniqueId = randomUUID();
     const prompt = `Learn focused API design ${uniqueId}`;
 
@@ -116,30 +116,37 @@ test.describe("Course prompt and generation resources API", () => {
       prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
     ).resolves.toMatchObject({ courseFormat: "coding", generationStatus: null });
 
-    const { apiContext: authenticatedApiContext } = await createAuthenticatedApiContext({
+    const { apiContext: authenticatedApiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "course-prompt-promotion",
+    });
+
+    const now = new Date();
+
+    await prisma.generationQuotaCounter.create({
+      data: {
+        actorKey: `user:${user.id}`,
+        count: 100,
+        period: "day",
+        periodStart: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())),
+        resource: "learningRequest",
+      },
     });
 
     const authenticatedResponse = await authenticatedApiContext.post("/v1/course-prompts", {
       data: { kind: "topic", language: "en", prompt },
     });
 
-    expect(authenticatedResponse.status()).toBe(200);
-
-    await expect(authenticatedResponse.json()).resolves.toStrictEqual({
-      coursePromptId: coursePrompt.id,
-      kind: "generation",
-    });
+    expect(authenticatedResponse.status()).toBe(429);
 
     await expect(
       prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
-    ).resolves.toMatchObject({ generationStatus: "pending" });
+    ).resolves.toMatchObject({ generationStatus: null });
 
     await Promise.all([guestApiContext.dispose(), authenticatedApiContext.dispose()]);
   });
 
-  test("returns personalized classifications without requiring authentication", async () => {
+  test("requires authentication without returning a legacy private classification", async () => {
     const prompt = `Personalized API course ${randomUUID()}`;
     const title = `Personalized API title ${randomUUID()}`;
 
@@ -159,14 +166,9 @@ test.describe("Course prompt and generation resources API", () => {
       data: { kind: "topic", language: "en", prompt },
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(401);
 
-    await expect(response.json()).resolves.toStrictEqual({
-      courseFormat: "personalized",
-      intent: "learn",
-      kind: "unsupported",
-      title,
-    });
+    await expect(response.json()).resolves.toMatchObject({ error: { code: "UNAUTHORIZED" } });
 
     await expect(
       prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
@@ -175,15 +177,16 @@ test.describe("Course prompt and generation resources API", () => {
     await apiContext.dispose();
   });
 
-  test("returns existing courses for classified guest prompts", async () => {
+  test("returns existing courses for exact public guest subjects", async () => {
     const organization = await getAiOrganization();
     const prompt = `Existing API course ${randomUUID()}`;
 
     const course = await courseFixture({
       generationStatus: "completed",
       isPublished: true,
+      normalizedTitle: normalizeString(prompt),
       organizationId: organization.id,
-      title: `Existing API course ${randomUUID()}`,
+      title: prompt,
     });
 
     const coursePrompt = await coursePromptFixture({
@@ -282,7 +285,7 @@ test.describe("Course prompt and generation resources API", () => {
     expect(response.status()).toBe(200);
 
     await expect(response.json()).resolves.toMatchObject({
-      completionKind: "introductionLesson",
+      completionKind: "course",
       courseFormat: "core",
       coursePromptId: coursePrompt.id,
       generationId: generationRunId,
@@ -294,7 +297,7 @@ test.describe("Course prompt and generation resources API", () => {
     await apiContext.dispose();
   });
 
-  test("returns a structured limit response instead of starting another generation", async () => {
+  test("reports the monthly reset when both outline budgets are exhausted without starting generation", async () => {
     const now = new Date();
 
     const periodStart = new Date(
@@ -306,14 +309,17 @@ test.describe("Course prompt and generation resources API", () => {
       prefix: "course-generation-limit",
     });
 
-    await prisma.generationQuotaCounter.create({
-      data: {
-        actorKey: `user:${user.id}`,
-        count: 5,
-        period: "day",
-        periodStart,
-        resource: "course",
-      },
+    await prisma.generationQuotaCounter.createMany({
+      data: [
+        { actorKey: `user:${user.id}`, count: 1, period: "day", periodStart, resource: "course" },
+        {
+          actorKey: `user:${user.id}`,
+          count: 1,
+          period: "month",
+          periodStart: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)),
+          resource: "course",
+        },
+      ],
     });
 
     const coursePrompt = await coursePromptFixture();
@@ -327,7 +333,7 @@ test.describe("Course prompt and generation resources API", () => {
     await expect(response.json()).resolves.toStrictEqual({
       error: {
         code: "GENERATION_LIMIT_REACHED",
-        details: { period: "day", resource: "course", viewer: "authenticated" },
+        details: { period: "month", resource: "course", viewer: "authenticated" },
         message: "Generation limit reached",
       },
     });
@@ -346,7 +352,7 @@ test.describe("Course prompt and generation resources API", () => {
       prisma.coursePrompt.findUniqueOrThrow({ where: { id: coursePrompt.id } }),
     ]);
 
-    expect(persistedCounter.count).toBe(5);
+    expect(persistedCounter.count).toBe(1);
     expect(persistedPrompt).toMatchObject({ generationRunId: null, generationStatus: "pending" });
 
     await apiContext.dispose();

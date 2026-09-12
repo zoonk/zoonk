@@ -86,15 +86,3 @@ export function StartSurfaceDescription({ children }: { children: React.ReactNod
     </p>
   );
 }
-
-/**
- * Aligns terminal actions with the start-surface header and form content so
- * fallback states do not leave a single button floating in the center.
- */
-export function StartSurfaceActions({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex w-full items-start" data-slot="start-surface-actions">
-      {children}
-    </div>
-  );
-}

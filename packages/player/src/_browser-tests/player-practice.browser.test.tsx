@@ -18,6 +18,7 @@ describe("player browser integration: practice lessons", () => {
               content: {
                 context: "Maya says the mismatch only appears on orders with manual discounts.",
                 image: {
+                  alt: "A refund dashboard filtered to discounted orders with one outlier row highlighted",
                   prompt:
                     "A refund dashboard filtered to discounted orders with one outlier row highlighted",
                   url: buildInlineImageUrl({
@@ -75,6 +76,7 @@ describe("player browser integration: practice lessons", () => {
             content: {
               context: "Maya says the mismatch only appears on orders with manual discounts.",
               image: {
+                alt: "A refund dashboard filtered to discounted orders with one outlier row highlighted",
                 prompt:
                   "A refund dashboard filtered to discounted orders with one outlier row highlighted",
                 url: buildInlineImageUrl({
@@ -125,6 +127,6 @@ describe("player browser integration: practice lessons", () => {
 
     await expect
       .element(page.getByRole("progressbar", { name: /chapter progress/iu }))
-      .toBeInTheDocument();
+      .not.toBeInTheDocument();
   });
 });

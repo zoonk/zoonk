@@ -4,33 +4,17 @@ import {
   ContinueLessonLink,
   ContinueLessonLinkSkeleton,
 } from "@/components/catalog/continue-lesson-link";
+import { Link } from "@/i18n/navigation";
 import { getChapter } from "@zoonk/core/chapters/get-by-slug";
 import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
-import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
 import { getSession } from "@zoonk/core/users/session";
-import { type Lesson, type LessonKind } from "@zoonk/db";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { GridToolbar } from "@zoonk/ui/components/grid";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterHeader } from "./chapter-header";
-
-/**
- * Chapter fallbacks are only used when the shared continue target cannot find
- * a destination. They still need to honor hidden lesson kinds so a filtered-out
- * lesson never becomes the backup route.
- */
-function getFirstVisibleLesson({
-  hiddenLessonKinds,
-  lessons,
-}: {
-  hiddenLessonKinds: LessonKind[];
-  lessons: Lesson[];
-}) {
-  const hiddenLessonKindSet = new Set(hiddenLessonKinds);
-
-  return lessons.find((lesson) => !hiddenLessonKindSet.has(lesson.kind));
-}
 
 /**
  * Loads the chapter identity and learner actions independently from the lesson
@@ -38,26 +22,33 @@ function getFirstVisibleLesson({
  */
 export async function ChapterSidebar({
   params,
-}: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">, "params">) {
+  searchParams,
+}: Pick<
+  PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">,
+  "params" | "searchParams"
+>) {
   const { brandSlug, chapterSlug, courseSlug } = await params;
+  const search = await searchParams;
+  const view = search.view === "curriculum" ? "curriculum" : "teaching";
 
-  const [chapter, lessonVisibility, session] = await Promise.all([
+  const [chapter, session] = await Promise.all([
     getChapter({ brandSlug, chapterSlug, courseSlug }),
-    getLessonVisibility(),
     getSession(),
   ]);
-
-  const { hiddenLessonKinds } = lessonVisibility;
 
   if (!chapter) {
     notFound();
   }
 
-  const lessons = await listChapterLessons({ chapterId: chapter.id });
+  const lessons = await listChapterLessons({ chapterId: chapter.id, view });
 
-  const shouldShowCreateChapterPrompt = brandSlug === AI_ORG_SLUG && lessons.length === 0;
+  const shouldShowCreateChapterPrompt =
+    (brandSlug === AI_ORG_SLUG || brandSlug === "me") &&
+    chapter.generationStatus !== "completed" &&
+    lessons.length === 0;
 
-  const firstVisibleLesson = getFirstVisibleLesson({ hiddenLessonKinds, lessons });
+  const firstVisibleLesson = lessons[0];
+  const t = await getExtracted();
 
   const fallbackHref = firstVisibleLesson
     ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${firstVisibleLesson.slug}` as const)
@@ -73,25 +64,28 @@ export async function ChapterSidebar({
       />
       {!shouldShowCreateChapterPrompt && (
         <GridToolbar>
-          <Suspense fallback={<ContinueLessonLinkSkeleton />}>
-            <ContinueLessonLink
-              chapterId={chapter.id}
-              excludedLessonKinds={hiddenLessonKinds}
-              fallbackHref={fallbackHref}
-            />
-          </Suspense>
+          {view === "curriculum" && fallbackHref ? (
+            <Link className={buttonVariants()} href={`${fallbackHref}?view=curriculum`}>
+              {t("Start chapter")}
+            </Link>
+          ) : (
+            <Suspense fallback={<ContinueLessonLinkSkeleton />}>
+              <ContinueLessonLink chapterId={chapter.id} fallbackHref={fallbackHref} />
+            </Suspense>
+          )}
           <Suspense fallback={null}>
             <CatalogActiveShortcutLink
-              excludedLessonKinds={hiddenLessonKinds}
               items={lessons}
               kind="lesson"
               scope={{ chapterId: chapter.id }}
             />
           </Suspense>
-          <CatalogActions
-            defaultEmail={session?.user.email}
-            feedbackTarget={{ chapterSlug, courseSlug, kind: "chapter" }}
-          />
+          {!chapter.course.userId && (
+            <CatalogActions
+              defaultEmail={session?.user.email}
+              feedbackTarget={{ chapterSlug, courseSlug, kind: "chapter" }}
+            />
+          )}
         </GridToolbar>
       )}
     </>

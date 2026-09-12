@@ -25,18 +25,6 @@ export function getPublishedCourseWhere(where: CourseWhere = {}): Prisma.CourseW
 }
 
 /**
- * Raw-id generation routes must only load chapters that belong to the public
- * AI organization. Without this helper, any chapter id could be treated
- * as eligible for lesson generation just because the row exists.
- */
-export function getAiGenerationChapterWhere({
-  chapterWhere = {},
-  courseWhere = {},
-}: { chapterWhere?: ChapterWhere; courseWhere?: CourseWhere } = {}): Prisma.ChapterWhereInput {
-  return { ...chapterWhere, course: getAiGenerationCourseWhere(courseWhere) };
-}
-
-/**
  * Public chapter reads should only see chapters that are still visible in the
  * live catalog, which means both the chapter and its parent course must be
  * published.
@@ -46,23 +34,6 @@ export function getPublishedChapterWhere({
   courseWhere = {},
 }: { chapterWhere?: ChapterWhere; courseWhere?: CourseWhere } = {}): Prisma.ChapterWhereInput {
   return { ...chapterWhere, course: getPublishedCourseWhere(courseWhere), isPublished: true };
-}
-
-/**
- * Lesson generation is also keyed by raw ids, so every entry point needs one
- * shared definition of "AI-owned lesson". Tying the org check to the full
- * ancestor chain avoids route-level drift when lessons are loaded indirectly.
- */
-export function getAiGenerationLessonWhere({
-  chapterWhere = {},
-  courseWhere = {},
-  lessonWhere = {},
-}: {
-  chapterWhere?: ChapterWhere;
-  courseWhere?: CourseWhere;
-  lessonWhere?: LessonWhere;
-} = {}): Prisma.LessonWhereInput {
-  return { ...lessonWhere, chapter: getAiGenerationChapterWhere({ chapterWhere, courseWhere }) };
 }
 
 /**

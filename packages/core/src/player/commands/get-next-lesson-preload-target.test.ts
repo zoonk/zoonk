@@ -50,6 +50,12 @@ async function subscribeUser(userId: string) {
   });
 }
 
+async function fundChapters(userId: string, chapterIds: string[]) {
+  await prisma.chapterGenerationGrant.createMany({
+    data: chapterIds.map((chapterId) => ({ chapterId, userId })),
+  });
+}
+
 const inaccessibleCurrentLessonCases: {
   currentLessonIsPublished?: boolean;
   name: string;
@@ -125,6 +131,8 @@ describe(getNextPreloadTargetResource, () => {
       createLessonPair({ nextLessonGenerationStatus: "pending" }),
     ]);
 
+    await fundChapters(user.id, [lessons.currentLesson.chapterId]);
+
     const result = await getReadyNextPreloadTargetsForUser({
       lessonId: lessons.currentLesson.id,
       userId: user.id,
@@ -161,6 +169,8 @@ describe(getNextPreloadTargetResource, () => {
       throw new Error("Expected current lesson plus three preload candidates");
     }
 
+    await fundChapters(user.id, [context.chapter.id]);
+
     const result = await getReadyNextPreloadTargetsForUser({
       lessonId: currentLesson.id,
       userId: user.id,
@@ -195,7 +205,7 @@ describe(getNextPreloadTargetResource, () => {
         }),
       ]);
 
-      await subscribeUser(user.id);
+      await fundChapters(user.id, [nextChapter.id]);
 
       const result = await getReadyNextPreloadTargetsForUser({
         lessonId: currentLesson.id,
@@ -333,6 +343,7 @@ describe(getNextPreloadTargetResource, () => {
     ]);
 
     const [vocabulary, , reading, grammar] = lessons;
+    await fundChapters(user.id, [context.chapter.id]);
 
     const result = await getReadyNextPreloadTargetsForUser({
       lessonId: vocabulary.id,
@@ -372,7 +383,7 @@ describe(getNextPreloadTargetResource, () => {
       }),
     ]);
 
-    await subscribeUser(user.id);
+    await fundChapters(user.id, [context.chapter.id, nextChapter.id]);
 
     const result = await getReadyNextPreloadTargetsForUser({
       lessonId: currentLesson.id,
@@ -385,7 +396,7 @@ describe(getNextPreloadTargetResource, () => {
     ]);
   });
 
-  it("only returns later-chapter targets to subscribed learners", async () => {
+  it("only preloads a later chapter after it has an explicit generation grant", async () => {
     const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
 
     const nextChapter = await chapterFixture({
@@ -409,6 +420,12 @@ describe(getNextPreloadTargetResource, () => {
     ).resolves.toStrictEqual([]);
 
     await subscribeUser(user.id);
+
+    await expect(
+      getReadyNextPreloadTargetsForUser({ lessonId: currentLesson.id, userId: user.id }),
+    ).resolves.toStrictEqual([]);
+
+    await fundChapters(user.id, [nextChapter.id]);
 
     await expect(
       getReadyNextPreloadTargetsForUser({ lessonId: currentLesson.id, userId: user.id }),

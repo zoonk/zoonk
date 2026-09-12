@@ -22,7 +22,7 @@ describe(setChapterAsCompletedStep, () => {
     vi.clearAllMocks();
   });
 
-  it("throws without streaming error when chapter does not exist", async () => {
+  it("ignores deleted chapters after curriculum replacement", async () => {
     const chapter = await chapterFixture({
       courseId: course.id,
       organizationId,
@@ -39,7 +39,7 @@ describe(setChapterAsCompletedStep, () => {
 
     await expect(
       setChapterAsCompletedStep({ context: brokenContext, workflowRunId: "run-id" }),
-    ).rejects.toThrow();
+    ).resolves.toBeUndefined();
 
     const events = getStreamedEvents();
 

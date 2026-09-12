@@ -3,6 +3,8 @@
 import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { usePlayerRuntime } from "../player-context";
+import { CompletionSaveControl } from "./completion-save-control";
 import { ContextualQuestionAction } from "./lesson-question-actions";
 
 /**
@@ -24,6 +26,11 @@ export function StepNavigationButtonGroup({
   onNavigatePrev: () => void;
 }) {
   const t = useExtracted();
+  const { completionPersistence } = usePlayerRuntime();
+
+  if (completionPersistence !== "idle") {
+    return <CompletionSaveControl />;
+  }
 
   return (
     <div className="flex w-full gap-2" data-slot="step-navigation-button-group">

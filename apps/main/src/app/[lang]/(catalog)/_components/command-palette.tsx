@@ -18,6 +18,7 @@ import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search"
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useCallback } from "react";
+import { saveLearningRequestDraft } from "../start/learn/learning-request-draft";
 import {
   type PaletteItem,
   createChapterPaletteItem,
@@ -272,8 +273,11 @@ function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; que
             size: "sm",
             variant: "outline",
           })}
-          href={getLearnPromptHref(prompt)}
-          onClick={onSelect}
+          href="/start/learn"
+          onClick={() => {
+            saveLearningRequestDraft(prompt);
+            onSelect();
+          }}
           prefetch={false}
         >
           <PlusIcon aria-hidden="true" />
@@ -298,12 +302,4 @@ function getCreateCoursePrompt(query: string) {
   }
 
   return prompt;
-}
-
-/**
- * The Learn prompt is stored in a dynamic path segment, so the raw search term
- * must be encoded before it is sent through Next.js navigation.
- */
-function getLearnPromptHref(prompt: string) {
-  return `/start/learn/${encodeURIComponent(prompt)}` as const;
 }

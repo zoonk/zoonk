@@ -3,6 +3,7 @@ import { type LessonKind } from "@zoonk/db";
 import { getChapterById } from "../chapters/get-chapter-by-id";
 import { getSession } from "../users/get-session";
 import { getLessonVisibility } from "../users/lesson-visibility";
+import { getLearningPathPercent, getLearningPathScope } from "./_utils/learning-path-scope";
 import { getProgressSession, tagProgressScope } from "./_utils/progress-cache";
 import { calculateProgressPercent } from "./calculate-continue-progress";
 import { getLessonProgress as calculateLessonProgress } from "./get-lesson-progress";
@@ -26,6 +27,18 @@ async function loadChapterProgress({
 
   if (!userId) {
     return { lessons: [], percentComplete: null };
+  }
+
+  const path = await getLearningPathScope(scope);
+
+  if (path !== undefined) {
+    return {
+      lessons:
+        path?.chapters.flatMap((chapter) =>
+          chapter.lessons.map(({ id, isCompleted }) => ({ isCompleted, lessonId: id })),
+        ) ?? [],
+      percentComplete: path ? getLearningPathPercent(path) : null,
+    };
   }
 
   const rows = await listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId });

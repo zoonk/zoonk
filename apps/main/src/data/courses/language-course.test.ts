@@ -16,7 +16,7 @@ describe(getCompletedLanguageCourseHrefs, () => {
     vi.mocked(listCompletedLanguageCourses).mockResolvedValue([{ course, targetLanguage: "es" }]);
 
     await expect(getCompletedLanguageCourseHrefs({ language })).resolves.toStrictEqual({
-      es: `/b/${AI_ORG_SLUG}/c/${slug}`,
+      es: `/b/${AI_ORG_SLUG}/c/${slug}/start`,
     });
 
     expect(listCompletedLanguageCourses).toHaveBeenCalledExactlyOnceWith({ language });

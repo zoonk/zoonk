@@ -2,6 +2,8 @@ import "server-only";
 import { getPublishedCourseWhere, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getCourseCacheTag } from "../cache/tags";
+import { getSession } from "../users/get-session";
+import { getReadableCourseWhere } from "./course-access";
 
 /**
  * Loads one published brand course by its stable resource ID. The related
@@ -10,7 +12,8 @@ import { getCourseCacheTag } from "../cache/tags";
  * link without composing separate database reads.
  */
 export async function getCourseById({ courseId }: { courseId: string }) {
-  "use cache";
+  "use cache: private";
+  const session = await getSession();
 
   cacheTag(getCourseCacheTag(courseId));
 
@@ -20,6 +23,9 @@ export async function getCourseById({ courseId }: { courseId: string }) {
       organization: true,
       prompts: { orderBy: { createdAt: "asc" }, take: 1 },
     },
-    where: getPublishedCourseWhere({ id: courseId, organization: { kind: "brand" } }),
+    where: getPublishedCourseWhere({
+      ...getReadableCourseWhere(session?.user.id ?? null),
+      id: courseId,
+    }),
   });
 }

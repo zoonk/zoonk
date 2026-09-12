@@ -1,6 +1,7 @@
 "use client";
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
+import { useState } from "react";
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneContext,
@@ -69,14 +70,22 @@ function ChoiceStepLayoutContent({
  * one vertical flow, then let the same image bleed through the full left
  * column on desktop where there is enough room to separate evidence and action.
  */
-function ChoiceStepImageStage({ image }: { image: StepImage }) {
+function ChoiceStepImageStage({
+  alt,
+  image,
+  onImageError,
+}: {
+  alt: string;
+  image: StepImage;
+  onImageError: () => void;
+}) {
   return (
     <div className="w-full lg:h-full lg:min-h-0" data-slot="choice-step-image-stage-shell">
       <div
         className="relative aspect-square w-full overflow-hidden rounded-xl lg:aspect-auto lg:h-full lg:rounded-none"
         data-slot="choice-step-image-stage"
       >
-        <StepImageView image={image} />
+        <StepImageView alt={alt} image={image} onError={onImageError} />
       </div>
     </div>
   );
@@ -99,11 +108,15 @@ function ChoiceStepDesktopAction() {
  * small square artifact inside a wide empty stage.
  */
 function ChoiceStepMediaLayout({
+  alt,
   children,
   image,
+  onImageError,
 }: {
+  alt: string;
   children: React.ReactNode;
   image: StepImage;
+  onImageError: () => void;
 }) {
   return (
     <div
@@ -111,7 +124,7 @@ function ChoiceStepMediaLayout({
       data-slot="choice-step-media-layout"
     >
       <div className="flex flex-col gap-4 sm:gap-6 lg:grid lg:h-full lg:grid-cols-2 lg:gap-0">
-        <ChoiceStepImageStage image={image} />
+        <ChoiceStepImageStage alt={alt} image={image} onImageError={onImageError} />
         <div className="flex min-w-0 flex-col gap-4 sm:gap-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:px-10 lg:py-10">
           <div className="flex min-w-0 flex-col gap-4 sm:gap-6 lg:mx-auto lg:my-auto lg:w-full lg:max-w-md">
             {children}
@@ -145,6 +158,8 @@ export function ChoiceStepLayout({
   question?: string | null;
   selectedKey: string | null;
 }) {
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+
   const content = (
     <ChoiceStepLayoutContent
       context={context}
@@ -155,9 +170,22 @@ export function ChoiceStepLayout({
     />
   );
 
-  if (!image) {
-    return <PlayerChoiceScene>{content}</PlayerChoiceScene>;
+  if (!image?.url || image.url === failedImageUrl) {
+    return (
+      <PlayerChoiceScene>
+        {content}
+        {image && <ChoiceStepDesktopAction />}
+      </PlayerChoiceScene>
+    );
   }
 
-  return <ChoiceStepMediaLayout image={image}>{content}</ChoiceStepMediaLayout>;
+  return (
+    <ChoiceStepMediaLayout
+      alt={question || context || ""}
+      image={image}
+      onImageError={() => setFailedImageUrl(image.url ?? null)}
+    >
+      {content}
+    </ChoiceStepMediaLayout>
+  );
 }

@@ -140,7 +140,7 @@ test.describe("Lesson Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns 402 when user has no active subscription", async () => {
+  test("allows a free learner to start beyond chapter one within their chapter allowance", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 1, uniqueId });
 
@@ -153,13 +153,11 @@ test.describe("Lesson Generation Workflow API", () => {
       data: { target: { id: lesson.id, type: "lesson" } },
     });
 
-    expect(response.status()).toBe(402);
+    expect(response.status()).toBe(202);
 
     const body = await response.json();
 
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("PAYMENT_REQUIRED");
-    expect(body.error.message).toBe("Active subscription required");
+    expect(body).toStrictEqual({ id: expect.any(String), status: expect.any(String) });
 
     await apiContext.dispose();
   });

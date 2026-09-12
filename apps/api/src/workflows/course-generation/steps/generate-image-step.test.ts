@@ -12,10 +12,12 @@ vi.mock("@zoonk/core/content/thumbnail", () => ({
 }));
 
 const course: CourseContext = {
+  contentRevision: 1,
   courseId: "1",
   courseSlug: "test-course",
   courseTitle: "Test Course",
   format: "core",
+  generationRunId: null,
   language: "en",
   organizationId: "org-1",
   targetLanguage: null,

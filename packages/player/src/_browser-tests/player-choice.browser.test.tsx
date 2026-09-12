@@ -418,6 +418,7 @@ describe("player browser integration: choice steps", () => {
             content: {
               context: "Use the chart before choosing.",
               image: {
+                alt: "A sales chart with a visible drop in March",
                 prompt: "A sales chart with a visible drop in March",
                 url: buildInlineImageUrl({ label: "A sales chart with a visible drop in March" }),
               },
@@ -623,8 +624,6 @@ describe("player browser integration: choice steps", () => {
       }),
       viewer: { isAuthenticated: false, userName: null },
     });
-
-    await page.getByRole("button", { name: /continue without saving/iu }).click();
 
     await expect.element(page.getByText(/^we have a situation$/iu)).toBeInTheDocument();
     await expect.element(page.getByText("{{NAME}}")).not.toBeInTheDocument();

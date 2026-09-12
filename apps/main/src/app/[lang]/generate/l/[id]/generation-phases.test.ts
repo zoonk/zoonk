@@ -13,13 +13,10 @@ describe(isGeneratedLessonKind, () => {
 });
 
 describe(getPhaseOrder, () => {
-  it("keeps explanation generation split into content, visual planning, images, and saving", () => {
+  it("keeps the explanation usable without waiting for background illustrations", () => {
     expect(getPhaseOrder("explanation")).toStrictEqual([
       "gettingStarted",
-      "creatingLessonImage",
       "writingContent",
-      "preparingImages",
-      "creatingImages",
       "saving",
     ]);
   });
@@ -47,10 +44,10 @@ describe(getPhaseOrder, () => {
 });
 
 describe(getPhaseStatus, () => {
-  it("marks the explanation visual planning phase active when image prompts are streaming", () => {
+  it("includes illustration selection in lesson preparation", () => {
     expect(
       getPhaseStatus(
-        "preparingImages",
+        "writingContent",
         ["getLesson", "setLessonAsRunning", "generateExplanationContent"],
         "generateImagePrompts",
         "explanation",
@@ -107,22 +104,21 @@ describe(getPhaseStatus, () => {
     ).toBe("completed");
   });
 
-  it("marks lesson thumbnail generation as its own active phase", () => {
+  it("finishes explanation progress without decorative thumbnails or background art", () => {
     expect(
-      getPhaseStatus(
-        "creatingLessonImage",
+      calculateWeightedProgress(
         [
           "getLesson",
           "setLessonAsRunning",
           "generateExplanationContent",
           "generateImagePrompts",
-          "generateStepImages",
           "saveExplanationLesson",
+          "setLessonAsCompleted",
         ],
-        "generateLessonImage",
+        null,
         "explanation",
       ),
-    ).toBe("active");
+    ).toBe(100);
   });
 });
 
