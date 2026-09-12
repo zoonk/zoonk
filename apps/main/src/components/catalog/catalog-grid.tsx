@@ -3,6 +3,7 @@
 import { type AppRoute, Link } from "@/i18n/navigation";
 import { GridContent, GridEmpty, GridGroupItem, GridItem } from "@zoonk/ui/components/grid";
 import { Input } from "@zoonk/ui/components/input";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
@@ -129,6 +130,8 @@ export function CatalogGridSearchField({
   placeholder: string;
   search: string;
 }) {
+  const isMounted = useIsMounted();
+
   return (
     <div
       className={cn("flex w-full min-w-0 items-center gap-2", className)}
@@ -139,6 +142,7 @@ export function CatalogGridSearchField({
         <Input
           aria-label={placeholder}
           className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
+          disabled={!isMounted}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder={placeholder}
           type="search"

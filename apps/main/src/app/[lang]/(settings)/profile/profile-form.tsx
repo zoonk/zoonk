@@ -17,6 +17,7 @@ import { Input } from "@zoonk/ui/components/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useExtracted } from "next-intl";
@@ -71,6 +72,7 @@ export function ProfileForm({
 }) {
   const t = useExtracted();
 
+  const isMounted = useIsMounted();
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
 
   const [state, formAction] = useActionState(profileFormAction, initialState);
@@ -78,7 +80,7 @@ export function ProfileForm({
   const currentName = state.name || defaultName;
 
   const hasError = state.status === "error";
-  const isSubmitDisabled = status !== "idle" && status !== "available";
+  const isSubmitDisabled = !isMounted || (status !== "idle" && status !== "available");
 
   return (
     <form action={formAction} className="flex flex-col gap-6 lg:max-w-md">
@@ -123,6 +125,7 @@ export function ProfileForm({
               autoCapitalize="none"
               autoComplete="username"
               autoCorrect="off"
+              disabled={!isMounted}
               id="username"
               maxLength={USERNAME_MAX_LENGTH}
               minLength={USERNAME_MIN_LENGTH}

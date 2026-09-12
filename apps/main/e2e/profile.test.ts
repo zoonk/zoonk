@@ -1,6 +1,30 @@
 import { expect, test } from "./fixtures";
+import { holdHydration } from "./hydration";
 
 test.describe("Profile settings page", () => {
+  test("waits for hydration before accepting a username change", async ({
+    authenticatedPage: page,
+  }) => {
+    const releaseHydration = await holdHydration({ page, scriptText: "defaultUsername" });
+
+    try {
+      await page.goto("/profile", { waitUntil: "commit" });
+
+      const usernameInput = page.getByRole("textbox", { name: /username/iu });
+      await expect(usernameInput).toBeVisible();
+      await expect(usernameInput).toBeDisabled();
+      await expect(page.getByRole("button", { name: /save changes/iu })).toBeDisabled();
+      releaseHydration();
+
+      await usernameInput.fill("AB!@#");
+      await expect(usernameInput).toHaveValue("ab!@#");
+      await expect(page.getByRole("button", { name: /save changes/iu })).toBeDisabled();
+    } finally {
+      releaseHydration();
+      await page.unrouteAll({ behavior: "wait" });
+    }
+  });
+
   test("shows login prompt for unauthenticated users", async ({ page }) => {
     await page.goto("/profile");
 

@@ -9,6 +9,9 @@ function lastPage(count: number): number {
 
 describe(countSitemapCourses, () => {
   it("returns a positive count", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    await courseFixture({ isPublished: true, organizationId: organization.id });
+
     const count = await countSitemapCourses();
     expect(count).toBeGreaterThan(0);
   });

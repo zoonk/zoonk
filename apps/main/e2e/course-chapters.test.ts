@@ -9,6 +9,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { getSearchInputTop, scrollSearchInputToTop } from "./catalog-search";
 import { expect, test } from "./fixtures";
+import { holdHydration } from "./hydration";
 
 const SEARCH_CHAPTERS_LABEL = /search chapters/iu;
 let courseUrl: string;
@@ -247,6 +248,34 @@ test.describe("Course Chapters - Locale", () => {
 });
 
 test.describe("Course Chapter Search", () => {
+  test("waits for hydration before accepting a chapter search", async ({ page }) => {
+    /** Keep the streaming shell available while delaying the catalog's own client bundle. */
+    const releaseHydration = await holdHydration({ page, scriptText: "catalog-grid-search" });
+
+    try {
+      await page.goto(courseUrl, { waitUntil: "commit" });
+
+      const search = page.getByLabel(SEARCH_CHAPTERS_LABEL);
+      await expect(search).toBeVisible();
+      await expect(search).toBeDisabled();
+      releaseHydration();
+
+      await search.fill("Gamma");
+      await expect(page).toHaveURL(/\?q=Gamma/u);
+
+      await expect(
+        page.getByRole("link", { name: new RegExp(chapterNames.third, "u") }),
+      ).toBeVisible();
+
+      await expect(
+        page.getByRole("link", { name: new RegExp(chapterNames.first, "u") }),
+      ).not.toBeVisible();
+    } finally {
+      releaseHydration();
+      await page.unrouteAll({ behavior: "wait" });
+    }
+  });
+
   test("filters chapters by title", async ({ page }) => {
     await page.goto(courseUrl);
 

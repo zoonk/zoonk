@@ -32,6 +32,15 @@ function lastPage(count: number): number {
 
 describe(countSitemapChapters, () => {
   it("returns a positive count", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
+    await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
     const count = await countSitemapChapters();
     expect(count).toBeGreaterThan(0);
   });

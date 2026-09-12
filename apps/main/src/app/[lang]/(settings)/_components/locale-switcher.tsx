@@ -4,6 +4,7 @@ import { getPathname, usePathname } from "@/i18n/navigation";
 import { Field, FieldContent, FieldLabel } from "@zoonk/ui/components/field";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { LOCALE_LABELS, SUPPORTED_LOCALES, isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted, useLocale } from "next-intl";
 
@@ -11,6 +12,7 @@ export function LocaleSwitcher() {
   const t = useExtracted();
   const locale = useLocale();
   const pathname = usePathname();
+  const isMounted = useIsMounted();
 
   /**
    * Use a document navigation because changing the root language through the
@@ -37,6 +39,7 @@ export function LocaleSwitcher() {
           aria-label={t("Update language")}
           className="w-full sm:w-70"
           defaultValue={locale}
+          disabled={!isMounted}
           id="language"
           onChange={onSelectChange}
         >
