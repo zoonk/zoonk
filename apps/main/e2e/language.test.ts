@@ -2,6 +2,7 @@ import { type Locator, type Page } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
+import { holdHydration } from "./hydration";
 
 /**
  * Change the language and wait for the proxy to finish canonicalizing the
@@ -23,6 +24,25 @@ async function selectLanguage({
 }
 
 test.describe("Language settings page", () => {
+  test("waits for hydration before accepting a language change", async ({ page }) => {
+    const releaseHydration = await holdHydration({ page });
+
+    try {
+      await page.goto("/language", { waitUntil: "commit" });
+
+      const selector = page.getByRole("combobox", { name: /update language/iu });
+      await expect(selector).toBeVisible();
+      await expect(selector).toBeDisabled();
+      releaseHydration();
+
+      await selectLanguage({ expectedPath: "/es/language", locale: "es", page, selector });
+      await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
+    } finally {
+      releaseHydration();
+      await page.unrouteAll({ behavior: "ignoreErrors" });
+    }
+  });
+
   test("displays language selector with current locale", async ({ page }) => {
     await page.goto("/language");
 

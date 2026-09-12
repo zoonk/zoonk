@@ -87,6 +87,7 @@ test.describe("Auth Callback", () => {
     });
 
     await page.goto("/pt/login");
+    await expect(page.getByText("Auth app", { exact: true })).toBeVisible();
     await expect.poll(() => authUrls.length).toBe(1);
 
     const authUrl = getInterceptedAuthUrl(authUrls);
@@ -108,6 +109,7 @@ test.describe("Auth Callback", () => {
     });
 
     await page.goto("/login");
+    await expect(page.getByText("Auth app", { exact: true })).toBeVisible();
     await expect.poll(() => authUrls.length).toBe(1);
 
     const authUrl = getInterceptedAuthUrl(authUrls);
@@ -130,6 +132,7 @@ test.describe("Auth Callback", () => {
     });
 
     await page.goto(`/login?next=${encodeURIComponent(nextPath)}`);
+    await expect(page.getByText("Auth app", { exact: true })).toBeVisible();
     await expect.poll(() => authUrls.length).toBe(1);
 
     const authUrl = getInterceptedAuthUrl(authUrls);
@@ -156,6 +159,7 @@ test.describe("Auth Callback", () => {
     });
 
     await page.goto(`/login?next=${encodeURIComponent(unsafeNextPath)}`);
+    await expect(page.getByText("Auth app", { exact: true })).toBeVisible();
     await expect.poll(() => authUrls.length).toBe(1);
 
     const authUrl = getInterceptedAuthUrl(authUrls);

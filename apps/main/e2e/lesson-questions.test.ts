@@ -2127,22 +2127,26 @@ async function expectReopenedSavedExplanation({
   expect(api.questions).toHaveLength(7);
   expect(api.answerRequests).toBe(1);
 
+  /** The saved explanation is visible before the refreshed thread has arrived. */
+  await expect(dialog.getByText("Follow-up question 5", { exact: true })).toBeVisible();
+
   const loadEarlier = dialog.getByRole("button", { name: "Load earlier questions" });
+  const turns = dialog.getByRole("article", { name: "Your question" });
 
   async function loadAllEarlierQuestions() {
-    if (!(await loadEarlier.isVisible())) {
+    const loadedCount = await turns.count();
+
+    if (loadedCount >= 7) {
       return;
     }
 
-    const completedRequests = api.completedGetRequests;
     await loadEarlier.click();
-    await expect.poll(() => api.completedGetRequests).toBeGreaterThan(completedRequests);
+    await expect.poll(() => turns.count()).toBeGreaterThan(loadedCount);
     await loadAllEarlierQuestions();
   }
 
   await loadAllEarlierQuestions();
 
-  const turns = dialog.getByRole("article", { name: "Your question" });
   await expect(turns).toHaveCount(7);
   await expect(turns.nth(0)).toContainText(ANSWER_TEXT);
 

@@ -83,6 +83,8 @@ export function useLessonQuestions({
       openedScopes.current.add(scope);
 
       if (canAskQuestions && needsRefresh) {
+        /** An early open performs the preload before the effect can run. */
+        preloadedScopes.current.add(scope);
         void loadThread(context);
       }
     },
