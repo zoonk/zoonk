@@ -329,7 +329,7 @@ final class ZoonkUITests: XCTestCase {
     app.launch()
 
     openPlantsCourse(in: app)
-    app.buttons["Home"].firstMatch.tap()
+    app.primaryNavigationItem("Home").tap()
     openAccount(in: app)
 
     let myCourses = app.buttons["My courses"]
@@ -364,7 +364,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.buttons["Courses"].firstMatch.tap()
+    app.primaryNavigationItem("Courses").tap()
 
     let allCourses = app.buttons["All Courses"]
     let myCourses = app.buttons["My Courses"]
@@ -397,13 +397,13 @@ final class ZoonkUITests: XCTestCase {
     let isPad = UIDevice.current.userInterfaceIdiom == .pad
     let pageSize = isPad ? 20 : 6
     XCUIDevice.shared.orientation = isPad ? .landscapeLeft : .portrait
-    defer { XCUIDevice.shared.orientation = .portrait }
+    addTeardownBlock { @MainActor in XCUIDevice.shared.orientation = .portrait }
 
     let app = makeApp(for: .catalog)
     app.launchEnvironment["ZOONK_UI_TEST_CATALOG"] = try courseCatalogPaginationUITestSnapshotJSON(
       pageSize: pageSize)
     app.launch()
-    app.buttons["Courses"].firstMatch.tap()
+    app.primaryNavigationItem("Courses").tap()
     app.buttons["My Courses"].tap()
 
     let lastCourse = app.staticTexts[String(format: "Enrolled Course %02d", pageSize)].firstMatch
@@ -430,7 +430,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.buttons["Courses"].firstMatch.tap()
+    app.primaryNavigationItem("Courses").tap()
 
     let categorySelector = app.scrollViews["Course categories"]
     XCTAssertTrue(categorySelector.waitForExistence(timeout: 5))
@@ -466,7 +466,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp()
     app.launch()
-    app.buttons["Courses"].firstMatch.tap()
+    app.primaryNavigationItem("Courses").tap()
 
     let myCourses = app.buttons["My Courses"]
     XCTAssertTrue(myCourses.waitForExistence(timeout: 5))
@@ -550,7 +550,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected tapping sign out to start the API request immediately")
   }
 
-  /// Proves that every primary destination is reachable through the native tab bar and presents the matching screen heading.
+  /// Proves every primary destination remains reachable through native tabs or the sidebar after rotation.
   @MainActor
   func testPrimaryTabsNavigateToTheirScreens() {
     continueAfterFailure = false
@@ -565,24 +565,30 @@ final class ZoonkUITests: XCTestCase {
       (tabTitle: "Progress", screenTitle: "Progress"),
     ]
 
-    for destination in destinations {
-      let tab = app.buttons[destination.tabTitle].firstMatch
-      XCTAssertTrue(
-        tab.waitForExistence(timeout: 5), "Expected the \(destination.tabTitle) tab to exist")
-      XCTAssertTrue(tab.isHittable, "Expected the \(destination.tabTitle) tab to be hittable")
-      tab.tap()
+    addTeardownBlock { @MainActor in XCUIDevice.shared.orientation = .portrait }
 
-      let selectedTab = XCTNSPredicateExpectation(
-        predicate: NSPredicate(format: "isSelected == true"),
-        object: tab)
-      XCTAssertEqual(
-        XCTWaiter.wait(for: [selectedTab], timeout: 5),
-        .completed,
-        "Expected the \(destination.tabTitle) tab to become selected")
+    for orientation in [UIDeviceOrientation.portrait, .landscapeLeft] {
+      XCUIDevice.shared.orientation = orientation
 
-      XCTAssertTrue(
-        app.navigationBars[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
-        "Expected the \(destination.screenTitle) screen heading to exist")
+      for destination in destinations {
+        let tab = app.primaryNavigationItem(destination.tabTitle)
+        XCTAssertTrue(
+          tab.waitForExistence(timeout: 5), "Expected the \(destination.tabTitle) tab to exist")
+        XCTAssertTrue(tab.isHittable, "Expected the \(destination.tabTitle) tab to be hittable")
+        tab.tap()
+
+        let selectedTab = XCTNSPredicateExpectation(
+          predicate: NSPredicate(format: "isSelected == true"),
+          object: tab)
+        XCTAssertEqual(
+          XCTWaiter.wait(for: [selectedTab], timeout: 5),
+          .completed,
+          "Expected the \(destination.tabTitle) tab to become selected")
+
+        XCTAssertTrue(
+          app.navigationBars[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
+          "Expected the \(destination.screenTitle) screen heading to exist")
+      }
     }
 
     XCTAssertFalse(app.buttons["Search"].exists, "Expected search to no longer be a primary tab")
@@ -596,7 +602,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .catalog)
     app.launch()
 
-    let coursesTab = app.buttons["Courses"].firstMatch
+    let coursesTab = app.primaryNavigationItem("Courses")
     XCTAssertTrue(coursesTab.waitForExistence(timeout: 5))
     coursesTab.tap()
 
@@ -685,7 +691,7 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.staticTexts["Lesson player coming soon"].waitForExistence(timeout: 5),
       "Expected the course continuation action to open the next lesson directly")
-    app.navigationBars.firstMatch.buttons["How Plants Grow"].tap()
+    app.navigationBars.buttons["How Plants Grow"].firstMatch.tap()
 
     let chapter = app.buttons.matching(
       NSPredicate(format: "label CONTAINS %@", "Roots and Water")
@@ -771,7 +777,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected the chapter continuation action to open the next lesson directly")
     XCTAssertTrue(app.navigationBars["Follow the Water"].exists)
 
-    let chapterBackButton = app.navigationBars.firstMatch.buttons["Roots and Water"]
+    let chapterBackButton = app.navigationBars.buttons["Roots and Water"].firstMatch
     XCTAssertTrue(
       chapterBackButton.waitForExistence(timeout: 5),
       "Expected the lesson placeholder to retain the native chapter back action")
@@ -789,7 +795,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.buttons["Courses"].firstMatch.tap()
+    app.primaryNavigationItem("Courses").tap()
     let searchField = app.searchFields["Search all courses"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
     searchField.tap()
@@ -821,7 +827,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.buttons["Courses"].firstMatch.tap()
+    app.primaryNavigationItem("Courses").tap()
 
     let searchField = app.searchFields["Search all courses"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
@@ -851,7 +857,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.buttons["Courses"].firstMatch.tap()
+    app.primaryNavigationItem("Courses").tap()
 
     XCTAssertTrue(
       app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 10),
@@ -877,7 +883,7 @@ final class ZoonkUITests: XCTestCase {
       app.navigationBars["New course"].waitForExistence(timeout: 5),
       "Expected the empty category action to open the existing New course screen")
     XCTAssertTrue(
-      app.buttons["New"].firstMatch.isSelected,
+      app.primaryNavigationItem("New").isSelected,
       "Expected New to become the selected primary tab")
   }
 
@@ -958,7 +964,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp()
     app.launch()
-    app.buttons["Progress"].firstMatch.tap()
+    app.primaryNavigationItem("Progress").tap()
     app.buttons["Sign in"].tap()
 
     XCTAssertTrue(
@@ -972,7 +978,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .progressDaypartOnly)
     app.launch()
-    app.buttons["Progress"].firstMatch.tap()
+    app.primaryNavigationItem("Progress").tap()
 
     XCTAssertTrue(
       app.staticTexts["Morning"].waitForExistence(timeout: 5),
@@ -988,7 +994,7 @@ final class ZoonkUITests: XCTestCase {
 
     let emptyApp = makeApp(for: .progressEmpty)
     emptyApp.launch()
-    emptyApp.buttons["Progress"].firstMatch.tap()
+    emptyApp.primaryNavigationItem("Progress").tap()
     XCTAssertTrue(
       emptyApp.staticTexts["Your progress starts here"].waitForExistence(timeout: 5),
       "Expected an empty learner to receive progress guidance")
@@ -996,7 +1002,7 @@ final class ZoonkUITests: XCTestCase {
 
     let failedApp = makeApp(for: .progressOverviewFailure)
     failedApp.launch()
-    failedApp.buttons["Progress"].firstMatch.tap()
+    failedApp.primaryNavigationItem("Progress").tap()
     XCTAssertTrue(
       failedApp.staticTexts["You're offline"].waitForExistence(timeout: 5),
       "Expected a network failure to show a recoverable state")
@@ -1009,7 +1015,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .progressActivityUnauthorized)
     app.launch()
-    app.buttons["Progress"].firstMatch.tap()
+    app.primaryNavigationItem("Progress").tap()
     XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
     app.staticTexts["Activity"].firstMatch.tap()
 
@@ -1024,12 +1030,12 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .progress)
     app.launch()
-    app.buttons["Progress"].firstMatch.tap()
+    app.primaryNavigationItem("Progress").tap()
     XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
     app.staticTexts["Level"].firstMatch.tap()
     XCTAssertTrue(app.staticTexts["Belt journey"].waitForExistence(timeout: 5))
 
-    let title = app.navigationBars.firstMatch.staticTexts["Level"]
+    let title = app.navigationBars.staticTexts["Level"].firstMatch
 
     if UIDevice.current.userInterfaceIdiom == .pad {
       XCTAssertFalse(title.exists, "Expected iPad to omit the centered detail title")
@@ -1046,7 +1052,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .progress)
     app.launch()
 
-    app.buttons["Progress"].firstMatch.tap()
+    app.primaryNavigationItem("Progress").tap()
     XCTAssertTrue(
       app.staticTexts["At a glance"].waitForExistence(timeout: 5),
       "Expected the loaded Progress summary to appear")
@@ -1072,7 +1078,7 @@ final class ZoonkUITests: XCTestCase {
       XCTAssertTrue(
         app.staticTexts[destination.loadedContent].waitForExistence(timeout: 5),
         "Expected \(destination.title) to finish loading its fixture content")
-      let backButton = app.navigationBars.firstMatch.buttons["Progress"]
+      let backButton = app.navigationBars.buttons["Progress"].firstMatch
       XCTAssertTrue(
         backButton.exists,
         "Expected \(destination.title) to retain the native Progress back action")
@@ -1122,7 +1128,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .progress)
     app.launch()
 
-    app.buttons["Progress"].firstMatch.tap()
+    app.primaryNavigationItem("Progress").tap()
     XCTAssertTrue(
       app.staticTexts["At a glance"].waitForExistence(timeout: 5),
       "Expected the loaded Progress summary to appear")
@@ -1143,7 +1149,7 @@ final class ZoonkUITests: XCTestCase {
 
   @MainActor
   private func openPlantsCourse(in app: XCUIApplication) {
-    let coursesTab = app.buttons["Courses"].firstMatch
+    let coursesTab = app.primaryNavigationItem("Courses")
     XCTAssertTrue(coursesTab.waitForExistence(timeout: 5))
     coursesTab.tap()
 
@@ -1170,6 +1176,15 @@ final class ZoonkUITests: XCTestCase {
     session.clearTransactions()
     session.disableDialogs = true
     return session
+  }
+}
+
+extension XCUIApplication {
+  @MainActor
+  fileprivate func primaryNavigationItem(_ title: String) -> XCUIElement {
+    let sidebarItem = collectionViews.cells.matching(NSPredicate(format: "label == %@", title))
+      .firstMatch
+    return sidebarItem.exists ? sidebarItem : buttons[title].firstMatch
   }
 }
 
