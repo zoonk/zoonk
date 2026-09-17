@@ -54,7 +54,7 @@
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIStatusBarStyle</key>
-	<string></string>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
