@@ -6,7 +6,7 @@ The iPad app also remains available in Apple's Designed for iPad compatibility m
 
 ## Requirements
 
-- macOS with Xcode 26.6 or newer
+- macOS with Xcode 27 or newer
 - Xcode command-line tools selected with `xcode-select`
 - An installed iOS simulator for running UI tests
 

@@ -1,4 +1,5 @@
 PRODUCT_BUNDLE_IDENTIFIER = com.zoonk.dev
+INFOPLIST_FILE = Zoonk/Info-Debug.plist
 GOOGLE_IOS_CLIENT_ID = 435450998434-jr43cdf8s72g9mkpqe8smh8dclqaqtq2.apps.googleusercontent.com
 GOOGLE_REVERSED_IOS_CLIENT_ID = com.googleusercontent.apps.435450998434-jr43cdf8s72g9mkpqe8smh8dclqaqtq2
 GOOGLE_SERVER_CLIENT_ID = 435450998434-jhj2skfq5b089dkjrth5dvo1bhujfp3h.apps.googleusercontent.com
