@@ -887,7 +887,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected New to become the selected primary tab")
   }
 
-  /// Proves searching chapters replaces the detail header so filtered content remains visible while the keyboard is open.
+  /// Proves chapter search keeps results visible and restores browsing when cancelled, including after reopening.
   @MainActor
   func testCourseSearchKeepsFilteredChaptersVisible() {
     continueAfterFailure = false
@@ -920,9 +920,32 @@ final class ZoonkUITests: XCTestCase {
       app.staticTexts["2. Leaves and Light"].isHittable,
       "Expected the filtered chapter to remain directly interactive during search")
     XCTAssertFalse(app.staticTexts["1. Roots and Water"].exists)
+
+    let cancelSearch = app.buttons.matching(
+      NSPredicate(format: "label ==[c] %@ OR label ==[c] %@", "Cancel", "close")
+    ).firstMatch
+    XCTAssertTrue(cancelSearch.waitForExistence(timeout: 5))
+    cancelSearch.tap()
+    XCTAssertTrue(
+      app.staticTexts["1. Roots and Water"].waitForExistence(timeout: 5),
+      "Expected dismissing search to restore the unfiltered chapters")
+    XCTAssertTrue(
+      courseContinue.waitForExistence(timeout: 5),
+      "Expected dismissing search to restore the course header")
+
+    app.buttons["Search"].tap()
+    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["1. Roots and Water"].exists)
+    searchField.tap()
+    searchField.typeText("leaves")
+    XCTAssertFalse(app.staticTexts["1. Roots and Water"].exists)
+    cancelSearch.tap()
+    XCTAssertTrue(
+      courseContinue.waitForExistence(timeout: 5),
+      "Expected search to remain dismissible after reopening")
   }
 
-  /// Proves lesson filtering uses the same compact search hierarchy as chapter filtering.
+  /// Proves lesson search restores the unfiltered list and header when cancelled, including after reopening.
   @MainActor
   func testChapterSearchKeepsFilteredLessonsVisible() {
     continueAfterFailure = false
@@ -956,6 +979,29 @@ final class ZoonkUITests: XCTestCase {
       app.staticTexts["2. Follow the Water"].isHittable,
       "Expected the filtered lesson to remain directly interactive during search")
     XCTAssertFalse(app.staticTexts["1. Meet the Roots"].exists)
+
+    let cancelSearch = app.buttons.matching(
+      NSPredicate(format: "label ==[c] %@ OR label ==[c] %@", "Cancel", "close")
+    ).firstMatch
+    XCTAssertTrue(cancelSearch.waitForExistence(timeout: 5))
+    cancelSearch.tap()
+    XCTAssertTrue(
+      app.staticTexts["1. Meet the Roots"].waitForExistence(timeout: 5),
+      "Expected dismissing search to restore the unfiltered lessons")
+    XCTAssertTrue(
+      chapterContinue.waitForExistence(timeout: 5),
+      "Expected dismissing search to restore the chapter header")
+
+    app.buttons["Search"].tap()
+    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["1. Meet the Roots"].exists)
+    searchField.tap()
+    searchField.typeText("water")
+    XCTAssertFalse(app.staticTexts["1. Meet the Roots"].exists)
+    cancelSearch.tap()
+    XCTAssertTrue(
+      chapterContinue.waitForExistence(timeout: 5),
+      "Expected search to remain dismissible after reopening")
   }
 
   @MainActor

@@ -26,15 +26,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@better-auth/prisma-adapter": "1.7.3",
-    "@better-auth/stripe": "1.7.3",
+    "@better-auth/prisma-adapter": "1.7.5",
+    "@better-auth/stripe": "1.7.5",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.7.3",
+    "better-auth": "1.7.5",
     "jose": "6.2.12",
     "mailchecker": "6.0.21",
-    "stripe": "22.6.1",
+    "stripe": "22.6.2",
     "zod": "catalog:"
   },
   "devDependencies": {

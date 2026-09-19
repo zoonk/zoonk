@@ -39,7 +39,7 @@
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "@vitest/browser-playwright": "5.0.0",
+    "@vitest/browser-playwright": "5.0.1",
     "@zoonk/i18n": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "jsdom": "catalog:",
