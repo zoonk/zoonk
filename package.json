@@ -42,16 +42,16 @@
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "knip": "6.35.0",
-    "oxfmt": "0.67.0",
-    "oxlint": "1.82.0",
-    "oxlint-tsgolint": "7.0.2001",
+    "knip": "6.37.0",
+    "oxfmt": "0.68.0",
+    "oxlint": "1.83.0",
+    "oxlint-tsgolint": "7.0.2002",
     "portless": "0.15.6",
-    "turbo": "2.10.12",
+    "turbo": "2.11.2",
     "typescript": "catalog:"
   },
   "engines": {
     "node": "^24"
   },
-  "packageManager": "pnpm@12.4.0"
+  "packageManager": "pnpm@12.4.2"
 }

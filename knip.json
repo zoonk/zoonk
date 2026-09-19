@@ -10,7 +10,6 @@
     "next",
     "portless",
     "postcss-load-config",
-    "raw-loader",
     "tsx"
   ],
   "includeEntryExports": true,

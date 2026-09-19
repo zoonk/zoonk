@@ -1,32 +1,39 @@
 import SwiftUI
 
 struct CatalogDetailSearchPresentation: ViewModifier {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Binding var text: String
   @Binding var isPresented: Bool
   let prompt: Text
 
   func body(content: Content) -> some View {
     Group {
-      if #available(iOS 26.0, *) {
+      if isPresented {
         content
           .searchable(
             text: $text,
             isPresented: $isPresented,
-            placement: .toolbar,
+            placement: horizontalSizeClass == .regular
+              ? .toolbar : .navigationBarDrawer(displayMode: .always),
             prompt: prompt
+          )
+          .searchPresentationToolbarBehavior(
+            horizontalSizeClass == .regular ? .avoidHidingContent : .automatic
           )
           .toolbar {
-            DefaultToolbarItem(kind: .search, placement: .topBarTrailing)
+            if horizontalSizeClass == .regular {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(role: .cancel) {
+                  isPresented = false
+                } label: {
+                  Text(
+                    "Cancel",
+                    tableName: "Navigation",
+                    comment: "Cancels catalog search and returns to browsing.")
+                }
+              }
+            }
           }
-          .searchToolbarBehavior(.minimize)
-      } else if isPresented {
-        content
-          .searchable(
-            text: $text,
-            isPresented: $isPresented,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: prompt
-          )
       } else {
         content
           .toolbar {

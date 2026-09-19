@@ -9,7 +9,7 @@ import {
   Status,
   Type,
 } from "@apple/app-store-server-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getAppleSubscriptionFromNotification,
   getAppleSubscriptionFromTransaction,
@@ -35,8 +35,14 @@ const OUTER_SIGNED_DATE = new Date("2026-08-19T12:00:00.000Z");
 const CURRENT_EXPIRATION_DATE = new Date("2026-09-19T12:00:00.000Z");
 
 describe(getAppleSubscriptionFromNotification, () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(OUTER_SIGNED_DATE);
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   it("prefers the current App Store status while retaining notification ordering", async () => {

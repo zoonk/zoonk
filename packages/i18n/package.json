@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@eloqnt/cli": "catalog:",
-    "ai-sdk-provider-codex-cli": "2.1.2"
+    "ai-sdk-provider-codex-cli": "2.2.1"
   },
   "devDependencies": {
     "@types/node": "catalog:",

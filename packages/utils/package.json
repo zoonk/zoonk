@@ -42,7 +42,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.8.13",
+    "@formatjs/intl-localematcher": "0.9.0",
     "negotiator": "1.1.0"
   },
   "devDependencies": {

@@ -1,4 +1,6 @@
-import "dotenv/config";
+import { config } from "dotenv";
+
+config();
 
 const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "localhost"]);
 
