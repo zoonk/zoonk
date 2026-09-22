@@ -9,8 +9,7 @@ const defaultModel = "openai/gpt-5.6-luna";
 
 const fallbackModels = [
   "google/gemini-3-flash",
-  "openai/gpt-5.5",
-  "anthropic/claude-opus-4.8",
+  "anthropic/claude-opus-5.5",
   "google/gemini-3.1-pro-preview",
 ] as const;
 

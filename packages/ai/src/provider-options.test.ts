@@ -6,7 +6,7 @@ describe(buildProviderOptions, () => {
     expect(
       buildProviderOptions({
         fallbackModels: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
-        model: "openai/gpt-5.4",
+        model: "openai/gpt-6-sol",
         useFallback: true,
       }),
     ).toStrictEqual({
@@ -20,7 +20,7 @@ describe(buildProviderOptions, () => {
   it("skips fallback models when fallback routing is disabled", () => {
     expect(
       buildProviderOptions({
-        fallbackModels: ["openai/gpt-5.4-mini"],
+        fallbackModels: ["openai/gpt-6-luna"],
         model: "google/gemini-3-flash",
         useFallback: false,
       }),
@@ -32,13 +32,13 @@ describe(buildProviderOptions, () => {
   it("adds the anthropic provider order for anthropic models", () => {
     expect(
       buildProviderOptions({
-        fallbackModels: ["openai/gpt-5.4-mini"],
-        model: "anthropic/claude-opus-5",
+        fallbackModels: ["openai/gpt-6-luna"],
+        model: "anthropic/claude-opus-5.5",
         useFallback: true,
       }),
     ).toStrictEqual({
       gateway: {
-        models: ["openai/gpt-5.4-mini"],
+        models: ["openai/gpt-6-luna"],
         order: ["anthropic", "vertex", "openai", "azure", "google"],
       },
     });
@@ -47,16 +47,16 @@ describe(buildProviderOptions, () => {
   it("leaves provider order unset for unsupported model prefixes", () => {
     expect(
       buildProviderOptions({
-        fallbackModels: ["openai/gpt-5.4-mini"],
+        fallbackModels: ["openai/gpt-6-luna"],
         model: "xai/grok-4",
         useFallback: true,
       }),
-    ).toStrictEqual({ gateway: { models: ["openai/gpt-5.4-mini"] } });
+    ).toStrictEqual({ gateway: { models: ["openai/gpt-6-luna"] } });
   });
 
   it("keeps provider order when fallback routing has no fallback models", () => {
     expect(
-      buildProviderOptions({ fallbackModels: [], model: "openai/gpt-5.4", useFallback: true }),
+      buildProviderOptions({ fallbackModels: [], model: "openai/gpt-6-sol", useFallback: true }),
     ).toStrictEqual({
       gateway: { models: [], order: ["openai", "azure", "google", "anthropic", "vertex"] },
     });

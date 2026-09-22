@@ -40,8 +40,8 @@ function buildGatewayProviderOptions({
 
 /**
  * Returns the provider preference list for a gateway model string.
- * For example, `openai/gpt-5.4` should prefer OpenAI-backed credentials first,
- * while `google/gemini-3-flash` should prefer Google-backed credentials first.
+ * For example, `openai/*` should prefer OpenAI-backed credentials first,
+ * while `google/*` should prefer Google-backed credentials first.
  * Unknown prefixes are left unset so we do not invent routing rules we do not own.
  */
 function getGatewayProviderOrder(model: string): GatewayProviderOptions["order"] {

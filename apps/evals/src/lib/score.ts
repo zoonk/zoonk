@@ -63,7 +63,7 @@ export async function generateScore(params: {
   if (scoreCategories) {
     const { output: result } = await generateText({
       instructions: systemPrompt,
-      model: "openai/gpt-5.6-sol",
+      model: "openai/gpt-6-astra",
       output: Output.object({ schema: categorizedScoreSchema }),
       prompt: evalPrompt,
     });
@@ -82,7 +82,7 @@ export async function generateScore(params: {
 
   const { output: result } = await generateText({
     instructions: systemPrompt,
-    model: "openai/gpt-5.6-sol",
+    model: "openai/gpt-6-astra",
     output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
   });

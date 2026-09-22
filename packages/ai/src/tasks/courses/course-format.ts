@@ -7,9 +7,8 @@ import systemPrompt from "./course-format.prompt.md";
 const defaultModel = "google/gemini-3.1-flash-lite";
 
 const fallbackModels = [
-  "openai/gpt-5.6-luna",
+  "openai/gpt-6-luna",
   "deepseek/deepseek-v4-flash",
-  "openai/gpt-5.4-mini",
   "anthropic/claude-haiku-4.5",
 ] as const;
 

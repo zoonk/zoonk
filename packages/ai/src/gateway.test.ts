@@ -5,7 +5,7 @@ import { zoonkGateway } from "./gateway";
 describe(zoonkGateway, () => {
   it("blocks provider requests during tests", async () => {
     await expect(
-      generateText({ model: zoonkGateway("openai/gpt-5.4"), prompt: "hello" }),
+      generateText({ model: zoonkGateway("openai/gpt-6-luna"), prompt: "hello" }),
     ).rejects.toThrow("AI Gateway calls are disabled during tests.");
   });
 });

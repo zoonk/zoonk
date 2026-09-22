@@ -10,7 +10,7 @@ const defaultModel = "google/gemini-3.1-flash-lite";
 const fallbackModels = [
   "openai/gpt-5.6-terra",
   "google/gemini-3.5-flash",
-  "anthropic/claude-opus-4.8",
+  "anthropic/claude-opus-5.5",
 ] as const;
 
 const romanizationSchema = z.string().min(1);

@@ -5,7 +5,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import classificationPrompt from "./course-identity.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite";
-const fallbackModels = ["openai/gpt-5.4-mini", "deepseek/deepseek-v4-flash"] as const;
+const fallbackModels = ["openai/gpt-6-luna", "deepseek/deepseek-v4-flash"] as const;
 
 const identitySchema = z.object({
   courseSlug: z.string().nullable(),
