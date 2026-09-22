@@ -1,4 +1,4 @@
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserCourses } from "@zoonk/core/courses/list-current-user";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -58,10 +58,7 @@ export async function UserCourseList() {
             className="focus-visible:ring-ring/50 hover:bg-muted flex min-w-0 flex-1 items-center gap-3.5 rounded-2xl px-4 py-2.5 transition-colors outline-none focus-visible:ring-[3px]"
             href={
               course.organization
-                ? getOriginalCourseHref({
-                    brandSlug: course.organization.slug,
-                    courseSlug: course.slug,
-                  })
+                ? getCourseHref({ brandSlug: course.organization.slug, courseSlug: course.slug })
                 : `/p/${course.id}`
             }
             prefetch

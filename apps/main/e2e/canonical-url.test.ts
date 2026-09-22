@@ -183,9 +183,7 @@ test("keeps unsupported instructional languages out of the English index", async
 test.describe("catalog URLs with another language preference", () => {
   test.use({ locale: "pt-BR" });
 
-  test("keeps English canonicals stable while preserving the saved UI language", async ({
-    page,
-  }) => {
+  test("uses the preferred UI language while keeping the course canonical", async ({ page }) => {
     const organization = await getAiOrganization();
 
     const course = await courseFixture({
@@ -204,9 +202,9 @@ test.describe("catalog URLs with another language preference", () => {
     const path = `/b/${organization.slug}/c/${course.slug}`;
 
     await setLocale(page, "de");
-    await expectCatalogMetadata({ canonicalPath: path, page, path, robots: "index, follow" });
+    await expectCatalogMetadata({ canonicalPath: path, page, path, robots: "noindex, follow" });
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
-    expect(new URL(page.url()).pathname).toBe(path);
+    expect(new URL(page.url()).pathname).toBe(`/de${path}`);
 
     await expectCatalogMetadata({
       canonicalPath: path,
@@ -218,9 +216,9 @@ test.describe("catalog URLs with another language preference", () => {
     expect(new URL(page.url()).pathname).toBe(`/pt${path}`);
 
     const cookies = await page.context().cookies();
-    expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("de");
+    expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("pt");
 
     await page.goto("/courses");
-    await expect(page).toHaveURL(/\/de\/courses$/u);
+    await expect(page).toHaveURL(/\/pt\/courses$/u);
   });
 });

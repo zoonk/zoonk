@@ -12,7 +12,7 @@ import {
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
 import { WorkflowGenerationError } from "@/components/generation/workflow-generation-error";
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
 import { type GenerationStatus, isGenerationInProgress } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
@@ -46,7 +46,7 @@ export function GenerationClient({
 }) {
   const t = useExtracted();
   const locale = useLocale();
-  const backHref = getOriginalCourseHref({ brandSlug: AI_ORG_SLUG, courseSlug });
+  const backHref = getCourseHref({ brandSlug: AI_ORG_SLUG, courseSlug });
   const loginHref = `/login?next=${encodeURIComponent(`/generate/ch/${chapterId}`)}` as const;
 
   const generation = useWorkflowGeneration<ChapterWorkflowStepName>({

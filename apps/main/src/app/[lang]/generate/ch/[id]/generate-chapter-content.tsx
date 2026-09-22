@@ -1,7 +1,7 @@
 import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import {
   getChapterCacheTag,
@@ -48,10 +48,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
   const { chapter } = access;
   const t = await getExtracted();
 
-  const backHref = getOriginalCourseHref({
-    brandSlug: AI_ORG_SLUG,
-    courseSlug: chapter.course.slug,
-  });
+  const backHref = getCourseHref({ brandSlug: AI_ORG_SLUG, courseSlug: chapter.course.slug });
 
   const backLabel = t("Back to course");
 

@@ -5,27 +5,23 @@ import { routing } from "./i18n/routing";
 
 const localizedMiddleware = createMiddleware(routing);
 
-const catalogMiddleware = createMiddleware({
-  ...routing,
-  alternateLinks: false,
-  localeCookie: false,
-  localeDetection: false,
-});
-
 const CATALOG_PATH = new RegExp(
   `^/(?:(?:${SUPPORTED_LOCALES.join("|")})/)?b/[^/]+/c/[^/]+(?:/|$)`,
   "u",
 );
 
 /**
- * Catalog canonicals identify an edition through the URL, including unprefixed
- * English URLs. Opening one must not rewrite the visitor's saved preference or
- * advertise the same course slug as an alternate in every UI language.
+ * Course editions have their own slugs. UI-language variants of the same slug
+ * are not translated editions, so next-intl's automatic alternates do not apply.
  */
 export default function proxy(request: NextRequest) {
-  return CATALOG_PATH.test(request.nextUrl.pathname)
-    ? catalogMiddleware(request)
-    : localizedMiddleware(request);
+  const response = localizedMiddleware(request);
+
+  if (CATALOG_PATH.test(request.nextUrl.pathname)) {
+    response.headers.delete("link");
+  }
+
+  return response;
 }
 
 export const config = {

@@ -1,6 +1,6 @@
 import { GenerationAuthenticationCTA } from "@/components/generation/generation-authentication-cta";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 import { redirect } from "@/i18n/navigation";
 import { getCoursePromptGeneration } from "@zoonk/core/courses/get-prompt-generation";
 import { getSession } from "@zoonk/core/users/session";
@@ -31,10 +31,7 @@ export async function GenerateCoursePromptContent({
   if (generation.status === "redirect") {
     if (generation.target.kind === "course") {
       return redirect({
-        href: getOriginalCourseHref({
-          brandSlug: AI_ORG_SLUG,
-          courseSlug: generation.target.courseSlug,
-        }),
+        href: getCourseHref({ brandSlug: AI_ORG_SLUG, courseSlug: generation.target.courseSlug }),
         locale,
       });
     }

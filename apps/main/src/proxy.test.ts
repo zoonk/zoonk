@@ -8,24 +8,22 @@ describe("catalog locale routing", () => {
     "/b/zoonk/c/computer-science",
     "/b/zoonk/c/computer-science/ch/basics",
     "/b/zoonk/c/computer-science/ch/basics/l/intro",
-  ])("keeps the unprefixed English canonical stable at %s", (path) => {
-    const request = new NextRequest(`https://www.zoonk.com${path}?edition=original`, {
+  ])("applies the saved locale to unprefixed catalog path %s", (path) => {
+    const request = new NextRequest(`https://www.zoonk.com${path}?review=true`, {
       headers: { "accept-language": "pt-BR", cookie: "ZOONK_LOCALE=de" },
     });
 
     const response = proxy(request);
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(307);
 
-    expect(response.headers.get("x-middleware-rewrite")).toBe(
-      `https://www.zoonk.com/en${path}?edition=original`,
-    );
+    expect(response.headers.get("location")).toBe(`https://www.zoonk.com/de${path}?review=true`);
 
     expect(response.headers.get("set-cookie")).toBeNull();
     expect(response.headers.get("link")).toBeNull();
   });
 
-  it("honors an explicit course locale without overwriting the saved preference", () => {
+  it("remembers an explicit course locale for subsequent navigation", () => {
     const response = proxy(
       new NextRequest("https://www.zoonk.com/pt/b/zoonk/c/ciencia-da-computacao-pt", {
         headers: { "accept-language": "fr-FR", cookie: "ZOONK_LOCALE=de" },
@@ -34,7 +32,30 @@ describe("catalog locale routing", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe("pt");
-    expect(response.headers.get("set-cookie")).toBeNull();
+    expect(response.cookies.get("ZOONK_LOCALE")?.value).toBe("pt");
+    expect(response.headers.get("link")).toBeNull();
+  });
+
+  it("detects the browser language on catalog routes without a saved locale", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/b/ai/c/spanish-fr", {
+        headers: { "accept-language": "fr-FR" },
+      }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe("https://www.zoonk.com/fr/b/ai/c/spanish-fr");
+  });
+
+  it("keeps English catalog URLs unprefixed without advertising other UI locales as editions", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/b/ai/c/computer-science", {
+        headers: { "accept-language": "en-US" },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
     expect(response.headers.get("link")).toBeNull();
   });
 

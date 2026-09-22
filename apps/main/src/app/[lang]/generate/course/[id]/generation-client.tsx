@@ -54,30 +54,10 @@ function getReadyTargetPath(target: ReturnType<typeof useCoursePromptReconciliat
   }
 
   if (target.kind === "course") {
-    return `${target.courseSlug}?edition=original`;
+    return target.courseSlug;
   }
 
   return `${target.courseSlug}/ch/${target.chapterSlug}/l/${target.lessonSlug}`;
-}
-
-function getCompletionTargetPath({
-  completionEntityId,
-  completionKind,
-  courseSlug,
-  linkedCourseSlug,
-}: {
-  completionEntityId: string | null;
-  completionKind: CoursePromptGenerationCompletionKind;
-  courseSlug: string;
-  linkedCourseSlug: string | null;
-}) {
-  const target = completionEntityId ?? linkedCourseSlug ?? courseSlug;
-
-  if (completionKind === "course" || !completionEntityId) {
-    return `${target}?edition=original`;
-  }
-
-  return target;
 }
 
 /** Viewing an existing run is public; retrying generation requires a session. */
@@ -193,12 +173,7 @@ export function GenerationClient({
     isActive ? activePhaseNames : [],
   );
 
-  const completionPath = getCompletionTargetPath({
-    completionEntityId: generation.completionEntityId,
-    completionKind,
-    courseSlug,
-    linkedCourseSlug,
-  });
+  const completionPath = generation.completionEntityId ?? linkedCourseSlug ?? courseSlug;
 
   const destinationTarget = getReadyTargetPath(reconciliation.target) ?? completionPath;
 

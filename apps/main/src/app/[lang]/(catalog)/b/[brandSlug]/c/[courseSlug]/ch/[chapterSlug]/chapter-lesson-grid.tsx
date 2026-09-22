@@ -1,4 +1,4 @@
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 import { getChapter } from "@zoonk/core/chapters/get-by-slug";
 import { listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
 import { getLessonVisibility } from "@zoonk/core/users/lesson-visibility";
@@ -33,7 +33,7 @@ export async function ChapterLessonGrid({
     return (
       <ChapterNotGenerated
         chapterId={chapter.id}
-        courseHref={getOriginalCourseHref({ brandSlug, courseSlug })}
+        courseHref={getCourseHref({ brandSlug, courseSlug })}
       />
     );
   }
