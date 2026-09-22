@@ -21,11 +21,9 @@ export const REASONING_OPTIONS = [
 ] as const satisfies readonly { label: string; value: Reasoning }[];
 
 export const EVAL_MODELS: ModelConfig[] = [
-  { id: "anthropic/claude-fable-5", inputCost: 10, name: "claude-fable-5", outputCost: 50 },
-  { id: "anthropic/claude-opus-5", inputCost: 5, name: "claude-opus-5", outputCost: 25 },
-  { id: "anthropic/claude-opus-4.8", inputCost: 5, name: "claude-opus-4.8", outputCost: 25 },
+  { id: "anthropic/claude-opus-5.5", inputCost: 4, name: "claude-opus-5.5", outputCost: 20 },
+  { id: "anthropic/claude-fable-5.1", inputCost: 10, name: "claude-fable-5.1", outputCost: 50 },
   { id: "anthropic/claude-sonnet-5", inputCost: 2, name: "claude-sonnet-5", outputCost: 10 },
-  { id: "anthropic/claude-sonnet-4.6", inputCost: 3, name: "claude-sonnet-4.6", outputCost: 15 },
   { id: "anthropic/claude-haiku-4.5", inputCost: 1, name: "claude-haiku-4.5", outputCost: 5 },
   { id: "deepseek/deepseek-v4-pro", inputCost: 0.43, name: "deepseek-v4-pro", outputCost: 0.87 },
   {
@@ -51,15 +49,14 @@ export const EVAL_MODELS: ModelConfig[] = [
   },
   { id: "google/gemini-3-flash", inputCost: 0.5, name: "gemini-3-flash", outputCost: 3 },
   { id: "openai/gpt-6-astra", inputCost: 10, name: "gpt-6-astra", outputCost: 50 },
+  { id: "openai/gpt-6-sol", inputCost: 2, name: "gpt-6-sol", outputCost: 10 },
+  { id: "openai/gpt-6-luna", inputCost: 0.1, name: "gpt-6-luna", outputCost: 0.5 },
   { id: "openai/gpt-5.6-sol", inputCost: 4, name: "gpt-5.6-sol", outputCost: 20 },
   { id: "openai/gpt-5.6-terra", inputCost: 2, name: "gpt-5.6-terra", outputCost: 12 },
   { id: "openai/gpt-5.6-luna", inputCost: 0.2, name: "gpt-5.6-luna", outputCost: 1.2 },
   { id: "openai/gpt-5.5", inputCost: 5, name: "gpt-5.5", outputCost: 30 },
-  { id: "openai/gpt-5.4", inputCost: 1.75, name: "gpt-5.4", outputCost: 14 },
   { id: "openai/gpt-5.4-mini", inputCost: 0.75, name: "gpt-5.4-mini", outputCost: 4.5 },
   { id: "openai/gpt-5.4-nano", inputCost: 0.2, name: "gpt-5.4-nano", outputCost: 1.25 },
-  { id: "xai/grok-4.5", inputCost: 2, name: "grok-4.5", outputCost: 6 },
-  { id: "xai/grok-4.3", inputCost: 1.25, name: "grok-4.3", outputCost: 2.5 },
 ];
 
 /**

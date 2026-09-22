@@ -45,7 +45,7 @@ const successfulProviderStream: MockLanguageModelV4["doStream"] = async () => ({
     chunks: [
       {
         id: "response-id",
-        modelId: "openai/gpt-5.6-luna",
+        modelId: "openai/gpt-6-luna",
         timestamp: new Date("2026-09-04T12:00:00.000Z"),
         type: "response-metadata",
       },
@@ -129,7 +129,7 @@ describe("lesson question answer route", () => {
       answer: ANSWER,
       finishReason: "stop",
       inputTokens: 80,
-      model: "openai/gpt-5.6-luna",
+      model: "openai/gpt-6-luna",
       outputTokens: 12,
       provider: "openai",
       questionId: QUESTION_ID,

@@ -6,8 +6,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import promptTemplate from "./course-categories.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite";
-
-const fallbackModels = ["deepseek/deepseek-v4-flash", "openai/gpt-5.4-mini"] as const;
+const fallbackModels = ["deepseek/deepseek-v4-flash", "openai/gpt-6-luna"] as const;
 
 const schema = z.object({ categories: z.array(z.enum(AI_COURSE_CATEGORIES)) });
 

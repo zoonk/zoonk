@@ -6,13 +6,8 @@ import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-distractors.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
-
-const fallbackModels = [
-  "openai/gpt-5.6-sol",
-  "google/gemini-3.1-flash-lite",
-  "anthropic/claude-sonnet-4.6",
-] as const;
+const defaultModel = "openai/gpt-6-sol";
+const fallbackModels = ["google/gemini-3.1-flash-lite", "anthropic/claude-sonnet-5"] as const;
 
 const schema = z.object({ distractors: z.array(z.string().min(1)).min(1) });
 
