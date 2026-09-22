@@ -677,12 +677,9 @@ test.describe("Browser language preferences for course editions", () => {
   test("uses the browser language and offers an edition without switching the selected course", async ({
     page,
   }) => {
-    const [source, target] = await Promise.all([
-      createCourse({ language: "en" }),
-      createCourse({ language: "de" }),
-    ]);
+    /** Browser-language detection does not need to change the shared German catalog. */
+    const source = await createCourse({ language: "en" });
 
-    await connectKnownPrompt({ source, target });
     await page.goto("/courses");
     await expect(page).toHaveURL("/de/courses");
 
@@ -698,7 +695,7 @@ test.describe("Browser language preferences for course editions", () => {
       page.getByRole("link", { name: new RegExp(source.chapter.title, "u") }),
     ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: "Auf Deutsch lernen" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Auf Deutsch lernen" })).toBeVisible();
 
     await expect(
       getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
