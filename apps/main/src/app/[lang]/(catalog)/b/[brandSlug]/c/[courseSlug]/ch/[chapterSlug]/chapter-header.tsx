@@ -1,6 +1,6 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { CatalogHeaderImage } from "@/components/catalog/catalog-header-image";
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 import { Link } from "@/i18n/navigation";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import { type ChapterWithDetails } from "@zoonk/core/chapters/get-by-slug";
@@ -41,7 +41,7 @@ export function ChapterHeader({
         <MediaCardBreadcrumb className="hidden sm:block">
           <Link
             className="hover:text-foreground block truncate transition-colors"
-            href={getOriginalCourseHref({ brandSlug, courseSlug })}
+            href={getCourseHref({ brandSlug, courseSlug })}
             prefetch
           >
             {chapter.course.title}

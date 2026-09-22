@@ -3,16 +3,15 @@ import {
   CatalogGridSkeleton,
   CatalogSidebarSkeleton,
 } from "@/components/catalog/catalog-skeletons";
-import { redirect } from "@/i18n/navigation";
 import { getCourseEdition } from "@zoonk/core/courses/editions";
 import { getCourse } from "@zoonk/core/courses/get-by-slug";
 import { Grid } from "@zoonk/ui/components/grid";
 import { getContentLocale } from "@zoonk/utils/locale";
 import { notFound } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
+import { CourseAppLanguageNotice } from "./course-app-language-notice";
 import { CourseChapterGrid } from "./course-chapter-grid";
 import { CourseEditionNotice } from "./course-edition-notice";
-import { CourseHeader } from "./course-header";
 import { CourseSidebar } from "./course-sidebar";
 
 function CourseCatalog({
@@ -40,13 +39,12 @@ function CourseCatalog({
 }
 
 /**
- * Keep exact lesson/course choices stable while adapting discovery to the UI
- * locale. Ordinary visits can reuse known editions but never start generation.
+ * Keep the selected course visible and offer other editions without switching
+ * the learner's course or starting generation on an ordinary visit.
  */
 export async function CourseContent({
   params,
-  searchParams,
-}: PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">) {
+}: Pick<PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">, "params">) {
   const { brandSlug, courseSlug, lang: locale } = await params;
   const course = await getCourse({ brandSlug, courseSlug });
 
@@ -58,22 +56,24 @@ export async function CourseContent({
     return <CourseCatalog params={params} />;
   }
 
-  const [edition, query] = await Promise.all([
-    getCourseEdition({ courseId: course.id, language: locale }),
-    searchParams,
-  ]);
+  const edition = await getCourseEdition({ courseId: course.id, language: locale });
 
   if (edition.kind === "notFound") {
     notFound();
   }
 
-  if (query.edition === "original") {
-    return (
+  return (
+    <>
+      <CourseAppLanguageNotice
+        brandSlug={brandSlug}
+        courseSlug={courseSlug}
+        language={course.language}
+        locale={locale}
+      />
       <CourseCatalog
         notice={
           <CourseEditionNotice
             brandSlug={brandSlug}
-            compact
             course={course}
             edition={edition}
             targetLocale={locale}
@@ -81,24 +81,7 @@ export async function CourseContent({
         }
         params={params}
       />
-    );
-  }
-
-  if (edition.kind === "course") {
-    return redirect({ href: `/b/${brandSlug}/c/${edition.course.slug}`, locale });
-  }
-
-  return (
-    <CatalogDetailLayout
-      sidebar={<CourseHeader brandSlug={brandSlug} course={course} variant="sidebar" />}
-    >
-      <CourseEditionNotice
-        brandSlug={brandSlug}
-        course={course}
-        edition={edition}
-        targetLocale={locale}
-      />
-    </CatalogDetailLayout>
+    </>
   );
 }
 

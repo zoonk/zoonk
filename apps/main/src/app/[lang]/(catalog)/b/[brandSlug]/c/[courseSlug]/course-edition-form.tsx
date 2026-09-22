@@ -47,14 +47,12 @@ function CourseEditionSubmitLabel({
 
 export function CourseEditionForm({
   brandSlug,
-  compact,
   courseId,
   courseSlug,
   failed,
   targetLocale,
 }: {
   brandSlug: string;
-  compact: boolean;
   courseId: string;
   courseSlug: string;
   failed: boolean;
@@ -91,7 +89,7 @@ export function CourseEditionForm({
         className="h-auto min-h-11 w-full whitespace-normal"
         disabled={pending}
         type="submit"
-        variant={compact ? "outline" : "default"}
+        variant="outline"
       >
         {pending && <Spinner />}
         <CourseEditionSubmitLabel

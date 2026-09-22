@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -594,6 +596,62 @@ async function createDerivedListeningLesson() {
 }
 
 test.describe("Lesson Player Page", () => {
+  for (const browserLocale of ["fr-FR", "en-US"]) {
+    test(`keeps the lesson UI in French after signing up with browser locale ${browserLocale}`, async ({
+      browser,
+    }) => {
+      const baseURL = getBaseURL();
+      const { course, chapter, lesson } = await createTestLesson({ stepCount: 2 });
+      const lessonPath = `/fr/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
+      const context = await browser.newContext({ baseURL, locale: browserLocale });
+      const page = await context.newPage();
+
+      try {
+        // Central auth runs on a separate host. Keep its real callback URL and
+        // redeem a real sign-up token through Main's callback in the same browser.
+        await page.route("**/auth/login**", (route) =>
+          route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 }),
+        );
+
+        if (browserLocale === "en-US") {
+          await setLocale(page, "fr");
+        }
+
+        await page.goto(lessonPath);
+        const authRequest = page.waitForRequest("**/auth/login**");
+
+        await page
+          .getByRole("link", { name: "Connecte-toi pour sauvegarder ta progression" })
+          .click();
+
+        const request = await authRequest;
+        const authUrl = new URL(request.url());
+        const callbackUrl = authUrl.searchParams.get("redirectTo");
+        expect(callbackUrl).not.toBeNull();
+        expect(new URL(callbackUrl!).searchParams.get("next")).toBe(lessonPath.slice(3));
+
+        const user = await createE2EUser(baseURL);
+        const token = await generateOneTimeToken(baseURL, user);
+        const returnUrl = new URL(callbackUrl!);
+        returnUrl.searchParams.set("token", token);
+
+        await page.goto(returnUrl.toString());
+
+        await expect(page).toHaveURL(`${baseURL}${lessonPath}`);
+
+        await expect(
+          page.getByRole("button", { exact: true, name: "Étape suivante" }),
+        ).toBeVisible();
+
+        await expect(
+          page.getByRole("link", { name: "Connecte-toi pour sauvegarder ta progression" }),
+        ).toHaveCount(0);
+      } finally {
+        await context.close();
+      }
+    });
+  }
+
   test("unauthenticated users can play every lesson in the first chapter", async ({ page }) => {
     const { chapter, course, lesson, uniqueId } = await createTestLesson({
       generationStatus: "completed",

@@ -12,13 +12,13 @@ export function getAiCourseHref(course: Pick<Course, "slug">): AiCourseHref {
   return `/b/${AI_ORG_SLUG}/c/${course.slug}`;
 }
 
-/** Learning history and parent navigation must keep the selected course edition. */
-export function getOriginalCourseHref({
+/** Course links identify the selected edition independently of the UI locale. */
+export function getCourseHref({
   brandSlug,
   courseSlug,
 }: {
   brandSlug: string;
   courseSlug: string;
 }) {
-  return `/b/${brandSlug}/c/${courseSlug}?edition=original` as const;
+  return `/b/${brandSlug}/c/${courseSlug}` as const;
 }

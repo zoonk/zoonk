@@ -430,6 +430,26 @@ msgctxt "vcaAXp"
 msgid "{completed, number}/{total, number} done"
 msgstr "{completed, number}/{total, number} completadas"
 
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
+msgctxt "y0ef9b"
+msgid "App language"
+msgstr "Idioma de la app"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
+msgctxt "Bjt5wo"
+msgid "Zoonk is also available in {language}."
+msgstr "Zoonk también está disponible en {language}."
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
+msgctxt "V9gbvB"
+msgid "Use Zoonk in {language}"
+msgstr "Usar Zoonk en {language}"
+
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
+msgctxt "BjO5K8"
+msgid "Dismiss language suggestion"
+msgstr "Descartar sugerencia de idioma"
+
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-curriculum-pending-notice.tsx
 msgctxt "Pf4uqS"
 msgid "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
@@ -494,11 +514,6 @@ msgid "Switching languages opens a separate course. Your progress stays here."
 msgstr "Al cambiar de idioma, se abre otro curso. Tu progreso se queda aquí."
 
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "ALdIan"
-msgid "This course is taught in {sourceLanguage}. We'll find it in {language} or create it for you."
-msgstr "Este curso se imparte en {sourceLanguage}. Lo buscaremos en {language} o lo crearemos para ti."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
 msgctxt "KYeXR4"
 msgid "Course language"
 msgstr "Idioma del curso"
@@ -507,11 +522,6 @@ msgstr "Idioma del curso"
 msgctxt "c5dUwC"
 msgid "This course is in {language}"
 msgstr "Este curso está en {language}"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "QN-YqC"
-msgid "Continue in {language}"
-msgstr "Continuar en {language}"
 
 #: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
 msgctxt "KjYOfT"

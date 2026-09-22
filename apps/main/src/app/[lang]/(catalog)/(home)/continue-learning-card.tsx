@@ -1,4 +1,4 @@
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 import { Link } from "@/i18n/navigation";
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import { type ContinueLearningItem } from "@zoonk/core/courses/list-current-user-continue-learning";
@@ -41,7 +41,7 @@ function getHrefs(item: ContinueLearningItem) {
     return { chapterHref: href, courseHref: href, headerHref: href, prefetch: true };
   }
 
-  const courseHref = getOriginalCourseHref({
+  const courseHref = getCourseHref({
     brandSlug: course.organization.slug,
     courseSlug: course.slug,
   });

@@ -65,13 +65,25 @@ async function connectKnownPrompt({
 }
 
 test.describe("Course language editions", () => {
-  test("links an existing local edition on demand and opens its own localized slug", async ({
+  test("keeps the selected course until the learner opens an existing local edition", async ({
     page,
   }) => {
     const [source, target] = await Promise.all([createCourse(), createCourse({ language: "en" })]);
     await connectKnownPrompt({ source, target });
 
     await page.goto(source.href);
+
+    await expect(page).toHaveURL(source.href);
+    await expect(page.getByRole("heading", { level: 1, name: source.course.title })).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(source.chapter.title, "u") }),
+    ).toBeVisible();
+
+    await page
+      .getByRole("region", { name: "Course language" })
+      .getByRole("link", { name: "Learn in English" })
+      .click();
 
     await expect(page).toHaveURL(target.href);
     await expect(page.getByRole("heading", { level: 1, name: target.course.title })).toBeVisible();
@@ -87,7 +99,7 @@ test.describe("Course language editions", () => {
     }).toPass();
   });
 
-  test("offers a local course without generating on visit and keeps an explicit original choice", async ({
+  test("shows the selected curriculum and offers another language without generating on visit", async ({
     page,
   }) => {
     const source = await createCourse();
@@ -99,7 +111,7 @@ test.describe("Course language editions", () => {
 
     await expect(
       page.getByRole("link", { name: new RegExp(source.chapter.title, "u") }),
-    ).toHaveCount(0);
+    ).toBeVisible();
 
     await expect(
       prisma.courseEditionRequest.count({ where: { sourceCourseId: source.course.id } }),
@@ -118,13 +130,7 @@ test.describe("Course language editions", () => {
       getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
     ).resolves.toHaveLength(0);
 
-    await languageChoice.getByRole("link", { name: "Continue in Portuguese" }).click();
-
-    await expect(page).toHaveURL(`${source.href}?edition=original`);
-
-    await expect(
-      page.getByRole("link", { name: new RegExp(source.chapter.title, "u") }),
-    ).toBeVisible();
+    await expect(page).toHaveURL(source.href);
 
     await expect(
       languageChoice.getByRole("heading", { name: "This course is in Portuguese" }),
@@ -264,7 +270,7 @@ test.describe("Course language editions", () => {
       .getByRole("link", { name: new RegExp(source.course.title, "u") })
       .click();
 
-    await expect(userWithoutProgress).toHaveURL(`${source.href}?edition=original`);
+    await expect(userWithoutProgress).toHaveURL(source.href);
 
     await expect(
       userWithoutProgress.getByRole("heading", { level: 1, name: source.course.title }),
@@ -277,7 +283,7 @@ test.describe("Course language editions", () => {
     await expect(userWithoutProgress).toHaveURL(`${source.href}/ch/${source.chapter.slug}`);
     await userWithoutProgress.getByRole("link", { exact: true, name: source.course.title }).click();
 
-    await expect(userWithoutProgress).toHaveURL(`${source.href}?edition=original`);
+    await expect(userWithoutProgress).toHaveURL(source.href);
 
     await userWithoutProgress
       .getByRole("region", { name: "Course language" })
@@ -302,8 +308,7 @@ test.describe("Course language editions", () => {
     );
 
     await expect(languageChoice.getByRole("button", { name: "Learn in English" })).toHaveCount(0);
-    await languageChoice.getByRole("link", { name: "Continue in Portuguese" }).click();
-    await expect(page).toHaveURL(`${source.href}?edition=original`);
+    await expect(page).toHaveURL(source.href);
 
     await expect(
       page.getByRole("link", { name: new RegExp(source.chapter.title, "u") }),
@@ -360,7 +365,7 @@ test.describe("Course language editions", () => {
       page: userWithoutProgress,
     });
 
-    await userWithoutProgress.goto(`/pt${source.href}?edition=original`);
+    await userWithoutProgress.goto(`/pt${source.href}`);
     await expect(userWithoutProgress).toHaveURL(`/pt/generate/course/${prompt.id}`);
 
     await expect
@@ -440,9 +445,7 @@ test.describe("Course language editions", () => {
 
     await userWithoutProgress.goto(`/pt/generate/course/${prompt.id}`);
 
-    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}?edition=original`, {
-      timeout: 20_000,
-    });
+    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}`, { timeout: 20_000 });
 
     await expect(
       userWithoutProgress.getByRole("heading", { level: 1, name: target.course.title }),
@@ -567,9 +570,7 @@ test.describe("Course language editions", () => {
 
     releaseRetryStream.resolve(null);
 
-    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}?edition=original`, {
-      timeout: 20_000,
-    });
+    await expect(userWithoutProgress).toHaveURL(`/pt${target.href}`, { timeout: 20_000 });
 
     await expect(
       userWithoutProgress.getByRole("heading", { level: 1, name: target.course.title }),
@@ -581,10 +582,99 @@ test.describe("Course language editions", () => {
   });
 });
 
+test.describe("App language suggestions", () => {
+  test("switches to the instructional language while keeping the selected course", async ({
+    page,
+  }) => {
+    const source = await createCourse({
+      format: "language",
+      language: "pt-BR",
+      targetLanguage: "es",
+    });
+
+    await page.goto(source.href);
+
+    const notice = page.getByRole("region", { name: "App language" });
+    await expect(notice).toBeVisible();
+    await notice.getByRole("link", { name: /Zoonk.*português/u }).click();
+
+    await expect(page).toHaveURL(`/pt${source.href}`);
+    await expect(page.getByRole("heading", { level: 1, name: source.course.title })).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(source.chapter.title, "u") }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: /Zoonk.*português/u })).toHaveCount(0);
+    const cookies = await page.context().cookies();
+    expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("pt");
+
+    await page.goto("/courses");
+    await expect(page).toHaveURL("/pt/courses");
+  });
+
+  test("remembers dismissal across courses and reloads for only the suggested language", async ({
+    page,
+  }) => {
+    const [first, second, french] = await Promise.all([
+      createCourse(),
+      createCourse(),
+      createCourse({ language: "fr" }),
+    ]);
+
+    await page.goto(first.href);
+    const notice = page.getByRole("region", { name: "App language" });
+    await notice.getByRole("button", { name: "Dismiss language suggestion" }).click();
+    await expect(notice).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "Course language" })).toBeVisible();
+
+    await page.reload();
+    await expect(page.getByRole("heading", { level: 1, name: first.course.title })).toBeVisible();
+    await expect(notice).toHaveCount(0);
+
+    await page.goto(second.href);
+    await expect(page.getByRole("heading", { level: 1, name: second.course.title })).toBeVisible();
+    await expect(notice).toHaveCount(0);
+
+    await page.goto(french.href);
+    await expect(notice.getByRole("link", { name: /Zoonk.*français/u })).toBeVisible();
+  });
+
+  test("switches to English without keeping a default-language prefix", async ({ page }) => {
+    const source = await createCourse({ language: "en" });
+    await page.goto(`/pt${source.href}`);
+    await page.getByRole("link", { name: "Use Zoonk in English" }).click();
+
+    await expect(page).toHaveURL(source.href);
+    await expect(page.getByRole("heading", { level: 1, name: source.course.title })).toBeVisible();
+    await expect(page.getByRole("region", { name: "App language" })).toHaveCount(0);
+    const cookies = await page.context().cookies();
+    expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("en");
+
+    await page.goto("/courses");
+    await expect(page).toHaveURL("/courses");
+  });
+
+  for (const language of ["en", "it"]) {
+    test(`does not suggest an app language for a ${language} course in the English UI`, async ({
+      page,
+    }) => {
+      const source = await createCourse({ language });
+      await page.goto(source.href);
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: source.course.title }),
+      ).toBeVisible();
+
+      await expect(page.getByRole("region", { name: "App language" })).toHaveCount(0);
+    });
+  }
+});
+
 test.describe("Browser language preferences for course editions", () => {
   test.use({ locale: "de-DE" });
 
-  test("omits browser-language suggestions when the UI and course languages match", async ({
+  test("uses the browser language and offers an edition without switching the selected course", async ({
     page,
   }) => {
     const [source, target] = await Promise.all([
@@ -601,14 +691,14 @@ test.describe("Browser language preferences for course editions", () => {
 
     await page.goto(source.href);
 
-    await expect(page).toHaveURL(source.href);
+    await expect(page).toHaveURL(`/de${source.href}`);
     await expect(page.getByRole("heading", { level: 1, name: source.course.title })).toBeVisible();
 
     await expect(
       page.getByRole("link", { name: new RegExp(source.chapter.title, "u") }),
     ).toBeVisible();
 
-    await expect(page.getByRole("region", { name: "Course language" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Auf Deutsch lernen" })).toBeVisible();
 
     await expect(
       getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),

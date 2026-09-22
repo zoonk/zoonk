@@ -1,4 +1,4 @@
-import { getOriginalCourseHref } from "@/data/courses/course-href";
+import { getCourseHref } from "@/data/courses/course-href";
 
 export type MobileChapterNavTarget = { courseHref: `/b/${string}/c/${string}` };
 
@@ -18,9 +18,6 @@ export function getMobileChapterNavTarget(pathname: string): MobileChapterNavTar
   }
 
   return {
-    courseHref: getOriginalCourseHref({
-      brandSlug: groups.brandSlug,
-      courseSlug: groups.courseSlug,
-    }),
+    courseHref: getCourseHref({ brandSlug: groups.brandSlug, courseSlug: groups.courseSlug }),
   };
 }

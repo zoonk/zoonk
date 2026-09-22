@@ -329,18 +329,19 @@ test.describe("Generate Course Page", () => {
         page: authenticatedPage,
       });
 
-      const prefix = language === "en" ? "" : `/${language}`;
-      const courseHref = `${prefix}/b/ai/c/${course.slug}?edition=original`;
+      const requestedPrefix = language === "en" ? "" : `/${language}`;
+      const locale = language === "en" ? "de" : language;
+      const courseHref = `/${locale}/b/ai/c/${course.slug}`;
       await setLocale(authenticatedPage, "de");
 
       // Visiting the empty course first warms the exact cache entries that
       // completion must expire before returning to the selected edition.
-      await authenticatedPage.goto(courseHref);
-      await expect(authenticatedPage).toHaveURL(`${prefix}/generate/course/${prompt.id}`);
+      await authenticatedPage.goto(`${requestedPrefix}/b/ai/c/${course.slug}`);
+      await expect(authenticatedPage).toHaveURL(`/${locale}/generate/course/${prompt.id}`);
       await expect(authenticatedPage.getByRole("progressbar")).toBeVisible();
 
       await expect(authenticatedPage.evaluate(() => document.documentElement.lang)).resolves.toBe(
-        language,
+        locale,
       );
 
       const chapter = await chapterFixture({
@@ -369,23 +370,23 @@ test.describe("Generate Course Page", () => {
     });
   }
 
-  test("keeps an English edition action in English despite a saved German preference", async ({
+  test("uses the saved language when requesting an edition from an unprefixed course", async ({
     authenticatedPage,
   }) => {
     const { course } = await createPublishedCourseWithLesson({
       language: "pt",
-      slug: `english-edition-action-${randomUUID()}-pt`,
+      slug: `german-edition-action-${randomUUID()}-pt`,
       title: `Portuguese course ${randomUUID()}`,
     });
 
     const prompt = await coursePromptFixture({
-      canonicalTitle: `English edition ${randomUUID()}`,
+      canonicalTitle: `German edition ${randomUUID()}`,
       generationStatus: "pending",
-      language: "en",
+      language: "de",
     });
 
     await prisma.courseEditionRequest.create({
-      data: { coursePromptId: prompt.id, language: "en", sourceCourseId: course.id },
+      data: { coursePromptId: prompt.id, language: "de", sourceCourseId: course.id },
     });
 
     await setupMockApis(authenticatedPage, {
@@ -394,27 +395,25 @@ test.describe("Generate Course Page", () => {
 
     await setLocale(authenticatedPage, "de");
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
-    await authenticatedPage.getByRole("button", { name: "Learn in English" }).click();
+    await authenticatedPage.getByRole("button", { name: "Auf Deutsch lernen" }).click();
 
-    await expect(authenticatedPage).toHaveURL(`/generate/course/${prompt.id}`);
+    await expect(authenticatedPage).toHaveURL(`/de/generate/course/${prompt.id}`);
 
     await expect(
-      authenticatedPage.getByRole("heading", {
-        name: `Creating the ${prompt.canonicalTitle} course`,
-      }),
+      authenticatedPage.getByRole("heading", { name: `Kurs ${prompt.canonicalTitle} erstellen` }),
     ).toBeVisible();
 
     await expect(authenticatedPage.evaluate(() => document.documentElement.lang)).resolves.toBe(
-      "en",
+      "de",
     );
   });
 
-  test("keeps English edition sign-in in English despite a saved German preference", async ({
+  test("preserves the saved language when an edition request requires sign-in", async ({
     page,
   }) => {
     const { course } = await createPublishedCourseWithLesson({
       language: "pt",
-      slug: `english-edition-login-${randomUUID()}-pt`,
+      slug: `german-edition-login-${randomUUID()}-pt`,
       title: `Portuguese course ${randomUUID()}`,
     });
 
@@ -428,14 +427,14 @@ test.describe("Generate Course Page", () => {
 
     await setLocale(page, "de");
     await page.goto(courseHref);
-    await page.getByRole("button", { name: "Learn in English" }).click();
+    await page.getByRole("button", { name: "Auf Deutsch lernen" }).click();
     await expect.poll(() => authUrls.length).toBe(1);
 
     const authUrl = authUrls.at(0);
-    expect(authUrl?.searchParams.get("locale")).toBe("en");
+    expect(authUrl?.searchParams.get("locale")).toBe("de");
 
     const callbackUrl = new URL(authUrl?.searchParams.get("redirectTo") ?? "");
-    expect(callbackUrl.searchParams.get("next")).toBe(courseHref);
+    expect(callbackUrl.searchParams.get("next")).toBe(`/de${courseHref}`);
   });
 
   test("lets guests follow an existing run without starting generation", async ({ page }) => {
@@ -491,7 +490,7 @@ test.describe("Generate Course Page", () => {
     await page.goto(`/generate/course/${prompt.id}`);
     await expect(page.getByRole("progressbar")).toBeVisible();
 
-    await expect(page).toHaveURL(`/b/ai/c/${course.slug}?edition=original`, { timeout: 15_000 });
+    await expect(page).toHaveURL(`/b/ai/c/${course.slug}`, { timeout: 15_000 });
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
 
     await expect(
@@ -800,9 +799,7 @@ test.describe("Generate Course Page", () => {
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}?edition=original`, {
-        timeout: 10_000,
-      });
+      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}`, { timeout: 10_000 });
     });
 
     test("shows completion state and redirects to the first intro lesson", async ({
@@ -918,9 +915,7 @@ test.describe("Generate Course Page", () => {
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}?edition=original`, {
-        timeout: 10_000,
-      });
+      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}`, { timeout: 10_000 });
     });
 
     test("redirects to suffixed slug intro lesson for non-English courses", async ({
@@ -1022,9 +1017,7 @@ test.describe("Generate Course Page", () => {
 
       await expect(authenticatedPage.getByRole("button", { name: "Try again" })).toHaveCount(0);
 
-      await expect(authenticatedPage).toHaveURL(`/b/ai/c/${course.slug}?edition=original`, {
-        timeout: 15_000,
-      });
+      await expect(authenticatedPage).toHaveURL(`/b/ai/c/${course.slug}`, { timeout: 15_000 });
 
       await expect(
         authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
@@ -1152,9 +1145,7 @@ test.describe("Generate Course Page", () => {
       await retryStarted.promise;
       releaseOldStatus.resolve(null);
 
-      await expect(authenticatedPage).toHaveURL(`/b/ai/c/${course.slug}?edition=original`, {
-        timeout: 15_000,
-      });
+      await expect(authenticatedPage).toHaveURL(`/b/ai/c/${course.slug}`, { timeout: 15_000 });
 
       await expect(
         authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
