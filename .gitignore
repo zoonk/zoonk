@@ -73,8 +73,10 @@ debug.log
 .claude/agent-memory
 .claude/plans
 
-# Tasks for AI agents
+# Temporary tasks for AI agents
 /tasks/
+/refactor/
+/tmp/
 
 # next-agents-md
 .next-docs/
