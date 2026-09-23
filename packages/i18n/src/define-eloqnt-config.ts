@@ -39,7 +39,7 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
       sourceLocale: "en",
       ...options.messages,
     },
-    model: codexCli("gpt-5.6-sol", { codexPath: getCodexPath() }),
+    model: codexCli("gpt-6-luna", { codexPath: getCodexPath() }),
     srcPath: getSrcPath(options.srcPath),
     styleguides: fileURLToPath(new URL("../.eloqnt", import.meta.url)),
   });
