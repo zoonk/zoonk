@@ -23,7 +23,7 @@ describe(claimLessonQuestionAnswer, () => {
     vi.mocked(claimGenerationQuotaIfNeeded).mockRejectedValueOnce(quotaFailure);
 
     await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-5.6-luna" }),
+      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-6-luna" }),
     ).rejects.toBe(quotaFailure);
 
     await expect(

@@ -6,12 +6,7 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-canonical-title.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite";
-
-const fallbackModels = [
-  "openai/gpt-5.6-luna",
-  "google/gemini-3.8-flash",
-  "openai/gpt-5.6-terra",
-] as const;
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;
 
 const schema = z.object({ title: z.string() });
 

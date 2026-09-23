@@ -3,7 +3,7 @@ import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options
 import { generateText, streamText } from "ai";
 import systemPrompt from "./lesson-question.prompt.md";
 
-export const LESSON_QUESTION_MODEL = "openai/gpt-5.6-luna";
+export const LESSON_QUESTION_MODEL = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
 const configuredModels = [LESSON_QUESTION_MODEL, ...fallbackModels];
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";

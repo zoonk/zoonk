@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-pronunciation.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-luna";
+const defaultModel = "openai/gpt-6-luna";
 
 const fallbackModels = [
   "google/gemini-3-flash",

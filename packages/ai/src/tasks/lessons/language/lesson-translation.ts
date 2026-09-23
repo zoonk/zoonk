@@ -8,7 +8,7 @@ import systemPrompt from "./lesson-translation.prompt.md";
 const defaultModel = "google/gemini-3.1-flash-lite";
 
 const fallbackModels = [
-  "openai/gpt-5.6-luna",
+  "openai/gpt-6-luna",
   "deepseek/deepseek-v4-flash",
   "anthropic/claude-haiku-4.5",
 ] as const;

@@ -5,7 +5,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-introduction.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-luna";
+const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const INTRODUCTION_LESSON_MIN_COUNT = 3;

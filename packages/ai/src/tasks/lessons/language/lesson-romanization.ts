@@ -8,7 +8,7 @@ import systemPrompt from "./lesson-romanization.prompt.md";
 const defaultModel = "google/gemini-3.1-flash-lite";
 
 const fallbackModels = [
-  "openai/gpt-5.6-terra",
+  "openai/gpt-6-luna",
   "google/gemini-3.5-flash",
   "anthropic/claude-opus-5.5",
 ] as const;
