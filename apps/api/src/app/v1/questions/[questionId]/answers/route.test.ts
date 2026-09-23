@@ -68,11 +68,7 @@ function createTestGeneration(
   doStream: MockLanguageModelV4["doStream"] = successfulProviderStream,
 ) {
   return streamText({
-    model: new MockLanguageModelV4({
-      doStream,
-      modelId: "openai/gpt-5.6-luna",
-      provider: "gateway",
-    }),
+    model: new MockLanguageModelV4({ doStream, modelId: "openai/gpt-6-luna", provider: "gateway" }),
     onError: vi.fn(),
     prompt: "Test lesson question",
   });

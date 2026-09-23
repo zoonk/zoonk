@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import searchPrompt from "./course-identity-search.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-luna";
+const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["anthropic/claude-sonnet-5"] as const;
 
 const searchSchema = z.object({ queries: z.array(z.string()) });
