@@ -575,14 +575,14 @@ async function installStreamingAnswerResponse({
         streamedAnswerCount += 1;
         const encoder = new TextEncoder();
 
+        function encodeEvent(event: object) {
+          return encoder.encode(`data: ${JSON.stringify(event)}\n\n`);
+        }
+
         return Promise.resolve(
           new Response(
             new ReadableStream({
               start(controller) {
-                function encodeEvent(event: object) {
-                  return encoder.encode(`data: ${JSON.stringify(event)}\n\n`);
-                }
-
                 controller.enqueue(encodeEvent({ type: "start" }));
                 controller.enqueue(encodeEvent({ id: "answer", type: "text-start" }));
 
