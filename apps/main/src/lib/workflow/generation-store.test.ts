@@ -17,6 +17,15 @@ function applyActions(actions: GenerationAction[], initial: GenerationState) {
   return actions.reduce((state, action) => generationReducer(state, action), initial);
 }
 
+function applyMessage(
+  message: StepStreamMessage,
+  initial?: Parameters<typeof initialGenerationState>[0],
+) {
+  const actions: GenerationAction[] = [];
+  handleStepStreamMessage({ dispatch: (a) => actions.push(a), message });
+  return applyActions(actions, initialGenerationState(initial));
+}
+
 describe(isGenerationInProgress, () => {
   it("keeps auto-triggered generation visible before and during the workflow connection", () => {
     expect(isGenerationInProgress("idle")).toBe(true);
@@ -205,15 +214,6 @@ describe(generationReducer, () => {
 });
 
 describe(handleStepStreamMessage, () => {
-  function applyMessage(
-    message: StepStreamMessage,
-    initial?: Parameters<typeof initialGenerationState>[0],
-  ) {
-    const actions: GenerationAction[] = [];
-    handleStepStreamMessage({ dispatch: (a) => actions.push(a), message });
-    return applyActions(actions, initialGenerationState(initial));
-  }
-
   it("routes 'started' to stepStarted", () => {
     const state = applyMessage({ status: "started", step: "stepA" });
     expect(state.currentStep).toBe("stepA");

@@ -68,7 +68,7 @@ jobs:
             ${{ runner.os }}-nextjs-main-
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2
+        uses: pnpm/setup@v3
         with:
           runtime: node@24
           cache: true

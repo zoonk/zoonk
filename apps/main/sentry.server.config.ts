@@ -9,7 +9,6 @@ if (process.env.NODE_ENV === "production") {
   init({
     dataCollection: getSentryDataCollection(),
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-    enableLogs: true,
     tracesSampleRate: 0.1,
   });
 }

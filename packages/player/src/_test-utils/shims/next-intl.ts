@@ -128,13 +128,14 @@ function formatRichExtractedMessage({
     .map((part, index) => renderRichMessagePart({ index, part, values }));
 }
 
+function translate(value: string, values?: Record<string, MessageValue>) {
+  return formatExtractedMessage({ value, values });
+}
+
+translate.rich = (value: string, values: Record<string, RichMessageValue>) =>
+  formatRichExtractedMessage({ value, values });
+
 export function useExtracted() {
-  const translate = (value: string, values?: Record<string, MessageValue>) =>
-    formatExtractedMessage({ value, values });
-
-  translate.rich = (value: string, values: Record<string, RichMessageValue>) =>
-    formatRichExtractedMessage({ value, values });
-
   return translate;
 }
 

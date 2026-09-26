@@ -31,6 +31,8 @@ export function createBaseConfig(options: {
         STRIPE_SECRET_KEY: "sk_test_fake",
         ...options.webServerEnv,
       },
+      // Let pnpm forward shutdown to the server in its separate process group.
+      gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
       timeout: 120_000,
       // Capture port from Next.js stdout: "- Local: http://localhost:12345"
       wait: { stdout: /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/u },
