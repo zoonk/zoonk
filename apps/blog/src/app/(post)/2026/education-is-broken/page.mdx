@@ -2,7 +2,7 @@ import { PostMeta } from "@/components/post-meta";
 
 export const metadata = {
   description:
-    "Why education feels fundamentally broken, why AI alone won't fix it, and what needs to be done to help schools, teachers, and students to build a better education system.",
+    "Schools reward passing exams, not learning. Why AI won't change that on its own, and what might.",
   title: "Education Is Broken. AI Won't Fix It Alone",
 };
 
@@ -12,401 +12,70 @@ export const metadata = {
 
 ![Split illustration contrasting a dark, test-driven classroom with a bright project-based learning space, separated by a large mechanical barrier symbolizing the education system.](/blog/2026/education-is-broken/cover.webp)
 
-“It does feel like education is fundamentally broken,” said [Burke Holland](https://x.com/burkeholland/status/2074693889957487082?s=20) in response to a discussion where [Sam Altman talked about his disappointment](https://x.com/Hesamation/status/2073884828861071557) with how little education has changed since the rise of AI.
+"It does feel like education is fundamentally broken," [Burke Holland wrote](https://x.com/burkeholland/status/2074693889957487082?s=20) after [Sam Altman said he was disappointed](https://x.com/Hesamation/status/2073884828861071557) by how little education has changed since AI took off.
 
-I think Burke is right.
-I also think Sam is right.
+They're both right. Education is broken, and it'll get worse if schools keep teaching and grading as if AI doesn't exist. Students will outsource more of their thinking, and teachers will spend their time policing cheating instead of teaching.
 
-Education is broken. And if we keep teaching and evaluating students as if AI does not exist, the system will probably get worse. Students will outsource more of their thinking. Schools will keep assigning work that no longer makes sense. Teachers will be forced to police cheating instead of designing better learning experiences. Everyone will pretend the old system still works because the alternative is too hard to implement.
+But I think Sam was too optimistic about how quickly schools would change. Most of what's broken in education has little to do with technology, so AI alone won't fix it.
 
-But I also think Sam was too optimistic about how quickly the system would redesign itself.
+## Schools reward passing
 
-AI alone will not fix education.
+In theory, the education system exists to help people learn. In practice, it rewards passing, whether it's a class, the SAT, or the bar exam. In Brazil, where I live, the big ones are ENEM (our national university entrance exam) and _concursos_ (exams for government jobs).
 
-Not because AI is useless. It is not. AI may become one of the most important technologies ever introduced into learning.
+Once a test matters enough, everything bends around it. Governments judge schools by their scores, schools advertise their results, and parents pay for test prep. Students figure this out early, and their main question becomes "Will this be on the test?"
 
-But education is not primarily a technology problem. It is an institutional problem. It is an incentives problem. It is a policy problem. It is a procurement problem. It is a trust problem. It is a risk problem. It is a human problem.
+They memorize physics formulas, pass the exam, and forget most of it a month later. They got the grade, but they can't use physics to think through a real problem. I was one of those students. I had good grades and never felt like I was learning anything.
 
-And this is the part many people in tech underestimate.
+From the outside, it's easy to say "just let people learn with AI" or "just build a better learning app." But most kids don't teach themselves. They go to school, where grades and exams decide what counts. If you want to fix learning, you have to deal with schools too.
 
-## Education Is Not the Same as Learning
+## Everyone is stuck
 
-Before talking about schools, it helps to separate two things: education and learning.
+People in tech often blame the people inside schools, as if teachers and principals were incompetent or resistant to change. I don't think that's true. Most teachers know the system is broken. So do many principals, parents, and students.
 
-Learning is what we actually care about. It is the process of understanding the world, developing skills, solving problems, changing how you think, and becoming more capable.
+Knowing isn't the same as being able to change it. A teacher can't redesign education from one classroom. A principal has a fixed budget, regulations, and parents to answer to. Parents want their kids to learn, but they also want them to get into a good university, and that depends on exams.
 
-Education is the system we built around learning.
+So everyone does the rational thing and focuses on the test, even when they know it isn't what matters.
 
-That system includes schools, universities, exams, grades, credentials, regulation, ministries, administrators, teachers, parents, textbooks, curriculum standards, funding rules, procurement processes, and political incentives.
+## Why EdTech doesn't fix it
 
-In theory, education exists to produce learning.
+Many EdTech startups say they want to change education, but the money is in helping people succeed inside the current system: exam prep for students, compliance tools for schools, and apps that generate quizzes and lesson plans for teachers.
 
-In practice, the system often optimizes for everything around learning: grades, test scores, attendance, compliance, credentials, rankings, and institutional safety.
+Those products can be useful, and some are great businesses. They just make the current system more efficient without changing what it rewards.
 
-That distinction matters because a lot of people in tech talk about fixing learning while ignoring the education system where most learning is supposed to happen.
+Y Combinator tells founders to "make something people want." In education, that's exactly why nothing changes. People want to pass the next exam. What they need is to actually learn, and it's much harder to build a business around that.
 
-It is easy to say “just let people learn with AI” or “just build a better learning app” if you are looking at education from the outside.
+Tech also tends to treat schools like any other market: build a better product, make it cheaper, add AI, grow fast. But if a productivity app fails, you switch apps. If an education experiment fails, a kid can lose a year of preparation for an exam that shapes their future. It makes sense that parents and schools are careful.
 
-But most children do not grow up inside a Silicon Valley ideal of self-directed agency. They go to school. They have teachers. They have parents. They have exams. They have grades. They have admission processes. They live inside institutions.
+A better way to learn isn't enough. It also has to work for a teacher with 35 students, a required curriculum, exam pressure, and no extra budget.
 
-So fixing learning matters, but fixing schools matters too.
+## Zoonk isn't immune
 
-You cannot ignore the system and expect the system to change.
+I've been making learning tools for years, and now I'm building Zoonk, so I'm not saying any of this from the outside.
 
-## How the School System Actually Works
+My long-term vision looks more like a game than test prep. Something like an RPG, or No Man's Sky for learning, where you learn physics because you're building something, history because you're trying to understand a conflict, and math because the world gives you constraints you have to reason through.
 
-At a basic level, the school system looks simple.
+When I talk to users, though, they rarely ask for that. They ask for help passing ENEM, a _concurso_, or a professional exam. If you have an exam in three months, you don't care about my philosophy of education.
 
-Children start school at a young age and spend most of their childhood there. Governments define what students are expected to learn. Schools are expected to follow curriculum requirements. Teachers are hired to teach that curriculum. Students are evaluated through assignments, grades, exams, and standardized tests.
+They're not wrong. I've had to step back from my original vision and build more of what people want now, so I can build what I think they need later.
 
-But the real system is much messier.
+## Why AI alone won't fix it
 
-Governments want measurable outcomes. School managers have limited budgets and a long list of obligations. Teachers have too much work, too little time, and very little room to experiment. Parents want their children to succeed inside the system that exists. Students quickly learn that what matters most is not curiosity, but performance.
+AI can be a great tutor. It can explain things at any level and help students build projects that used to be out of reach. But it amplifies whatever the system already rewards. When the assignment is an essay for a grade, students use AI to write the essay. When schools are judged by test scores, they use AI to raise test scores.
 
-Everyone says they care about learning.
+Eventually, I think AI will force schools to change. If AI can do a traditional assignment in seconds, that assignment stops meaning anything.
 
-But the system rewards something else.
+It just won't happen in one or two years, like Sam thought. It may take decades. Education is tied to childhood, families, public policy, and people's chances in life, which makes it one of the hardest systems in the world to change.
 
-It rewards passing.
+## What might work
 
-Passing the class. Passing the standardized test. Passing the university entrance exam. Passing the SAT. Passing the bar exam. Passing ENEM and "concursos" in Brazil, where I live. Passing whatever gate comes next.
+I don't have a simple answer, and I'd be suspicious of anyone who says they do. But I do think we teach things in the wrong order.
 
-Eventually, passing becomes the product.
+Most classes work like this: here are ten concepts, memorize them, and maybe one day you'll see why they matter. I'd rather start with a problem and ask what you need to understand to solve it. That makes learning concrete, and it makes thinking much harder to fake, even with AI.
 
-Learning becomes a side effect.
+We can't get there by ignoring the system we have, though. People buy what they already understand: grades, certificates, and "this will help your child pass." Learning how to think matters more, but next month's exam is more urgent.
 
-Sometimes it happens. Often it does not.
+The realistic path, I think, is to build tools that help people with the system as it is today while slowly bringing better learning into it. For example, exam prep that makes students explain and apply ideas instead of memorizing them, or tools that save teachers time instead of giving them more work.
 
-## The Exam Is the Operating System
+That takes humility from people in tech, me included. We need to spend time with teachers, principals, students, parents, and policymakers, and understand their constraints before deciding what they need.
 
-I think standardized tests are one of the biggest reasons education is so hard to change.
-
-They are not just a measurement tool. They are the operating system of modern education.
-
-Once a test becomes important enough, everything starts orbiting around it.
-
-Governments use tests to measure the system. Schools use tests to prove they are doing their job. Parents use tests as a proxy for their children’s future. Students use tests as a path to university, jobs, and status. EdTech companies use tests as a business model.
-
-The result is predictable: the system becomes optimized for test performance.
-
-And once the system is optimized for test performance, real learning becomes optional.
-
-A student may “learn” physics by memorizing formulas for an exam. But that does not mean they can look at the world and think physically. It does not mean they can use physics to reason about a real problem. It does not mean they understand why the concept matters.
-
-They may pass the test and forget everything a month later.
-
-That is not learning. That is temporary compression for institutional survival.
-
-And students understand this very early. They learn the real game quickly:
-
-Do not ask, “How do I understand this?”
-
-Ask, “Will this be on the test?”
-
-That sentence tells you almost everything you need to know about what the system actually rewards.
-
-## Everyone Is Trapped
-
-One mistake people in tech often make is assuming schools are broken because the people inside them are incompetent, lazy, or resistant to change.
-
-I do not think that is true.
-
-Most teachers know the system is broken.
-
-Many school managers know the system is broken.
-
-A lot of students know it too.
-
-The problem is that knowing something is broken does not automatically give you the power to change it.
-
-Teachers are often trapped by curriculum requirements, grading expectations, classroom size, limited time, bureaucracy, parents, school leadership, standardized tests, and the basic reality that they cannot redesign the entire system from inside one classroom.
-
-School managers are trapped by budgets, regulation, staffing constraints, infrastructure problems, political pressure, parent expectations, and the need to keep the school running every day.
-
-Parents are trapped too. Most parents want their kids to actually learn, but they also want them to succeed in the world that exists. If university admission, scholarships, jobs, and social mobility depend on exams, then parents will rationally care about exam performance.
-
-Students are the most trapped of all. They may want curiosity, agency, and meaning, but they also know the system will judge them by grades and credentials.
-
-So everyone adapts.
-
-Teachers teach to the test.
-
-Students study for the test.
-
-Parents pay for test prep.
-
-Schools market test results.
-
-Governments measure test scores.
-
-Startups build tools to improve test performance.
-
-And then we wonder why education does not change.
-
-## Why EdTech Usually Does Not Fix Education
-
-This is where EdTech gets uncomfortable.
-
-Many EdTech startups say they want to change education.
-
-But the money is usually not in changing education.
-
-The money is in helping people succeed inside the existing system.
-
-That is an important distinction.
-
-A startup that helps students pass exams can become a very successful business. A startup that helps schools manage compliance can become a very successful business. A startup that helps teachers generate quizzes, worksheets, summaries, and lesson plans can become a very successful business.
-
-Those products may be useful. They may save time. They may help people.
-
-But they do not necessarily fix education.
-
-In many cases, they make the existing system more efficient.
-
-That is why I put “fail” in quotes when I say EdTech startups “fail.”
-
-They do not necessarily fail as companies. Education is a massive industry. There is a lot of money in it. Many companies make a lot of money selling into the current system.
-
-They fail in a different sense.
-
-They fail to change what the system rewards.
-
-They fail to move education away from shallow memorization and toward understanding, agency, critical thinking, and real-world problem solving.
-
-They fail because the market does not usually reward the thing education needs most. It rewards the thing people are currently forced to buy.
-
-And what people are forced to buy is usually help passing the next gate.
-
-Investors like Y Combinator ask you to build what people want and founders do it. But, building what people want, is why this system doesn't change. For education, we should build what people need but it's much harder to develop a business around that.
-
-## What Tech Gets Wrong
-
-People in tech often assume education can be disrupted the way software markets are disrupted.
-
-Build a better product. Make it cheaper. Make it easier to use. Add AI. Grow fast. Replace the old system.
-
-But schools do not work like that.
-
-Schools are not just inefficient software companies waiting for a better interface.
-
-They are institutions embedded in law, politics, culture, family expectations, budgets, procurement cycles, labor constraints, and high-stakes outcomes.
-
-If a productivity app fails, people switch tools.
-
-If an education experiment fails, a child may lose a year of preparation for an exam that affects their future.
-
-That makes people risk-averse. And honestly, that risk aversion is understandable.
-
-The problem is that when everyone is afraid of breaking the system further, the system stays broken.
-
-This is why building for education from a tech office, without spending serious time with teachers, school managers, students, parents, and policymakers, usually leads to shallow solutions.
-
-You can build a beautiful product and still completely misunderstand the reality of the classroom.
-
-You can build powerful AI features and still fail to address the actual constraints teachers face.
-
-You can build something that looks obviously better from the outside and still be irrelevant inside the system.
-
-Because the question is not just:
-
-“Is this a better way to learn?”
-
-The question is also:
-
-“Can a teacher actually use this with 35 students, limited time, a required curriculum, exam pressure, parent expectations, and no extra budget?”
-
-That is a much harder question.
-
-## What I Learned Building Zoonk
-
-I am not saying this from the outside.
-
-I have been trying to build different learning tools for years, and I am now building Zoonk.
-
-My long-term vision is not test prep. I do not want education to be a memorization machine. I do not want learning to feel like passively consuming content until you can answer multiple-choice questions.
-
-The future I want to build is much closer to an exploration game.
-
-Something more like an RPG. Or a game like No Man’s Sky, but for learning. A world where you learn because you are trying to solve problems. You need physics because you are building something. You need history because you are understanding a conflict. You need language because you are communicating with people. You need math because the world gives you constraints and you have to reason through them.
-
-That is the future of learning I believe in: hands-on, practical, exploratory, fun, and connected to the real world.
-
-But building a business around that vision is hard.
-
-Because when you talk to users, they often do not ask for the future of learning.
-
-They ask for help with the system they are already trapped in.
-
-They need to pass the exam.
-
-They need to finish the course.
-
-They need to get the credential.
-
-They need to prepare for ENEM, concursos, university, professional exams, or whatever comes next.
-
-And they are not wrong.
-
-If someone has an exam in three months, telling them “I have a better philosophy of education” is not very useful.
-
-They need something that helps them now.
-
-This is the trap.
-
-You may start with a vision to change education. But the market pulls you toward helping people survive the current system.
-
-And Zoonk is not immune to that. I am also having to take steps back from my original vision and build more of what people want before I can build what I think people need.
-
-That is not the romantic version of building an EdTech startup.
-
-But it is the real one.
-
-## Why AI Alone Will Not Fix This
-
-AI changes a lot, but it does not automatically change incentives.
-
-If the assignment is still “write an essay for a grade,” students will use AI to write the essay.
-
-If the goal is still “pass the test,” students will use AI to prepare for the test.
-
-If the school is still measured by exam scores, schools will use AI to improve exam scores.
-
-If teachers are still overloaded, many AI tools will become faster ways to generate the same worksheets, quizzes, summaries, and lesson plans.
-
-Again, this can be useful. I am not dismissing it.
-
-But making the old system faster is not the same as fixing it.
-
-AI can help students learn. It can act as a tutor, coach, simulator, collaborator, critic, and feedback engine. It can help teachers personalize instruction. It can help students build projects that were previously impossible. It can give people access to explanations, practice, and guidance at a scale we have never had before.
-
-But if the surrounding system still rewards shallow performance, AI will mostly be used to optimize shallow performance.
-
-That is why AI alone will not fix education.
-
-It will amplify whatever the system already rewards.
-
-If we reward memorization, AI will help with memorization.
-
-If we reward test performance, AI will help with test performance.
-
-If we reward compliance, AI will help with compliance.
-
-If we reward real problem-solving, AI can help with that too.
-
-But the reward structure has to change.
-
-## What Might Actually Change Education
-
-I do not think there is one simple answer.
-
-Anyone claiming to have a simple answer probably does not understand the system.
-
-But I think the direction is clear.
-
-We need to move from content-first education to problem-first education.
-
-Instead of starting with a long list of concepts students are supposed to memorize, we should start with problems, projects, questions, and situations where knowledge becomes useful.
-
-Not:
-
-“Here are ten concepts. Learn them now. Maybe one day you will understand why they matter.”
-
-But:
-
-“Here is a problem. What do you need to understand in order to solve it?”
-
-That shift matters.
-
-It gives students more agency. It makes learning more concrete. It connects knowledge to the real world. It makes critical thinking harder to fake. It creates space for AI to be used as a tool for reasoning, not just a shortcut for producing answers.
-
-But this cannot be introduced by ignoring the current system.
-
-Schools still have requirements. Teachers still have limited time. Students still have exams. Parents still care about outcomes. Governments still need accountability.
-
-So the practical path is probably not to replace everything at once.
-
-It is to build tools that help people survive the current system while gradually introducing better learning models inside it.
-
-That means tools that help teachers, not tools that ask teachers to become product managers.
-
-Tools that help school managers meet their obligations, not tools that add another expensive platform to an already crowded budget.
-
-Tools that help students prepare for exams, but also make them think, build, explain, simulate, and apply.
-
-Tools that help governments measure more than test scores.
-
-Tools that package better learning in a way the existing system can actually adopt.
-
-This is less exciting than saying “AI will disrupt education.”
-
-But it is more realistic.
-
-## The Hard Part
-
-The hard part is that people usually buy what they already understand.
-
-They understand exam prep.
-
-They understand grades.
-
-They understand dashboards.
-
-They understand certificates.
-
-They understand “this will help your child pass.”
-
-They do not yet fully understand “this will help your child develop agency, think critically, solve real problems, and learn how to learn.”
-
-Even if that second promise is more important, the first one is more urgent.
-
-That is the uncomfortable reality.
-
-So if we want to change education, we cannot just build tools for the world we wish existed.
-
-We have to build bridges from the world that exists.
-
-We have to work with teachers, not around them.
-
-We have to understand school managers, not dismiss them.
-
-We have to understand parents’ fears, not mock them.
-
-We have to understand students’ incentives, not blame them for adapting.
-
-We have to understand governments and policy, not pretend software floats above institutions.
-
-And we have to be honest that technology alone will not do the work.
-
-## AI Will Matter. But It Is Not Enough.
-
-I still think AI will force education to change.
-
-Eventually, the contradiction will become too obvious to ignore. If students can use AI to complete traditional assignments instantly, then traditional assignments will lose meaning. If AI can explain anything, generate practice, simulate scenarios, and give feedback, then the role of teachers will have to evolve. If knowledge work changes, then what we teach and how we evaluate students will also have to change.
-
-But, unfortunately, this will not happen in one or two years like Sam thought.
-
-It may take decades.
-
-Education moves slowly because it is tied to childhood, family expectations, public policy, social mobility, labor markets, and national identity. That makes it one of the hardest systems in the world to change.
-
-Still, I do not think the answer is cynicism.
-
-The answer is humility.
-
-People in tech need to stop assuming education is just another market waiting to be disrupted. We need to spend more time on the ground. We need to talk to teachers, school managers, students, parents, and government officials. We need to understand the constraints before prescribing solutions.
-
-And then we need to build tools that do two things at the same time:
-
-Help people deal with the system as it exists.
-
-And slowly move the system toward something better.
-
-That is the difficult path.
-
-It is also probably the only realistic one.
-
-Education is broken.
-
-AI will help.
-
-But AI will not fix it alone.
+This will be slower than any of us would like, but I don't see another way.
