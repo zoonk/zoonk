@@ -1,8 +1,12 @@
-import { FAIR_USE_SPACING_SECONDS } from "@zoonk/core/entitlements/limits";
 import { getFreePlanLimits, getPlusPlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { type Page, expect, test } from "./fixtures";
 
 const PHONE_VIEWPORT = { height: 812, width: 375 };
+
+/** The note under Plus's "Unlimited*" values, with Plus's one hard cap. */
+function getFairUseNote() {
+  return `*Unlimited for personal use, under our fair use policy. With Plus, you can start up to ${getPlusPlanLimits().newGoalsPerDay} new goals a day.`;
+}
 
 /**
  * The public pricing page: the plans in the public frame (no learning tabs or settings), with
@@ -94,11 +98,7 @@ test.describe("Pricing for visitors", () => {
         .last(),
     ).toHaveText("Unlimited*");
 
-    await expect(
-      page.getByText(
-        `*Fair use: after very heavy use in a day, you wait ${FAIR_USE_SPACING_SECONDS / 60} minutes between new lessons or messages. With Plus, you can start up to ${getPlusPlanLimits().newGoalsPerDay} new goals a day.`,
-      ),
-    ).toBeVisible();
+    await expect(page.getByText(getFairUseNote())).toBeVisible();
 
     await expect(plans.getByRole("row", { name: /exam prep/iu }).getByRole("cell")).toHaveText([
       "Diagnostic, plan and the first week",
@@ -117,6 +117,15 @@ test.describe("Pricing for visitors", () => {
     await expect(page.getByRole("button", { name: /monthly/iu })).toBeVisible();
     await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
+  });
+
+  test("the fair use note opens the fair use section of the terms", async ({ page }) => {
+    await page.goto("/pricing");
+
+    await page.getByText(getFairUseNote()).getByRole("link", { name: "fair use policy" }).click();
+
+    await expect(page).toHaveURL(/\/terms#fair-use$/u);
+    await expect(page.getByRole("heading", { level: 2, name: "6. Fair use" })).toBeInViewport();
   });
 
   test("the subscription page's URL opens the public pricing page", async ({ page }) => {

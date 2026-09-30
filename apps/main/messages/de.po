@@ -2630,9 +2630,9 @@ msgid "We couldn't send that. Try again in a moment."
 msgstr "Wir konnten die Anfrage nicht senden. Versuch es gleich noch einmal."
 
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "hySQkF"
-msgid "Fair use: after very heavy use in a day, you wait {minutes, plural, one {# minute} other {# minutes}} between new lessons or messages."
-msgstr "Faire Nutzung: Nach sehr intensiver Nutzung an einem Tag musst du zwischen neuen Lektionen oder Nachrichten {minutes, plural, one {# Minute} other {# Minuten}} warten."
+msgctxt "mN394y"
+msgid "Unlimited for personal use, under our <link>fair use policy</link>."
+msgstr "Unbegrenzt für die persönliche Nutzung, gemäß unserer <link>Fair-Use-Richtlinie</link>."
 
 #: src/components/pricing/plan-comparison.tsx
 msgctxt "FQ2bnB"
