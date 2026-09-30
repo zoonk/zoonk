@@ -107,8 +107,6 @@ export function NoodleBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) 
         x="53"
         y="84"
       />
-      <ellipse cx="29" cy="76" fill="#ff4f86" opacity=".38" rx="6" ry="3.5" />
-      <ellipse cx="91" cy="76" fill="#ff4f86" opacity=".38" rx="6" ry="3.5" />
 
       {!isNapping && <NoodleSparks glow={glow} isGlowing={isGlowing} uid={uid} />}
     </>

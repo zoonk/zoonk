@@ -90,8 +90,6 @@ export function OttoBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
         ry="6"
         transform="rotate(-14 44 30)"
       />
-      <ellipse cx="28" cy="74" fill="#ff7ab6" opacity=".5" rx="5.5" ry="3.2" />
-      <ellipse cx="92" cy="74" fill="#ff7ab6" opacity=".5" rx="5.5" ry="3.2" />
 
       {SPOTS.map((spot) => (
         <g key={`${spot.cx}-${spot.cy}`}>

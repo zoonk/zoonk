@@ -5,7 +5,7 @@ import { getExtracted } from "next-intl/server";
 /** Each mode draws the chips the way its lesson screen does. */
 const CHIP_CLASS = {
   focus: "bg-secondary min-h-8 gap-1.5 px-2.5 text-[13px] font-medium [&_svg]:size-3.5",
-  fun: "border-fun-line bg-background min-h-[34px] gap-1.5 border px-2.5 text-[13px] font-semibold [&_svg]:text-fun-accent-violet [&_svg]:size-4",
+  fun: "border-fun-line bg-background min-h-[34px] gap-1 border px-2 text-xs font-semibold [&_svg]:text-fun-accent-violet [&_svg]:size-3.5",
 } as const;
 
 /**

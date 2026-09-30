@@ -87,7 +87,7 @@ export function BuddyStep({
 
   return (
     <StepForm
-      description={t("You feed your buddy by learning. It grows with you and never gets sick.")}
+      description={t("You feed your buddy by learning. It grows with you.")}
       onContinue={() => {
         analytics.track({
           name: "Buddy Chosen",

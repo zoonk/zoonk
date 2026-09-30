@@ -675,9 +675,9 @@ msgid "Practice shaped by your goal"
 msgstr "Des exercices adaptés à ton objectif"
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
-msgctxt "fR1fT-"
-msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have in your first week."
-msgstr "Pour un examen, tu t’entraînes avec des questions au même format. Pour un nouvel emploi, tu résous des problèmes inspirés du travail réel. Pour un déménagement, tu t’exerces aux conversations que tu auras pendant ta première semaine."
+msgctxt "aEpsFz"
+msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day."
+msgstr "Pour un examen, tu t’entraînes avec des questions au même format. Pour un nouvel emploi, tu résous des problèmes inspirés du travail réel. Pour un déménagement, tu t’exerces aux conversations que tu auras au quotidien."
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
 msgctxt "uqb48T"
@@ -1095,9 +1095,9 @@ msgid "A buddy you feed by learning"
 msgstr "Un compagnon qui grandit quand tu apprends"
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "Zc_9OB"
-msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn and never gets sick."
-msgstr "Les leçons, les révisions et les erreurs corrigées le nourrissent. Il grandit au fil de tes apprentissages et ne tombe jamais malade."
+msgctxt "F01nWn"
+msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
+msgstr "Les leçons, les révisions et les erreurs corrigées le nourrissent. Il grandit au fil de tes apprentissages."
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
 msgctxt "IFviMa"

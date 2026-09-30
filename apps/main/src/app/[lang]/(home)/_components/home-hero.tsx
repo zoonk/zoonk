@@ -109,7 +109,7 @@ export async function HomeHero({ startPath }: { startPath: string }) {
 
           <GoalBox action={startPath} id={HERO_GOAL_ID} variant="card" />
 
-          <p className="text-muted-foreground mt-3 text-[13px] sm:text-sm">
+          <p className="text-muted-foreground mt-3 text-center text-[13px] sm:text-sm">
             {t("Free to start. No account needed.")}
           </p>
         </div>

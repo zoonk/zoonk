@@ -675,9 +675,9 @@ msgid "Practice shaped by your goal"
 msgstr "Práctica adaptada a tu objetivo"
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
-msgctxt "fR1fT-"
-msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have in your first week."
-msgstr "Si preparas un examen, practicarás con preguntas de su formato. Para un trabajo nuevo, resolverás problemas reales del puesto. Y si te mudas, practicarás las conversaciones que tendrás durante tu primera semana."
+msgctxt "aEpsFz"
+msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day."
+msgstr "Si preparas un examen, practicarás con preguntas de su formato. Para un trabajo nuevo, resolverás problemas reales del puesto. Y si te mudas, practicarás las conversaciones que tendrás en tu día a día."
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
 msgctxt "uqb48T"
@@ -1095,9 +1095,9 @@ msgid "A buddy you feed by learning"
 msgstr "Un compañero que crece mientras aprendes"
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "Zc_9OB"
-msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn and never gets sick."
-msgstr "Las lecciones, los repasos y los errores corregidos son su alimento. Crece contigo mientras aprendes y nunca se pone enfermo."
+msgctxt "F01nWn"
+msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
+msgstr "Las lecciones, los repasos y los errores corregidos son su alimento. Crece contigo mientras aprendes."
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
 msgctxt "IFviMa"

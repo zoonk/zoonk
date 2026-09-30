@@ -131,8 +131,6 @@ export function BeepBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
         y="34"
       />
       <rect fill="#fff" height="3.6" opacity=".8" rx="1.8" width="26" x="30" y="27.5" />
-      <ellipse cx="31" cy="77" fill="#ff7ab6" opacity=".45" rx="5" ry="3" />
-      <ellipse cx="89" cy="77" fill="#ff7ab6" opacity=".45" rx="5" ry="3" />
     </>
   );
 }

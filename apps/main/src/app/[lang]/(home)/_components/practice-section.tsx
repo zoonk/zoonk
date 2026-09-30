@@ -78,7 +78,7 @@ export async function PracticeSection({ locale }: { locale: SupportedLocale }) {
           </h2>
           <p className={SECTION_LEAD_CLASS}>
             {t(
-              "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have in your first week.",
+              "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day.",
             )}
           </p>
         </div>

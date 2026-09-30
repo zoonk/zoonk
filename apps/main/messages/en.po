@@ -675,9 +675,9 @@ msgid "Practice shaped by your goal"
 msgstr "Practice shaped by your goal"
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
-msgctxt "fR1fT-"
-msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have in your first week."
-msgstr "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have in your first week."
+msgctxt "aEpsFz"
+msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day."
+msgstr "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day."
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
 msgctxt "uqb48T"
@@ -1095,9 +1095,9 @@ msgid "A buddy you feed by learning"
 msgstr "A buddy you feed by learning"
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "Zc_9OB"
-msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn and never gets sick."
-msgstr "Lessons, reviews and fixed mistakes are its food. It grows as you learn and never gets sick."
+msgctxt "F01nWn"
+msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
+msgstr "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
 msgctxt "IFviMa"

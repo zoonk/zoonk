@@ -675,9 +675,9 @@ msgid "Practice shaped by your goal"
 msgstr "Prática feita para a sua meta"
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
-msgctxt "fR1fT-"
-msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have in your first week."
-msgstr "Para uma prova, perguntas no formato dela. Para um emprego novo, desafios do trabalho de verdade. Para uma mudança, as conversas que você vai ter na primeira semana."
+msgctxt "aEpsFz"
+msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day."
+msgstr "Para uma prova, perguntas no formato dela. Para um emprego novo, desafios do trabalho de verdade. Para uma mudança, as conversas que você vai ter no dia a dia."
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
 msgctxt "uqb48T"
@@ -1095,9 +1095,9 @@ msgid "A buddy you feed by learning"
 msgstr "Um parceiro que você alimenta enquanto aprende"
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "Zc_9OB"
-msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn and never gets sick."
-msgstr "Cada aula, revisão e erro que você corrige faz seu parceiro crescer junto com você. Ele nunca fica doente."
+msgctxt "F01nWn"
+msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
+msgstr "Cada aula, revisão e erro que você corrige faz seu parceiro crescer junto com você."
 
 #: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
 msgctxt "IFviMa"

@@ -18,7 +18,7 @@ const BUDDY_CHOICES: { belt: BeltColor; kind: BuddyKind }[] = [
 
 function MealItem({ children, icon }: { children: ReactNode; icon: ReactNode }) {
   return (
-    <li className="bg-fun-soft flex min-w-0 flex-col items-center gap-1.5 rounded-2xl px-1.5 py-2.5">
+    <li className="bg-fun-soft flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl px-1.5 py-2.5">
       {icon}
       <span className="text-fun-fg2 text-xs leading-tight font-semibold text-balance wrap-break-word">
         {children}
@@ -37,9 +37,7 @@ export async function VoyageBuddy() {
         {t("A buddy you feed by learning")}
       </h4>
       <p className="text-fun-fg2 mt-2 text-[15px] leading-relaxed">
-        {t(
-          "Lessons, reviews and fixed mistakes are its food. It grows as you learn and never gets sick.",
-        )}
+        {t("Lessons, reviews and fixed mistakes are its food. It grows as you learn.")}
       </p>
 
       <div

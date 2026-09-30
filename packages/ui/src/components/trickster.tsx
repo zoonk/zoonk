@@ -92,8 +92,6 @@ function TricksterBody({ uid }: { uid: string }) {
 function SlyFace({ uid }: { uid: string }) {
   return (
     <g>
-      <ellipse cx="42" cy="118" fill="#ff7ac6" opacity=".55" rx="5.5" ry="3.2" />
-      <ellipse cx="99" cy="115" fill="#ff7ac6" opacity=".55" rx="5.5" ry="3.2" />
       <path
         d="M41 99 Q47 90 60 94 Q67 96.5 72 94 Q86 86 98 92 Q100 104 91 110 Q80 114.5 72.5 106.5 Q68.5 103.5 64.5 106.5 Q54 115 45 110 Q39 105 41 99 Z"
         fill={INK}

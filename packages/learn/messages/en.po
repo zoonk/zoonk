@@ -5430,9 +5430,9 @@ msgid "How do you like to study?"
 msgstr "How do you like to study?"
 
 #: src/onboarding/steps/mode-buddy-steps.tsx
-msgctxt "bseH3H"
-msgid "You feed your buddy by learning. It grows with you and never gets sick."
-msgstr "You feed your buddy by learning. It grows with you and never gets sick."
+msgctxt "DMyIQf"
+msgid "You feed your buddy by learning. It grows with you."
+msgstr "You feed your buddy by learning. It grows with you."
 
 #: src/onboarding/steps/placement-question.tsx
 msgctxt "s7LDgm"

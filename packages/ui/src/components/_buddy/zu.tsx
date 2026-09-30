@@ -124,8 +124,6 @@ export function ZuBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
       <circle cx="84" cy="38" fill="#fff" opacity=".28" r="3.2" />
       <circle cx="91" cy="46" fill="#fff" opacity=".28" r="2" />
       <circle cx="30" cy="42" fill="#fff" opacity=".22" r="2.4" />
-      <ellipse cx="28" cy="75" fill="#ff7ab6" opacity=".45" rx="5.5" ry="3.2" />
-      <ellipse cx="92" cy="75" fill="#ff7ab6" opacity=".45" rx="5.5" ry="3.2" />
     </>
   );
 }

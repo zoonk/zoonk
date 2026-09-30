@@ -77,7 +77,7 @@ export async function FunLessonPreview({ prices }: { prices: LessonPrices }) {
         </span>
       </div>
 
-      <div className="relative mx-4 mt-[70px]">
+      <div className="relative mx-3 mt-[70px]">
         <Buddy
           beltColor="yellow"
           className="absolute top-[-62px] left-3 z-10 size-16"
@@ -89,7 +89,7 @@ export async function FunLessonPreview({ prices }: { prices: LessonPrices }) {
           {t("Look how clever this is:")}
         </p>
 
-        <div className="fun-paper rounded-[30px] p-5 shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]">
+        <div className="fun-paper rounded-[30px] px-4 py-5 shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]">
           <PriceCard prices={prices} />
 
           <p className="text-fun-fg2 mt-4 text-[15px] font-semibold">
