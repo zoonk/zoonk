@@ -18,18 +18,6 @@ function getCodexPath() {
   return process.env.CODEX_PATH ?? "codex";
 }
 
-/**
- * Translates with eloqnt's hosted engine when `ELOQNT_TOKEN` is set, as in Claude Code's cloud
- * sessions, which have no Codex CLI; otherwise with the Codex CLI on this machine.
- */
-function getModel() {
-  if (process.env.ELOQNT_TOKEN) {
-    return {};
-  }
-
-  return { model: codexCli("gpt-6-luna", { codexPath: getCodexPath() }) };
-}
-
 function getSrcPath(srcPath: EloqntProjectOptions["srcPath"]) {
   if (srcPath === null) {
     return;
@@ -51,7 +39,7 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
       sourceLocale: "en",
       ...options.messages,
     },
-    ...getModel(),
+    model: codexCli("gpt-6-luna", { codexPath: getCodexPath() }),
     srcPath: getSrcPath(options.srcPath),
     styleguides: fileURLToPath(new URL("../.eloqnt", import.meta.url)),
   });

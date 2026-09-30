@@ -10,13 +10,9 @@ const CACHE_IMAGE_DAYS = 30;
 
 const isE2E = process.env.E2E_TESTING === "true";
 
-// Swap @zoonk/auth for E2E-specific config during E2E builds. Its auth leaves BotID out, so the
-// browser skips BotID's challenge too: E2E runs outside Vercel and shouldn't depend on reaching it.
+// Swap @zoonk/auth for E2E-specific config during E2E builds
 const e2eAliases: Record<string, string> = isE2E
-  ? {
-      "@zoonk/auth": "../../packages/auth/src/e2e.ts",
-      "botid/client/core": "../../packages/e2e/src/botid-client.ts",
-    }
+  ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
   : {};
 
 /** Paths without a locale are the default language; the others start with their locale. */
