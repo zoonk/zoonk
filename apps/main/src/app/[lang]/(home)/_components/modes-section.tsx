@@ -3,6 +3,7 @@ import {
   SECTION_LEAD_CLASS,
   SECTION_TITLE_CLASS,
 } from "@/components/public/landing-styles";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -15,35 +16,27 @@ import { VoyageBuddy } from "./voyage/voyage-buddy";
 import { VoyageBoss, VoyageCards } from "./voyage/voyage-challenges";
 import { VoyageRoute } from "./voyage/voyage-route";
 
-const FOCUS_TITLE_ID = "focus-mode-title";
-const FUN_TITLE_ID = "fun-mode-title";
-
 /**
  * One mode's pitch beside its lesson screen: what it's like, in words a visitor already knows.
- * Both modes put their pitch on the same side, so the two read as one comparison.
+ * Both modes put their pitch on the same side, so switching reads as one comparison.
  */
 function ModeIntro({
-  badge,
   children,
   description,
   title,
   titleClassName,
-  titleId,
 }: {
-  badge: ReactNode;
   children: ReactNode;
   description: string;
   title: string;
   titleClassName: string;
-  titleId: string;
 }) {
   return (
-    <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <div
+      className={cn(SECTION_CLASS, "grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16")}
+    >
       <div className="mx-auto max-w-[480px] text-center lg:mx-0 lg:text-left">
-        {badge}
-        <h3 className={cn("mt-4 font-bold text-balance", titleClassName)} id={titleId}>
-          {title}
-        </h3>
+        <h3 className={cn("font-bold text-balance", titleClassName)}>{title}</h3>
         <p className="text-muted-foreground mt-3 text-base leading-relaxed text-pretty sm:mt-4 sm:text-lg">
           {description}
         </p>
@@ -55,10 +48,11 @@ function ModeIntro({
 }
 
 /**
- * Focus and Fun, one after the other, each with its pitch and its own screen of the same lesson.
- * Fun goes on to show what makes it a game (the voyage, the buddy, the boss and the cards), so
- * everything playful stays inside Fun's space. Fun here is the real Fun mode, so it's deep space on
- * every device, like the app.
+ * Focus and Fun as a switch over the same lesson, so the section shows its point (one plan, two
+ * looks, change any time) and phones scroll past one mode instead of both. Fun goes on to show what
+ * makes it a game (the voyage, the buddy, the boss and the cards), so everything playful stays
+ * inside Fun's tab. Both panels stay in the page for search engines and for a switch without
+ * waiting. Fun here is the real Fun mode, so it's deep space on every device, like the app.
  */
 export async function ModesSection({ locale }: { locale: SupportedLocale }) {
   const [t, prices] = await Promise.all([getExtracted(), getLessonPrices(locale)]);
@@ -80,55 +74,61 @@ export async function ModesSection({ locale }: { locale: SupportedLocale }) {
         </p>
       </div>
 
-      <section
-        aria-labelledby={FOCUS_TITLE_ID}
-        className="bg-muted/60 dark:bg-card mt-10 py-14 sm:mt-14 sm:py-20"
-      >
-        <div className={SECTION_CLASS}>
+      <Tabs className="mt-8 gap-0 sm:mt-10" defaultValue="focus">
+        <TabsList className="self-center group-data-horizontal/tabs:h-11">
+          <TabsTrigger className="min-w-28 px-5 text-[15px]" value="focus">
+            {t("Focus")}
+          </TabsTrigger>
+          <TabsTrigger className="min-w-28 px-5 text-[15px]" value="fun">
+            {t("Fun")}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent
+          className="bg-muted/60 dark:bg-card mt-8 rounded-none py-14 text-base sm:mt-10 sm:py-20"
+          keepMounted
+          value="focus"
+        >
           <ModeIntro
-            badge={
-              <span className="bg-background inline-flex min-h-8 items-center rounded-full px-3.5 text-sm font-semibold shadow-[0_0_0_1px_rgb(0_0_0/0.06)]">
-                {t("Focus")}
-              </span>
-            }
             description={t(
               "Just the lesson and your progress on a quiet screen, so nothing pulls your attention away.",
             )}
             title={t("Calm and simple")}
             titleClassName="text-[28px] leading-[1.1] tracking-[-0.03em] sm:text-4xl"
-            titleId={FOCUS_TITLE_ID}
           >
             <FocusLessonPreview prices={prices} />
           </ModeIntro>
-        </div>
-      </section>
+        </TabsContent>
 
-      <section aria-labelledby={FUN_TITLE_ID} className="fun-space py-14 sm:py-20" data-mode="fun">
-        <div className={SECTION_CLASS}>
+        <TabsContent
+          className="fun-space mt-8 rounded-none py-14 text-base sm:mt-10 sm:py-20"
+          data-mode="fun"
+          keepMounted
+          value="fun"
+        >
           <ModeIntro
-            badge={
-              <span className="bg-fun-lime text-fun-lime-foreground inline-flex min-h-8 items-center rounded-full px-3.5 text-sm font-bold">
-                {t("Fun")}
-              </span>
-            }
             description={t(
               "Your plan becomes a space voyage to your goal. A buddy comes along, daily missions keep you going, and you earn rewards as you learn.",
             )}
             title={t("Learning that feels like a game")}
             titleClassName="font-fun-display text-[26px] leading-[1.15] tracking-[-0.01em] sm:text-[34px]"
-            titleId={FUN_TITLE_ID}
           >
             <FunLessonPreview prices={prices} />
           </ModeIntro>
 
-          <div className="mt-14 grid grid-cols-1 gap-4 sm:mt-20 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          <div
+            className={cn(
+              SECTION_CLASS,
+              "mt-14 grid grid-cols-1 gap-4 sm:mt-20 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3",
+            )}
+          >
             <VoyageRoute />
             <VoyageBuddy />
             <VoyageBoss />
             <VoyageCards />
           </div>
-        </div>
-      </section>
+        </TabsContent>
+      </Tabs>
     </section>
   );
 }

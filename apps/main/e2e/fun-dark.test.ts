@@ -191,7 +191,9 @@ test.describe("Fun is dark only", () => {
     await page.emulateMedia({ colorScheme: "light" });
     await page.goto("/");
 
-    await expect(page.locator('section[aria-labelledby="fun-mode-title"]')).toHaveCSS(
+    await page.getByRole("tab", { name: "Fun" }).click();
+
+    await expect(page.getByRole("tabpanel", { name: "Fun" })).toHaveCSS(
       "background-color",
       DEEP_SPACE,
     );

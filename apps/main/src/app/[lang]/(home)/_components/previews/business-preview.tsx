@@ -15,11 +15,7 @@ function renderAmount(chunks: ReactNode) {
   return <b className="text-foreground tabular-nums">{chunks}</b>;
 }
 
-/**
- * Numbers to play with: drag the price and see what's left per cake and per
- * week. It's the one live preview on the page, because moving the number is
- * the point.
- */
+/** Numbers to play with: drag the price and see what's left per cake and per week. */
 export function BusinessPreview({ currency }: { currency: string }) {
   const t = useExtracted();
   const format = useFormatter();

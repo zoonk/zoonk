@@ -98,7 +98,9 @@ export async function HomeHero({ startPath }: { startPath: string }) {
         </h1>
 
         <p className={HERO_LEAD_CLASS}>
-          {t("Tell us your goal. Zoonk plans every day until your date, in the minutes you have.")}
+          {t(
+            "Tell us your goal. Zoonk teaches you with lessons, practice and reviews, planned for every day until your date.",
+          )}
         </p>
 
         <div className="mt-6 max-w-[560px] sm:mt-8">

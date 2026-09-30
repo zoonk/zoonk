@@ -1,7 +1,7 @@
 import { PREVIEW_CARD_CLASS } from "@/components/public/landing-styles";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheckIcon, PlayIcon } from "lucide-react";
+import { CircleCheckIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 
 /** SQL is shown as written in every language, like in a real job. */
@@ -38,18 +38,12 @@ export async function JobPreview() {
         ))}
       </pre>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-        <span className="flex min-w-0 items-start gap-1.5 text-[13px] leading-snug font-medium text-emerald-700 dark:text-emerald-400">
-          <LineMarker>
-            <CircleCheckIcon className="size-4" />
-          </LineMarker>
-          {t("It works. 3 rows")}
-        </span>
-        <span className="border-border inline-flex min-h-8 flex-none items-center gap-1.5 rounded-full border px-3 text-[13px] font-medium whitespace-nowrap">
-          <PlayIcon className="size-3.5 flex-none" />
-          {t("Run")}
-        </span>
-      </div>
+      <p className="mt-3 flex items-start gap-1.5 text-[13px] leading-snug font-medium text-emerald-700 dark:text-emerald-400">
+        <LineMarker>
+          <CircleCheckIcon className="size-4" />
+        </LineMarker>
+        {t("It works. 3 rows")}
+      </p>
 
       <div className="bg-muted/60 divide-border mt-3 divide-y rounded-xl px-3 text-[13px] tabular-nums dark:bg-neutral-800">
         {rows.map((row) => (

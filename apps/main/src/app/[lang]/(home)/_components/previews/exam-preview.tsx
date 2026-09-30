@@ -73,7 +73,7 @@ export async function ExamPreview() {
             {t("100%")}
           </ExamOption>
         </div>
-        <p className="text-muted-foreground mt-3.5 hidden text-[13px] leading-snug sm:block">
+        <p className="text-muted-foreground mt-3.5 text-[13px] leading-snug">
           {t.rich("<b>Not quite. The 20% off comes from the higher price:</b> 1.2 × 0.8 = 0.96.", {
             b: renderEmphasis,
           })}
@@ -90,7 +90,7 @@ export async function ExamPreview() {
             {t("Mock exam, timed like the real one")}
           </p>
           <p className="text-muted-foreground mt-1.5 text-[13px] leading-snug">
-            {t("Full length · 2h 14m")}
+            {t("Full length")}
           </p>
         </div>
 

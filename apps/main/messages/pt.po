@@ -518,9 +518,9 @@ msgid "the move."
 msgstr "a mudança."
 
 #: src/app/[lang]/(home)/_components/home-hero.tsx
-msgctxt "EEJTYB"
-msgid "Tell us your goal. Zoonk plans every day until your date, in the minutes you have."
-msgstr "Diga sua meta. O Zoonk organiza seus estudos para cada dia até a data que você escolher, de acordo com o tempo que você tem."
+msgctxt "jhSF6u"
+msgid "Tell us your goal. Zoonk teaches you with lessons, practice and reviews, planned for every day until your date."
+msgstr "Diga sua meta. O Zoonk te ensina com aulas, prática e revisões, planejadas para cada dia até a data que você escolher."
 
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 msgctxt "55wzu6"
@@ -550,6 +550,11 @@ msgid "Focus"
 msgstr "Foco"
 
 #: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "uhCfm8"
+msgid "Fun"
+msgstr "Diversão"
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
 msgctxt "B1qdQI"
 msgid "Just the lesson and your progress on a quiet screen, so nothing pulls your attention away."
 msgstr "Só a aula e seu progresso em uma tela sem distrações."
@@ -558,11 +563,6 @@ msgstr "Só a aula e seu progresso em uma tela sem distrações."
 msgctxt "d54rpo"
 msgid "Calm and simple"
 msgstr "Tranquilo e simples"
-
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "uhCfm8"
-msgid "Fun"
-msgstr "Diversão"
 
 #: src/app/[lang]/(home)/_components/modes-section.tsx
 msgctxt "HPy249"
@@ -755,20 +755,32 @@ msgid "{cakes} cakes a week: <b>{amount}</b> for you"
 msgstr "{cakes} bolos por semana: <b>{amount}</b> para você"
 
 #: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "_ZDXg3"
+msgid "It's the <b>slope</b> of the line that just touches the curve at that point."
+msgstr "É a <b>inclinação</b> da reta que toca a curva só naquele ponto."
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
 msgctxt "Os2U8v"
 msgid "A derivative is <b>how fast</b> something changes at one moment."
 msgstr "A derivada é <b>a rapidez com que</b> algo muda em um instante."
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "JzIwuN"
+msgid "Think of a speedometer: it shows <b>how fast</b> you're going right now."
+msgstr "Pense num velocímetro: ele mostra <b>a que velocidade</b> você está agora."
 
 #: src/app/[lang]/(home)/_components/previews/class-preview.tsx
 msgctxt "_m48x4"
 msgid "right now"
 msgstr "agora"
 
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
 #: src/app/[lang]/(home)/_components/previews/depth-chips.tsx
 msgctxt "6vRhWR"
 msgid "Simpler"
 msgstr "Mais simples"
 
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
 #: src/app/[lang]/(home)/_components/previews/depth-chips.tsx
 msgctxt "pfRO-j"
 msgid "Go deeper"
@@ -815,9 +827,9 @@ msgid "Mock exam, timed like the real one"
 msgstr "Simulado cronometrado como a prova de verdade"
 
 #: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
-msgctxt "1Zg5Hb"
-msgid "Full length · 2h 14m"
-msgstr "Prova completa · 2 h 14 min"
+msgctxt "onvyDn"
+msgid "Full length"
+msgstr "Prova completa"
 
 #: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
 msgctxt "Synugh"
@@ -916,11 +928,6 @@ msgstr "Qual região vendeu mais?"
 msgctxt "w8BVIs"
 msgid "It works. 3 rows"
 msgstr "Funcionou. 3 linhas"
-
-#: src/app/[lang]/(home)/_components/previews/job-preview.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "Executar"
 
 #: src/app/[lang]/(home)/_components/previews/language-preview.tsx
 msgctxt "9Da2rt"

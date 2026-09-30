@@ -139,33 +139,58 @@ test.describe("The home goal box", () => {
 });
 
 test.describe("Focus and Fun on the home page", () => {
-  test("a phone shows both modes, each with its pitch, and the voyage only inside Fun", async ({
-    browser,
+  test("shows Focus first, and the Fun tab brings Fun's pitch, lesson and voyage", async ({
+    page,
   }) => {
-    const context = await browser.newContext({ viewport: { height: 844, width: 390 } });
-    const page = await context.newPage();
+    await page.goto("/");
 
-    try {
-      await page.goto("/");
+    const focusTitle = page.getByRole("heading", { name: "Calm and simple" });
+    const fun = page.getByRole("tabpanel", { name: "Fun" });
+    const route = fun.getByRole("heading", { name: "The route to Madrid" });
 
-      const focus = page.getByRole("region", { name: "Calm and simple" });
-      const fun = page.getByRole("region", { name: "Learning that feels like a game" });
+    await expect(page.getByRole("tab", { name: "Focus" })).toHaveAttribute("aria-selected", "true");
+    await expect(focusTitle).toBeVisible();
+    await expect(route).toBeHidden();
 
-      await expect(
-        focus.getByText(/^Just the lesson and your progress on a quiet screen/u),
-      ).toBeVisible();
+    await page.getByRole("tab", { name: "Fun" }).click();
 
-      await expect(fun.getByText(/^Your plan becomes a space voyage to your goal/u)).toBeVisible();
-      await expect(fun.getByRole("heading", { name: "The route to Madrid" })).toBeVisible();
+    await expect(
+      fun.getByRole("heading", { name: "Learning that feels like a game" }),
+    ).toBeVisible();
 
-      await expect(
-        fun.getByRole("heading", { name: "A buddy you feed by learning" }),
-      ).toBeVisible();
+    await expect(fun.getByText(/^Your plan becomes a space voyage/u)).toBeVisible();
+    await expect(route).toBeVisible();
+    await expect(fun.getByRole("heading", { name: "A buddy you feed by learning" })).toBeVisible();
+    await expect(focusTitle).toBeHidden();
+  });
+});
 
-      await expect(focus.getByRole("heading", { name: "The route to Madrid" })).toHaveCount(0);
-    } finally {
-      await context.close();
-    }
+test.describe("The class example on the home page", () => {
+  test("Simpler and Go deeper swap the explanation, and a second tap brings it back", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const example = page
+      .getByRole("listitem")
+      .filter({ has: page.getByRole("heading", { name: "Keep up in class" }) });
+
+    const original = example.getByText(/^A derivative is how fast/u);
+    const simpler = example.getByRole("button", { name: "Simpler" });
+
+    await expect(original).toBeVisible();
+
+    await simpler.click();
+    await expect(simpler).toHaveAttribute("aria-pressed", "true");
+    await expect(example.getByText(/^Think of a speedometer/u)).toBeVisible();
+    await expect(original).toBeHidden();
+
+    await example.getByRole("button", { name: "Go deeper" }).click();
+    await expect(example.getByText(/^It's the slope of the line/u)).toBeVisible();
+    await expect(simpler).toHaveAttribute("aria-pressed", "false");
+
+    await example.getByRole("button", { name: "Go deeper" }).click();
+    await expect(original).toBeVisible();
   });
 });
 
