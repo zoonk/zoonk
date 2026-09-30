@@ -9,7 +9,7 @@ import {
   resolveLibraryIdentities,
 } from "../identity/resolve-library-identity";
 import { writeSearchTerms } from "../identity/write-search-terms";
-import { createLibraryLesson } from "../lessons/create-library-lesson";
+import { type NewLessonDetails, createHomeChapterLessons } from "../lessons/create-library-lesson";
 import { createSkill } from "../skills/create-skill";
 import {
   type CurriculumAnalytics,
@@ -31,7 +31,7 @@ type ScopeContext = {
   scope: CurriculumScope;
 };
 
-type ScopeLesson = {
+type ScopeLesson = NewLessonDetails & {
   description: string;
   estimatedMinutes: number;
   skills: readonly LessonSkillName[];
@@ -207,38 +207,35 @@ async function writeLessonSearchTerms({
   });
 }
 
-async function toLessonId({
+/** A new lesson in the scope's language and level, with its own words and details. */
+function toNewLesson({
   context,
+  identityKey,
   lesson,
-  resolution,
   skills,
 }: {
   context: LessonContext;
+  identityKey: string;
   lesson: ScopeLesson;
-  resolution: LibraryIdentityResolution;
   skills: readonly ResolvedLessonSkill[];
-}): Promise<{ created: boolean; id: string }> {
-  if (resolution.kind === "existing") {
-    return { created: false, id: resolution.id };
-  }
+}) {
+  const { level, provenance, scope } = context;
 
-  const { homeChapterId, level, provenance, scope } = context;
-
-  const created = await createLibraryLesson({
+  return {
+    canDo: lesson.canDo,
     description: lesson.description,
     estimatedMinutes: lesson.estimatedMinutes,
-    homeChapterId,
-    identityKey: resolution.identityKey,
+    identityKey,
     language: scope.language,
     level,
-    ownerId: scope.ownerId,
     provenance,
     skillIds: skills.map((skill) => skill.id),
+    spec: lesson.spec,
+    specRunId: lesson.specRunId,
+    specStatus: lesson.specStatus,
     targetLanguage: scope.targetLanguage,
     title: lesson.title,
-  });
-
-  return { created: true, id: created.lesson.id };
+  };
 }
 
 /** A lesson's skills as one value, the same in any order: what its identity is made of. */
@@ -262,18 +259,17 @@ function findSharedSkillSets(lessonSkills: readonly (readonly ResolvedLessonSkil
 /**
  * Finds the Library lessons that already teach these skills at this level (in this course, or
  * another course's the reuse decision finds on the same subject), or creates them in their home
- * chapter. Lessons known together, such as a chapter's, resolve together: their skills in one
- * batch and, beside it, their search terms in one model call, then the lessons themselves. Lessons
- * of the batch that teach the same skills stay apart by title (`findSharedSkillSets`). Returns
- * each lesson in the order asked for; `created` tells the caller the lesson is new, so it can
- * write what only a new lesson needs. Null for a lesson none of whose skills resolve.
+ * chapter with what the caller already knows about them (`NewLessonDetails`). Lessons known
+ * together, such as a chapter's, resolve together: their skills in one batch and, beside it, their
+ * search terms in one model call, then the lessons themselves, the new ones created together
+ * (`createHomeChapterLessons`). Lessons of the batch that teach the same skills stay apart by title
+ * (`findSharedSkillSets`). Returns each lesson's id in the order asked for, or null for a lesson
+ * none of whose skills resolve.
  */
 export async function resolveScopeLessons({
   lessons,
   ...context
-}: LessonContext & { lessons: readonly ScopeLesson[] }): Promise<
-  ({ created: boolean; id: string } | null)[]
-> {
+}: LessonContext & { lessons: readonly ScopeLesson[] }): Promise<(string | null)[]> {
   const [lessonSkills, searchTerms] = await Promise.all([
     resolveLessonSkills({ ...context, lessons }),
     writeLessonSearchTerms({ context, lessons }),
@@ -298,20 +294,26 @@ export async function resolveScopeLessons({
     searchTerms: searchTerms && requested.map((entry) => searchTerms[entry.index] ?? []),
   });
 
-  const saved = await Promise.all(
-    withResolutions(requested, resolutions).map(async ({ item, resolution }) => {
-      const lesson = await toLessonId({
-        context,
-        lesson: item.lesson,
-        resolution,
-        skills: item.skills,
-      });
+  const resolved = withResolutions(requested, resolutions);
 
-      return [item.index, lesson] as const;
-    }),
+  const newLessons = resolved.flatMap(({ item, resolution }) =>
+    resolution.kind === "generate" ? [{ identityKey: resolution.identityKey, item }] : [],
   );
 
-  const byIndex = new Map(saved);
+  const created = await createHomeChapterLessons({
+    homeChapterId: context.homeChapterId,
+    lessons: newLessons.map(({ identityKey, item }) =>
+      toNewLesson({ context, identityKey, lesson: item.lesson, skills: item.skills }),
+    ),
+    ownerId: context.scope.ownerId,
+  });
 
-  return lessons.map((_, index) => byIndex.get(index) ?? null);
+  const ids = new Map([
+    ...resolved.flatMap(({ item, resolution }) =>
+      resolution.kind === "existing" ? [[item.index, resolution.id] as const] : [],
+    ),
+    ...newLessons.map(({ item }, position) => [item.index, created[position]?.lesson.id] as const),
+  ]);
+
+  return lessons.map((_, index) => ids.get(index) ?? null);
 }

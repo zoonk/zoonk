@@ -8,7 +8,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
-import { type CreateLibraryLessonInput, createLibraryLesson } from "./create-library-lesson";
+import {
+  type CreateLibraryLessonInput,
+  createHomeChapterLessons,
+  createLibraryLesson,
+} from "./create-library-lesson";
 
 function testProvenance() {
   return {
@@ -121,6 +125,51 @@ describe(createLibraryLesson, () => {
     );
 
     expect(lesson).toMatchObject({ ownerId: owner.id, visibility: "private" });
+  });
+});
+
+describe(createHomeChapterLessons, () => {
+  it("creates each lesson with its details and a slug free in the chapter and the batch", async () => {
+    const chapter = await libraryChapterFixture();
+    const title = `Tax ${randomUUID()}`;
+    const spec = { kind: "challenge", skills: [], variant: "work" };
+
+    const [earlier, first, second] = await Promise.all([
+      lessonInput({ homeChapterId: chapter.id, title }),
+      lessonInput({ canDo: "Work out a tax", title }),
+      lessonInput({ spec, specStatus: "completed", title }),
+    ]);
+
+    const { lesson: taken } = await createLibraryLesson(earlier);
+
+    const created = await createHomeChapterLessons({
+      homeChapterId: chapter.id,
+      lessons: [first, second],
+      ownerId: null,
+    });
+
+    expect(created).toMatchObject([
+      { created: true, lesson: { canDo: "Work out a tax", slug: `${taken.slug}-2` } },
+      { created: true, lesson: { canDo: null, slug: `${taken.slug}-3`, specStatus: "completed" } },
+    ]);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: created[1]?.lesson.id ?? "" } }),
+    ).resolves.toMatchObject({ spec });
+  });
+
+  it("returns the lesson another request already created under a key", async () => {
+    const chapter = await libraryChapterFixture();
+    const input = await lessonInput({ homeChapterId: chapter.id });
+    const existing = await createLibraryLesson(input);
+
+    const [result] = await createHomeChapterLessons({
+      homeChapterId: chapter.id,
+      lessons: [{ ...input, provenance: testProvenance() }],
+      ownerId: null,
+    });
+
+    expect(result).toStrictEqual({ created: false, lesson: existing.lesson });
   });
 });
 

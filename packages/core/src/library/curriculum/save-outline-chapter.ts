@@ -82,7 +82,7 @@ async function resolveChapter({
 
 /**
  * Finds or creates the chapter's lessons together (see `resolveScopeLessons`), in the outline's
- * order, and gives each new one the outline's can-do line, so session tiles have it before the
+ * order. A new one is created with the outline's can-do line, so session tiles have it before the
  * spec exists.
  */
 async function resolveChapterLessons({
@@ -94,30 +94,20 @@ async function resolveChapterLessons({
   chapterId: string;
   context: OutlineContext;
 }): Promise<(string | null)[]> {
-  const resolved = await resolveScopeLessons({
+  return resolveScopeLessons({
     ...context,
     homeChapterId: chapterId,
     lessons: chapter.lessons.map((lesson) => ({
-      ...lesson,
+      canDo: lesson.canDo,
+      description: lesson.description,
+      estimatedMinutes: lesson.estimatedMinutes,
       skills: lesson.skills.map((name) => ({
         description: lesson.canDo || lesson.description,
         name,
       })),
+      title: lesson.title,
     })),
   });
-
-  const created = chapter.lessons.flatMap((lesson, index) => {
-    const saved = resolved[index];
-    return saved?.created ? [{ canDo: lesson.canDo, id: saved.id }] : [];
-  });
-
-  await Promise.all(
-    created.map(({ canDo, id }) =>
-      prisma.lesson.updateMany({ data: { canDo }, where: { canDo: null, id } }),
-    ),
-  );
-
-  return resolved.map((lesson) => lesson?.id ?? null);
 }
 
 /**

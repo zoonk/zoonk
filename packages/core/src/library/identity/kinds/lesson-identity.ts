@@ -13,7 +13,6 @@ import {
   MAX_IDENTITY_CANDIDATES,
   MAX_MATCHES_PER_TERM,
   type TextSearch,
-  orderByIds,
   toIndexedMatchesSql,
   toSearchVector,
   toTermMatchesSql,
@@ -154,18 +153,12 @@ async function findRankedLessonIds({
 }
 
 /**
- * Public lessons in the same language, level and target language whose words or skills match, from
+ * The lessons a search found, with their skills and the courses placing them. They may come from
  * any course: the reuse decision judges from both sides' courses whether one can serve the other.
  */
-async function searchLessonCandidates({
-  request,
-  search,
-}: {
-  request: LessonIdentityRequest;
-  search: TextSearch;
-}): Promise<LibraryIdentityCandidate[]> {
-  const ids = await findRankedLessonIds({ request, search });
-
+export async function loadLessonCandidates(
+  ids: readonly string[],
+): Promise<LibraryIdentityCandidate[]> {
   const lessons = await prisma.lesson.findMany({
     include: {
       chapters: {
@@ -185,10 +178,10 @@ async function searchLessonCandidates({
       skills: { include: { skill: { select: { name: true } } } },
     },
     omit: { spec: true, summary: true },
-    where: { id: { in: ids } },
+    where: { id: { in: [...ids] } },
   });
 
-  return orderByIds(ids, lessons).map((lesson) => ({
+  return lessons.map((lesson) => ({
     id: lesson.id,
     item: {
       courses: listLessonCourses(lesson),
@@ -245,8 +238,8 @@ export function getLessonIdentitySearch(request: LessonIdentityRequest): Identit
   return {
     aiSubject: toLessonIdentitySubject(request),
     baseTerms: [request.title, ...skillNames],
+    findCandidateIds: (search) => findRankedLessonIds({ request, search }),
     findExact: () => findExactLesson({ identityKey, request }),
     identityKey,
-    searchCandidates: (search) => searchLessonCandidates({ request, search }),
   };
 }

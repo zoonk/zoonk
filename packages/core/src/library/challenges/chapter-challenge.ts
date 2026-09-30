@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseLevel, prisma } from "@zoonk/db";
+import { type CourseLevel } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { type LibraryProvenance } from "../_utils/library-rows";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
@@ -145,7 +145,14 @@ export async function createChapterChallenge({
   const variant = getChallengeVariant(level);
   const copy = getChallengeCopy({ language, variant });
 
+  const spec: ChallengeLessonSpec = {
+    kind: "challenge",
+    skills: names.map((name) => ({ description: null, name })),
+    variant,
+  };
+
   const { lesson } = await createLibraryLesson({
+    canDo: copy.canDo,
     description: copy.description,
     estimatedMinutes: CHALLENGE_MINUTES[variant],
     homeChapterId: chapterId,
@@ -155,19 +162,10 @@ export async function createChapterChallenge({
     ownerId,
     provenance,
     skillIds: [],
+    spec,
+    specStatus: "completed",
     targetLanguage,
     title: copy.title.replace("{title}", chapterTitle),
-  });
-
-  const spec: ChallengeLessonSpec = {
-    kind: "challenge",
-    skills: names.map((name) => ({ description: null, name })),
-    variant,
-  };
-
-  await prisma.lesson.updateMany({
-    data: { canDo: copy.canDo, spec, specStatus: "completed" },
-    where: { id: lesson.id, specStatus: "pending" },
   });
 
   return lesson.id;

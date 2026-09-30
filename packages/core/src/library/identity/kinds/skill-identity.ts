@@ -6,7 +6,7 @@ import { findSurvivingSkill } from "../../skills/_utils/find-surviving-skill";
 import { isInRequestScope } from "../_utils/exact-match-scope";
 import { type IdentityKindSearch, type SkillIdentityRequest } from "../_utils/identity-requests";
 import { SKILL_DOCUMENT } from "../_utils/search-documents";
-import { type TextSearch, findRankedIds, orderByIds } from "../_utils/text-search-sql";
+import { type TextSearch, findRankedIds } from "../_utils/text-search-sql";
 
 /**
  * An exact match on a merged duplicate returns the skill it was merged into.
@@ -42,14 +42,14 @@ async function findExactSkill({
  * Surviving public skills in the same language and target language whose words
  * match. Level isn't filtered: a skill is the same at every level.
  */
-async function searchSkillCandidates({
+async function findSkillCandidateIds({
   request,
   search,
 }: {
   request: SkillIdentityRequest;
   search: TextSearch;
-}): Promise<LibraryIdentityCandidate[]> {
-  const ids = await findRankedIds({
+}): Promise<string[]> {
+  return findRankedIds({
     document: SKILL_DOCUMENT,
     filters: sql`s.language = ${request.language}
       AND s.target_language IS NOT DISTINCT FROM ${request.targetLanguage}
@@ -57,10 +57,14 @@ async function searchSkillCandidates({
       AND s.visibility = 'public'`,
     search,
   });
+}
 
-  const skills = await prisma.skill.findMany({ where: { id: { in: ids } } });
+export async function loadSkillCandidates(
+  ids: readonly string[],
+): Promise<LibraryIdentityCandidate[]> {
+  const skills = await prisma.skill.findMany({ where: { id: { in: [...ids] } } });
 
-  return orderByIds(ids, skills).map((skill) => ({
+  return skills.map((skill) => ({
     id: skill.id,
     item: {
       description: skill.description,
@@ -88,8 +92,8 @@ export function getSkillIdentitySearch(request: SkillIdentityRequest): IdentityK
       language: request.language,
     },
     baseTerms: [request.name],
+    findCandidateIds: (search) => findSkillCandidateIds({ request, search }),
     findExact: () => findExactSkill({ identityKey, request }),
     identityKey,
-    searchCandidates: (search) => searchSkillCandidates({ request, search }),
   };
 }

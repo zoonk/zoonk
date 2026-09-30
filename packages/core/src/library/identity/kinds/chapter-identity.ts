@@ -6,7 +6,7 @@ import { listChapterCourses } from "../_utils/candidate-courses";
 import { isInRequestScope } from "../_utils/exact-match-scope";
 import { type ChapterIdentityRequest, type IdentityKindSearch } from "../_utils/identity-requests";
 import { CHAPTER_DOCUMENT } from "../_utils/search-documents";
-import { type TextSearch, findRankedIds, orderByIds } from "../_utils/text-search-sql";
+import { type TextSearch, findRankedIds } from "../_utils/text-search-sql";
 
 async function findExactChapter({
   identityKey,
@@ -29,14 +29,14 @@ async function findExactChapter({
  * course: a course on the same subject under another name can share them, which the reuse
  * decision judges from both sides' courses.
  */
-async function searchChapterCandidates({
+async function findChapterCandidateIds({
   request,
   search,
 }: {
   request: ChapterIdentityRequest;
   search: TextSearch;
-}): Promise<LibraryIdentityCandidate[]> {
-  const ids = await findRankedIds({
+}): Promise<string[]> {
+  return findRankedIds({
     document: CHAPTER_DOCUMENT,
     filters: sql`c.language = ${request.language}
       AND c.level = ${request.level}::"CourseLevel"
@@ -44,16 +44,20 @@ async function searchChapterCandidates({
       AND c.target_language IS NOT DISTINCT FROM ${request.targetLanguage}`,
     search,
   });
+}
 
+export async function loadChapterCandidates(
+  ids: readonly string[],
+): Promise<LibraryIdentityCandidate[]> {
   const chapters = await prisma.chapter.findMany({
     include: {
       courses: { orderBy: { createdAt: "asc" }, select: { course: { select: { title: true } } } },
       homeCourse: { select: { title: true } },
     },
-    where: { id: { in: ids } },
+    where: { id: { in: [...ids] } },
   });
 
-  return orderByIds(ids, chapters).map((chapter) => ({
+  return chapters.map((chapter) => ({
     id: chapter.id,
     item: {
       courses: listChapterCourses(chapter),
@@ -87,8 +91,8 @@ export function getChapterIdentitySearch(request: ChapterIdentityRequest): Ident
       language: request.language,
     },
     baseTerms: [request.title],
+    findCandidateIds: (search) => findChapterCandidateIds({ request, search }),
     findExact: () => findExactChapter({ identityKey, request }),
     identityKey,
-    searchCandidates: (search) => searchChapterCandidates({ request, search }),
   };
 }

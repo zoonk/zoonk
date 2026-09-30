@@ -6,7 +6,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { type CourseIdentityRequest, type IdentityKindSearch } from "../_utils/identity-requests";
 import { COURSE_DOCUMENT } from "../_utils/search-documents";
-import { type TextSearch, findRankedIds, orderByIds } from "../_utils/text-search-sql";
+import { type TextSearch, findRankedIds } from "../_utils/text-search-sql";
 
 type CourseTitleRequest = Pick<
   CourseIdentityRequest,
@@ -41,13 +41,13 @@ async function findExactCourse(request: CourseIdentityRequest): Promise<string |
 }
 
 /** Shared courses in the same language and target language whose title or description match. */
-async function searchCourseCandidates({
+async function findCourseCandidateIds({
   request,
   search,
 }: {
   request: CourseIdentityRequest;
   search: TextSearch;
-}): Promise<LibraryIdentityCandidate[]> {
+}): Promise<string[]> {
   const organization = await prisma.organization.findUnique({ where: { slug: AI_ORG_SLUG } });
 
   if (!organization) {
@@ -56,7 +56,7 @@ async function searchCourseCandidates({
 
   // By the organization's id rather than a join on its slug: Postgres then knows it owns most
   // courses and reads the text-search index, instead of matching every shared course one by one.
-  const ids = await findRankedIds({
+  return findRankedIds({
     document: COURSE_DOCUMENT,
     filters: sql`c.organization_id = ${organization.id}::uuid
       AND c.language = ${request.language}
@@ -64,10 +64,14 @@ async function searchCourseCandidates({
       AND c.target_language IS NOT DISTINCT FROM ${request.targetLanguage}`,
     search,
   });
+}
 
-  const courses = await prisma.course.findMany({ where: { id: { in: ids } } });
+export async function loadCourseCandidates(
+  ids: readonly string[],
+): Promise<LibraryIdentityCandidate[]> {
+  const courses = await prisma.course.findMany({ where: { id: { in: [...ids] } } });
 
-  return orderByIds(ids, courses).map((course) => ({
+  return courses.map((course) => ({
     id: course.id,
     item: {
       description: course.description,
@@ -91,8 +95,8 @@ export function getCourseIdentitySearch(request: CourseIdentityRequest): Identit
       language: request.language,
     },
     baseTerms: [request.title],
+    findCandidateIds: (search) => findCourseCandidateIds({ request, search }),
     findExact: () => findExactCourse(request),
     identityKey,
-    searchCandidates: (search) => searchCourseCandidates({ request, search }),
   };
 }

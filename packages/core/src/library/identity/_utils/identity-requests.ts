@@ -1,7 +1,4 @@
-import {
-  type LibraryIdentityCandidate,
-  type LibraryIdentitySubject,
-} from "@zoonk/ai/tasks/v2/identity/subject";
+import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/v2/identity/subject";
 import { type CourseLevel } from "@zoonk/db";
 import { type TextSearch } from "./text-search-sql";
 
@@ -100,5 +97,6 @@ export type IdentityKindSearch = {
   /** Its `language` is the language search terms are written and stemmed in. */
   aiSubject: LibraryIdentitySubject;
   findExact: () => Promise<string | null>;
-  searchCandidates: (search: TextSearch) => Promise<LibraryIdentityCandidate[]>;
+  /** The ids of rows whose words match the search, best first; they load with their kind's loader. */
+  findCandidateIds: (search: TextSearch) => Promise<string[]>;
 };

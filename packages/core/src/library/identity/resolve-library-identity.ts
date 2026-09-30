@@ -4,14 +4,15 @@ import {
   decideLibraryIdentity,
 } from "@zoonk/ai/tasks/v2/identity/decision";
 import { type SearchTermsParams } from "@zoonk/ai/tasks/v2/identity/search-terms";
+import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/v2/identity/subject";
 import { type IdentityKindSearch, type LibraryIdentityRequest } from "./_utils/identity-requests";
 import { toTextSearch } from "./_utils/text-search-sql";
-import { getChapterIdentitySearch } from "./kinds/chapter-identity";
-import { getCourseIdentitySearch } from "./kinds/course-identity";
-import { getImageIdentitySearch } from "./kinds/image-identity";
-import { getLessonIdentitySearch } from "./kinds/lesson-identity";
-import { getSkillIdentitySearch } from "./kinds/skill-identity";
-import { getSourceIdentitySearch } from "./kinds/source-identity";
+import { getChapterIdentitySearch, loadChapterCandidates } from "./kinds/chapter-identity";
+import { getCourseIdentitySearch, loadCourseCandidates } from "./kinds/course-identity";
+import { getImageIdentitySearch, loadImageCandidates } from "./kinds/image-identity";
+import { getLessonIdentitySearch, loadLessonCandidates } from "./kinds/lesson-identity";
+import { getSkillIdentitySearch, loadSkillCandidates } from "./kinds/skill-identity";
+import { getSourceIdentitySearch, loadSourceCandidates } from "./kinds/source-identity";
 import { writeSearchTerms } from "./write-search-terms";
 
 /**
@@ -55,48 +56,85 @@ function getIdentitySearch(request: LibraryIdentityRequest): IdentityKindSearch 
   }
 }
 
+/**
+ * Loads each kind's candidates by id. A candidate reads the same for every request that found it,
+ * so requests resolved together load their candidates in one call per kind.
+ */
+const CANDIDATE_LOADERS: Record<
+  LibraryIdentityRequest["kind"],
+  (ids: readonly string[]) => Promise<LibraryIdentityCandidate[]>
+> = {
+  chapter: loadChapterCandidates,
+  course: loadCourseCandidates,
+  image: loadImageCandidates,
+  lesson: loadLessonCandidates,
+  skill: loadSkillCandidates,
+  source: loadSourceCandidates,
+};
+
 type IdentityAnalytics = SearchTermsParams["analytics"];
 
 /**
  * Postgres full-text search for public rows with the same language and level, on the item's own
- * words and the terms the model wrote for it.
+ * words and the terms the model wrote for it. Returns the ids it found, best first.
  */
-async function searchCandidates({
+async function findCandidateIds({
   search,
   terms,
 }: {
   search: IdentityKindSearch;
   terms: readonly string[];
-}) {
+}): Promise<{ ids: string[]; searchTerms: string[] }> {
   const searchTerms = [...search.baseTerms, ...terms];
   const textSearch = toTextSearch({ language: search.aiSubject.language, terms: searchTerms });
+  const ids = textSearch ? await search.findCandidateIds(textSearch) : [];
 
-  if (!textSearch) {
-    return { candidates: [], searchTerms };
-  }
-
-  const candidates = await search.searchCandidates(textSearch);
-
-  return { candidates, searchTerms };
+  return { ids, searchTerms };
 }
 
-/** Text search with the request's terms, then a Jev decision on each candidate it found. */
-async function searchIdentity({
+/** Every candidate the searches found, by id, loaded once per kind. */
+async function loadCandidates(
+  searched: readonly { ids: readonly string[]; kind: LibraryIdentityRequest["kind"] }[],
+): Promise<Map<string, LibraryIdentityCandidate>> {
+  const kinds = [...new Set(searched.map((entry) => entry.kind))];
+
+  const found = kinds
+    .map((kind) => ({
+      ids: [
+        ...new Set(searched.filter((entry) => entry.kind === kind).flatMap((entry) => entry.ids)),
+      ],
+      kind,
+    }))
+    .filter(({ ids }) => ids.length > 0);
+
+  const loaded = await Promise.all(found.map(({ ids, kind }) => CANDIDATE_LOADERS[kind](ids)));
+
+  return new Map(loaded.flat().map((candidate) => [candidate.id, candidate]));
+}
+
+/** A Jev decision on the candidates a search found, best first. */
+async function decideIdentity({
+  candidates,
   search,
-  terms,
+  searchTerms,
 }: {
+  candidates: readonly LibraryIdentityCandidate[];
   search: IdentityKindSearch;
-  terms: readonly string[];
+  searchTerms: string[];
 }): Promise<LibraryIdentityResolution> {
-  const generate = { identityKey: search.identityKey, kind: "generate" as const, verdicts: [] };
-  const { candidates, searchTerms } = await searchCandidates({ search, terms });
+  const generate = {
+    identityKey: search.identityKey,
+    kind: "generate" as const,
+    searchTerms,
+    verdicts: [],
+  };
 
   if (candidates.length === 0) {
-    return { ...generate, searchTerms };
+    return generate;
   }
 
   const { match, verdicts } = await decideLibraryIdentity({
-    candidates,
+    candidates: [...candidates],
     subject: search.aiSubject,
   });
 
@@ -105,7 +143,7 @@ async function searchIdentity({
     return { id, kind: "existing", match: "search", probability, verdicts };
   }
 
-  return { ...generate, searchTerms, verdicts };
+  return { ...generate, verdicts };
 }
 
 type IdentityEntry = {
@@ -154,7 +192,8 @@ function resolveUnsearched(entry: IdentityEntry): LibraryIdentityResolution {
  * match first, then model-written search terms, Postgres text search filtered by language and
  * level, and a Jev decision on each candidate. Requests known together, such as a chapter's
  * lessons, resolve together: the terms of every request still unmatched are written in one model
- * call instead of one each, and the results come back in the order of the requests. A caller that
+ * call instead of one each, the candidates their searches find load in one call per kind, and the
+ * results come back in the order of the requests. A caller that
  * already wrote the terms, beside other work, passes them in `searchTerms`, in the same order.
  * Private requests only match their owner's own rows: they are never reused and never reuse
  * other learners' private content.
@@ -181,13 +220,32 @@ export async function resolveLibraryIdentities({
   const searching = entries.filter((entry) => !entry.exactId && !entry.request.ownerId);
   const terms = await getSearchTerms({ analytics, searchTerms, searching });
 
+  const searches = await Promise.all(
+    searching.map(async (entry) => ({
+      entry,
+      ...(await findCandidateIds({ search: entry.search, terms: terms.get(entry) ?? [] })),
+    })),
+  );
+
+  const candidates = await loadCandidates(
+    searches.map(({ entry, ids }) => ({ ids, kind: entry.request.kind })),
+  );
+
+  const searched = new Map(searches.map((found) => [found.entry, found]));
+
   return Promise.all(
     entries.map(async (entry) => {
-      const entryTerms = terms.get(entry);
+      const found = searched.get(entry);
 
-      return entryTerms
-        ? searchIdentity({ search: entry.search, terms: entryTerms })
-        : resolveUnsearched(entry);
+      if (!found) {
+        return resolveUnsearched(entry);
+      }
+
+      return decideIdentity({
+        candidates: found.ids.flatMap((id) => candidates.get(id) ?? []),
+        search: entry.search,
+        searchTerms: found.searchTerms,
+      });
     }),
   );
 }

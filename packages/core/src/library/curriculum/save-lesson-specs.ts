@@ -31,8 +31,8 @@ function toSpecData(spec: LessonSpec) {
 /**
  * Each spec the split rule cut off becomes its own lesson: the specs' skills go through identity
  * search together, a lesson of the same course that already teaches them at this level is reused
- * (or another course's the reuse decision finds on the same subject), and a new one gets its spec
- * right away, so it never needs planning again. Returns each spec's lesson, in order.
+ * (or another course's the reuse decision finds on the same subject), and a new one is created with
+ * its spec, so it never needs planning again. Returns each spec's lesson, in order.
  */
 async function saveSplitLessons({
   context,
@@ -41,30 +41,18 @@ async function saveSplitLessons({
   context: SplitContext;
   specs: readonly LessonSpec[];
 }): Promise<(string | null)[]> {
-  const resolved = await resolveScopeLessons({
+  return resolveScopeLessons({
     ...context,
     goalSkills: [],
     lessons: specs.map((spec) => ({
-      ...spec,
+      ...toSpecData(spec),
+      description: spec.description,
       skills: spec.skills.map((skill) => ({ description: skill.description, name: skill.name })),
+      specRunId: context.workflowRunId,
+      specStatus: "completed",
+      title: spec.title,
     })),
   });
-
-  const created = specs.flatMap((spec, index) => {
-    const saved = resolved[index];
-    return saved?.created ? [{ id: saved.id, spec }] : [];
-  });
-
-  await Promise.all(
-    created.map(({ id, spec }) =>
-      prisma.lesson.updateMany({
-        data: { ...toSpecData(spec), specRunId: context.workflowRunId, specStatus: "completed" },
-        where: { id, specStatus: { in: ["pending", "failed"] } },
-      }),
-    ),
-  );
-
-  return resolved.map((lesson) => lesson?.id ?? null);
 }
 
 /** Places split lessons right after the lesson they came from, keeping the rest of the order. */
