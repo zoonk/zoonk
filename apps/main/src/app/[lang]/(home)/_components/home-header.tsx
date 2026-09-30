@@ -6,7 +6,7 @@ import { getExtracted } from "next-intl/server";
 import { FOCUS_AND_FUN_ID, HOW_IT_WORKS_ID } from "./home-ids";
 
 const NAV_LINK_CLASS =
-  "text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center rounded-md whitespace-nowrap outline-none transition-colors focus-visible:ring-[3px]";
+  "text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 min-w-11 items-center justify-center rounded-md whitespace-nowrap outline-none transition-colors focus-visible:ring-[3px]";
 
 /**
  * The visitor home page's top bar. It's static: signed-in learners never see
