@@ -1,9 +1,21 @@
 import { defineConfig, devices } from "@playwright/test";
 import { getTestEnvironment } from "@zoonk/db/test-environment";
 
+/**
+ * Claude Code's cloud containers can't download Playwright's pinned Chromium, so their
+ * session-start hook points this at the Chromium the container ships.
+ */
+const CHROMIUM_EXECUTABLE_PATH = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+
 const CHROMIUM_PROJECT = {
   name: "chromium",
-  use: { ...devices["Desktop Chrome"], ...(process.env.CI ? { channel: "chrome" as const } : {}) },
+  use: {
+    ...devices["Desktop Chrome"],
+    ...(process.env.CI ? { channel: "chrome" as const } : {}),
+    ...(CHROMIUM_EXECUTABLE_PATH
+      ? { launchOptions: { executablePath: CHROMIUM_EXECUTABLE_PATH } }
+      : {}),
+  },
 };
 
 export function createBaseConfig(options: {

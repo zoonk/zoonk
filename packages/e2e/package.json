@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     "./base.config": "./src/base.config.ts",
+    "./botid-client": "./src/botid-client.ts",
     "./fixtures": "./src/fixtures.ts",
     "./fixtures/base-url": "./src/fixtures/base-url.ts",
     "./fixtures/dialog": "./src/fixtures/dialog.ts",
