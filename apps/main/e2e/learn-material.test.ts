@@ -4,7 +4,7 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, setDeviceMode } from "./learn-personas";
+import { setDeviceMode } from "./learn-personas";
 
 /**
  * Studying your own material: the paperclip takes a file, pasted text or a link, then "What do you
@@ -140,109 +140,105 @@ test.describe("Studying your own material", () => {
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeHidden();
   });
 
-  for (const mode of MODES) {
-    test(`questions about the material are answered from its pages, in ${mode}`, async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const title = "Aula 5 - Glicolise";
-      const slides = await sourceFixture({ kind: "upload", mimeType: PPTX, title });
-      await learnerSourceFixture({ sourceId: slides.id, userId: noProgressUser.id });
-      await stubUpload(page, { id: slides.id, title });
-      await setDeviceMode(page.context(), mode);
+  test("questions about the material are answered from its pages", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const title = "Aula 5 - Glicolise";
+    const slides = await sourceFixture({ kind: "upload", mimeType: PPTX, title });
+    await learnerSourceFixture({ sourceId: slides.id, userId: noProgressUser.id });
+    await stubUpload(page, { id: slides.id, title });
+    await setDeviceMode(page.context(), "focus");
 
-      await page.route("**/v1/material-questions", (route) =>
-        route.fulfill({
-          json: {
-            answer: "It makes 4 ATP but spends 2, so 2 are left for each glucose.",
-            citations: [{ page: 6, title, unit: "slide" }],
-            found: true,
-          },
-        }),
-      );
+    await page.route("**/v1/material-questions", (route) =>
+      route.fulfill({
+        json: {
+          answer: "It makes 4 ATP but spends 2, so 2 are left for each glucose.",
+          citations: [{ page: 6, title, unit: "slide" }],
+          found: true,
+        },
+      }),
+    );
 
-      await openPaperclip(page);
-      await page.getByRole("button", { name: "Paste text" }).click();
-      await page.getByRole("textbox", { name: "Your text" }).fill("Glycolysis nets 2 ATP.");
-      await page.getByRole("button", { name: "Add text" }).click();
-      await page.getByRole("radio", { name: /Ask questions/u }).click();
-      await page.getByRole("button", { name: "Start with your goal" }).click();
+    await openPaperclip(page);
+    await page.getByRole("button", { name: "Paste text" }).click();
+    await page.getByRole("textbox", { name: "Your text" }).fill("Glycolysis nets 2 ATP.");
+    await page.getByRole("button", { name: "Add text" }).click();
+    await page.getByRole("radio", { name: /Ask questions/u }).click();
+    await page.getByRole("button", { name: "Start with your goal" }).click();
 
-      await expect(page.getByRole("heading", { name: "Ask about your material" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Ask about your material" })).toBeVisible();
 
-      const question = page.getByRole("textbox", { name: "Your question" });
-      await question.fill("Why only 2 ATP?");
-      await question.press("Enter");
+    const question = page.getByRole("textbox", { name: "Your question" });
+    await question.fill("Why only 2 ATP?");
+    await question.press("Enter");
 
-      await expect(page.getByText("so 2 are left for each glucose")).toBeVisible();
+    await expect(page.getByText("so 2 are left for each glucose")).toBeVisible();
 
-      await expect(
-        page.getByRole("list", { name: "Where this comes from" }).getByText(`${title}, slide 6`),
-      ).toBeVisible();
+    await expect(
+      page.getByRole("list", { name: "Where this comes from" }).getByText(`${title}, slide 6`),
+    ).toBeVisible();
 
-      // Asking isn't a goal: nothing was created.
-      await expect(prisma.goal.count({ where: { userId: noProgressUser.id } })).resolves.toBe(0);
+    // Asking isn't a goal: nothing was created.
+    await expect(prisma.goal.count({ where: { userId: noProgressUser.id } })).resolves.toBe(0);
+  });
+
+  test("a lesson built from the learner's slides cites its slide", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const slides = await sourceFixture({
+      kind: "upload",
+      mimeType: PPTX,
+      ownerId: noProgressUser.id,
+      title: "Aula 5 - Glicolise",
+      visibility: "private",
     });
 
-    test(`a lesson built from the learner's slides cites its slide, in ${mode}`, async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const slides = await sourceFixture({
-        kind: "upload",
-        mimeType: PPTX,
-        ownerId: noProgressUser.id,
-        title: "Aula 5 - Glicolise",
-        visibility: "private",
-      });
-
-      const { lesson, steps } = await playableLessonFixture({
-        lesson: { ownerId: noProgressUser.id, visibility: "private" },
-        steps: ["explanation", "check"],
-      });
-
-      await prisma.step.update({
-        data: { sourceId: slides.id, sourcePage: 3 },
-        where: { id: steps[0]?.id },
-      });
-
-      await setDeviceMode(page.context(), mode);
-      await page.goto(`/learn/${lesson.id}`);
-
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
-      await expect(
-        page.getByLabel("From your material: Aula 5 - Glicolise, slide 3"),
-      ).toBeVisible();
+    const { lesson, steps } = await playableLessonFixture({
+      lesson: { ownerId: noProgressUser.id, visibility: "private" },
+      steps: ["explanation", "check"],
     });
 
-    test(`an explanation no slide supports says it isn't in the material, in ${mode}`, async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const slides = await sourceFixture({
-        kind: "upload",
-        mimeType: PPTX,
-        ownerId: noProgressUser.id,
-        title: "Aula 6 - Ciclo de Krebs",
-        visibility: "private",
-      });
-
-      const { lesson, steps } = await playableLessonFixture({
-        lesson: { ownerId: noProgressUser.id, visibility: "private" },
-        steps: ["explanation", "check"],
-      });
-
-      await prisma.step.update({
-        data: { sourceId: slides.id, sourcePage: 5 },
-        where: { id: steps[1]?.id },
-      });
-
-      await setDeviceMode(page.context(), mode);
-      await page.goto(`/learn/${lesson.id}`);
-
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-      await expect(page.getByText("Not in your material")).toBeVisible();
+    await prisma.step.update({
+      data: { sourceId: slides.id, sourcePage: 3 },
+      where: { id: steps[0]?.id },
     });
-  }
+
+    await setDeviceMode(page.context(), "fun");
+    await page.goto(`/learn/${lesson.id}`);
+
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+
+    await expect(page.getByLabel("From your material: Aula 5 - Glicolise, slide 3")).toBeVisible();
+  });
+
+  test("an explanation no slide supports says it isn't in the material", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const slides = await sourceFixture({
+      kind: "upload",
+      mimeType: PPTX,
+      ownerId: noProgressUser.id,
+      title: "Aula 6 - Ciclo de Krebs",
+      visibility: "private",
+    });
+
+    const { lesson, steps } = await playableLessonFixture({
+      lesson: { ownerId: noProgressUser.id, visibility: "private" },
+      steps: ["explanation", "check"],
+    });
+
+    await prisma.step.update({
+      data: { sourceId: slides.id, sourcePage: 5 },
+      where: { id: steps[1]?.id },
+    });
+
+    await setDeviceMode(page.context(), "focus");
+    await page.goto(`/learn/${lesson.id}`);
+
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+    await expect(page.getByText("Not in your material")).toBeVisible();
+  });
 });

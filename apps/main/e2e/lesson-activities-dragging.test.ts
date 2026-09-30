@@ -1,7 +1,10 @@
+import { randomUUID } from "node:crypto";
 import { type Locator } from "@playwright/test";
-import { openActivity } from "./activity-lesson";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { type Page, expect, test } from "./fixtures";
-import { MODES } from "./learn-personas";
+import { type Mode, setDeviceMode } from "./learn-personas";
 
 /** A small phone, where the lesson scrolls and the Check bar sits over the bottom of it. */
 const PHONE = { hasTouch: true, isMobile: true, viewport: { height: 812, width: 375 } };
@@ -13,6 +16,27 @@ const MOVE_STEPS = 12;
 
 /** Far enough to scroll the lesson; a phone scrolls well before this. */
 const SWIPE_PX = 200;
+
+/** Opens a lesson whose one screen is the template's shared fixture, in `mode`. */
+async function openActivity(
+  page: Page,
+  { mode, template }: { mode: Mode; template: keyof typeof activityContentFixtures },
+) {
+  const lesson = await libraryLessonFixture({
+    contentStatus: "completed",
+    title: `E2E ${template} ${randomUUID()}`,
+  });
+
+  await libraryStepFixture({
+    content: activityContentFixtures[template],
+    kind: "activity",
+    lessonId: lesson.id,
+    position: 0,
+  });
+
+  await setDeviceMode(page.context(), mode);
+  await page.goto(`/learn/${lesson.id}`);
+}
 
 async function centerOf(locator: Locator) {
   const box = await locator.boundingBox();
@@ -124,79 +148,61 @@ async function expectEvidencePicked(page: Page) {
   await expect(page.getByRole("button", { name: "Take the quote out" })).toBeVisible();
 }
 
-for (const mode of MODES) {
-  test.describe(`dragging activity items with a mouse in ${mode} mode`, () => {
-    test("labeled diagram: a name dragged onto a spot labels it", async ({ page }) => {
-      await openActivity(page, { mode, template: "labeledDiagram" });
-      await dragWithMouse(heartDrag(page));
-      await expectHeartLabeled(page);
-    });
+/*
+ * Dragging with a mouse is tested with the player (`packages/player`). These stay here because they
+ * need a phone: a touch screen at phone size, with the browser's own touch input and page scroll.
+ */
+test.describe("dragging activity items on a phone", () => {
+  test.use(PHONE);
 
-    test("categorize: an item dragged onto a group is sorted into it", async ({ page }) => {
-      await openActivity(page, { mode, template: "categorize" });
-      await dragWithMouse(sortingDrag(page));
-      await expectSorted(page);
-    });
-
-    test("argument builder: a quote dragged onto the evidence is picked", async ({ page }) => {
-      await openActivity(page, { mode, template: "argumentBuilder" });
-      await dragWithMouse(evidenceDrag(page));
-      await expectEvidencePicked(page);
-    });
+  test("labeled diagram: a name dragged onto a spot with a mouse labels it", async ({ page }) => {
+    await openActivity(page, { mode: "focus", template: "labeledDiagram" });
+    await dragWithMouse(heartDrag(page));
+    await expectHeartLabeled(page);
   });
 
-  test.describe(`dragging activity items on a phone in ${mode} mode`, () => {
-    test.use(PHONE);
-
-    test("labeled diagram: a name dragged onto a spot with a mouse labels it", async ({ page }) => {
-      await openActivity(page, { mode, template: "labeledDiagram" });
-      await dragWithMouse(heartDrag(page));
-      await expectHeartLabeled(page);
-    });
-
-    test("labeled diagram: a name held and dragged onto a spot with a finger labels it", async ({
-      page,
-    }) => {
-      await openActivity(page, { mode, template: "labeledDiagram" });
-      await dragWithFinger(page, heartDrag(page));
-      await expectHeartLabeled(page);
-    });
-
-    test("categorize: an item held and dragged onto a group with a finger sorts it", async ({
-      page,
-    }) => {
-      await openActivity(page, { mode, template: "categorize" });
-      await dragWithFinger(page, sortingDrag(page));
-      await expectSorted(page);
-    });
-
-    test("argument builder: a quote held and dragged onto the evidence with a finger is picked", async ({
-      page,
-    }) => {
-      await openActivity(page, { mode, template: "argumentBuilder" });
-      await dragWithFinger(page, evidenceDrag(page));
-      await expectEvidencePicked(page);
-    });
-
-    test("labeled diagram: a quick swipe over the names scrolls instead of dragging", async ({
-      page,
-    }) => {
-      await openActivity(page, { mode, template: "labeledDiagram" });
-      const lastSpot = page.getByRole("button", { name: "Spot 5, bottom right: empty" });
-      await expect(lastSpot).not.toBeInViewport();
-
-      await swipeUpFrom(page, page.getByRole("button", { name: "Put Aorta on spot 1" }));
-
-      await expect(lastSpot).toBeInViewport();
-      await expect(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
-    });
-
-    test("labeled diagram: tapping a name still puts it on the highlighted spot", async ({
-      page,
-    }) => {
-      await openActivity(page, { mode, template: "labeledDiagram" });
-      await page.getByRole("button", { name: "Put Aorta on spot 1" }).tap();
-      await expect(page.getByRole("button", { name: /^Spot 1, .*: Aorta$/u })).toBeVisible();
-    });
+  test("labeled diagram: a name held and dragged onto a spot with a finger labels it", async ({
+    page,
+  }) => {
+    await openActivity(page, { mode: "fun", template: "labeledDiagram" });
+    await dragWithFinger(page, heartDrag(page));
+    await expectHeartLabeled(page);
   });
-}
+
+  test("categorize: an item held and dragged onto a group with a finger sorts it", async ({
+    page,
+  }) => {
+    await openActivity(page, { mode: "focus", template: "categorize" });
+    await dragWithFinger(page, sortingDrag(page));
+    await expectSorted(page);
+  });
+
+  test("argument builder: a quote held and dragged onto the evidence with a finger is picked", async ({
+    page,
+  }) => {
+    await openActivity(page, { mode: "fun", template: "argumentBuilder" });
+    await dragWithFinger(page, evidenceDrag(page));
+    await expectEvidencePicked(page);
+  });
+
+  test("labeled diagram: a quick swipe over the names scrolls instead of dragging", async ({
+    page,
+  }) => {
+    await openActivity(page, { mode: "focus", template: "labeledDiagram" });
+    const lastSpot = page.getByRole("button", { name: "Spot 5, bottom right: empty" });
+    await expect(lastSpot).not.toBeInViewport();
+
+    await swipeUpFrom(page, page.getByRole("button", { name: "Put Aorta on spot 1" }));
+
+    await expect(lastSpot).toBeInViewport();
+    await expect(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
+  });
+
+  test("labeled diagram: tapping a name still puts it on the highlighted spot", async ({
+    page,
+  }) => {
+    await openActivity(page, { mode: "fun", template: "labeledDiagram" });
+    await page.getByRole("button", { name: "Put Aorta on spot 1" }).tap();
+    await expect(page.getByRole("button", { name: /^Spot 1, .*: Aorta$/u })).toBeVisible();
+  });
+});

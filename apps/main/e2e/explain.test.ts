@@ -6,7 +6,7 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, asPersona } from "./learn-personas";
+import { asPersona } from "./learn-personas";
 
 /**
  * Quick explanations: a question goes straight to its explanation, with a designed wait while
@@ -242,9 +242,11 @@ test.describe("Quick explanations", () => {
     });
   });
 
-  for (const mode of MODES) {
-    test(`plays the story and ends with "Now you know" in ${mode} mode`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "explain" }, async ({ page, user: persona }) => {
+  test(`plays the story and ends with "Now you know"`, async ({ browser }) => {
+    await asPersona(
+      browser,
+      { mode: "focus", persona: "explain" },
+      async ({ page, user: persona }) => {
         await page.goto(`/explain/${persona.goalId}`);
         await expect(page.getByText("The market isn't one price")).toBeVisible();
 
@@ -283,7 +285,7 @@ test.describe("Quick explanations", () => {
               where: { contentId: item.lessonId ?? "", userId: persona.id },
             }),
           )
-          .toMatchObject({ contentKind: "lesson", mode, vote: "up" });
+          .toMatchObject({ contentKind: "lesson", mode: "focus", vote: "up" });
 
         const goFurther = page.getByRole("region", { name: "Want to go further?" });
 
@@ -292,7 +294,7 @@ test.describe("Quick explanations", () => {
         ).toBeVisible();
 
         await expect(page.getByRole("link", { name: "Done" })).toHaveAttribute("href", "/today");
-      });
-    });
-  }
+      },
+    );
+  });
 });

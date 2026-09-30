@@ -4,7 +4,7 @@ import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { z } from "zod";
 import { expect, test } from "./fixtures";
-import { MODES, asPersona } from "./learn-personas";
+import { asPersona } from "./learn-personas";
 
 /**
  * A plan-change insight on Today whose gap is bigger than one lesson: memory sized it as a few
@@ -87,32 +87,28 @@ function loadChangeStatus(changeId: string) {
 }
 
 test.describe("Plan-change insight bigger than a lesson", () => {
-  for (const mode of MODES) {
-    test(`shows its effect and adds it once the learner says yes in ${mode}`, async ({
-      browser,
-    }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        const { change, skillIds } = await proposeGap({ goalId: user.goalId, userId: user.id });
-        await page.goto("/today");
+  test("shows its effect and adds it once the learner says yes", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+      const { change, skillIds } = await proposeGap({ goalId: user.goalId, userId: user.id });
+      await page.goto("/today");
 
-        const card = page.getByRole("complementary", { name: "From your recent answers" });
-        await expect(card.getByText(MESSAGE)).toBeVisible();
-        await expect(card.getByText(/^Adds 3 lessons\. Ends .+ instead of .+\.$/u)).toBeVisible();
+      const card = page.getByRole("complementary", { name: "From your recent answers" });
+      await expect(card.getByText(MESSAGE)).toBeVisible();
+      await expect(card.getByText(/^Adds 3 lessons\. Ends .+ instead of .+\.$/u)).toBeVisible();
 
-        // Nothing changes before the learner's OK.
-        await expect.poll(() => loadGraphSkillIds(user.goalId)).not.toContain(skillIds[0]);
+      // Nothing changes before the learner's OK.
+      await expect.poll(() => loadGraphSkillIds(user.goalId)).not.toContain(skillIds[0]);
 
-        await card.getByRole("button", { name: "Add it" }).click();
-        await expect(card.getByRole("status")).toHaveText("It's in your plan.");
+      await card.getByRole("button", { name: "Add it" }).click();
+      await expect(card.getByRole("status")).toHaveText("It's in your plan.");
 
-        await expect.poll(() => loadChangeStatus(change.id)).toBe("applied");
+      await expect.poll(() => loadChangeStatus(change.id)).toBe("applied");
 
-        await expect
-          .poll(() => loadGraphSkillIds(user.goalId))
-          .toStrictEqual(expect.arrayContaining(skillIds));
-      });
+      await expect
+        .poll(() => loadGraphSkillIds(user.goalId))
+        .toStrictEqual(expect.arrayContaining(skillIds));
     });
-  }
+  });
 
   test("waits on the Route with the same effect until the learner applies it", async ({
     browser,

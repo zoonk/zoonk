@@ -61,7 +61,7 @@ yarn-error.log*
 .idea/
 *.pem
 .playwright-mcp
-.vitest-attachments
+.vitest
 __screenshots__
 
 # VSCode

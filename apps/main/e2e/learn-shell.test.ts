@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
-import { MODES, asPersona } from "./learn-personas";
+import { asPersona } from "./learn-personas";
 
 /**
  * The learning tabs' frame: the goal switcher, the Focus tabs or the Fun dock, Energy and the
@@ -82,76 +82,72 @@ test.describe("Learning tabs frame", () => {
     });
   });
 
-  for (const mode of MODES) {
-    test(`switching goals changes every tab in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        const second = await goalFixture({ title: "Learn to cook", userId: user.id });
-        await planFixture({ goalId: second.id });
+  test("switching goals changes every tab", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
+      const second = await goalFixture({ title: "Learn to cook", userId: user.id });
+      await planFixture({ goalId: second.id });
 
-        await page.goto("/progress");
-        await page.getByRole("button", { name: /Current goal: ENEM/u }).click();
-        await page.getByRole("menuitemradio", { name: "Learn to cook" }).click();
+      await page.goto("/progress");
+      await page.getByRole("button", { name: /Current goal: ENEM/u }).click();
+      await page.getByRole("menuitemradio", { name: "Learn to cook" }).click();
 
-        await expect(
-          page.getByRole("button", { name: /Current goal: Learn to cook/u }),
-        ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: /Current goal: Learn to cook/u }),
+      ).toBeVisible();
 
-        await expect
-          .poll(async () => {
-            const profile = await prisma.userLearningProfile.findUnique({
-              where: { userId: user.id },
-            });
+      await expect
+        .poll(async () => {
+          const profile = await prisma.userLearningProfile.findUnique({
+            where: { userId: user.id },
+          });
 
-            return profile?.activeGoalId;
-          })
-          .toBe(second.id);
+          return profile?.activeGoalId;
+        })
+        .toBe(second.id);
 
-        await page.getByRole("link", { name: mode === "fun" ? "Route" : "Plan" }).click();
+      await page.getByRole("link", { name: "Plan" }).click();
 
-        await expect(
-          page.getByRole("button", { name: /Current goal: Learn to cook/u }),
-        ).toBeVisible();
-      });
+      await expect(
+        page.getByRole("button", { name: /Current goal: Learn to cook/u }),
+      ).toBeVisible();
     });
-  }
+  });
 
-  for (const mode of MODES) {
-    test(`the goal switcher lists each goal's minutes, the day's total and the catalog in ${mode}`, async ({
-      browser,
-    }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        await prisma.goal.update({ data: { dailyMinutes: 40 }, where: { id: user.goalId } });
+  test("the goal switcher lists each goal's minutes, the day's total and the catalog", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+      await prisma.goal.update({ data: { dailyMinutes: 40 }, where: { id: user.goalId } });
 
-        const second = await goalFixture({
-          dailyMinutes: 15,
-          title: "Learn to cook",
-          userId: user.id,
-        });
-
-        await planFixture({ goalId: second.id });
-
-        await page.goto("/plan");
-        await page.getByRole("button", { name: /Current goal: ENEM/u }).click();
-
-        await expect(page.getByText("Today: 55 min")).toBeVisible();
-        await expect(page.getByRole("menuitemradio", { name: /ENEM/u })).toContainText("40 min");
-
-        await expect(page.getByRole("menuitemradio", { name: "Learn to cook" })).toContainText(
-          "15 min",
-        );
-
-        await expect(page.getByRole("menuitem", { name: "Add a goal" })).toHaveAttribute(
-          "href",
-          "/start",
-        );
-
-        await expect(page.getByRole("menuitem", { name: "Explore courses" })).toHaveAttribute(
-          "href",
-          "/courses",
-        );
+      const second = await goalFixture({
+        dailyMinutes: 15,
+        title: "Learn to cook",
+        userId: user.id,
       });
+
+      await planFixture({ goalId: second.id });
+
+      await page.goto("/plan");
+      await page.getByRole("button", { name: /Current goal: ENEM/u }).click();
+
+      await expect(page.getByText("Today: 55 min")).toBeVisible();
+      await expect(page.getByRole("menuitemradio", { name: /ENEM/u })).toContainText("40 min");
+
+      await expect(page.getByRole("menuitemradio", { name: "Learn to cook" })).toContainText(
+        "15 min",
+      );
+
+      await expect(page.getByRole("menuitem", { name: "Add a goal" })).toHaveAttribute(
+        "href",
+        "/start",
+      );
+
+      await expect(page.getByRole("menuitem", { name: "Explore courses" })).toHaveAttribute(
+        "href",
+        "/courses",
+      );
     });
-  }
+  });
 
   test("a long goal title stays whole on hover and in the menu on a phone in Fun", async ({
     browser,

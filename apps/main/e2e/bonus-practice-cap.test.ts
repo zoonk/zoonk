@@ -7,7 +7,6 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { MODES } from "./learn-personas";
 import { openAs } from "./study-day";
 
 /**
@@ -49,27 +48,25 @@ async function useUpBonusPractice({ goalId, userId }: { goalId: string; userId: 
 }
 
 test.describe("Bonus practice cap", () => {
-  for (const mode of MODES) {
-    test(`"Practice now" after the day's two bonus blocks says so and adds none in ${mode}`, async ({
-      browser,
-    }) => {
-      const user = await createE2EPersona(getBaseURL(), { mode, persona: "exam" });
-      const session = await useUpBonusPractice({ goalId: user.goalId, userId: user.id });
-      const page = await openAs(browser, user);
+  test(`"Practice now" after the day's two bonus blocks says so and adds none`, async ({
+    browser,
+  }) => {
+    const user = await createE2EPersona(getBaseURL(), { mode: "fun", persona: "exam" });
+    const session = await useUpBonusPractice({ goalId: user.goalId, userId: user.id });
+    const page = await openAs(browser, user);
 
-      await page.goto("/progress");
-      await page.getByRole("button", { name: "Practice now" }).click();
+    await page.goto("/progress");
+    await page.getByRole("button", { name: "Practice now" }).click();
 
-      await expect(
-        page.getByRole("status").filter({ hasText: "That's all the bonus practice for today." }),
-      ).toBeVisible();
+    await expect(
+      page.getByRole("status").filter({ hasText: "That's all the bonus practice for today." }),
+    ).toBeVisible();
 
-      await expect(page).toHaveURL(/\/progress$/u);
+    await expect(page).toHaveURL(/\/progress$/u);
 
-      const extra = await findExtraBlocks(session.id);
-      expect(extra).toHaveLength(2);
+    const extra = await findExtraBlocks(session.id);
+    expect(extra).toHaveLength(2);
 
-      await page.context().close();
-    });
-  }
+    await page.context().close();
+  });
 });

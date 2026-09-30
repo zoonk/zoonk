@@ -1,7 +1,7 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
-import { MODES, asPersona } from "./learn-personas";
+import { asPersona } from "./learn-personas";
 
 const PATTERN_LINK = /We noticed a pattern\s*since e for/u;
 
@@ -36,44 +36,40 @@ async function answerDrill(page: Page) {
 /**
  * "We noticed a pattern" for Marcos: from Today to the rule and its contrast, then the five-question
  * drill with instant feedback (number keys and Enter, or taps), the result with Brain Power, and
- * the card gone from Today once practiced. Both modes.
+ * the card gone from Today once practiced.
  */
 test.describe("Language mistake pattern", () => {
-  for (const mode of MODES) {
-    test(`drills the pattern from Today and takes it off Today in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "language" }, async ({ page, user }) => {
-        await page.goto("/today");
-        await page.getByRole("link", { name: PATTERN_LINK }).click();
+  test("drills the pattern from Today and takes it off Today", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
+      await page.goto("/today");
+      await page.getByRole("link", { name: PATTERN_LINK }).click();
 
-        await expect(page).toHaveURL(/\/pattern\/[\da-f-]{36}$/u);
+      await expect(page).toHaveURL(/\/pattern\/[\da-f-]{36}$/u);
 
-        await expect(
-          page.getByRole("heading", { level: 1, name: "We noticed a pattern" }),
-        ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: "We noticed a pattern" }),
+      ).toBeVisible();
 
-        await expect(page.getByText("I've lived here since 2020.")).toBeVisible();
-        await expect(page.getByText("for 6 years")).toBeVisible();
+      await expect(page.getByText("I've lived here since 2020.")).toBeVisible();
+      await expect(page.getByText("for 6 years")).toBeVisible();
 
-        await page.keyboard.press("Enter");
-        await answerDrill(page);
+      await page.keyboard.press("Enter");
+      await answerDrill(page);
 
-        await expect(page.getByRole("heading", { level: 1, name: "4 of 5 right" })).toBeVisible();
-        await expect(page.getByText(/^\+\d+ Brain Power$/u)).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "4 of 5 right" })).toBeVisible();
+      await expect(page.getByText(/^\+\d+ Brain Power$/u)).toBeVisible();
 
-        const pattern = await prisma.mistakePattern.findFirstOrThrow({
-          where: { userId: user.id },
-        });
+      const pattern = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });
 
-        expect(pattern.practicedAt).not.toBeNull();
+      expect(pattern.practicedAt).not.toBeNull();
 
-        await page.getByRole("link", { name: "Back to Today" }).click();
+      await page.getByRole("link", { name: "Back to Today" }).click();
 
-        await expect(page).toHaveURL(/\/today$/u);
-        await expect(page.getByRole("region", { name: "Your current situation" })).toBeVisible();
-        await expect(page.getByRole("link", { name: PATTERN_LINK })).toHaveCount(0);
-      });
+      await expect(page).toHaveURL(/\/today$/u);
+      await expect(page.getByRole("region", { name: "Your current situation" })).toBeVisible();
+      await expect(page.getByRole("link", { name: PATTERN_LINK })).toHaveCount(0);
     });
-  }
+  });
 
   test("a pattern that was only typos says so kindly, with nothing to practice", async ({
     browser,

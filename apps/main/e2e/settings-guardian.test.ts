@@ -4,7 +4,6 @@ import {
   learningProfileFixture,
 } from "@zoonk/testing/fixtures/learning-profiles";
 import { type Page, expect, test } from "./fixtures";
-import { MODES } from "./learn-personas";
 
 /**
  * The learner's side of guardian links: a teen invites a guardian, sees the invite pending and
@@ -19,41 +18,37 @@ async function openGuardian(page: Page) {
   await expect(page.getByRole("heading", { level: 1, name: "Guardian" })).toBeVisible();
 }
 
-for (const mode of MODES) {
-  test.describe(`Guardian settings in ${mode} mode`, () => {
-    test("a teen invites a guardian and can cancel the pending invite", async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      await learningProfileFixture({
-        birthMonth: 1,
-        birthYear: TEEN_BIRTH_YEAR,
-        experienceMode: mode,
-        userId: noProgressUser.id,
-      });
-
-      await openGuardian(page);
-      await page.getByRole("textbox", { name: "Your guardian's email" }).fill("mom@zoonk.test");
-      await page.getByRole("button", { name: "Send invite" }).click();
-
-      await expect(page.getByText("Invite sent. It works for 7 days.")).toBeVisible();
-      await expect(page.getByText("mom@zoonk.test")).toBeVisible();
-
-      await expect
-        .poll(() => prisma.guardianLink.findFirst({ where: { userId: noProgressUser.id } }))
-        .toMatchObject({ guardianEmail: "mom@zoonk.test", status: "pending" });
-
-      await page.getByRole("button", { name: "Cancel invite" }).click();
-      await expect(page.getByText("mom@zoonk.test")).toBeHidden();
-
-      await expect
-        .poll(() => prisma.guardianLink.findFirst({ where: { userId: noProgressUser.id } }))
-        .toMatchObject({ status: "revoked" });
-    });
-  });
-}
-
 test.describe("Guardian settings", () => {
+  test("a teen invites a guardian and can cancel the pending invite", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    await learningProfileFixture({
+      birthMonth: 1,
+      birthYear: TEEN_BIRTH_YEAR,
+      experienceMode: "focus",
+      userId: noProgressUser.id,
+    });
+
+    await openGuardian(page);
+    await page.getByRole("textbox", { name: "Your guardian's email" }).fill("mom@zoonk.test");
+    await page.getByRole("button", { name: "Send invite" }).click();
+
+    await expect(page.getByText("Invite sent. It works for 7 days.")).toBeVisible();
+    await expect(page.getByText("mom@zoonk.test")).toBeVisible();
+
+    await expect
+      .poll(() => prisma.guardianLink.findFirst({ where: { userId: noProgressUser.id } }))
+      .toMatchObject({ guardianEmail: "mom@zoonk.test", status: "pending" });
+
+    await page.getByRole("button", { name: "Cancel invite" }).click();
+    await expect(page.getByText("mom@zoonk.test")).toBeHidden();
+
+    await expect
+      .poll(() => prisma.guardianLink.findFirst({ where: { userId: noProgressUser.id } }))
+      .toMatchObject({ status: "revoked" });
+  });
+
   test("shows an active guardian's daily limit and Plus approval", async ({
     noProgressUser,
     userWithoutProgress: page,

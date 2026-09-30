@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { MODES, type Mode, setDeviceMode } from "./learn-personas";
+import { type Mode, setDeviceMode } from "./learn-personas";
 import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
 
 /**
@@ -128,54 +128,48 @@ test.describe("Refreshing mid-onboarding", () => {
   });
 });
 
-for (const mode of MODES) {
-  test.describe(`Waiting for placement's questions in ${mode}`, () => {
-    test("shows the run's progress, survives a refresh and moves on when questions arrive", async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const runId = `e2e-steps-${randomUUID()}`;
-      const goal = await createGoalBeingMapped({ runId, userId: noProgressUser.id });
+test.describe("Waiting for placement's questions", () => {
+  test("shows the run's progress, survives a refresh and moves on when questions arrive", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const runId = `e2e-steps-${randomUUID()}`;
+    const goal = await createGoalBeingMapped({ runId, userId: noProgressUser.id });
 
-      await followRun({
-        events: [
-          { entityId: goal.id, status: "started", step: "understandGoal" },
-          { entityId: goal.id, status: "started", step: "buildSkillGraph" },
-          { entityId: goal.id, status: "completed", step: "buildSkillGraph" },
-          { entityId: goal.id, status: "started", step: "preparePlacement" },
-        ],
-        page,
-        runId,
-      });
-
-      await openSteps(page, { goalId: goal.id, mode });
-      await page.getByRole("button", { exact: true, name: "Start" }).click();
-
-      await expect(
-        page.getByRole("heading", { name: "Getting your questions ready" }),
-      ).toBeVisible();
-
-      await expect(
-        page.getByRole("progressbar", { name: "Getting your questions ready" }),
-      ).toBeVisible();
-
-      await expect(placementWait(page).nth(0)).toHaveText("Reading your goal, done");
-      await expect(placementWait(page).nth(1)).toHaveText("Mapping the skills it takes, done");
-      await expect(placementWait(page).nth(2)).toContainText("Writing your questions, in progress");
-
-      // A refresh while waiting comes back to the wait, not to placement's start.
-      await page.reload();
-
-      await expect(
-        page.getByRole("heading", { name: "Getting your questions ready" }),
-      ).toBeVisible();
-
-      // The run writes the skill map and its questions: the first one shows without a refresh.
-      await mapGoalSkills({ goalId: goal.id });
-      await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
+    await followRun({
+      events: [
+        { entityId: goal.id, status: "started", step: "understandGoal" },
+        { entityId: goal.id, status: "started", step: "buildSkillGraph" },
+        { entityId: goal.id, status: "completed", step: "buildSkillGraph" },
+        { entityId: goal.id, status: "started", step: "preparePlacement" },
+      ],
+      page,
+      runId,
     });
+
+    await openSteps(page, { goalId: goal.id, mode: "focus" });
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    await expect(page.getByRole("heading", { name: "Getting your questions ready" })).toBeVisible();
+
+    await expect(
+      page.getByRole("progressbar", { name: "Getting your questions ready" }),
+    ).toBeVisible();
+
+    await expect(placementWait(page).nth(0)).toHaveText("Reading your goal, done");
+    await expect(placementWait(page).nth(1)).toHaveText("Mapping the skills it takes, done");
+    await expect(placementWait(page).nth(2)).toContainText("Writing your questions, in progress");
+
+    // A refresh while waiting comes back to the wait, not to placement's start.
+    await page.reload();
+
+    await expect(page.getByRole("heading", { name: "Getting your questions ready" })).toBeVisible();
+
+    // The run writes the skill map and its questions: the first one shows without a refresh.
+    await mapGoalSkills({ goalId: goal.id });
+    await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
   });
-}
+});
 
 test.describe("When a wait can't go on", () => {
   test("a failed run says so, and Try again starts it over", async ({

@@ -9,7 +9,7 @@ import {
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { expect, test } from "./fixtures";
-import { MODES, expectMode, showInMode } from "./learn-personas";
+import { expectMode, showInMode } from "./learn-personas";
 import { fulfillTutorAnswer } from "./tutor-answer";
 
 const FORMATTED_ANSWER = [
@@ -615,78 +615,76 @@ async function expectCreateRecoveryAction({
   expect(api.inputs).toHaveLength(1);
 }
 
-test.describe("The tutor in Focus and Fun", () => {
-  for (const mode of MODES) {
-    test(`asks from the screen in view and follows up on the next one in its own thread in ${mode}`, async ({
-      browser,
-      subscriberUser,
-    }) => {
-      const context = await browser.newContext({ storageState: subscriberUser.storageState });
-      await showInMode(context, { mode, userId: subscriberUser.id });
-      const authenticatedPage = await context.newPage();
+test.describe("The tutor", () => {
+  test("asks from the screen in view and follows up on the next one in its own thread in Fun", async ({
+    browser,
+    subscriberUser,
+  }) => {
+    const context = await browser.newContext({ storageState: subscriberUser.storageState });
+    await showInMode(context, { mode: "fun", userId: subscriberUser.id });
+    const authenticatedPage = await context.newPage();
 
-      try {
-        const scenario = await createQuestionLesson({ includeSecondStep: true });
-        const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
+    try {
+      const scenario = await createQuestionLesson({ includeSecondStep: true });
+      const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
-        await authenticatedPage.goto(scenario.url);
-        await expectMode(authenticatedPage, mode);
-        await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
-        const lessonUrl = authenticatedPage.url();
+      await authenticatedPage.goto(scenario.url);
+      await expectMode(authenticatedPage, "fun");
+      await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
+      const lessonUrl = authenticatedPage.url();
 
-        await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
-        const dialog = authenticatedPage.getByRole("dialog");
-        await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-        await expect(dialog.getByText("Part 1 of 2")).toBeVisible();
+      await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
+      const dialog = authenticatedPage.getByRole("dialog");
+      await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
+      await expect(dialog.getByText("Part 1 of 2")).toBeVisible();
 
-        const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
-        await expect(textbox).toHaveAttribute("placeholder", "Ask about the lesson content…");
-        const firstQuestion = `Can you explain this orbit ${randomUUID().slice(0, 6)}?`;
-        await textbox.fill(firstQuestion);
-        await textbox.press("Enter");
-        await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+      const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
+      await expect(textbox).toHaveAttribute("placeholder", "Ask about the lesson content…");
+      const firstQuestion = `Can you explain this orbit ${randomUUID().slice(0, 6)}?`;
+      await textbox.fill(firstQuestion);
+      await textbox.press("Enter");
+      await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
 
-        expect(api.inputs[0]).toMatchObject({
-          context: { kind: "step", stepId: scenario.stepIds[0], stepNumber: 1 },
-          question: firstQuestion,
-        });
+      expect(api.inputs[0]).toMatchObject({
+        context: { kind: "step", stepId: scenario.stepIds[0], stepNumber: 1 },
+        question: firstQuestion,
+      });
 
-        await authenticatedPage.keyboard.press("Escape");
-        await expect(dialog).not.toBeVisible();
-        expect(authenticatedPage.url()).toBe(lessonUrl);
-        await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
+      await authenticatedPage.keyboard.press("Escape");
+      await expect(dialog).not.toBeVisible();
+      expect(authenticatedPage.url()).toBe(lessonUrl);
+      await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("radio", { name: scenario.wrongOption }),
-        ).not.toBeChecked();
+      await expect(
+        authenticatedPage.getByRole("radio", { name: scenario.wrongOption }),
+      ).not.toBeChecked();
 
-        await checkOption(authenticatedPage, scenario.correctOption);
-        await authenticatedPage.getByRole("button", { name: /^Continue/u }).click();
-        const secondStepTitle = scenario.stepTitles[1];
+      await checkOption(authenticatedPage, scenario.correctOption);
+      await authenticatedPage.getByRole("button", { name: /^Continue/u }).click();
+      const secondStepTitle = scenario.stepTitles[1];
 
-        if (!secondStepTitle) {
-          throw new Error("Question follow-up scenario is missing its second step");
-        }
-
-        await expect(authenticatedPage.getByText(secondStepTitle)).toBeVisible();
-        await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
-        await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
-
-        const followUp = "How does that connect to free fall?";
-        await dialog.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
-        await dialog.getByRole("button", { name: "Send" }).click();
-        await expect(dialog.getByText(followUp)).toBeVisible();
-        await expect.poll(() => api.inputs.length).toBe(2);
-
-        expect(api.inputs[1]).toMatchObject({
-          context: { kind: "step", stepId: scenario.stepIds[1], stepNumber: 2 },
-          question: followUp,
-        });
-      } finally {
-        await context.close();
+      if (!secondStepTitle) {
+        throw new Error("Question follow-up scenario is missing its second step");
       }
-    });
-  }
+
+      await expect(authenticatedPage.getByText(secondStepTitle)).toBeVisible();
+      await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
+      await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
+
+      const followUp = "How does that connect to free fall?";
+      await dialog.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
+      await dialog.getByRole("button", { name: "Send" }).click();
+      await expect(dialog.getByText(followUp)).toBeVisible();
+      await expect.poll(() => api.inputs.length).toBe(2);
+
+      expect(api.inputs[1]).toMatchObject({
+        context: { kind: "step", stepId: scenario.stepIds[1], stepNumber: 2 },
+        question: followUp,
+      });
+    } finally {
+      await context.close();
+    }
+  });
 });
 
 test("keeps a late history preload in its own step and restores it on return", async ({

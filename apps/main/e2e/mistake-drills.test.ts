@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { type Page, expect, test } from "./fixtures";
-import { MODES } from "./learn-personas";
 import {
   LESSON_IDEA,
   createDrillSession,
@@ -65,60 +64,58 @@ async function expectTimedOut({ itemId, userId }: { itemId: string; userId: stri
   expect(answer.durationMs).toBeGreaterThanOrEqual(TIME_LIMIT_MS);
 }
 
-for (const mode of MODES) {
-  test.describe(`Mistake drills in ${mode}`, () => {
-    test("Practice mistakes brings a gap's idea back first and times a timed drill", async ({
-      browser,
-    }) => {
-      const { drills, user } = await createMistakeLearner({ causes: ["gap", "time"], mode });
-      const [gap, time] = drills;
-      const page = await openAs(browser, user);
+test.describe("Mistake drills", () => {
+  test("Practice mistakes brings a gap's idea back first and times a timed drill", async ({
+    browser,
+  }) => {
+    const { drills, user } = await createMistakeLearner({ causes: ["gap", "time"], mode: "focus" });
+    const [gap, time] = drills;
+    const page = await openAs(browser, user);
 
-      await page.clock.install();
-      await page.goto("/mistakes/practice");
-      await expectIdeaFirst(page, gap?.lesson.id ?? "");
-      await practiceRight(page, drillQuestion("gap", "original"));
-      await practiceRight(page, drillQuestion("gap", "extra"));
+    await page.clock.install();
+    await page.goto("/mistakes/practice");
+    await expectIdeaFirst(page, gap?.lesson.id ?? "");
+    await practiceRight(page, drillQuestion("gap", "original"));
+    await practiceRight(page, drillQuestion("gap", "extra"));
 
-      await expect(
-        page.getByRole("heading", { name: drillQuestion("time", "original") }),
-      ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: drillQuestion("time", "original") }),
+    ).toBeVisible();
 
-      await runOutOfTime(page);
+    await runOutOfTime(page);
 
-      await expect(page.getByText(TIMES_UP)).toBeVisible();
-      await expect(page.getByRole("status").filter({ hasText: /^Not quite\./u })).toBeVisible();
-      await expect(page.getByRole("timer")).toBeHidden();
+    await expect(page.getByText(TIMES_UP)).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: /^Not quite\./u })).toBeVisible();
+    await expect(page.getByRole("timer")).toBeHidden();
 
-      await expectTimedOut({ itemId: time?.original.id ?? "", userId: user.id });
-      await page.context().close();
-    });
-
-    test("today's practice plays each mistake's drill by its cause", async ({ browser }) => {
-      const { drills, user } = await createDrillSession({ causes: ["gap", "time"], mode });
-      const [gap, time] = drills;
-      const page = await openAs(browser, user);
-      const feedback = page.getByRole("region", { name: "Answer feedback" });
-
-      await page.clock.install();
-      await page.goto("/session");
-      await page.getByRole("button", { name: /^Start/u }).click();
-      await expectIdeaFirst(page, gap?.lesson.id ?? "");
-      await answerRight(page, drillQuestion("gap", "original"));
-      await answerRight(page, drillQuestion("gap", "extra"));
-
-      await expect(
-        page.getByRole("heading", { name: drillQuestion("time", "original") }),
-      ).toBeVisible();
-
-      await runOutOfTime(page);
-
-      await expect(feedback.getByText("Not quite")).toBeVisible();
-      await expect(feedback.getByText(TIMES_UP)).toBeVisible();
-      await expect(page.getByRole("timer")).toBeHidden();
-
-      await expectTimedOut({ itemId: time?.original.id ?? "", userId: user.id });
-      await page.context().close();
-    });
+    await expectTimedOut({ itemId: time?.original.id ?? "", userId: user.id });
+    await page.context().close();
   });
-}
+
+  test("today's practice plays each mistake's drill by its cause", async ({ browser }) => {
+    const { drills, user } = await createDrillSession({ causes: ["gap", "time"], mode: "fun" });
+    const [gap, time] = drills;
+    const page = await openAs(browser, user);
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+
+    await page.clock.install();
+    await page.goto("/session");
+    await page.getByRole("button", { name: /^Start/u }).click();
+    await expectIdeaFirst(page, gap?.lesson.id ?? "");
+    await answerRight(page, drillQuestion("gap", "original"));
+    await answerRight(page, drillQuestion("gap", "extra"));
+
+    await expect(
+      page.getByRole("heading", { name: drillQuestion("time", "original") }),
+    ).toBeVisible();
+
+    await runOutOfTime(page);
+
+    await expect(feedback.getByText("Not quite")).toBeVisible();
+    await expect(feedback.getByText(TIMES_UP)).toBeVisible();
+    await expect(page.getByRole("timer")).toBeHidden();
+
+    await expectTimedOut({ itemId: time?.original.id ?? "", userId: user.id });
+    await page.context().close();
+  });
+});

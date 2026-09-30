@@ -3,10 +3,8 @@ import { type AccessibilityRoute, expectAccessibleRoutes } from "@zoonk/e2e/fixt
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
-import {
-  languageLessonFixture,
-  playableStepContent,
-} from "@zoonk/testing/fixtures/playable-lessons";
+import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { type Page, expect, test } from "./fixtures";
 import { MODES, showInMode } from "./learn-personas";
 

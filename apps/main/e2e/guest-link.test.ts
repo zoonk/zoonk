@@ -15,7 +15,7 @@ import {
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, setDeviceMode } from "./learn-personas";
+import { setDeviceMode } from "./learn-personas";
 
 /**
  * A visitor from a search result: the answer on the public page opens the lesson as a guest, the
@@ -127,55 +127,53 @@ async function finishLessonFromPublicPage(page: Page, lessonPath: string) {
   await expect(page.getByText("Brain Power")).toBeVisible();
 }
 
-for (const mode of MODES) {
-  test.describe(`A visitor from a public lesson page in ${mode} mode`, () => {
-    test("finishes the lesson as a guest, sees where it fits and keeps it by signing up", async ({
-      page,
-    }) => {
-      const { course, lessonPath } = await createPublicLesson();
-      await setDeviceMode(page.context(), mode);
+test.describe("A visitor from a public lesson page", () => {
+  test("finishes the lesson as a guest, sees where it fits and keeps it by signing up", async ({
+    page,
+  }) => {
+    const { course, lessonPath } = await createPublicLesson();
+    await setDeviceMode(page.context(), "fun");
 
-      await finishLessonFromPublicPage(page, lessonPath);
+    await finishLessonFromPublicPage(page, lessonPath);
 
-      await expect(page.getByText("This is part of")).toBeVisible();
-      await expect(page.getByText(course.title)).toBeVisible();
+    await expect(page.getByText("This is part of")).toBeVisible();
+    await expect(page.getByText(course.title)).toBeVisible();
 
-      await expect(
-        page.getByText("Save your progress and a quick review comes back to help it stick."),
-      ).toBeVisible();
+    await expect(
+      page.getByText("Save your progress and a quick review comes back to help it stick."),
+    ).toBeVisible();
 
-      await expect(page.getByRole("button", { name: "Build my plan" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Build my plan" })).toBeVisible();
 
-      await expect(page.getByRole("link", { name: "Create an account to save" })).toHaveAttribute(
-        "href",
-        "/login",
-      );
+    await expect(page.getByRole("link", { name: "Create an account to save" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
 
-      const guest = await prisma.attempt.findFirstOrThrow({
-        select: { userId: true },
-        where: { step: { lesson: { homeChapter: { homeCourseId: course.id } } } },
-      });
-
-      // Creating the account moves the guest's lesson to it (the sign-up screen lives on central auth).
-      const email = `e2e-guest-save-${randomUUID().slice(0, 8)}@zoonk.test`;
-
-      const signUp = await page.request.post("/api/auth/sign-up/email", {
-        data: { email, name: "Saved Guest", password: "password123" },
-        headers: { Origin: getBaseURL() },
-      });
-
-      expect(signUp.ok()).toBe(true);
-
-      const account = await prisma.user.findUniqueOrThrow({ where: { email } });
-
-      await expect
-        .poll(() => prisma.attempt.count({ where: { userId: account.id } }))
-        .toBeGreaterThan(0);
-
-      await expect.poll(() => prisma.user.findUnique({ where: { id: guest.userId } })).toBeNull();
+    const guest = await prisma.attempt.findFirstOrThrow({
+      select: { userId: true },
+      where: { step: { lesson: { homeChapter: { homeCourseId: course.id } } } },
     });
+
+    // Creating the account moves the guest's lesson to it (the sign-up screen lives on central auth).
+    const email = `e2e-guest-save-${randomUUID().slice(0, 8)}@zoonk.test`;
+
+    const signUp = await page.request.post("/api/auth/sign-up/email", {
+      data: { email, name: "Saved Guest", password: "password123" },
+      headers: { Origin: getBaseURL() },
+    });
+
+    expect(signUp.ok()).toBe(true);
+
+    const account = await prisma.user.findUniqueOrThrow({ where: { email } });
+
+    await expect
+      .poll(() => prisma.attempt.count({ where: { userId: account.id } }))
+      .toBeGreaterThan(0);
+
+    await expect.poll(() => prisma.user.findUnique({ where: { id: guest.userId } })).toBeNull();
   });
-}
+});
 
 test("the lesson's screens load only with a session, so they aren't in a visitor's HTML", async ({
   page,

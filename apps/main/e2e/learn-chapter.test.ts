@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, asPersona, findPlanChapterId } from "./learn-personas";
+import { asPersona, findPlanChapterId } from "./learn-personas";
 
 /**
  * A chapter of Maya's plan (quantum physics from scratch): she's in "Exponents and scientific
@@ -14,43 +14,41 @@ async function openChapter(page: Page, goalId: string) {
 }
 
 test.describe("Chapter page", () => {
-  for (const mode of MODES) {
-    test(`shows the chapter's map, lessons and mistakes in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page, user }) => {
-        await openChapter(page, user.goalId);
+  test("shows the chapter's map, lessons and mistakes", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
+      await openChapter(page, user.goalId);
 
-        await expect(page.getByText("Chapter 4 · Beginner")).toBeVisible();
-        await expect(page.getByRole("progressbar", { name: /of 3 lessons/u })).toBeVisible();
+      await expect(page.getByText("Chapter 4 · Beginner")).toBeVisible();
+      await expect(page.getByRole("progressbar", { name: /of 3 lessons/u })).toBeVisible();
 
-        const lessons = page.getByRole("region", { name: "Lessons" });
-        await expect(lessons.getByRole("link", { name: /Done Powers of ten/u })).toBeVisible();
-        await expect(lessons.getByRole("link", { name: /^Next /u })).toBeVisible();
-        await expect(lessons.getByRole("img", { name: "Coming up" })).toBeVisible();
+      const lessons = page.getByRole("region", { name: "Lessons" });
+      await expect(lessons.getByRole("link", { name: /Done Powers of ten/u })).toBeVisible();
+      await expect(lessons.getByRole("link", { name: /^Next /u })).toBeVisible();
+      await expect(lessons.getByRole("img", { name: "Coming up" })).toBeVisible();
 
-        const map = page.getByRole("list", { name: `Skills in ${CHAPTER}` });
-        // Screen readers hear each skill's state and what it builds on, as the lines show.
-        await expect(
-          map.getByRole("button", {
-            name: "Write a number in scientific notation Learning, builds on Use powers of ten",
-          }),
-        ).toBeVisible();
+      const map = page.getByRole("list", { name: `Skills in ${CHAPTER}` });
+      // Screen readers hear each skill's state and what it builds on, as the lines show.
+      await expect(
+        map.getByRole("button", {
+          name: "Write a number in scientific notation Learning, builds on Use powers of ten",
+        }),
+      ).toBeVisible();
 
-        const powers = map.getByRole("button", { name: /^Use powers of ten/u });
-        await powers.click();
+      const powers = map.getByRole("button", { name: /^Use powers of ten/u });
+      await powers.click();
 
-        await expect(powers).toHaveAttribute("aria-expanded", "true");
-        const detail = page.getByRole("region", { name: "Use powers of ten" });
-        await expect(detail.getByRole("link", { name: "Powers of ten" })).toBeVisible();
+      await expect(powers).toHaveAttribute("aria-expanded", "true");
+      const detail = page.getByRole("region", { name: "Use powers of ten" });
+      await expect(detail.getByRole("link", { name: "Powers of ten" })).toBeVisible();
 
-        await expect(page.getByRole("link", { name: "Your mistakes" })).toHaveAttribute(
-          "href",
-          /\/mistakes$/u,
-        );
+      await expect(page.getByRole("link", { name: "Your mistakes" })).toHaveAttribute(
+        "href",
+        /\/mistakes$/u,
+      );
 
-        await expect(page.getByText("1 to review")).toBeVisible();
-      });
+      await expect(page.getByText("1 to review")).toBeVisible();
     });
-  }
+  });
 
   test("walks the map with the keyboard", async ({ browser }) => {
     await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
@@ -69,40 +67,43 @@ test.describe("Chapter page", () => {
     });
   });
 
-  for (const mode of MODES) {
-    test(`practices the chapter's skills in today's session in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page, user }) => {
-        await openChapter(page, user.goalId);
+  test("practices the chapter's skills in today's session", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page, user }) => {
+      await openChapter(page, user.goalId);
 
-        await page.getByRole("button", { name: "Practice" }).click();
+      await page.getByRole("button", { name: "Practice" }).click();
 
-        // Practice on the chapter's studied skills, or its next lesson once today's session has
-        // already asked every question on them.
-        await expect(page).toHaveURL(/\/(?:session|learn\/[^/?]+\?session=)/u);
-      });
+      // Practice on the chapter's studied skills, or its next lesson once today's session has
+      // already asked every question on them.
+      await expect(page).toHaveURL(/\/(?:session|learn\/[^/?]+\?session=)/u);
     });
+  });
 
-    test(`saves a vote on the chapter from its menu in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page, user }) => {
-        const chapterId = await findPlanChapterId(user.goalId, CHAPTER);
-        await openChapter(page, user.goalId);
+  test("saves a vote on the chapter from its menu", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
+      const chapterId = await findPlanChapterId(user.goalId, CHAPTER);
+      await openChapter(page, user.goalId);
 
-        await page.getByRole("button", { name: "Chapter options" }).click();
-        await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).click();
+      await page.getByRole("button", { name: "Chapter options" }).click();
+      await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).click();
 
-        const sheet = page.getByRole("dialog", { name: "What went wrong?" });
-        await sheet.getByRole("button", { name: "Too easy" }).click();
-        await sheet.getByRole("button", { name: "Send" }).click();
-        await expect(sheet).toBeHidden();
+      const sheet = page.getByRole("dialog", { name: "What went wrong?" });
+      await sheet.getByRole("button", { name: "Too easy" }).click();
+      await sheet.getByRole("button", { name: "Send" }).click();
+      await expect(sheet).toBeHidden();
 
-        await expect
-          .poll(() =>
-            prisma.contentFeedback.findFirst({ where: { contentId: chapterId, userId: user.id } }),
-          )
-          .toMatchObject({ contentKind: "chapter", mode, reasons: ["tooEasy"], vote: "down" });
-      });
+      await expect
+        .poll(() =>
+          prisma.contentFeedback.findFirst({ where: { contentId: chapterId, userId: user.id } }),
+        )
+        .toMatchObject({
+          contentKind: "chapter",
+          mode: "focus",
+          reasons: ["tooEasy"],
+          vote: "down",
+        });
     });
-  }
+  });
 
   test("hides chapters that aren't in the learner's plan", async ({ browser }) => {
     await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page }) => {

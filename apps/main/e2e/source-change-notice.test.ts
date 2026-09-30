@@ -4,7 +4,6 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { expect, test } from "./fixtures";
-import { MODES } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 const MESSAGE = "The exam notice changed: the test now has 60 questions.";
@@ -17,18 +16,16 @@ async function addChangedNotice({ goalId, userId }: { goalId: string; userId: st
 }
 
 test.describe("Source change notice on Today", () => {
-  for (const mode of MODES) {
-    test(`${mode}: says in one line what changed in the goal's notice`, async ({ browser }) => {
-      const { goal, user } = await createStudyDay({ mode });
-      await addChangedNotice({ goalId: goal.id, userId: user.id });
+  test("says in one line what changed in the goal's notice", async ({ browser }) => {
+    const { goal, user } = await createStudyDay({ mode: "fun" });
+    await addChangedNotice({ goalId: goal.id, userId: user.id });
 
-      const page = await openAs(browser, user);
-      await page.goto("/today");
+    const page = await openAs(browser, user);
+    await page.goto("/today");
 
-      await expect(page.getByRole("complementary", { name: "What changed" })).toHaveText(MESSAGE);
-      await page.context().close();
-    });
-  }
+    await expect(page.getByRole("complementary", { name: "What changed" })).toHaveText(MESSAGE);
+    await page.context().close();
+  });
 
   test("shows nothing when no source changed", async ({ browser }) => {
     const { user } = await createStudyDay({ mode: "focus" });

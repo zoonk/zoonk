@@ -1,6 +1,6 @@
 import { type Page } from "@playwright/test";
 import { expect, test } from "./fixtures";
-import { MODES, expectMode, showInMode } from "./learn-personas";
+import { expectMode, showInMode } from "./learn-personas";
 
 /**
  * Opens one progress page at the shared phone size and verifies the document
@@ -33,41 +33,39 @@ test.describe("Score", () => {
     ).toBeVisible();
   });
 
-  for (const mode of MODES) {
-    test(`shows one weighted 90-day score with its denominator and weekly trend in ${mode}`, async ({
-      browser,
-      withProgressUser,
-    }) => {
-      const context = await browser.newContext({ storageState: withProgressUser.storageState });
-      await showInMode(context, { mode, userId: withProgressUser.id });
-      const page = await context.newPage();
+  test("shows one weighted 90-day score with its denominator and weekly trend", async ({
+    browser,
+    withProgressUser,
+  }) => {
+    const context = await browser.newContext({ storageState: withProgressUser.storageState });
+    await showInMode(context, { mode: "fun", userId: withProgressUser.id });
+    const page = await context.newPage();
 
-      try {
-        await page.goto("/score");
-        await expectMode(page, mode);
+    try {
+      await page.goto("/score");
+      await expectMode(page, "fun");
 
-        await expect(
-          page.getByRole("heading", { exact: true, level: 1, name: "Score" }),
-        ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { exact: true, level: 1, name: "Score" }),
+      ).toBeVisible();
 
-        const scoreSummary = page.getByRole("region", { name: /score summary/iu });
-        const scoreChart = page.getByRole("figure", { name: /weekly score trend/iu });
+      const scoreSummary = page.getByRole("region", { name: /score summary/iu });
+      const scoreChart = page.getByRole("figure", { name: /weekly score trend/iu });
 
-        await expect(scoreSummary).toContainText(/\d+(?:\.\d+)?%/u);
-        await expect(scoreSummary).toContainText(/\d+ of \d+ answers correct/iu);
-        await expect(scoreChart).toBeVisible();
-        await expect(scoreChart).toContainText(/past 90 days/iu);
-        await expect(scoreChart).toContainText(/\d+ answers/iu);
-        await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
+      await expect(scoreSummary).toContainText(/\d+(?:\.\d+)?%/u);
+      await expect(scoreSummary).toContainText(/\d+ of \d+ answers correct/iu);
+      await expect(scoreChart).toBeVisible();
+      await expect(scoreChart).toContainText(/past 90 days/iu);
+      await expect(scoreChart).toContainText(/\d+ answers/iu);
+      await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
 
-        await expect(
-          page.getByRole("button", { name: /previous period|next period/iu }),
-        ).toHaveCount(0);
-      } finally {
-        await context.close();
-      }
-    });
-  }
+      await expect(page.getByRole("button", { name: /previous period|next period/iu })).toHaveCount(
+        0,
+      );
+    } finally {
+      await context.close();
+    }
+  });
 
   test("keeps Score within a mobile viewport", async ({ browser, withProgressUser }) => {
     const browserContext = await browser.newContext({

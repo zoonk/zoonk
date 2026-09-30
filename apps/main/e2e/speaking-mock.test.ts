@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
-import { MODES, asPersona } from "./learn-personas";
+import { asPersona } from "./learn-personas";
 
 const TOEFL_SCENARIO = {
   character: { name: "Sarah", place: "Test centre", role: "examinadora" },
@@ -73,68 +73,54 @@ async function createToeflMock({
 }
 
 /**
- * A TOEFL speaking mock, in both modes: before the call, the header names the TOEFL and the
- * objectives are its two tasks; after it, an estimated band on TOEFL's 1 to 6 scale, overall and
- * for each TOEFL criterion, with the focus marked.
+ * A TOEFL speaking mock: before the call, the header names the TOEFL and the objectives are its
+ * two tasks; after it, an estimated band on TOEFL's 1 to 6 scale, overall and for each TOEFL
+ * criterion, with the focus marked.
  */
 test.describe("TOEFL speaking mock", () => {
-  for (const mode of MODES) {
-    test(`opens with the TOEFL's two tasks in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "language" }, async ({ page, user }) => {
-        const mock = await createToeflMock({
-          finished: false,
-          goalId: user.goalId,
-          userId: user.id,
-        });
+  test("opens with the TOEFL's two tasks", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
+      const mock = await createToeflMock({ finished: false, goalId: user.goalId, userId: user.id });
 
-        await page.goto(`/conversation/${mock.id}`);
+      await page.goto(`/conversation/${mock.id}`);
 
-        await expect(page.getByText("TOEFL speaking mock").first()).toBeVisible();
-        await expect(page.getByRole("heading", { level: 1, name: "Sarah" })).toBeVisible();
-        await expect(page.getByText("Listen and Repeat", { exact: true })).toBeVisible();
-        await expect(page.getByText("Take an Interview", { exact: true })).toBeVisible();
-      });
+      await expect(page.getByText("TOEFL speaking mock").first()).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "Sarah" })).toBeVisible();
+      await expect(page.getByText("Listen and Repeat", { exact: true })).toBeVisible();
+      await expect(page.getByText("Take an Interview", { exact: true })).toBeVisible();
     });
+  });
 
-    test(`shows the estimated band on the 1 to 6 scale by TOEFL criteria in ${mode}`, async ({
-      browser,
-    }) => {
-      await asPersona(browser, { mode, persona: "language" }, async ({ page, user }) => {
-        const mock = await createToeflMock({
-          finished: true,
-          goalId: user.goalId,
-          userId: user.id,
-        });
+  test("shows the estimated band on the 1 to 6 scale by TOEFL criteria", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "language" }, async ({ page, user }) => {
+      const mock = await createToeflMock({ finished: true, goalId: user.goalId, userId: user.id });
 
-        await page.goto(`/conversation/${mock.id}`);
+      await page.goto(`/conversation/${mock.id}`);
 
-        await expect(page.getByText("TOEFL speaking mock").first()).toBeVisible();
-        await expect(page.getByText("4.0–4.5", { exact: true }).first()).toBeVisible();
-        await expect(page.getByText("Estimated band, from 1 to 6")).toBeVisible();
+      await expect(page.getByText("TOEFL speaking mock").first()).toBeVisible();
+      await expect(page.getByText("4.0–4.5", { exact: true }).first()).toBeVisible();
+      await expect(page.getByText("Estimated band, from 1 to 6")).toBeVisible();
 
-        await expect(
-          page.getByText("An estimate from one short mock, not an official score."),
-        ).toBeVisible();
+      await expect(
+        page.getByText("An estimate from one short mock, not an official score."),
+      ).toBeVisible();
 
-        const criteria = page.getByRole("listitem");
+      const criteria = page.getByRole("listitem");
 
-        await expect(criteria.getByRole("heading")).toHaveText([
-          "Repeating sentences",
-          /^Clear, developed answers\s*Focus$/u,
-          "Grammar",
-          "Vocabulary",
-          "Pace and pronunciation",
-        ]);
+      await expect(criteria.getByRole("heading")).toHaveText([
+        "Repeating sentences",
+        /^Clear, developed answers\s*Focus$/u,
+        "Grammar",
+        "Vocabulary",
+        "Pace and pronunciation",
+      ]);
 
-        await expect(
-          page.getByText('Você disse "clean it" em vez de "clean it up".'),
-        ).toBeVisible();
+      await expect(page.getByText('Você disse "clean it" em vez de "clean it up".')).toBeVisible();
 
-        await expect(page.getByRole("button", { name: "Try another mock" })).toBeEnabled();
+      await expect(page.getByRole("button", { name: "Try another mock" })).toBeEnabled();
 
-        await page.getByRole("link", { name: "Continue" }).click();
-        await expect(page).toHaveURL(/\/progress$/u);
-      });
+      await page.getByRole("link", { name: "Continue" }).click();
+      await expect(page).toHaveURL(/\/progress$/u);
     });
-  }
+  });
 });

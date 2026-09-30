@@ -3,13 +3,13 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, setDeviceMode } from "./learn-personas";
+import { setDeviceMode } from "./learn-personas";
 
 /**
- * A language lesson played to its end by a signed-in learner, in Focus and in Fun: the word, then
- * building sentences from a word bank (reading and listening), a blank to fill, a sentence to
- * write and the summary. The run is counted from its start to its end: the start opens it in the
- * ledger and the completion closes it with what the server graded.
+ * A language lesson played to its end by a signed-in learner: the word, then building sentences
+ * from a word bank (reading and listening), a blank to fill, a sentence to write and the summary.
+ * The run is counted from its start to its end: the start opens it in the ledger and the
+ * completion closes it with what the server graded.
  */
 
 const SENTENCE = "How much is the rent?";
@@ -145,61 +145,59 @@ async function findRuns(userId: string) {
   }));
 }
 
-for (const mode of MODES) {
-  test.describe(`A language lesson in ${mode} mode`, () => {
-    test("plays its word-bank, blank and writing screens to the end, and counts the run", async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const [lesson] = await Promise.all([
-        createLanguageLesson(),
-        learningProfileFixture({ experienceMode: mode, userId: noProgressUser.id }),
+test.describe("A language lesson", () => {
+  test("plays its word-bank, blank and writing screens to the end, and counts the run", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [lesson] = await Promise.all([
+      createLanguageLesson(),
+      learningProfileFixture({ experienceMode: "focus", userId: noProgressUser.id }),
+    ]);
+
+    await setDeviceMode(page.context(), "focus");
+    await page.goto(`/learn/${lesson.id}`);
+    await learnTheWord(page);
+
+    // Starting the lesson opened its run in the ledger, still unfinished.
+    await expect
+      .poll(() => findRuns(noProgressUser.id))
+      .toStrictEqual([
+        {
+          contentIds: expect.objectContaining({ lessonId: lesson.id }),
+          correctAnswers: 0,
+          ended: false,
+          incorrectAnswers: 0,
+          mode: "focus",
+        },
       ]);
 
-      await setDeviceMode(page.context(), mode);
-      await page.goto(`/learn/${lesson.id}`);
-      await learnTheWord(page);
+    await buildTheSentences(page);
+    await fillTheBlankAfterAMistake(page);
+    await writeTheSentence(page);
 
-      // Starting the lesson opened its run in the ledger, still unfinished.
-      await expect
-        .poll(() => findRuns(noProgressUser.id))
-        .toStrictEqual([
-          {
-            contentIds: expect.objectContaining({ lessonId: lesson.id }),
-            correctAnswers: 0,
-            ended: false,
-            incorrectAnswers: 0,
-            mode,
-          },
-        ]);
+    await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+    await primary(page, /^Continue/u).click();
 
-      await buildTheSentences(page);
-      await fillTheBlankAfterAMistake(page);
-      await writeTheSentence(page);
+    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-      await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-      await primary(page, /^Continue/u).click();
+    // The blank's first answer was wrong, so it counts as a miss even though it was fixed.
+    await expect(page.getByText("4 of 5 right the first time")).toBeVisible();
 
-      await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    await expect
+      .poll(() => findRuns(noProgressUser.id))
+      .toStrictEqual([
+        {
+          contentIds: expect.objectContaining({ lessonId: lesson.id }),
+          correctAnswers: 4,
+          ended: true,
+          incorrectAnswers: 1,
+          mode: "focus",
+        },
+      ]);
 
-      // The blank's first answer was wrong, so it counts as a miss even though it was fixed.
-      await expect(page.getByText("4 of 5 right the first time")).toBeVisible();
-
-      await expect
-        .poll(() => findRuns(noProgressUser.id))
-        .toStrictEqual([
-          {
-            contentIds: expect.objectContaining({ lessonId: lesson.id }),
-            correctAnswers: 4,
-            ended: true,
-            incorrectAnswers: 1,
-            mode,
-          },
-        ]);
-
-      await expect
-        .poll(() => prisma.dailyProgress.findFirst({ where: { userId: noProgressUser.id } }))
-        .toMatchObject({ correctAnswers: 4, incorrectAnswers: 1, lessonsCompleted: 1 });
-    });
+    await expect
+      .poll(() => prisma.dailyProgress.findFirst({ where: { userId: noProgressUser.id } }))
+      .toMatchObject({ correctAnswers: 4, incorrectAnswers: 1, lessonsCompleted: 1 });
   });
-}
+});

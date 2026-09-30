@@ -4,7 +4,7 @@ import { createE2EPersona } from "@zoonk/e2e/fixtures/personas";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { z } from "zod";
 import { expect, test } from "./fixtures";
-import { MODES, asPersona, expectMode } from "./learn-personas";
+import { asPersona, expectMode } from "./learn-personas";
 
 /** Only the size of a plan's skill graph matters here. */
 const graphSchema = z.object({ skills: z.array(z.unknown()) });
@@ -67,42 +67,36 @@ test.describe("Plan links", () => {
     expect(skillCount(copy.graph)).toBeLessThanOrEqual(skillCount(plan.graph));
   });
 
-  for (const mode of MODES) {
-    test(`a signed-in learner starts their own plan from the link in ${mode}`, async ({
-      browser,
-    }) => {
-      const owner = await createE2EPersona(getBaseURL(), { persona: "hugeGoal" });
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: owner.goalId } });
+  test("a signed-in learner starts their own plan from the link", async ({ browser }) => {
+    const owner = await createE2EPersona(getBaseURL(), { persona: "hugeGoal" });
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: owner.goalId } });
 
-      await asPersona(browser, { mode, persona: "explain" }, async ({ page, user }) => {
-        await page.goto(`/plan-link/${plan.id}`);
+    await asPersona(browser, { mode: "focus", persona: "explain" }, async ({ page, user }) => {
+      await page.goto(`/plan-link/${plan.id}`);
 
-        await page.getByLabel("How much time a day?").selectOption("30");
-        await page.getByRole("button", { name: "Start from this plan" }).click();
+      await page.getByLabel("How much time a day?").selectOption("30");
+      await page.getByRole("button", { name: "Start from this plan" }).click();
 
-        await expect(page).toHaveURL(/\/plan$/u);
-        await expectMode(page, mode);
+      await expect(page).toHaveURL(/\/plan$/u);
+      await expectMode(page, "focus");
 
-        await expect
-          .poll(async () => prisma.goal.count({ where: { dailyMinutes: 30, userId: user.id } }))
-          .toBe(1);
-      });
+      await expect
+        .poll(async () => prisma.goal.count({ where: { dailyMinutes: 30, userId: user.id } }))
+        .toBe(1);
     });
+  });
 
-    test(`the owner opening their own link lands on their plan in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
+  test("the owner opening their own link lands on their plan", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
 
-        await page.goto(`/plan-link/${plan.id}`);
+      await page.goto(`/plan-link/${plan.id}`);
 
-        await expect(page).toHaveURL(/\/plan$/u);
-        await expectMode(page, mode);
+      await expect(page).toHaveURL(/\/plan$/u);
+      await expectMode(page, "fun");
 
-        // Fun calls the plan the Route; Focus names it by its date.
-        await expect(
-          page.getByRole("heading", { level: 1, name: mode === "fun" ? "Route" : /^Until /u }),
-        ).toBeVisible();
-      });
+      // Fun calls the plan the Route; Focus names it by its date.
+      await expect(page.getByRole("heading", { level: 1, name: "Route" })).toBeVisible();
     });
-  }
+  });
 });

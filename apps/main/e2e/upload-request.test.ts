@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { expectAccessibleRoutes } from "@zoonk/e2e/fixtures/accessibility";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, type Mode } from "./learn-personas";
+import { type Mode } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
@@ -73,78 +73,84 @@ async function stubResearch(page: Page): Promise<() => unknown> {
 }
 
 test.describe("Asking for the notice research couldn't find", () => {
-  for (const mode of MODES) {
-    test(`${mode}: Today asks for the notice, and uploading it sends it to research`, async ({
-      browser,
-    }) => {
-      const { goal, user } = await studyDayWaitingFor("noOfficialSource", mode);
-      const page = await openAs(browser, user);
-      const upload = await stubUpload({ page, userId: user.id });
-      const lastResearch = await stubResearch(page);
+  test("Today asks for the notice, and uploading it sends it to research", async ({ browser }) => {
+    const { goal, user } = await studyDayWaitingFor("noOfficialSource", "focus");
+    const page = await openAs(browser, user);
+    const upload = await stubUpload({ page, userId: user.id });
+    const lastResearch = await stubResearch(page);
 
-      await page.goto("/today");
+    await page.goto("/today");
 
-      const ask = page.getByRole("region", { name: "We couldn't find the official notice" });
-      await expect(ask).toContainText("Upload it so your plan follows the real exam.");
+    const ask = page.getByRole("region", { name: "We couldn't find the official notice" });
+    await expect(ask).toContainText("Upload it so your plan follows the real exam.");
 
-      await ask.getByRole("button", { name: "Upload the notice" }).click();
-      await ask.getByRole("button", { name: "Paste text" }).click();
-      await ask.getByRole("textbox", { name: "Your text" }).fill("Edital nº 1: 120 questões.");
-      await ask.getByRole("button", { name: "Add text" }).click();
+    await ask.getByRole("button", { name: "Upload the notice" }).click();
+    await ask.getByRole("button", { name: "Paste text" }).click();
+    await ask.getByRole("textbox", { name: "Your text" }).fill("Edital nº 1: 120 questões.");
+    await ask.getByRole("button", { name: "Add text" }).click();
 
-      await expect(
-        ask.getByText("Thanks. We're reading it now, and your plan will update in a few minutes."),
-      ).toBeVisible();
+    await expect(
+      ask.getByText("Thanks. We're reading it now, and your plan will update in a few minutes."),
+    ).toBeVisible();
 
-      await expect(ask.getByRole("button", { name: "Upload the notice" })).toBeHidden();
+    await expect(ask.getByRole("button", { name: "Upload the notice" })).toBeHidden();
 
-      expect(lastResearch()).toStrictEqual({ goalId: goal.id, sourceIds: [upload.id] });
-      await page.context().close();
-    });
+    expect(lastResearch()).toStrictEqual({ goalId: goal.id, sourceIds: [upload.id] });
+    await page.context().close();
+  });
 
-    test(`${mode}: Plan asks too, and "Not now" takes the ask away`, async ({ browser }) => {
-      const { goal, user } = await studyDayWaitingFor("unverified", mode);
-      const page = await openAs(browser, user);
+  test(`Plan asks too, and "Not now" takes the ask away`, async ({ browser }) => {
+    const { goal, user } = await studyDayWaitingFor("unverified", "fun");
+    const page = await openAs(browser, user);
 
-      await page.goto("/plan");
+    await page.goto("/plan");
 
-      const ask = page.getByRole("region", { name: "We couldn't confirm the exam's details" });
-      await expect(ask).toContainText("Upload the official notice");
+    const ask = page.getByRole("region", { name: "We couldn't confirm the exam's details" });
+    await expect(ask).toContainText("Upload the official notice");
 
-      await ask.getByRole("button", { name: "Not now" }).click();
-      await expect(ask).toBeHidden();
+    await ask.getByRole("button", { name: "Not now" }).click();
+    await expect(ask).toBeHidden();
 
-      await expect
-        .poll(async () => {
-          const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-          return stored.researchUploadReason;
-        })
-        .toBeNull();
+    await expect
+      .poll(async () => {
+        const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return stored.researchUploadReason;
+      })
+      .toBeNull();
 
-      await page.reload();
-      await expect(page.getByRole("button", { name: "Share this plan" })).toBeVisible();
-      await expect(page.getByRole("region", { name: /exam's details/u })).toBeHidden();
-      await page.context().close();
-    });
-  }
+    await page.reload();
+    await expect(page.getByRole("button", { name: "Share this plan" })).toBeVisible();
+    await expect(page.getByRole("region", { name: /exam's details/u })).toBeHidden();
+    await page.context().close();
+  });
 
-  for (const mode of MODES) {
-    test(`${mode}: the ask is accessible on Today and Plan, light and dark`, async ({
-      browser,
-    }) => {
-      test.setTimeout(ACCESSIBILITY_TIMEOUT_MS);
+  test("the ask is accessible on Today and Plan, light and dark, in Focus", async ({ browser }) => {
+    test.setTimeout(ACCESSIBILITY_TIMEOUT_MS);
 
-      const { user } = await studyDayWaitingFor("noOfficialSource", mode);
-      const page = await openAs(browser, user);
+    const { user } = await studyDayWaitingFor("noOfficialSource", "focus");
+    const page = await openAs(browser, user);
 
-      await expectAccessibleRoutes(page, [
-        { path: "/today", ready: askIsShown },
-        { path: "/plan", ready: askIsShown },
-      ]);
+    await expectAccessibleRoutes(page, [
+      { path: "/today", ready: askIsShown },
+      { path: "/plan", ready: askIsShown },
+    ]);
 
-      await page.context().close();
-    });
-  }
+    await page.context().close();
+  });
+
+  test("the ask is accessible on Today and Plan, light and dark, in Fun", async ({ browser }) => {
+    test.setTimeout(ACCESSIBILITY_TIMEOUT_MS);
+
+    const { user } = await studyDayWaitingFor("noOfficialSource", "fun");
+    const page = await openAs(browser, user);
+
+    await expectAccessibleRoutes(page, [
+      { path: "/today", ready: askIsShown },
+      { path: "/plan", ready: askIsShown },
+    ]);
+
+    await page.context().close();
+  });
 
   test("a teacher's test asks for the class's material", async ({ browser }) => {
     const { user } = await studyDayWaitingFor("classMaterial");

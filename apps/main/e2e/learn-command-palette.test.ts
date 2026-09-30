@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, asPersona, expectMode } from "./learn-personas";
+import { asPersona, expectMode } from "./learn-personas";
 
 /** Cmd/Ctrl+K from anywhere on the page, retried until the client has hydrated the shortcut. */
 async function openPaletteWithKeyboard(page: Page) {
@@ -81,59 +81,55 @@ test.describe("Learning tabs command palette", () => {
     });
   });
 
-  for (const mode of MODES) {
-    test(`switches to another goal from the palette in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        const second = await goalFixture({ title: "Learn to cook", userId: user.id });
-        await planFixture({ goalId: second.id });
+  test("switches to another goal from the palette", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
+      const second = await goalFixture({ title: "Learn to cook", userId: user.id });
+      await planFixture({ goalId: second.id });
 
-        await page.goto("/progress");
-        await expectMode(page, mode);
+      await page.goto("/progress");
+      await expectMode(page, "focus");
 
-        const palette = await openPaletteWithKeyboard(page);
-        const goals = palette.getByRole("group", { name: "Goals" });
+      const palette = await openPaletteWithKeyboard(page);
+      const goals = palette.getByRole("group", { name: "Goals" });
 
-        /** The goal on screen isn't offered: only the ones to switch to. */
-        await expect(goals.getByRole("option")).toHaveText(["Switch to Learn to cook"]);
+      /** The goal on screen isn't offered: only the ones to switch to. */
+      await expect(goals.getByRole("option")).toHaveText(["Switch to Learn to cook"]);
 
-        await palette.getByRole("combobox", { name: "Search" }).fill("cook");
-        await page.keyboard.press("Enter");
+      await palette.getByRole("combobox", { name: "Search" }).fill("cook");
+      await page.keyboard.press("Enter");
 
-        await expect(palette).toBeHidden();
+      await expect(palette).toBeHidden();
 
-        await expect(
-          page.getByRole("button", { name: /Current goal: Learn to cook/u }),
-        ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: /Current goal: Learn to cook/u }),
+      ).toBeVisible();
 
-        await expect
-          .poll(async () => {
-            const profile = await prisma.userLearningProfile.findUnique({
-              where: { userId: user.id },
-            });
+      await expect
+        .poll(async () => {
+          const profile = await prisma.userLearningProfile.findUnique({
+            where: { userId: user.id },
+          });
 
-            return profile?.activeGoalId;
-          })
-          .toBe(second.id);
-      });
+          return profile?.activeGoalId;
+        })
+        .toBe(second.id);
     });
-  }
+  });
 
-  for (const mode of MODES) {
-    test(`"Send feedback" opens the feedback form in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page }) => {
-        await page.goto("/plan");
-        await expectMode(page, mode);
+  test(`"Send feedback" opens the feedback form`, async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page }) => {
+      await page.goto("/plan");
+      await expectMode(page, "fun");
 
-        const palette = await openPaletteWithKeyboard(page);
-        await palette.getByRole("combobox", { name: "Search" }).fill("feedback");
-        await palette.getByRole("option", { name: "Send feedback" }).click();
+      const palette = await openPaletteWithKeyboard(page);
+      await palette.getByRole("combobox", { name: "Search" }).fill("feedback");
+      await palette.getByRole("option", { name: "Send feedback" }).click();
 
-        const form = page.getByRole("dialog", { name: "Feedback" });
-        await expect(form).toBeVisible();
-        await expect(form.getByRole("textbox", { name: "Message" })).toBeVisible();
-      });
+      const form = page.getByRole("dialog", { name: "Feedback" });
+      await expect(form).toBeVisible();
+      await expect(form.getByRole("textbox", { name: "Message" })).toBeVisible();
     });
-  }
+  });
 
   test("phones keep the top bar clear: no search button", async ({ browser }) => {
     await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {

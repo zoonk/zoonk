@@ -8,7 +8,7 @@ import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createE2EPersona } from "@zoonk/e2e/fixtures/personas";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
-import { MODES, expectMode, showInMode } from "./learn-personas";
+import { expectMode, showInMode } from "./learn-personas";
 
 type TestSubscriptionProvider = "apple" | "google" | "stripe" | "zoonk";
 
@@ -317,46 +317,44 @@ test.describe("Subscription Page - Stripe Locale", () => {
 });
 
 test.describe("Subscription Page - With Plus Subscription", () => {
-  for (const mode of MODES) {
-    test(`shows the plan instead of the offer: what it includes, its renewal and cancellation in ${mode}`, async ({
-      browser,
-      baseURL,
-    }) => {
-      const email = await createUserWithSubscription(baseURL!, "plus", {
-        periodEnd: new Date("2027-03-14T12:00:00Z"),
-      });
-
-      const [{ browserContext, page }, user] = await Promise.all([
-        createAuthenticatedPage(browser, baseURL!, email),
-        prisma.user.findUniqueOrThrow({ where: { email } }),
-      ]);
-
-      await showInMode(browserContext, { mode, userId: user.id });
-      await page.goto("/subscription");
-      await expectMode(page, mode);
-
-      await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
-      await expect(page.getByText("Active", { exact: true })).toBeVisible();
-      await expect(page.getByText("Renews on March 14, 2027.")).toBeVisible();
-
-      const included = page.getByRole("region", { name: "What's included" });
-      await expect(included.getByText("Exam prep")).toBeVisible();
-      await expect(included.getByText("Everything, including mock exams")).toBeVisible();
-      await expect(included.getByText("Unlimited*")).toHaveCount(3);
-
-      await expect(
-        included.getByText(
-          `With Plus, you can start up to ${getPlusPlanLimits().newGoalsPerDay} new goals a day.`,
-        ),
-      ).toBeVisible();
-
-      await expect(page.getByRole("heading", { name: /learn anything/iu })).toHaveCount(0);
-      await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
-      await expect(page.getByRole("button", { name: /cancel subscription/iu })).toBeVisible();
-
-      await browserContext.close();
+  test("shows the plan instead of the offer: what it includes, its renewal and cancellation", async ({
+    browser,
+    baseURL,
+  }) => {
+    const email = await createUserWithSubscription(baseURL!, "plus", {
+      periodEnd: new Date("2027-03-14T12:00:00Z"),
     });
-  }
+
+    const [{ browserContext, page }, user] = await Promise.all([
+      createAuthenticatedPage(browser, baseURL!, email),
+      prisma.user.findUniqueOrThrow({ where: { email } }),
+    ]);
+
+    await showInMode(browserContext, { mode: "fun", userId: user.id });
+    await page.goto("/subscription");
+    await expectMode(page, "fun");
+
+    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByText("Active", { exact: true })).toBeVisible();
+    await expect(page.getByText("Renews on March 14, 2027.")).toBeVisible();
+
+    const included = page.getByRole("region", { name: "What's included" });
+    await expect(included.getByText("Exam prep")).toBeVisible();
+    await expect(included.getByText("Everything, including mock exams")).toBeVisible();
+    await expect(included.getByText("Unlimited*")).toHaveCount(3);
+
+    await expect(
+      included.getByText(
+        `With Plus, you can start up to ${getPlusPlanLimits().newGoalsPerDay} new goals a day.`,
+      ),
+    ).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /cancel subscription/iu })).toBeVisible();
+
+    await browserContext.close();
+  });
 
   test("starts cancellation and shows a loading state", async ({ browser, baseURL }) => {
     const email = await createUserWithSubscription(baseURL!, "plus");

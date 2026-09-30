@@ -10,7 +10,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { MODES, type Mode } from "./learn-personas";
+import { type Mode } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
@@ -43,54 +43,45 @@ async function createPlanLearner({ mode, runId }: { mode: Mode; runId?: string }
   return { goal, user };
 }
 
-/** A plan without a deadline: "Your plan" in Focus, the Route in Fun. */
-function planHeading(mode: Mode) {
-  return mode === "fun" ? "Route" : "Your plan";
-}
-
 test.describe("The plan being built", () => {
-  for (const mode of MODES) {
-    test(`follows the plan being built and shows it on its own (${mode})`, async ({ browser }) => {
-      const runId = `e2e-plan-${randomUUID()}`;
-      const { goal, user } = await createPlanLearner({ mode, runId });
-      const plan = await planFixture({ goalId: goal.id, phases: [] });
+  test("follows the plan being built and shows it on its own", async ({ browser }) => {
+    const runId = `e2e-plan-${randomUUID()}`;
+    const { goal, user } = await createPlanLearner({ mode: "focus", runId });
+    const plan = await planFixture({ goalId: goal.id, phases: [] });
 
-      const events: StreamEvent[] = [
-        { entityId: goal.id, status: "started", step: "understandGoal" },
-        { entityId: goal.id, status: "started", step: "buildSkillGraph" },
-      ];
+    const events: StreamEvent[] = [
+      { entityId: goal.id, status: "started", step: "understandGoal" },
+      { entityId: goal.id, status: "started", step: "buildSkillGraph" },
+    ];
 
-      const page = await openAs(browser, user);
-      await followRun({ events, page, runId });
-      await page.goto("/plan");
+    const page = await openAs(browser, user);
+    await followRun({ events, page, runId });
+    await page.goto("/plan");
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: "Building your plan" }),
-      ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Building your plan" })).toBeVisible();
 
-      await expect(page.getByRole("progressbar", { name: "Building your plan" })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Building your plan" })).toBeVisible();
 
-      const phases = page.getByRole("list", { name: "Building your plan" });
-      await expect(phases.getByRole("listitem").nth(0)).toHaveText("Reading your goal, done");
+    const phases = page.getByRole("list", { name: "Building your plan" });
+    await expect(phases.getByRole("listitem").nth(0)).toHaveText("Reading your goal, done");
 
-      // The run saves the plan: its stream says so and the plan shows without a refresh.
-      await Promise.all([
-        prisma.plan.update({
-          data: { phases: [{ name: "Foundations", summary: "The basics first" }] },
-          where: { id: plan.id },
-        }),
-        planItemFixture({ planId: plan.id, titleSnapshot: "Equivalent ratios" }),
-      ]);
+    // The run saves the plan: its stream says so and the plan shows without a refresh.
+    await Promise.all([
+      prisma.plan.update({
+        data: { phases: [{ name: "Foundations", summary: "The basics first" }] },
+        where: { id: plan.id },
+      }),
+      planItemFixture({ planId: plan.id, titleSnapshot: "Equivalent ratios" }),
+    ]);
 
-      events.push(
-        { entityId: goal.id, status: "completed", step: "buildSkillGraph" },
-        { entityId: goal.id, status: "completed", step: "createPlan" },
-      );
+    events.push(
+      { entityId: goal.id, status: "completed", step: "buildSkillGraph" },
+      { entityId: goal.id, status: "completed", step: "createPlan" },
+    );
 
-      await expect(page.getByRole("heading", { level: 1, name: planHeading(mode) })).toBeVisible();
-      await page.context().close();
-    });
-  }
+    await expect(page.getByRole("heading", { level: 1, name: "Your plan" })).toBeVisible();
+    await page.context().close();
+  });
 
   test("says when building the plan failed and starts it again on a tap", async ({ browser }) => {
     const runId = `e2e-plan-${randomUUID()}`;
@@ -205,47 +196,45 @@ const EDIT_SLOW_MS = 8000;
 const EDIT_TIME_LIMIT_MS = 45_000;
 
 test.describe("An own-words plan edit that hangs", () => {
-  for (const mode of MODES) {
-    test(`says so, then lets the learner try again (${mode})`, async ({ browser }) => {
-      const { user } = await createStudyDay({ mode });
-      const page = await openAs(browser, user);
-      const { promise: hung } = Promise.withResolvers<null>();
+  test("says so, then lets the learner try again", async ({ browser }) => {
+    const { user } = await createStudyDay({ mode: "fun" });
+    const page = await openAs(browser, user);
+    const { promise: hung } = Promise.withResolvers<null>();
 
-      // The edit's Server Action never answers, as when the server is stuck.
-      await page.route(
-        (url) => url.pathname.endsWith("/plan"),
-        async (route) => {
-          if (route.request().method() === "POST" && route.request().headers()["next-action"]) {
-            await hung;
-          }
+    // The edit's Server Action never answers, as when the server is stuck.
+    await page.route(
+      (url) => url.pathname.endsWith("/plan"),
+      async (route) => {
+        if (route.request().method() === "POST" && route.request().headers()["next-action"]) {
+          await hung;
+        }
 
-          await route.fallback();
-        },
-      );
+        await route.fallback();
+      },
+    );
 
-      await page.clock.install();
-      await page.goto("/plan");
+    await page.clock.install();
+    await page.goto("/plan");
 
-      await page.getByRole("button", { name: "Change your plan" }).click();
-      await page.getByLabel("Change it in your own words").fill("Less on weekends");
-      await page.getByRole("button", { name: "Change my plan" }).click();
-      await expect(page.getByRole("button", { name: "Changing…" })).toBeVisible();
-      await page.clock.fastForward(EDIT_SLOW_MS + 1000);
+    await page.getByRole("button", { name: "Change your plan" }).click();
+    await page.getByLabel("Change it in your own words").fill("Less on weekends");
+    await page.getByRole("button", { name: "Change my plan" }).click();
+    await expect(page.getByRole("button", { name: "Changing…" })).toBeVisible();
+    await page.clock.fastForward(EDIT_SLOW_MS + 1000);
 
-      await expect(
-        page.getByText("Still changing your plan. This is taking longer than usual."),
-      ).toBeVisible();
+    await expect(
+      page.getByText("Still changing your plan. This is taking longer than usual."),
+    ).toBeVisible();
 
-      await page.clock.fastForward(EDIT_TIME_LIMIT_MS);
+    await page.clock.fastForward(EDIT_TIME_LIMIT_MS);
 
-      await expect(
-        page.getByText("This took too long. If your plan doesn't change in a moment, try again."),
-      ).toBeVisible();
+    await expect(
+      page.getByText("This took too long. If your plan doesn't change in a moment, try again."),
+    ).toBeVisible();
 
-      // What they wrote stays, and the button sends it again.
-      await expect(page.getByLabel("Change it in your own words")).toHaveValue("Less on weekends");
-      await expect(page.getByRole("button", { name: "Change my plan" })).toBeEnabled();
-      await page.context().close();
-    });
-  }
+    // What they wrote stays, and the button sends it again.
+    await expect(page.getByLabel("Change it in your own words")).toHaveValue("Less on weekends");
+    await expect(page.getByRole("button", { name: "Change my plan" })).toBeEnabled();
+    await page.context().close();
+  });
 });

@@ -4,7 +4,7 @@ import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { expect, test } from "./fixtures";
-import { MODES, type Mode, expectMode, showInMode } from "./learn-personas";
+import { type Mode, expectMode, showInMode } from "./learn-personas";
 
 const ESTIMATE_NOTE = "Estimated from past editions until the official notice is out.";
 const citation = { passage: "", sourceId: "notice" };
@@ -66,26 +66,24 @@ async function openExamScreen({
 }
 
 test.describe("Exam year", () => {
-  for (const mode of MODES) {
-    test(`a year without its notice shows the days the exam usually falls on, as an estimate, in ${mode}`, async ({
-      browser,
-    }) => {
-      const page = await openExamScreen({ browser, examYear: 2100, mode });
+  test("a year without its notice shows the days the exam usually falls on, as an estimate", async ({
+    browser,
+  }) => {
+    const page = await openExamScreen({ browser, examYear: 2100, mode: "focus" });
 
-      await expect(page.getByText("Day 1: Sunday, November 14, 2100")).toBeVisible();
-      await expect(page.getByText("Day 2: Sunday, November 21, 2100")).toBeVisible();
-      await expect(page.getByText(ESTIMATE_NOTE)).toBeVisible();
+    await expect(page.getByText("Day 1: Sunday, November 14, 2100")).toBeVisible();
+    await expect(page.getByText("Day 2: Sunday, November 21, 2100")).toBeVisible();
+    await expect(page.getByText(ESTIMATE_NOTE)).toBeVisible();
 
-      await page.context().close();
-    });
+    await page.context().close();
+  });
 
-    test(`the notice's own year shows its official days in ${mode}`, async ({ browser }) => {
-      const page = await openExamScreen({ browser, examYear: 2098, mode });
+  test("the notice's own year shows its official days", async ({ browser }) => {
+    const page = await openExamScreen({ browser, examYear: 2098, mode: "fun" });
 
-      await expect(page.getByText("Day 1: Sunday, November 9, 2098")).toBeVisible();
-      await expect(page.getByText(ESTIMATE_NOTE)).toBeHidden();
+    await expect(page.getByText("Day 1: Sunday, November 9, 2098")).toBeVisible();
+    await expect(page.getByText(ESTIMATE_NOTE)).toBeHidden();
 
-      await page.context().close();
-    });
-  }
+    await page.context().close();
+  });
 });

@@ -4,11 +4,13 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { mediaAssetFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
-  TEACHING_LESSON_STEPS,
   languageLessonFixture,
   playableLessonFixture,
-  playableStepContent,
 } from "@zoonk/testing/fixtures/playable-lessons";
+import {
+  TEACHING_LESSON_STEPS,
+  playableStepContent,
+} from "@zoonk/testing/fixtures/playable-step-contents";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";

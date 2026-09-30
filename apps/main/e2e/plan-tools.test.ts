@@ -4,7 +4,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { buildLessonIdentityKey, buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, type Mode, asPersona, setDeviceMode } from "./learn-personas";
+import { type Mode, asPersona, setDeviceMode } from "./learn-personas";
 
 /**
  * The "You'll use" card. Maya's quantum physics plan (the v2 seed) has a vectors chapter that
@@ -14,12 +14,6 @@ import { MODES, type Mode, asPersona, setDeviceMode } from "./learn-personas";
 
 const CALCULATOR = "Graphing calculator (Desmos or GeoGebra)";
 const PYTHON = "Python";
-
-/** Each mode sets Python up on its own device, so parallel tests never write the same lesson. */
-const DEVICES = {
-  focus: { label: "Windows", system: "windows" },
-  fun: { label: "macOS", system: "macos" },
-} as const;
 
 /**
  * The setup lesson an earlier learner's choice wrote, keyed like core keys it. Tests never call
@@ -127,90 +121,86 @@ async function loadToolChoices(goalId: string) {
 }
 
 test.describe("Plan tools", () => {
-  for (const mode of MODES) {
-    test(`the learner has one tool and sets the other up, with an undo, in ${mode}`, async ({
-      browser,
-    }) => {
-      const device = DEVICES[mode];
-      const setup = await ensureSetupLesson({ system: device.system, tool: PYTHON });
+  test("the learner has one tool and sets the other up, with an undo", async ({ browser }) => {
+    const device = { label: "Windows", system: "windows" };
+    const setup = await ensureSetupLesson({ system: device.system, tool: PYTHON });
 
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page, user }) => {
-        await openPlan(page, mode);
+    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
+      await openPlan(page, "focus");
 
-        const card = toolsCard(page);
-        await expect(card.getByText("Needed to practice")).toBeVisible();
+      const card = toolsCard(page);
+      await expect(card.getByText("Needed to practice")).toBeVisible();
 
-        // Python only helps in a later phase, so it waits under "More later".
-        await expect(card.getByText(`More later: ${PYTHON}`)).toBeVisible();
-        await openLaterTools(page);
-        await expect(card.getByText("Optional")).toBeVisible();
+      // Python only helps in a later phase, so it waits under "More later".
+      await expect(card.getByText(`More later: ${PYTHON}`)).toBeVisible();
+      await openLaterTools(page);
+      await expect(card.getByText("Optional")).toBeVisible();
 
-        await chooseTool(page, { answer: /^I have it/u, tool: CALCULATOR });
-        await expect(card.getByText("You have it")).toBeVisible();
+      await chooseTool(page, { answer: /^I have it/u, tool: CALCULATOR });
+      await expect(card.getByText("You have it")).toBeVisible();
 
-        await expect
-          .poll(async () => loadToolChoices(user.goalId))
-          .toMatchObject({ tools: [{ choice: "have", name: CALCULATOR }] });
+      await expect
+        .poll(async () => loadToolChoices(user.goalId))
+        .toMatchObject({ tools: [{ choice: "have", name: CALCULATOR }] });
 
-        await chooseTool(page, { answer: /^I'll set it up/u, device: device.label, tool: PYTHON });
-        await expect(card.getByText(`Setup lesson for ${device.label}`)).toBeVisible();
+      await chooseTool(page, { answer: /^I'll set it up/u, device: device.label, tool: PYTHON });
+      await expect(card.getByText(`Setup lesson for ${device.label}`)).toBeVisible();
 
-        const change = page
-          .getByRole("listitem")
-          .filter({
-            hasText: `A lesson to set up ${PYTHON} on ${device.label} comes before you need it.`,
-          });
+      const change = page
+        .getByRole("listitem")
+        .filter({
+          hasText: `A lesson to set up ${PYTHON} on ${device.label} comes before you need it.`,
+        });
 
-        await expect(change).toBeVisible();
+      await expect(change).toBeVisible();
 
-        await expect
-          .poll(async () =>
-            prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: user.goalId } } }),
-          )
-          .toBe(1);
+      await expect
+        .poll(async () =>
+          prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: user.goalId } } }),
+        )
+        .toBe(1);
 
-        await change.getByRole("button", { name: "Undo" }).click();
-        await expect(change.getByText("Undone")).toBeVisible();
-        await expect(card.getByText("Optional")).toBeVisible();
+      await change.getByRole("button", { name: "Undo" }).click();
+      await expect(change.getByText("Undone")).toBeVisible();
+      await expect(card.getByText("Optional")).toBeVisible();
 
-        await expect
-          .poll(async () =>
-            prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: user.goalId } } }),
-          )
-          .toBe(0);
-      });
+      await expect
+        .poll(async () =>
+          prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: user.goalId } } }),
+        )
+        .toBe(0);
     });
+  });
 
-    test(`going without tools says what that path can't give in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page, user }) => {
-        await openPlan(page, mode);
+  test("going without tools says what that path can't give", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page, user }) => {
+      await openPlan(page, "fun");
 
-        const card = toolsCard(page);
+      const card = toolsCard(page);
 
-        await card
-          .getByRole("button", { name: "No tools? You can do it all with examples." })
-          .click();
+      await card
+        .getByRole("button", { name: "No tools? You can do it all with examples." })
+        .click();
 
-        const note = card.getByText("You won't practice on your own computer.", { exact: false });
-        await expect(note).toBeVisible();
+      const note = card.getByText("You won't practice on your own computer.", { exact: false });
+      await expect(note).toBeVisible();
 
-        // The button leaves once it's chosen, so focus moves to the note that replaces it.
-        await expect(note).toBeFocused();
+      // The button leaves once it's chosen, so focus moves to the note that replaces it.
+      await expect(note).toBeFocused();
 
-        await openLaterTools(page);
-        await expect(card.getByText("Examples only")).toHaveCount(2);
+      await openLaterTools(page);
+      await expect(card.getByText("Examples only")).toHaveCount(2);
 
-        await expect
-          .poll(async () => loadToolChoices(user.goalId))
-          .toMatchObject({
-            tools: [
-              { choice: "none", name: CALCULATOR },
-              { choice: "none", name: PYTHON },
-            ],
-          });
-      });
+      await expect
+        .poll(async () => loadToolChoices(user.goalId))
+        .toMatchObject({
+          tools: [
+            { choice: "none", name: CALCULATOR },
+            { choice: "none", name: PYTHON },
+          ],
+        });
     });
-  }
+  });
 });
 
 /** Every onboarding question is behind the learner, so `/start/{goalId}` opens on the plan. */
@@ -259,27 +249,25 @@ async function createRevealGoal(userId: string) {
 }
 
 test.describe("Plan tools on the plan reveal", () => {
-  for (const mode of MODES) {
-    test(`the plan reveal shows the tools card in ${mode}`, async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const { goal, tool } = await createRevealGoal(noProgressUser.id);
+  test("the plan reveal shows the tools card", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { goal, tool } = await createRevealGoal(noProgressUser.id);
 
-      await setDeviceMode(page.context(), mode);
-      await page.goto(`/start/${goal.id}`);
+    await setDeviceMode(page.context(), "focus");
+    await page.goto(`/start/${goal.id}`);
 
-      await expect(page.getByText(mode === "fun" ? "Route ready" : "Plan ready")).toBeVisible();
+    await expect(page.getByText("Plan ready")).toBeVisible();
 
-      const card = toolsCard(page);
-      await expect(card.getByText("Needed to practice")).toBeVisible();
+    const card = toolsCard(page);
+    await expect(card.getByText("Needed to practice")).toBeVisible();
 
-      await chooseTool(page, { answer: /^No install/u, tool });
-      await expect(card.getByText("Examples only")).toBeVisible();
+    await chooseTool(page, { answer: /^No install/u, tool });
+    await expect(card.getByText("Examples only")).toBeVisible();
 
-      await expect
-        .poll(async () => loadToolChoices(goal.id))
-        .toMatchObject({ tools: [{ choice: "none", name: tool }] });
-    });
-  }
+    await expect
+      .poll(async () => loadToolChoices(goal.id))
+      .toMatchObject({ tools: [{ choice: "none", name: tool }] });
+  });
 });

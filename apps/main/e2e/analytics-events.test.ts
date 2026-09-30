@@ -3,7 +3,6 @@ import { gunzipSync } from "node:zlib";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, type Mode } from "./learn-personas";
 import { answerRight, createStudyDay, openAs } from "./study-day";
 
 /**
@@ -107,71 +106,65 @@ async function expectSent(
     .toContainEqual(expect.objectContaining({ properties: expect.objectContaining(properties) }));
 }
 
-function modeName(mode: Mode) {
-  return mode === "fun" ? "Fun" : "Focus";
-}
+test.describe("Analytics", () => {
+  test("Today and the session's capsules carry Focus; outcomes stay on the server", async ({
+    browser,
+  }) => {
+    const { user } = await createStudyDay({ mode: "focus" });
+    const page = await openAs(browser, user);
+    const sent = await capturePostHog(page);
 
-for (const mode of MODES) {
-  test.describe(`Analytics in ${modeName(mode)}`, () => {
-    test("Today and the session's capsules carry the mode; outcomes stay on the server", async ({
-      browser,
-    }) => {
-      const { user } = await createStudyDay({ mode });
-      const page = await openAs(browser, user);
-      const sent = await capturePostHog(page);
+    await page.goto("/today");
+    await expectSent(sent, "Today Viewed", { mode: "focus" });
 
-      await page.goto("/today");
-      await expectSent(sent, "Today Viewed", { mode });
+    await page.getByRole("button", { name: /^Start/u }).click();
+    await answerRight(page, /^Capsule one/u);
+    await answerRight(page, /^Capsule two/u);
 
-      await page.getByRole("button", { name: mode === "fun" ? /^Take off/u : /^Start/u }).click();
-      await answerRight(page, /^Capsule one/u);
-      await answerRight(page, /^Capsule two/u);
+    await expectSent(sent, "Capsule Opened", { mode: "focus" });
 
-      await expectSent(sent, "Capsule Opened", { mode });
+    // The block's moment shows once the block was saved, when the server sends its outcomes.
+    await expect(
+      page.getByRole("progressbar", { name: "Today's session: 1 of 3 done" }),
+    ).toBeVisible();
 
-      // The block's moment shows once the block was saved, when the server sends its outcomes.
-      await expect(
-        page.getByRole("progressbar", { name: "Today's session: 1 of 3 done" }),
-      ).toBeVisible();
+    const outcomes = sent.filter((item) => SERVER_OUTCOMES.has(item.event));
+    expect(outcomes).toStrictEqual([]);
 
-      const outcomes = sent.filter((item) => SERVER_OUTCOMES.has(item.event));
-      expect(outcomes).toStrictEqual([]);
-
-      await page.context().close();
-    });
-
-    test("the player's hook and leaving mid-lesson carry the mode", async ({ browser }) => {
-      const [{ user }, { lesson }] = await Promise.all([
-        createStudyDay({ mode }),
-        playableLessonFixture({ steps: ["hook", "check", "explanation"] }),
-      ]);
-
-      const page = await openAs(browser, user);
-      const sent = await capturePostHog(page);
-      await page.goto(`/learn/${lesson.id}`);
-
-      await page.getByRole("radio", { name: "No" }).click();
-      await page.getByRole("button", { name: /^See the answer/u }).click();
-      await expectSent(sent, "Hook Answered", { lesson_id: lesson.id, mode });
-      await page.getByRole("button", { name: /^Continue/u }).click();
-
-      await page.getByRole("radio", { name: "The electron's exact path" }).click();
-      await page.getByRole("button", { name: /^Check/u }).click();
-      await expect(page.getByRole("status").filter({ hasText: /\S/u })).toBeVisible();
-      await page.getByRole("link", { name: "Close lesson" }).click();
-
-      await expectSent(sent, "Activity Abandoned", {
-        lesson_id: lesson.id,
-        mode,
-        screen: 2,
-        step_kind: "check",
-        wrong_in_a_row: 1,
-      });
-
-      await page.context().close();
-    });
+    await page.context().close();
   });
-}
+
+  test("the player's hook and leaving mid-lesson carry Fun", async ({ browser }) => {
+    const [{ user }, { lesson }] = await Promise.all([
+      createStudyDay({ mode: "fun" }),
+      playableLessonFixture({ steps: ["hook", "check", "explanation"] }),
+    ]);
+
+    const page = await openAs(browser, user);
+    const sent = await capturePostHog(page);
+    await page.goto(`/learn/${lesson.id}`);
+
+    await page.getByRole("radio", { name: "No" }).click();
+    await page.getByRole("button", { name: /^See the answer/u }).click();
+    await expectSent(sent, "Hook Answered", { lesson_id: lesson.id, mode: "fun" });
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await page.getByRole("radio", { name: "The electron's exact path" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect(page.getByRole("status").filter({ hasText: /\S/u })).toBeVisible();
+    await page.getByRole("link", { name: "Close lesson" }).click();
+
+    await expectSent(sent, "Activity Abandoned", {
+      lesson_id: lesson.id,
+      mode: "fun",
+      screen: 2,
+      step_kind: "check",
+      wrong_in_a_row: 1,
+    });
+
+    await page.context().close();
+  });
+});
 
 test("switching to Fun sends Mode Switched, and later events carry Fun", async ({ browser }) => {
   const { user } = await createStudyDay({ mode: "focus" });

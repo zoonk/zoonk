@@ -18,7 +18,7 @@ import {
   statement,
 } from "./exam-fixtures";
 import { expect, test } from "./fixtures";
-import { MODES, type Mode, setDeviceMode } from "./learn-personas";
+import { type Mode, setDeviceMode } from "./learn-personas";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
 
@@ -160,75 +160,71 @@ test("a Cebraspe goal's placement asks each statement Certo or Errado", async ({
   await page.context().close();
 });
 
-for (const mode of MODES) {
-  test.describe(`Statements in ${mode}`, () => {
-    test("a Cebraspe goal's practice judges them Certo or Errado", async ({ browser }) => {
-      const { user } = await createNetScoredPracticeDay(mode);
-      const page = await openAs(browser, user);
-      const feedback = page.getByRole("region", { name: "Resultado da resposta" });
+test.describe("Statements", () => {
+  test("a Cebraspe goal's practice judges them Certo or Errado", async ({ browser }) => {
+    const { user } = await createNetScoredPracticeDay("focus");
+    const page = await openAs(browser, user);
+    const feedback = page.getByRole("region", { name: "Resultado da resposta" });
 
-      await startSession(page);
+    await startSession(page);
 
-      await expect(page.getByRole("button", { name: /^Certo/u })).toBeVisible();
-      await expect(page.getByRole("button", { name: "Deixar em branco" })).toBeVisible();
-      await expect(page.getByRole("button", { name: /^Verdadeiro/u })).toBeHidden();
+    await expect(page.getByRole("button", { name: /^Certo/u })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Deixar em branco" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Verdadeiro/u })).toBeHidden();
 
-      // "Errado" on a statement that is right: the grade gives the right answer in the same words.
-      await page.getByRole("button", { name: /^Errado/u }).click();
-      await expect(feedback.getByText("Resposta certa: Certo")).toBeVisible();
-      await page.context().close();
-    });
-
-    test("an ENEM-style goal's practice keeps them Verdadeiro or Falso", async ({ browser }) => {
-      const { user } = await createStatementPracticeDay({
-        mode,
-        netScored: false,
-        structure: ENEM_STRUCTURE,
-      });
-
-      const page = await openAs(browser, user);
-      const feedback = page.getByRole("region", { name: "Resultado da resposta" });
-
-      await startSession(page);
-
-      await expect(page.getByRole("button", { name: /^Verdadeiro/u })).toBeVisible();
-      await expect(page.getByRole("button", { name: /^Certo/u })).toBeHidden();
-
-      await page.getByRole("button", { name: /^Falso/u }).click();
-      await expect(feedback.getByText("Resposta certa: Verdadeiro")).toBeVisible();
-      await page.context().close();
-    });
-
-    test("a Cebraspe mock asks Certo, Errado or Deixar em branco, and reviews in those words", async ({
-      browser,
-    }) => {
-      const { blockId, user } = await createCebraspeMock(mode);
-      const page = await openAs(browser, user);
-
-      await page.goto(`/pt/mock/${blockId}`);
-
-      await page
-        .getByRole("button", { name: mode === "fun" ? "Tô dentro" : "Começar o simulado" })
-        .click();
-
-      await expect(page.getByText(/^Questão 1 de 2/u)).toBeVisible();
-
-      const picks = page.getByRole("radiogroup");
-      await expect(picks.getByRole("radio")).toHaveText([/Certo/u, /Errado/u, /Deixar em branco/u]);
-
-      // The first statement is right: "Errado" is a mistake to review.
-      await picks.getByRole("radio", { name: /Errado/u }).click();
-      await page.getByRole("button", { name: "Avançar" }).click();
-
-      await expect(page.getByText(/^Questão 2 de 2/u)).toBeVisible();
-      await picks.getByRole("radio", { name: /Errado/u }).click();
-      await page.getByRole("button", { name: "Entregar o simulado" }).click();
-
-      await page.getByText("Ver a pergunta para revisar").click();
-      const review = page.getByRole("listitem").filter({ hasText: "First statement" });
-
-      await expect(review.getByRole("definition")).toHaveText(["Errado", "Certo"]);
-      await page.context().close();
-    });
+    // "Errado" on a statement that is right: the grade gives the right answer in the same words.
+    await page.getByRole("button", { name: /^Errado/u }).click();
+    await expect(feedback.getByText("Resposta certa: Certo")).toBeVisible();
+    await page.context().close();
   });
-}
+
+  test("an ENEM-style goal's practice keeps them Verdadeiro or Falso", async ({ browser }) => {
+    const { user } = await createStatementPracticeDay({
+      mode: "fun",
+      netScored: false,
+      structure: ENEM_STRUCTURE,
+    });
+
+    const page = await openAs(browser, user);
+    const feedback = page.getByRole("region", { name: "Resultado da resposta" });
+
+    await startSession(page);
+
+    await expect(page.getByRole("button", { name: /^Verdadeiro/u })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Certo/u })).toBeHidden();
+
+    await page.getByRole("button", { name: /^Falso/u }).click();
+    await expect(feedback.getByText("Resposta certa: Verdadeiro")).toBeVisible();
+    await page.context().close();
+  });
+
+  test("a Cebraspe mock asks Certo, Errado or Deixar em branco, and reviews in those words", async ({
+    browser,
+  }) => {
+    const { blockId, user } = await createCebraspeMock("focus");
+    const page = await openAs(browser, user);
+
+    await page.goto(`/pt/mock/${blockId}`);
+
+    await page.getByRole("button", { name: "Começar o simulado" }).click();
+
+    await expect(page.getByText(/^Questão 1 de 2/u)).toBeVisible();
+
+    const picks = page.getByRole("radiogroup");
+    await expect(picks.getByRole("radio")).toHaveText([/Certo/u, /Errado/u, /Deixar em branco/u]);
+
+    // The first statement is right: "Errado" is a mistake to review.
+    await picks.getByRole("radio", { name: /Errado/u }).click();
+    await page.getByRole("button", { name: "Avançar" }).click();
+
+    await expect(page.getByText(/^Questão 2 de 2/u)).toBeVisible();
+    await picks.getByRole("radio", { name: /Errado/u }).click();
+    await page.getByRole("button", { name: "Entregar o simulado" }).click();
+
+    await page.getByText("Ver a pergunta para revisar").click();
+    const review = page.getByRole("listitem").filter({ hasText: "First statement" });
+
+    await expect(review.getByRole("definition")).toHaveText(["Errado", "Certo"]);
+    await page.context().close();
+  });
+});

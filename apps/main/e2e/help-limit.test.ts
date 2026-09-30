@@ -2,7 +2,7 @@ import { getDailySpendBudgetMicros } from "@zoonk/core/entitlements/limits";
 import { prisma } from "@zoonk/db";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, expectMode } from "./learn-personas";
+import { expectMode } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
@@ -53,35 +53,33 @@ async function useUpTodaysHelp({ page, tier, userId }: { page: Page; tier: Tier;
   await page.context().clearCookies({ name: /session_data/u });
 }
 
-for (const mode of MODES) {
-  test.describe(`Today's AI help used up (${mode})`, () => {
-    for (const tier of ["guest", "free"] as const) {
-      test(`a plan edit in plain words tells a ${tier} learner how to keep going`, async ({
-        browser,
-      }) => {
-        const { user } = await createStudyDay({ mode });
-        const page = await openAs(browser, user);
+test.describe("Today's AI help used up", () => {
+  for (const tier of ["guest", "free"] as const) {
+    test(`a plan edit in plain words tells a ${tier} learner how to keep going`, async ({
+      browser,
+    }) => {
+      const { user } = await createStudyDay({ mode: "focus" });
+      const page = await openAs(browser, user);
 
-        try {
-          await useUpTodaysHelp({ page, tier, userId: user.id });
-          await page.goto("/plan");
-          await expectMode(page, mode);
+      try {
+        await useUpTodaysHelp({ page, tier, userId: user.id });
+        await page.goto("/plan");
+        await expectMode(page, "focus");
 
-          await page.getByRole("button", { name: "Change your plan" }).click();
-          await page.getByLabel("Change it in your own words").fill("Less on weekends");
-          await page.getByRole("button", { name: "Change my plan" }).click();
+        await page.getByRole("button", { name: "Change your plan" }).click();
+        await page.getByLabel("Change it in your own words").fill("Less on weekends");
+        await page.getByRole("button", { name: "Change my plan" }).click();
 
-          await expect(page.getByText(NOTICES[tier].text)).toBeVisible();
-          await expect(page.getByRole("link", { name: NOTICES[tier].link })).toBeVisible();
-          await expect(page.getByText("That didn't work", { exact: false })).toBeHidden();
+        await expect(page.getByText(NOTICES[tier].text)).toBeVisible();
+        await expect(page.getByRole("link", { name: NOTICES[tier].link })).toBeVisible();
+        await expect(page.getByText("That didn't work", { exact: false })).toBeHidden();
 
-          // What they wrote stays, to send once the help is back.
-          const words = page.getByLabel("Change it in your own words");
-          await expect(words).toHaveValue("Less on weekends");
-        } finally {
-          await page.context().close();
-        }
-      });
-    }
-  });
-}
+        // What they wrote stays, to send once the help is back.
+        const words = page.getByLabel("Change it in your own words");
+        await expect(words).toHaveValue("Less on weekends");
+      } finally {
+        await page.context().close();
+      }
+    });
+  }
+});

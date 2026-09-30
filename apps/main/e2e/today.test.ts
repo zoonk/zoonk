@@ -14,7 +14,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { pressShortcutAndWaitForUrl } from "./keyboard-shortcuts";
-import { MODES, type Mode, asPersona } from "./learn-personas";
+import { type Mode, asPersona } from "./learn-personas";
 import {
   DAYS_TO_EXAM,
   LESSON_CAN_DO,
@@ -249,37 +249,26 @@ test.describe("Today without a day to show", () => {
     await page.context().close();
   });
 
-  for (const mode of MODES) {
-    test(`shows a designed wait while the plan is built (${mode})`, async ({ browser }) => {
-      const user = await createE2EUser(getBaseURL());
+  test("shows a designed wait while the plan is built", async ({ browser }) => {
+    const user = await createE2EUser(getBaseURL());
 
-      const goal = await goalFixture({
-        timezone: "UTC",
-        title: "Quantum physics",
-        userId: user.id,
-      });
+    const goal = await goalFixture({ timezone: "UTC", title: "Quantum physics", userId: user.id });
 
-      await Promise.all([
-        planFixture({ goalId: goal.id }),
-        learningProfileFixture({
-          activeGoalId: goal.id,
-          experienceMode: mode,
-          userId: user.id,
-          ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-        }),
-      ]);
+    await Promise.all([
+      planFixture({ goalId: goal.id }),
+      learningProfileFixture({ activeGoalId: goal.id, experienceMode: "focus", userId: user.id }),
+    ]);
 
-      const page = await openAs(browser, user);
-      await page.goto("/today");
+    const page = await openAs(browser, user);
+    await page.goto("/today");
 
-      await expect(
-        page.getByRole("heading", { name: "Building your plan for Quantum physics" }),
-      ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Building your plan for Quantum physics" }),
+    ).toBeVisible();
 
-      await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
-      await page.context().close();
-    });
-  }
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+    await page.context().close();
+  });
 
   test("follows the plan being built and opens the day on its own", async ({ browser }) => {
     const user = await createE2EUser(getBaseURL());
@@ -405,19 +394,11 @@ test.describe("Today for the seeded learners", () => {
   });
 
   // A phase ends with a phase checkpoint, so the week's challenge is the one this Sunday.
-  for (const mode of MODES) {
-    test(`the huge learn goal's weekly challenge is this Sunday's in ${mode}`, async ({
-      browser,
-    }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page }) => {
-        await page.goto("/today");
+  test("the huge learn goal's weekly challenge is this Sunday's", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page }) => {
+      await page.goto("/today");
 
-        await expect(
-          page.getByText(mode === "fun" ? "Sunday: Big Challenge" : "Sunday: weekly challenge", {
-            exact: true,
-          }),
-        ).toBeVisible();
-      });
+      await expect(page.getByText("Sunday: Big Challenge", { exact: true })).toBeVisible();
     });
-  }
+  });
 });

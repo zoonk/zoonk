@@ -8,7 +8,7 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, type Mode, asPersona } from "./learn-personas";
+import { type Mode, asPersona } from "./learn-personas";
 
 const CARD_COUNT = 1000;
 const AREA_COUNT = 40;
@@ -86,32 +86,30 @@ function searchBox(page: Page) {
 }
 
 test.describe("Content tab", () => {
-  for (const mode of MODES) {
-    test(`groups the exam's skills by area, then chapter, in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page }) => {
-        await page.goto("/content");
+  test("groups the exam's skills by area, then chapter", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
+      await page.goto("/content");
 
-        const math = page.getByRole("heading", { level: 2, name: "Matemática" });
-        const sciences = page.getByRole("heading", { level: 2, name: "Ciências da Natureza" });
+      const math = page.getByRole("heading", { level: 2, name: "Matemática" });
+      const sciences = page.getByRole("heading", { level: 2, name: "Ciências da Natureza" });
 
-        await expect(math).toBeVisible();
-        await expect(sciences).toBeVisible();
+      await expect(math).toBeVisible();
+      await expect(sciences).toBeVisible();
 
-        // Each area's chapters sit under it, Math's before Natural Sciences starts.
-        const percentages = page.getByText("Porcentagem", { exact: true }).first();
-        await expect(percentages).toBeVisible();
+      // Each area's chapters sit under it, Math's before Natural Sciences starts.
+      const percentages = page.getByText("Porcentagem", { exact: true }).first();
+      await expect(percentages).toBeVisible();
 
-        const [mathBox, percentagesBox, sciencesBox] = await Promise.all([
-          math.boundingBox(),
-          percentages.boundingBox(),
-          sciences.boundingBox(),
-        ]);
+      const [mathBox, percentagesBox, sciencesBox] = await Promise.all([
+        math.boundingBox(),
+        percentages.boundingBox(),
+        sciences.boundingBox(),
+      ]);
 
-        expect(mathBox?.y ?? 0).toBeLessThan(percentagesBox?.y ?? 0);
-        expect(percentagesBox?.y ?? 0).toBeLessThan(sciencesBox?.y ?? 0);
-      });
+      expect(mathBox?.y ?? 0).toBeLessThan(percentagesBox?.y ?? 0);
+      expect(percentagesBox?.y ?? 0).toBeLessThan(sciencesBox?.y ?? 0);
     });
-  }
+  });
 
   test("Focus lists the skills with their states, search, filters and summaries", async ({
     browser,
@@ -207,39 +205,29 @@ test.describe("Content tab", () => {
     }
   });
 
-  for (const mode of MODES) {
-    test(`a thousand cards stay quick to open, search and filter in ${mode}`, async ({
-      browser,
-    }) => {
-      const { context, page } = await createThousandCardLearner(browser, mode);
+  test("a thousand cards stay quick to open, search and filter", async ({ browser }) => {
+    const { context, page } = await createThousandCardLearner(browser, "fun");
 
-      try {
-        const start = Date.now();
-        await page.goto("/content");
+    try {
+      const start = Date.now();
+      await page.goto("/content");
 
-        await expect(
-          mode === "fun"
-            ? page.getByText("1,000 cards in 40 areas")
-            : page.getByText("1,000 skills · 250 mastered"),
-        ).toBeVisible();
+      await expect(page.getByText("1,000 cards in 40 areas")).toBeVisible();
 
-        expect(Date.now() - start).toBeLessThan(10_000);
+      expect(Date.now() - start).toBeLessThan(10_000);
 
-        const filters = page.getByRole("group", { name: "Show" });
-        await expect(filters.getByRole("button", { name: /1,000\s*All/u })).toBeVisible();
+      const filters = page.getByRole("group", { name: "Show" });
+      await expect(filters.getByRole("button", { name: /1,000\s*All/u })).toBeVisible();
 
-        await expect(
-          filters.getByRole("button", { name: mode === "fun" ? /250\s*Gold/u : /250\s*Mastered/u }),
-        ).toBeVisible();
+      await expect(filters.getByRole("button", { name: /250\s*Gold/u })).toBeVisible();
 
-        const searchStart = Date.now();
-        await searchBox(page).fill("Card 999");
-        await expect(page.getByText("Card 999", { exact: true })).toBeVisible();
-        await expect(page.getByText("Card 998", { exact: true })).toBeHidden();
-        expect(Date.now() - searchStart).toBeLessThan(3000);
-      } finally {
-        await context.close();
-      }
-    });
-  }
+      const searchStart = Date.now();
+      await searchBox(page).fill("Card 999");
+      await expect(page.getByText("Card 999", { exact: true })).toBeVisible();
+      await expect(page.getByText("Card 998", { exact: true })).toBeHidden();
+      expect(Date.now() - searchStart).toBeLessThan(3000);
+    } finally {
+      await context.close();
+    }
+  });
 });

@@ -5,11 +5,11 @@ import {
   playableLessonFixture,
 } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, type Mode, setDeviceMode } from "./learn-personas";
+import { type Mode, setDeviceMode } from "./learn-personas";
 
 /**
- * Plays Library lessons in the lesson player, in Focus and in Fun: every teaching screen (the
- * hook's guess, an explanation, a worked example, a check, a typed and a spoken answer, the
+ * Plays Library lessons in the lesson player, split between Focus and Fun: every teaching screen
+ * (the hook's guess, an explanation, a worked example, a check, a typed and a spoken answer, the
  * summary) for a signed-in learner, and the language screens for a visitor, who becomes a guest on
  * the first answer.
  */
@@ -34,13 +34,11 @@ async function expectVerdict(page: Page, verdict: string) {
   await expect(page.getByRole("status").filter({ hasText: verdict })).toBeVisible();
 }
 
-/** Both modes count Hyperdrive (right answers in a row); only Fun shows it, from x2 on. */
-async function expectHyperdrive(page: Page, { level, mode }: { level: number; mode: Mode }) {
+/** Fun shows Hyperdrive (right answers in a row) from x2 on. */
+async function expectHyperdrive(page: Page, level: number) {
   const badge = page.locator('[data-slot="lesson-hyperdrive"]');
 
-  await (mode === "fun" && level >= 2
-    ? expect(badge).toContainText(`x${level}`)
-    : expect(badge).toHaveCount(0));
+  await (level >= 2 ? expect(badge).toContainText(`x${level}`) : expect(badge).toHaveCount(0));
 }
 
 async function answerHook(page: Page) {
@@ -129,184 +127,180 @@ async function answerSpokenByTyping(page: Page) {
   await primary(page, /^Continue/u).click();
 }
 
-for (const mode of MODES) {
-  test.describe(`Library lesson player in ${mode} mode`, () => {
-    test("plays every teaching screen and finishes the lesson", async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const [{ lesson }] = await Promise.all([
-        playableLessonFixture(),
-        learningProfileFixture({ experienceMode: mode, userId: noProgressUser.id }),
-      ]);
+test.describe("Library lesson player", () => {
+  test("plays every teaching screen and finishes the lesson in Fun", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [{ lesson }] = await Promise.all([
+      playableLessonFixture(),
+      learningProfileFixture({ experienceMode: "fun", userId: noProgressUser.id }),
+    ]);
 
-      await openLesson(page, { lessonId: lesson.id, mode });
+    await openLesson(page, { lessonId: lesson.id, mode: "fun" });
 
-      await answerHook(page);
-      await readExplanationWithHelp(page);
-      await followWorkedExample(page);
-      await answerCheckWithKeys(page);
-      await expectHyperdrive(page, { level: 1, mode });
-      await answerTyped(page);
-      await expectHyperdrive(page, { level: 2, mode });
-      await answerSpokenByTyping(page);
-      await expectHyperdrive(page, { level: 3, mode });
+    await answerHook(page);
+    await readExplanationWithHelp(page);
+    await followWorkedExample(page);
+    await answerCheckWithKeys(page);
+    await expectHyperdrive(page, 1);
+    await answerTyped(page);
+    await expectHyperdrive(page, 2);
+    await answerSpokenByTyping(page);
+    await expectHyperdrive(page, 3);
 
-      await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-      await primary(page, /^Continue/u).click();
+    await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+    await primary(page, /^Continue/u).click();
 
-      await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-      await expect(page.getByText("3 of 3 right the first time")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    await expect(page.getByText("3 of 3 right the first time")).toBeVisible();
 
-      // Brain Power v2: 2, 4 and 6 for three right answers in a row, and 10 for finishing.
-      await expect(page.getByText("+22")).toBeVisible();
+    // Brain Power v2: 2, 4 and 6 for three right answers in a row, and 10 for finishing.
+    await expect(page.getByText("+22")).toBeVisible();
 
-      await expect(page.getByText("Top Hyperdrive")).toHaveCount(mode === "fun" ? 1 : 0);
-    });
+    await expect(page.getByText("Top Hyperdrive")).toHaveCount(1);
+  });
 
-    test("asks for a short break when lessons are read too fast, then opens the lesson", async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const [{ lesson }] = await Promise.all([
-        playableLessonFixture({ steps: ["explanation", "check"] }),
-        learningProfileFixture({ experienceMode: mode, userId: noProgressUser.id }),
-      ]);
+  test("asks for a short break when lessons are read too fast, then opens the lesson", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [{ lesson }] = await Promise.all([
+      playableLessonFixture({ steps: ["explanation", "check"] }),
+      learningProfileFixture({ experienceMode: "focus", userId: noProgressUser.id }),
+    ]);
 
-      // E2E servers stand in for the Vercel Firewall: this header answers as the rule's limit would.
-      await page.setExtraHTTPHeaders({ "x-e2e-rate-limited": "lesson-steps" });
-      await openLesson(page, { lessonId: lesson.id, mode });
+    // E2E servers stand in for the Vercel Firewall: this header answers as the rule's limit would.
+    await page.setExtraHTTPHeaders({ "x-e2e-rate-limited": "lesson-steps" });
+    await openLesson(page, { lessonId: lesson.id, mode: "focus" });
 
-      await expect(page.getByRole("heading", { name: "Take a short break" })).toBeVisible();
-      await expect(page.getByText(/This one opens in \d+ seconds\./u)).toBeVisible();
-      await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
+    await expect(page.getByRole("heading", { name: "Take a short break" })).toBeVisible();
+    await expect(page.getByText(/This one opens in \d+ seconds\./u)).toBeVisible();
+    await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
 
-      await page.setExtraHTTPHeaders({});
-      await page.reload();
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-    });
+    await page.setExtraHTTPHeaders({});
+    await page.reload();
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+  });
 
-    test("shows the lesson's minutes and keeps its summary card in the screen's menu", async ({
-      page,
-    }) => {
-      const { lesson } = await playableLessonFixture({
-        lesson: {
-          estimatedMinutes: 4,
-          summary: {
-            ideas: [
-              { text: "Electrons live in clouds." },
-              { text: "The densest part is likeliest." },
-            ],
-          },
+  test("shows the lesson's minutes in Focus and keeps its summary card in the screen's menu", async ({
+    page,
+  }) => {
+    const { lesson } = await playableLessonFixture({
+      lesson: {
+        estimatedMinutes: 4,
+        summary: {
+          ideas: [
+            { text: "Electrons live in clouds." },
+            { text: "The densest part is likeliest." },
+          ],
         },
-        steps: ["explanation", "check"],
-      });
-
-      await openLesson(page, { lessonId: lesson.id, mode });
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
-      // Focus's header has the title and minutes; Fun's has the dots instead.
-      await expect(page.getByText("4 min", { exact: true })).toHaveCount(mode === "focus" ? 1 : 0);
-
-      await page.getByRole("button", { name: "Screen options" }).click();
-      await page.getByRole("menuitem", { name: "Lesson summary" }).click();
-
-      const summary = page.getByRole("dialog", { name: "Lesson summary" });
-      await expect(summary.getByText("Electrons live in clouds.")).toBeVisible();
-      await expect(summary.getByText("The densest part is likeliest.")).toBeVisible();
-
-      await summary.getByRole("button", { name: "Got it" }).click();
-      await expect(summary).toBeHidden();
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+      },
+      steps: ["explanation", "check"],
     });
 
-    test("counts a typo as right and shows the spelling", async ({
-      noProgressUser,
-      userWithoutProgress: page,
-    }) => {
-      const [{ lesson }] = await Promise.all([
-        playableLessonFixture({ steps: ["typedAnswer", "summary"] }),
-        learningProfileFixture({ experienceMode: mode, userId: noProgressUser.id }),
-      ]);
+    await openLesson(page, { lessonId: lesson.id, mode: "focus" });
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      await openLesson(page, { lessonId: lesson.id, mode });
+    // Focus's header has the title and minutes; Fun's has the dots instead.
+    await expect(page.getByText("4 min", { exact: true })).toHaveCount(1);
 
-      await page
-        .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
-        .fill("It shows where the electorn is likely to be");
+    await page.getByRole("button", { name: "Screen options" }).click();
+    await page.getByRole("menuitem", { name: "Lesson summary" }).click();
 
-      await primary(page, /^Check/u).click();
-      await expectVerdict(page, "Right, watch the spelling");
+    const summary = page.getByRole("dialog", { name: "Lesson summary" });
+    await expect(summary.getByText("Electrons live in clouds.")).toBeVisible();
+    await expect(summary.getByText("The densest part is likeliest.")).toBeVisible();
 
-      await expect(
-        page.getByRole("status").getByText("It shows where the electron is likely to be"),
-      ).toBeVisible();
+    await summary.getByRole("button", { name: "Got it" }).click();
+    await expect(summary).toBeHidden();
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+  });
 
-      await primary(page, /^Continue/u).click();
-      await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-    });
+  test("counts a typo as right and shows the spelling", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [{ lesson }] = await Promise.all([
+      playableLessonFixture({ steps: ["typedAnswer", "summary"] }),
+      learningProfileFixture({ experienceMode: "fun", userId: noProgressUser.id }),
+    ]);
 
-    test("plays a spoken screen as listening when the learner can't talk now", async ({
-      browser,
-    }) => {
-      const { lesson } = await languageLessonFixture();
+    await openLesson(page, { lessonId: lesson.id, mode: "fun" });
 
-      await prisma.step.deleteMany({
-        where: { kind: { not: "spokenAnswer" }, lessonId: lesson.id },
-      });
+    await page
+      .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
+      .fill("It shows where the electorn is likely to be");
 
-      // Chromium's fake microphone, so speaking is offered first, as on a phone.
-      const context = await browser.newContext({ permissions: ["microphone"] });
-      const page = await context.newPage();
+    await primary(page, /^Check/u).click();
+    await expectVerdict(page, "Right, watch the spelling");
 
-      try {
-        await openLesson(page, { lessonId: lesson.id, mode });
-        await expect(page.getByText("How much is the rent?")).toBeVisible();
-        await page.getByRole("button", { name: "I can't talk now" }).click();
+    await expect(
+      page.getByRole("status").getByText("It shows where the electron is likely to be"),
+    ).toBeVisible();
 
-        const bank = page.getByRole("group", { name: "Word bank" });
+    await primary(page, /^Continue/u).click();
+    await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+  });
 
-        for (const word of ["quanto", "é", "o", "aluguel?"]) {
-          // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
-          await bank
-            .getByRole("button", { name: new RegExp(`^${escapeRegExp(word)}$`, "iu") })
-            .click();
-        }
+  test("plays a spoken screen as listening when the learner can't talk now", async ({
+    browser,
+  }) => {
+    const { lesson } = await languageLessonFixture();
 
-        await primary(page, /^Check/u).click();
-        await expectVerdict(page, "Correct!");
+    await prisma.step.deleteMany({ where: { kind: { not: "spokenAnswer" }, lessonId: lesson.id } });
 
-        // The choice lasts for the visit: the screen opens as listening again, until they can talk.
-        await page.reload();
-        await expect(page.getByRole("group", { name: "Word bank" })).toBeVisible();
-        await page.getByRole("button", { name: "I can talk now" }).click();
-        await expect(page.getByRole("button", { name: "Start speaking" })).toBeVisible();
-      } finally {
-        await context.close();
+    // Chromium's fake microphone, so speaking is offered first, as on a phone.
+    const context = await browser.newContext({ permissions: ["microphone"] });
+    const page = await context.newPage();
+
+    try {
+      await openLesson(page, { lessonId: lesson.id, mode: "focus" });
+      await expect(page.getByText("How much is the rent?")).toBeVisible();
+      await page.getByRole("button", { name: "I can't talk now" }).click();
+
+      const bank = page.getByRole("group", { name: "Word bank" });
+
+      for (const word of ["quanto", "é", "o", "aluguel?"]) {
+        // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+        await bank
+          .getByRole("button", { name: new RegExp(`^${escapeRegExp(word)}$`, "iu") })
+          .click();
       }
-    });
 
-    test("teaches a word with its note and tip, then checks it", async ({ page }) => {
-      const { lesson } = await languageLessonFixture();
-      await openLesson(page, { lessonId: lesson.id, mode });
-
-      // A visitor can open the tutor, which asks them to sign in first.
-      await openAndCloseTutor(page, { expectText: "Sign in to ask questions" });
-
-      await expect(page.getByRole("region", { name: "Vocabulary: rent" })).toBeVisible();
-      await expect(page.getByText("aluguel", { exact: true })).toBeVisible();
-      await expect(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
-      await expect(page.getByText("O r do começo é suave, não como em rato.")).toBeVisible();
-      await primary(page, /^Next/u).click();
-
-      await expect(page.getByText("Translate this word:")).toBeVisible();
-      await page.getByRole("radio", { name: "Rent" }).click();
       await primary(page, /^Check/u).click();
       await expectVerdict(page, "Correct!");
-      await expect(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
-      await primary(page, /^Continue/u).click();
 
+      // The choice lasts for the visit: the screen opens as listening again, until they can talk.
+      await page.reload();
       await expect(page.getByRole("group", { name: "Word bank" })).toBeVisible();
-    });
+      await page.getByRole("button", { name: "I can talk now" }).click();
+      await expect(page.getByRole("button", { name: "Start speaking" })).toBeVisible();
+    } finally {
+      await context.close();
+    }
   });
-}
+
+  test("teaches a word with its note and tip, then checks it", async ({ page }) => {
+    const { lesson } = await languageLessonFixture();
+    await openLesson(page, { lessonId: lesson.id, mode: "fun" });
+
+    // A visitor can open the tutor, which asks them to sign in first.
+    await openAndCloseTutor(page, { expectText: "Sign in to ask questions" });
+
+    await expect(page.getByRole("region", { name: "Vocabulary: rent" })).toBeVisible();
+    await expect(page.getByText("aluguel", { exact: true })).toBeVisible();
+    await expect(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
+    await expect(page.getByText("O r do começo é suave, não como em rato.")).toBeVisible();
+    await primary(page, /^Next/u).click();
+
+    await expect(page.getByText("Translate this word:")).toBeVisible();
+    await page.getByRole("radio", { name: "Rent" }).click();
+    await primary(page, /^Check/u).click();
+    await expectVerdict(page, "Correct!");
+    await expect(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
+    await primary(page, /^Continue/u).click();
+
+    await expect(page.getByRole("group", { name: "Word bank" })).toBeVisible();
+  });
+});

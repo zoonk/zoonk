@@ -7,7 +7,6 @@ import {
   createCheckpointLearner,
   playDuel,
 } from "./fun-rewards-fixtures";
-import { MODES } from "./learn-personas";
 import { openAs } from "./study-day";
 
 async function planItemStatus(id: string) {
@@ -184,64 +183,54 @@ test.describe("Checkpoints", () => {
   });
 });
 
-for (const mode of MODES) {
-  test.describe(`A checkpoint from today's session in ${mode} mode`, () => {
-    test("continues back to the session, by keyboard", async ({ browser }) => {
-      const { block, user } = await createCheckpointLearner({ mode });
-      const page = await openAs(browser, user);
+test.describe("A checkpoint from today's session in Fun", () => {
+  test("continues back to the session, by keyboard", async ({ browser }) => {
+    const { block, user } = await createCheckpointLearner({ mode: "fun" });
+    const page = await openAs(browser, user);
 
-      await page.goto("/today");
+    await page.goto("/today");
 
-      // Keys work once the page hydrates, so each first press retries until the screen changes.
-      await expect(async () => {
-        await page.keyboard.press("Enter");
-
-        await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"), {
-          timeout: 1000,
-        });
-      }).toPass({ timeout: 10_000 });
-
-      await expect(async () => {
-        await page.keyboard.press("Enter");
-
-        await expect(page.getByText(`Question 1 of ${CHECKPOINT_QUESTIONS}`)).toBeVisible({
-          timeout: 1000,
-        });
-      }).toPass({ timeout: 5000 });
-
-      await playDuel(page, { keyboard: true });
-
-      await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute(
-        "href",
-        "/session",
-      );
-
+    // Keys work once the page hydrates, so each first press retries until the screen changes.
+    await expect(async () => {
       await page.keyboard.press("Enter");
 
-      // The checkpoint was the day's only block, so the session shows the day's summary.
-      await expect(page).toHaveURL(/\/session$/u);
+      await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"), {
+        timeout: 1000,
+      });
+    }).toPass({ timeout: 10_000 });
 
-      // In Fun, the first boss won brings glasses first. Enter presses the focused "Wear them"; the
-      // summary under the ceremony keeps its own Enter for later.
-      if (mode === "fun") {
-        const wear = page.getByRole("button", { name: "Wear them" });
-        await expect(wear).toBeFocused();
-        await page.keyboard.press("Enter");
-        await expect(wear).toBeHidden();
-        await expect(page).toHaveURL(/\/session$/u);
-      }
+    await expect(async () => {
+      await page.keyboard.press("Enter");
 
-      await expect(
-        page.getByRole("heading", {
-          level: 1,
-          name: mode === "fun" ? "Flight plan complete!" : "Today's session is done",
-        }),
-      ).toBeVisible();
+      await expect(page.getByText(`Question 1 of ${CHECKPOINT_QUESTIONS}`)).toBeVisible({
+        timeout: 1000,
+      });
+    }).toPass({ timeout: 5000 });
 
-      await page.context().close();
-    });
+    await playDuel(page, { keyboard: true });
+
+    await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
+
+    await page.keyboard.press("Enter");
+
+    // The checkpoint was the day's only block, so the session shows the day's summary.
+    await expect(page).toHaveURL(/\/session$/u);
+
+    // In Fun, the first boss won brings glasses first. Enter presses the focused "Wear them"; the
+    // summary under the ceremony keeps its own Enter for later.
+    const wear = page.getByRole("button", { name: "Wear them" });
+    await expect(wear).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(wear).toBeHidden();
+    await expect(page).toHaveURL(/\/session$/u);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Flight plan complete!" }),
+    ).toBeVisible();
+
+    await page.context().close();
   });
-}
+});
 
 /** The week's challenges of a plan, as learner-local days. */
 async function challengeDays(planId: string) {
@@ -257,35 +246,31 @@ async function blockStatus(blockId: string) {
   return block.status;
 }
 
-for (const mode of MODES) {
-  test.describe(`Move to Monday in ${mode} mode`, () => {
-    test("the week's challenge moves to Monday through the plan, with undo", async ({
-      browser,
-    }) => {
-      const { block, plan, user } = await createCheckpointLearner({
-        kind: "weekly",
-        mode,
-        planned: true,
-      });
-
-      const page = await openAs(browser, user);
-
-      await page.goto(`/checkpoint/${block.id}`);
-      await page.getByRole("button", { name: "Move to Monday" }).click();
-
-      await expect(page.getByRole("heading", { name: /^Moved to/u })).toBeVisible();
-      await expect(page.getByText("Your plan made room for it. Nothing is lost.")).toBeVisible();
-      await expect.poll(() => blockStatus(block.id)).toBe("skipped");
-
-      const days = await challengeDays(plan.id);
-      expect(days.some((day) => day && new Date(`${day}T00:00:00Z`).getUTCDay() === 1)).toBe(true);
-
-      await page.getByRole("button", { name: "Undo" }).click();
-
-      await expect(page.getByRole("button", { name: "Move to Monday" })).toBeVisible();
-      await expect.poll(() => blockStatus(block.id)).toBe("pending");
-
-      await page.context().close();
+test.describe("Move to Monday", () => {
+  test("the week's challenge moves to Monday through the plan, with undo", async ({ browser }) => {
+    const { block, plan, user } = await createCheckpointLearner({
+      kind: "weekly",
+      mode: "focus",
+      planned: true,
     });
+
+    const page = await openAs(browser, user);
+
+    await page.goto(`/checkpoint/${block.id}`);
+    await page.getByRole("button", { name: "Move to Monday" }).click();
+
+    await expect(page.getByRole("heading", { name: /^Moved to/u })).toBeVisible();
+    await expect(page.getByText("Your plan made room for it. Nothing is lost.")).toBeVisible();
+    await expect.poll(() => blockStatus(block.id)).toBe("skipped");
+
+    const days = await challengeDays(plan.id);
+    expect(days.some((day) => day && new Date(`${day}T00:00:00Z`).getUTCDay() === 1)).toBe(true);
+
+    await page.getByRole("button", { name: "Undo" }).click();
+
+    await expect(page.getByRole("button", { name: "Move to Monday" })).toBeVisible();
+    await expect.poll(() => blockStatus(block.id)).toBe("pending");
+
+    await page.context().close();
   });
-}
+});

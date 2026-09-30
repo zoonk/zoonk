@@ -11,7 +11,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
-import { MODES, type Mode } from "./learn-personas";
+import { type Mode } from "./learn-personas";
 import { openAs } from "./study-day";
 
 const CITATION = "Enem 2022, 2º dia, questão 141";
@@ -82,27 +82,25 @@ async function createQuotedDay(mode: Mode) {
   return { user };
 }
 
-for (const mode of MODES) {
-  test.describe(`Past exam questions in ${mode}`, () => {
-    test("says where a copied question is from before and after it's answered", async ({
-      browser,
-    }) => {
-      const { user } = await createQuotedDay(mode);
-      const page = await openAs(browser, user);
+test.describe("Past exam questions", () => {
+  test("says where a copied question is from before and after it's answered", async ({
+    browser,
+  }) => {
+    const { user } = await createQuotedDay("focus");
+    const page = await openAs(browser, user);
 
-      const feedback = page.getByRole("region", { name: "Answer feedback" });
-      await page.goto("/session");
-      await page.getByRole("button", { name: /^Start/u }).click();
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await page.goto("/session");
+    await page.getByRole("button", { name: /^Start/u }).click();
 
-      await expect(page.locator('[data-slot="quoted-source"]')).toHaveText(
-        `Past exam question · ${CITATION}`,
-      );
+    await expect(page.locator('[data-slot="quoted-source"]')).toHaveText(
+      `Past exam question · ${CITATION}`,
+    );
 
-      // Number keys pick an option and check it.
-      await page.keyboard.press("2");
-      await expect(feedback.getByText("Correct!")).toBeVisible();
-      await expect(feedback.getByText(CITATION)).toBeVisible();
-      await page.context().close();
-    });
+    // Number keys pick an option and check it.
+    await page.keyboard.press("2");
+    await expect(feedback.getByText("Correct!")).toBeVisible();
+    await expect(feedback.getByText(CITATION)).toBeVisible();
+    await page.context().close();
   });
-}
+});

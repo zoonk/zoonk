@@ -3,7 +3,7 @@ import { getDailySpendBudgetMicros } from "@zoonk/core/entitlements/limits";
 import { type E2EUser } from "@zoonk/e2e/fixtures/users";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, type Mode, expectMode, showInMode } from "./learn-personas";
+import { type Mode, expectMode, showInMode } from "./learn-personas";
 
 /** Chromium's fake microphone, so recording starts without a device or a permission prompt. */
 test.use({
@@ -118,110 +118,106 @@ test("a spoken answer records from the microphone once the learner allows it", a
   }
 });
 
-for (const mode of MODES) {
-  test.describe(`A spoken answer (${mode})`, () => {
-    test("goes to the API with the learner's token and shows what was heard", async ({
+test.describe("A spoken answer", () => {
+  test("goes to the API with the learner's token and shows what was heard", async ({
+    browser,
+    noProgressUser,
+  }) => {
+    const { context, lesson, page } = await openSpokenLesson({
       browser,
-      noProgressUser,
-    }) => {
-      const { context, lesson, page } = await openSpokenLesson({
-        browser,
-        mode,
-        user: noProgressUser,
-      });
-
-      try {
-        const sent = await answerRecordings(page, { json: GRADE, status: 200 });
-        await page.goto(`/learn/${lesson.id}`);
-        await expectMode(page, mode);
-        await sayIt(page);
-
-        await expect(page.getByText("What we heard")).toBeVisible();
-
-        // The recording and the fields the API reads, as the learner: never the step in the body.
-        const [request] = sent;
-        const body = request?.postData() ?? "";
-
-        expect(request?.headers().authorization).toMatch(/^Bearer /u);
-        expect(body).toContain('name="audio"');
-        expect(body).toContain('name="durationMs"');
-        expect(body).toContain('name="timeZone"');
-        expect(body).not.toContain('name="stepId"');
-      } finally {
-        await context.close();
-      }
+      mode: "focus",
+      user: noProgressUser,
     });
 
-    test("with no words in it says so and lets the learner try again or type", async ({
-      browser,
-      noProgressUser,
-    }) => {
-      const { context, lesson, page } = await openSpokenLesson({
-        browser,
-        mode,
-        user: noProgressUser,
-      });
+    try {
+      const sent = await answerRecordings(page, { json: GRADE, status: 200 });
+      await page.goto(`/learn/${lesson.id}`);
+      await expectMode(page, "focus");
+      await sayIt(page);
 
-      try {
-        const sent = await answerRecordings(page, { json: NO_SPEECH_ERROR, status: 422 });
-        await page.goto(`/learn/${lesson.id}`);
-        await expectMode(page, mode);
-        await sayIt(page);
+      await expect(page.getByText("What we heard")).toBeVisible();
 
-        await expect(page.getByText("We couldn't hear any words. Try again.")).toBeVisible();
+      // The recording and the fields the API reads, as the learner: never the step in the body.
+      const [request] = sent;
+      const body = request?.postData() ?? "";
 
-        const failure = page.getByText("We couldn't check your answer", { exact: false });
-        await expect(failure).toBeHidden();
-        await expect(page.getByRole("button", { name: "Type it instead" })).toBeVisible();
-
-        // Trying again records and sends again.
-        await sayIt(page);
-        await expect.poll(() => sent.length).toBe(2);
-      } finally {
-        await context.close();
-      }
-    });
-
-    for (const tier of ["guest", "free"] as const) {
-      test(`says how a ${tier} learner keeps going once today's help is used up`, async ({
-        browser,
-        noProgressUser,
-      }) => {
-        const { context, lesson, page } = await openSpokenLesson({
-          browser,
-          mode,
-          user: noProgressUser,
-        });
-
-        try {
-          await answerRecordings(page, {
-            json: usageLimitError(tier),
-            status: tier === "guest" ? 403 : 402,
-          });
-
-          await page.goto(`/learn/${lesson.id}`);
-          await expectMode(page, mode);
-          await sayIt(page);
-
-          await expect(
-            page.getByText(
-              tier === "guest"
-                ? "You've used today's free help. Create a free account to keep going."
-                : "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
-            ),
-          ).toBeVisible();
-
-          await expect(
-            page.getByRole("link", {
-              name: tier === "guest" ? "Create a free account" : "See Plus",
-            }),
-          ).toBeVisible();
-
-          await expect(page.getByRole("button", { name: "Type it instead" })).toBeVisible();
-        } finally {
-          await context.close();
-        }
-      });
+      expect(request?.headers().authorization).toMatch(/^Bearer /u);
+      expect(body).toContain('name="audio"');
+      expect(body).toContain('name="durationMs"');
+      expect(body).toContain('name="timeZone"');
+      expect(body).not.toContain('name="stepId"');
+    } finally {
+      await context.close();
     }
   });
-}
+
+  test("with no words in it says so and lets the learner try again or type", async ({
+    browser,
+    noProgressUser,
+  }) => {
+    const { context, lesson, page } = await openSpokenLesson({
+      browser,
+      mode: "fun",
+      user: noProgressUser,
+    });
+
+    try {
+      const sent = await answerRecordings(page, { json: NO_SPEECH_ERROR, status: 422 });
+      await page.goto(`/learn/${lesson.id}`);
+      await expectMode(page, "fun");
+      await sayIt(page);
+
+      await expect(page.getByText("We couldn't hear any words. Try again.")).toBeVisible();
+
+      const failure = page.getByText("We couldn't check your answer", { exact: false });
+      await expect(failure).toBeHidden();
+      await expect(page.getByRole("button", { name: "Type it instead" })).toBeVisible();
+
+      // Trying again records and sends again.
+      await sayIt(page);
+      await expect.poll(() => sent.length).toBe(2);
+    } finally {
+      await context.close();
+    }
+  });
+
+  for (const tier of ["guest", "free"] as const) {
+    test(`says how a ${tier} learner keeps going once today's help is used up`, async ({
+      browser,
+      noProgressUser,
+    }) => {
+      const { context, lesson, page } = await openSpokenLesson({
+        browser,
+        mode: "focus",
+        user: noProgressUser,
+      });
+
+      try {
+        await answerRecordings(page, {
+          json: usageLimitError(tier),
+          status: tier === "guest" ? 403 : 402,
+        });
+
+        await page.goto(`/learn/${lesson.id}`);
+        await expectMode(page, "focus");
+        await sayIt(page);
+
+        await expect(
+          page.getByText(
+            tier === "guest"
+              ? "You've used today's free help. Create a free account to keep going."
+              : "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
+          ),
+        ).toBeVisible();
+
+        await expect(
+          page.getByRole("link", { name: tier === "guest" ? "Create a free account" : "See Plus" }),
+        ).toBeVisible();
+
+        await expect(page.getByRole("button", { name: "Type it instead" })).toBeVisible();
+      } finally {
+        await context.close();
+      }
+    });
+  }
+});

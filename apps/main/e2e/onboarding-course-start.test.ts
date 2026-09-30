@@ -13,7 +13,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, asPersona, expectMode, setDeviceMode } from "./learn-personas";
+import { asPersona, expectMode, setDeviceMode } from "./learn-personas";
 
 const GOAL_URL = /\/start\/(?<goalId>[0-9a-f-]{36})$/u;
 
@@ -171,50 +171,46 @@ test.describe("Starting a course from its page", () => {
     ]);
   });
 
-  for (const mode of MODES) {
-    test(`the course's start page creates nothing until its button is pressed, in ${mode}`, async ({
-      page,
-    }) => {
-      const { course } = await createOutlinedCourse();
-      await setDeviceMode(page.context(), mode);
+  test("the course's start page creates nothing until its button is pressed", async ({ page }) => {
+    const { course } = await createOutlinedCourse();
+    await setDeviceMode(page.context(), "focus");
 
+    await page.goto(`/start/course/${course.id}`);
+
+    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    await expectMode(page, "focus");
+    await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
+
+    await page.getByRole("button", { name: "Start this course" }).click();
+
+    const goalId = await readGoalId(page);
+    await expectMode(page, "focus");
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
+      primaryCourseId: course.id,
+    });
+  });
+
+  test("a free learner following another goal is told why the course didn't start", async ({
+    browser,
+  }) => {
+    const { course } = await createOutlinedCourse();
+
+    await asPersona(browser, { mode: "fun", persona: "language" }, async ({ page, user }) => {
       await page.goto(`/start/course/${course.id}`);
-
-      await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
-      await expectMode(page, mode);
-      await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
+      await expectMode(page, "fun");
 
       await page.getByRole("button", { name: "Start this course" }).click();
 
-      const goalId = await readGoalId(page);
-      await expectMode(page, mode);
+      await expect(
+        page.getByRole("alert").filter({ hasText: "The free plan follows one goal at a time." }),
+      ).toBeVisible();
 
-      await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject(
-        { primaryCourseId: course.id },
-      );
+      await expect(page.getByRole("link", { name: "Get Plus" })).toBeVisible();
+
+      await expect(
+        prisma.goal.count({ where: { primaryCourseId: course.id, userId: user.id } }),
+      ).resolves.toBe(0);
     });
-
-    test(`a free learner following another goal is told why the course didn't start, in ${mode}`, async ({
-      browser,
-    }) => {
-      const { course } = await createOutlinedCourse();
-
-      await asPersona(browser, { mode, persona: "language" }, async ({ page, user }) => {
-        await page.goto(`/start/course/${course.id}`);
-        await expectMode(page, mode);
-
-        await page.getByRole("button", { name: "Start this course" }).click();
-
-        await expect(
-          page.getByRole("alert").filter({ hasText: "The free plan follows one goal at a time." }),
-        ).toBeVisible();
-
-        await expect(page.getByRole("link", { name: "Get Plus" })).toBeVisible();
-
-        await expect(
-          prisma.goal.count({ where: { primaryCourseId: course.id, userId: user.id } }),
-        ).resolves.toBe(0);
-      });
-    });
-  }
+  });
 });

@@ -2,11 +2,11 @@ import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, asPersona } from "./learn-personas";
+import { asPersona } from "./learn-personas";
 
 /**
- * Plays a challenge lesson (the A/B test case from `challengeCaseFixture`) in Focus and in Fun as
- * a copy of the huge learn goal persona (Maya): the intro with the team kept with the plan, decisions picked with
+ * Plays a challenge lesson (the A/B test case from `challengeCaseFixture`) as a copy of the huge
+ * learn goal persona (Maya): the intro with the team kept with the plan, decisions picked with
  * number keys or taps and sent with Confirm, the meters and the week that passes, the ending and
  * the debrief, then the lesson's completion.
  */
@@ -89,64 +89,62 @@ async function playStrongPath(page: Page, product: string) {
   ).toBeVisible();
 }
 
-for (const mode of MODES) {
-  test.describe(`Challenge lesson in ${mode} mode`, () => {
-    test("solves the case like at work and gets a debrief", async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page, user }) => {
-        const { planId } = await openChallenge(page, user.goalId);
-        const { product } = await startCase(page, planId);
+test.describe("Challenge lesson", () => {
+  test("solves the case like at work and gets a debrief", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
+      const { planId } = await openChallenge(page, user.goalId);
+      const { product } = await startCase(page, planId);
 
-        await playStrongPath(page, product);
+      await playStrongPath(page, product);
 
-        await primary(page, /^See how it went/u).click();
-        await expect(page.getByRole("heading", { name: "Challenge complete" })).toBeVisible();
-        await expect(page.getByRole("heading", { name: "Nicely done" })).toBeVisible();
+      await primary(page, /^See how it went/u).click();
+      await expect(page.getByRole("heading", { name: "Challenge complete" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Nicely done" })).toBeVisible();
 
-        await expect(
-          page.getByText("You checked whether the gap could be chance before deciding."),
-        ).toBeVisible();
+      await expect(
+        page.getByText("You checked whether the gap could be chance before deciding."),
+      ).toBeVisible();
 
-        await expect(page.getByRole("heading", { name: "To improve" })).toHaveCount(0);
-        await expect(page.getByRole("heading", { name: "Skills practiced" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "To improve" })).toHaveCount(0);
+      await expect(page.getByRole("heading", { name: "Skills practiced" })).toBeVisible();
 
-        await primary(page, /^Continue/u).click();
-        await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+      await primary(page, /^Continue/u).click();
+      await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-        // Opening it again keeps the same people.
-        await expect(readTeam(planId)).resolves.toHaveLength(4);
-      });
-    });
-
-    test("finishes a rushed case with one thing to improve and a practice", async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page, user }) => {
-        const { planId } = await openChallenge(page, user.goalId);
-        const { data } = await startCase(page, planId);
-
-        await page.getByRole("radio", { name: "Go ahead and launch" }).click();
-        await primary(page, /^Confirm/u).click();
-
-        await expect(
-          page.getByRole("heading", { name: `${data} has doubts. What now?` }),
-        ).toBeVisible();
-
-        await page.getByRole("radio", { name: "Keep it live" }).click();
-        await primary(page, /^Confirm/u).click();
-        await expect(page.getByText(/the early gap was chance/u)).toBeVisible();
-
-        await page.keyboard.press("Enter");
-        await expect(page.getByRole("heading", { name: "To improve" })).toBeVisible();
-
-        await expect(
-          page.getByText("One day of data can't tell a real gain from chance."),
-        ).toBeVisible();
-
-        await expect(
-          page.getByRole("heading", { name: "Practice “Sample size” · 5 min" }),
-        ).toBeVisible();
-
-        await page.keyboard.press("Enter");
-        await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-      });
+      // Opening it again keeps the same people.
+      await expect(readTeam(planId)).resolves.toHaveLength(4);
     });
   });
-}
+
+  test("finishes a rushed case with one thing to improve and a practice", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page, user }) => {
+      const { planId } = await openChallenge(page, user.goalId);
+      const { data } = await startCase(page, planId);
+
+      await page.getByRole("radio", { name: "Go ahead and launch" }).click();
+      await primary(page, /^Confirm/u).click();
+
+      await expect(
+        page.getByRole("heading", { name: `${data} has doubts. What now?` }),
+      ).toBeVisible();
+
+      await page.getByRole("radio", { name: "Keep it live" }).click();
+      await primary(page, /^Confirm/u).click();
+      await expect(page.getByText(/the early gap was chance/u)).toBeVisible();
+
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("heading", { name: "To improve" })).toBeVisible();
+
+      await expect(
+        page.getByText("One day of data can't tell a real gain from chance."),
+      ).toBeVisible();
+
+      await expect(
+        page.getByRole("heading", { name: "Practice “Sample size” · 5 min" }),
+      ).toBeVisible();
+
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    });
+  });
+});

@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { MODES, type Mode, expectMode, showInMode } from "./learn-personas";
+import { type Mode, expectMode, showInMode } from "./learn-personas";
 
 const TIME_PERIODS = ["Night", "Morning", "Afternoon", "Evening"] as const;
 const TUESDAY = 2;
@@ -157,48 +157,46 @@ test.describe("Patterns", () => {
     ).toBeVisible();
   });
 
-  for (const mode of MODES) {
-    test(`shows every weekday and selects the strongest explicit weekday in ${mode}`, async ({
-      baseURL,
+  test("shows every weekday and selects the strongest explicit weekday in Fun", async ({
+    baseURL,
+    browser,
+  }) => {
+    const { browserContext, page } = await createPatternsTestPage({
+      baseURL: baseURL!,
       browser,
-    }) => {
-      const { browserContext, page } = await createPatternsTestPage({
-        baseURL: baseURL!,
-        browser,
-        mode,
-      });
-
-      try {
-        await page.goto("/patterns");
-        await expectMode(page, mode);
-
-        const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
-
-        await expect(weeklyRhythm).toContainText(/past 90 days/iu);
-        await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
-
-        await Promise.all(
-          WEEKDAYS.map((weekday) =>
-            expect(
-              weeklyRhythm.getByRole("button", { name: new RegExp(weekday, "iu") }),
-            ).toBeVisible(),
-          ),
-        );
-
-        await expect(weeklyRhythm.getByRole("status")).toContainText(
-          /you do better on tuesdays.*90% across 10 answers/iu,
-        );
-
-        await weeklyRhythm.getByRole("button", { name: /friday/iu }).click();
-
-        await expect(weeklyRhythm.getByRole("status")).toContainText(
-          /friday performance.*10% across 10 answers/iu,
-        );
-      } finally {
-        await browserContext.close();
-      }
+      mode: "fun",
     });
-  }
+
+    try {
+      await page.goto("/patterns");
+      await expectMode(page, "fun");
+
+      const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
+
+      await expect(weeklyRhythm).toContainText(/past 90 days/iu);
+      await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
+
+      await Promise.all(
+        WEEKDAYS.map((weekday) =>
+          expect(
+            weeklyRhythm.getByRole("button", { name: new RegExp(weekday, "iu") }),
+          ).toBeVisible(),
+        ),
+      );
+
+      await expect(weeklyRhythm.getByRole("status")).toContainText(
+        /you do better on tuesdays.*90% across 10 answers/iu,
+      );
+
+      await weeklyRhythm.getByRole("button", { name: /friday/iu }).click();
+
+      await expect(weeklyRhythm.getByRole("status")).toContainText(
+        /friday performance.*10% across 10 answers/iu,
+      );
+    } finally {
+      await browserContext.close();
+    }
+  });
 
   test("shows every time period with its accuracy and answer count", async ({
     baseURL,

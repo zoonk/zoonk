@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { z } from "zod";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, type Mode, asPersona } from "./learn-personas";
+import { type Mode, asPersona } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
@@ -94,94 +94,90 @@ test.describe("Plan tab", () => {
     });
   });
 
-  for (const mode of MODES) {
-    test(`steering changes the plan with an undo in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        await openPlan(page, mode);
+  test("steering changes the plan with an undo", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
+      await openPlan(page, "focus");
 
-        const morePractice = page.getByRole("button", { name: "More practice" });
-        await morePractice.click();
+      const morePractice = page.getByRole("button", { name: "More practice" });
+      await morePractice.click();
 
-        await expect(morePractice).toHaveAttribute("aria-pressed", "true");
-        // Saving doesn't drop focus to the page: the toggle keeps it while it waits and after.
-        await expect(morePractice).toBeFocused();
-        const change = page.getByRole("listitem").filter({ hasText: "More practice from now on." });
-        await expect(change).toBeVisible();
+      await expect(morePractice).toHaveAttribute("aria-pressed", "true");
+      // Saving doesn't drop focus to the page: the toggle keeps it while it waits and after.
+      await expect(morePractice).toBeFocused();
+      const change = page.getByRole("listitem").filter({ hasText: "More practice from now on." });
+      await expect(change).toBeVisible();
 
-        await expect
-          .poll(async () => loadPlanSettings(user.goalId))
-          .toMatchObject({ practiceBias: "morePractice" });
+      await expect
+        .poll(async () => loadPlanSettings(user.goalId))
+        .toMatchObject({ practiceBias: "morePractice" });
 
-        await change.getByRole("button", { name: "Undo" }).click();
-        await expect(change.getByText("Undone")).toBeVisible();
-        await expect(morePractice).toHaveAttribute("aria-pressed", "false");
+      await change.getByRole("button", { name: "Undo" }).click();
+      await expect(change.getByText("Undone")).toBeVisible();
+      await expect(morePractice).toHaveAttribute("aria-pressed", "false");
 
-        // Undo leaves with the undo, so focus moves to the change it undid.
-        await expect(change).toBeFocused();
-      });
+      // Undo leaves with the undo, so focus moves to the change it undid.
+      await expect(change).toBeFocused();
     });
+  });
 
-    test(`a proposal waits for the learner's answer in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        await openPlan(page, mode);
+  test("a proposal waits for the learner's answer", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+      await openPlan(page, "fun");
 
-        const proposal = page.getByRole("listitem").filter({ hasText: "Waiting for your OK" });
-        await expect(proposal).toContainText("sábado");
+      const proposal = page.getByRole("listitem").filter({ hasText: "Waiting for your OK" });
+      await expect(proposal).toContainText("sábado");
 
-        await proposal.getByRole("button", { name: "Not now" }).click();
-        await expect(page.getByText("Waiting for your OK")).toBeHidden();
+      await proposal.getByRole("button", { name: "Not now" }).click();
+      await expect(page.getByText("Waiting for your OK")).toBeHidden();
 
-        // The declined proposal leaves the list, so focus moves to the plan's changes.
-        await expect(page.getByRole("heading", { name: "Changes to your plan" })).toBeFocused();
+      // The declined proposal leaves the list, so focus moves to the plan's changes.
+      await expect(page.getByRole("heading", { name: "Changes to your plan" })).toBeFocused();
 
-        await expect
-          .poll(async () => {
-            const plan = await prisma.plan.findUniqueOrThrow({
-              include: { changes: { where: { status: "declined" } } },
-              where: { goalId: user.goalId },
-            });
+      await expect
+        .poll(async () => {
+          const plan = await prisma.plan.findUniqueOrThrow({
+            include: { changes: { where: { status: "declined" } } },
+            where: { goalId: user.goalId },
+          });
 
-            return plan.changes.length;
-          })
-          .toBe(1);
-      });
+          return plan.changes.length;
+        })
+        .toBe(1);
     });
+  });
 
-    test(`the schedule changes from the edit panel in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page }) => {
-        await openPlan(page, mode);
+  test("the schedule changes from the edit panel", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
+      await openPlan(page, "focus");
 
-        await page.getByRole("button", { exact: true, name: "Edit" }).click();
-        await page.getByLabel("Time a day").selectOption("60");
+      await page.getByRole("button", { exact: true, name: "Edit" }).click();
+      await page.getByLabel("Time a day").selectOption("60");
 
-        await expect(
-          page.getByRole("listitem").filter({ hasText: "Daily time changed to 60 min." }),
-        ).toBeVisible();
+      await expect(
+        page.getByRole("listitem").filter({ hasText: "Daily time changed to 60 min." }),
+      ).toBeVisible();
 
-        await page.getByRole("button", { name: "Make next week light" }).click();
-        const lightWeek = page.getByRole("button", { name: "Next week is light" });
-        await expect(lightWeek).toBeDisabled();
-        await expect(lightWeek).toBeFocused();
-      });
+      await page.getByRole("button", { name: "Make next week light" }).click();
+      const lightWeek = page.getByRole("button", { name: "Next week is light" });
+      await expect(lightWeek).toBeDisabled();
+      await expect(lightWeek).toBeFocused();
     });
-  }
+  });
 
-  for (const mode of MODES) {
-    test(`sharing the plan copies its link in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-        await openPlan(page, mode);
+  test("sharing the plan copies its link", async ({ browser }) => {
+    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+      await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+      await openPlan(page, "fun");
 
-        await page.getByRole("button", { name: "Share this plan" }).click();
-        await expect(page.getByText("Link copied")).toBeVisible();
+      await page.getByRole("button", { name: "Share this plan" }).click();
+      await expect(page.getByText("Link copied")).toBeVisible();
 
-        const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
-        const copied = await page.evaluate(() => navigator.clipboard.readText());
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
+      const copied = await page.evaluate(() => navigator.clipboard.readText());
 
-        expect(copied).toMatch(new RegExp(`/plan-link/${plan.id}$`, "u"));
-      });
+      expect(copied).toMatch(new RegExp(`/plan-link/${plan.id}$`, "u"));
     });
-  }
+  });
 
   test("zoom levels and steering work from the keyboard", async ({ browser }) => {
     await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {

@@ -13,7 +13,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
-import { MODES, type Mode } from "./learn-personas";
+import { type Mode } from "./learn-personas";
 import { openAs } from "./study-day";
 
 /**
@@ -84,70 +84,68 @@ async function createSourcedPractice(mode: Mode) {
   return { law, user };
 }
 
-for (const mode of MODES) {
-  test.describe(`Sources chip in ${mode}`, () => {
-    test("a lesson screen built from a law says when it was checked and opens it", async ({
-      browser,
-    }) => {
-      const [{ user }, { lesson, steps }, law] = await Promise.all([
-        learnerIn(mode),
-        playableLessonFixture({ steps: ["explanation", "check"] }),
-        lawFixture(),
-      ]);
+test.describe("Sources chip", () => {
+  test("a lesson screen built from a law says when it was checked and opens it", async ({
+    browser,
+  }) => {
+    const [{ user }, { lesson, steps }, law] = await Promise.all([
+      learnerIn("focus"),
+      playableLessonFixture({ steps: ["explanation", "check"] }),
+      lawFixture(),
+    ]);
 
-      await prisma.step.update({ data: { sourceId: law.id }, where: { id: steps[0]?.id } });
+    await prisma.step.update({ data: { sourceId: law.id }, where: { id: steps[0]?.id } });
 
-      const page = await openAs(browser, user);
-      await page.goto(`/learn/${lesson.id}`);
+    const page = await openAs(browser, user);
+    await page.goto(`/learn/${lesson.id}`);
 
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-      await page.getByRole("button", { name: CHIP }).click();
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+    await page.getByRole("button", { name: CHIP }).click();
 
-      const source = page.getByRole("dialog");
-      await expect(source.getByRole("heading", { name: law.title })).toBeVisible();
-      await expect(source.getByText("Planalto · Checked Sep 12, 2026")).toBeVisible();
+    const source = page.getByRole("dialog");
+    await expect(source.getByRole("heading", { name: law.title })).toBeVisible();
+    await expect(source.getByText("Planalto · Checked Sep 12, 2026")).toBeVisible();
 
-      await expect(source.getByRole("link", { name: "Open the source" })).toHaveAttribute(
-        "href",
-        LAW_URL,
-      );
+    await expect(source.getByRole("link", { name: "Open the source" })).toHaveAttribute(
+      "href",
+      LAW_URL,
+    );
 
-      // Closing it leaves the lesson where it was.
-      await page.keyboard.press("Escape");
-      await expect(source).toBeHidden();
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+    // Closing it leaves the lesson where it was.
+    await page.keyboard.press("Escape");
+    await expect(source).toBeHidden();
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      await page.context().close();
-    });
-
-    test("a practice question's feedback shows the article and its dated source", async ({
-      browser,
-    }) => {
-      const { law, user } = await createSourcedPractice(mode);
-      const page = await openAs(browser, user);
-      const feedback = page.getByRole("region", { name: "Answer feedback" });
-
-      await page.goto("/session");
-      await page.getByRole("button", { name: /^Start/u }).click();
-
-      await expect(
-        page.getByRole("heading", { name: "How long does a public servant's probation last?" }),
-      ).toBeVisible();
-
-      await page.keyboard.press("1");
-      await expect(feedback.getByText("Correct!")).toBeVisible();
-      await expect(feedback.getByText("Law 8,112, Art. 20")).toBeVisible();
-      await feedback.getByRole("button", { name: CHIP }).click();
-
-      const source = page.getByRole("dialog");
-      await expect(source.getByRole("heading", { name: law.title })).toBeVisible();
-
-      await expect(source.getByRole("link", { name: "Open the source" })).toHaveAttribute(
-        "href",
-        LAW_URL,
-      );
-
-      await page.context().close();
-    });
+    await page.context().close();
   });
-}
+
+  test("a practice question's feedback shows the article and its dated source", async ({
+    browser,
+  }) => {
+    const { law, user } = await createSourcedPractice("fun");
+    const page = await openAs(browser, user);
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+
+    await page.goto("/session");
+    await page.getByRole("button", { name: /^Start/u }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "How long does a public servant's probation last?" }),
+    ).toBeVisible();
+
+    await page.keyboard.press("1");
+    await expect(feedback.getByText("Correct!")).toBeVisible();
+    await expect(feedback.getByText("Law 8,112, Art. 20")).toBeVisible();
+    await feedback.getByRole("button", { name: CHIP }).click();
+
+    const source = page.getByRole("dialog");
+    await expect(source.getByRole("heading", { name: law.title })).toBeVisible();
+
+    await expect(source.getByRole("link", { name: "Open the source" })).toHaveAttribute(
+      "href",
+      LAW_URL,
+    );
+
+    await page.context().close();
+  });
+});

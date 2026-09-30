@@ -2,10 +2,8 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
-import {
-  playableLessonFixture,
-  playableStepContent,
-} from "@zoonk/testing/fixtures/playable-lessons";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { createBearerLearner } from "./helpers/bearer";
 
 /**

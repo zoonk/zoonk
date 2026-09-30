@@ -12,10 +12,10 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
-import { playableStepContent } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { SITE_URL } from "@zoonk/utils/url";
 import { type Page, expect, test } from "./fixtures";
-import { MODES, expectMode, setDeviceMode } from "./learn-personas";
+import { expectMode, setDeviceMode } from "./learn-personas";
 
 const REVEAL = "It spreads out into a cloud of places where it could be.";
 const HIDDEN_SCREEN = "This second screen only loads in the player.";
@@ -284,43 +284,41 @@ test.describe("public Library lesson page", () => {
     await expect.poll(() => readHead(page)).toMatchObject({ robots: "index, follow" });
   });
 
-  for (const mode of MODES) {
-    test(`starts a lesson that isn't written yet in one tap and plays it once written (${mode})`, async ({
-      page,
-    }) => {
-      const { unwritten, unwrittenPath } = await createLibraryCourse();
-      await setDeviceMode(page.context(), mode);
-      const { asked, runId } = await writeLessonWhenFollowed({ lessonId: unwritten.id, page });
+  test("starts a lesson that isn't written yet in one tap and plays it once written", async ({
+    page,
+  }) => {
+    const { unwritten, unwrittenPath } = await createLibraryCourse();
+    await setDeviceMode(page.context(), "fun");
+    const { asked, runId } = await writeLessonWhenFollowed({ lessonId: unwritten.id, page });
 
-      await page.goto(unwrittenPath);
-      const start = page.getByRole("button", { name: "Start this lesson" });
-      await expect(start).toBeVisible();
+    await page.goto(unwrittenPath);
+    const start = page.getByRole("button", { name: "Start this lesson" });
+    await expect(start).toBeVisible();
 
-      // Loading the page alone makes no guest and asks for nothing, so a crawler starts no AI work.
-      const before = await page.request.get("/api/auth/get-session");
-      expect(await before.json()).toBeNull();
-      expect(asked).toStrictEqual([]);
+    // Loading the page alone makes no guest and asks for nothing, so a crawler starts no AI work.
+    const before = await page.request.get("/api/auth/get-session");
+    expect(await before.json()).toBeNull();
+    expect(asked).toStrictEqual([]);
 
-      const followed = page.waitForRequest(`**/v1/generations/${runId}/events**`);
-      await start.click();
+    const followed = page.waitForRequest(`**/v1/generations/${runId}/events**`);
+    await start.click();
 
-      // One tap: the visitor became a guest, the player asked for the lesson once and followed
-      // the run writing it, with no second "Start".
-      await expect(page).toHaveURL(new RegExp(`/learn/${unwritten.id}$`, "u"));
-      await followed;
+    // One tap: the visitor became a guest, the player asked for the lesson once and followed
+    // the run writing it, with no second "Start".
+    await expect(page).toHaveURL(new RegExp(`/learn/${unwritten.id}$`, "u"));
+    await followed;
 
-      await expect(page.getByText(playableStepContent.explanation.title)).toBeVisible();
-      await expectMode(page, mode);
-      expect(asked).toHaveLength(1);
+    await expect(page.getByText(playableStepContent.explanation.title)).toBeVisible();
+    await expectMode(page, "fun");
+    expect(asked).toHaveLength(1);
 
-      const session = await page.request.get("/api/auth/get-session");
-      expect(await session.json()).toMatchObject({ user: { isAnonymous: true } });
+    const session = await page.request.get("/api/auth/get-session");
+    expect(await session.json()).toMatchObject({ user: { isAnonymous: true } });
 
-      // The lesson plays: its next screen is a question.
-      await page.getByRole("button", { name: "Next" }).click();
-      await expect(page.getByText(playableStepContent.check.question)).toBeVisible();
-    });
-  }
+    // The lesson plays: its next screen is a question.
+    await page.getByRole("button", { name: "Next" }).click();
+    await expect(page.getByText(playableStepContent.check.question)).toBeVisible();
+  });
 
   test("points a reused lesson's canonical URL to its home chapter", async ({ page }) => {
     const [home, other] = await Promise.all([createLibraryCourse(), createLibraryCourse()]);

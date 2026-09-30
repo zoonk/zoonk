@@ -50,6 +50,7 @@ catalog:
   next-intl: 4.14.7
   next: 16.3.6
   nuqs: 2.10.1
+  playwright: 1.63.0
   posthog-js: 1.434.14
   raw-loader: 4.0.2
   react-dom: 19.3.0

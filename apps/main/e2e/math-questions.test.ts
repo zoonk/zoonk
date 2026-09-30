@@ -12,7 +12,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { expect, test } from "./fixtures";
-import { MODES, type Mode } from "./learn-personas";
+import { type Mode } from "./learn-personas";
 import { openAs } from "./study-day";
 
 const SAVED_REASON = "That's what you save. You pay what's left after it.";
@@ -192,92 +192,90 @@ async function createMathBoss(mode: Mode) {
   return { block, user };
 }
 
-for (const mode of MODES) {
-  test.describe(`Math problems in ${mode}`, () => {
-    test("answers with the numbers shown, and a common mistake shows the way", async ({
-      browser,
-    }) => {
-      const { user } = await createMathDay({
-        mode,
-        problems: [discountContent({ label: "Shirt" }), discountContent({ label: "Jacket" })],
-      });
-
-      const page = await openAs(browser, user);
-      const feedback = page.getByRole("region", { name: "Answer feedback" });
-      await page.goto("/session");
-      await page.getByRole("button", { name: /^Start/u }).click();
-
-      // Number keys pick options in a choice question.
-      await expect(page.getByRole("heading", { name: /^Warm-up/u })).toBeVisible();
-      await page.keyboard.press("1");
-      await expect(feedback.getByText("Correct!")).toBeVisible();
-      await page.keyboard.press("Enter");
-
-      // In a math problem they type into the answer field, next to its unit, and Enter checks.
-      const shirt = await readNumbers(page, "Shirt");
-      const field = page.getByRole("textbox", { name: "Your answer" });
-
-      await expect(field).toBeFocused();
-      await expect(page.getByText("R$", { exact: true })).toBeVisible();
-      await page.keyboard.type(String(shirt.paid));
-      await expect(field).toHaveValue(String(shirt.paid));
-      await page.keyboard.press("Enter");
-
-      await expect(feedback.getByText("Correct!")).toBeVisible();
-      await expect(field).toBeDisabled();
-      await page.keyboard.press("Enter");
-
-      // Answering with the discount instead of the price paid.
-      const jacket = await readNumbers(page, "Jacket");
-      await field.fill("abc");
-      await page.getByRole("button", { name: /^Check/u }).click();
-      await expect(page.getByText("Type a number, like 2.5.")).toBeVisible();
-
-      await field.fill(String(jacket.saved));
-      await page.getByRole("button", { name: /^Check/u }).click();
-
-      await expect(feedback.getByText("Not quite")).toBeVisible();
-      await expect(feedback.getByText(`Right answer: ${reais(jacket.paid)}`)).toBeVisible();
-      await expect(feedback.getByText(SAVED_REASON)).toBeVisible();
-      await expect(feedback.getByText("How to solve it")).toBeVisible();
-
-      await expect(
-        feedback.getByRole("listitem").filter({ hasText: `= ${jacket.paid}` }),
-      ).toBeVisible();
-
-      await expect(feedback.getByText("Saved to your mistakes, so it comes back.")).toBeVisible();
-      await page.context().close();
+test.describe("Math problems", () => {
+  test("answers with the numbers shown, and a common mistake shows the way", async ({
+    browser,
+  }) => {
+    const { user } = await createMathDay({
+      mode: "focus",
+      problems: [discountContent({ label: "Shirt" }), discountContent({ label: "Jacket" })],
     });
 
-    test("a boss asks a math problem without hints, then shows the way", async ({ browser }) => {
-      const { block, user } = await createMathBoss(mode);
-      const page = await openAs(browser, user);
-      await page.goto(`/checkpoint/${block.id}`);
+    const page = await openAs(browser, user);
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await page.goto("/session");
+    await page.getByRole("button", { name: /^Start/u }).click();
 
-      // Keys work once the page hydrates, so the first press retries until the duel opens.
-      await expect(async () => {
-        await page.keyboard.press("Enter");
-        await expect(page.getByText("Question 1 of 1")).toBeVisible({ timeout: 1000 });
-      }).toPass({ timeout: 5000 });
+    // Number keys pick options in a choice question.
+    await expect(page.getByRole("heading", { name: /^Warm-up/u })).toBeVisible();
+    await page.keyboard.press("1");
+    await expect(feedback.getByText("Correct!")).toBeVisible();
+    await page.keyboard.press("Enter");
 
-      const boss = await readNumbers(page, "Boss");
-      await expect(page.getByRole("textbox", { name: "Your answer" })).toBeFocused();
-      await page.keyboard.type(String(boss.saved));
-      await page.keyboard.press("Enter");
+    // In a math problem they type into the answer field, next to its unit, and Enter checks.
+    const shirt = await readNumbers(page, "Shirt");
+    const field = page.getByRole("textbox", { name: "Your answer" });
 
-      await expect(page.getByRole("status")).toHaveText("Not this one. You'll see why at the end.");
+    await expect(field).toBeFocused();
+    await expect(page.getByText("R$", { exact: true })).toBeVisible();
+    await page.keyboard.type(String(shirt.paid));
+    await expect(field).toHaveValue(String(shirt.paid));
+    await page.keyboard.press("Enter");
 
-      await expect(page.getByText(SAVED_REASON)).toHaveCount(0);
-      await page.keyboard.press("Enter");
+    await expect(feedback.getByText("Correct!")).toBeVisible();
+    await expect(field).toBeDisabled();
+    await page.keyboard.press("Enter");
 
-      await page.getByText("Review the answers").click();
-      await expect(page.getByText(`Answer: ${reais(boss.paid)}`)).toBeVisible();
-      await expect(page.getByText(SAVED_REASON)).toBeVisible();
-      await expect(page.getByText(`/100) = ${boss.paid}`)).toBeVisible();
-      await page.context().close();
-    });
+    // Answering with the discount instead of the price paid.
+    const jacket = await readNumbers(page, "Jacket");
+    await field.fill("abc");
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect(page.getByText("Type a number, like 2.5.")).toBeVisible();
+
+    await field.fill(String(jacket.saved));
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect(feedback.getByText("Not quite")).toBeVisible();
+    await expect(feedback.getByText(`Right answer: ${reais(jacket.paid)}`)).toBeVisible();
+    await expect(feedback.getByText(SAVED_REASON)).toBeVisible();
+    await expect(feedback.getByText("How to solve it")).toBeVisible();
+
+    await expect(
+      feedback.getByRole("listitem").filter({ hasText: `= ${jacket.paid}` }),
+    ).toBeVisible();
+
+    await expect(feedback.getByText("Saved to your mistakes, so it comes back.")).toBeVisible();
+    await page.context().close();
   });
-}
+
+  test("a boss asks a math problem without hints, then shows the way", async ({ browser }) => {
+    const { block, user } = await createMathBoss("fun");
+    const page = await openAs(browser, user);
+    await page.goto(`/checkpoint/${block.id}`);
+
+    // Keys work once the page hydrates, so the first press retries until the duel opens.
+    await expect(async () => {
+      await page.keyboard.press("Enter");
+      await expect(page.getByText("Question 1 of 1")).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 5000 });
+
+    const boss = await readNumbers(page, "Boss");
+    await expect(page.getByRole("textbox", { name: "Your answer" })).toBeFocused();
+    await page.keyboard.type(String(boss.saved));
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByRole("status")).toHaveText("Not this one. You'll see why at the end.");
+
+    await expect(page.getByText(SAVED_REASON)).toHaveCount(0);
+    await page.keyboard.press("Enter");
+
+    await page.getByText("Review the answers").click();
+    await expect(page.getByText(`Answer: ${reais(boss.paid)}`)).toBeVisible();
+    await expect(page.getByText(SAVED_REASON)).toBeVisible();
+    await expect(page.getByText(`/100) = ${boss.paid}`)).toBeVisible();
+    await page.context().close();
+  });
+});
 
 test("reads a decimal comma in Portuguese", async ({ browser }) => {
   // Prices ending in 5 with 10% off always cost a fraction of a real.

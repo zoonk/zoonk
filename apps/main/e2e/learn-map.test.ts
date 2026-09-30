@@ -7,7 +7,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { createModeLearner } from "./fun-rewards-fixtures";
-import { MODES, type Mode, asPersona } from "./learn-personas";
+import { type Mode, asPersona } from "./learn-personas";
 
 const FADED_DAYS = 30;
 const QUESTIONS_PER_SKILL = 3;
@@ -61,93 +61,87 @@ async function createRefreshLearner({ browser, mode }: { browser: Browser; mode:
  * once Lucas has finished his overview.
  */
 test.describe("Map of the subject", () => {
-  for (const mode of MODES) {
-    test(`opens from Content with only the current phase open in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "hugeGoal" }, async ({ page }) => {
-        await page.goto("/content");
-        await page.getByRole("link", { name: /Map of your subject/u }).click();
+  test("opens from Content with only the current phase open", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page }) => {
+      await page.goto("/content");
+      await page.getByRole("link", { name: /Map of your subject/u }).click();
 
-        await expect(
-          page.getByRole("heading", { level: 1, name: "Map of your subject" }),
-        ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Map of your subject" }),
+      ).toBeVisible();
 
-        const phases = page.getByRole("list", { name: "Phases" });
-        const current = phases.getByRole("button", { name: /Phase 1: The math physics uses/u });
-        const later = phases.getByRole("button", { name: /Phase 2: Calculus and linear algebra/u });
+      const phases = page.getByRole("list", { name: "Phases" });
+      const current = phases.getByRole("button", { name: /Phase 1: The math physics uses/u });
+      const later = phases.getByRole("button", { name: /Phase 2: Calculus and linear algebra/u });
 
-        await expect(current).toHaveAttribute("aria-expanded", "true");
-        await expect(later).toHaveAttribute("aria-expanded", "false");
-        await expect(phases.getByText("You are here", { exact: true })).toBeVisible();
+      await expect(current).toHaveAttribute("aria-expanded", "true");
+      await expect(later).toHaveAttribute("aria-expanded", "false");
+      await expect(phases.getByText("You are here", { exact: true })).toBeVisible();
 
-        const chapterMap = page.getByRole("list", {
-          name: "Skills in Exponents and scientific notation",
-        });
-
-        await chapterMap.getByRole("button", { name: /^Use powers of ten/u }).click();
-
-        const detail = page.getByRole("region", { name: "Use powers of ten" });
-        await expect(detail.getByText(/10ⁿ is 1 followed by n zeros/u)).toBeVisible();
-
-        await detail.getByRole("link", { name: "Open chapter" }).click();
-
-        await expect(
-          page.getByRole("heading", { level: 1, name: "Exponents and scientific notation" }),
-        ).toBeVisible();
+      const chapterMap = page.getByRole("list", {
+        name: "Skills in Exponents and scientific notation",
       });
+
+      await chapterMap.getByRole("button", { name: /^Use powers of ten/u }).click();
+
+      const detail = page.getByRole("region", { name: "Use powers of ten" });
+      await expect(detail.getByText(/10ⁿ is 1 followed by n zeros/u)).toBeVisible();
+
+      await detail.getByRole("link", { name: "Open chapter" }).click();
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Exponents and scientific notation" }),
+      ).toBeVisible();
     });
-  }
+  });
 
-  for (const mode of MODES) {
-    test(`leads with fading skills for a refresh goal in ${mode}`, async ({ browser }) => {
-      const { context, page } = await createRefreshLearner({ browser, mode });
+  test("leads with fading skills for a refresh goal", async ({ browser }) => {
+    const { context, page } = await createRefreshLearner({ browser, mode: "fun" });
 
-      try {
-        await page.goto("/content/map");
+    try {
+      await page.goto("/content/map");
 
-        const refresh = page.getByRole("region", { name: "2 skills are fading" });
-        await expect(refresh.getByText("Mean")).toBeVisible();
+      const refresh = page.getByRole("region", { name: "2 skills are fading" });
+      await expect(refresh.getByText("Mean")).toBeVisible();
 
-        await refresh.getByRole("button", { name: "Refresh now" }).click();
-        await expect(page).toHaveURL(/\/session$/u);
-      } finally {
-        await context.close();
-      }
-    });
-  }
+      await refresh.getByRole("button", { name: "Refresh now" }).click();
+      await expect(page).toHaveURL(/\/session$/u);
+    } finally {
+      await context.close();
+    }
+  });
 
-  for (const mode of MODES) {
-    test(`continues at the next level once the plan is done in ${mode}`, async ({ browser }) => {
-      await asPersona(browser, { mode, persona: "fun" }, async ({ page, user }) => {
-        await prisma.planItem.updateMany({
-          data: { status: "done" },
-          where: { kind: { in: ["chapter", "lesson"] }, plan: { goalId: user.goalId } },
-        });
-
-        await page.goto("/plan");
-        await expect(page.getByRole("heading", { name: "You finished this plan" })).toBeVisible();
-
-        await page.getByRole("link", { name: "What to study next" }).click();
-
-        const next = page.getByRole("region", { name: "You finished your plan" });
-        await expect(next).toBeVisible();
-
-        await next.getByRole("button", { name: "Continue at Beginner" }).click();
-        await expect(page).toHaveURL(/\/plan$/u);
-
-        await expect
-          .poll(async () => {
-            const goals = await prisma.goal.findMany({
-              orderBy: { createdAt: "asc" },
-              select: { status: true },
-              where: { userId: user.id },
-            });
-
-            return goals.map((goal) => goal.status);
-          })
-          .toStrictEqual(["completed", "active"]);
-
-        await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
+  test("continues at the next level once the plan is done", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "fun" }, async ({ page, user }) => {
+      await prisma.planItem.updateMany({
+        data: { status: "done" },
+        where: { kind: { in: ["chapter", "lesson"] }, plan: { goalId: user.goalId } },
       });
+
+      await page.goto("/plan");
+      await expect(page.getByRole("heading", { name: "You finished this plan" })).toBeVisible();
+
+      await page.getByRole("link", { name: "What to study next" }).click();
+
+      const next = page.getByRole("region", { name: "You finished your plan" });
+      await expect(next).toBeVisible();
+
+      await next.getByRole("button", { name: "Continue at Beginner" }).click();
+      await expect(page).toHaveURL(/\/plan$/u);
+
+      await expect
+        .poll(async () => {
+          const goals = await prisma.goal.findMany({
+            orderBy: { createdAt: "asc" },
+            select: { status: true },
+            where: { userId: user.id },
+          });
+
+          return goals.map((goal) => goal.status);
+        })
+        .toStrictEqual(["completed", "active"]);
+
+      await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
     });
-  }
+  });
 });

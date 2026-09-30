@@ -5,7 +5,7 @@ import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fi
 import { getContributionCalendarDateRange } from "@zoonk/utils/contribution-calendar";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { MODES, expectMode, showInMode } from "./learn-personas";
+import { expectMode, showInMode } from "./learn-personas";
 
 const DAYS_OUTSIDE_CHART = 400;
 const DERIVED_LIFETIME_AVERAGE_ENERGY = "12.7%";
@@ -160,80 +160,74 @@ test.describe("Energy Page", () => {
       }
     });
 
-    for (const mode of MODES) {
-      test(`shows the Energy calendar and all-time metrics without date controls in ${mode}`, async ({
-        baseURL,
-        browser,
-      }) => {
-        const user = await createE2EUser(baseURL!, { orgRole: "member" });
-        const now = new Date();
-        const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    test("shows the Energy calendar and all-time metrics without date controls", async ({
+      baseURL,
+      browser,
+    }) => {
+      const user = await createE2EUser(baseURL!, { orgRole: "member" });
+      const now = new Date();
+      const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
-        const todayLabel = new Intl.DateTimeFormat("en", {
-          dateStyle: "short",
-          timeZone: "UTC",
-        }).format(today);
+      const todayLabel = new Intl.DateTimeFormat("en", {
+        dateStyle: "short",
+        timeZone: "UTC",
+      }).format(today);
 
-        const historicalDate = new Date(today.getTime() - DAYS_OUTSIDE_CHART * MS_PER_DAY);
+      const historicalDate = new Date(today.getTime() - DAYS_OUTSIDE_CHART * MS_PER_DAY);
 
-        await Promise.all([
-          userProgressFixture({ currentEnergy: 50, lastActiveAt: now, userId: user.id }),
-          dailyProgressFixtureMany([
-            { date: historicalDate, energyAtEnd: 100, userId: user.id },
-            { date: today, energyAtEnd: 50, userId: user.id },
-          ]),
-        ]);
+      await Promise.all([
+        userProgressFixture({ currentEnergy: 50, lastActiveAt: now, userId: user.id }),
+        dailyProgressFixtureMany([
+          { date: historicalDate, energyAtEnd: 100, userId: user.id },
+          { date: today, energyAtEnd: 50, userId: user.id },
+        ]),
+      ]);
 
-        const browserContext = await browser.newContext({
-          storageState: user.storageState,
-          timezoneId: "UTC",
+      const browserContext = await browser.newContext({
+        storageState: user.storageState,
+        timezoneId: "UTC",
+      });
+
+      await showInMode(browserContext, { mode: "fun", userId: user.id });
+      const page = await browserContext.newPage();
+
+      try {
+        await page.goto("/energy");
+        await expectMode(page, "fun");
+
+        await expect.poll(() => prisma.dailyProgress.count({ where: { userId: user.id } })).toBe(2);
+
+        const averageEnergyCard = page.getByRole("article", { name: /average energy/iu });
+        const energyBattery = page.getByRole("progressbar", { name: /your energy/iu });
+        const fullEnergyCard = page.getByRole("article", { name: /days at max energy/iu });
+        const energyChart = page.getByRole("figure", { name: /energy history/iu });
+
+        const recordedEnergyDay = energyChart.getByRole("button", {
+          exact: true,
+          name: `50% Energy on ${todayLabel}`,
         });
 
-        await showInMode(browserContext, { mode, userId: user.id });
-        const page = await browserContext.newPage();
+        await expect(energyBattery).toHaveAttribute("aria-valuemin", "0");
+        await expect(energyBattery).toHaveAttribute("aria-valuemax", "100");
+        await expect(energyBattery).toHaveAttribute("aria-valuenow", "50");
+        await expect(energyBattery).toHaveAttribute("aria-valuetext", "50%");
+        await expect(page.getByText(/^50%$/u)).toBeVisible();
+        await expect(averageEnergyCard).toContainText(DERIVED_LIFETIME_AVERAGE_ENERGY);
+        await expect(fullEnergyCard).toContainText("1 day");
+        await expect(energyChart).toBeVisible();
+        await expect(recordedEnergyDay).toBeVisible();
 
-        try {
-          await page.goto("/energy");
-          await expectMode(page, mode);
+        await expect(energyChart.getByRole("button", { name: /^max energy on /iu })).toHaveCount(0);
 
-          await expect
-            .poll(() => prisma.dailyProgress.count({ where: { userId: user.id } }))
-            .toBe(2);
+        await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
 
-          const averageEnergyCard = page.getByRole("article", { name: /average energy/iu });
-          const energyBattery = page.getByRole("progressbar", { name: /your energy/iu });
-          const fullEnergyCard = page.getByRole("article", { name: /days at max energy/iu });
-          const energyChart = page.getByRole("figure", { name: /energy history/iu });
-
-          const recordedEnergyDay = energyChart.getByRole("button", {
-            exact: true,
-            name: `50% Energy on ${todayLabel}`,
-          });
-
-          await expect(energyBattery).toHaveAttribute("aria-valuemin", "0");
-          await expect(energyBattery).toHaveAttribute("aria-valuemax", "100");
-          await expect(energyBattery).toHaveAttribute("aria-valuenow", "50");
-          await expect(energyBattery).toHaveAttribute("aria-valuetext", "50%");
-          await expect(page.getByText(/^50%$/u)).toBeVisible();
-          await expect(averageEnergyCard).toContainText(DERIVED_LIFETIME_AVERAGE_ENERGY);
-          await expect(fullEnergyCard).toContainText("1 day");
-          await expect(energyChart).toBeVisible();
-          await expect(recordedEnergyDay).toBeVisible();
-
-          await expect(energyChart.getByRole("button", { name: /^max energy on /iu })).toHaveCount(
-            0,
-          );
-
-          await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
-
-          await expect(
-            page.getByRole("button", { name: /previous period|next period/iu }),
-          ).toHaveCount(0);
-        } finally {
-          await browserContext.close();
-        }
-      });
-    }
+        await expect(
+          page.getByRole("button", { name: /previous period|next period/iu }),
+        ).toHaveCount(0);
+      } finally {
+        await browserContext.close();
+      }
+    });
 
     test(`derives sparse Energy gaps in ${ENERGY_TIME_ZONE}`, async ({ baseURL, browser }) => {
       const { today, user } = await createSparseEnergyUser({

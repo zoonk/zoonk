@@ -25,6 +25,7 @@
     "./fixtures/onboarding-drafts": "./src/fixtures/onboarding-drafts.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/playable-lessons": "./src/fixtures/playable-lessons.ts",
+    "./fixtures/playable-step-contents": "./src/fixtures/playable-step-contents.ts",
     "./fixtures/progress": "./src/fixtures/progress.ts",
     "./fixtures/pronunciation-reviews": "./src/fixtures/pronunciation-reviews.ts",
     "./fixtures/skills": "./src/fixtures/skills.ts",

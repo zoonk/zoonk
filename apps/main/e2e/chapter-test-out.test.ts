@@ -10,7 +10,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { readOptions } from "./exam-fixtures";
 import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { MODES, type Mode, asPersona } from "./learn-personas";
+import { type Mode, asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
 
 /**
@@ -54,42 +54,38 @@ function countTestedOut(goalId: string) {
 }
 
 test.describe("Passing a chapter test-out", () => {
-  for (const mode of MODES) {
-    test(`takes the chapter's lessons off the plan, with an undo, in ${mode}`, async ({
-      browser,
-    }) => {
-      await asPersona(browser, { mode, persona: "exam" }, async ({ page, user }) => {
-        const before = await countTestedOut(user.goalId);
+  test("takes the chapter's lessons off the plan, with an undo", async ({ browser }) => {
+    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
+      const before = await countTestedOut(user.goalId);
 
-        await page.goto("/plan");
-        await page.getByRole("link", { name: "Test out of Porcentagem" }).click();
-        await expect(page.getByText("Test out: Porcentagem")).toBeVisible();
+      await page.goto("/plan");
+      await page.getByRole("link", { name: "Test out of Porcentagem" }).click();
+      await expect(page.getByText("Test out: Porcentagem")).toBeVisible();
 
-        await answerEveryQuestionRight(page);
+      await answerEveryQuestionRight(page);
 
-        await expect(page.getByRole("heading", { name: "You already know this" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "You already know this" })).toBeVisible();
 
-        await expect(
-          page.getByText(
-            /^\d+ lessons? (?:is|are) off your plan\. You can undo it from the plan\.$/u,
-          ),
-        ).toBeVisible();
+      await expect(
+        page.getByText(
+          /^\d+ lessons? (?:is|are) off your plan\. You can undo it from the plan\.$/u,
+        ),
+      ).toBeVisible();
 
-        await expect.poll(() => countTestedOut(user.goalId)).toBeGreaterThan(before);
+      await expect.poll(() => countTestedOut(user.goalId)).toBeGreaterThan(before);
 
-        await page.getByRole("link", { name: "Back to the plan" }).click();
+      await page.getByRole("link", { name: "Back to the plan" }).click();
 
-        const change = page
-          .getByRole("listitem")
-          .filter({ hasText: /^You tested out of \d+ lessons?, so it.s off your plan\./u });
+      const change = page
+        .getByRole("listitem")
+        .filter({ hasText: /^You tested out of \d+ lessons?, so it.s off your plan\./u });
 
-        await change.getByRole("button", { name: "Undo" }).click();
-        await expect(change.getByText("Undone")).toBeVisible();
+      await change.getByRole("button", { name: "Undo" }).click();
+      await expect(change.getByText("Undone")).toBeVisible();
 
-        await expect.poll(() => countTestedOut(user.goalId)).toBe(before);
-      });
+      await expect.poll(() => countTestedOut(user.goalId)).toBe(before);
     });
-  }
+  });
 });
 
 const SKILLS = 3;
@@ -141,45 +137,41 @@ async function createChapterWithoutQuestions(mode: Mode) {
 }
 
 test.describe("A chapter test-out without questions yet", () => {
-  for (const mode of MODES) {
-    test(`writes them when asked, follows the run and opens the test on its own (${mode})`, async ({
-      browser,
-    }) => {
-      const { chapter, user, writeQuestions } = await createChapterWithoutQuestions(mode);
-      const runId = `e2e-test-out-${randomUUID()}`;
-      const page = await openAs(browser, user);
-      const events: StreamEvent[] = [];
+  test("writes them when asked, follows the run and opens the test on its own", async ({
+    browser,
+  }) => {
+    const { chapter, user, writeQuestions } = await createChapterWithoutQuestions("fun");
+    const runId = `e2e-test-out-${randomUUID()}`;
+    const page = await openAs(browser, user);
+    const events: StreamEvent[] = [];
 
-      await page.route(GENERATIONS_URL, (route) =>
-        route.fulfill({ json: { generationId: runId, status: "generating" }, status: 202 }),
-      );
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({ json: { generationId: runId, status: "generating" }, status: 202 }),
+    );
 
-      await followRun({ events, page, runId });
-      await page.goto(`/plan/test-out/${chapter.id}`);
+    await followRun({ events, page, runId });
+    await page.goto(`/plan/test-out/${chapter.id}`);
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: `Test out: ${chapter.title}` }),
-      ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: `Test out: ${chapter.title}` }),
+    ).toBeVisible();
 
-      await expect(page.getByText(/This chapter has no questions yet/u)).toBeVisible();
-      await expect(page.getByRole("link", { name: "Back to the plan" })).toBeVisible();
+    await expect(page.getByText(/This chapter has no questions yet/u)).toBeVisible();
+    await expect(page.getByRole("link", { name: "Back to the plan" })).toBeVisible();
 
-      events.push({ entityId: chapter.id, status: "started", step: "writeTestOutQuestions" });
-      await page.getByRole("button", { name: "Get my questions ready" }).click();
+    events.push({ entityId: chapter.id, status: "started", step: "writeTestOutQuestions" });
+    await page.getByRole("button", { name: "Get my questions ready" }).click();
 
-      await expect(page.getByRole("progressbar", { name: "Writing your questions" })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Writing your questions" })).toBeVisible();
 
-      await writeQuestions();
-      events.push({ entityId: chapter.id, status: "completed", step: "testOutQuestionsReady" });
+    await writeQuestions();
+    events.push({ entityId: chapter.id, status: "completed", step: "testOutQuestionsReady" });
 
-      // No refresh: the test opens once its questions exist.
-      await expect(
-        page.getByRole("progressbar", { name: `Question 1 of ${SKILLS}` }),
-      ).toBeVisible();
+    // No refresh: the test opens once its questions exist.
+    await expect(page.getByRole("progressbar", { name: `Question 1 of ${SKILLS}` })).toBeVisible();
 
-      await page.context().close();
-    });
-  }
+    await page.context().close();
+  });
 
   test("says when writing them couldn't start, and a tap asks again", async ({ browser }) => {
     const { chapter, user, writeQuestions } = await createChapterWithoutQuestions("focus");

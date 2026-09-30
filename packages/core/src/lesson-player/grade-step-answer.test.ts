@@ -1,4 +1,4 @@
-import { playableStepContent } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
 import { parseStepContent } from "../library/steps/contract/step-contract";
 import { serializeExerciseSteps } from "../player/contracts/prepare-lesson-data";
