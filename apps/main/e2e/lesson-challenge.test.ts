@@ -48,8 +48,14 @@ async function startCase(page: Page, planId: string) {
   await expect(team).toContainText("AI assistant");
   await expect(page.getByText(`Meeting with ${product} today at 3 pm`)).toBeVisible();
 
-  await page.keyboard.press("Enter");
-  await expect(page.getByText("B won! 3.4% vs. 3.1%. Can I launch it today?")).toBeVisible();
+  // Enter's listener attaches as the page hydrates, so the first press retries.
+  await expect(async () => {
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByText("B won! 3.4% vs. 3.1%. Can I launch it today?")).toBeVisible({
+      timeout: 1000,
+    });
+  }).toPass({ timeout: 5000 });
 
   return { data, product };
 }

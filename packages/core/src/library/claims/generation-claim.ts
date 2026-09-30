@@ -26,11 +26,11 @@ type ClaimInput = { id: string; workflowRunId: string };
 type ClaimState = { runId: string | null; status: GenerationStatus | null };
 
 type ClaimTargetOps = {
-  claim: (tx: TransactionClient, input: ClaimInput) => Promise<{ count: number }>;
+  claim: (db: TransactionClient, input: ClaimInput) => Promise<{ count: number }>;
   finish: (input: ClaimInput & { status: "completed" | "failed" }) => Promise<{ count: number }>;
-  read: (tx: TransactionClient, id: string) => Promise<ClaimState | null>;
+  read: (db: TransactionClient, id: string) => Promise<ClaimState | null>;
   /** Clears what a failed run left behind before the new owner starts. */
-  reset?: (tx: TransactionClient, id: string) => Promise<unknown>;
+  reset?: (db: TransactionClient, id: string) => Promise<unknown>;
   tags: (id: string) => string[];
 };
 
@@ -38,8 +38,8 @@ const CLAIMABLE_STATUSES: GenerationStatus[] = ["pending", "failed"];
 
 const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> = {
   chapterOutline: {
-    claim: (tx, { id, workflowRunId }) =>
-      tx.chapter.updateMany({
+    claim: (db, { id, workflowRunId }) =>
+      db.chapter.updateMany({
         data: { outlineRunId: workflowRunId, outlineStatus: "running" },
         where: { id, outlineStatus: { in: CLAIMABLE_STATUSES } },
       }),
@@ -48,16 +48,16 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { outlineStatus: status },
         where: { id, outlineRunId: workflowRunId, outlineStatus: "running" },
       }),
-    read: async (tx, id) => {
-      const chapter = await tx.chapter.findUnique({ where: { id } });
+    read: async (db, id) => {
+      const chapter = await db.chapter.findUnique({ where: { id } });
       return chapter && { runId: chapter.outlineRunId, status: chapter.outlineStatus };
     },
     tags: (id) => [getLibraryChapterCacheTag(id)],
   },
   courseOutline: {
     /** Courses made before outlines existed have no outline status; their first run may claim them. */
-    claim: (tx, { id, workflowRunId }) =>
-      tx.course.updateMany({
+    claim: (db, { id, workflowRunId }) =>
+      db.course.updateMany({
         data: { outlineRunId: workflowRunId, outlineStatus: "running" },
         where: { OR: [{ outlineStatus: { in: CLAIMABLE_STATUSES } }, { outlineStatus: null }], id },
       }),
@@ -66,15 +66,15 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { outlineStatus: status },
         where: { id, outlineRunId: workflowRunId, outlineStatus: "running" },
       }),
-    read: async (tx, id) => {
-      const course = await tx.course.findUnique({ where: { id } });
+    read: async (db, id) => {
+      const course = await db.course.findUnique({ where: { id } });
       return course && { runId: course.outlineRunId, status: course.outlineStatus };
     },
     tags: (id) => [getCourseCacheTag(id), getCourseCurriculumCacheTag(id)],
   },
   lessonContent: {
-    claim: (tx, { id, workflowRunId }) =>
-      tx.lesson.updateMany({
+    claim: (db, { id, workflowRunId }) =>
+      db.lesson.updateMany({
         data: { contentRunId: workflowRunId, contentStatus: "running" },
         where: { contentStatus: { in: CLAIMABLE_STATUSES }, id },
       }),
@@ -83,20 +83,20 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { contentStatus: status },
         where: { contentRunId: workflowRunId, contentStatus: "running", id },
       }),
-    read: async (tx, id) => {
-      const lesson = await tx.lesson.findUnique({
+    read: async (db, id) => {
+      const lesson = await db.lesson.findUnique({
         omit: { spec: true, summary: true },
         where: { id },
       });
 
       return lesson && { runId: lesson.contentRunId, status: lesson.contentStatus };
     },
-    reset: (tx, id) => tx.step.deleteMany({ where: { lessonId: id } }),
+    reset: (db, id) => db.step.deleteMany({ where: { lessonId: id } }),
     tags: (id) => [getLibraryLessonCacheTag(id)],
   },
   lessonSpec: {
-    claim: (tx, { id, workflowRunId }) =>
-      tx.lesson.updateMany({
+    claim: (db, { id, workflowRunId }) =>
+      db.lesson.updateMany({
         data: { specRunId: workflowRunId, specStatus: "running" },
         where: { id, specStatus: { in: CLAIMABLE_STATUSES } },
       }),
@@ -105,8 +105,8 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { specStatus: status },
         where: { id, specRunId: workflowRunId, specStatus: "running" },
       }),
-    read: async (tx, id) => {
-      const lesson = await tx.lesson.findUnique({
+    read: async (db, id) => {
+      const lesson = await db.lesson.findUnique({
         omit: { spec: true, summary: true },
         where: { id },
       });
@@ -140,11 +140,37 @@ function toClaimResult({
   return "running";
 }
 
+/** Claims with `db`: the conditional update alone, or with the reset in the caller's transaction. */
+async function claimWith(
+  db: TransactionClient,
+  {
+    id,
+    ops,
+    target,
+    workflowRunId,
+  }: ClaimInput & { ops: ClaimTargetOps; target: LibraryGenerationTarget },
+): Promise<{ changed: boolean; result: LibraryClaimResult }> {
+  const claim = await ops.claim(db, { id, workflowRunId });
+
+  if (claim.count > 0) {
+    await ops.reset?.(db, id);
+    return { changed: true, result: "claimed" };
+  }
+
+  const state = await ops.read(db, id);
+
+  if (!state) {
+    throw new Error(`Cannot claim ${target} for missing row ${id}.`);
+  }
+
+  return { changed: false, result: toClaimResult({ state, workflowRunId }) };
+}
+
 /**
- * Claims one generation phase of a Library row before any AI work starts. The
- * status predicate makes the claim atomic: when two workflows race for the same row, exactly one moves
- * it to `running` and the other learns who owns it. Claiming lesson content
- * after a failed run deletes that run's partial steps.
+ * Claims one generation phase of a Library row before any AI work starts. The status predicate
+ * makes the claim atomic: when two workflows race for the same row, exactly one moves it to
+ * `running` and the other learns who owns it. Claiming lesson content after a failed run deletes
+ * that run's partial steps, in one transaction with the claim; the other phases need none.
  */
 export async function claimLibraryGeneration({
   id,
@@ -152,23 +178,11 @@ export async function claimLibraryGeneration({
   workflowRunId,
 }: ClaimInput & { target: LibraryGenerationTarget }): Promise<LibraryClaimResult> {
   const ops = CLAIM_TARGETS[target];
+  const input = { id, ops, target, workflowRunId };
 
-  const { changed, result } = await prisma.$transaction(async (tx) => {
-    const claim = await ops.claim(tx, { id, workflowRunId });
-
-    if (claim.count > 0) {
-      await ops.reset?.(tx, id);
-      return { changed: true, result: "claimed" as const };
-    }
-
-    const state = await ops.read(tx, id);
-
-    if (!state) {
-      throw new Error(`Cannot claim ${target} for missing row ${id}.`);
-    }
-
-    return { changed: false, result: toClaimResult({ state, workflowRunId }) };
-  });
+  const { changed, result } = ops.reset
+    ? await prisma.$transaction((tx) => claimWith(tx, input))
+    : await claimWith(prisma, input);
 
   if (changed) {
     revalidateCacheTags(ops.tags(id));

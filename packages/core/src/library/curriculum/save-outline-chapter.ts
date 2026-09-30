@@ -9,7 +9,7 @@ import { createLibraryChapter } from "../chapters/create-library-chapter";
 import { claimLibraryGeneration, finishLibraryGeneration } from "../claims/generation-claim";
 import { type IdentityCourse } from "../identity/_utils/identity-requests";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
-import { attachLessonToChapter } from "../lessons/attach-chapter-lesson";
+import { placeChapterLessons } from "../lessons/place-chapter-lessons";
 import {
   type CurriculumAnalytics,
   type CurriculumScope,
@@ -151,10 +151,8 @@ async function writeChapterLessons({
 
   const placed = [...new Set([...lessonIds, challengeId].filter((id) => id !== null))];
 
-  await prisma.chapterLesson.deleteMany({ where: { chapterId } });
-
   await Promise.all([
-    ...placed.map((lessonId, position) => attachLessonToChapter({ chapterId, lessonId, position })),
+    placeChapterLessons({ chapterId, lessonIds: placed }),
     prisma.chapter.update({
       data: { tools: parseChapterTools(chapter.tools) },
       where: { id: chapterId },
