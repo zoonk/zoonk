@@ -21,6 +21,7 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
@@ -28,7 +29,7 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { z } from "zod";
@@ -250,6 +251,11 @@ const planWeightsSchema = z.object({
 });
 
 describe(goalContentWorkflow, () => {
+  // Shared courses live in the AI organization, which a fresh test database doesn't have.
+  beforeAll(async () => {
+    await aiOrganizationFixture();
+  });
+
   let graph: SkillGraph;
 
   beforeEach(() => {

@@ -8,8 +8,9 @@ import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
@@ -142,6 +143,11 @@ function mockGenerality(isGeneral: boolean) {
 }
 
 describe(explainQuestionWorkflow, () => {
+  // Shared courses live in the AI organization, which a fresh test database doesn't have.
+  beforeAll(async () => {
+    await aiOrganizationFixture();
+  });
+
   beforeEach(() => {
     vi.mocked(generateSearchTerms).mockImplementation(
       async ({ subjects }) =>
@@ -352,7 +358,7 @@ describe(explainQuestionWorkflow, () => {
     mockGenerality(false);
 
     vi.mocked(generateQuickExplanation).mockResolvedValue(
-      taskResult(explanation("Investing"), "openai/gpt-6-luna"),
+      taskResult(explanation(`Investing ${crypto.randomUUID().slice(0, 8)}`), "openai/gpt-6-luna"),
     );
 
     const result = await explainQuestionWorkflow({ goalId: goal.id });
@@ -361,7 +367,10 @@ describe(explainQuestionWorkflow, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: result.lessonId ?? "" } }),
     ).resolves.toMatchObject({ ownerId: user.id, visibility: "private" });
 
-    expect(generateSearchTerms).not.toHaveBeenCalled();
+    // Only its shared course to go further is looked up across the Library, never the question.
+    expect(generateSearchTerms).not.toHaveBeenCalledWith(
+      expect.objectContaining({ subjects: [expect.objectContaining({ kind: "skill" })] }),
+    );
 
     expect(start).toHaveBeenCalledWith(lessonImagesWorkflow, [
       expect.objectContaining({
