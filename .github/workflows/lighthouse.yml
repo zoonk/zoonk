@@ -69,6 +69,10 @@ jobs:
           runtime: node@24
           cache: true
 
+      # The seed imports the Prisma client, so it must be generated before seeding.
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
       # The audited lesson page is one of the seeded Library lessons.
       - name: Setup database
         run: |

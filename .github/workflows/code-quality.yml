@@ -55,14 +55,15 @@ jobs:
           runtime: node@24
           cache: true
 
+      # The OpenAPI schemas import Prisma enums, so the client must exist first.
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
       - name: Check generated OpenAPI artifact
         run: pnpm openapi:check
 
       - name: Run database migrations
         run: pnpm --filter @zoonk/db db:deploy
-
-      - name: Generate Prisma client
-        run: pnpm db:generate
 
       - name: Check for i18n errors
         run: pnpm i18n:lint
