@@ -38,11 +38,18 @@ function readColors(page: Page, selectors: string[]) {
   );
 }
 
-/** Opens `path` once the page has taken its mode (so its skeleton is gone) and its first element shows. */
+/**
+ * Opens `path` once the page has taken its mode (so its skeleton is gone) and every element to
+ * read is there: a page's own content can stream in after the frame, behind a skeleton of its own.
+ */
 async function open(page: Page, path: string, selectors: string[]) {
   await page.goto(path);
   await expect(page.locator("html")).toHaveAttribute("data-mode", /^(?:focus|fun)$/u);
   await expect(page.locator(selectors[0] ?? "body")).toBeVisible();
+
+  await Promise.all(
+    selectors.map((selector) => expect(page.locator(selector).first()).toBeAttached()),
+  );
 }
 
 /** Opens `path` on a dark and then on a light device and reads the same elements on both. */

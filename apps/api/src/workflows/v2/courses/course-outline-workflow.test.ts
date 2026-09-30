@@ -642,31 +642,38 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
-  it("leaves a shared course's background work to a learner with an account, not a guest's goal", async () => {
-    const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
-    const chapter = await libraryChapterFixture();
+  // Writes the whole recorded band, like the tests above that get the longer timeout.
+  it(
+    "leaves a shared course's background work to a learner with an account, not a guest's goal",
+    { timeout: TIMEOUT },
+    async () => {
+      const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
+      const chapter = await libraryChapterFixture();
 
-    await Promise.all([
-      prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
-      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
-    ]);
+      await Promise.all([
+        prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
+        courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+      ]);
 
-    await expect(
-      courseOutlineWorkflow({
-        bands: [
-          {
-            level: "overview",
-            skills: [{ description: skill.description, id: skill.id, key: "k", name: skill.name }],
-          },
-        ],
-        courseId: course.id,
-        forGuest: true,
-        scope,
-      }),
-    ).resolves.toMatchObject({ status: "written" });
+      await expect(
+        courseOutlineWorkflow({
+          bands: [
+            {
+              level: "overview",
+              skills: [
+                { description: skill.description, id: skill.id, key: "k", name: skill.name },
+              ],
+            },
+          ],
+          courseId: course.id,
+          forGuest: true,
+          scope,
+        }),
+      ).resolves.toMatchObject({ status: "written" });
 
-    expect(start).not.toHaveBeenCalled();
-  });
+      expect(start).not.toHaveBeenCalled();
+    },
+  );
 
   it("writes nothing when the course already teaches every skill in another band", async () => {
     const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
