@@ -121,7 +121,12 @@ async function scanScreen(page: Page, where: string): Promise<string[]> {
   await waitForAnimations(page);
 
   const [results, smallTargets] = await Promise.all([
-    new AxeBuilder({ page }).analyze(),
+    // Screens have no iframes, so axe runs in the page (legacy mode) instead of merging frame
+    // results in a new blank page each scan, and it gathers only violations, all a scan reads.
+    new AxeBuilder({ page })
+      .setLegacyMode()
+      .options({ resultTypes: ["violations"] })
+      .analyze(),
     findSmallTargets(page),
   ]);
 
@@ -150,7 +155,6 @@ async function scanScreen(page: Page, where: string): Promise<string[]> {
   ];
 }
 
-type ColorScheme = (typeof COLOR_SCHEMES)[number];
 type Viewport = (typeof ACCESSIBILITY_VIEWPORTS)[number];
 
 /** A screen inside the learner's Fun mode (not a Fun preview on a Focus page). */
@@ -167,42 +171,26 @@ async function findLightFun(page: Page, where: string): Promise<string[]> {
   return scheme === "dark" ? [] : [`${where}: Fun renders with a "${scheme}" color scheme`];
 }
 
-async function scanVariant(
-  page: Page,
-  {
-    colorScheme,
-    route,
-    viewport,
-  }: { colorScheme: ColorScheme; route: AccessibilityRoute; viewport: Viewport },
-) {
-  const where = `${route.label ?? route.path} (${viewport.name}, ${colorScheme})`;
+/**
+ * Opens a route on a light device at one width and scans it there, then on a dark device unless
+ * it's a Fun screen, which looks the same on both and is checked to stay dark instead. The route
+ * opens once: dark mode is CSS alone (`prefers-color-scheme`), so switching the device's scheme
+ * restyles the same screen, as it does for `scanCurrentScreen`.
+ */
+async function scanRoute(page: Page, route: AccessibilityRoute, viewport: Viewport) {
+  const label = `${route.label ?? route.path}, ${viewport.name}`;
 
   await page.setViewportSize(viewport.size);
-  await page.emulateMedia({ colorScheme });
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto(route.path);
 
   // A screen that never shows what it should is a finding too; the scan still reads it.
   const unready = await (route.ready ?? waitForFirstHeading)(page).then(
     () => [],
-    (error: unknown) => [`${where}: not ready: ${String(error).split("\n")[0]}`],
+    (error: unknown) => [`${label}: not ready: ${String(error).split("\n")[0]}`],
   );
 
-  return [...unready, ...(await scanScreen(page, where))];
-}
-
-/**
- * Opens a route on a light device and scans it, then on a dark one unless it's a Fun screen, which
- * looks the same on both and is checked to stay dark instead.
- */
-async function scanRoute(page: Page, route: AccessibilityRoute, viewport: Viewport) {
-  const light = await scanVariant(page, { colorScheme: "light", route, viewport });
-
-  if (await isFunScreen(page)) {
-    const where = `${route.label ?? route.path} (${viewport.name}, light)`;
-    return [...light, ...(await findLightFun(page, where))];
-  }
-
-  return [...light, ...(await scanVariant(page, { colorScheme: "dark", route, viewport }))];
+  return [...unready, ...(await scanCurrentScreen(page, label))];
 }
 
 /**
