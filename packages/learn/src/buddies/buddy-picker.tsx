@@ -3,7 +3,7 @@
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
+import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
@@ -34,7 +34,7 @@ function BuddyOption({
   const name = useBuddyName({ kind, name: null });
 
   return (
-    <Label className={OPTION_CLASS}>
+    <RadioGroupOption className={OPTION_CLASS}>
       <RadioGroupItem className="absolute top-3 right-3" value={kind} />
       <Buddy
         beltColor={look.beltColor}
@@ -48,7 +48,7 @@ function BuddyOption({
       <span className="text-muted-foreground text-xs">
         <BuddyTagline kind={kind} />
       </span>
-    </Label>
+    </RadioGroupOption>
   );
 }
 

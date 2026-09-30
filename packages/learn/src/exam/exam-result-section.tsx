@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
+import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -184,10 +184,10 @@ export function ExamResultSection() {
                 ["unknown", t("Not yet")],
               ] as const
             ).map(([value, label]) => (
-              <Label className={OPTION_CLASS} key={value}>
+              <RadioGroupOption className={OPTION_CLASS} key={value}>
                 <RadioGroupItem value={value} />
                 {label}
-              </Label>
+              </RadioGroupOption>
             ))}
           </RadioGroup>
         </fieldset>

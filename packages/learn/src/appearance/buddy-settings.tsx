@@ -9,9 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
-import { Label } from "@zoonk/ui/components/label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
+import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { type BuddyGlasses, type BuddyKind, getBuddyStage } from "@zoonk/utils/buddy";
 import { LockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -63,7 +62,7 @@ function GlassesPicker({
         const isEarned = available.includes(glasses);
 
         return (
-          <Label className={GLASSES_OPTION_CLASS} key={glasses}>
+          <RadioGroupOption className={GLASSES_OPTION_CLASS} key={glasses}>
             <Buddy
               beltColor={look.beltColor}
               className="size-12"
@@ -86,7 +85,7 @@ function GlassesPicker({
               </span>
             </span>
             <RadioGroupItem disabled={!isEarned} value={glasses} />
-          </Label>
+          </RadioGroupOption>
         );
       })}
     </RadioGroup>

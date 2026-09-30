@@ -1,8 +1,7 @@
 "use client";
 
-import { Label } from "@zoonk/ui/components/label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
+import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ExperienceMode } from "../experience-mode";
@@ -50,7 +49,7 @@ function ModeOption({ mode }: { mode: ExperienceMode }) {
   const t = useExtracted();
 
   return (
-    <Label className={OPTION_CLASS}>
+    <RadioGroupOption className={OPTION_CLASS}>
       {mode === "fun" ? <FunPreview /> : <FocusPreview />}
 
       <span className="flex items-start justify-between gap-2">
@@ -64,7 +63,7 @@ function ModeOption({ mode }: { mode: ExperienceMode }) {
         </span>
         <RadioGroupItem className="mt-0.5 size-5 shrink-0" value={mode} />
       </span>
-    </Label>
+    </RadioGroupOption>
   );
 }
 

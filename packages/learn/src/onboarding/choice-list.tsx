@@ -1,7 +1,6 @@
 "use client";
 
-import { Label } from "@zoonk/ui/components/label";
-import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
+import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 
@@ -56,7 +55,7 @@ export function ChoiceList<Value extends string>({
       value={value}
     >
       {choices.map((choice) => (
-        <Label className={OPTION_CLASS} key={choice.value}>
+        <RadioGroupOption className={OPTION_CLASS} key={choice.value}>
           {choice.icon && (
             <span className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-xl [&_svg]:size-5">
               {choice.icon}
@@ -73,7 +72,7 @@ export function ChoiceList<Value extends string>({
           </span>
 
           <RadioGroupItem className="size-5 shrink-0" value={choice.value} />
-        </Label>
+        </RadioGroupOption>
       ))}
     </RadioGroup>
   );
