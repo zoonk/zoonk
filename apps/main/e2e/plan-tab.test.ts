@@ -241,13 +241,18 @@ test.describe("Plan tab", () => {
       await page.getByRole("link", { name: "Test out of Porcentagem" }).click();
 
       await expect(page.getByText("Test out: Porcentagem")).toBeVisible();
+      await expect(page.getByRole("progressbar", { name: /^Question 1 of \d+$/u })).toBeVisible();
+
+      // Which question comes first depends on seeded ids, so this reads the first answer shown.
+      const firstAnswer = page.getByRole("main").getByRole("listitem").first().getByRole("button");
+
       await page.keyboard.press("1");
-      await expect(page.getByRole("button", { name: "R$ 360", pressed: true })).toBeVisible();
+      await expect(firstAnswer).toHaveAttribute("aria-pressed", "true");
       await expect(page.getByRole("button", { name: /^(?:Next|Finish)$/u })).toBeEnabled();
 
       // Enter moves on with the picked answer, as Next does.
       await page.keyboard.press("Enter");
-      await expect(page.getByRole("button", { name: "R$ 360", pressed: true })).toBeHidden();
+      await expect(page.getByRole("progressbar", { name: /^Question 2 of \d+$/u })).toBeVisible();
     });
   });
 });
