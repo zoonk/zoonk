@@ -17,6 +17,19 @@
       "Bash(git push --force:*)"
     ]
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh",
+            "timeout": 900
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
     "cache-components@nextjs": true,
     "code-review@claude-plugins-official": true,
