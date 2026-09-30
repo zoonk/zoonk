@@ -12,7 +12,14 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 attachDatabasePool(pool);
 
 const adapter = new PrismaPg(pool);
-const prisma = globalThis.prisma ?? new PrismaClient({ adapter });
+
+/**
+ * A query waits for a free connection as long as it takes, but Prisma gives a transaction only 2s
+ * to get one. Work that shares the pool side by side, like a course outline saving its chapters
+ * in parallel, can queue longer than that, so a transaction gets up to 10s.
+ */
+const prisma =
+  globalThis.prisma ?? new PrismaClient({ adapter, transactionOptions: { maxWait: 10_000 } });
 
 if (process.env.NODE_ENV !== "production") {
   globalThis.prisma = prisma;
