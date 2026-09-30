@@ -15,7 +15,7 @@ final class CourseCatalogStoreTests: XCTestCase {
 
     XCTAssertEqual(store.coursesState, .idle)
     XCTAssertEqual(store.courseState(for: Course.testFixture.id), .idle)
-    XCTAssertEqual(store.chapterState(for: CourseChapter.testFixture.id), .idle)
+    XCTAssertEqual(store.chapterState(for: .testFixture), .idle)
     XCTAssertFalse(store.isLoadingMore)
     XCTAssertNil(store.loadMoreFailure)
   }
@@ -536,6 +536,33 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(chapterListRequestCount, 1)
   }
 
+  func testCourseReadsSendTheSessionSoOwnersCanOpenPrivateCourses() async {
+    let privateCourse = Course(
+      categories: [],
+      description: nil,
+      generationStatus: .completed,
+      id: Course.testFixture.id,
+      imageURL: nil,
+      language: "en",
+      organization: nil,
+      slug: "field-notes",
+      targetLanguage: nil,
+      title: "Field Notes")
+    let session = SessionStore.preview(account: makeCourseCatalogTestAccount())
+    let api = CourseCatalogAPIStub(
+      chapterResults: [.success([])],
+      courseResults: [.success(privateCourse)])
+    let store = CourseCatalogStore(api: api, language: "en", session: session)
+
+    await store.loadCourse(id: privateCourse.id)
+
+    XCTAssertEqual(
+      store.courseState(for: privateCourse.id),
+      .loaded(CourseDetail(course: privateCourse, chapters: [])))
+    let courseReadTokens = await api.courseReadTokens
+    XCTAssertEqual(courseReadTokens, ["preview-session"])
+  }
+
   func testCourseDetailLoadsContinuationAndProgressWithTheCurrentSession() async {
     let session = SessionStore.preview(account: makeCourseCatalogTestAccount())
     let api = CourseCatalogAPIStub(
@@ -674,10 +701,10 @@ final class CourseCatalogStoreTests: XCTestCase {
       lessonResults: [.success([.testFixture])])
     let store = CourseCatalogStore(api: api, language: "en")
 
-    await store.loadChapter(id: CourseChapter.testFixture.id)
+    await store.loadChapter(.testFixture)
 
     XCTAssertEqual(
-      store.chapterState(for: CourseChapter.testFixture.id),
+      store.chapterState(for: .testFixture),
       .loaded(ChapterDetail(chapter: .resourceTestFixture, lessons: [.testFixture])))
   }
 
@@ -685,8 +712,8 @@ final class CourseCatalogStoreTests: XCTestCase {
     let api = CourseCatalogAPIStub(lessonResults: [.success([.testFixture])])
     let store = CourseCatalogStore(api: api, language: "en")
 
-    await store.loadChapter(id: CourseChapter.testFixture.id)
-    await store.loadChapterIfNeeded(id: CourseChapter.testFixture.id)
+    await store.loadChapter(.testFixture)
+    await store.loadChapterIfNeeded(.testFixture)
 
     let chapterRequestCount = await api.chapterRequestCount
     let lessonListRequestCount = await api.lessonListRequestCount
@@ -702,10 +729,10 @@ final class CourseCatalogStoreTests: XCTestCase {
       lessonResults: [.success([.testFixture])])
     let store = CourseCatalogStore(api: api, language: "en", session: session)
 
-    await store.loadChapter(id: CourseChapter.testFixture.id)
+    await store.loadChapter(.testFixture)
 
     XCTAssertEqual(
-      store.chapterState(for: CourseChapter.testFixture.id),
+      store.chapterState(for: .testFixture),
       .loaded(
         ChapterDetail(
           chapter: .resourceTestFixture,
@@ -724,10 +751,10 @@ final class CourseCatalogStoreTests: XCTestCase {
       lessonResults: [.success([.testFixture])])
     let store = CourseCatalogStore(api: api, language: "en")
 
-    await store.loadChapter(id: CourseChapter.testFixture.id)
+    await store.loadChapter(.testFixture)
 
     XCTAssertEqual(
-      store.chapterState(for: CourseChapter.testFixture.id),
+      store.chapterState(for: .testFixture),
       .loaded(ChapterDetail(lessons: [.testFixture])))
   }
 
@@ -735,10 +762,10 @@ final class CourseCatalogStoreTests: XCTestCase {
     let api = CourseCatalogAPIStub(lessonResults: [.success([])])
     let store = CourseCatalogStore(api: api, language: "en")
 
-    await store.loadChapter(id: CourseChapter.testFixture.id)
+    await store.loadChapter(.testFixture)
 
     XCTAssertEqual(
-      store.chapterState(for: CourseChapter.testFixture.id),
+      store.chapterState(for: .testFixture),
       .loaded(ChapterDetail(chapter: .resourceTestFixture, lessons: [])))
   }
 
@@ -751,10 +778,80 @@ final class CourseCatalogStoreTests: XCTestCase {
       ])
     let store = CourseCatalogStore(api: api, language: "en")
 
-    await store.loadChapter(id: CourseChapter.testFixture.id)
-    await store.loadChapter(id: CourseChapter.testFixture.id, force: true)
+    await store.loadChapter(.testFixture)
+    await store.loadChapter(.testFixture, force: true)
 
-    XCTAssertEqual(store.chapterState(for: CourseChapter.testFixture.id), .loaded(detail))
+    XCTAssertEqual(store.chapterState(for: .testFixture), .loaded(detail))
+  }
+
+  func testSharedChapterKeepsASeparatePageForEachCourse() async {
+    let otherCourseKey = CatalogChapterKey(
+      chapterID: CourseChapter.testFixture.id,
+      courseID: CourseSummary.secondTestFixture.id)
+    let api = CourseCatalogAPIStub(
+      chapterDetailResults: [.success(.resourceTestFixture), .success(.resourceTestFixture)],
+      lessonResults: [.success([.testFixture]), .success([])])
+    let store = CourseCatalogStore(api: api, language: "en")
+
+    await store.loadChapter(.testFixture)
+    await store.loadChapterIfNeeded(otherCourseKey)
+
+    XCTAssertEqual(
+      store.chapterState(for: .testFixture),
+      .loaded(ChapterDetail(chapter: .resourceTestFixture, lessons: [.testFixture])))
+    XCTAssertEqual(
+      store.chapterState(for: otherCourseKey),
+      .loaded(ChapterDetail(chapter: .resourceTestFixture, lessons: [])))
+    let lessonListRequestCount = await api.lessonListRequestCount
+    XCTAssertEqual(lessonListRequestCount, 2)
+    let chapterKeys = await api.chapterKeys
+    XCTAssertEqual(
+      Set(chapterKeys),
+      [.testFixture, otherCourseKey],
+      "Expected each page to read the chapter in the course it was opened from")
+  }
+
+  func testMissingChapterRefreshesTheCourseItWasOpenedFrom() async {
+    let api = CourseCatalogAPIStub(
+      chapterResults: [.success([.testFixture]), .success([])],
+      courseResults: [.success(.testFixture), .success(.testFixture)],
+      lessonResults: [.failure(CourseCatalogFailure.notFound)])
+    let store = CourseCatalogStore(api: api, language: "en")
+
+    await store.loadCourse(id: Course.testFixture.id)
+    await store.loadChapter(.testFixture)
+
+    XCTAssertEqual(store.chapterState(for: .testFixture), .failed(.notFound))
+    XCTAssertEqual(
+      store.courseState(for: Course.testFixture.id),
+      .loaded(CourseDetail(course: .testFixture, chapters: [])))
+    let courseRequestCount = await api.courseRequestCount
+    XCTAssertEqual(courseRequestCount, 2)
+  }
+
+  func testMissingChapterDoesNotLoadACourseThatWasNeverOpened() async {
+    let api = CourseCatalogAPIStub(lessonResults: [.failure(CourseCatalogFailure.notFound)])
+    let store = CourseCatalogStore(api: api, language: "en")
+
+    await store.loadChapter(.testFixture)
+
+    XCTAssertEqual(store.chapterState(for: .testFixture), .failed(.notFound))
+    XCTAssertEqual(store.courseState(for: Course.testFixture.id), .idle)
+    let courseRequestCount = await api.courseRequestCount
+    XCTAssertEqual(courseRequestCount, 0)
+  }
+
+  func testMissingCourseForgetsChapterPagesOpenedFromIt() async {
+    let api = CourseCatalogAPIStub(
+      courseResults: [.failure(CourseCatalogFailure.notFound)],
+      lessonResults: [.success([.testFixture])])
+    let store = CourseCatalogStore(api: api, language: "en")
+
+    await store.loadChapter(.testFixture)
+    await store.loadCourse(id: Course.testFixture.id)
+
+    XCTAssertEqual(store.courseState(for: Course.testFixture.id), .failed(.notFound))
+    XCTAssertEqual(store.chapterState(for: .testFixture), .idle)
   }
 
   func testCatalogSearchPublishesGroupedResultsWithAnAnonymousRequest() async {
@@ -886,6 +983,8 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
   private(set) var courseContinuationTokens: [String?] = []
   private(set) var courseProgressTokens: [String?] = []
   private(set) var courseQueries: [CourseCatalogQuery] = []
+  private(set) var chapterKeys: [CatalogChapterKey] = []
+  private(set) var courseReadTokens: [String?] = []
   private(set) var chapterListRequestCount = 0
   private(set) var chapterRequestCount = 0
   private(set) var courseRequestCount = 0
@@ -921,23 +1020,28 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
     return try takeFirstResult(from: &coursePageResults).get()
   }
 
-  func getCourse(id: String) async throws -> Course {
+  func getCourse(id: String, token: String?) async throws -> Course {
     courseRequestCount += 1
+    courseReadTokens.append(token)
     return try takeFirstResult(from: &courseResults).get()
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
+  func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
     chapterRequestCount += 1
+    chapterKeys.append(key)
     return try takeFirstResult(from: &chapterDetailResults).get()
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
     chapterListRequestCount += 1
     return try takeFirstResult(from: &chapterResults).get()
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
+  func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws
+    -> [CourseLesson]
+  {
     lessonListRequestCount += 1
+    chapterKeys.append(key)
     return try takeFirstResult(from: &lessonResults).get()
   }
 
@@ -948,10 +1052,11 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
     return try takeFirstResult(from: &courseContinuationResults).get()
   }
 
-  func getChapterNextLesson(chapterID: String, token: String?) async throws
+  func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
     -> CatalogContinuationTarget
   {
     chapterContinuationTokens.append(token)
+    chapterKeys.append(key)
     return try takeFirstResult(from: &chapterContinuationResults).get()
   }
 
@@ -1029,19 +1134,21 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
     }
   }
 
-  func getCourse(id: String) async throws -> Course {
+  func getCourse(id: String, token: String?) async throws -> Course {
     throw CourseCatalogFailure.unavailable
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
+  func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
     throw CourseCatalogFailure.unavailable
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
     throw CourseCatalogFailure.unavailable
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
+  func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws
+    -> [CourseLesson]
+  {
     throw CourseCatalogFailure.unavailable
   }
 
@@ -1051,7 +1158,7 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
     throw CourseCatalogFailure.unavailable
   }
 
-  func getChapterNextLesson(chapterID: String, token: String?) async throws
+  func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
     -> CatalogContinuationTarget
   {
     throw CourseCatalogFailure.unavailable
@@ -1101,25 +1208,27 @@ private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
     throw CourseCatalogFailure.unavailable
   }
 
-  func getCourse(id: String) async throws -> Course {
+  func getCourse(id: String, token: String?) async throws -> Course {
     try await withCheckedThrowingContinuation { continuation in
       courseContinuation = continuation
       courseDidStart()
     }
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
+  func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
     throw CourseCatalogFailure.unavailable
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
     try await withCheckedThrowingContinuation { continuation in
       chaptersContinuation = continuation
       chaptersDidStart()
     }
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
+  func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws
+    -> [CourseLesson]
+  {
     throw CourseCatalogFailure.unavailable
   }
 
@@ -1129,7 +1238,7 @@ private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
     throw CourseCatalogFailure.unavailable
   }
 
-  func getChapterNextLesson(chapterID: String, token: String?) async throws
+  func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
     -> CatalogContinuationTarget
   {
     throw CourseCatalogFailure.unavailable

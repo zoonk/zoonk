@@ -1,0 +1,143 @@
+enum ItemFormat {
+  multipleChoice @map("multiple_choice")
+  trueFalse      @map("true_false")
+  typed
+  spoken
+  essay
+  matchPairs     @map("match_pairs")
+  order
+  numeric
+}
+
+/// One thing a learner can do ("calculate a discount"): the unit of mastery, review and study cards.
+/// Identity search keeps one skill per identity key and language, so two curricula share it and its
+/// lessons. A duplicate that slips through is merged (`mergedIntoId`), never deleted, so learners'
+/// mastery follows the surviving skill. A private course's skills are private to its owner and never reused.
+model Skill {
+  id             String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language       String              @db.VarChar(10)
+  targetLanguage String?             @map("target_language") @db.VarChar(10)
+  identityKey    String              @map("identity_key")
+  name           String
+  normalizedName String              @map("normalized_name")
+  /// The idea in one sentence: the front of the skill's study card.
+  description    String
+  /// A worked example: the back of the skill's study card.
+  example        String?
+  level          CourseLevel?
+  mergedIntoId   String?             @map("merged_into_id") @db.Uuid
+  mergedInto     Skill?              @relation("SkillMerge", fields: [mergedIntoId], references: [id], onDelete: SetNull)
+  mergedSkills   Skill[]             @relation("SkillMerge")
+  visibility     LibraryVisibility   @default(public)
+  /// Owner of a private course's skill. Private skills are deleted with their owner.
+  ownerId        String?             @map("owner_id") @db.Uuid
+  owner          User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  model          String
+  promptVersion  String              @map("prompt_version")
+  runId          String              @map("run_id")
+  generatedAt    DateTime            @default(now()) @map("generated_at")
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
+  prerequisites  SkillPrerequisite[] @relation("SkillPrerequisiteSkill")
+  dependents     SkillPrerequisite[] @relation("SkillPrerequisitePrerequisite")
+  lessons        LessonSkill[]
+  chapters       ChapterSkill[]
+  items          Item[]
+  steps          Step[]
+  learnerSkills  LearnerSkill[]
+  attempts       Attempt[]
+  mistakes       Mistake[]
+  planItems      PlanItem[]
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@index([language, normalizedName])
+  @@index([mergedIntoId])
+  @@index([ownerId])
+  @@map("skills")
+}
+
+/// Skill graph edge: `prerequisite` is learned before `skill`.
+model SkillPrerequisite {
+  skillId        String   @map("skill_id") @db.Uuid
+  skill          Skill    @relation("SkillPrerequisiteSkill", fields: [skillId], references: [id], onDelete: Cascade)
+  prerequisiteId String   @map("prerequisite_id") @db.Uuid
+  prerequisite   Skill    @relation("SkillPrerequisitePrerequisite", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@id([skillId, prerequisiteId])
+  @@index([prerequisiteId])
+  @@map("skill_prerequisites")
+}
+
+/// The 1 to 3 skills a lesson teaches.
+model LessonSkill {
+  lessonId  String   @map("lesson_id") @db.Uuid
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  skillId   String   @map("skill_id") @db.Uuid
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([lessonId, skillId])
+  @@index([skillId])
+  @@map("lesson_skills")
+}
+
+/// A question for a skill in one format, with a reason for every wrong option and key points for typed
+/// and spoken answers. Math items store the solution as data (variables, expression, units, tolerance,
+/// steps and common mistakes) so practice can use new numbers. `field` holds practice set in the
+/// learner's work ("nursing") and is null for general items. Past exam questions keep their citation
+/// under the source's reuse policy. Difficulty and discrimination are recalibrated from real answers.
+model Item {
+  id                 String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  skillId            String              @map("skill_id") @db.Uuid
+  skill              Skill               @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  language           String              @db.VarChar(10)
+  format             ItemFormat
+  field              String?
+  content            Json
+  difficulty         Float?
+  discrimination     Float?
+  examBlueprintId    String?             @map("exam_blueprint_id") @db.Uuid
+  examBlueprint      ExamBlueprint?      @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  sourceId           String?             @map("source_id") @db.Uuid
+  source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  sourceCitation     String?             @map("source_citation")
+  model              String
+  promptVersion      String              @map("prompt_version")
+  runId              String              @map("run_id")
+  generatedAt        DateTime            @default(now()) @map("generated_at")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
+  steps              Step[]
+  answerExplanations AnswerExplanation[]
+  attempts           Attempt[]
+  mistakes           Mistake[]
+  reviewFlags        ContentReviewFlag[]
+
+  @@index([skillId, format])
+  @@index([examBlueprintId])
+  @@index([sourceId])
+  @@map("items")
+}
+
+/// Shared explanation of a wrong typed or spoken answer, reused by the next learner who gives the same
+/// answer. Each row belongs to exactly one item or one step, so each unique key covers one of them.
+model AnswerExplanation {
+  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  itemId           String?  @map("item_id") @db.Uuid
+  item             Item?    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  stepId           String?  @map("step_id") @db.Uuid
+  step             Step?    @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  language         String   @db.VarChar(10)
+  normalizedAnswer String   @map("normalized_answer")
+  explanation      String
+  model            String
+  promptVersion    String   @map("prompt_version")
+  runId            String   @map("run_id")
+  generatedAt      DateTime @default(now()) @map("generated_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@unique([itemId, normalizedAnswer, language], name: "itemAnswer")
+  @@unique([stepId, normalizedAnswer, language], name: "stepAnswer")
+  @@map("answer_explanations")
+}

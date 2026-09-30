@@ -1,0 +1,383 @@
+{
+  "modelId": "google/gemini-3.5-transcribe",
+  "results": [
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"How much is the rent?\" and we heard \"How much is the rent?\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the rent?\" and we heard \"How much is the rent?\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the rent?\" and we heard \"How much is the rent?\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "en-rent-correct-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "How much is the rent?",
+          "targetText": "How much is the rent?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"How much is the hent?\" and we heard \"How much is the hint?\". Expected flagged words [\"rent?\"]; flagged [\"rent?\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the hent?\" and we heard \"How much is the hint?\". Expected flagged words [\"rent?\"]; flagged [\"rent?\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the hent?\" and we heard \"How much is the hint?\". Expected flagged words [\"rent?\"]; flagged [\"rent?\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["rent?"] },
+        "id": "en-rent-hent-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "How much is the hent?",
+          "targetText": "How much is the rent?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"I live here since 2020.\" and we heard \"I live here since 2020.\". Expected flagged words [\"I've\",\"lived\"]; flagged [\"I've\",\"lived\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I live here since 2020.\" and we heard \"I live here since 2020.\". Expected flagged words [\"I've\",\"lived\"]; flagged [\"I've\",\"lived\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I live here since 2020.\" and we heard \"I live here since 2020.\". Expected flagged words [\"I've\",\"lived\"]; flagged [\"I've\",\"lived\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["I've", "lived"] },
+        "id": "en-lived-live-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "I live here since 2020.",
+          "targetText": "I've lived here since 2020."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Is the apartment still available?\" and we heard \"Is the apartment still available?\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Is the apartment still available?\" and we heard \"Is the apartment still available?\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Is the apartment still available?\" and we heard \"Is the apartment still available?\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "en-available-correct-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "Is the apartment still available?",
+          "targetText": "Is the apartment still available?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Can I see apartment on Saturday?\" and we heard \"Can I see apartment on Saturday?\". Expected flagged words [\"the\"]; flagged [\"the\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Can I see apartment on Saturday?\" and we heard \"Can I see apartment on Saturday?\". Expected flagged words [\"the\"]; flagged [\"the\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Can I see apartment on Saturday?\" and we heard \"Can I see apartment on Saturday?\". Expected flagged words [\"the\"]; flagged [\"the\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["the"] },
+        "id": "en-missing-the-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "Can I see apartment on Saturday?",
+          "targetText": "Can I see the apartment on Saturday?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"The sheep is very big\" and we heard \"The sheep is very big.\". Expected flagged words [\"ship\"]; flagged [\"ship\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"The sheep is very big\" and we heard \"The sheep is very big.\". Expected flagged words [\"ship\"]; flagged [\"ship\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"The sheep is very big\" and we heard \"The sheep is very big.\". Expected flagged words [\"ship\"]; flagged [\"ship\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["ship"] },
+        "id": "en-ship-sheep-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "The sheep is very big",
+          "targetText": "The ship is very big"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"I sink it's cheap\" and we heard \"I think it's cheap.\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I sink it's cheap\" and we heard \"I think it's cheap.\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I sink it's cheap\" and we heard \"I think it's cheap.\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "en-think-sink-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "I sink it's cheap",
+          "targetText": "I think it's cheap"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"O apartamento ainda está disponível?\" and we heard \"O apartamento ainda está disponível?\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda está disponível?\" and we heard \"O apartamento ainda está disponível?\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda está disponível?\" and we heard \"O apartamento ainda está disponível?\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "pt-disponivel-correct-1",
+        "userInput": {
+          "language": "pt",
+          "spokenText": "O apartamento ainda está disponível?",
+          "targetText": "O apartamento ainda está disponível?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["está"] },
+        "id": "pt-estar-1",
+        "userInput": {
+          "language": "pt",
+          "spokenText": "O apartamento ainda estar disponível?",
+          "targetText": "O apartamento ainda está disponível?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Eu quero mas café\" and we heard \"Eu quero mais café.\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Eu quero mas café\" and we heard \"Eu quero mais café.\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Eu quero mas café\" and we heard \"Eu quero mais café.\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "pt-mais-mas-1",
+        "userInput": {
+          "language": "pt",
+          "spokenText": "Eu quero mas café",
+          "targetText": "Eu quero mais café"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"¿Cuánto cuesta el alquiler?\" and we heard \"¿Cuánto cuesta el alquiler?\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"¿Cuánto cuesta el alquiler?\" and we heard \"¿Cuánto cuesta el alquiler?\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"¿Cuánto cuesta el alquiler?\" and we heard \"¿Cuánto cuesta el alquiler?\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "es-alquiler-correct-1",
+        "userInput": {
+          "language": "es",
+          "spokenText": "¿Cuánto cuesta el alquiler?",
+          "targetText": "¿Cuánto cuesta el alquiler?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Tengo un pero\" and we heard \"Tengo un perro.\". Expected flagged words [\"perro\"]; flagged [].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Tengo un pero\" and we heard \"Tengo un perro.\". Expected flagged words [\"perro\"]; flagged [].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Tengo un pero\" and we heard \"Tengo un perro.\". Expected flagged words [\"perro\"]; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["perro"] },
+        "id": "es-perro-pero-1",
+        "userInput": {
+          "language": "es",
+          "spokenText": "Tengo un pero",
+          "targetText": "Tengo un perro"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Quiero ver piso mañana\" and we heard \"Quiero ver piso mañana.\". Expected flagged words [\"el\"]; flagged [\"el\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Quiero ver piso mañana\" and we heard \"Quiero ver piso mañana.\". Expected flagged words [\"el\"]; flagged [\"el\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Quiero ver piso mañana\" and we heard \"Quiero ver piso mañana.\". Expected flagged words [\"el\"]; flagged [\"el\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["el"] },
+        "id": "es-missing-el-1",
+        "userInput": {
+          "language": "es",
+          "spokenText": "Quiero ver piso mañana",
+          "targetText": "Quiero ver el piso mañana"
+        }
+      }
+    }
+  ],
+  "taskId": "transcribe-speech"
+}

@@ -25,32 +25,6 @@ export function toSlug(str: string): string {
     .replaceAll(/^-|-$/gu, "");
 }
 
-function nextAvailableSlug(base: string, taken: Set<string>): string {
-  let counter = 1;
-
-  while (taken.has(`${base}-${counter}`)) {
-    counter += 1;
-  }
-
-  return `${base}-${counter}`;
-}
-
-export function deduplicateSlugs<T extends { slug: string }>(items: T[]): T[] {
-  const taken = new Set<string>(items.map((item) => item.slug));
-  const seen = new Set<string>();
-
-  return items.map((item) => {
-    if (!seen.has(item.slug)) {
-      seen.add(item.slug);
-      return item;
-    }
-
-    const candidate = nextAvailableSlug(item.slug, taken);
-    taken.add(candidate);
-    return { ...item, slug: candidate };
-  });
-}
-
 /**
  * Different parts of the app can send the same text with tiny formatting differences,
  * such as extra spaces, accents, or a space before punctuation.
@@ -67,14 +41,6 @@ export function deduplicateNormalizedTexts(texts: string[]): string[] {
       }),
     ).values(),
   ];
-}
-
-/**
- * Converts optional free-text fields into the database representation for missing text.
- * This keeps blank generated fields from being saved as meaningful strings.
- */
-export function emptyToNull(value?: string | null): string | null {
-  return value?.trim() || null;
 }
 
 export function ensureLocaleSuffix(value: string, language: string): string {
@@ -154,15 +120,15 @@ export function segmentWords(text: string): string[] {
   return segmentNonSpaceText(normalizedText);
 }
 
-export function extractUniqueSentenceWords(sentences: string[]): string[] {
-  const words = sentences.flatMap((sentence) =>
-    segmentWords(sentence).flatMap((token) => {
-      const stripped = stripPunctuation(token).toLowerCase();
-      return stripped.length > 0 ? [stripped] : [];
-    }),
-  );
+/**
+ * The first sentence of a text, whole: a summary that never stops mid-thought the way a line clamp
+ * does. Sentence breaks follow the text's language (`Intl.Segmenter`), so languages without spaces
+ * work too. Text without a sentence end comes back trimmed.
+ */
+export function getFirstSentence(text: string, locale: string): string {
+  const [first] = new Intl.Segmenter(locale, { granularity: "sentence" }).segment(text.trim());
 
-  return [...new Set(words)];
+  return first?.segment.trim() ?? "";
 }
 
 /**

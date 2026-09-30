@@ -1,48 +1,54 @@
 import { Stats } from "@/components/stats";
 import { StatsSection } from "@/components/stats-section";
 import { countCoursePrompts } from "@/data/course-prompts/list-course-prompts";
-import { countContent } from "@/data/stats/count-content";
-import { countCourses } from "@/data/stats/count-courses";
-import { BookOpenIcon, LayersIcon, MessageSquareTextIcon } from "lucide-react";
+import { countLibraryContent } from "@/data/stats/count-library-content";
+import { BookOpenIcon, LayersIcon, MessageSquareTextIcon, SparklesIcon } from "lucide-react";
 
+/** The Library inventory and the course prompts learners submitted before goals replaced them. */
 export async function ContentStats() {
   "use cache: private";
 
-  const [totalCourses, content, promptCount] = await Promise.all([
-    countCourses(),
-    countContent(),
-    countCoursePrompts(),
-  ]);
+  const [content, promptCount] = await Promise.all([countLibraryContent(), countCoursePrompts()]);
 
   return (
-    <StatsSection subtitle="Content catalog and review pipeline" title="Content & Operations">
+    <StatsSection subtitle="Library catalog and review pipeline" title="Content & Operations">
       <Stats
-        help="All courses, including published and draft courses"
-        href="/courses"
+        help="Courses with a Library outline"
+        href="/stats/content?view=content-totals"
         icon={<BookOpenIcon />}
         title="Courses"
-        value={totalCourses.toLocaleString()}
+        value={content.courses.toLocaleString()}
       />
 
       <Stats
-        help="Chapters with completed generation status"
+        help="Library chapters whose lesson outline is written"
         icon={<LayersIcon />}
         title="Chapters"
         value={content.chapters.toLocaleString()}
       />
 
       <Stats
-        help="Lessons with completed generation status"
+        description={`${content.lessonOutlines.toLocaleString()} outlines`}
+        help="Library lessons with generated content"
         icon={<LayersIcon />}
         title="Lessons"
         value={content.lessons.toLocaleString()}
       />
 
       <Stats
-        help="All generated step rows"
+        help="All Library lesson screens"
         icon={<LayersIcon />}
         title="Steps"
         value={content.steps.toLocaleString()}
+      />
+
+      <Stats
+        description={`${content.items.toLocaleString()} practice items`}
+        help="Skills that weren't merged into another"
+        href="/skills"
+        icon={<SparklesIcon />}
+        title="Skills"
+        value={content.skills.toLocaleString()}
       />
 
       <Stats

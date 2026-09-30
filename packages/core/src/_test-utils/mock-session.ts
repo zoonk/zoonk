@@ -9,6 +9,14 @@ export function mockSession(userId: string | null): void {
   );
 }
 
+/** Selects a guest: an anonymous user the mocked core session resolver returns. */
+export function mockGuestSession(userId: string): void {
+  vi.mocked(getSession).mockResolvedValue(
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Business tests only read the identity and guest flag.
+    { user: { id: userId, isAnonymous: true } } as Awaited<ReturnType<typeof getSession>>,
+  );
+}
+
 /** Makes the mocked session resolver surface an infrastructure failure. */
 export function mockSessionFailure(error: Error): void {
   vi.mocked(getSession).mockRejectedValue(error);

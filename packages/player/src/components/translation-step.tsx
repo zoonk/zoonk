@@ -5,7 +5,7 @@ import {
   type TranslationOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer } from "../player-reducer";
+import { type SelectedAnswer } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import {
   PlayerChoiceScene,
@@ -50,7 +50,7 @@ export function TranslationStep({
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  onSelectAnswer: (answer: SelectedAnswer) => void;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
@@ -69,7 +69,7 @@ export function TranslationStep({
     }
 
     void play(word.audioUrl);
-    onSelectAnswer(step.id, { kind: "translation", selectedOptionId: word.id });
+    onSelectAnswer({ kind: "translation", selectedOptionId: word.id });
   };
 
   if (!correctWord) {

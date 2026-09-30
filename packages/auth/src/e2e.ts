@@ -6,9 +6,9 @@ import { oneTimeToken } from "better-auth/plugins";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
-import { stripePlugin } from "./stripe/plugin";
 
-const e2ePluginOverrideIds = new Set(["email-otp", "next-cookies", "one-time-token", "stripe"]);
+/** BotID (the `captcha` plugin) only answers on Vercel, so the E2E build, which runs outside it, leaves it out. */
+const e2ePluginOverrideIds = new Set(["captcha", "email-otp", "next-cookies", "one-time-token"]);
 const SESSION_TRACE_FILE = "e2e/.auth/session-lookups.log";
 const SESSION_TRACE_HEADER = "x-e2e-session-trace";
 
@@ -53,7 +53,6 @@ export const auth = betterAuth({
   plugins: [
     ...baseAuthPlugins,
     ...fullPlugins.filter((plugin) => !e2ePluginOverrideIds.has(plugin.id)),
-    stripePlugin({ createCustomerOnSignUp: false }),
     createEmailOTPPlugin({ storeOTP: "plain" }),
     oneTimeToken({ storeToken: "plain" }),
     nextCookies(),

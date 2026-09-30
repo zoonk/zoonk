@@ -1,4 +1,6 @@
-import { useEffect, useEffectEvent } from "react";
+import { use, useEffectEvent, useLayoutEffect, useRef } from "react";
+import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
+import { getNumberKeyIndex, isEditableTarget, isScreenShortcut } from "./_utils/screen-shortcut";
 
 type KeyboardModifiers = {
   altKey?: boolean;
@@ -9,17 +11,9 @@ type KeyboardModifiers = {
 
 type ModifierMode = "all" | "any" | "none";
 
-function isEditableTarget(target: EventTarget | null): boolean {
-  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-    return true;
-  }
-
-  if (target instanceof HTMLElement && target.isContentEditable) {
-    return true;
-  }
-
-  return false;
-}
+/** `void` means handled, `false` means not handled (`preventDefault` is skipped). */
+// oxlint-disable-next-line @typescript-eslint/no-invalid-void-type -- `void` is the correct return type here; `undefined` breaks contextual typing for callbacks like `() => toggle()`
+type ShortcutResult = false | void;
 
 function hasAnyModifier(event: KeyboardEvent): boolean {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -103,11 +97,10 @@ function checkModifiers({
  */
 export function useKeyboardCallback(
   key: string,
-  // oxlint-disable-next-line @typescript-eslint/no-invalid-void-type -- `void` is the correct return type here; `undefined` breaks contextual typing for callbacks like `() => toggle()`
-  callback: () => false | void,
+  callback: () => ShortcutResult,
   options: {
     /**
-     * Skip the callback when the event target is an input, textarea, or contenteditable element.
+     * Skip the callback when the event target is an input, textarea, select, or contenteditable element.
      */
     ignoreEditable?: boolean;
     /**
@@ -121,9 +114,16 @@ export function useKeyboardCallback(
      * Modifiers to check. If undefined/empty, modifiers are ignored (just the key matters).
      */
     modifiers?: KeyboardModifiers;
+    /**
+     * A screen's own shortcut, such as Enter to continue or an arrow to the next screen, rather
+     * than an app-wide one: it leaves the key to the control in focus (a field, a dialog or menu,
+     * Enter on a button or a link) and acts once however long the key is held.
+     */
+    screen?: boolean;
   } = {},
 ) {
-  const { ignoreEditable = false, mode = "all", modifiers } = options;
+  const { ignoreEditable = false, mode = "all", modifiers, screen = false } = options;
+  const inPopup = use(PopupShortcutLayer);
   const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
 
   const onKeyPress = useEffectEvent((event: KeyboardEvent) => {
@@ -134,13 +134,18 @@ export function useKeyboardCallback(
     }
   });
 
-  useEffect(() => {
+  // Before paint, so a key pressed as soon as its screen shows already works.
+  useLayoutEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== key) {
         return;
       }
 
       if (ignoreEditable && isEditableTarget(event.target)) {
+        return;
+      }
+
+      if (screen && !isScreenShortcut(event, { inPopup })) {
         return;
       }
 
@@ -153,5 +158,83 @@ export function useKeyboardCallback(
 
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [key, mode, ignoreEditable, altKey, ctrlKey, metaKey, shiftKey]);
+  }, [key, mode, ignoreEditable, screen, inPopup, altKey, ctrlKey, metaKey, shiftKey]);
+}
+
+/**
+ * Enter runs the screen's main action (continue, check, start), keyboard first. A focused button
+ * or link keeps its own Enter, and so do fields, dialogs and menus. Return `false` when the
+ * action can't run, so Enter keeps its default.
+ */
+export function useEnterKey(
+  callback: () => ShortcutResult,
+  { enabled = true }: { enabled?: boolean } = {},
+) {
+  useKeyboardCallback("Enter", () => (enabled ? callback() : false), {
+    mode: "none",
+    screen: true,
+  });
+}
+
+/**
+ * For a screen whose next step is a link (or a button elsewhere on the page): Enter presses the
+ * element this ref is on, as if it had focus.
+ */
+export function useEnterClick<Target extends HTMLElement>({
+  enabled = true,
+}: { enabled?: boolean } = {}) {
+  const ref = useRef<Target>(null);
+
+  useEnterKey(
+    () => {
+      if (!ref.current) {
+        return false;
+      }
+
+      ref.current.click();
+    },
+    { enabled },
+  );
+
+  return ref;
+}
+
+/**
+ * Number keys 1 to 9 pick the screen's options, as fast as a tap. Digits typed in a field, or
+ * pressed inside a dialog or a menu, stay there. Return `false` from `onPick` for a key that
+ * picked nothing.
+ */
+export function useNumberKeys({
+  count,
+  enabled = true,
+  onPick,
+}: {
+  count: number;
+  enabled?: boolean;
+  onPick: (index: number) => ShortcutResult;
+}) {
+  const pick = useEffectEvent(onPick);
+  const inPopup = use(PopupShortcutLayer);
+
+  // Before paint, like `useKeyboardCallback`: a question's number keys work once it shows.
+  useLayoutEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      const index = getNumberKeyIndex(event);
+
+      if (index === null || index >= count || !isScreenShortcut(event, { inPopup })) {
+        return;
+      }
+
+      if (pick(index) !== false) {
+        event.preventDefault();
+      }
+    }
+
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => globalThis.removeEventListener("keydown", handleKeyDown);
+  }, [count, enabled, inPopup]);
 }

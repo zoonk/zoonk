@@ -1,8 +1,10 @@
+import { MainFeedbackProvider } from "@/components/feedback/main-feedback-provider";
+import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { routing } from "@/i18n/routing";
+import { funFontVariables } from "@/lib/fun-fonts";
 import { Toaster } from "@zoonk/ui/components/toast";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
-import { NextIntlClientProvider } from "next-intl";
 import { lang } from "next/root-params";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
@@ -16,10 +18,12 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   return (
-    <html lang={await lang()}>
+    <html className={funFontVariables} lang={await lang()}>
       <body className="font-sans antialiased">
         <NuqsAdapter>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <ClientMessagesProvider scope="site">
+            <MainFeedbackProvider>{children}</MainFeedbackProvider>
+          </ClientMessagesProvider>
         </NuqsAdapter>
         <Suspense fallback={null}>
           <AppAnalytics />

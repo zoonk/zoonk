@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type ScoredRow, aggregateByPeriod, findBestByScore } from "./aggregation";
+import { aggregateByPeriod } from "./aggregation";
 
 describe("aggregateByPeriod - month", () => {
   const dataPoints = [
@@ -48,37 +48,5 @@ describe("aggregateByPeriod - year", () => {
     const result = aggregateByPeriod(reversed, (point) => point.value, "sum", "year");
     const times = result.map((row) => row.date.getTime());
     expect(times).toStrictEqual([...times].toSorted((left, right) => left - right));
-  });
-});
-
-describe(findBestByScore, () => {
-  it("finds row with highest score", () => {
-    const rows: ScoredRow[] = [
-      { correct: 7, incorrect: 3, key: 1 },
-      { correct: 9, incorrect: 1, key: 2 },
-      { correct: 5, incorrect: 5, key: 3 },
-    ];
-
-    const result = findBestByScore(rows);
-    expect(result).toStrictEqual({ key: 2, score: 90 });
-  });
-
-  it("breaks ties by total", () => {
-    const rows: ScoredRow[] = [
-      { correct: 8, incorrect: 2, key: 1 }, // 80%, total 10
-      { correct: 16, incorrect: 4, key: 2 }, // 80%, total 20
-    ];
-
-    const result = findBestByScore(rows);
-    expect(result).toStrictEqual({ key: 2, score: 80 });
-  });
-
-  it("returns null for empty array", () => {
-    expect(findBestByScore([])).toBeNull();
-  });
-
-  it("returns null when all rows have zero data", () => {
-    const rows: ScoredRow[] = [{ correct: 0, incorrect: 0, key: 1 }];
-    expect(findBestByScore(rows)).toBeNull();
   });
 });

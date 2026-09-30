@@ -1,0 +1,482 @@
+{
+  "modelId": "openai/gpt-image-2.5-flare",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The discount reads at a glance. The old tag has R$ 80 crossed out, the amber -25% badge sits between the tags, and a dashed arrow leads to the new R$ 60 tag. The numbers are consistent: 25% off 80 is 60. The two tags look identical in color, which slightly weakens the old-versus-new contrast.",
+          "score": 9,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image uses flat rounded shapes, soft ground shadows, thin dashed movement lines and a very light plain background. The palette is limited to muted blue, cream and gray with an amber accent. The composition is clean with generous space.",
+          "score": 9,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Read letter by letter, the image shows 'antes', 'R$ 80' (struck through), '-25%', 'voc\u00ea paga' and 'R$ 60'. All labels are spelled correctly, including the circumflex, and each sits on its own element. There is no extra text. Legibility is good, though the right tag's text is slightly tilted.",
+          "score": 9,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3722,
+          "outputTokens": 796,
+          "reasoningTokens": 229
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Both tags use the same blue, so the new tag is not visually set apart from the old one. The tilted, slightly curved baseline of 'voc\u00ea paga' makes it a little less crisp to read than the other labels.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Give the new tag a subtle distinguishing touch, such as a soft green tint, to reinforce 'new, lower price'. Straighten the text baseline on the right tag.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One idea: a discount. An old tag with \"antes R$ 80\" crossed out, a new tag with \"voc\u00ea paga R$ 60\" and a -25% badge between them. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "discount-pt-1",
+        "userInput": {
+          "caseId": "discount-pt",
+          "category": "business",
+          "format": "step",
+          "language": "pt",
+          "scene": {
+            "labels": [
+              { "target": "on the old tag", "text": "antes R$ 80" },
+              { "target": "on the new tag", "text": "voc\u00ea paga R$ 60" },
+              { "target": "on the round badge", "text": "-25%" }
+            ],
+            "layout": "sequence",
+            "motion": null,
+            "relation": "a round amber badge sits between the old tag and the new tag",
+            "supportingObjects": ["a round badge"],
+            "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The image shows a clear cloud of tiny dots around a small red nucleus, thinning outward, so the probability idea reads at a glance. The gradient could be stronger near the center.",
+          "score": 8.5,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is flat, uses a light plain background, has one focal object with generous empty space, and keeps to soft blue with a red accent. The only departure is a slight gloss on the nucleus.",
+          "score": 9,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Only the two requested labels appear. 'nucleus' and 'electron cloud' are both spelled correctly, legible and connected by leader lines. The 'electron cloud' line points to the sparse edge of the cloud.",
+          "score": 9,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3678,
+          "outputTokens": 553,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The 'electron cloud' leader line ends on the sparse outer edge of the cloud rather than on its dense region, so the label does not point at the part of the cloud that best shows it. The nucleus has a small glossy highlight that adds a slight 3D look to an otherwise flat style. The density gradient is gentle: the dots near the nucleus are only a little denser than those in the mid-ring.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Make the density falloff steeper so the core is clearly packed and the outer dots are very sparse. Point the 'electron cloud' leader line into the dense part of the cloud. Flatten the nucleus highlight so it matches the flat house style.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "An electron cloud: tiny dots densest around a small red nucleus and fading outward, so the image shows where the electron is likely to be. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "electron-cloud-en-1",
+        "userInput": {
+          "caseId": "electron-cloud-en",
+          "category": "science",
+          "format": "step",
+          "language": "en",
+          "scene": {
+            "labels": [
+              { "target": "next to the small red nucleus", "text": "nucleus" },
+              { "target": "next to the dense cloud of dots", "text": "electron cloud" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a cloud of tiny dots around a small red nucleus, densest in the middle and fading outward"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The microwave with steaming soup and wavy lines is clear. A dashed line links it to a circled water molecule (one red O, two H) with curved spin arrows. The idea reads at a glance. The dashed line crossing the oven body is a minor distraction.",
+          "score": 9,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is flat with rounded shapes, a soft shadow, a light plain background, a periwinkle palette and a red accent. It has generous space. There are slight highlight gradients on the atoms, but the style fits well overall.",
+          "score": 9,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "The only text is 'water molecules', spelled correctly. It is legible and placed next to the molecule.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3726,
+          "outputTokens": 485,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The dashed link line runs across the oven door and control panel and stops short inside the molecule circle rather than reaching the molecule. This makes the connection a little messy. The label sits in a pill with a leader line, which is slightly heavier than a plain label.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Route the dashed line cleanly from the soup to the circle's edge. Enlarge the curved spin arrows so the rotation reads more strongly. Place the label closer to the molecule without the leader line.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cause and effect: a microwave heating a bowl of soup, linked by one dashed line to a spinning water molecule. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "microwave-en-1",
+        "userInput": {
+          "caseId": "microwave-en",
+          "category": "science",
+          "format": "step",
+          "language": "en",
+          "scene": {
+            "labels": [{ "target": "next to the spinning molecule", "text": "water molecules" }],
+            "layout": "sequence",
+            "motion": "curved arrows show the water molecule spinning",
+            "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
+            "supportingObjects": ["a water molecule in a circle"],
+            "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side-by-side comparison of two same-size dashed orbits reads at a glance. The Sun and Earth are recognizable, the electron orbits the nucleus, and the question mark conveys the doubt. However, the nucleus is not tiny as the scene specifies.",
+          "score": 8,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image uses flat, soft shapes, a very light plain background, dashed orbits, a limited palette and soft shadows. The callout pills with leader lines and the divider push it toward an infographic look and add clutter.",
+          "score": 7,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Both requested labels are spelled correctly, legible and placed under their scenes. Four unrequested labels ('Sun', 'Earth', 'Nucleus', 'Electron') are also present, which caps this category at 4.",
+          "score": 3,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3726,
+          "outputTokens": 842,
+          "reasoningTokens": 234
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Four unrequested callout labels appear: 'Sun', 'Earth', 'Nucleus' and 'Electron', each with a leader line. Only 'Earth and Sun' and 'Electron and nucleus?' were allowed, so the extra text is a major error.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The nucleus is drawn as a fairly large red sphere, close in size to the Sun analogue, rather than the tiny nucleus the scene asks for. The callout pills with leader lines and the vertical divider make the image look more like an infographic and add clutter.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Remove the four callout labels and their leader lines. Shrink the nucleus so it reads as tiny. Consider dropping the divider line and letting spacing separate the two panels.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A comparison: Earth orbiting the Sun next to an electron orbiting a nucleus, same size, so the question becomes visible. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "orbits-comparison-en-1",
+        "userInput": {
+          "caseId": "orbits-comparison-en",
+          "category": "science",
+          "format": "step",
+          "language": "en",
+          "scene": {
+            "labels": [
+              { "target": "under the Sun and Earth", "text": "Earth and Sun" },
+              { "target": "under the nucleus and electron", "text": "Electron and nucleus?" }
+            ],
+            "layout": "comparison",
+            "motion": null,
+            "relation": "the two orbits sit side by side at the same size",
+            "supportingObjects": ["a tiny nucleus with an electron on a dashed elliptical orbit"],
+            "focalObject": "the Sun with Earth on a dashed elliptical orbit"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The nucleus, the electron on its faint dashed orbit, and the red dashed inward path with one arrowhead are all present, so the idea of the electron collapsing inward reads clearly. The S-shaped wiggle and the arrow ending short of the nucleus make the spiral slightly less clean.",
+          "score": 8,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is flat with a very light plain background, generous empty space, soft shadows, and a limited palette of blue, red, and lavender. The small glossy highlights on the spheres are only a minor deviation.",
+          "score": 9,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "The only text is \"electron\", spelled correctly and clearly legible. It sits beside the blue electron with a leader line, and there is no other text.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3702,
+          "outputTokens": 887,
+          "reasoningTokens": 350
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The red path is not a smooth inward spiral: it starts with an S-shaped wiggle just below the electron before looping around the nucleus. Its arrowhead also stops short of the nucleus, so the final fall into the nucleus is implied rather than shown. The spheres have small glossy highlights that lean slightly away from the flat style.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Redraw the path as one continuous spiral whose radius shrinks steadily from the electron. End the arrowhead touching or pointing directly into the nucleus. Remove the specular highlights for a flatter look.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Motion with a few lines: an electron on a dashed orbit around a nucleus, with a red dashed path spiraling inward and one arrowhead, showing the fall classical physics predicted. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "spiral-en-1",
+        "userInput": {
+          "caseId": "spiral-en",
+          "category": "science",
+          "format": "step",
+          "language": "en",
+          "scene": {
+            "labels": [{ "target": "next to the blue electron", "text": "electron" }],
+            "layout": "single",
+            "motion": "a red dashed path spirals inward from the electron to the nucleus, with one arrowhead",
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a small red nucleus with a blue electron on a faint dashed circular orbit"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "A small house with a yellow door stands beside a sign on a post that shows only a key symbol. This clearly conveys a house for rent, and nothing in the image contradicts the scene. The key is slightly small.",
+          "score": 9,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is a flat illustration with rounded shapes, soft ground shadows, a light plain background and plenty of empty space. Its palette of lavender and purple with yellow and a coral accent is soft. The only weakness is that the pale walls have low contrast against the background.",
+          "score": 9,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters, numbers or captions anywhere; the sign shows only a key symbol, as required.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3625,
+          "outputTokens": 472,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The house walls are a very pale lavender that sits close to the off-white background, so the house silhouette reads mostly through the roof, door and bushes. The key symbol's yellow on coral is somewhat low in contrast and small inside the sign.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Enlarge the key symbol slightly or darken its outline so it reads instantly. Give the house walls a touch more tone, or a soft edge shadow, so they separate from the background.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A language course scene: a small house with a sign for rent that shows a key symbol. The image must contain no text at all: any letters, numbers or captions are a major error.",
+        "id": "house-language-1",
+        "userInput": {
+          "caseId": "house-language",
+          "category": "languages",
+          "format": "step",
+          "language": "pt",
+          "scene": {
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a sign on a post stands beside the house and shows only a key symbol",
+            "supportingObjects": ["a sign on a post with a key symbol"],
+            "focalObject": "a small house with a yellow door"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "A recognizable green leaf is the focal object, with a small sun and dashed rays heading toward it and a glow where the light hits. The idea reads at a glance. Two things weaken the light-landing-on-leaf relation: the rays are blue and have inconsistent arrowheads, and the lone arrowhead stops short of the leaf.",
+          "score": 8,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is a flat illustration with rounded shapes, a soft ambient shadow, a very light plain background, dashed motion lines and generous empty space. It uses few colors, with coral as the accent. Mild gradients and the glow keep it from being perfectly flat.",
+          "score": 8,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "A careful check of the whole image finds no letters, numbers or captions, as the case requires.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2943,
+          "outputTokens": 867,
+          "reasoningTokens": 253
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The sunlight rays are cool lavender-blue rather than a warm light color, and only one of the three dashed rays has an arrowhead. That arrowhead stops short of the leaf and points slightly past its edge, which weakens the 'catching sunlight' relation. The sun is coral-red, which reads a little alarming rather than sunny. The leaf uses soft gradients and a glow spot that drift slightly from strictly flat shapes.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give all rays a consistent warm yellow tone and end them on the leaf's glowing spot so the light clearly lands on it. Use a warmer yellow-orange sun that still works as the accent. Move the leaf and sun closer together so the pairing reads more strongly at small thumbnail size.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A chapter cover for photosynthesis: one green leaf catching sunlight, readable as a small square thumbnail. The image must contain no text at all: any letters, numbers or captions are a major error.",
+        "id": "cover-photosynthesis-1",
+        "userInput": {
+          "caseId": "cover-photosynthesis",
+          "category": "science",
+          "format": "cover",
+          "language": "en",
+          "scene": {
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": ["a small sun"],
+            "focalObject": "a green leaf catching rays of sunlight"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-image"
+}

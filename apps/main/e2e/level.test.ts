@@ -2,6 +2,7 @@ import { type Browser } from "@playwright/test";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
+import { MODES, type Mode, expectMode, showInMode } from "./learn-personas";
 
 /**
  * Creates an isolated learner at an exact Brain Power total so Level assertions
@@ -11,11 +12,13 @@ async function createLevelTestPage({
   baseURL,
   browser,
   browserLocale,
+  mode = "focus",
   totalBrainPower,
 }: {
   baseURL: string;
   browser: Browser;
   browserLocale?: string;
+  mode?: Mode;
   totalBrainPower: bigint;
 }) {
   const user = await createE2EUser(baseURL, { orgRole: "member" });
@@ -26,6 +29,7 @@ async function createLevelTestPage({
     storageState: user.storageState,
   });
 
+  await showInMode(browserContext, { mode, userId: user.id });
   const page = await browserContext.newPage();
 
   return { browserContext, page };
@@ -42,41 +46,45 @@ test.describe("Level Page", () => {
   });
 
   test.describe("Authenticated Users", () => {
-    test("shows the current level and the progress that moves learning forward", async ({
-      baseURL,
-      browser,
-    }) => {
-      const { browserContext, page } = await createLevelTestPage({
-        baseURL: baseURL!,
+    for (const mode of MODES) {
+      test(`shows the current level and the progress that moves learning forward in ${mode}`, async ({
+        baseURL,
         browser,
-        totalBrainPower: 15_000n,
+      }) => {
+        const { browserContext, page } = await createLevelTestPage({
+          baseURL: baseURL!,
+          browser,
+          mode,
+          totalBrainPower: 15_000n,
+        });
+
+        try {
+          await page.goto("/level");
+          await expectMode(page, mode);
+
+          await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeVisible();
+          await expect(page.getByText(/^orange belt · level 8$/iu)).toBeVisible();
+          await expect(page.getByText(/^500 bp to next level$/iu)).toBeVisible();
+          await expect(page.getByText(/^15,000 bp$/iu)).toBeVisible();
+
+          const levelProgress = page.getByRole("progressbar", { name: /500 bp to next level/iu });
+
+          await expect(levelProgress).toBeVisible();
+          await expect(levelProgress).toHaveAttribute("aria-valuenow", "50");
+          await expect(levelProgress).toContainText("500 of 1,000 BP");
+
+          await expect(page.getByRole("heading", { name: /belt progression/iu })).toBeVisible();
+          await expect(page.getByRole("heading", { name: /how levels work/iu })).toBeVisible();
+          await expect(page.getByText(/brain power never goes down/iu)).toBeVisible();
+
+          await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
+          await expect(page.getByRole("figure", { name: /brain power chart/iu })).toHaveCount(0);
+          await expect(page.getByRole("article", { name: /highest bp/iu })).toHaveCount(0);
+        } finally {
+          await browserContext.close();
+        }
       });
-
-      try {
-        await page.goto("/level");
-
-        await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeVisible();
-        await expect(page.getByText(/^orange belt · level 8$/iu)).toBeVisible();
-        await expect(page.getByText(/^500 bp to next level$/iu)).toBeVisible();
-        await expect(page.getByText(/^15,000 bp$/iu)).toBeVisible();
-
-        const levelProgress = page.getByRole("progressbar", { name: /500 bp to next level/iu });
-
-        await expect(levelProgress).toBeVisible();
-        await expect(levelProgress).toHaveAttribute("aria-valuenow", "50");
-        await expect(levelProgress).toContainText("500 of 1,000 BP");
-
-        await expect(page.getByRole("heading", { name: /belt progression/iu })).toBeVisible();
-        await expect(page.getByRole("heading", { name: /how levels work/iu })).toBeVisible();
-        await expect(page.getByText(/brain power never goes down/iu)).toBeVisible();
-
-        await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
-        await expect(page.getByRole("figure", { name: /brain power chart/iu })).toHaveCount(0);
-        await expect(page.getByRole("article", { name: /highest bp/iu })).toHaveCount(0);
-      } finally {
-        await browserContext.close();
-      }
-    });
+    }
 
     test("formats level progress using the app locale", async ({ baseURL, browser }) => {
       const { browserContext, page } = await createLevelTestPage({

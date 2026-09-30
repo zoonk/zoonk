@@ -1,5 +1,5 @@
 import "server-only";
-import { type Sql, prisma, sql } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { getProgressSession } from "./_utils/progress-cache";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { type ScoreDateRange, getScoreDateRange } from "./score-date-range";
@@ -25,14 +25,16 @@ type WeekdayScoreRow = {
   dayOfWeek: number;
 };
 
-type TimeScoreRow = {
-  correctAnswers: number | null;
-  incorrectAnswers: number | null;
-  period: number | null;
+type HourScoreRow = {
+  _sum: { correctAnswers: number | null; incorrectAnswers: number | null };
+  hour: number;
 };
+
+type AnswerTotals = { correctAnswers: number; incorrectAnswers: number };
 
 const WEEKDAY_COUNT = 7;
 const TIME_PERIOD_COUNT = 4;
+const HOURS_PER_TIME_PERIOD = 6;
 
 const EMPTY_SCORE_PERFORMANCE: ScorePerformance = {
   correctAnswers: 0,
@@ -55,16 +57,52 @@ function toWeekdayScorePerformance(row: WeekdayScoreRow): WeekdayScorePattern | 
 }
 
 /**
- * Converts one time-of-day aggregate into the shared Score shape while keeping
- * the existing 0-to-3 period key used by Home and translations.
+ * Sums the ledger's hourly answer totals that fall in one 0-to-3 daypart
+ * (night, morning, afternoon, evening), the period key used by Home and
+ * translations.
  */
-function toTimeScorePerformance(row: TimeScoreRow): TimeScorePattern | null {
-  const performance = getScorePerformance({
-    correctAnswers: row.correctAnswers ?? 0,
-    incorrectAnswers: row.incorrectAnswers ?? 0,
-  });
+function getPeriodAnswerTotals({
+  period,
+  rows,
+}: {
+  period: number;
+  rows: HourScoreRow[];
+}): AnswerTotals {
+  const periodRows = rows.filter((row) => Math.floor(row.hour / HOURS_PER_TIME_PERIOD) === period);
 
-  return performance ? { ...performance, period: row.period ?? 0 } : null;
+  return {
+    correctAnswers: periodRows.reduce((total, row) => total + (row._sum.correctAnswers ?? 0), 0),
+    incorrectAnswers: periodRows.reduce(
+      (total, row) => total + (row._sum.incorrectAnswers ?? 0),
+      0,
+    ),
+  };
+}
+
+/**
+ * Converts one daypart's answer totals into the shared Score shape while
+ * keeping its period key.
+ */
+function toTimeScorePattern({
+  period,
+  rows,
+}: {
+  period: number;
+  rows: HourScoreRow[];
+}): TimeScorePattern | null {
+  const performance = getScorePerformance(getPeriodAnswerTotals({ period, rows }));
+
+  return performance ? { ...performance, period } : null;
+}
+
+/**
+ * Converts hourly ledger totals into daypart Score rows, keeping only the
+ * dayparts with answers.
+ */
+function getTimeScorePatterns(rows: HourScoreRow[]): TimeScorePattern[] {
+  return getObservedPerformance(
+    Array.from({ length: TIME_PERIOD_COUNT }, (_, period) => toTimeScorePattern({ period, rows })),
+  );
 }
 
 /**
@@ -76,52 +114,36 @@ function getObservedPerformance<T>(rows: (T | null)[]): T[] {
 }
 
 /**
- * Uses an explicit SQL predicate for the shared closed range because raw-query
- * interpolation cannot accept Prisma's object-shaped date filter.
- */
-function getAnsweredAtRangeFilter({ endDate, startDate }: { endDate: Date; startDate: Date }): Sql {
-  return sql`answered_at >= ${startDate} AND answered_at <= ${endDate}`;
-}
-
-/**
  * Loads weekday and time-of-day aggregates in parallel so the Patterns page
- * gets one coherent window without creating a database waterfall.
- * Attempts without saved answer totals retain their original boolean score.
+ * gets one coherent window without creating a database waterfall. Weekdays
+ * come from the daily totals and dayparts from the learning ledger's
+ * learner-local hour, so neither depends on content tables. A session's own
+ * row sums the answers its lessons and blocks already recorded, so it's left
+ * out to count each answer once.
  */
 async function queryScorePatterns({
-  dailyProgress,
-  stepAttempts,
+  endDate,
+  startDate,
   userId,
 }: ScoreDateRange & { userId: string }): Promise<ScorePatternsData | null> {
-  const answeredAtRangeFilter = getAnsweredAtRangeFilter(stepAttempts);
-
-  const [weekdayRows, timeRows] = await Promise.all([
+  const [weekdayRows, hourRows] = await Promise.all([
     prisma.dailyProgress.groupBy({
       _sum: { correctAnswers: true, incorrectAnswers: true },
       by: ["dayOfWeek"],
       orderBy: { dayOfWeek: "asc" },
-      where: { date: { gte: dailyProgress.startDate, lte: dailyProgress.endDate }, userId },
+      where: { date: { gte: startDate, lte: endDate }, userId },
     }),
-    prisma.$queryRaw<TimeScoreRow[]>`
-      SELECT
-        CASE
-          WHEN hour_of_day BETWEEN 0 AND 5 THEN 0
-          WHEN hour_of_day BETWEEN 6 AND 11 THEN 1
-          WHEN hour_of_day BETWEEN 12 AND 17 THEN 2
-          ELSE 3
-        END AS "period",
-        SUM(COALESCE(correct_answers, is_correct::int))::int AS "correctAnswers",
-        SUM(COALESCE(incorrect_answers, (NOT is_correct)::int))::int AS "incorrectAnswers"
-      FROM step_attempts
-      WHERE user_id = ${userId} AND ${answeredAtRangeFilter}
-      GROUP BY 1
-      ORDER BY 1
-    `,
+    prisma.learningEvent.groupBy({
+      _sum: { correctAnswers: true, incorrectAnswers: true },
+      by: ["hour"],
+      orderBy: { hour: "asc" },
+      where: { kind: { not: "session" }, localDate: { gte: startDate, lte: endDate }, userId },
+    }),
   ]);
 
   const weekdays = getObservedPerformance(weekdayRows.map((row) => toWeekdayScorePerformance(row)));
 
-  const times = getObservedPerformance(timeRows.map((row) => toTimeScorePerformance(row)));
+  const times = getTimeScorePatterns(hourRows);
 
   if (weekdays.length === 0 && times.length === 0) {
     return null;

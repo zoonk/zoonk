@@ -22,7 +22,7 @@ export async function generateAudioAction(formData: FormData) {
 
   const model = getSpeechModel(modelValue);
 
-  const { data: audioUrl, error } = await generateLanguageAudio({
+  const { data: audio, error } = await generateLanguageAudio({
     language,
     ...(model ? { model } : {}),
     orgSlug: "evals",
@@ -35,5 +35,5 @@ export async function generateAudioAction(formData: FormData) {
     return { error: error.message };
   }
 
-  return { audioUrl, success: true };
+  return { audioUrl: audio.url, success: true };
 }

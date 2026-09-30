@@ -1,19 +1,15 @@
+import { describe, expect, it } from "vitest";
 import {
   type FillBlankStepContent,
   type MatchColumnsStepContent,
   type MultipleChoiceStepContent,
-  type SelectImageStepContent,
-  type SortOrderStepContent,
-} from "@zoonk/core/steps/contract/content";
-import { describe, expect, it } from "vitest";
+} from "../../library/steps/contract/language-exercises";
 import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
-  checkSelectImageAnswer,
   checkSingleMatchPair,
-  checkSortOrderAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
 
@@ -135,7 +131,6 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toStrictEqual({
-      answerCounts: { correct: 2, incorrect: 0 },
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
@@ -149,7 +144,6 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toStrictEqual({
-      answerCounts: { correct: 2, incorrect: 0 },
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
@@ -163,16 +157,6 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 1)).toStrictEqual({
-      answerCounts: { correct: 2, incorrect: 1 },
-      correctAnswer: null,
-      feedback: null,
-      isCorrect: false,
-    });
-  });
-
-  it("counts mistakes up to the supported per-step limit", () => {
-    expect(checkMatchColumnsAnswer(content, content.pairs, 10_000)).toStrictEqual({
-      answerCounts: { correct: 2, incorrect: 10_000 },
       correctAnswer: null,
       feedback: null,
       isCorrect: false,
@@ -239,72 +223,6 @@ describe(checkMatchColumnsAnswer, () => {
         0,
       ),
     ).toStrictEqual({ correctAnswer: null, feedback: null, isCorrect: false });
-  });
-});
-
-describe(checkSortOrderAnswer, () => {
-  const content: SortOrderStepContent = {
-    feedback: "Correct order.",
-    items: ["one", "two", "three"],
-    question: "Sort these items.",
-  };
-
-  it("returns correct for matching order", () => {
-    expect(checkSortOrderAnswer(content, ["one", "two", "three"])).toStrictEqual({
-      correctAnswer: "one → two → three",
-      feedback: "Correct order.",
-      isCorrect: true,
-    });
-  });
-
-  it("returns incorrect for wrong order", () => {
-    expect(checkSortOrderAnswer(content, ["three", "two", "one"])).toStrictEqual({
-      correctAnswer: "one → two → three",
-      feedback: "Correct order.",
-      isCorrect: false,
-    });
-  });
-
-  it("returns incorrect when user provides extra entries", () => {
-    expect(checkSortOrderAnswer(content, ["one", "two", "three", "four"])).toStrictEqual({
-      correctAnswer: "one → two → three",
-      feedback: "Correct order.",
-      isCorrect: false,
-    });
-  });
-});
-
-describe(checkSelectImageAnswer, () => {
-  const content: SelectImageStepContent = {
-    options: [
-      { feedback: "Yes, a cat!", id: "cat", isCorrect: true, prompt: "A cat" },
-      { feedback: "That's a dog.", id: "dog", isCorrect: false, prompt: "A dog" },
-    ],
-    question: "Which image shows a cat?",
-  };
-
-  it("returns correct with feedback for correct option id", () => {
-    expect(checkSelectImageAnswer(content, "cat")).toStrictEqual({
-      correctAnswer: "A cat",
-      feedback: "Yes, a cat!",
-      isCorrect: true,
-    });
-  });
-
-  it("returns incorrect with feedback for wrong option id", () => {
-    expect(checkSelectImageAnswer(content, "dog")).toStrictEqual({
-      correctAnswer: "A cat",
-      feedback: "That's a dog.",
-      isCorrect: false,
-    });
-  });
-
-  it("returns incorrect with null feedback for unknown option id", () => {
-    expect(checkSelectImageAnswer(content, "missing")).toStrictEqual({
-      correctAnswer: "A cat",
-      feedback: null,
-      isCorrect: false,
-    });
   });
 });
 

@@ -1,16 +1,16 @@
 "use client";
 
+import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { usePlayerInteractionState } from "../player-context";
-import { type SelectedAnswer } from "../player-reducer";
 import { MAX_NUMBER_KEY_SHORTCUT, getNumberKeyShortcut } from "../player-shortcuts";
-import { useOptionKeyboard } from "../use-option-keyboard";
+import { type SelectedAnswer } from "../step-answer";
 import {
   type ItemVisualState,
   type MatchAttempt,
@@ -56,7 +56,7 @@ function MatchItem({
       aria-keyshortcuts={visibleShortcut ?? undefined}
       aria-pressed={state === "selected"}
       className={cn(
-        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
+        "border-border flex min-h-11 items-center rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
         getItemClassName(state),
       )}
       aria-disabled={isLocked || undefined}
@@ -64,19 +64,21 @@ function MatchItem({
       onClick={onTap}
       type="button"
     >
-      {shortcut && (
-        <ResultKbd
-          className={cn(
-            "hidden shrink-0 lg:pointer-fine:inline-flex",
-            !visibleShortcut && "invisible",
-          )}
-          isSelected={state === "selected"}
-        >
-          {shortcut}
-        </ResultKbd>
-      )}
+      {/* The shortcut sits on the label's first line when a long label wraps. */}
+      <span className="flex min-w-0 items-start gap-2">
+        {shortcut && (
+          <span
+            className={cn(
+              "hidden h-lh flex-none items-center lg:pointer-fine:flex",
+              !visibleShortcut && "invisible",
+            )}
+          >
+            <ResultKbd isSelected={state === "selected"}>{shortcut}</ResultKbd>
+          </span>
+        )}
 
-      <span className="min-w-0">{displayLabel}</span>
+        <span className="min-w-0">{displayLabel}</span>
+      </span>
     </button>
   );
 }
@@ -149,7 +151,7 @@ export function MatchColumnsStep({
   onSelectAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
@@ -205,7 +207,7 @@ export function MatchColumnsStep({
         setSelected(null);
 
         if (nextCorrect.length === content.pairs.length) {
-          onSelectAnswer(step.id, {
+          onSelectAnswer({
             kind: "matchColumns",
             mistakes,
             userPairs: nextCorrect.map((attempt) => attempt.pair),
@@ -227,20 +229,19 @@ export function MatchColumnsStep({
         }, FLASH_DURATION);
       }
     },
-    [content, correctMatches, flashingMatch, mistakes, onSelectAnswer, selected, step.id, trigger],
+    [content, correctMatches, flashingMatch, mistakes, onSelectAnswer, selected, trigger],
   );
 
-  useOptionKeyboard({
-    enabled: !allMatched && flashingMatch === null,
-    interactionState,
-    onSelect: (index) => {
+  useNumberKeys({
+    count: Math.min(keyboardItems.length, MAX_NUMBER_KEY_SHORTCUT),
+    enabled: !allMatched && flashingMatch === null && interactionState !== "paused",
+    onPick: (index) => {
       const item = keyboardItems[index];
 
       if (item) {
         handleTap(item);
       }
     },
-    optionCount: Math.min(keyboardItems.length, MAX_NUMBER_KEY_SHORTCUT),
   });
 
   const question = content.question ?? t("Match the pairs.");

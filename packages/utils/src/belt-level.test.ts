@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateBeltLevel } from "./belt-level";
+import { calculateBeltLevel, getBeltStartBrainPower } from "./belt-level";
 
 describe(calculateBeltLevel, () => {
   describe("white belt (250 BP per level)", () => {
@@ -389,6 +389,18 @@ describe(calculateBeltLevel, () => {
     it("tracks BP progress just before level-up", () => {
       const result = calculateBeltLevel(248);
       expect(result.progressInLevel).toBe(248);
+    });
+  });
+});
+
+describe(getBeltStartBrainPower, () => {
+  it("returns where each belt color starts", () => {
+    expect(getBeltStartBrainPower("white")).toBe(0);
+    expect(getBeltStartBrainPower("orange")).toBe(7500);
+
+    expect(calculateBeltLevel(getBeltStartBrainPower("green"))).toMatchObject({
+      color: "green",
+      level: 1,
     });
   });
 });

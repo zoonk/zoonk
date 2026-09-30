@@ -1,33 +1,52 @@
+/// A subject in one language. Its outline is a set of shared chapters placed in level bands
+/// (`CourseChapter`). A private course is built for one learner's too-specific goal: `userId` is its
+/// owner, and it is never indexed or reused.
 model Course {
-  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  familyId         String?                @map("family_id") @db.Uuid
-  family           CourseFamily?          @relation(fields: [familyId], references: [id], onDelete: SetNull)
-  organizationId   String?                @map("organization_id") @db.Uuid
-  organization     Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId           String?                @map("user_id") @db.Uuid
-  user             User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  format           CourseFormat           @default(core)
-  completedAt      DateTime?              @map("completed_at")
-  isPublished      Boolean                @default(false) @map("is_published")
-  language         String                 @db.VarChar(10)
-  slug             String
-  title            String
-  normalizedTitle  String                 @map("normalized_title")
-  description      String?
-  landingPage      Json?                  @map("landing_page")
-  targetLanguage   String?                @map("target_language") @db.VarChar(10)
-  generationStatus GenerationStatus       @default(completed) @map("generation_status")
-  generationRunId  String?                @map("generation_run_id")
-  imageUrl         String?                @map("image_url")
-  userCount        Int                    @default(0) @map("user_count")
-  createdAt        DateTime               @default(now()) @map("created_at")
-  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
-  categories       CourseCategory[]
-  chapters         Chapter[]
-  completions      CourseCompletion[]
-  prompts          CoursePrompt[]
-  users            CourseUser[]
-  editionRequests  CourseEditionRequest[]
+  id                   String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  familyId             String?           @map("family_id") @db.Uuid
+  family               CourseFamily?     @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  organizationId       String?           @map("organization_id") @db.Uuid
+  organization         Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId               String?           @map("user_id") @db.Uuid
+  user                 User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  format               CourseFormat      @default(core)
+  isPublished          Boolean           @default(false) @map("is_published")
+  language             String            @db.VarChar(10)
+  slug                 String
+  title                String
+  normalizedTitle      String            @map("normalized_title")
+  description          String?
+  landingPage          Json?             @map("landing_page")
+  targetLanguage       String?           @map("target_language") @db.VarChar(10)
+  imageUrl             String?           @map("image_url")
+  userCount            Int               @default(0) @map("user_count")
+  visibility           LibraryVisibility @default(public)
+  /// Whether every chapter with its objectives has been written for this course.
+  outlineStatus        GenerationStatus? @map("outline_status")
+  outlineRunId         String?           @map("outline_run_id")
+  /// The AI run that created the course and wrote its title. The `details*` columns name the run
+  /// that wrote its description, landing page and categories, and the `icon*` columns the run that
+  /// drew its icon. Each is null when people wrote that part, when no model was needed (a language
+  /// course's category) and for courses made before generated rows stored their provenance.
+  model                String?
+  promptVersion        String?           @map("prompt_version")
+  runId                String?           @map("run_id")
+  generatedAt          DateTime?         @map("generated_at")
+  detailsModel         String?           @map("details_model")
+  detailsPromptVersion String?           @map("details_prompt_version")
+  detailsRunId         String?           @map("details_run_id")
+  detailsGeneratedAt   DateTime?         @map("details_generated_at")
+  iconModel            String?           @map("icon_model")
+  iconPromptVersion    String?           @map("icon_prompt_version")
+  iconRunId            String?           @map("icon_run_id")
+  iconGeneratedAt      DateTime?         @map("icon_generated_at")
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @default(now()) @updatedAt @map("updated_at")
+  categories           CourseCategory[]
+  prompts              CoursePrompt[]
+  courseChapters       CourseChapter[]
+  homeChapters         Chapter[]
+  goals                Goal[]
 
   @@unique([organizationId, slug], name: "orgSlug")
   @@unique([userId, slug], name: "userSlug")
@@ -48,36 +67,21 @@ model CourseFamily {
   @@map("course_families")
 }
 
-model CourseEditionRequest {
-  id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  sourceCourseId String       @map("source_course_id") @db.Uuid
-  sourceCourse   Course       @relation(fields: [sourceCourseId], references: [id], onDelete: Cascade)
-  language       String       @db.VarChar(10)
-  coursePromptId String       @map("course_prompt_id") @db.Uuid
-  coursePrompt   CoursePrompt @relation(fields: [coursePromptId], references: [id], onDelete: Cascade)
-  createdAt      DateTime     @default(now()) @map("created_at")
-
-  @@unique([sourceCourseId, language], name: "sourceLanguage")
-  @@index([coursePromptId])
-  @@map("course_edition_requests")
-}
-
 model CoursePrompt {
-  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  courseId         String?                @map("course_id") @db.Uuid
-  course           Course?                @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  language         String                 @db.VarChar(10)
+  id               String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courseId         String?            @map("course_id") @db.Uuid
+  course           Course?            @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  language         String             @db.VarChar(10)
   prompt           String
-  normalizedPrompt String                 @map("normalized_prompt")
+  normalizedPrompt String             @map("normalized_prompt")
   intent           CoursePromptIntent
-  courseFormat     CourseFormat?          @map("course_format")
-  canonicalTitle   String?                @map("canonical_title")
-  targetLanguage   String?                @map("target_language") @db.VarChar(10)
-  generationStatus GenerationStatus?      @map("generation_status")
-  generationRunId  String?                @map("generation_run_id")
-  createdAt        DateTime               @default(now()) @map("created_at")
-  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
-  editionRequests  CourseEditionRequest[]
+  courseFormat     CourseFormat?      @map("course_format")
+  canonicalTitle   String?            @map("canonical_title")
+  targetLanguage   String?            @map("target_language") @db.VarChar(10)
+  generationStatus GenerationStatus?  @map("generation_status")
+  generationRunId  String?            @map("generation_run_id")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
 
   @@unique([language, normalizedPrompt], name: "languageNormalizedPrompt")
   @@index([courseId])
@@ -96,17 +100,4 @@ model CourseCategory {
   @@unique([courseId, category], name: "courseCategory")
   @@index([category])
   @@map("course_categories")
-}
-
-model CourseUser {
-  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  courseId  String   @map("course_id") @db.Uuid
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  userId    String   @map("user_id") @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  startedAt DateTime @default(now()) @map("started_at")
-
-  @@unique([courseId, userId], name: "courseUser")
-  @@index([userId])
-  @@map("course_users")
 }

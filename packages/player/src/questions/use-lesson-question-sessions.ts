@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useReducer, useRef } from "react";
-import { type PlayerQuestionContext } from "../player-context";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import {
   INITIAL_LESSON_QUESTION_SESSIONS,
   getLessonQuestionSession,
@@ -9,7 +9,7 @@ import {
 } from "./lesson-question-sessions";
 import { type LessonQuestionAction } from "./lesson-question-state";
 
-export function useLessonQuestionSessions(activeContext: PlayerQuestionContext) {
+export function useLessonQuestionSessions(activeContext: LessonQuestionContext) {
   const [sessions, dispatchToContext] = useReducer(
     lessonQuestionSessionsReducer,
     INITIAL_LESSON_QUESTION_SESSIONS,
@@ -31,7 +31,7 @@ export function useLessonQuestionSessions(activeContext: PlayerQuestionContext) 
   );
 
   const getState = useCallback(
-    (requestedContext: PlayerQuestionContext) =>
+    (requestedContext: LessonQuestionContext) =>
       getLessonQuestionSession({ context: requestedContext, sessions: currentSessions.current }),
     [],
   );

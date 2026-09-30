@@ -49,5 +49,5 @@ export async function getScore(): Promise<ScorePerformance | null> {
     timeZone: dateContext.timeZone,
   });
 
-  return findScore({ ...dateRange.dailyProgress, userId: session.user.id });
+  return findScore({ ...dateRange, userId: session.user.id });
 }

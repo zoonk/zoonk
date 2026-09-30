@@ -1,0 +1,473 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Percent off: sale prices. Work out what you pay when an item is 20% off. Find a price after a percentage reduction"
+            },
+            { "id": "interest", "text": "Simple interest on a loan. Calculate simple interest" },
+            { "id": "tax", "text": "Sales tax. Add tax to a price at the register" },
+            { "id": "tips", "text": "Tipping at restaurants. Work out a tip on a bill" }
+          ],
+          "targetId": "target"
+        },
+        "id": "en-lesson-discount-1",
+        "userInput": {
+          "subject": {
+            "goal": "Handle money at my new retail job",
+            "item": {
+              "description": "Find the final price of an item on sale",
+              "level": "beginner",
+              "skills": ["Calculate a discounted price"],
+              "title": "Calculate a discount"
+            },
+            "kind": "lesson",
+            "language": "en"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Stoichiometric coefficients. Make atoms match on both sides of a reaction. Adjust coefficients so reactants and products have the same atoms"
+            },
+            { "id": "moles", "text": "The mole. Convert grams to moles with molar mass" },
+            {
+              "id": "bonds",
+              "text": "Ionic and covalent bonds. Tell how atoms share or give electrons"
+            }
+          ],
+          "targetId": "target"
+        },
+        "id": "en-lesson-balance-equations-1",
+        "userInput": {
+          "subject": {
+            "item": {
+              "description": "Make both sides of a chemical equation have the same atoms",
+              "level": "beginner",
+              "skills": ["Balance a chemical equation using coefficients"],
+              "title": "Balance chemical equations"
+            },
+            "kind": "lesson",
+            "language": "en"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "missed" },
+      "steps": [
+        {
+          "conclusion": "Target target not found with terms: balance sheet, assets and liabilities, financial statements, company equity, accounting.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Target target not found with terms: balance sheet, assets and liabilities, financial statements, company equity, accounting.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Target target not found with terms: balance sheet, assets and liabilities, financial statements, company equity, accounting.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Interpret a statement of financial position. Tell what a company owns, owes and what is left for owners"
+            },
+            {
+              "id": "income",
+              "text": "Read an income statement. Follow revenue down to net profit"
+            },
+            {
+              "id": "cash",
+              "text": "Read a cash flow statement. See where cash came from and went"
+            }
+          ],
+          "targetId": "target"
+        },
+        "id": "en-skill-balance-sheet-1",
+        "userInput": {
+          "subject": {
+            "item": {
+              "description": "Understand what a company owns and owes",
+              "title": "Read a balance sheet"
+            },
+            "kind": "skill",
+            "language": "en"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "missed" },
+      "steps": [
+        {
+          "conclusion": "Target target not found with terms: photosynthesis, plant energy, glucose production, light reaction, chloroplast, carbon fixation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Target target not found with terms: photosynthesis, plant energy, glucose production, light reaction, chloroplast, carbon fixation.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Target target not found with terms: photosynthesis, plant energy, glucose production, light reaction, chloroplast, carbon fixation.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "How plants make food. Light-dependent reactions, the Calvin cycle and chlorophyll"
+            },
+            {
+              "id": "respiration",
+              "text": "Cellular respiration. How cells release energy from glucose"
+            },
+            {
+              "id": "cells",
+              "text": "Plant cells. Cell wall, vacuole and other parts of a plant cell"
+            }
+          ],
+          "targetId": "target"
+        },
+        "id": "en-chapter-photosynthesis-1",
+        "userInput": {
+          "subject": {
+            "item": {
+              "description": "How plants turn light into chemical energy",
+              "level": "beginner",
+              "objectives": ["Explain how plants make glucose from light"],
+              "title": "Photosynthesis"
+            },
+            "kind": "chapter",
+            "language": "en"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "IELTS Academic: what to expect on test day. British Council. https://takeielts.britishcouncil.org/academic"
+            },
+            { "id": "toefl", "text": "TOEFL iBT test content. ETS. https://www.ets.org/toefl" },
+            { "id": "cambridge", "text": "C1 Advanced exam format. Cambridge English" }
+          ],
+          "targetId": "target"
+        },
+        "id": "en-source-ielts-1",
+        "userInput": {
+          "subject": {
+            "item": { "publisher": "British Council", "title": "IELTS Academic test format" },
+            "kind": "source",
+            "language": "en"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Circle graph of monthly spending split into rent, food and savings"
+            },
+            { "id": "bar", "text": "Bar graph comparing rainfall in four cities" },
+            { "id": "coins", "text": "A jar of coins on a kitchen table" }
+          ],
+          "targetId": "target"
+        },
+        "id": "en-image-budget-chart-1",
+        "userInput": {
+          "subject": {
+            "item": { "title": "A pie chart with three slices showing a household budget" },
+            "kind": "image",
+            "language": "en"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Grandezas diretamente proporcionais. Descubra um valor desconhecido quando duas grandezas crescem juntas. Montar uma proporção entre duas razões"
+            },
+            { "id": "percent", "text": "Porcentagem. Calcular uma parte de um total" },
+            { "id": "fractions", "text": "Frações equivalentes. Simplificar frações" }
+          ],
+          "targetId": "target"
+        },
+        "id": "pt-lesson-rule-of-three-1",
+        "userInput": {
+          "subject": {
+            "item": {
+              "description": "Encontrar um valor a partir de três valores conhecidos",
+              "level": "beginner",
+              "skills": ["Resolver problemas de regra de três"],
+              "title": "Regra de três simples"
+            },
+            "kind": "lesson",
+            "language": "pt"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Montante com capitalização composta. Como o dinheiro cresce quando os juros rendem juros. Aplicar a fórmula M = C(1+i)^t"
+            },
+            {
+              "id": "simple",
+              "text": "Juros simples. Juros calculados só sobre o capital inicial. Calcular juros simples"
+            },
+            { "id": "inflation", "text": "Inflação e poder de compra. Entender o IPCA" }
+          ],
+          "targetId": "target"
+        },
+        "id": "pt-lesson-compound-interest-1",
+        "userInput": {
+          "subject": {
+            "item": {
+              "description": "Calcular quanto um investimento rende ao longo do tempo",
+              "level": "beginner",
+              "skills": ["Calcular o montante de uma aplicação"],
+              "title": "Juros compostos"
+            },
+            "kind": "lesson",
+            "language": "pt"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Conjugação de verbos regulares no presente do indicativo. Eu falo, tu falas, ele fala"
+            },
+            {
+              "id": "past",
+              "text": "Pretérito perfeito dos verbos regulares. Eu falei, tu falaste"
+            },
+            {
+              "id": "plural",
+              "text": "Plural dos substantivos. Formar o plural de palavras terminadas em -ão"
+            }
+          ],
+          "targetId": "target"
+        },
+        "id": "pt-skill-present-tense-1",
+        "userInput": {
+          "subject": {
+            "item": {
+              "description": "Usar as formas certas dos verbos -ar, -er e -ir no presente",
+              "title": "Flexionar verbos -ar, -er, -ir"
+            },
+            "kind": "skill",
+            "language": "pt"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "A queda da monarquia na França (1789-1799). Tomada da Bastilha, Terror e ascensão de Napoleão"
+            },
+            {
+              "id": "industrial",
+              "text": "Revolução Industrial. Máquinas a vapor e fábricas na Inglaterra"
+            },
+            {
+              "id": "american",
+              "text": "Independência dos Estados Unidos. As treze colônias e 1776"
+            }
+          ],
+          "targetId": "target"
+        },
+        "id": "pt-chapter-french-revolution-1",
+        "userInput": {
+          "subject": {
+            "item": {
+              "description": "Causas, fases e consequências da revolução de 1789",
+              "level": "intermediate",
+              "objectives": ["Explicar por que a monarquia francesa caiu"],
+              "title": "Revolução Francesa"
+            },
+            "kind": "chapter",
+            "language": "pt"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Exame Nacional do Ensino Médio 2026: edital. Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira"
+            },
+            { "id": "encceja", "text": "Edital Encceja 2026. Inep" },
+            { "id": "sisu", "text": "Sisu 2026: cronograma de inscrições. Ministério da Educação" }
+          ],
+          "targetId": "target"
+        },
+        "id": "pt-source-enem-notice-1",
+        "userInput": {
+          "subject": {
+            "item": { "publisher": "Inep", "title": "Edital ENEM 2026" },
+            "kind": "source",
+            "language": "pt"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            { "id": "target", "text": "Diagrama de uma célula eucariótica mostrando organelas" },
+            { "id": "bacteria", "text": "Bactéria em forma de bastonete com flagelo" },
+            { "id": "plant", "text": "Folha verde ao sol com gotas de orvalho" }
+          ],
+          "targetId": "target"
+        },
+        "id": "pt-image-animal-cell-1",
+        "userInput": {
+          "subject": {
+            "item": { "title": "Célula animal com núcleo, mitocôndrias e membrana plasmática" },
+            "kind": "image",
+            "language": "pt"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "library": [
+            {
+              "id": "target",
+              "text": "Probabilidade e estatística. Médias, variação, amostras e testes para analisar dados"
+            },
+            { "id": "calculus", "text": "Cálculo. Limites, derivadas e integrais" },
+            { "id": "finance", "text": "Matemática financeira. Juros, descontos e investimentos" }
+          ],
+          "targetId": "target"
+        },
+        "id": "pt-course-statistics-1",
+        "userInput": {
+          "subject": {
+            "goal": "Analisar dados no trabalho",
+            "item": { "title": "Estatística" },
+            "kind": "course",
+            "language": "pt"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "library-search-terms"
+}

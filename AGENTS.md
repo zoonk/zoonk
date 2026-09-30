@@ -22,6 +22,7 @@
 - Put reusable business rules, authorization, persistence, and orchestration in `@zoonk/core`. Apps own delivery: HTTP parsing/serialization, UI composition, translations, URLs, metadata, and presentation fallbacks. Do not add framework abstraction until another framework is adopted.
 - Apps call authenticated core capabilities rather than supplying an acting user ID. Read the [core capability contract](packages/core/AGENTS.md) when adding or changing those capabilities or their callers.
 - Reusable product behavior must be reachable through the public API. Main owns its [capability parity audit](apps/main/AGENTS.md); API owns the [public contract and transport rules](apps/api/AGENTS.md).
+- AI work (a model call or a workflow that generates) starts only from a POST (a Server Action or an API POST) by a signed-in learner or a guest, never from a GET, a render (`after()` during one included), metadata, an OG image, a sitemap or a page load without a click. The one exception is system work behind a secret, such as the Vercel Cron's `GET /cron/daily-sweeps`.
 
 ## Verification
 
@@ -47,6 +48,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Apple app                                                       | [Apple app](apps/apple/AGENTS.md)                                                  |
 | Android UI                                                      | [Android Material guidelines](.agents/skills/android-material-guidelines/SKILL.md) |
 | AI task prompts                                                 | [AI package](packages/ai/AGENTS.md)                                                |
+| Adding a supported language                                     | [Adding a language](.agents/guides/adding-a-language.md)                           |
 | Local services, sign-in, or validation commands                 | [Development guide](.agents/guides/development.md)                                 |
 
 ## Maintaining these instructions

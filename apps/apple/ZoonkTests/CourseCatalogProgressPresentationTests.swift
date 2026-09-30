@@ -95,6 +95,93 @@ final class CourseCatalogProgressPresentationTests: XCTestCase {
       .lesson(LessonReference((chapter: chapter, lesson: .testFixture))))
   }
 
+  func testLoadedChapterKeepsTheCourseItWasOpenedFrom() {
+    let otherCourse = Course(
+      categories: [],
+      description: nil,
+      generationStatus: .completed,
+      id: CourseSummary.secondTestFixture.id,
+      imageURL: nil,
+      language: "en",
+      organization: .testFixture,
+      slug: CourseSummary.secondTestFixture.slug,
+      targetLanguage: nil,
+      title: CourseSummary.secondTestFixture.title)
+    let sharedChapter = CourseChapter(
+      courseID: otherCourse.id,
+      description: CourseChapter.testFixture.description,
+      generationStatus: .completed,
+      id: CourseChapter.testFixture.id,
+      language: "en",
+      lessonCount: 2,
+      level: .beginner,
+      position: 3,
+      slug: CourseChapter.testFixture.slug,
+      title: CourseChapter.testFixture.title)
+    let openedFromOtherCourse = ChapterReference((course: otherCourse, chapter: sharedChapter))
+
+    let refreshed = ChapterReference(
+      (reference: openedFromOtherCourse, chapter: .resourceTestFixture))
+
+    XCTAssertEqual(refreshed.courseID, otherCourse.id)
+    XCTAssertEqual(refreshed.courseTitle, otherCourse.title)
+    XCTAssertEqual(refreshed.position, 3)
+    XCTAssertEqual(
+      refreshed.key,
+      CatalogChapterKey(chapterID: CourseChapter.testFixture.id, courseID: otherCourse.id))
+  }
+
+  func testSearchedChapterUsesTheLoadedPositionOnlyInTheSameCourse() {
+    let searchResult = CatalogSearchResults.testFixture.chapters[0]
+    let otherCoursePlacement = CourseChapter(
+      courseID: CourseSummary.secondTestFixture.id,
+      description: CourseChapter.testFixture.description,
+      generationStatus: .completed,
+      id: CourseChapter.testFixture.id,
+      language: "en",
+      lessonCount: nil,
+      level: .beginner,
+      position: 5,
+      slug: CourseChapter.testFixture.slug,
+      title: CourseChapter.testFixture.title)
+
+    XCTAssertEqual(
+      ChapterReference((reference: ChapterReference(searchResult), chapter: .resourceTestFixture))
+        .position,
+      CourseChapter.resourceTestFixture.position)
+    XCTAssertNil(
+      ChapterReference((reference: ChapterReference(searchResult), chapter: otherCoursePlacement))
+        .position)
+  }
+
+  func testChaptersGroupIntoLevelBandsInOutlineOrder() {
+    let chapters = [
+      makeChapter(id: "advanced", level: .advanced, position: 3),
+      makeChapter(id: "overview", level: .overview, position: 0),
+      makeChapter(id: "beginner-1", level: .beginner, position: 1),
+      makeChapter(id: "beginner-2", level: .beginner, position: 2),
+    ]
+
+    let bands = courseLevelBands(chapters)
+
+    XCTAssertEqual(bands.map(\.level), [.overview, .beginner, .advanced])
+    XCTAssertEqual(bands[1].chapters.map(\.id), ["beginner-1", "beginner-2"])
+  }
+
+  private func makeChapter(id: String, level: CourseLevel, position: Int) -> CourseChapter {
+    CourseChapter(
+      courseID: Course.testFixture.id,
+      description: "",
+      generationStatus: .completed,
+      id: id,
+      language: "en",
+      lessonCount: 1,
+      level: level,
+      position: position,
+      slug: id,
+      title: id)
+  }
+
   private func continuation(
     hasStarted: Bool,
     completed: Bool

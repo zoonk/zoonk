@@ -1,9 +1,9 @@
-import { prisma } from "@zoonk/db";
+import { randomUUID } from "node:crypto";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { expect, test } from "./fixtures";
 
 test.describe("My Courses", () => {
@@ -42,32 +42,35 @@ test.describe("My Courses", () => {
     await expect(userWithoutProgress).toHaveURL(/\/start$/u);
 
     await expect(
-      userWithoutProgress.getByRole("heading", { name: "What's your goal?" }),
+      userWithoutProgress.getByRole("heading", { name: "What do you want to achieve?" }),
     ).toBeVisible();
   });
 
-  test("removes a course from the list without clearing progress", async ({ baseURL, browser }) => {
-    const [user, organization] = await Promise.all([
+  test("lists the courses of the learner's goals and started lessons", async ({
+    baseURL,
+    browser,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const [user, started] = await Promise.all([
       createE2EUser(baseURL!),
-      organizationFixture({ kind: "brand" }),
+      catalogCourseFixture({ lessonCounts: [1], title: `Started course ${uniqueId}` }),
     ]);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-      title: `Course to remove ${user.id}`,
+    const privateCourse = await courseFixture({
+      title: `My own course ${uniqueId}`,
+      userId: user.id,
+      visibility: "private",
     });
 
-    const chapter = await chapterFixture({ courseId: course.id, organizationId: organization.id });
-
-    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: organization.id });
-
-    const [, lessonProgress] = await Promise.all([
-      courseUserFixture({ courseId: course.id, userId: user.id }),
-      lessonProgressFixture({
-        completedAt: new Date(),
-        durationSeconds: 60,
-        lessonId: lesson.id,
+    await Promise.all([
+      goalFixture({
+        primaryCourseId: privateCourse.id,
+        updatedAt: new Date(Date.now() - 60_000),
+        userId: user.id,
+      }),
+      learningEventFixture({
+        contentIds: { chapterId: started.chapters[0]!.id, lessonId: started.lessons[0]![0]!.id },
         userId: user.id,
       }),
     ]);
@@ -77,29 +80,51 @@ test.describe("My Courses", () => {
 
     await page.goto("/my");
 
-    await expect(page.getByRole("link", { name: course.title })).toBeVisible();
-    await page.getByRole("button", { name: `More options for ${course.title}` }).click();
-    await page.getByRole("menuitem", { name: "Remove from My Courses" }).click();
+    const startedLink = page.getByRole("link", { name: started.course.title });
+    const privateLink = page.getByRole("link", { name: privateCourse.title });
 
-    const confirmation = page.getByRole("alertdialog", { name: `Remove ${course.title}?` });
+    await expect(startedLink).toHaveAttribute(
+      "href",
+      `/b/${started.organization.slug}/c/${started.course.slug}`,
+    );
 
-    await expect(confirmation).toContainText("Your progress will be kept.");
-    await confirmation.getByRole("button", { name: "Remove course" }).click();
-    await expect(page.getByRole("link", { name: course.title })).toHaveCount(0);
+    await expect(privateLink).toHaveAttribute("href", "/plan");
+    await expect(page.getByRole("button", { name: /more options/iu })).toHaveCount(0);
 
-    await expect(async () => {
-      const [courseUser, preservedProgress, updatedCourse] = await Promise.all([
-        prisma.courseUser.findUnique({
-          where: { courseUser: { courseId: course.id, userId: user.id } },
-        }),
-        prisma.lessonProgress.findUnique({ where: { id: lessonProgress.id } }),
-        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      ]);
+    await startedLink.click();
 
-      expect(courseUser).toBeNull();
-      expect(preservedProgress).not.toBeNull();
-      expect(updatedCourse.userCount).toBe(0);
-    }).toPass({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { level: 1, name: started.course.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("a language course shows the flag of the variety it teaches", async ({
+    baseURL,
+    browser,
+  }) => {
+    const user = await createE2EUser(baseURL!);
+
+    const course = await courseFixture({
+      targetLanguage: "es",
+      title: `Spanish course ${randomUUID().slice(0, 8)}`,
+      userId: user.id,
+      visibility: "private",
+    });
+
+    await goalFixture({
+      kind: "language",
+      primaryCourseId: course.id,
+      targetLanguage: "es",
+      userId: user.id,
+    });
+
+    const browserContext = await browser.newContext({ storageState: user.storageState });
+    const page = await browserContext.newPage();
+
+    await page.goto("/my");
+
+    const link = page.getByRole("link", { name: new RegExp(course.title, "u") });
+    await expect(link.getByRole("img", { name: "European Spanish" })).toBeVisible();
 
     await browserContext.close();
   });

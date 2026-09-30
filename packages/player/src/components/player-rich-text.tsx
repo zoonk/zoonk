@@ -1,16 +1,8 @@
 "use client";
 
-import { renderToString } from "katex";
 import { useReplaceName } from "../user-name-context";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
-
-type RichTextSegment =
-  | { kind: "bold"; text: string }
-  | { kind: "code"; text: string }
-  | { kind: "displayMath"; text: string }
-  | { kind: "italic"; text: string }
-  | { kind: "math"; text: string }
-  | { kind: "text"; text: string };
+import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segments";
 
 const MATH_DELIMITERS = [
   { close: "\\\\)", kind: "math" as const, open: "\\\\(" },
@@ -37,7 +29,7 @@ function findNextMathDelimiter(text: string) {
  * Splits lesson prose into math and non-math regions so lightweight Markdown
  * markers never modify LaTeX commands such as \lambda or \theta.
  */
-function parseMathSegments(text: string): RichTextSegment[] {
+function parseMathSegments(text: string): RichInlineSegment[] {
   const delimiter = findNextMathDelimiter(text);
 
   if (!delimiter) {
@@ -67,7 +59,7 @@ function parseMathSegments(text: string): RichTextSegment[] {
  * `greetUser();` keep their literal punctuation instead of being interpreted
  * as lightweight Markdown.
  */
-function parseCodeSegments(text: string): RichTextSegment[] {
+function parseCodeSegments(text: string): RichInlineSegment[] {
   const start = text.indexOf("`");
   const contentStart = start + 1;
   const end = text.indexOf("`", contentStart);
@@ -92,7 +84,7 @@ function parseCodeSegments(text: string): RichTextSegment[] {
  * This intentionally avoids a broad Markdown renderer so generated headings,
  * lists, tables, or links cannot unexpectedly change the player layout.
  */
-function parseEmphasisSegments(text: string): RichTextSegment[] {
+function parseEmphasisSegments(text: string): RichInlineSegment[] {
   const boldStart = text.indexOf("**");
   const italicStart = text.indexOf("*");
   const hasBold = boldStart !== -1;
@@ -124,7 +116,7 @@ function parseMarkedSegment({
   kind: "bold" | "italic";
   open: string;
   text: string;
-}): RichTextSegment[] {
+}): RichInlineSegment[] {
   const start = text.indexOf(open);
   const contentStart = start + open.length;
   const end = text.indexOf(close, contentStart);
@@ -145,29 +137,6 @@ function parseMarkedSegment({
 }
 
 /**
- * Renders LaTeX through KaTeX with errors kept inline. AI-generated formulas
- * should never crash the player, and visible fallback text makes bad formulas
- * reviewable instead of invisible.
- */
-function renderMathToHtml({ displayMode, text }: { displayMode: boolean; text: string }) {
-  return renderToString(normalizeLatexCommands(text), {
-    displayMode,
-    output: "mathml",
-    throwOnError: false,
-    trust: false,
-  });
-}
-
-/**
- * Some structured AI responses include JSON-escaped LaTeX commands as literal
- * learner text, such as `\\rightarrow`. KaTeX expects `\rightarrow`, so the
- * player accepts that common over-escaped shape at render time.
- */
-function normalizeLatexCommands(text: string) {
-  return text.replaceAll(/\\\\[A-Za-z]+/gu, (escapedCommand) => escapedCommand.slice(1));
-}
-
-/**
  * Renders generated lesson copy with only the formatting primitives we support
  * in player content: LaTeX math, inline code, and simple bold/italic emphasis.
  */
@@ -175,44 +144,5 @@ export function PlayerRichText({ text }: { text: string }) {
   const replaceName = useReplaceName();
   const displayText = stripWrappingQuotes(replaceName(text));
 
-  return parseMathSegments(displayText).map((segment, index) => {
-    const key = `${segment.kind}-${index}`;
-
-    if (segment.kind === "bold") {
-      return <strong key={key}>{segment.text}</strong>;
-    }
-
-    if (segment.kind === "italic") {
-      return <em key={key}>{segment.text}</em>;
-    }
-
-    if (segment.kind === "code") {
-      return (
-        <code
-          className="bg-foreground text-background rounded-sm px-1 py-0.5 font-mono text-[0.85em]"
-          key={key}
-        >
-          {segment.text}
-        </code>
-      );
-    }
-
-    if (segment.kind === "math" || segment.kind === "displayMath") {
-      return (
-        <span
-          className={segment.kind === "displayMath" ? "my-3 block overflow-x-auto" : undefined}
-          // eslint-disable-next-line react/no-danger -- KaTeX returns escaped MathML with trust disabled, which lets formulas render without allowing AI-provided HTML.
-          dangerouslySetInnerHTML={{
-            __html: renderMathToHtml({
-              displayMode: segment.kind === "displayMath",
-              text: segment.text,
-            }),
-          }}
-          key={key}
-        />
-      );
-    }
-
-    return <span key={key}>{segment.text}</span>;
-  });
+  return <RichInlineSegments segments={parseMathSegments(displayText)} />;
 }

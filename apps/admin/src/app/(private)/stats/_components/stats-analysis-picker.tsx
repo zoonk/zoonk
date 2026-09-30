@@ -13,7 +13,8 @@ import {
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react";
-import { STATS_ANALYSIS_GROUPS, type StatsAnalysisView } from "../_utils/stats-analysis";
+import { type StatsAnalysisView } from "../_utils/stats-analysis";
+import { STATS_ANALYSIS_GROUPS } from "../_utils/stats-analysis-groups";
 
 /**
  * Builds the destination locally so switching analysis always keeps the useful

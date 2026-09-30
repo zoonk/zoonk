@@ -87,7 +87,7 @@ function CommandDialogDescription({
 function CommandInput({ className, ...props }: AutocompleteInputProps) {
   return (
     <div className="p-1 pb-0" data-slot="command-input-wrapper">
-      <div className="bg-input/30 flex h-9 items-center gap-2 rounded-full px-3">
+      <div className="bg-input/30 flex h-11 items-center gap-2 rounded-full px-3">
         <SearchIcon aria-hidden="true" className="text-muted-foreground size-4" />
         <Autocomplete.Input
           autoFocus
@@ -190,7 +190,7 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
   return (
     <Autocomplete.Item
       className={cn(
-        "group/command-item relative flex w-full max-w-full min-w-0 cursor-default items-center gap-2 overflow-hidden rounded-2xl px-3 py-2 text-sm outline-hidden select-none",
+        "group/command-item relative flex min-h-11 w-full max-w-full min-w-0 cursor-default items-center gap-2 overflow-hidden rounded-2xl px-3 py-2 text-sm outline-hidden select-none",
         "data-highlighted:bg-muted data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,

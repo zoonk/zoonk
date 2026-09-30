@@ -86,6 +86,31 @@ export async function deleteModelOutputs({
   await fs.rm(getOutputsFilePath(taskId, modelId), { force: true });
 }
 
+/**
+ * Drops selected runs from one model's saved outputs so they are generated
+ * again, while every other saved run for that model stays untouched.
+ */
+export async function removeModelOutputRuns({
+  modelId,
+  runIds,
+  taskId,
+}: {
+  modelId: string;
+  runIds: ReadonlySet<string>;
+  taskId: string;
+}): Promise<void> {
+  const outputs = await loadModelOutputs(taskId, modelId);
+
+  if (!outputs) {
+    return;
+  }
+
+  await saveModelOutputs(taskId, modelId, {
+    ...outputs,
+    outputs: outputs.outputs.filter((output) => !runIds.has(output.testCaseId)),
+  });
+}
+
 export const loadModelOutputs = cache(
   async (taskId: string, modelId: string): Promise<ModelOutputs | null> => {
     const filePath = getOutputsFilePath(taskId, modelId);

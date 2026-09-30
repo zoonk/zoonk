@@ -1,7 +1,9 @@
 import { Login, LoginDivider, LoginFooter, LoginHeader, LoginTitle } from "@/components/login";
+import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
+import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
 import { getSession } from "@zoonk/core/users/session";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
 import { EmailLoginForm } from "./email-login-form";
@@ -30,7 +32,7 @@ function PrivacyLink(children: ReactNode) {
 async function LoginView({ searchParams }: PageProps<"/auth/login">) {
   const { redirectTo } = await searchParams;
 
-  const session = await getSession();
+  const [session, locale] = await Promise.all([getSession(), getLocale()]);
 
   if (session && redirectTo) {
     redirect(`/auth/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
@@ -40,6 +42,10 @@ async function LoginView({ searchParams }: PageProps<"/auth/login">) {
 
   return (
     <>
+      <RegisterSharedEventProperties
+        properties={buildSharedEventProperties({ isGuest: !session, locale, platform: "web" })}
+      />
+
       <LoginHeader>
         <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
       </LoginHeader>

@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { type ReactNode, StrictMode, useCallback, useState } from "react";
 import { type Mock, afterEach, describe, expect, it, vi } from "vitest";
 import { buildWordBankOption } from "../_test-utils/player-test-data";
-import { type SelectedAnswer } from "../player-reducer";
+import { type SelectedAnswer } from "../step-answer";
 import { FillBlankStep } from "./fill-blank-step";
 
 vi.mock("next-intl", () => ({ useExtracted: () => (value: string) => value }));
@@ -29,7 +29,6 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
     position: 0,
     sentence: null,
     sentenceWordOptions: [],
-    sortOrderItems: [],
     translationOptions: [],
     vocabularyOptions: [],
     word: null,
@@ -45,26 +44,17 @@ function ParentWithState({
   children,
 }: {
   children: (props: {
-    onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+    onSelectAnswer: (answer: SelectedAnswer | null) => void;
     selectedAnswer?: SelectedAnswer;
   }) => ReactNode;
 }) {
-  const [answers, setAnswers] = useState<Record<string, SelectedAnswer>>({});
+  const [selectedAnswer, setSelectedAnswer] = useState<SelectedAnswer>();
 
-  const handleSelectAnswer = useCallback((stepId: string, answer: SelectedAnswer | null) => {
-    if (answer) {
-      setAnswers((prev) => ({ ...prev, [stepId]: answer }));
-    } else {
-      setAnswers((prev) => {
-        const { [stepId]: _, ...rest } = prev;
-        return rest;
-      });
-    }
+  const handleSelectAnswer = useCallback((answer: SelectedAnswer | null) => {
+    setSelectedAnswer(answer ?? undefined);
   }, []);
 
-  return (
-    <>{children({ onSelectAnswer: handleSelectAnswer, selectedAnswer: answers["step-fb"] })}</>
-  );
+  return <>{children({ onSelectAnswer: handleSelectAnswer, selectedAnswer })}</>;
 }
 
 /**

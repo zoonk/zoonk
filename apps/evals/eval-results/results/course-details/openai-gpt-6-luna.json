@@ -1,0 +1,563 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names substantive contract-law topics and presents a whole-course scope rather than limiting coverage to the supplied chapters. Outcomes are observable and course-specific. The remedies outcome is valid but could more directly express how learners would connect a breach to its consequences. No score cap applies.",
+          "score": 9,
+          "label": "Fit and specificity",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no guarantees, inflated claims, duration statements, or commercial promises. The page frames contract review as identifying issues and preparing questions for qualified legal professionals, not qualifying learners to practice law or advise clients.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 30
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "All four audience items identify recognizable roles and contract-related situations. Opportunities provide credible everyday, freelance, business, workplace, and study contexts without implying professional legal practice.",
+          "score": 10,
+          "label": "Audience and uses",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy consistently uses natural US English, avoids the prohibited expressions and hype, and keeps legal terminology appropriate to a beginner-facing contract-law page.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2009,
+          "inputTokens": 2012,
+          "outputTokens": 608,
+          "reasoningTokens": 202
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the remedies outcome more useful by replacing “Distinguish breach of contract from possible remedies” with an ability such as “Explain common remedies for breach and their limits.” This connects the violation to its possible consequences.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Regulated profession: the course helps someone understand contracts, read them carefully and know when to ask a lawyer; nothing says or implies giving legal advice, representing clients, drafting binding contracts for others or replacing law school or a lawyer\n      - Audience examples like freelancers, small business owners, tenants or students preparing for law school fit\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 to 5 audience items, 4 to 6 outcomes, 3 to 5 opportunities) and 1 or 2 categories; code checks score sizes and category validity, so don't judge them\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": { "categories": ["law"] },
+        "id": "en-contract-law-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Offer, acceptance, consideration and when a promise becomes enforceable.",
+              "level": "beginner",
+              "title": "What makes a contract binding"
+            },
+            {
+              "description": "Common clauses such as termination, liability limits and automatic renewals.",
+              "level": "beginner",
+              "title": "Reading the fine print"
+            },
+            {
+              "description": "Breach, remedies and what courts usually award.",
+              "level": "beginner",
+              "title": "When contracts go wrong"
+            },
+            {
+              "description": "Leases, job offers, app terms and freelance agreements.",
+              "level": "beginner",
+              "title": "Contracts you sign every day"
+            }
+          ],
+          "courseTitle": "Contract law",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description identifies pharmacology and names concrete subject matter, including mechanisms, absorption, elimination, interactions and antibiotic resistance. Medication classes and safety appropriately broaden the scope beyond the initial chapters. Outcomes describe observable, course-specific abilities.",
+          "score": 10,
+          "label": "Fit and specificity",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The page consistently frames the course as academic study and informed communication with healthcare professionals. It does not imply qualification to prescribe, diagnose, treat or select patient doses, and explicitly preserves professional guidance. There are no inflated claims or promises about credentials, employment or other guaranteed results.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 30
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "All audience statements identify relevant roles or situations. Opportunities provide genuine academic and everyday contexts, including family medication use and conversations with healthcare teams. The two academic-study contexts could be diversified with package-insert reading, but no vagueness or outcome-restatement cap is triggered.",
+          "score": 9,
+          "label": "Audience and uses",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy uses natural Brazilian Portuguese throughout, including audience roles. Technical terms are relevant to pharmacology and supported by accessible wording. There are no banned learning formulations, hype or unnecessarily dense passages.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2181,
+          "inputTokens": 2184,
+          "outputTokens": 650,
+          "reasoningTokens": 221
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Replace one of the overlapping academic-study opportunities with reading a package insert and preparing questions for a healthcare professional. This would add a distinct, practical everyday use.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, including audience nouns and roles\n      - Regulated field: frames the course as understanding and study of how medicines act, never as qualifying anyone to prescribe, diagnose, treat or choose doses for patients; nursing or pharmacy students, caregivers and curious people fit\n      - Everyday use such as reading a package insert (bula) or talking with a doctor is welcome\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 to 5 audience items, 4 to 6 outcomes, 3 to 5 opportunities) and 1 or 2 categories; code checks score sizes and category validity, so don't judge them\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": { "categories": ["health", "science"] },
+        "id": "pt-farmacologia-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Receptores, enzimas e o caminho de um remédio da absorção à eliminação.",
+              "level": "beginner",
+              "title": "Como os remédios agem no corpo"
+            },
+            {
+              "description": "Por que a mesma substância muda de efeito pela boca, na veia ou na pele.",
+              "level": "beginner",
+              "title": "Doses e vias de administração"
+            },
+            {
+              "description": "Quando dois remédios, ou um remédio e um alimento, se atrapalham.",
+              "level": "beginner",
+              "title": "Interações e efeitos adversos"
+            },
+            {
+              "description": "Como os antibióticos funcionam e por que o uso errado cria bactérias resistentes.",
+              "level": "beginner",
+              "title": "Antibióticos e resistência"
+            }
+          ],
+          "courseTitle": "Farmacologia",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description defines economics and covers both the supplied chapters and broader course themes, including trade, employment, growth and inequality. Outcomes describe observable economic reasoning rather than merely listing topics. No generic-copy cap applies.",
+          "score": 9,
+          "label": "Fit and specificity",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no guarantees, inflated claims, duration or access statements, or suggestions that the course qualifies learners to provide professional financial advice. Workplace uses are presented without promising employment.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 30
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "Audience items identify recognizable goals and situations. Opportunities provide distinct everyday, educational, workplace and civic contexts, including credit decisions and interpreting news. The page remains suitable for a shared course audience.",
+          "score": 10,
+          "label": "Audience and uses",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy uses Brazilian Portuguese and avoids the prohibited learning verbs and hype. However, the unexplained term “custo de oportunidade” and the awkward phrase “a economia ao redor” slightly weaken beginner accessibility and naturalness, warranting the cap of 8 for jargon or stiff phrasing.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2167,
+          "inputTokens": 2170,
+          "outputTokens": 731,
+          "reasoningTokens": 293
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The language is predominantly natural Brazilian Portuguese, but “custo de oportunidade” appears without a plain-language explanation, and “a economia ao redor” is slightly awkward.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make one outcome more directly practical—for example, comparing credit options by their total cost—to connect the observable abilities more closely to the promised everyday uses.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Names the big ideas of economics (escassez, preços, juros, inflação, papel do governo, comércio) in plain words; Brazilian examples are welcome\n      - Includes everyday uses (orçamento pessoal, entender notícias, decidir sobre crédito) next to work and civic ones, with no promise of a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 to 5 audience items, 4 to 6 outcomes, 3 to 5 opportunities) and 1 or 2 categories; code checks score sizes and category validity, so don't judge them\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": { "categories": ["economics"] },
+        "id": "pt-economia-overview-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Por que toda escolha tem um custo e como isso explica decisões do dia a dia.",
+              "level": "overview",
+              "title": "Escassez e escolhas"
+            },
+            {
+              "description": "Como os preços sobem e descem conforme o que se quer e o que existe.",
+              "level": "overview",
+              "title": "Preços, oferta e demanda"
+            },
+            {
+              "description": "O que os bancos fazem com o seu dinheiro e por que os juros mudam tudo.",
+              "level": "overview",
+              "title": "Dinheiro, bancos e juros"
+            },
+            {
+              "description": "Por que o mesmo salário compra menos com o tempo e quem controla isso.",
+              "level": "overview",
+              "title": "Inflação e poder de compra"
+            },
+            {
+              "description": "Impostos, gastos públicos e dívida, e como afetam o país.",
+              "level": "overview",
+              "title": "O papel do governo"
+            }
+          ],
+          "courseTitle": "Economia",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names relevant language skills and recognizable chapter content while extending beyond the initial beginner band. Outcomes are observable communication abilities rather than topic labels. However, the repeated American-English positioning is not grounded in the supplied course information, and the later-stage progression could be more specific. No generic-copy cap is triggered.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no promises of fluency, certification, employment or other guaranteed results, and no mentions of duration, prices or access rules. The value proposition describes reasonable course abilities without inflated claims.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 30
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "Audience items identify recognizable goals and situations for beginners, travelers, professionals, students and cultural-content viewers. Opportunities are genuine contexts of use across everyday communication, travel, work, study and culture, rather than restated outcomes.",
+          "score": 10,
+          "label": "Audience and uses",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The learner-facing copy is consistently in natural Brazilian Portuguese, including audience labels. It is readable, avoids hype and does not use the prohibited instructional phrasings.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2097,
+          "inputTokens": 2100,
+          "outputTokens": 782,
+          "reasoningTokens": 329
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The copy repeatedly specifies American English and singles out the United States, although the supplied course title and chapters do not establish a regional focus. This unnecessarily narrows the course's positioning.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the whole-course progression more tangible by replacing vague references to more nuanced or detailed conversations with a specific later-stage ability, such as explaining a viewpoint and responding to follow-up questions.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese; the course is English itself, for Brazilian learners\n      - Focuses on communicating in real situations (conversas, viagens, estudo, trabalho, cultura), from first conversations to confident use\n      - Never promises fluency, a certificate, an exam score or a job, and never mentions how long it takes\n      - Categories don't matter for language courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 to 5 audience items, 4 to 6 outcomes, 3 to 5 opportunities) and 1 or 2 categories; code checks score sizes and category validity, so don't judge them\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-ingles-language-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Dizer quem você é, de onde vem e o que faz.",
+              "level": "beginner",
+              "title": "Apresentações"
+            },
+            {
+              "description": "Fazer check-in, pedir informações e resolver problemas simples.",
+              "level": "beginner",
+              "title": "No aeroporto e no hotel"
+            },
+            {
+              "description": "Ler um cardápio, pedir e pagar em um restaurante.",
+              "level": "beginner",
+              "title": "Pedindo comida"
+            },
+            {
+              "description": "Falar sobre o seu dia, marcar compromissos e combinar horários.",
+              "level": "beginner",
+              "title": "Rotina e horários"
+            }
+          ],
+          "courseTitle": "Inglês",
+          "language": "pt",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description clearly defines data analysis and covers organizing, cleaning, summaries, charts, conclusions, and checking AI-generated analysis. It presents a whole-course scope, and all outcomes describe observable abilities. Naming averages and variation would make the summaries outcome slightly more concrete.",
+          "score": 9,
+          "label": "Fit and specificity",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no guaranteed results, employment promises, inflated expertise claims, or statements about duration, pricing, or access. Household budgeting is framed as an everyday use, not professional financial advice.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 30
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "Audience items identify recognizable roles and situations, and opportunities are genuine contexts rather than restated outcomes. Work and personal-finance uses are present, but the expected news-statistics use is missing, and marketing and operations are not explicitly represented.",
+          "score": 8,
+          "label": "Audience and uses",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy consistently uses natural US English, beginner-friendly wording, and direct action verbs. It contains no banned phrasing, hype, or distracting jargon.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2027,
+          "inputTokens": 2030,
+          "outputTokens": 681,
+          "reasoningTokens": 254
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The page includes workplace reports, decisions, and personal finances, but does not explicitly cover marketing, operations, or reading statistics in the news, all named in the expectations.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the summaries outcome more specific by naming the ability to choose an appropriate average and describe how much values vary.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Names concrete parts of data analysis: organizing and cleaning data, summaries, charts, drawing conclusions, checking AI's analysis\n      - Uses at work (reports, decisions, marketing, operations) and everyday life (personal finances, reading statistics in the news) without promising a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 to 5 audience items, 4 to 6 outcomes, 3 to 5 opportunities) and 1 or 2 categories; code checks score sizes and category validity, so don't judge them\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": { "categories": ["tech", "business", "math"] },
+        "id": "en-data-analysis-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Organize raw numbers into tables you can sort, filter and sum.",
+              "level": "beginner",
+              "title": "Spreadsheets for analysis"
+            },
+            {
+              "description": "Fix duplicates, blanks and inconsistent formats before trusting a result.",
+              "level": "beginner",
+              "title": "Cleaning messy data"
+            },
+            {
+              "description": "Summarize a column with the right average and see how much values vary.",
+              "level": "beginner",
+              "title": "Averages and spread"
+            },
+            {
+              "description": "Pick the chart that fits the question and avoid misleading scales.",
+              "level": "beginner",
+              "title": "Charts that tell the truth"
+            },
+            {
+              "description": "Ask an AI assistant for an analysis and verify its numbers and claims.",
+              "level": "beginner",
+              "title": "Checking AI's analysis"
+            }
+          ],
+          "courseTitle": "Data analysis",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description clearly identifies Star Wars and covers the saga, mythology, worldbuilding, filmmaking, expanded stories, and cultural influence. It presents a whole-course scope rather than a chapter list. Outcomes use observable actions tied to concrete Star Wars content, including tracing the Skywalker story and analyzing how the galaxy is constructed. No generic-copy cap applies.",
+          "score": 10,
+          "label": "Fit and specificity",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Claims are measured and consistent with the course content. There are no guarantees, inflated expertise claims, duration or access claims, or career framing. Uses remain cultural, social, critical, and educational.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 30
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "Audience items identify recognizable interests and goals, from connecting the trilogies to examining filmmaking techniques. Opportunities are actual contexts of use, including everyday conversations, film clubs, college study, and fan communities, rather than restated outcomes. No vagueness cap applies.",
+          "score": 10,
+          "label": "Audience and uses",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "All fields use natural US English with clear, beginner-accessible wording. The copy avoids the prohibited phrases, hype, and unnecessary jargon.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2095,
+          "inputTokens": 2098,
+          "outputTokens": 699,
+          "reasoningTokens": 302
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Pop culture: personal, creative, social and cultural uses (discussion, criticism, fan communities, understanding references, storytelling), never careers or jobs\n      - Specific to Star Wars (its saga, characters, world-building, influence on film and franchises), not generic film copy\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 to 5 audience items, 4 to 6 outcomes, 3 to 5 opportunities) and 1 or 2 categories; code checks score sizes and category validity, so don't judge them\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": { "categories": ["culture", "arts"] },
+        "id": "en-star-wars-overview-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "How the Skywalker story unfolds across three trilogies.",
+              "level": "overview",
+              "title": "A saga in nine episodes"
+            },
+            {
+              "description": "The old myths George Lucas borrowed to build his story.",
+              "level": "overview",
+              "title": "Myth and the hero's journey"
+            },
+            {
+              "description": "Planets, species and technology that make the world feel lived-in.",
+              "level": "overview",
+              "title": "Building a galaxy"
+            },
+            {
+              "description": "How the films pushed special effects and sound design forward.",
+              "level": "overview",
+              "title": "Effects that changed movies"
+            },
+            {
+              "description": "Series, games and books that grew the story and its fans.",
+              "level": "overview",
+              "title": "From films to a franchise"
+            }
+          ],
+          "courseTitle": "Star Wars",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "course-details"
+}

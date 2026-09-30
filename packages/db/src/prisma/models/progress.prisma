@@ -1,74 +1,3 @@
-model LessonProgress {
-  id              String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId          String    @map("user_id") @db.Uuid
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lessonId        String    @map("lesson_id") @db.Uuid
-  lesson          Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  startedAt       DateTime  @default(now()) @map("started_at")
-  completedAt     DateTime? @map("completed_at")
-  completedDate   DateTime? @map("completed_date") @db.Date
-  durationSeconds Int?      @map("duration_seconds")
-
-  @@unique([userId, lessonId], name: "userLesson")
-  @@index([lessonId])
-  @@index([userId, completedAt])
-  @@index([userId, completedDate])
-  @@index([startedAt])
-  @@map("lesson_progress")
-}
-
-model ChapterCompletion {
-  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chapterId   String   @map("chapter_id") @db.Uuid
-  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  completedAt DateTime @default(now()) @map("completed_at")
-
-  @@unique([userId, chapterId], name: "userChapterCompletion")
-  @@index([chapterId])
-  @@index([userId, completedAt])
-  @@map("chapter_completions")
-}
-
-model CourseCompletion {
-  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId    String   @map("course_id") @db.Uuid
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  completedAt DateTime @default(now()) @map("completed_at")
-
-  @@unique([userId, courseId], name: "userCourseCompletion")
-  @@index([courseId])
-  @@index([userId, completedAt])
-  @@map("course_completions")
-}
-
-model StepAttempt {
-  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId           String   @map("user_id") @db.Uuid
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stepId           String   @map("step_id") @db.Uuid
-  step             Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  isCorrect        Boolean  @map("is_correct")
-  correctAnswers   Int?     @map("correct_answers")
-  incorrectAnswers Int?     @map("incorrect_answers")
-  answer           Json
-  effects          Json?
-  durationSeconds  Int      @map("duration_seconds")
-  answeredAt       DateTime @default(now()) @map("answered_at")
-  hourOfDay        Int      @map("hour_of_day") @db.SmallInt
-  dayOfWeek        Int      @map("day_of_week") @db.SmallInt
-
-  @@index([userId, answeredAt])
-  @@index([stepId])
-  @@index([userId, dayOfWeek])
-  @@index([userId, hourOfDay])
-  @@index([answeredAt])
-  @@map("step_attempts")
-}
-
 model UserProgress {
   id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId          String   @unique @map("user_id") @db.Uuid
@@ -90,6 +19,8 @@ model DailyProgress {
   incorrectAnswers     Int      @default(0) @map("incorrect_answers")
   staticCompleted      Int      @default(0) @map("static_completed")
   interactiveCompleted Int      @default(0) @map("interactive_completed")
+  /// First completions of lessons on this learner-local day, so Activity never reads content tables.
+  lessonsCompleted     Int      @default(0) @map("lessons_completed")
   brainPowerEarned     Int      @default(0) @map("brain_power_earned")
   timeSpentSeconds     Int      @default(0) @map("time_spent_seconds")
   energyAtEnd          Float    @default(0) @map("energy_at_end")

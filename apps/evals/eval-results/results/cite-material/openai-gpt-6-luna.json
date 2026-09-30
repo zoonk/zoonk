@@ -1,0 +1,123 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Wrong: screen 1: S1:10",
+          "kind": "majorErrors",
+          "score": 9.333333333333334
+        },
+        {
+          "conclusion": "Wrong: screen 1: S1:10",
+          "kind": "minorErrors",
+          "score": 9.333333333333334
+        },
+        {
+          "conclusion": "Wrong: screen 1: S1:10",
+          "kind": "potentialImprovements",
+          "score": 9.333333333333334
+        }
+      ],
+      "testCase": {
+        "expected": { "refs": [[], ["S1:5"], ["S1:6"], ["S1:6", "S1:10"], ["S1:3", "S1:10"], []] },
+        "id": "pt-glycolysis-yield-1",
+        "userInput": {
+          "material": "<page ref=\"S1:2\" of=\"Aula 5 - Glicolise, slide 2\">\nPor que as células respiram?\nObjetivo: transformar a energia da glicose em ATP\nATP = a 'moeda de energia' da célula\nRespiração aeróbia: C6H12O6 + 6 O2 → 6 CO2 + 6 H2O + energia\n</page>\n<page ref=\"S1:3\" of=\"Aula 5 - Glicolise, slide 3\">\nAs três etapas\n1. Glicólise – no citoplasma\n2. Ciclo de Krebs – na matriz mitocondrial\n3. Cadeia respiratória – nas cristas mitocondriais\nMacete da aula: 'Cito-Matriz-Cristas' (CMC)\n</page>\n<page ref=\"S1:5\" of=\"Aula 5 - Glicolise, slide 5\">\nGlicólise: fase de investimento\nGasta 2 ATP para 'ativar' a glicose\nPense num empréstimo: investe 2 para ganhar mais depois\n</page>\n<page ref=\"S1:6\" of=\"Aula 5 - Glicolise, slide 6\">\nGlicólise: fase de rendimento\nProduz 4 ATP (fosforilação no nível do substrato)\nProduz 2 NADH (carrega elétrons para a cadeia respiratória)\nSaldo: 4 − 2 = 2 ATP por glicose\n</page>\n<page ref=\"S1:10\" of=\"Aula 5 - Glicolise, slide 10\">\nPegadinhas de prova\nGlicólise NÃO acontece na mitocôndria\nO saldo da glicólise é 2 ATP, não 4\n</page>",
+          "screens": [
+            "Você come um pão antes da aula. Quanto ATP sobra de cada glicose na glicólise? Chute: 2 ou 4?",
+            "Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como um empréstimo que se paga depois.",
+            "Fase de rendimento: a glicólise produz 4 ATP e 2 NADH.",
+            "Qual é o saldo de ATP da glicólise por glicose? 2 | 4 | 36",
+            "Onde acontece a glicólise? No citoplasma | Na matriz mitocondrial | Nas cristas",
+            "Um corredor amador em Recife sente cãibra depois de uma prova longa. Explique o que isso tem a ver com a energia das células."
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "refs": [["S1:2"], ["S1:3"], ["S1:3"], []] },
+        "id": "pt-respiration-stages-1",
+        "userInput": {
+          "material": "<page ref=\"S1:2\" of=\"Aula 5 - Glicolise, slide 2\">\nPor que as células respiram?\nObjetivo: transformar a energia da glicose em ATP\nATP = a 'moeda de energia' da célula\nRespiração aeróbia: C6H12O6 + 6 O2 → 6 CO2 + 6 H2O + energia\n</page>\n<page ref=\"S1:3\" of=\"Aula 5 - Glicolise, slide 3\">\nAs três etapas\n1. Glicólise – no citoplasma\n2. Ciclo de Krebs – na matriz mitocondrial\n3. Cadeia respiratória – nas cristas mitocondriais\nMacete da aula: 'Cito-Matriz-Cristas' (CMC)\n</page>\n<page ref=\"S1:5\" of=\"Aula 5 - Glicolise, slide 5\">\nGlicólise: fase de investimento\nGasta 2 ATP para 'ativar' a glicose\nPense num empréstimo: investe 2 para ganhar mais depois\n</page>\n<page ref=\"S1:6\" of=\"Aula 5 - Glicolise, slide 6\">\nGlicólise: fase de rendimento\nProduz 4 ATP (fosforilação no nível do substrato)\nProduz 2 NADH (carrega elétrons para a cadeia respiratória)\nSaldo: 4 − 2 = 2 ATP por glicose\n</page>\n<page ref=\"S1:10\" of=\"Aula 5 - Glicolise, slide 10\">\nPegadinhas de prova\nGlicólise NÃO acontece na mitocôndria\nO saldo da glicólise é 2 ATP, não 4\n</page>",
+          "screens": [
+            "A respiração transforma a energia da glicose em ATP, a moeda de energia da célula.",
+            "As três etapas acontecem em lugares diferentes: citoplasma, matriz e cristas. Macete: CMC.",
+            "Em que parte da mitocôndria fica a cadeia respiratória? Nas cristas | Na matriz | No citoplasma",
+            "Pense numa usina elétrica da sua cidade: ela também transforma um combustível em energia útil."
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "refs": [["S1:1"], ["S1:2"], ["S2:4"], ["S2:4"], []] },
+        "id": "en-supply-demand-notes-1",
+        "userInput": {
+          "material": "<page ref=\"S1:1\" of=\"Econ notes\">\nDemand: as price goes up, people buy less (law of demand). Shift vs movement: a price change moves along the curve; income or tastes shift the whole curve.\n</page>\n<page ref=\"S1:2\" of=\"Econ notes\">\nSupply: sellers offer more at higher prices. Equilibrium = where supply meets demand; a shortage happens below it, a surplus above it.\n</page>\n<page ref=\"S2:4\" of=\"Lecture 3 slides, page 4\">\nPrice ceiling (e.g. rent control) set below equilibrium → shortage. Price floor (e.g. minimum wage) above equilibrium → surplus.\n</page>",
+          "screens": [
+            "When the price of coffee rises, people buy less of it: that's the law of demand.",
+            "The market settles where supply meets demand: the equilibrium.",
+            "A rent ceiling below the equilibrium price leads to what? A shortage | A surplus | Nothing changes",
+            "Minimum wage works as a price floor above equilibrium, so it can create a surplus of workers.",
+            "Guess before we start: do airlines charge more on holidays because of demand or because of fuel?"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "refs": [["S1:1", "none"], ["S1:1"], ["S2:1"], ["S1:1"], ["S2:1", "none"]] },
+        "id": "en-tax-deadlines-official-1",
+        "userInput": {
+          "material": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868.\nAn extension gives you more time to file, not more time to pay.\n</page>\n<page ref=\"S2:1\" of=\"IRS, Penalties\">\nFailure to file: usually 5% of the unpaid tax for each month or part of a month a return is late, up to 25%.\nFailure to pay: 0.5% of the unpaid tax for each month or part of a month it stays unpaid, up to 25%.\n</page>",
+          "screens": [
+            "Guess before we start: if you get more time to file your tax return, do you also get more time to pay?",
+            "Your 2025 federal tax return is due April 15, 2026.",
+            "Filing late without an extension usually costs 5% of the unpaid tax for each month, up to 25%.",
+            "Mia sent Form 4868 on April 10, 2026. By when must she pay what she owes? April 15, 2026 | October 15, 2026 | Whenever she files",
+            "Think of your rent: paying it late costs a fee, and taxes work the same way."
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "refs": [["S1:1", "none"], ["S2:1"], ["S1:1"], ["S1:1"], []] },
+        "id": "pt-estabilidade-official-1",
+        "userInput": {
+          "material": "<page ref=\"S1:1\" of=\"Constituição Federal, Art. 41\">\nArt. 41. São estáveis após três anos de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.\n§ 4º Como condição para a aquisição da estabilidade, é obrigatória a avaliação especial de desempenho por comissão instituída para essa finalidade.\n</page>\n<page ref=\"S2:1\" of=\"Constituição Federal, Art. 37\">\nII - a investidura em cargo ou emprego público depende de aprovação prévia em concurso público de provas ou de provas e títulos, de acordo com a natureza e a complexidade do cargo ou emprego.\n</page>",
+          "screens": [
+            "Palpite sem valer ponto: Ana tomou posse num cargo público. Depois de quanto tempo ela pode ficar estável? 2 anos | 3 anos | 5 anos",
+            "Para ocupar um cargo efetivo, é preciso passar num concurso público de provas ou de provas e títulos.",
+            "O servidor concursado fica estável depois de três anos de efetivo exercício no cargo.",
+            "Pedro completou três anos, mas a comissão ainda não fez a avaliação especial de desempenho. Ele já é estável? Sim | Não",
+            "Pense no período de experiência de um emprego: a empresa observa o seu trabalho antes de efetivar."
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "cite-material"
+}

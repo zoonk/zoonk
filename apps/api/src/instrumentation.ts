@@ -6,6 +6,20 @@ export async function register() {
 
   if (process.env.NEXT_RUNTIME === "nodejs") {
     await import("../sentry.server.config");
+
+    const [
+      { registerAiGenerationAnalytics },
+      { registerSubscriptionAnalytics },
+      { registerEvaluationRunLog },
+    ] = await Promise.all([
+      import("@zoonk/core/analytics/ai-generations"),
+      import("@zoonk/core/analytics/subscription-events"),
+      import("@zoonk/core/evaluation-runs/log"),
+    ]);
+
+    registerAiGenerationAnalytics();
+    registerSubscriptionAnalytics();
+    registerEvaluationRunLog();
   }
 
   if (process.env.NEXT_RUNTIME === "edge") {

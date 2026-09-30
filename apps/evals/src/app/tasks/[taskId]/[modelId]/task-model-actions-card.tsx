@@ -1,5 +1,5 @@
 import { ModelStatusBadge, ModelStatusBadgeSkeleton } from "@/components/model-status-badge";
-import { type ModelConfig, getModelDisplayName } from "@/lib/models";
+import { DEFAULT_REASONING, type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type OutputProgress } from "@/lib/output-loader";
 import { type ReviewExportEntry } from "@/lib/review-export";
 import { ButtonSkeleton } from "@zoonk/ui/components/button";
@@ -54,7 +54,11 @@ export function TaskModelActionsCard({
             <input name="taskId" type="hidden" value={taskId} />
             <input name="modelId" type="hidden" value={modelId} />
 
-            <ReasoningSelect reasoning={model.reasoning} />
+            {model.kind === "generation" ? (
+              <ReasoningSelect reasoning={model.reasoning} />
+            ) : (
+              <input name="reasoning" type="hidden" value={DEFAULT_REASONING} />
+            )}
 
             <SubmitButton icon={<SparklesIcon />}>Generate Outputs</SubmitButton>
           </form>

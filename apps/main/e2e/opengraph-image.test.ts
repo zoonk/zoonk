@@ -1,9 +1,15 @@
 import { createHash, randomUUID } from "node:crypto";
 import { type APIRequestContext } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
@@ -116,12 +122,13 @@ test("localizes the shared open graph image for every locale", async ({ context,
   expect(imageHashes.size).toBe(pagePaths.length);
 });
 
-test("generates route-specific open graph images for catalog pages", async ({ page, request }) => {
+test("generates open graph images for course, chapter, and lesson pages", async ({
+  page,
+  request,
+}) => {
   const uniqueId = randomUUID().slice(0, 8);
   const org = await getAiOrganization();
   const courseTitle = `E2E Open Graph Course ${uniqueId}`;
-  const chapterTitle = `E2E Open Graph Chapter ${uniqueId}`;
-  const lessonTitle = `E2E Open Graph Lesson ${uniqueId}`;
 
   const course = await courseFixture({
     description: `A social sharing course ${uniqueId}`,
@@ -133,30 +140,13 @@ test("generates route-specific open graph images for catalog pages", async ({ pa
     title: courseTitle,
   });
 
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    description: `A social sharing chapter ${uniqueId}`,
-    imageUrl: "/catalog/chapters/science.webp",
-    isPublished: true,
-    normalizedTitle: normalizeString(chapterTitle),
-    organizationId: org.id,
-    position: 0,
-    slug: `e2e-og-chapter-${uniqueId}`,
-    title: chapterTitle,
-  });
+  const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+  const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
 
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    description: `A social sharing lesson ${uniqueId}`,
-    imageUrl: "/catalog/lessons/explanation.webp",
-    isPublished: true,
-    kind: "explanation",
-    normalizedTitle: normalizeString(lessonTitle),
-    organizationId: org.id,
-    position: 0,
-    slug: `e2e-og-lesson-${uniqueId}`,
-    title: lessonTitle,
-  });
+  await Promise.all([
+    courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+  ]);
 
   const coursePath = `/b/${org.slug}/c/${course.slug}`;
   const chapterPath = `${coursePath}/ch/${chapter.slug}`;

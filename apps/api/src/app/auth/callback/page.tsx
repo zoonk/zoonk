@@ -2,6 +2,7 @@ import { trackAuthCompleted } from "@/lib/server-track-events";
 import { externalRedirect } from "@zoonk/core/navigation/external-redirect";
 import { getSession } from "@zoonk/core/users/session";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { createOneTimeTokenAction, validateTrustedOriginAction } from "./actions";
@@ -20,11 +21,11 @@ async function CallbackHandler({
     return redirect("/auth/untrusted-origin");
   }
 
-  const session = await getSession();
+  const [session, locale] = await Promise.all([getSession(), getLocale()]);
   const needsSetup = !session?.user.username || !session?.user.name;
 
   if (session && needsSetup) {
-    await trackAuthCompleted({ action: "sign-up", userId: session.user.id });
+    await trackAuthCompleted({ action: "sign-up", locale, userId: session.user.id });
     redirect(`/auth/setup?redirectTo=${encodeURIComponent(redirectToStr)}`);
   }
 
@@ -35,7 +36,7 @@ async function CallbackHandler({
   }
 
   if (session) {
-    await trackAuthCompleted({ action: "sign-in", userId: session.user.id });
+    await trackAuthCompleted({ action: "sign-in", locale, userId: session.user.id });
   }
 
   return externalRedirect(result.url);

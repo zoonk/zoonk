@@ -7,7 +7,7 @@
       "APPLE_*",
       "AUTH_COOKIE_CACHE_ENABLED",
       "BETTER_AUTH_SECRET",
-      "BLOB_READ_WRITE_TOKEN",
+      "BLOB_*",
       "DATABASE_*",
       "E2E_TESTING",
       "GEMINI_API_KEY",
@@ -20,6 +20,7 @@
       "STRIPE_*",
       "VERCEL_*",
       "PORTLESS_*",
+      "PRIVATE_BLOB_*",
       "ZOONK_DEV_PROJECT"
     ],
     "ui": "tui",

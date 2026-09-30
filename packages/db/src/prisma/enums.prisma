@@ -5,10 +5,24 @@ enum GenerationStatus {
   failed
 }
 
+/// What a tutor question is about: a lesson, one of its screens or an answer on it, or the chapter,
+/// plan or mock its thread belongs to.
 enum LessonQuestionContextKind {
   lesson
   step
   answer
+  chapter
+  plan
+  mock
+}
+
+/// What a tutor thread is attached to: one learner has one thread per lesson, chapter, goal's plan or
+/// mock.
+enum TutorThreadKind {
+  lesson
+  chapter
+  plan
+  mock
 }
 
 enum LessonQuestionStatus {
@@ -16,49 +30,6 @@ enum LessonQuestionStatus {
   running
   completed
   failed
-}
-
-enum GenerationQuotaPeriod {
-  day
-  month
-}
-
-enum GenerationQuotaResource {
-  course
-  chapter
-  lesson
-  lessonQuestion
-}
-
-enum LessonKind {
-  alphabet
-  custom
-  explanation
-  grammar
-  listening
-  practice
-  quiz
-  reading
-  review
-  translation
-  tutorial
-  vocabulary
-}
-
-enum StepKind {
-  alphabet
-  arrangeWords   @map("arrange_words")
-  fillBlank      @map("fill_blank")
-  listening
-  matchColumns   @map("match_columns")
-  multipleChoice @map("multiple_choice")
-  reading
-  selectImage    @map("select_image")
-  sortOrder      @map("sort_order")
-  static
-  translation
-  visual
-  vocabulary
 }
 
 enum CourseFormat {

@@ -6,6 +6,7 @@ import { useHideElement } from "@zoonk/ui/hooks/hide-element";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { createContext, useContext } from "react";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
 /**
@@ -84,7 +85,7 @@ function DialogContent({
         data-slot="dialog-content"
         {...props}
       >
-        {children}
+        <PopupShortcutLayer value>{children}</PopupShortcutLayer>
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
@@ -104,13 +105,15 @@ function DialogContent({
  * DialogContent because they need to supply their own portal, backdrop, or
  * viewport structure.
  */
-function DialogPopup({ className, ...props }: DialogPrimitive.Popup.Props) {
+function DialogPopup({ children, className, ...props }: DialogPrimitive.Popup.Props) {
   return (
     <DialogPrimitive.Popup
       className={cn("bg-background text-foreground outline-none", className)}
       data-slot="dialog-content"
       {...props}
-    />
+    >
+      <PopupShortcutLayer value>{children}</PopupShortcutLayer>
+    </DialogPrimitive.Popup>
   );
 }
 

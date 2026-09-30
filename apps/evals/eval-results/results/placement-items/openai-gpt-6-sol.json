@@ -1,0 +1,291 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm all supplied keys: x = 14; 18a + 12(15 − a) = 228 gives 8 adult tickets; 12/80 × 100 = 15%; the delivery slope is $4 per mile; and W(0) = 180 gallons. However, the explanation attached to −14 does not mathematically produce that answer. This factual error in one question's feedback triggers the cap of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors reflect specific realistic mistakes, with clear labels and explanations. The supplied typed items have atomic, checkable key points and appropriate accepted answers. However, the sign-error explanation for −14 does not match its distractor and must be corrected. The missing percent-change typed item also leaves its grading guidance absent. Neither the generic-label cap nor the several-implausible-distractors cap is triggered.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The supplied questions use concise equations or contexts, direct questions, four multiple-choice options, and numeric constructed responses consistent with Digital SAT Math. The wording and contexts are plausible, and option length does not meaningfully reveal the answers.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All supplied questions apply their assigned skills and are written in US English. The linear-equation typed problem can be solved in one variable, and the model questions appropriately distinguish slope from initial value. Existing typed situations differ from their multiple-choice counterparts. However, omitting the percent-change typed question materially reduces the required coverage and variety.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Percent change, typed 1: Two accepted answers are the same.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3002,
+          "inputTokens": 3005,
+          "outputTokens": 1041,
+          "reasoningTokens": 447
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The percent-change skill is missing its required typed question, leaving only five of the six required questions. The linear-equation feedback for −14 also gives an invalid explanation: subtracting 12 from both sides of 2x − 12 = 16 produces x = 2, not −14.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Use a percent decrease in a different setting for the missing typed item, with an independently checkable key point and accepted numeric answers. This would broaden coverage beyond the multiple-choice percent increase.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three Digital SAT skills, each with one SAT-style multiple-choice question (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value) and one typed question with checkable key points and accepted answers for short answers. The math must be right. Each question tests only its own skill, and a skill's typed question uses a different situation from its multiple-choice one.",
+        "id": "en-sat-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "language": "en",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
+              "level": "intermediate",
+              "name": "Solving linear equations in one variable"
+            },
+            {
+              "description": "Compute the percent increase or decrease between an original and a new value.",
+              "level": "intermediate",
+              "name": "Percent change"
+            },
+            {
+              "description": "Interpret the slope and y-intercept of a linear model in the context of a real situation.",
+              "level": "intermediate",
+              "name": "Interpreting linear models"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation confirms all six intended answers: R$ 216; R$ 96 after the two changes; Thursday with 180 bus trips; 37 completed appointments; R$ 48 for 60 kWh; and 80 Wh for each device under constant-power operation. However, the explanation attached to R$ 210 is mathematically false: a net 10% increase on R$ 200 produces R$ 220. This is a factual numerical error in one question, triggering the maximum score of 7 even though its keyed answer is correct.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The energy distractors and most percentage distractors identify specific mistakes and explain them usefully. However, R$ 210 cannot be obtained through its stated mistake, and several table distractors rely on weak selection stories rather than realistic, well-explained misreadings. These trigger the cap of 7 for several implausible distractors. Empty accepted-answer lists across all typed items also fail to cover common correct wordings explicitly. Most key points are checkable, although the final energy point combines multiple claims.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The multiple-choice items have short contextual support texts, clear commands, and five options, and the tables are correctly placed in context as GFM pipe tables. The percentage and heater items are plausible simple ENEM-style applications. However, the table pair asks only for a column maximum and correction of a directly misread cell, making that portion look like an elementary worksheet rather than typical ENEM material. This triggers the maximum score of 7 for a set that looks out of place in the named exam.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Each question uses its assigned skill rather than asking for a memorized definition. Each pair changes situations and response demands: calculating versus explaining percentage effects, comparing versus diagnosing table readings, and calculating cost versus comparing energy consumption. The typed questions do not reveal their multiple-choice counterparts' answers, and the learner-facing text is in Portuguese. Difficulty spread is limited, however, with especially direct table tasks and modest intermediate-level challenge. Neither the recall nor same-task-same-way cap is triggered.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3925,
+          "inputTokens": 3928,
+          "outputTokens": 1061,
+          "reasoningTokens": 209
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The percentage question contains an incorrect numerical explanation: subtracting 10% from 20% and applying the resulting increase to R$ 200 gives R$ 220, not the offered R$ 210. Thus, that distractor does not match its stated misconception. The table questions are essentially elementary maximum-finding and cell-location exercises; despite their everyday contexts, they fall short of the explicit requirement that questions never resemble primary-school exercises.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "All three typed questions leave acceptedAnswers empty, so common correct formulations are not explicitly covered. Several table distractors have weak diagnostic grounding: choosing the first row, the second-largest value, or a merely high value in the other column does not consistently represent a convincing path to the answer. Some feedback identifies an incorrect selection without adequately explaining the underlying reading mistake.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "State that the charger draws a constant 20 W during the specified period, rather than relying on an implicit assumption about a plugged-in charger's consumption. Split the final energy key point into separately checkable claims about the charger's consumption, equal energy use, and Pedro's conclusion. Preserve beginner accessibility in the table items while giving the comparison a meaningful practical purpose.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row) and one typed question asking for a short answer or explanation with checkable key points. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't repeat or give away the multiple-choice one's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
+        "id": "pt-enem-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos"
+            },
+            {
+              "description": "Ler e comparar dados apresentados em tabelas para responder a perguntas sobre valores, diferenças e variações.",
+              "level": "beginner",
+              "name": "Leitura de dados em tabelas"
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All six questions have defensible keyed answers. Promotional official advertising violates impersonality under article 37, paragraph 1; an internally created fee without legal authorization violates legality. The incurably unlawful authorization calls for annulment, whereas the valid precarious authorization can be revoked prospectively for public-interest reasons, consistently with Law 9.784/1999 and STF Precedent 473. Urgent, lawful sanitary interdiction need not await judicial authorization, and personal aesthetic preferences do not justify seizure. No factual-error cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The false assertion targets a realistic confusion between annulment and revocation, and its label and explanation identify that mistake specifically. Most typed key points are independently checkable. However, all acceptedAnswers lists are empty, so common correct formulations are not expressly covered, and the final police-power point is broad and compound. Neither the generic-misconception cap nor the multiple-inadequate-reasons cap is triggered.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The quick items are recognizable Cebraspe-style assertions for Certo/Errado judgment, not multiple-choice questions. The false item uses a credible conceptual swap, and the municipal and sanitary-administration contexts fit Brazilian administrative-law assessment. The typed questions are appropriate constructed-response supplements required by this task. The out-of-place-format cap does not apply.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Each question applies its assigned skill to a concrete situation, and all learner-facing content is in Portuguese. The typed prompts do not explicitly disclose the quick assertions' judgments; answer keys should not be treated as part of those prompts. Situations vary, but difficulty is comparatively uniform and straightforward for intermediate placement, especially the overtly arbitrary seizure scenario. Neither the majority-recall cap nor the same-task-same-method cap applies.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2871,
+          "inputTokens": 2874,
+          "outputTokens": 1168,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "All three typed items have empty acceptedAnswers lists, leaving common alternative correct wordings undocumented. The final police-power key point also combines public purpose with the vague requirement to 'respect its limits,' making it less independently checkable than the other key points.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Broaden the difficulty range within the intermediate level. Most scenarios make the relevant legal distinction immediately apparent; a more nuanced but unambiguous application would improve placement discrimination. Make the police-power grading points more specific, without requiring knowledge outside that skill.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill's quick question is a Cebraspe-style assertion judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Each skill also has one typed question with checkable key points. Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, and the typed question doesn't give away the assertion's judgment.",
+        "id": "pt-cebraspe-placement-true-false-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "language": "pt",
+          "quickFormat": "trueFalse",
+          "skills": [
+            {
+              "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+              "level": "intermediate",
+              "name": "Princípios da administração pública (LIMPE)"
+            },
+            {
+              "description": "Distinguir quando a administração deve anular um ato administrativo e quando pode revogá-lo, e os efeitos de cada um.",
+              "level": "intermediate",
+              "name": "Anulação e revogação de atos administrativos"
+            },
+            {
+              "description": "Reconhecer o poder de polícia, seus atributos e limites, em situações da administração pública.",
+              "level": "intermediate",
+              "name": "Poder de polícia"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "placement-items"
+}

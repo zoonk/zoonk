@@ -49,7 +49,6 @@ function makeStep(
     position: 0,
     sentence,
     sentenceWordOptions: [],
-    sortOrderItems: [],
     translationOptions: [],
     vocabularyOptions: [],
     word: null,

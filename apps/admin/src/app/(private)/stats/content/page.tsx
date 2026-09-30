@@ -1,12 +1,10 @@
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import {
-  StatsExplorerLayout,
   StatsExplorerPageSkeleton,
   StatsExplorerSkeleton,
 } from "../_components/stats-explorer-layout";
-import { getStatsAnalysisView } from "../_utils/stats-analysis";
-import { buildStatsPeriodQuery, getStatsPeriod } from "../_utils/stats-period";
+import { StatsExplorerRoute } from "../_components/stats-explorer-route";
 import { ContentMetrics } from "./content-metrics";
 
 export const metadata: Metadata = { title: "Content Stats" };
@@ -18,32 +16,13 @@ export const metadata: Metadata = { title: "Content Stats" };
 export default function ContentPage({ searchParams }: PageProps<"/stats/content">) {
   return (
     <Suspense fallback={<StatsExplorerPageSkeleton />}>
-      <ContentExplorer searchParams={searchParams} />
+      <StatsExplorerRoute path="/stats/content" searchParams={searchParams}>
+        {({ periodQuery, selectedView, statsPeriod }) => (
+          <Suspense fallback={<StatsExplorerSkeleton />} key={`${selectedView.id}-${periodQuery}`}>
+            <ContentMetrics statsPeriod={statsPeriod} view={selectedView} />
+          </Suspense>
+        )}
+      </StatsExplorerRoute>
     </Suspense>
-  );
-}
-
-/**
- * Once URL state is available, the shared explorer preserves both Content
- * trends and complete operational tables without rendering them together.
- */
-async function ContentExplorer({
-  searchParams,
-}: Pick<PageProps<"/stats/content">, "searchParams">) {
-  const params = await searchParams;
-  const statsPeriod = await getStatsPeriod(params);
-  const selectedView = getStatsAnalysisView({ path: "/stats/content", value: params.view });
-  const periodQuery = buildStatsPeriodQuery(statsPeriod);
-
-  return (
-    <StatsExplorerLayout
-      periodQuery={periodQuery}
-      selectedView={selectedView}
-      statsPeriod={statsPeriod}
-    >
-      <Suspense fallback={<StatsExplorerSkeleton />} key={`${selectedView.id}-${periodQuery}`}>
-        <ContentMetrics statsPeriod={statsPeriod} view={selectedView} />
-      </Suspense>
-    </StatsExplorerLayout>
   );
 }

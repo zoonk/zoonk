@@ -5,11 +5,18 @@ struct FeedbackSheet: View {
   @FocusState private var focusedField: FeedbackField?
   @State private var store: FeedbackFormStore
 
-  init(api: any FeedbackAPIClient, defaultEmail: String? = nil) {
+  init(
+    api: any FeedbackAPIClient,
+    context: FeedbackContext? = nil,
+    defaultEmail: String? = nil,
+    token: String? = nil
+  ) {
     _store = State(
       initialValue: FeedbackFormStore(
         api: api,
-        defaultEmail: defaultEmail))
+        context: context,
+        defaultEmail: defaultEmail,
+        token: token))
   }
 
   var body: some View {

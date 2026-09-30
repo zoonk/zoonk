@@ -60,7 +60,7 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
       {canScrollLeft && (
         <button
           aria-label="Scroll left"
-          className="border-border bg-background hover:bg-accent absolute top-1/2 left-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
+          className="border-border bg-background hover:bg-accent hit-area absolute top-1/2 left-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
           onClick={() => scroll("left")}
           type="button"
         >
@@ -71,7 +71,7 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
       {canScrollRight && (
         <button
           aria-label="Scroll right"
-          className="border-border bg-background hover:bg-accent absolute top-1/2 right-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
+          className="border-border bg-background hover:bg-accent hit-area absolute top-1/2 right-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
           onClick={() => scroll("right")}
           type="button"
         >

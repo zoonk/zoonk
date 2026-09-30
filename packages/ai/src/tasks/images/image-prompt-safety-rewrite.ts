@@ -2,6 +2,8 @@ import "server-only";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import { runTaskGeneration } from "../../provenance/run-task-generation";
 import systemPrompt from "./image-prompt-safety-rewrite.prompt.md";
 
 const defaultModel = "openai/gpt-6-luna";
@@ -18,6 +20,7 @@ export type ImageInputSafetyRewriteParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
+  analytics?: AiGenerationContext;
 };
 
 /**
@@ -27,6 +30,7 @@ export type ImageInputSafetyRewriteParams = {
  * protected-character or sensitive-topic behavior.
  */
 export async function rewriteImageInputForSafetyRetry({
+  analytics,
   errorContext,
   input,
   model = defaultModel,
@@ -37,16 +41,22 @@ export async function rewriteImageInputForSafetyRetry({
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
-  const { output, usage } = await generateText({
-    instructions: systemPrompt,
-    model,
-    output: Output.object({ schema }),
-    prompt: userPrompt,
-    providerOptions,
-    reasoning,
+  const { provenance, result } = await runTaskGeneration({
+    analytics,
+    generate: () =>
+      generateText({
+        instructions: systemPrompt,
+        model,
+        output: Output.object({ schema }),
+        prompt: userPrompt,
+        providerOptions,
+        reasoning,
+      }),
+    systemPrompt,
+    task: "image-prompt-safety-rewrite",
   });
 
-  return { data: output, systemPrompt, usage, userPrompt };
+  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
 /**

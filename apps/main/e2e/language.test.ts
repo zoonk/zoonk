@@ -2,6 +2,7 @@ import { type Locator, type Page } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
+import { expectMode, showInMode } from "./learn-personas";
 
 /**
  * Change the language and wait for the proxy to finish canonicalizing the
@@ -105,5 +106,27 @@ test.describe("Language settings page", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /^nutzungsbedingungen$/iu }),
     ).toBeVisible();
+  });
+});
+
+test.describe("Language settings in Fun", () => {
+  test("a Fun learner switches the app language and stays in Fun", async ({
+    browser,
+    noProgressUser,
+  }) => {
+    const context = await browser.newContext({ storageState: noProgressUser.storageState });
+    await showInMode(context, { mode: "fun", userId: noProgressUser.id });
+    const page = await context.newPage();
+
+    await page.goto("/language");
+    await expectMode(page, "fun");
+
+    const selector = page.getByRole("combobox", { name: /update language/iu });
+
+    await selectLanguage({ expectedPath: "/es/language", locale: "es", page, selector });
+    await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
+    await expectMode(page, "fun");
+
+    await context.close();
   });
 });

@@ -1,27 +1,32 @@
+import { type getCatalogChapter } from "@zoonk/core/catalog/chapter";
+import { type listCatalogChapterLessons } from "@zoonk/core/catalog/chapter-lessons";
+import { type listCatalogCourseChapters } from "@zoonk/core/catalog/course-chapters";
 import { type searchCatalog } from "@zoonk/core/catalog/search";
-import { type getChapterById } from "@zoonk/core/chapters/get-by-id";
-import { type listCourseChapters } from "@zoonk/core/chapters/list-by-course";
 import { type getCourseById } from "@zoonk/core/courses/get-by-id";
-import { type listCompletedLanguageCourses } from "@zoonk/core/courses/language";
 import { type listCourses } from "@zoonk/core/courses/list";
-import { type getLessonById } from "@zoonk/core/lessons/get-by-id";
-import { type listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
 
 type CatalogSearch = Awaited<ReturnType<typeof searchCatalog>>;
-type ChapterResource = NonNullable<Awaited<ReturnType<typeof getChapterById>>>;
-type CourseChapter = Awaited<ReturnType<typeof listCourseChapters>>[number];
+type CatalogChapter = NonNullable<Awaited<ReturnType<typeof getCatalogChapter>>>;
+type CourseChapter = NonNullable<Awaited<ReturnType<typeof listCatalogCourseChapters>>>[number];
+type ChapterLessons = NonNullable<Awaited<ReturnType<typeof listCatalogChapterLessons>>>;
 type CourseResource = NonNullable<Awaited<ReturnType<typeof getCourseById>>>;
 type CourseSummary = Awaited<ReturnType<typeof listCourses>>[number];
-type LanguageCourse = Awaited<ReturnType<typeof listCompletedLanguageCourses>>[number];
-type LessonResource = NonNullable<Awaited<ReturnType<typeof getLessonById>>>;
-type ChapterLesson = Awaited<ReturnType<typeof listChapterLessons>>[number];
+
+/** The Library chapter fields both chapter resources share. */
+type ChapterFields = CatalogChapter["chapter"] | CourseChapter["chapter"];
 
 /**
  * Serializes one organization into the stable public subset shared by course
  * list, detail, and current-library responses. Billing and auth-provider fields
- * remain internal even when Core loaded the complete relation.
+ * remain internal even when Core loaded the complete relation. A learner's
+ * private course has no organization, so the relationship stays nullable
+ * instead of inventing a synthetic brand.
  */
-export function toOrganizationSummary(organization: CourseSummary["organization"]) {
+function toCourseOrganization(organization: CourseSummary["organization"] | null) {
+  if (!organization) {
+    return null;
+  }
+
   return {
     id: organization.id,
     logo: organization.logo,
@@ -30,41 +35,39 @@ export function toOrganizationSummary(organization: CourseSummary["organization"
   };
 }
 
-/**
- * Serializes the compact course shape used in paginated catalog collections.
- */
-export function toCourseSummary(course: CourseSummary) {
+/** Serializes the compact course shape of course lists: the catalog's and the learner's own. */
+export function toCourseSummary(
+  course: Pick<CourseSummary, "description" | "id" | "imageUrl" | "language" | "slug" | "title"> & {
+    organization: CourseSummary["organization"] | null;
+  },
+) {
   return {
     description: course.description,
     id: course.id,
     imageUrl: course.imageUrl,
     language: course.language,
-    organization: toOrganizationSummary(course.organization),
+    organization: toCourseOrganization(course.organization),
     slug: course.slug,
     title: course.title,
   };
 }
 
 /**
- * Serializes the complete public course metadata resource while excluding
- * persistence-only fields and exposing only the first originating prompt ID.
+ * Serializes the complete course metadata resource while excluding
+ * persistence-only fields. The generation fields follow the course outline,
+ * which a course without one is still waiting for.
  */
 export function toCourseResource(course: CourseResource) {
-  if (!course.organization) {
-    throw new Error("Published brand course is missing its organization");
-  }
-
   return {
     categories: course.categories.map((category) => category.category),
-    coursePromptId: course.prompts.at(0)?.id ?? null,
     description: course.description,
     format: course.format,
-    generationId: course.generationRunId,
-    generationStatus: course.generationStatus,
+    generationId: course.outlineRunId,
+    generationStatus: course.outlineStatus ?? "pending",
     id: course.id,
     imageUrl: course.imageUrl,
     language: course.language,
-    organization: toOrganizationSummary(course.organization),
+    organization: toCourseOrganization(course.organization),
     slug: course.slug,
     targetLanguage: course.targetLanguage,
     title: course.title,
@@ -72,84 +75,59 @@ export function toCourseResource(course: CourseResource) {
 }
 
 /**
- * Serializes a chapter returned inside a course collection and adds its
- * published lesson count without exposing Prisma's relation-count envelope.
+ * A chapter's generation fields follow its lesson outline: the titles and
+ * descriptions of its lessons.
  */
-export function toCourseChapter(chapter: CourseChapter) {
+function toChapterFields(chapter: ChapterFields) {
   return {
-    courseId: chapter.courseId,
     description: chapter.description,
-    generationId: chapter.generationRunId,
-    generationStatus: chapter.generationStatus,
+    generationId: chapter.outlineRunId,
+    generationStatus: chapter.outlineStatus,
     id: chapter.id,
-    imageUrl: chapter.imageUrl,
     language: chapter.language,
-    lessonCount: chapter._count.lessons,
-    position: chapter.position,
     slug: chapter.slug,
     title: chapter.title,
   };
 }
 
 /**
- * Serializes the direct chapter resource and preserves its parent course ID.
+ * Serializes a chapter as its course places it: the course it's read in, its
+ * level band and its position across that course's outline.
  */
-export function toChapterResource(chapter: ChapterResource) {
-  return {
-    courseId: chapter.courseId,
-    description: chapter.description,
-    generationId: chapter.generationRunId,
-    generationStatus: chapter.generationStatus,
-    id: chapter.id,
-    imageUrl: chapter.imageUrl,
-    language: chapter.language,
-    position: chapter.position,
-    slug: chapter.slug,
-    title: chapter.title,
-  };
+export function toChapterResource({
+  chapter,
+  courseId,
+  level,
+  position,
+}: Omit<CatalogChapter, "chapter"> & { chapter: ChapterFields }) {
+  return { ...toChapterFields(chapter), courseId, level, position };
 }
 
 /**
- * Serializes a lesson shell from a chapter collection. The caller supplies the
- * already-known course ID so no additional relation query is needed.
+ * Serializes a chapter inside a course collection with its visible lesson
+ * count.
  */
-export function toChapterLesson({ courseId, lesson }: { courseId: string; lesson: ChapterLesson }) {
-  return {
-    chapterId: lesson.chapterId,
+export function toCourseChapter(placement: CourseChapter) {
+  return { ...toChapterResource(placement), lessonCount: placement.chapter.lessons.length };
+}
+
+/**
+ * Serializes a chapter's lessons with the chapter and the course they're read
+ * in. A lesson's generation fields follow its content.
+ */
+export function toChapterLessons({ chapterId, courseId, lessons }: ChapterLessons) {
+  return lessons.map((lesson) => ({
+    chapterId,
     courseId,
     description: lesson.description,
-    generationId: lesson.generationRunId,
-    generationStatus: lesson.generationStatus,
+    generationId: lesson.contentRunId,
+    generationStatus: lesson.contentStatus,
     id: lesson.id,
-    imageUrl: lesson.imageUrl,
-    kind: lesson.kind,
     language: lesson.language,
     position: lesson.position,
     slug: lesson.slug,
     title: lesson.title,
-  };
-}
-
-/**
- * Serializes the direct lesson shell with both parent resource IDs.
- */
-export function toLessonResource(lesson: LessonResource) {
-  return toChapterLesson({ courseId: lesson.chapter.courseId, lesson });
-}
-
-/**
- * Serializes the finite language-course picker resource without leaking the
- * nested Core tuple used to guarantee supported target-language values.
- */
-export function toLanguageCourse({ course, targetLanguage }: LanguageCourse) {
-  return {
-    id: course.id,
-    imageUrl: course.imageUrl,
-    language: course.language,
-    slug: course.slug,
-    targetLanguage,
-    title: course.title,
-  };
+  }));
 }
 
 /**
@@ -164,7 +142,6 @@ export function toCatalogSearchResponse(results: CatalogSearch) {
       courseTitle: chapter.courseTitle,
       description: chapter.description,
       id: chapter.id,
-      imageUrl: chapter.imageUrl,
       language: chapter.language,
       organizationSlug: chapter.brandSlug,
       slug: chapter.slug,
@@ -177,6 +154,7 @@ export function toCatalogSearchResponse(results: CatalogSearch) {
       language: course.language,
       organizationSlug: course.brandSlug,
       slug: course.slug,
+      targetLanguage: course.targetLanguage,
       title: course.title,
     })),
   };

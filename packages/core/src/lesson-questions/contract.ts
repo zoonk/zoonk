@@ -1,32 +1,23 @@
 import { z } from "zod";
-import { createSelectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
+import { lessonStepAnswerSchema } from "../lesson-player/contract";
 
 export const MAX_LESSON_QUESTION_LENGTH = 2000;
 export const MAX_LESSON_QUESTION_THREAD_TURNS = 50;
 
 const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
 
-const MAX_LESSON_QUESTION_ANSWER_ITEMS = 50;
-
-const MAX_LESSON_QUESTION_ANSWER_TEXT_LENGTH = 500;
-
-const MAX_LESSON_QUESTION_ANSWER_MISTAKES = 50;
-
 const lessonQuestionThreadCursorSchema = z.uuid();
+
+/** The things a learner can ask the tutor about beyond a lesson; each has one thread. */
+const SCREEN_CONTEXT_KINDS = ["chapter", "plan", "mock"] as const;
 
 export const getLessonQuestionThreadInputSchema = z
   .object({
-    contextKind: z.enum(["lesson", "step", "answer"]).optional(),
+    contextKind: z.enum(["lesson", "step", "answer", ...SCREEN_CONTEXT_KINDS]).optional(),
     cursor: lessonQuestionThreadCursorSchema.optional(),
     stepId: z.uuid().optional(),
   })
   .strict();
-
-const lessonQuestionSelectedAnswerSchema = createSelectedAnswerSchema({
-  maxItems: MAX_LESSON_QUESTION_ANSWER_ITEMS,
-  maxMistakes: MAX_LESSON_QUESTION_ANSWER_MISTAKES,
-  maxTextLength: MAX_LESSON_QUESTION_ANSWER_TEXT_LENGTH,
-});
 
 const lessonQuestionLessonContextInputSchema = z
   .object({ kind: z.literal("lesson"), stepIds: z.array(z.uuid()).optional() })
@@ -44,17 +35,22 @@ const lessonQuestionStepContextInputSchema = z
 
 const lessonQuestionAnswerContextInputSchema = z
   .object({
-    answer: lessonQuestionSelectedAnswerSchema,
+    /** Language exercises answer in today's shapes; Library screens also answer checks and text. */
+    answer: lessonStepAnswerSchema,
     kind: z.literal("answer"),
     stepId: z.uuid(),
     stepNumber: lessonQuestionStepNumberSchema,
   })
   .strict();
 
+/** A chapter, plan or mock is asked about as a whole: the server builds what it shows. */
+const lessonQuestionScreenContextSchema = z.object({ kind: z.enum(SCREEN_CONTEXT_KINDS) }).strict();
+
 export const lessonQuestionContextInputSchema = z.discriminatedUnion("kind", [
   lessonQuestionLessonContextInputSchema,
   lessonQuestionStepContextInputSchema,
   lessonQuestionAnswerContextInputSchema,
+  lessonQuestionScreenContextSchema,
 ]);
 
 export const createLessonQuestionInputSchema = z
@@ -62,11 +58,17 @@ export const createLessonQuestionInputSchema = z
     context: lessonQuestionContextInputSchema,
     question: z.string().trim().min(1).max(MAX_LESSON_QUESTION_LENGTH),
     requestId: z.uuid(),
+    /**
+     * The learner sent one of the tutor's suggested questions as offered. A suggested question
+     * about a lesson screen is answered once for everyone who asks it there.
+     */
+    suggested: z.literal(true).optional(),
   })
   .strict();
 
 const lessonQuestionContextSummarySchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("lesson") }).strict(),
+  lessonQuestionScreenContextSchema,
   z
     .object({
       kind: z.literal("step"),
@@ -110,6 +112,42 @@ export const lessonQuestionThreadResponseSchema = lessonQuestionThreadResourceSc
 export type CreateLessonQuestionInput = z.infer<typeof createLessonQuestionInputSchema>;
 export type GetLessonQuestionThreadInput = z.infer<typeof getLessonQuestionThreadInputSchema>;
 export type LessonQuestionContextInput = z.infer<typeof lessonQuestionContextInputSchema>;
+/** A question about a lesson: all of it, one screen, or an answer given on a screen. */
+export type LessonScopeContextInput = Extract<
+  LessonQuestionContextInput,
+  { kind: "answer" | "lesson" | "step" }
+>;
 export type LessonQuestionContextSummary = z.infer<typeof lessonQuestionContextSummarySchema>;
+export type LessonQuestionScreenKind = (typeof SCREEN_CONTEXT_KINDS)[number];
+
+/**
+ * What a tutor thread is about: a Library lesson, a chapter, the plan of one of the learner's
+ * goals (with the course it's built from), or one of their finished mocks (by its session block,
+ * as the API addresses mocks everywhere). A learner has one thread per thing.
+ */
+export type TutorTarget =
+  | { chapterId: string; kind: "chapter" }
+  | { goalId: string; kind: "plan" }
+  | { blockId: string; kind: "mock" }
+  | { kind: "lesson"; lessonId: string };
 export type LessonQuestionResource = z.infer<typeof lessonQuestionResourceSchema>;
 export type LessonQuestionThreadResource = z.infer<typeof lessonQuestionThreadResourceSchema>;
+
+const memoryFactSummarySchema = z.object({ id: z.uuid(), statement: z.string() }).nullable();
+
+/**
+ * What a Library lesson's tutor answer changed in the learner's memory, sent as the answer
+ * stream's `data-memory` part after the text, for a "Memory updated" notice with undo.
+ */
+export const lessonQuestionMemoryChangesSchema = z.array(
+  z.object({
+    action: z.enum(["added", "removed", "replaced"]),
+    fact: memoryFactSummarySchema,
+    previous: memoryFactSummarySchema,
+  }),
+);
+
+export type LessonQuestionMemoryChange = z.infer<typeof lessonQuestionMemoryChangesSchema>[number];
+
+/** The answer stream's part that carries memory changes. */
+export const LESSON_QUESTION_MEMORY_PART = "data-memory";

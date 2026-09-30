@@ -1,0 +1,202 @@
+/// The four skills a language goal measures a CEFR level for.
+enum LanguageSkill {
+  reading
+  listening
+  speaking
+  writing
+}
+
+/// Where a live conversation starts: practice from a unit page, a unit's checkpoint (the language
+/// boss), or a speaking mock test scored by an exam's criteria.
+enum LanguageConversationKind {
+  practice
+  checkpoint
+  speakingMock @map("speaking_mock")
+}
+
+enum LanguageConversationStatus {
+  ready
+  completed
+}
+
+/// What a model found in a learner's recent language mistakes: one repeated pattern, or only typos.
+enum MistakePatternKind {
+  pattern
+  typos
+}
+
+/// A learner's CEFR level in one skill of a language they learn, on a half-step scale: 0 is A1, 0.5
+/// A1+, up to 5 for C2. `startScore` is where the level test or the learner's own answer put them, so
+/// progress reads "since the level test". Answers and conversations add evidence to the current
+/// window, and a full window moves the level half a step at most.
+model LanguageSkillLevel {
+  id            String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId        String        @map("user_id") @db.Uuid
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// The language learned, such as "en".
+  language      String        @db.VarChar(10)
+  skill         LanguageSkill
+  score         Float
+  startScore    Float         @map("start_score")
+  windowCorrect Int           @default(0) @map("window_correct")
+  windowTotal   Int           @default(0) @map("window_total")
+  /// The highest content level answered right in the window, on the same scale. A window can't lift
+  /// the level more than half a step above it.
+  windowCeiling Float?        @map("window_ceiling")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, language, skill], name: "userLanguageSkill")
+  @@map("language_skill_levels")
+}
+
+/// A word a learner got right in a language lesson, kept as a plain id with the word's text so the
+/// count of words known survives content changes.
+model LearnerWord {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language  String   @db.VarChar(10)
+  wordId    String   @map("word_id") @db.Uuid
+  text      String
+  learnedAt DateTime @default(now()) @map("learned_at")
+
+  @@unique([userId, wordId], name: "userWord")
+  @@index([userId, language, learnedAt])
+  @@map("learner_words")
+}
+
+/// A word the learner mispronounced in a spoken answer, coming back as a pronunciation review: hear
+/// it, then say it again. `stage` climbs a short ladder of waits (1, 3, then 7 days) each time the
+/// word is said right; a miss starts over at one day, and a word said right on the last rung leaves
+/// the reviews (`dueAt` null). `userLanguage` picks the respelling and tip to show.
+model PronunciationReview {
+  id             String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wordId         String    @map("word_id") @db.Uuid
+  word           Word      @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  language       String    @db.VarChar(10)
+  userLanguage   String    @map("user_language") @db.VarChar(10)
+  stage          Int       @default(0) @db.SmallInt
+  dueAt          DateTime? @map("due_at")
+  lastReviewedAt DateTime? @map("last_reviewed_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, wordId], name: "userWord")
+  @@index([userId, language, dueAt])
+  @@index([wordId])
+  @@map("pronunciation_reviews")
+}
+
+/// A live voice conversation with an AI character. `scenario` is the snapshot the call used. Neither
+/// the audio nor the transcript is stored: the transcript only reaches the separate text model that
+/// writes `feedback` (what went well, one thing to improve, pronunciation tips, or a speaking mock's
+/// criteria), kept with its provenance. A checkpoint call belongs to its session block.
+model LanguageConversation {
+  id             String                     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String                     @map("user_id") @db.Uuid
+  user           User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId         String?                    @map("goal_id") @db.Uuid
+  goal           Goal?                      @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  /// The unit the call practices; null for a speaking mock.
+  chapterId      String?                    @map("chapter_id") @db.Uuid
+  chapter        Chapter?                   @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  studyBlockId   String?                    @unique @map("study_block_id") @db.Uuid
+  studyBlock     StudySessionBlock?         @relation(fields: [studyBlockId], references: [id], onDelete: SetNull)
+  kind           LanguageConversationKind
+  status         LanguageConversationStatus @default(ready)
+  /// The learner's language, for the scenario's notes and the feedback.
+  language       String                     @db.VarChar(10)
+  targetLanguage String                     @map("target_language") @db.VarChar(10)
+  /// The CEFR band the character speaks at.
+  level          String                     @db.VarChar(3)
+  minutes        Int                        @db.SmallInt
+  scenario       Json
+  titleSnapshot  String                     @map("title_snapshot")
+  /// The live voice model that ran the call.
+  liveModel      String?                    @map("live_model")
+  objectivesMet  String[]                   @default([]) @map("objectives_met")
+  usedHelp       Boolean                    @default(false) @map("used_help")
+  spokenSeconds  Int                        @default(0) @map("spoken_seconds")
+  feedback       Json?
+  model          String?
+  promptVersion  String?                    @map("prompt_version")
+  runId          String?                    @map("run_id")
+  generatedAt    DateTime?                  @map("generated_at")
+  startedAt      DateTime?                  @map("started_at")
+  endedAt        DateTime?                  @map("ended_at")
+  createdAt      DateTime                   @default(now()) @map("created_at")
+  updatedAt      DateTime                   @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId, createdAt])
+  @@index([goalId])
+  @@index([chapterId])
+  @@map("language_conversations")
+}
+
+/// A unit's role-play call at one speaking level, shared by every learner of the unit: the character,
+/// the goals of the call and phrases to help. Written once by a model.
+model ConversationScenario {
+  id            String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  chapterId     String   @map("chapter_id") @db.Uuid
+  chapter       Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  level         String   @db.VarChar(3)
+  content       Json
+  model         String
+  promptVersion String   @map("prompt_version")
+  runId         String   @map("run_id")
+  generatedAt   DateTime @default(now()) @map("generated_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([chapterId, level], name: "chapterLevel")
+  @@map("conversation_scenarios")
+}
+
+/// The three-minute level test of one language pair: reading and listening questions and sentences
+/// to say out loud from A1 to C1. Written once by a model and shared by every learner of the pair.
+model LanguageLevelTest {
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  /// The learner's language, for questions and translations.
+  language       String   @db.VarChar(10)
+  targetLanguage String   @map("target_language") @db.VarChar(10)
+  content        Json
+  model          String
+  promptVersion  String   @map("prompt_version")
+  runId          String   @map("run_id")
+  generatedAt    DateTime @default(now()) @map("generated_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@unique([language, targetLanguage], name: "languagePair")
+  @@map("language_level_tests")
+}
+
+/// A pattern a model noticed in a learner's recent language mistakes ("since" where English needs
+/// "for"), with a short drill, or the note that they were only typos. `mistakeIds` are plain ids of
+/// the notebook entries it read, so a pattern outlives them; `content` keeps the rule, contrasts and
+/// drill as text.
+model MistakePattern {
+  id            String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId        String             @map("user_id") @db.Uuid
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId        String?            @map("goal_id") @db.Uuid
+  goal          Goal?              @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  /// The language learned.
+  language      String             @db.VarChar(10)
+  kind          MistakePatternKind
+  title         String
+  content       Json
+  mistakeIds    String[]           @default([]) @map("mistake_ids")
+  practicedAt   DateTime?          @map("practiced_at")
+  dismissedAt   DateTime?          @map("dismissed_at")
+  model         String
+  promptVersion String             @map("prompt_version")
+  runId         String             @map("run_id")
+  generatedAt   DateTime           @default(now()) @map("generated_at")
+  createdAt     DateTime           @default(now()) @map("created_at")
+
+  @@index([userId, language, createdAt])
+  @@index([goalId])
+  @@map("mistake_patterns")
+}

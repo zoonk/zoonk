@@ -1,25 +1,40 @@
 "use client";
 
-import { type LessonQuestionContextSummary } from "@zoonk/core/lesson-questions/contract";
+import {
+  type LessonQuestionContextSummary,
+  type LessonQuestionMemoryChange,
+} from "@zoonk/core/lesson-questions/contract";
 import { Bubble, BubbleContent } from "@zoonk/ui/components/bubble";
 import { Button } from "@zoonk/ui/components/button";
 import { Marker, MarkerContent } from "@zoonk/ui/components/marker";
 import { Message, MessageContent, MessageHeader } from "@zoonk/ui/components/message";
-import { RotateCcwIcon } from "lucide-react";
+import { RotateCcwIcon, SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
 import { LessonQuestionMarkdown } from "./lesson-question-markdown";
+import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function QuestionContextLabel({ context }: { context: LessonQuestionContextSummary }) {
   const t = useExtracted();
 
-  if (context.kind === "answer") {
-    return <>{t("About your answer")}</>;
+  switch (context.kind) {
+    case "answer":
+      return t("About your answer");
+    case "chapter":
+      return t("About this chapter");
+    case "lesson":
+      return t("About this lesson");
+    case "mock":
+      return t("About this mock exam");
+    case "plan":
+      return t("About your plan");
+    case "step":
+      return t("About this part");
+    default:
+      return context satisfies never;
   }
-
-  return context.kind === "step" ? t("About this part") : t("About this lesson");
 }
 
 function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null }) {
@@ -29,7 +44,8 @@ function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null 
     error?.kind === "authentication" ||
     error?.kind === "subscription" ||
     error?.kind === "unavailable" ||
-    error?.kind === "limit"
+    error?.kind === "slowDown" ||
+    error?.kind === "usageLimit"
   ) {
     return <RequestErrorMessage error={error} />;
   }
@@ -123,10 +139,31 @@ function QuestionAnswer({
   );
 }
 
+function MemoryUpdate({ changes }: { changes: LessonQuestionMemoryChange[] | undefined }) {
+  const { renderMemoryUpdate } = useLessonQuestionNavigation();
+
+  if (!changes || changes.length === 0 || !renderMemoryUpdate) {
+    return null;
+  }
+
+  return renderMemoryUpdate(changes);
+}
+
+function AnswerFeedback({ question }: { question: { id: string; status: string } }) {
+  const { renderAnswerFeedback } = useLessonQuestionNavigation();
+
+  if (!renderAnswerFeedback || question.status !== "completed") {
+    return null;
+  }
+
+  return renderAnswerFeedback(question.id);
+}
+
 export function QuestionTurn({
   activeQuestionId,
   answerInProgressCount,
   answerError,
+  memoryChanges,
   onCheckAgain,
   onRetry,
   question,
@@ -134,6 +171,7 @@ export function QuestionTurn({
   activeQuestionId: string | null;
   answerInProgressCount: number;
   answerError: LessonQuestionController["state"]["answerError"];
+  memoryChanges: LessonQuestionMemoryChange[] | undefined;
   onCheckAgain: (questionId: string) => void;
   onRetry: (questionId: string) => void;
   question: LessonQuestionController["state"]["questions"][number];
@@ -155,6 +193,10 @@ export function QuestionTurn({
 
       <Message>
         <MessageContent>
+          <MessageHeader className="gap-1.5">
+            <SparklesIcon aria-hidden="true" className="size-3.5" />
+            {t("AI tutor")}
+          </MessageHeader>
           <Bubble variant="ghost">
             <BubbleContent>
               <QuestionAnswer
@@ -169,6 +211,8 @@ export function QuestionTurn({
               />
             </BubbleContent>
           </Bubble>
+          <AnswerFeedback question={question} />
+          <MemoryUpdate changes={memoryChanges} />
         </MessageContent>
       </Message>
     </article>

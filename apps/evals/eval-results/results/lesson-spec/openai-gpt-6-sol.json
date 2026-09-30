@@ -1,0 +1,1435 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The lesson consistently develops one idea: atomic stability despite attraction to the nucleus. Its single verb-led skill includes a canonical topic, a one-sentence explanation, a concrete cellphone-glass example, and an everyday use. The title, description, and can-do line are appropriately scoped.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The ungraded guess about atoms in the learner's hand is engaging. Explanations move from attraction and the familiar orbit picture to a cloud and the energy cost of confinement. Briefs are actionable, explanation-first support fits the new concept, and the final cellphone conversation applies the idea realistically. However, the second check largely repeats the preceding explanation, triggering the cap of 8 for one weak check. No worked example is required for this overview.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The visuals teach attraction, classical collapse, the probability cloud, and confinement energy rather than merely decorating the lesson. Omitting template activities is appropriate because none is necessary for these light conceptual checks. A side-by-side orbit-versus-cloud comparison would make the central contrast more immediately legible than separate screens.",
+          "score": 9,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The prose is Brazilian Portuguese, uses everyday situations and a cloud comparison, and contains no formulas or mathematical notation. The qualitative explanation of confinement energy is suitable for an overview and does not stray into orbital details, quantum numbers, or uncertainty mathematics. Every screen advances or tests the central idea rather than adding filler.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4851,
+          "inputTokens": 4854,
+          "outputTokens": 710,
+          "reasoningTokens": 150
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The second check mainly asks learners to reproduce the explanation just given, with all its key points specified. Unlike the earlier prediction and final misconception challenge, it does not clearly require using the idea in a new case.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show the old orbit picture and the probability cloud side by side to make the conceptual change easier to see. Replace the repetitive explanation check with a light choice between two claims about squeezing the electron into the nucleus.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview lesson for a curious adult: why the electron doesn't fall into the nucleus, told as a story with an everyday comparison (a blurred fan, a cloud) and no formulas, equations or notation\n      - A guess-first hook fits (\"the electron orbits like the Earth around the Sun?\"); checks are light and fun\n      - No worked examples are needed for an overview idea; a visual of the cloud versus the old orbit picture helps\n      - Orbitals in detail, quantum numbers and the uncertainty principle's math belong elsewhere\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-nucleo-overview-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterTitle": "O átomo por dentro",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "lessonCanDo": "Explicar por que o elétron não cai no núcleo",
+          "lessonDescription": "Descubra por que o elétron não despenca no núcleo e por que isso faz os átomos, e você, existirem.",
+          "lessonTitle": "Por que o elétron não cai no núcleo",
+          "level": "overview",
+          "otherLessonTitles": [
+            "A luz em pacotes",
+            "Onda ou partícula?",
+            "O princípio da incerteza"
+          ],
+          "skills": ["Explicar por que o elétron não cai no núcleo"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The lesson has one coherent purpose: summarising sales with a pivot table. Its two closely linked skills start with action verbs and each includes a canonical topic, a one-sentence explanation, a concrete example and a workplace use. The title, description and can-do line are appropriately scoped.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The plan provides a concrete hook, explanation-first support, a four-row worked example, less-supported field-placement practice and a realistic final region-and-month sales task. Checks name plausible wrong answers, and the arithmetic is correct. However, summary-function checks omit average entirely, despite the explicit requirement to distinguish sum, count and average. This weak check coverage triggers the cap of 8.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The proposed visuals teach directly: highlighted source headers, field-placement arrows, a source-to-pivot comparison and a sum-versus-count comparison. None is decorative. No interactive template is necessary for the specified configuration and calculation checks, and the sales figures are presented as teaching examples rather than sourced real-world data.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The text fits Spain Spanish, including euro formatting and appropriate spreadsheet terminology. Small sales datasets and simple calculations suit beginners. The lesson stays within pivot-table construction and summary selection, without drifting into neighbouring lessons on filtering, conditional functions or charts, and contains no filler screens.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5094,
+          "inputTokens": 5097,
+          "outputTokens": 874,
+          "reasoningTokens": 336
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required choice between sum, count and average is incomplete: the lesson teaches and checks only Suma and Recuento. Promedio never appears, so learners cannot practise selecting the appropriate summary for an average-sale question.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the first worked example explicitly select Suma in the value-field settings before showing the result. This would make the creation procedure more reproducible rather than leaving the initial summary setting implicit.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish)\n      - Beginner lesson on pivot tables in a spreadsheet for someone who builds sales reports at work\n      - Building a pivot table is a procedure, so it needs a worked example on a small sales table (rows, columns, values, summary function) and then a similar task with less help\n      - Checks should make the learner choose rows, columns and the summary (sum vs count vs average) for a question\n      - The application answers a real work question (sales by region and month); an activity like categorize or chart reading may fit, but a decorative one does not\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "es-tablas-dinamicas-beginner-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterTitle": "Resumir datos",
+          "courseTitle": "Análisis de datos con hojas de cálculo",
+          "language": "es",
+          "lessonCanDo": "Resumir una tabla de ventas con una tabla dinámica",
+          "lessonDescription": "Convierte cientos de filas de ventas en un resumen por región y mes con una tabla dinámica.",
+          "lessonTitle": "Tablas dinámicas",
+          "level": "beginner",
+          "otherLessonTitles": [
+            "Ordenar y filtrar datos",
+            "Funciones SUMAR.SI y CONTAR.SI",
+            "Gráficos a partir de tablas"
+          ],
+          "skills": [
+            "Crear una tabla dinámica",
+            "Elegir la función de resumen de una tabla dinámica"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The three lessons follow coherent boundaries and teaching order: center, range/IQR, then variance/standard deviation. Each contains one to three closely linked action-based skills with canonical topics, one-sentence ideas, examples, and uses. Titles, descriptions, and can-do lines are appropriately scoped, and variance remains paired with standard deviation.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The lessons have motivating situations, calculation checks with explicit tempting wrong answers, worked examples followed by less-supported problems, and realistic final applications. Standard deviation receives the required worked example and follow-up. The range/IQR hook is weaker because its two datasets are unspecified, triggering the cap of 8 for one weak hook. The variance explanation also needs to distinguish signed differences from nonnegative distances.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The proposed visuals teach equal sharing, sorted position, endpoint spread, quartile grouping, and distance from the mean rather than decorating the lessons. Two visuals per center/spread lesson and one for variance are restrained and appropriate. No interactive template is necessary for these checks. Specifying the values and distance labels in the variance visual would make it more useful to the writer.",
+          "score": 9,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The output uses US English, everyday contexts, small datasets, and accessible language. Necessary arithmetic and square roots are introduced with intuitive explanations rather than unnecessary notation. Population variance is explicitly identified, and the quartile convention is stated. The lessons avoid drifting into histograms, box plots, or data types and contain no filler screens.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 7193,
+          "inputTokens": 7196,
+          "outputTokens": 1105,
+          "reasoningTokens": 505
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The range/IQR hook refers to two delivery-time lists without providing them, making the opening comparison less concrete and actionable. The variance explanation says distances are squared so they do not cancel, but distances are already nonnegative; signed differences from the mean are what can cancel. The calculations themselves are correct.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Include one variance example with unequal distances from the mean. Every current variance dataset has identical squared distances, so learners never meaningfully practice averaging different squared values. Explicitly label the variance number-line visual with values and distances to reinforce the calculation.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The input bundles six skills, so the output MUST be split into several lessons, each with 1 to 3 closely linked skills, in teaching order\n      - Natural boundaries: measures of center (mean, median, mode, and which to use when there are outliers) apart from measures of spread (range, interquartile range, variance and standard deviation); standard deviation is hard and needs a worked example\n      - Each lesson needs its own canonical title, a scoped description, a concrete can-do line, a hook and one application\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-describing-data-oversized-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterTitle": "Describing data",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "lessonCanDo": "Summarize a data set with the right numbers",
+          "lessonDescription": "Mean, median, mode, range, interquartile range, variance and standard deviation, and when to use each.",
+          "lessonTitle": "Summarizing a data set",
+          "level": "beginner",
+          "otherLessonTitles": ["Types of data", "Histograms", "Box plots"],
+          "skills": [
+            "Calculate the mean",
+            "Find the median",
+            "Find the mode",
+            "Calculate the range",
+            "Calculate the interquartile range",
+            "Calculate the standard deviation"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The lesson coherently teaches planning filing and payment around federal deadlines. Its two closely linked skills start with action verbs and each includes a canonical topic, a one-sentence idea, a concrete example, and a practical use. The title, description, and can-do line are appropriately scoped. No cap applies.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The ungraded Emma scenario provides a useful hook. Explanations separate the tax year, filing extension, and unchanged payment deadline. Checks require deadline judgment and error correction, with named tempting wrong answers. Diego's worked example is followed by Ava's less-supported problem, and the final screen requires a realistic filing-and-payment plan. Explanation-first support fits beginners. No cap applies; repeating the filing year in abbreviated dates would make individual screens more self-contained.",
+          "score": 9,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "Both visuals teach relevant distinctions: tax year versus filing year, and the filing deadline moving while payment stays fixed. Neither is decorative. No interactive template is necessary because the scenario checks and static comparisons adequately support the idea. No cap applies.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The plan uses beginner-friendly US English, US names, and dollar amounts without formulas or unnecessary notation. All deadline claims match the source: April 15, 2026 for filing and payment, and October 15, 2026 for filing after timely Form 4868 submission. The extension-payment misconception is explicitly checked. Interest and penalties receive only brief contextual mentions, not separate instruction; deductions and tax brackets are not introduced. No cap applies.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4974,
+          "inputTokens": 4977,
+          "outputTokens": 880,
+          "reasoningTokens": 332
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "For easier reuse of individual screens, include 2026 in both tracks of the deadline visual and in the October 10 and September 30 scenario dates. The year is already clear in context, so this is an optional clarity improvement.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, with US examples (dollars, US names and cities)\n      - Every date in the plan matches SOURCES: the 2025 federal return is due April 15, 2026; Form 4868 extends filing to October 15, 2026; paying is still due April 15, 2026\n      - A check plans the trap of believing the extension also delays payment\n      - The plan stays on deadlines and extensions; it doesn't turn into a lesson on penalties or deductions beyond a sentence\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tax-deadlines-sourced-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "lessonCanDo": "Plan your federal tax return around its deadlines",
+          "lessonDescription": "When a federal tax return is due, and what an extension does and doesn't delay.",
+          "lessonTitle": "Federal tax deadlines and extensions",
+          "level": "beginner",
+          "otherLessonTitles": ["Tax brackets", "Deductions and credits"],
+          "skills": ["Know the federal tax filing deadline", "Use a filing extension correctly"],
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The lesson teaches one coherent idea through buying and selling: an order can exhaust shares at one price and reach a less favorable price. Its single skill starts with an action verb and includes a canonical topic, one-sentence idea, concrete example, and real-life use. The title, description, and can-do line are appropriately scoped.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook offers a tempting wrong answer, the explanation moves from a concrete example to the term, and explanation-first support fits the new idea. The selling check transfers the idea to the opposite direction, and the final application adds a realistic choice between order sizes. However, the first check merely changes the numbers in the hook's question, triggering the cap of 8 for one weak check.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "Both visuals teach the mechanism by showing an order extending beyond the shares available at the first price. They are instructional rather than decorative. No specialized activity template is necessary for these light prediction and decision questions, and the hypothetical examples are not presented as real market data.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The plan uses plain US English, short stories, and light checks without formulas or mathematical notation. It stays focused on price impact, does not reteach price formation, liquidity, or spreads, and avoids the neighboring lessons' cases and numbers. There are no filler screens.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5100,
+          "inputTokens": 5103,
+          "outputTokens": 892,
+          "reasoningTokens": 329
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The first graded check repeats the hook's buy-order question with different numbers: the order exceeds the shares at the first price and reaches the second. This violates the explicit requirement that checks not repeat the same question with other numbers.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Replace the first check with a common-mistake case: a large order has enough shares available at the first price, so it need not reach another price. This would test whether learners understand that order size relative to available shares matters, rather than assuming every large order trades at several prices.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, overview level: plain words and stories, no formulas\n      - The earlier lessons already taught what sets a trade price, liquidity and the spread: each gets at most a short reminder, never its own explanation screen, and the hook is about this lesson's idea, not a recap\n      - The plan uses its own case and numbers: not the $20 then $21 trade, the $19 sale, the $20.10 and $20.00 price tags or the busy and empty market stalls the earlier lessons used\n      - Each check asks something new (a new case, a harder one or a common mistake), never the same question with other numbers, and the application is a new situation that takes one more step, not the explanation's example again\n      - The hook has a tempting wrong answer, such as every share trading at the first price shown\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-price-impact-chapter-siblings-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterLessons": [
+            {
+              "canDo": "Explain why a stock's next trade may have a different price",
+              "examples": [
+                "One share trades for $20; later, a buyer offers $21 and a seller accepts, so the next trade is at $21.",
+                "A stock traded for $20 a minute ago, then for $21. Ask learners to guess what might have changed.",
+                "The last trade was $20. Buyers now want to pay only $19, and a seller accepts. Ask for the next trade price."
+              ],
+              "ideas": [
+                "A stock's next trade price changes when buyers and sellers change the prices they'll agree on."
+              ],
+              "order": "before",
+              "title": "Why stock prices change"
+            },
+            {
+              "canDo": "Recognize when a stock may be hard to trade",
+              "examples": [
+                "Stock A has several people ready to buy and sell today; Stock B has one ready seller and no ready buyer.",
+                "Compare selling at a busy market stall with selling at an empty one."
+              ],
+              "ideas": [
+                "Market liquidity is how easy it is to trade a stock when willing buyers and sellers are available."
+              ],
+              "order": "before",
+              "title": "Market liquidity"
+            },
+            {
+              "canDo": "Spot a trading cost in the buy-sell price gap",
+              "examples": [
+                "A share costs $20.10 to buy but sells for $20.00, leaving a 10-cent spread.",
+                "Two price tags for the same stock: buy for $20.10 and sell for $20.00. If you buy and sell right away, do you get back what you paid?"
+              ],
+              "ideas": [
+                "The gap between the buying and selling price is a cost of trading right away."
+              ],
+              "order": "before",
+              "title": "Buying and selling price spreads"
+            },
+            {
+              "canDo": "Imagine how this chapter's ideas play out",
+              "order": "after",
+              "title": "What if? Prices and trading costs"
+            }
+          ],
+          "chapterTitle": "Prices and trading costs",
+          "courseTitle": "How the stock market works",
+          "language": "en",
+          "lessonCanDo": "Explain why a large order may trade at several prices",
+          "lessonDescription": "See how a large buy or sell order can use up the shares offered at one price and reach a less favorable one.",
+          "lessonTitle": "Large orders and price impact",
+          "level": "overview",
+          "skills": ["Explain the price impact of an order"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "Each lesson has one action-based skill, a canonical topic, a one-sentence idea, a concrete example and a practical use. Acquisition and loss of stability form defensible boundaries, and the order is appropriate. Titles, descriptions and can-do statements are scoped to their respective lessons.",
+          "score": 9,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hooks use concrete choices, checks name tempting wrong answers, and both worked examples have less-supported follow-ups. The time-alone trap is explicitly checked, and both final screens apply the rules to personnel work at a prefeitura. However, several explanations in the second lesson introduce abstract legal definitions before a concrete case, particularly administrative proceedings and periodic evaluation. Starting those screens with situations would better satisfy the required concrete-to-name progression.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "No dedicated activities or visuals are included, which is appropriate here: short scenario-based checks can teach these legal distinctions without a specialized interaction. There are no decorative elements, unsuitable templates or fabricated data presented as real, and no clear need for manipulation or a diagram.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The Portuguese is Brazilian, the explanations are accessible to beginners, and legal terms such as final judgment and full defense receive plain-language explanations. The plan largely stays within stability rather than expanding into disciplinary rules. However, it omits the explicitly requested Brazilian city, so the localization requirement is incomplete and the score is capped at 8 for this slip. The special-evaluation explanation should also state approval explicitly, although subsequent examples correctly supply it. The plan consistently uses three years as the threshold and does not expressly claim that these three routes are the only possibilities in every circumstance.",
+          "score": 8,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 6176,
+          "inputTokens": 6179,
+          "outputTokens": 1322,
+          "reasoningTokens": 705
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation introducing the special evaluation says the servant must be evaluated, without explicitly requiring approval; the worked example and application correctly include approval, but the defining explanation should do so too. The examples include Brazilian names and a prefeitura, but no Brazilian city, as requested.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Introduce the administrative-process and periodic-evaluation explanations through concrete situations before naming the legal concepts. Explicitly frame the second lesson around misconduct and poor performance so its three routes are not mistaken for an exhaustive account of every constitutional circumstance of losing a post.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, with Brazilian examples (names, cities, a prefeitura or órgão federal)\n      - The stability rule matches SOURCES (Constituição, art. 41): three years of effective service plus approval in the special performance evaluation by a commission; never 24 months or 2 years\n      - For misconduct or poor performance, the ways a stable servant loses the post are the three in the article (final court decision, administrative process with a defense, periodic evaluation); the plan never claims they are the only ways in every case\n      - A check plans the trap of thinking time alone gives stability\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-estabilidade-sourced-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "Cargos, empregos e funções públicas" },
+            { "order": "after", "title": "Regime disciplinar" }
+          ],
+          "chapterTitle": "Agentes públicos",
+          "courseTitle": "Direito Administrativo",
+          "language": "pt",
+          "lessonCanDo": "Dizer quando um servidor fica estável e como pode perder o cargo",
+          "lessonDescription": "Quando o servidor concursado adquire estabilidade e em que casos o servidor estável perde o cargo.",
+          "lessonTitle": "Estabilidade do servidor público",
+          "level": "beginner",
+          "skills": [
+            "Identificar quando o servidor adquire estabilidade",
+            "Reconhecer como o servidor estável pode perder o cargo"
+          ],
+          "sources": "<page ref=\"S1:1\" of=\"Constituição da República Federativa do Brasil de 1988, Art. 41\">\nArt. 41. São estáveis após três anos de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.\n§ 1º O servidor público estável só perderá o cargo:\nI - em virtude de sentença judicial transitada em julgado;\nII - mediante processo administrativo em que lhe seja assegurada ampla defesa;\nIII - mediante procedimento de avaliação periódica de desempenho, na forma de lei complementar, assegurada ampla defesa.\n§ 4º Como condição para a aquisição da estabilidade, é obrigatória a avaliação especial de desempenho por comissão instituída para essa finalidade.\n</page>"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The lesson consistently teaches percent change relative to the starting amount. Recovery percentages are a closely linked application, not a separate topic. The single skill starts with an action verb and includes a canonical topic, clear idea, accurate example, and practical use.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The surprising recovery hook leads into concrete intuition, a definition, and a correct numerical procedure. A worked example is followed by a less-supported calculation that explicitly includes the new-denominator trap. The final pay scenario is realistic and mathematically correct. The recovery sequence could provide stronger transfer through a fresh recovery-percentage calculation, but no score cap is triggered.",
+          "score": 9,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The labeled before-and-after bars directly support understanding the original amount and the dollar increase. No decorative visuals or unnecessary activities are included; the planned calculations and checks do not require an interactive template.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The language and arithmetic fit beginners, and notation follows concrete intuition. The lesson does not reteach percent of a quantity or expand into discounts, markups, or percentage points. US English is used throughout, with only the minor article error in “A $80 jacket.”",
+          "score": 9,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4793,
+          "inputTokens": 4796,
+          "outputTokens": 743,
+          "reasoningTokens": 254
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The hook says “A $80 jacket”; this should be “An $80 jacket.”",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Strengthen transfer after the recovery example by asking learners to calculate the recovery percentage for a different-sized drop. The current check effectively tests whether equal percentage changes cancel, but repeats the 50% scenario rather than independently testing the recovery calculation.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Beginner lesson on percent change: explanation first; a hook such as a price that rises 50% then falls 50% and doesn't return to the start\n      - Calculating a percent change is a procedure, so it needs a worked example with real numbers followed by a similar check with less help\n      - Checks should include the classic trap of dividing by the new value instead of the original\n      - The application uses a realistic case (a rent increase, a salary raise, a sale price)\n      - Discounts, markups and percentage points belong to the other lessons and get at most a sentence\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-beginner-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "Percent of a quantity" },
+            { "order": "after", "title": "Discounts and markups" },
+            { "order": "after", "title": "Percentage points" }
+          ],
+          "chapterTitle": "Fractions and percentages",
+          "courseTitle": "Mathematics",
+          "language": "en",
+          "lessonCanDo": "Calculate how much a price changed in percent",
+          "lessonDescription": "Work out how much a price or a salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
+          "lessonTitle": "Percent change",
+          "level": "beginner",
+          "skills": ["Calculate a percent change"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The split between simple and compound rule of three is natural and preserves teaching order. Direct and inverse cases remain together rather than separating mutually defining ideas. Each lesson has one action-based skill with a canonical topic, a one-sentence description, a correct example and a practical use, plus a scoped title, description and can-do line.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "Both plans contain concrete numerical hooks, correct worked examples, similar less-supported checks with named tempting errors, and realistic final applications. Direction of change is introduced before the relevant calculations. However, both support modes are explanationFirst rather than the expected questionFirst. The direct relationship is not explicitly named in its teaching sequence, and the recipe-to-machines analogy weakens explanatory clarity. The question-based hooks mitigate, but do not remove, the support-mode mismatch.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The visuals teach relevant relationships through aligned quantities, a same-tank comparison and a production table. Their number is restrained. No activity-template screens are included, which is acceptable here: the numerical checks already require useful learner action, and no clearly superior manipulation is missing. There are no decorative visuals or invented data presented as observed evidence.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The instructional text is in Brazilian Portuguese and uses intermediate-appropriate arithmetic after concrete situations. All supplied calculations are correct. The lessons stay within rule of three, briefly recall rather than extensively reteach proportionality, and avoid filler screens. The neighboring lessons provide no listed cases or numbers that the result demonstrably reuses.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5914,
+          "inputTokens": 5917,
+          "outputTokens": 1017,
+          "reasoningTokens": 369
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Both lessons specify explanationFirst despite the expected question-first support for this partly familiar intermediate topic. The opening questions partly mitigate this, but the support-mode specification conflicts with the intended teaching approach.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The simple-rule explanation describes quantities merely varying together, without explicitly connecting the direct case to proportional variation and naming it before calculation. The constant-unit-price context helps, but the distinction could be more precise. The compound lesson's recipe analogy is also confusing because its adjustments concern machines and working time rather than recipe quantities.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Set the support mode to questionFirst and explicitly make the opening guesses ungraded. Strengthen the initial distinction by naming direct and inverse proportion in the concrete examples, using the previously learned proportionality concept rather than reteaching it. Replace the recipe analogy with the actual production scenario.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate lesson on direct and inverse rule of three, a topic most learners at this level partly know, so question first is a good fit\n      - Must teach how to tell direct from inverse proportion before setting up the rule of three, with a worked example of each (inverse ones are the common trap)\n      - Compound rule of three may be split into its own lesson or kept only if the lesson still fits; either is fine if the plan is coherent\n      - Applications should look like real problems (workers and days, recipes, fuel and distance)\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-de-tres-intermediate-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "Razão e escala" },
+            { "order": "before", "title": "Grandezas proporcionais" },
+            { "order": "after", "title": "Porcentagem" }
+          ],
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "lessonCanDo": "Resolver problemas com grandezas direta e inversamente proporcionais",
+          "lessonDescription": "Monte e resolva regras de três simples e compostas, reconhecendo quando as grandezas são direta ou inversamente proporcionais.",
+          "lessonTitle": "Regra de três simples e composta",
+          "level": "intermediate",
+          "skills": [
+            "Identificar grandezas direta e inversamente proporcionais",
+            "Resolver regra de três simples",
+            "Resolver regra de três composta"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The single lesson preserves the derivation as one coherent idea. Its action-based skill has a canonical topic, a one-sentence explanation, a concrete numerical example, and a relevant nanoscale-device use case. The title, description, and can-do are appropriately scoped.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook invites a prediction, briefs specify usable equations and numbers, worked examples have related follow-up checks, and tempting wrong answers are named. The final device-design problem applies the result meaningfully. However, the explanation moves into wavefunction notation and the differential equation before establishing standing-wave intuition. This is a concrete sequencing weakness; the later wave visual does not repair the initial presentation.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The three planned visuals teach wall constraints, removal of the cosine term, and allowed sine patterns rather than decorating the lesson. The sliderGraph is well matched to the inverse-square dependence on width, with a range, labeled axes, a comparison value, and a diagnostic question. Its values are correctly derived from the stated idealized model.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The physics and numerical examples are correct, the text uses US English, and the lesson stays within the infinite-well derivation without teaching tunneling, the harmonic oscillator, or time-dependent dynamics. It appropriately uses rather than reteaches the preceding Schrödinger-equation lesson. However, advanced notation precedes the required standing-wave intuition, and the requested string picture is absent. This triggers the cap of 8 for one level or scope slip.",
+          "score": 8,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5235,
+          "inputTokens": 5238,
+          "outputTokens": 919,
+          "reasoningTokens": 318
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required intuition-before-notation sequence is missing: the plan introduces ψ(0) = ψ(L) = 0 and the differential equation before showing standing-wave patterns, and never supplies the requested picture of standing waves on a string. The later sine-pattern visual does not fix that ordering failure.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Strengthen assessment of the full can-do by asking learners to reconstruct the right-wall quantization and energy substitution with less help. The existing shifted-wall check and numerical energy checks are useful, but do not independently assess the complete derivation.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Advanced lesson: deriving the energy levels of a particle in a one-dimensional infinite well from the time-independent Schrödinger equation (boundary conditions, sine solutions, quantized wave numbers, E_n proportional to n squared over L squared)\n      - The derivation is one idea that may not split; up to 6 minutes is allowed for one skill at the advanced level\n      - Notation is expected here but should follow a picture of standing waves on a string; a worked derivation with a check after the boundary conditions\n      - An activity such as a slider graph (energy against n or L) or a visual of the first standing waves fits\n      - The time-dependent equation, tunneling and the harmonic oscillator belong to other lessons\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-particle-in-a-box-advanced-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "The time-independent Schrödinger equation" },
+            { "order": "after", "title": "Quantum tunneling" },
+            { "order": "after", "title": "The quantum harmonic oscillator" }
+          ],
+          "chapterTitle": "The Schrödinger equation",
+          "courseTitle": "Quantum mechanics",
+          "language": "en",
+          "lessonCanDo": "Derive the energy levels of a particle in a box",
+          "lessonDescription": "Solve the time-independent Schrödinger equation for a particle trapped in a one-dimensional box and see why its energy comes in steps.",
+          "lessonTitle": "Particle in a box",
+          "level": "advanced",
+          "skills": ["Derive the energy levels of a particle in a box"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The lesson consistently develops successive percentage changes and their accumulated effect. Its single skill starts with an action verb and includes a canonical topic, a one-sentence idea, a correct concrete example, and a realistic use. The title, description, and can-do line are appropriately scoped.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook poses a useful surprise, explanations begin with concrete prices, and the worked example has a closely matched follow-up with less help. Checks progress from cancellation to accumulated change, explicitly name tempting wrong answers, and culminate in a realistic offer comparison. However, the worked example does not demonstrate how to calculate the accumulated percentage that the next check requires.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "Both proposed visuals teach the changing-base idea through updated price labels and annotated monetary changes. They are not decorative. No interactive template is necessary for these straightforward calculations and comparisons, and the absence of an activity is appropriate.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The language is accessible Brazilian Portuguese, all calculations are correct, the cases avoid those listed in earlier lessons, and simple interest is excluded. The single-change calculation serves as contextual setup rather than an extended review. However, omitting factor chaining is a substantive scope slip relative to the explicitly required new idea, limiting this category to 8.",
+          "score": 8,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5110,
+          "inputTokens": 5113,
+          "outputTokens": 882,
+          "reasoningTokens": 295
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required new method—chaining percentage factors—is never taught. The examples correctly apply each percentage to the updated value, but no screen shows a calculation such as 200 × 1.20 × 0.90 = 216. This misses an explicit instructional expectation and does not build on the previously learned factor method.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The worked example states that the R$ 16 increase represents 8% without showing how to obtain that percentage from the initial R$ 200. The following check asks learners to calculate accumulated percentage change, so this step needs clearer modeling.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the hook explicitly an ungraded guess, and specify feedback explaining why directly adding or subtracting the percentages produces the tempting wrong answers in the checks.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners\n      - The earlier lesson already taught a single increase or discount with its factor (× 1,10 or × 0,75): it gets at most a short reminder, and the new idea is chaining factors, such as why +10% then −10% doesn't return to the start\n      - The plan uses its own cases and numbers: not the R$ 80 camiseta with 25% off, the R$ 2.000 salário with a 10% raise or \"20% de R$ 150\" from the earlier lessons\n      - A worked example of two changes in a row, followed by a similar check with less help; the checks include the trap of adding the percentages, and each check asks something new\n      - Juros simples belongs to the next lesson\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-descontos-sucessivos-chapter-siblings-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Guess how often something random happens, then run it hundreds of times and compare. Code computes the exact chance of a hit; each guess option carries the chance it stands for in `value` and the closest one is correct. Fills: the random model, what counts as a hit, the number of runs, the guess choices and the why.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater",
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "id": "codeRunner"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "id": "timeline"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "id": "matchPairs"
+            }
+          ],
+          "chapterLessons": [
+            {
+              "canDo": "Calcular a porcentagem de um valor",
+              "examples": [
+                "Quanto é 20% de R$ 150?",
+                "Numa turma de 40 alunos, 25% usam óculos. Quantos são?"
+              ],
+              "ideas": ["Para achar 20% de um valor, multiplique o valor por 0,20."],
+              "order": "before",
+              "title": "Porcentagem de um valor"
+            },
+            {
+              "canDo": "Aplicar um aumento ou um desconto percentual",
+              "examples": [
+                "Uma camiseta de R$ 80 com 25% de desconto passa a custar R$ 60.",
+                "Um salário de R$ 2.000 com aumento de 10% vai para R$ 2.200.",
+                "Qual é o fator de um aumento de 15%?"
+              ],
+              "ideas": [
+                "Um aumento de 10% multiplica o valor por 1,10.",
+                "Um desconto de 25% multiplica o valor por 0,75."
+              ],
+              "order": "before",
+              "title": "Aumento e desconto percentual"
+            },
+            {
+              "canDo": "Calcular juros simples de um empréstimo",
+              "order": "after",
+              "title": "Juros simples"
+            }
+          ],
+          "chapterTitle": "Porcentagem",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "lessonCanDo": "Calcular o efeito de aumentos e descontos seguidos",
+          "lessonDescription": "Entenda por que um aumento de 10% seguido de um desconto de 10% não volta ao preço inicial e calcule variações acumuladas.",
+          "lessonTitle": "Aumentos e descontos sucessivos",
+          "level": "beginner",
+          "skills": ["Calcular aumentos e descontos sucessivos"]
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-spec"
+}

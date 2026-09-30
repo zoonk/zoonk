@@ -61,7 +61,7 @@ struct CourseCatalogSearchResultsView: View {
             ) {
               CatalogSearchResultRow(
                 description: chapter.courseTitle,
-                imageURL: chapter.imageURL,
+                imageURL: nil,
                 systemImage: "rectangle.stack.fill",
                 title: chapter.title)
             }

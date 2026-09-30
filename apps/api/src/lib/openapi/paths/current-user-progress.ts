@@ -3,7 +3,6 @@ import {
   currentUserEnergyResponseSchema,
   currentUserLevelResponseSchema,
   currentUserProgressResponseSchema,
-  currentUserProgressSnapshotResponseSchema,
   currentUserScorePatternsResponseSchema,
   currentUserScoreResponseSchema,
 } from "../schemas/current-user-progress";
@@ -27,7 +26,6 @@ function getCurrentUserProgressResponses({
     | typeof currentUserEnergyResponseSchema
     | typeof currentUserLevelResponseSchema
     | typeof currentUserProgressResponseSchema
-    | typeof currentUserProgressSnapshotResponseSchema
     | typeof currentUserScorePatternsResponseSchema
     | typeof currentUserScoreResponseSchema;
 }) {
@@ -113,19 +111,6 @@ export const currentUserProgressPaths = {
       }),
       security: AUTHENTICATED_SECURITY,
       summary: "Get current learner Score patterns",
-      tags: ["Progress"],
-    },
-  },
-  "/me/progress/snapshot": {
-    get: {
-      description: `Pre-completion milestone facts used by interactive lesson players. ${requestTimeZoneDescription}`,
-      operationId: "getCurrentUserProgressSnapshot",
-      responses: getCurrentUserProgressResponses({
-        description: "Current learner player progress snapshot",
-        schema: currentUserProgressSnapshotResponseSchema,
-      }),
-      security: AUTHENTICATED_SECURITY,
-      summary: "Get current learner progress snapshot",
       tags: ["Progress"],
     },
   },

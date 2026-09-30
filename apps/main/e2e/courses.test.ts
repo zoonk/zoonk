@@ -93,7 +93,8 @@ test.describe("Courses Page - Basic", () => {
     await expect(createCourseLink).toBeVisible();
     await createCourseLink.click();
 
-    await expect(page).toHaveURL(/\/start\/learn$/u);
+    await expect(page).toHaveURL(/\/start$/u);
+    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
   });
 });
 

@@ -1,10 +1,10 @@
+import { DetailField } from "@/components/detail-field";
 import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
 import { getUserSubscriptions } from "@/data/users/get-user-subscriptions";
 import { getSubscriptionProviderLabel, getSubscriptionStatusLabel } from "@/lib/subscription";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Separator } from "@zoonk/ui/components/separator";
 import { ChangePlanDialog } from "./change-plan-dialog";
-import { DetailField } from "./detail-field";
 
 type UserSubscriptions = Awaited<ReturnType<typeof getUserSubscriptions>>;
 type UserSubscriptionRecord = NonNullable<UserSubscriptions["active"]>;

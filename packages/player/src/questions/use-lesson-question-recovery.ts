@@ -13,8 +13,6 @@ import {
   isRetryableLessonQuestionStatusError,
 } from "./lesson-question-status";
 
-const MAX_TIMER_DELAY_MILLISECONDS = 2_147_000_000;
-
 function waitForPollDelay({ delay, signal }: { delay: number; signal: AbortSignal }) {
   if (signal.aborted) {
     return Promise.resolve();
@@ -66,14 +64,6 @@ function getPendingQuestionId(questions: LessonQuestionState["questions"]) {
 
 function getRunningQuestionId(questions: LessonQuestionState["questions"]) {
   return questions.find((question) => question.status === "running")?.id ?? null;
-}
-
-function getAnswerLimit(answerError: LessonQuestionState["answerError"]) {
-  if (answerError?.reason.kind !== "limit") {
-    return null;
-  }
-
-  return { questionId: answerError.questionId, retryAt: answerError.reason.retryAt };
 }
 
 export function useLessonQuestionRecovery({
@@ -196,46 +186,4 @@ export function useLessonQuestionRecovery({
       abortController.abort();
     };
   }, [connection, canAskQuestions, dispatch, remoteRunningQuestionId, state.isOpen]);
-
-  const limitError = getAnswerLimit(state.answerError);
-
-  useEffect(() => {
-    if (!limitError) {
-      return;
-    }
-
-    const retryAt = Date.parse(limitError.retryAt);
-    const questionId = limitError.questionId;
-
-    if (!Number.isFinite(retryAt)) {
-      return;
-    }
-
-    const timeoutIds = new Set<ReturnType<typeof globalThis.setTimeout>>();
-
-    function scheduleLimitReset() {
-      const remainingMilliseconds = retryAt - Date.now();
-
-      if (remainingMilliseconds <= 0) {
-        dispatch({ questionId, type: "answerLimitExpired" });
-        return;
-      }
-
-      const timeoutId = globalThis.setTimeout(
-        () => {
-          timeoutIds.delete(timeoutId);
-          scheduleLimitReset();
-        },
-        Math.min(remainingMilliseconds, MAX_TIMER_DELAY_MILLISECONDS),
-      );
-
-      timeoutIds.add(timeoutId);
-    }
-
-    scheduleLimitReset();
-
-    return () => {
-      timeoutIds.forEach((timeoutId) => globalThis.clearTimeout(timeoutId));
-    };
-  }, [dispatch, limitError]);
 }

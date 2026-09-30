@@ -1,9 +1,9 @@
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { getTaskResults } from "./eval-runner";
-import { EVAL_MODELS } from "./models";
+import { EVAL_MODELS, type ModelConfig } from "./models";
 import { getAllOutputsForTask, getOutputStatus } from "./output-loader";
 import { getTestCaseRunProgress } from "./test-case-runs";
-import { type TaskEvalResults } from "./types";
+import { type RegisteredTask, type TaskEvalResults } from "./types";
 
 export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStarted";
 
@@ -47,10 +47,31 @@ export async function getModelStatus(taskId: string, modelId: string): Promise<M
   return "notStarted";
 }
 
+/**
+ * Evaluation models can only run tasks that define an evaluation route, and
+ * image, transcription and realtime models only run tasks with that output,
+ * which nothing else can run.
+ */
+function supportsModel(task: RegisteredTask, model: ModelConfig): boolean {
+  if (
+    task.output ||
+    model.kind === "image" ||
+    model.kind === "realtime" ||
+    model.kind === "transcription"
+  ) {
+    return task.output === model.kind;
+  }
+
+  return model.kind === "generation" || Boolean(task.evaluate);
+}
+
 // Fetch model statuses and sort: notStarted -> outputsReady -> incomplete (filter out completed)
-export async function getSortedModels(taskId: string) {
+export async function getSortedModels(task: RegisteredTask) {
   const modelWithStatus = await Promise.all(
-    EVAL_MODELS.map(async (model) => ({ model, status: await getModelStatus(taskId, model.id) })),
+    EVAL_MODELS.filter((model) => supportsModel(task, model)).map(async (model) => ({
+      model,
+      status: await getModelStatus(task.id, model.id),
+    })),
   );
 
   const order: Record<ModelStatus, number> = {

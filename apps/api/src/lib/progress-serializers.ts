@@ -1,4 +1,3 @@
-import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
 import { type EnergyData } from "@zoonk/core/progress/energy";
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
 import { type CurrentUserProgress } from "@zoonk/core/progress/get-current-user";
@@ -9,7 +8,6 @@ import {
   type TimeScorePattern,
   type WeekdayScorePattern,
 } from "@zoonk/core/progress/get-score-patterns";
-import { type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { getContributionCalendarDateKey } from "@zoonk/utils/contribution-calendar";
 
 const WEEKDAY_KEYS = [
@@ -52,17 +50,9 @@ function serializeDaypart(period: number) {
  * Renames the internal belt color identity to a domain field so clients remain
  * free to choose their own presentation color for each tier.
  */
-export function serializeBeltLevel(level: BeltLevelDetails | BeltLevelResult) {
+export function serializeLevel(level: BeltLevelDetails) {
   const { color: belt, ...progress } = level;
   return { ...progress, belt };
-}
-
-/**
- * Preserves the public Level serializer name while sharing the belt identity
- * mapping with lesson-completion responses.
- */
-export function serializeLevel(level: BeltLevelDetails) {
-  return serializeBeltLevel(level);
 }
 
 /**
@@ -160,22 +150,5 @@ export function serializeScore(score: ScoreHistoryResource) {
     periodStart: serializeLogicalDate(score.periodStart),
     score: score.score,
     totalAnswers: score.totalAnswers,
-  };
-}
-
-/**
- * Converts the player's best-day facts to semantic weekdays while preserving
- * every numeric milestone used to compute post-completion effects.
- */
-export function serializeProgressSnapshot(snapshot: PlayerInitialProgress) {
-  return {
-    ...snapshot,
-    progressSnapshot: {
-      ...snapshot.progressSnapshot,
-      bestDayScores: snapshot.progressSnapshot.bestDayScores?.map((score) => ({
-        ...score,
-        dayOfWeek: serializeWeekday(score.dayOfWeek),
-      })),
-    },
   };
 }

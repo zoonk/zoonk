@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { accountDataExportSchema } from "../schemas/account-export";
 import {
   meDeletionResponseSchema,
   meDeletionSchema,
@@ -79,6 +80,23 @@ export const accountPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Update current user",
+      tags: ["Account"],
+    },
+  },
+  "/me/export": {
+    get: {
+      description:
+        "Everything Zoonk keeps about the learner as one JSON download: the account, learning profile, goals and plans, the progress ledger, answers, skills, mistakes, milestones, memory, feedback and guardian links.",
+      operationId: "exportCurrentUserData",
+      responses: {
+        "200": {
+          content: { "application/json": { schema: accountDataExportSchema } },
+          description: "The learner's data, sent as an attachment",
+        },
+        "401": unauthorizedResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Export the current user's data",
       tags: ["Account"],
     },
   },

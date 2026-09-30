@@ -33,6 +33,7 @@ test.describe("Support page", () => {
     await expect(page.getByText(/message sent successfully/iu)).toBeVisible();
 
     await expect(feedbackSubmission.requestBody).resolves.toStrictEqual({
+      context: { platform: "web", screen: "support", url: "/support" },
       email: "test@example.com",
       message: "Test message",
     });
@@ -69,7 +70,7 @@ test.describe("Support page", () => {
     await messageInput.fill("   ");
     await page.getByRole("button", { name: /send message/iu }).click();
 
-    await expect(page.getByText(/failed to send message/iu)).toBeVisible();
+    await expect(page.getByText(/couldn't send your message/iu)).toBeVisible();
   });
 });
 

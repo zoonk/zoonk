@@ -1,6 +1,5 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { toGenerationResource } from "@/lib/generation-resource";
 import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { NextResponse } from "next/server";
@@ -29,7 +28,8 @@ async function getGeneration(
     return errors.notFound("Generation not found");
   }
 
-  return NextResponse.json(await toGenerationResource(run));
+  // Only the run id and status: clients never see Workflow's own run shape.
+  return NextResponse.json({ id: run.runId, status: await run.status });
 }
 
 export const GET = withApiErrorBoundary(getGeneration);

@@ -1,27 +1,51 @@
 import { type Client, type QueryResultRow } from "pg";
 
-const CONTENT_TABLES = [
+/** Every table the sync copies, in the order the copy inserts them. */
+export const CONTENT_TABLES = [
+  "course_families",
   "courses",
   "course_categories",
-  "chapters",
-  "lessons",
+  "media_assets",
+  "skills",
+  "skill_prerequisites",
+  "items",
+  "library_chapters",
+  "course_chapters",
+  "chapter_skills",
+  "conversation_scenarios",
+  "library_lessons",
+  "chapter_lessons",
+  "lesson_skills",
   "words",
   "word_pronunciations",
   "sentences",
-  "chapter_words",
-  "chapter_sentences",
-  "steps",
+  "lesson_words",
+  "lesson_sentences",
+  "library_steps",
+  "step_variants",
+  "answer_explanations",
 ] as const;
 
 export type ContentTable = (typeof CONTENT_TABLES)[number];
 
-export type ContentIds = {
-  chapterIds: string[];
-  courseIds: string[];
-  lessonIds: string[];
-  sentenceIds: string[];
-  wordIds: string[];
-};
+/**
+ * Public Library rows have no owner and make up the AI organization's catalog. Private rows belong to
+ * one learner's too-specific goal: they never leave the source and are never replaced locally.
+ */
+export const PUBLIC_ROWS = "visibility = 'public' AND owner_id IS NULL";
+
+/**
+ * The v2 seed (`seed/v2`) writes its courses and Library rows with UUID version 8 ids, which
+ * generated content never has. Seeded content belongs to the local database: the sync doesn't read
+ * it from the source, and never removes or overwrites it locally, so the seeded personas keep their
+ * goals, plans and history.
+ */
+export const SEEDED_ROWS = "uuid_extract_version(id) = 8";
+
+export const NOT_SEEDED = `NOT (${SEEDED_ROWS})`;
+
+/** The AI organization's shared Library rows: what the sync copies and replaces. */
+export const CATALOG_ROWS = `${PUBLIC_ROWS} AND ${NOT_SEEDED}`;
 
 type TableColumn = QueryResultRow & {
   column_name: string;
@@ -99,57 +123,4 @@ export async function getOrganizationId({
   }
 
   return organization.id;
-}
-
-async function getIds({
-  client,
-  params,
-  query,
-}: {
-  client: Client;
-  params: unknown[];
-  query: string;
-}): Promise<string[]> {
-  const result = await client.query<{ id: string }>(query, params);
-  return result.rows.map((row) => row.id);
-}
-
-export async function getContentIds({
-  organizationId,
-  source,
-}: {
-  organizationId: string;
-  source: Client;
-}): Promise<ContentIds> {
-  const courseIds = await getIds({
-    client: source,
-    params: [organizationId],
-    query: "SELECT id FROM courses WHERE organization_id = $1 AND user_id IS NULL ORDER BY id",
-  });
-
-  const chapterIds = await getIds({
-    client: source,
-    params: [courseIds],
-    query: "SELECT id FROM chapters WHERE course_id = ANY($1::uuid[]) ORDER BY id",
-  });
-
-  const wordIds = await getIds({
-    client: source,
-    params: [organizationId],
-    query: "SELECT id FROM words WHERE organization_id = $1 ORDER BY id",
-  });
-
-  const sentenceIds = await getIds({
-    client: source,
-    params: [organizationId],
-    query: "SELECT id FROM sentences WHERE organization_id = $1 ORDER BY id",
-  });
-
-  const lessonIds = await getIds({
-    client: source,
-    params: [chapterIds],
-    query: "SELECT id FROM lessons WHERE chapter_id = ANY($1::uuid[]) ORDER BY id",
-  });
-
-  return { chapterIds, courseIds, lessonIds, sentenceIds, wordIds };
 }

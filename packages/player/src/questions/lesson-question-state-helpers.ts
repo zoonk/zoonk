@@ -1,6 +1,6 @@
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
-import { type PlayerQuestionContext } from "../player-context";
 import { type LessonQuestionApiError } from "./lesson-question-api";
+import { type LessonQuestionContext } from "./lesson-question-context";
 
 function sortQuestions(questions: LessonQuestionResource[]) {
   return questions.toSorted(
@@ -114,15 +114,11 @@ export function isSameDraftContext({
   current,
   next,
 }: {
-  current: PlayerQuestionContext;
-  next: PlayerQuestionContext;
+  current: LessonQuestionContext;
+  next: LessonQuestionContext;
 }) {
   if (current.kind !== next.kind) {
     return false;
-  }
-
-  if (current.kind === "lesson" || next.kind === "lesson") {
-    return true;
   }
 
   if (current.kind === "answer" && next.kind === "answer") {
@@ -132,7 +128,12 @@ export function isSameDraftContext({
     );
   }
 
-  return current.kind === "step" && next.kind === "step" && current.step.id === next.step.id;
+  if (current.kind === "step" && next.kind === "step") {
+    return current.step.id === next.step.id;
+  }
+
+  // A lesson, chapter, plan or mock has one conversation.
+  return true;
 }
 
 export function getReconciledAnswerError({

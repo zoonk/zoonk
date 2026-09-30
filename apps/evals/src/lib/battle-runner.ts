@@ -5,6 +5,7 @@ import { logError, logInfo } from "@zoonk/utils/logger";
 import { getBattleLeaderboard } from "./battle-loader";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
 import { generateBattleRankings } from "./battle-score";
+import { canJudge } from "./models";
 import {
   getAllOutputsForTask,
   getModelsWithCompleteOutputs,
@@ -25,7 +26,10 @@ import {
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 
-// Battle judges - easy to extend
+/**
+ * One judge per model family. Each judge skips contestants from its own family,
+ * so every model is scored only by judges from other families.
+ */
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
   "anthropic/claude-opus-5.5",
   "google/gemini-3.1-pro-preview",
@@ -108,9 +112,23 @@ function extractMappingFromMatchup(
   }));
 }
 
-function getMissingJudges(matchup: BattleMatchup): string[] {
+/** A judge is only needed when at least one contestant comes from another family. */
+function canJudgeAny({ judgeId, modelIds }: { judgeId: string; modelIds: string[] }): boolean {
+  return modelIds.some((modelId) => canJudge({ judgeId, modelId }));
+}
+
+function getMissingJudges({
+  matchup,
+  modelIds,
+}: {
+  matchup: BattleMatchup;
+  modelIds: string[];
+}): string[] {
   const existingJudges = new Set(matchup.judgments.map((judgment) => judgment.judgeId));
-  return BATTLE_JUDGES_CONFIG.filter((judgeId) => !existingJudges.has(judgeId));
+
+  return BATTLE_JUDGES_CONFIG.filter(
+    (judgeId) => !existingJudges.has(judgeId) && canJudgeAny({ judgeId, modelIds }),
+  );
 }
 
 function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[]): boolean {
@@ -202,7 +220,8 @@ function getAnonymizationForBattle(
 
 /**
  * Runs one judge independently so the enclosing settled wave can retain both
- * the judge identity and any rankings it successfully produced.
+ * the judge identity and any rankings it successfully produced. The judge only
+ * sees outputs from other model families, under the same anonymous labels.
  */
 async function runJudge(params: {
   judgeId: string;
@@ -213,18 +232,19 @@ async function runJudge(params: {
   scoreCategories?: ScoreCategory[];
 }): Promise<BattleMatchup["judgments"][number]> {
   const { judgeId, anonymizedOutputs, expectations, userPrompt, mapping, scoreCategories } = params;
+  const eligibleMapping = mapping.filter((entry) => canJudge({ judgeId, modelId: entry.modelId }));
+  const eligibleIds = new Set(eligibleMapping.map((entry) => entry.anonymousId));
 
-  return {
+  const { rankings, usage } = await generateBattleRankings({
+    anonymizedOutputs: anonymizedOutputs.filter((output) => eligibleIds.has(output.anonymousId)),
+    expectations,
     judgeId,
-    rankings: await generateBattleRankings({
-      anonymizedOutputs,
-      expectations,
-      judgeId,
-      mapping,
-      scoreCategories,
-      userPrompt,
-    }),
-  };
+    mapping: eligibleMapping,
+    scoreCategories,
+    userPrompt,
+  });
+
+  return { judgeId, rankings, usage };
 }
 
 /**
@@ -291,8 +311,8 @@ async function runBattleForTestCase({
   const { mapping, anonymizedOutputs } = getAnonymizationForBattle(modelOutputs, effectiveExisting);
 
   const judgesToRun = effectiveExisting
-    ? getMissingJudges(effectiveExisting)
-    : [...BATTLE_JUDGES_CONFIG];
+    ? getMissingJudges({ matchup: effectiveExisting, modelIds: currentModelIds })
+    : BATTLE_JUDGES_CONFIG.filter((judgeId) => canJudgeAny({ judgeId, modelIds: currentModelIds }));
 
   if (judgesToRun.length === 0 && effectiveExisting) {
     return effectiveExisting;
@@ -419,6 +439,6 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
   logInfo("Top 3 models:");
 
   leaderboard.slice(0, 3).forEach((entry, i) => {
-    logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.totalScore} points`);
+    logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.averageScore.toFixed(2)} average`);
   });
 }

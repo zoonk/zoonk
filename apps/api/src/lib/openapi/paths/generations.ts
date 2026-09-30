@@ -1,52 +1,13 @@
-import { z } from "zod";
 import { generationPathParamsSchema } from "../schemas/paths";
+import { notFoundResponse, validationErrorResponse } from "../schemas/responses";
 import {
-  badRequestResponse,
-  forbiddenResponse,
-  notFoundResponse,
-  paymentRequiredResponse,
-  tooManyRequestsResponse,
-  unauthorizedResponse,
-  validationErrorResponse,
-} from "../schemas/responses";
-import {
-  createGenerationRequestSchema,
   generationEventStreamSchema,
   generationResourceSchema,
   workflowEventsQuerySchema,
 } from "../schemas/workflows";
-import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
+import { PUBLIC_SECURITY } from "../security";
 
 export const generationPaths = {
-  "/generations": {
-    post: {
-      description:
-        "Starts authenticated course, chapter, or lesson generation. Daily and monthly limits depend on the caller's entitlement. Chapter and lesson targets also require an active subscription when the free first-chapter rule does not apply.",
-      operationId: "createGeneration",
-      requestBody: {
-        content: { "application/json": { schema: createGenerationRequestSchema } },
-        required: true,
-      },
-      responses: {
-        "202": {
-          content: { "application/json": { schema: generationResourceSchema } },
-          description: "Generation accepted",
-          headers: z.object({
-            Location: z.string().meta({ description: "Canonical URL for the accepted generation" }),
-          }),
-        },
-        "400": badRequestResponse,
-        "401": unauthorizedResponse,
-        "402": paymentRequiredResponse,
-        "403": forbiddenResponse,
-        "404": notFoundResponse,
-        "429": tooManyRequestsResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Create a generation",
-      tags: ["Workflows"],
-    },
-  },
   "/generations/{generationId}": {
     get: {
       operationId: "getGeneration",

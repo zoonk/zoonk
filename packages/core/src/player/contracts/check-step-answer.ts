@@ -1,6 +1,6 @@
-import { type StepKind } from "@zoonk/db";
 import { segmentWords } from "@zoonk/utils/string";
-import { parseStepContent } from "../../steps/contract/content";
+import { parseStepContent } from "../../library/steps/contract/step-contract";
+import { type SelectedAnswer } from "./_utils/selected-answer-schema";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   type AnswerResult,
@@ -8,15 +8,13 @@ import {
   checkFillBlankAnswer,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
-  checkSelectImageAnswer,
-  checkSortOrderAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
-import { type SelectedAnswer } from "./completion-input-schema";
+import { type ExerciseKind } from "./exercise-content";
 
 export type CheckableStep = {
   content: unknown;
-  kind: StepKind;
+  kind: ExerciseKind;
   sentence?: { explanation?: string | null; sentence: string; translation: string } | null;
   word?: { id: string; word?: string } | null;
 };
@@ -49,25 +47,6 @@ function checkMatchColumnsStep(step: CheckableStep, answer: SelectedAnswer): Ans
     parseStepContent("matchColumns", step.content),
     answer.userPairs,
     answer.mistakes,
-  );
-}
-
-function checkSortOrderStep(step: CheckableStep, answer: SelectedAnswer): AnswerResult | null {
-  if (step.kind !== "sortOrder" || answer.kind !== "sortOrder") {
-    return null;
-  }
-
-  return checkSortOrderAnswer(parseStepContent("sortOrder", step.content), answer.userOrder);
-}
-
-function checkSelectImageStep(step: CheckableStep, answer: SelectedAnswer): AnswerResult | null {
-  if (step.kind !== "selectImage" || answer.kind !== "selectImage") {
-    return null;
-  }
-
-  return checkSelectImageAnswer(
-    parseStepContent("selectImage", step.content),
-    answer.selectedOptionId,
   );
 }
 
@@ -121,16 +100,9 @@ export function checkStepAnswer(step: CheckableStep, answer: SelectedAnswer): An
       return checkMultipleChoiceStep(step, answer);
     case "reading":
       return checkReadingStep(step, answer);
-    case "selectImage":
-      return checkSelectImageStep(step, answer);
-    case "sortOrder":
-      return checkSortOrderStep(step, answer);
     case "translation":
       return checkTranslationStep(step, answer);
     case "alphabet":
-    case "arrangeWords":
-    case "static":
-    case "visual":
     case "vocabulary":
       return null;
     default:

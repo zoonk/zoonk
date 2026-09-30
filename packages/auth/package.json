@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     ".": "./src/auth.ts",
+    "./access-contract": "./src/access-contract.ts",
     "./account-deletion": "./src/account-deletion.ts",
     "./client": "./src/client.ts",
     "./cookies": "./src/cookies.ts",
@@ -11,14 +12,19 @@
     "./email-deletion-contract": "./src/email-deletion-contract.ts",
     "./email-signup-contract": "./src/email-signup-contract.ts",
     "./errors": "./src/errors.ts",
+    "./human-check": "./src/request-guards/human-check.ts",
     "./next": "./src/next.ts",
     "./native-apple": "./src/native-apple.ts",
     "./native-apple-contract": "./src/native-apple-contract.ts",
     "./native-sessions": "./src/native-sessions.ts",
     "./testing": "./src/testing.ts",
     "./permissions": "./src/permissions.ts",
+    "./plus-purchase": "./src/minors/plus-purchase.ts",
+    "./rate-limit": "./src/request-guards/rate-limit.ts",
     "./username-rules": "./src/username-rules.ts",
-    "./stripe-prices": "./src/stripe/prices.ts"
+    "./user-blobs": "./src/user-blobs.ts",
+    "./stripe-prices": "./src/stripe/prices.ts",
+    "./subscription-events": "./src/stripe/subscription-events.ts"
   },
   "scripts": {
     "test": "vitest run",
@@ -28,10 +34,14 @@
   "dependencies": {
     "@better-auth/prisma-adapter": "1.7.6",
     "@better-auth/stripe": "1.7.6",
+    "@sentry/nextjs": "catalog:",
+    "@vercel/blob": "2.8.0",
+    "@vercel/firewall": "1.2.5",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.7.6",
+    "botid": "catalog:",
     "jose": "6.2.12",
     "mailchecker": "6.0.21",
     "stripe": "22.6.2",

@@ -1,6 +1,6 @@
 "use client";
 
-import { identifyPostHogUser } from "@/lib/posthog";
+import { identifyPostHogUser, syncPostHogSessionReplay } from "@/lib/posthog";
 import { useEffect } from "react";
 
 /**
@@ -10,17 +10,23 @@ import { useEffect } from "react";
 export function PostHogIdentify({
   analyticsDisabled,
   plan,
+  sessionReplayAllowed,
   userId,
   username,
 }: {
   analyticsDisabled: boolean;
   plan: string;
+  sessionReplayAllowed: boolean;
   userId: string | null;
   username: string | null;
 }) {
   useEffect(() => {
-    identifyPostHogUser({ analyticsDisabled, plan, userId, username });
+    void identifyPostHogUser({ analyticsDisabled, plan, userId, username });
   }, [analyticsDisabled, plan, userId, username]);
+
+  useEffect(() => {
+    void syncPostHogSessionReplay(sessionReplayAllowed);
+  }, [sessionReplayAllowed]);
 
   return null;
 }

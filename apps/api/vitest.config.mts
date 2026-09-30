@@ -22,6 +22,8 @@ export default defineConfig({
         replacement: resolve(import.meta.dirname, "./mocks/server-only.ts"),
       },
     ],
+    // Core resolves its own copy of Next (other peers), so without this its `next/cache` escapes the setup mock.
+    dedupe: ["next"],
     tsconfigPaths: true,
   },
   test: {
@@ -32,6 +34,7 @@ export default defineConfig({
     },
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
+    globalSetup: ["./vitest.global-setup.ts"],
     setupFiles: ["./setup-tests.ts"],
   },
 });

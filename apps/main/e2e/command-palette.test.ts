@@ -2,9 +2,12 @@ import { randomUUID } from "node:crypto";
 import { type Locator } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
 
@@ -61,26 +64,18 @@ async function createLocalizedSearchCatalog() {
   ]);
 
   await Promise.all([
-    chapterFixture({
-      courseId: enCourse.id,
+    libraryChapterFixture({
       description: `English chapter locale result ${uniqueId}`,
-      isPublished: true,
+      homeCourseId: enCourse.id,
       language: "en",
       normalizedTitle: normalizeString(enChapterTitle),
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-locale-chapter-en-${uniqueId}`,
       title: enChapterTitle,
     }),
-    chapterFixture({
-      courseId: ptCourse.id,
+    libraryChapterFixture({
       description: `Portuguese chapter locale result ${uniqueId}`,
-      isPublished: true,
+      homeCourseId: ptCourse.id,
       language: "pt",
       normalizedTitle: normalizeString(ptChapterTitle),
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-locale-chapter-pt-${uniqueId}`,
       title: ptChapterTitle,
     }),
   ]);
@@ -121,7 +116,7 @@ async function expectActiveOption(page: Page, optionName: RegExp) {
 async function expectSearchResultsReset({ page, shortQuery }: { page: Page; shortQuery: string }) {
   const course = await createTestCourse();
 
-  await page.goto("/");
+  await page.goto("/courses");
   await openCommandPalette(page);
 
   const dialog = page.getByRole("dialog");
@@ -179,7 +174,7 @@ function getModifierKey(): "Meta" | "Control" {
 
 test.describe("Command Palette - Unauthenticated", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
     await page.waitForLoadState("networkidle");
 
     await expect(
@@ -227,17 +222,19 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
-  test("shows Pages group with Home, Courses, and start goals", async ({ page }) => {
+  test("shows Pages group with Home, Courses, and Start a new course", async ({ page }) => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByRole("group", { name: "Pages" })).toBeVisible();
-    await expect(dialog.getByText(/home page/iu)).toBeVisible();
-    await expect(dialog.getByRole("option", { name: /^courses$/iu })).toBeVisible();
-    await expect(dialog.getByText(/start a new course/iu)).toBeVisible();
-    await expect(dialog.getByText(/speak a language/iu)).toBeVisible();
-    await expect(dialog.getByText(/learn something/iu)).toBeVisible();
-    await expect(dialog.getByText(/pass an exam/iu)).toBeVisible();
+    const pages = dialog.getByRole("group", { name: "Pages" });
+
+    await expect(pages).toBeVisible();
+
+    await expect(pages.getByRole("option")).toHaveText([
+      /home page/iu,
+      /^courses$/iu,
+      /start a new course/iu,
+    ]);
   });
 
   test("shows My account group with Login and Language only", async ({ page }) => {
@@ -272,7 +269,7 @@ test.describe("Command Palette - Unauthenticated", () => {
       .click();
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /get ready for/iu })).toBeVisible();
   });
 
   test("selecting Courses shows courses content", async ({ page }) => {
@@ -296,25 +293,13 @@ test.describe("Command Palette - Unauthenticated", () => {
       .click();
 
     await expect(page).toHaveURL(/\/start$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-  });
-
-  test("selecting a start goal opens that path", async ({ page }) => {
-    await openCommandPalette(page);
-
-    await page
-      .getByRole("dialog")
-      .getByText(/pass an exam/iu)
-      .click();
-
-    await expect(page).toHaveURL(/\/start\/exam$/u);
-    await expect(page.getByRole("heading", { name: /pass an exam/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
   });
 });
 
 test.describe("Command Palette - Authenticated", () => {
   test("shows My account group with authenticated options", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/courses");
     await openCommandPalette(authenticatedPage);
 
     const dialog = authenticatedPage.getByRole("dialog");
@@ -326,7 +311,7 @@ test.describe("Command Palette - Authenticated", () => {
   });
 
   test("does NOT show Login option when authenticated", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/courses");
     await openCommandPalette(authenticatedPage);
 
     const dialog = authenticatedPage.getByRole("dialog");
@@ -334,7 +319,7 @@ test.describe("Command Palette - Authenticated", () => {
   });
 
   test("selecting My courses shows user's enrolled courses", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/courses");
     await openCommandPalette(authenticatedPage);
 
     await authenticatedPage
@@ -347,7 +332,7 @@ test.describe("Command Palette - Authenticated", () => {
   });
 
   test("selecting Subscription shows subscription content", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/courses");
     await openCommandPalette(authenticatedPage);
 
     await authenticatedPage
@@ -362,15 +347,15 @@ test.describe("Command Palette - Authenticated", () => {
   });
 
   // Logout test uses dedicated logoutPage fixture to avoid session interference
-  test("selecting Logout logs user out and shows the home start goals", async ({ logoutPage }) => {
-    await logoutPage.goto("/");
+  test("selecting Logout logs user out and shows the visitor home page", async ({ logoutPage }) => {
+    await logoutPage.goto("/courses");
 
     // Verify authenticated state by checking command palette shows Logout option
     await openCommandPalette(logoutPage);
     await expect(logoutPage.getByRole("dialog").getByText(/^logout$/iu)).toBeVisible();
 
-    // Logout returns to the same URL, so wait for the new main document rather
-    // than a URL change that could resolve before sign-out starts.
+    // Logout reloads the app at the home page, so wait for the new main document
+    // rather than a URL change that could resolve before sign-out starts.
     await Promise.all([
       logoutPage.waitForEvent("framenavigated", {
         predicate: (frame) => frame === logoutPage.mainFrame(),
@@ -381,9 +366,12 @@ test.describe("Command Palette - Authenticated", () => {
         .click(),
     ]);
 
-    await expect(logoutPage.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+    await expect(
+      logoutPage.getByRole("heading", { level: 1, name: /get ready for/iu }),
+    ).toBeVisible();
 
     // Verify user is logged out - command palette should show Login option
+    await logoutPage.goto("/courses");
     await openCommandPalette(logoutPage);
     await expect(logoutPage.getByRole("dialog").getByText(/^login$/iu)).toBeVisible();
   });
@@ -400,7 +388,7 @@ test.describe("Command Palette - Course Search", () => {
 
   test("does not search with fewer than 2 characters", async ({ page }) => {
     const course = await createTestCourse();
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -412,30 +400,19 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("shows course in results and navigates to detail page", async ({ page }) => {
-    const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
     const courseName = `E2E Search Nav ${uniqueId}`;
     const courseDescription = `Searchable course for navigation ${uniqueId}`;
 
-    const course = await courseFixture({
+    await catalogCourseFixture({
       description: courseDescription,
-      isPublished: true,
       normalizedTitle: normalizeString(courseName),
-      organizationId: org.id,
       slug: `e2e-search-nav-${uniqueId}`,
       title: courseName,
     });
 
-    // Course needs a chapter so the detail page renders instead of redirecting
-    await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-    });
-
-    await page.goto("/");
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+    await page.goto("/courses");
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -458,34 +435,31 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("shows chapter results below courses and navigates to chapter page", async ({ page }) => {
-    const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `E2E Palette Mixed ${uniqueId}`;
     const courseName = `${searchTerm} Course`;
     const chapterName = `${searchTerm} Chapter`;
     const chapterDescription = `Chapter result description ${uniqueId}`;
 
-    const course = await courseFixture({
+    const { course, organization } = await catalogCourseFixture({
       description: `Course result description ${uniqueId}`,
-      isPublished: true,
+      lessonCounts: [],
       normalizedTitle: normalizeString(courseName),
-      organizationId: org.id,
       slug: `e2e-palette-course-${uniqueId}`,
       title: courseName,
     });
 
-    const chapter = await chapterFixture({
-      courseId: course.id,
+    const chapter = await libraryChapterFixture({
       description: chapterDescription,
-      isPublished: true,
+      homeCourseId: course.id,
       normalizedTitle: normalizeString(chapterName),
-      organizationId: org.id,
-      position: 0,
       slug: `e2e-palette-chapter-${uniqueId}`,
       title: chapterName,
     });
 
-    await page.goto("/");
+    await courseChapterFixture({ chapterId: chapter.id, courseId: course.id });
+
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -507,8 +481,8 @@ test.describe("Command Palette - Course Search", () => {
 
     await chapterOption.click();
 
-    await expect(page).toHaveURL(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}`);
-    await expect(page.getByRole("button", { name: new RegExp(chapterName, "u") })).toBeVisible();
+    await expect(page).toHaveURL(`/b/${organization.slug}/c/${course.slug}/ch/${chapter.slug}`);
+    await expect(page.getByRole("heading", { level: 1, name: chapterName })).toBeVisible();
   });
 
   test("truncates long result content without horizontal overflow", async ({ page }) => {
@@ -530,18 +504,14 @@ test.describe("Command Palette - Course Search", () => {
       title: courseName,
     });
 
-    await chapterFixture({
-      courseId: course.id,
+    await libraryChapterFixture({
       description: longDescription,
-      isPublished: true,
+      homeCourseId: course.id,
       normalizedTitle: normalizeString(chapterName),
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-long-result-chapter-${uniqueId}`,
       title: chapterName,
     });
 
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -558,21 +528,11 @@ test.describe("Command Palette - Course Search", () => {
     await expectNoHorizontalScrollableOverflow(dialog);
   });
 
-  test("suggests creating a course for non-matching query", async ({ page }) => {
+  test("starts onboarding with a non-matching query as the goal", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const prompt = `E2E Empty Search ${uniqueId}`;
 
-    await coursePromptFixture({
-      canonicalTitle: prompt,
-      courseFormat: "question",
-      generationStatus: null,
-      intent: "question",
-      language: "en",
-      normalizedPrompt: normalizeString(prompt),
-      prompt,
-    });
-
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -585,16 +545,13 @@ test.describe("Command Palette - Course Search", () => {
     await expect(createCourseLink).toBeVisible();
     await createCourseLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`/start/learn/${encodeURIComponent(prompt)}$`, "u"));
-
-    await expect(
-      page.getByRole("heading", { name: /this option isn't available yet/iu }),
-    ).toBeVisible();
+    await expect(page).toHaveURL(`/start?goal=${encodeURIComponent(prompt)}`);
+    await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue(prompt);
   });
 
   test("handles rapid typing correctly", async ({ page }) => {
     const course = await createTestCourse();
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -646,7 +603,7 @@ test.describe("Command Palette - Course Search", () => {
       ),
     );
 
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -673,7 +630,7 @@ test.describe("Command Palette - Course Search", () => {
       await createLocalizedSearchCatalog();
 
     await setLocale(page, "pt");
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -699,7 +656,7 @@ test.describe("Command Palette - Course Search", () => {
 
 test.describe("Command Palette - Keyboard Navigation", () => {
   test("focuses input on open", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const input = page.getByPlaceholder(/search/iu);
@@ -707,7 +664,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("arrow key navigation selects items", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -747,11 +704,11 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /get ready for/iu })).toBeVisible();
   });
 
   test("focus trap within dialog", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -769,7 +726,7 @@ test.describe("Command Palette - Mobile Viewport", () => {
   test.use({ viewport: { height: 667, width: 375 } });
 
   test("command palette opens and functions on mobile", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -782,7 +739,7 @@ test.describe("Command Palette - Mobile Viewport", () => {
 
 test.describe("Command Palette - Accessibility", () => {
   test("has dialog role", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -790,7 +747,7 @@ test.describe("Command Palette - Accessibility", () => {
   });
 
   test("has accessible title", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -803,7 +760,7 @@ test.describe("Command Palette - Accessibility", () => {
   });
 
   test("search button indicates keyboard shortcut", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses");
 
     // Scoped to navigation to avoid strict mode violation
     const searchButton = page.getByRole("navigation").getByRole("button", { name: /search/iu });
@@ -822,7 +779,7 @@ test.describe("Command Palette - Accessibility", () => {
 
     const page = await context.newPage();
 
-    await page.goto("/");
+    await page.goto("/courses");
     await openCommandPalette(page);
 
     const input = page.getByPlaceholder(/search/iu);

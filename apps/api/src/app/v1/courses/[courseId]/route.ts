@@ -7,7 +7,8 @@ import { getCourseById } from "@zoonk/core/courses/get-by-id";
 import { NextResponse } from "next/server";
 
 /**
- * Returns the canonical metadata for one published brand course.
+ * Returns the canonical metadata for one published brand course, or for the
+ * signed-in learner's own private course.
  */
 async function getCourse(_request: Request, context: RouteContext<"/v1/courses/[courseId]">) {
   const parsed = parsePathParams({ params: await context.params, schema: coursePathParamsSchema });

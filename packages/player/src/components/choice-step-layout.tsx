@@ -1,6 +1,6 @@
 "use client";
 
-import { type StepImage } from "@zoonk/core/steps/contract/image";
+import { type ExerciseImage } from "@zoonk/core/library/steps/contract/language-exercises";
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneContext,
@@ -9,7 +9,6 @@ import {
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
-import { StepActionGroup } from "./step-action-group";
 import { StepImageView } from "./step-image";
 
 /**
@@ -69,7 +68,7 @@ function ChoiceStepLayoutContent({
  * one vertical flow, then let the same image bleed through the full left
  * column on desktop where there is enough room to separate evidence and action.
  */
-function ChoiceStepImageStage({ image }: { image: StepImage }) {
+function ChoiceStepImageStage({ image }: { image: ExerciseImage }) {
   return (
     <div className="w-full lg:h-full lg:min-h-0" data-slot="choice-step-image-stage-shell">
       <div
@@ -83,16 +82,6 @@ function ChoiceStepImageStage({ image }: { image: StepImage }) {
 }
 
 /**
- * Image-led choice steps need their desktop action button inside the same
- * reading column as the prompt and options. Keeping that button local to the
- * step lets the right column stay visually self-contained while mobile still
- * uses the shared sticky bottom bar.
- */
-function ChoiceStepDesktopAction() {
-  return <StepActionGroup className="hidden lg:flex" />;
-}
-
-/**
  * Visual practice questions use the normal compact mobile stack, then become a
  * full-height image/text split on desktop. That keeps small screens familiar
  * while making large screens feel intentionally image-led instead of showing a
@@ -103,7 +92,7 @@ function ChoiceStepMediaLayout({
   image,
 }: {
   children: React.ReactNode;
-  image: StepImage;
+  image: ExerciseImage;
 }) {
   return (
     <div
@@ -115,7 +104,6 @@ function ChoiceStepMediaLayout({
         <div className="flex min-w-0 flex-col gap-4 sm:gap-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:px-10 lg:py-10">
           <div className="flex min-w-0 flex-col gap-4 sm:gap-6 lg:mx-auto lg:my-auto lg:w-full lg:max-w-md">
             {children}
-            <ChoiceStepDesktopAction />
           </div>
         </div>
       </div>
@@ -139,7 +127,7 @@ export function ChoiceStepLayout({
   selectedKey,
 }: {
   context?: string | null;
-  image?: StepImage | null;
+  image?: ExerciseImage | null;
   onSelect: (key: string) => void;
   options: readonly { key: string; text: string }[];
   question?: string | null;

@@ -168,7 +168,7 @@ test.describe("Auth Callback", () => {
     expect(stateCookie?.value).toBe(state);
   });
 
-  test("redirects to home and sets session on valid token", async ({ browser }) => {
+  test("signs in on a valid token and opens the learner's home", async ({ browser }) => {
     const baseURL = getBaseURL();
     const user = await createE2EUser(baseURL);
     const token = await generateOneTimeToken(baseURL, user);
@@ -181,8 +181,10 @@ test.describe("Auth Callback", () => {
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
     );
 
-    await page.waitForURL(/\/$/u);
+    // Home sends a learner without a goal to Today, which asks them to start one.
+    await page.waitForURL(/\/start$/u);
 
+    await page.goto("/courses");
     await page.getByRole("button", { name: /user menu/iu }).click();
     await expect(page.getByText(/logout/iu)).toBeVisible();
 

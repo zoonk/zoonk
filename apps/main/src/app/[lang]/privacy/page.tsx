@@ -1,3 +1,4 @@
+import { LegalDocument } from "@/components/public/legal-document";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 
@@ -18,8 +19,8 @@ export default async function Privacy() {
   const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
 
   return (
-    <main className="prose dark:prose-invert max-w-full p-4">
+    <LegalDocument>
       <PrivacyPolicy />
-    </main>
+    </LegalDocument>
   );
 }

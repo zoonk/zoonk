@@ -11,24 +11,51 @@ import {
 } from "@zoonk/ui/components/sheet";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { usePlayerViewer } from "../player-context";
 import { QuestionComposer } from "./lesson-question-composer";
-import { LessonQuestionCopyAction } from "./lesson-question-copy-action";
 import {
   type LessonQuestionNavigation,
   LessonQuestionNavigationContext,
 } from "./lesson-question-navigation";
-import { type LessonQuestionPanelMetadata } from "./lesson-question-panel-types";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
+/** What the sheet is about: the part of a lesson in view, or the thing asked about as a whole. */
+function LessonQuestionPanelDescription({
+  context,
+  stepCount,
+}: {
+  context: LessonQuestionController["state"]["context"];
+  stepCount: number;
+}) {
+  const t = useExtracted();
+
+  switch (context.kind) {
+    case "answer":
+    case "step":
+      return t("Part {current} of {total}", {
+        current: String(context.stepIndex + 1),
+        total: String(stepCount),
+      });
+    case "chapter":
+      return t("Ask questions about this chapter");
+    case "lesson":
+      return t("Ask questions about this lesson");
+    case "mock":
+      return t("Ask questions about this mock exam");
+    case "plan":
+      return t("Ask questions about your plan");
+    default:
+      return context satisfies never;
+  }
+}
+
 function LessonQuestionPanelHeader({
   controller,
-  metadata,
+  stepCount,
 }: {
   controller: LessonQuestionController;
-  metadata: LessonQuestionPanelMetadata;
+  stepCount: number;
 }) {
   const t = useExtracted();
 
@@ -49,31 +76,26 @@ function LessonQuestionPanelHeader({
           <XIcon aria-hidden="true" />
         </SheetClose>
       </div>
-      <div className="mt-0.5 -ml-2.5 self-stretch pr-2.5">
-        <LessonQuestionCopyAction controller={controller} metadata={metadata} />
-      </div>
       <SheetDescription className="text-xs">
-        {controller.state.context.kind === "lesson"
-          ? t("Ask questions about this lesson")
-          : t("Part {current} of {total}", {
-              current: String(controller.state.context.stepIndex + 1),
-              total: String(metadata.lessonSteps.length),
-            })}
+        <LessonQuestionPanelDescription context={controller.state.context} stepCount={stepCount} />
       </SheetDescription>
     </SheetHeader>
   );
 }
 
-export function LessonQuestionPanel({
+/**
+ * The tutor's sheet: the thread about where the learner is and, for learners who can ask, the
+ * composer.
+ */
+export function LessonQuestionSheet({
   navigation,
-  metadata,
+  stepCount,
 }: {
   navigation: LessonQuestionNavigation;
-  metadata: LessonQuestionPanelMetadata;
+  stepCount: number;
 }) {
   const controller = useLessonQuestionController();
-  const { isAuthenticated } = usePlayerViewer();
-  const { state } = controller;
+  const { canAskQuestions, state } = controller;
 
   return (
     <LessonQuestionNavigationContext value={navigation}>
@@ -83,13 +105,13 @@ export function LessonQuestionPanel({
           showCloseButton={false}
           side="right"
         >
-          <LessonQuestionPanelHeader controller={controller} metadata={metadata} />
+          <LessonQuestionPanelHeader controller={controller} stepCount={stepCount} />
 
           <div className="min-h-0 flex-1">
-            <QuestionThread controller={controller} isAuthenticated={isAuthenticated} />
+            <QuestionThread controller={controller} isAuthenticated={canAskQuestions} />
           </div>
 
-          {isAuthenticated && <QuestionComposer controller={controller} />}
+          {canAskQuestions && <QuestionComposer controller={controller} />}
         </SheetContent>
       </Sheet>
     </LessonQuestionNavigationContext>

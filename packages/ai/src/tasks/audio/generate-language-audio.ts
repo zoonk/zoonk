@@ -1,7 +1,9 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type TTSVoice, isOpenAITTSSupportedLanguage } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
+import { getPromptVersion } from "../../provenance/prompt-version";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
@@ -18,7 +20,20 @@ const MAX_PROVIDER_AUDIO_BYTES = 850 * 1024;
 const READ_ALOUD_TEMPLATE =
   "The following text is {{LANGUAGE}}. Speak clearly at a moderate pace suitable for language learners. Enunciate each word precisely; read it aloud in {{LANGUAGE}}.";
 
-export type AudioResult = { audio: Uint8Array; format: "mp3" };
+/**
+ * The text-to-speech run that voiced a clip, stored with the audio like every generated row's
+ * provenance. `promptVersion` covers the voice and the instructions it was read with.
+ */
+export type SpeechProvenance = {
+  generatedAt: string;
+  model: SpeechModelName;
+  promptVersion: string;
+  runId: string;
+};
+
+type VoicedAudio = { audio: Uint8Array; format: "mp3"; model: SpeechModelName };
+
+export type AudioResult = Omit<VoicedAudio, "model"> & { provenance: SpeechProvenance };
 export type LanguageAudioTextType = "sentence" | "word";
 export type LanguageAudioUsage = "alphabetSymbol";
 
@@ -155,7 +170,7 @@ async function generateWithModel({
   model: SpeechModelName;
   text: string;
   voice: TTSVoice;
-}): Promise<AudioResult> {
+}): Promise<VoicedAudio> {
   const wavAudio = await generateSpeechWithProvider({
     ...(instructions ? { instructions } : {}),
     model,
@@ -166,7 +181,7 @@ async function generateWithModel({
   assertExpectedAudioSize({ audio: wavAudio, model });
 
   const mp3Audio = await convertWavToMp3({ audio: wavAudio, model });
-  return { audio: mp3Audio, format: "mp3" };
+  return { audio: mp3Audio, format: "mp3", model };
 }
 
 /**
@@ -183,7 +198,7 @@ async function generateWithFallback({
   models: readonly SpeechModelName[];
   text: string;
   voice: TTSVoice;
-}): Promise<AudioResult> {
+}): Promise<VoicedAudio> {
   const [model, ...remainingModels] = models;
 
   if (!model) {
@@ -217,6 +232,7 @@ async function generateWithFallback({
  * Generates audio with a language-aware provider order. Callers only need to
  * identify sentences because words are the default used by vocabulary and
  * alphabet generation. An explicit model bypasses automatic provider choice.
+ * The result names the model that actually voiced it, after any fallback.
  */
 export async function generateLanguageAudio({
   language,
@@ -234,9 +250,11 @@ export async function generateLanguageAudio({
   voice?: TTSVoice;
 }): Promise<SafeReturn<AudioResult>> {
   const instructions = buildInstructions({ languageCode: language, usage });
+  const promptVersion = getPromptVersion({ systemPrompt: `${voice}\n${instructions ?? ""}` });
+  const runId = randomUUID();
 
-  return safeAsync(() =>
-    generateWithFallback({
+  return safeAsync(async () => {
+    const voiced = await generateWithFallback({
       ...(instructions ? { instructions } : {}),
       models: getSpeechModels({
         ...(language ? { languageCode: language } : {}),
@@ -245,6 +263,17 @@ export async function generateLanguageAudio({
       }),
       text,
       voice,
-    }),
-  );
+    });
+
+    return {
+      audio: voiced.audio,
+      format: voiced.format,
+      provenance: {
+        generatedAt: new Date().toISOString(),
+        model: voiced.model,
+        promptVersion,
+        runId,
+      },
+    };
+  });
 }

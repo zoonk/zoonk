@@ -18,19 +18,6 @@ export function PlayerContentFrame({ className, ...props }: React.ComponentProps
   );
 }
 
-export function NavigableStepLayout({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center",
-        className,
-      )}
-      data-slot="navigable-step-layout"
-      {...props}
-    />
-  );
-}
-
 /**
  * Wraps every centered interactive screen in the shared player frame so answer
  * content and primary actions always use the same width.

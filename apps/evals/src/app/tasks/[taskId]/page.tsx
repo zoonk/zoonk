@@ -4,7 +4,10 @@ import {
   HomeLinkBreadcrumb,
   TaskPageBreadcrumb,
 } from "@/components/breadcrumb";
-import { getBattleLeaderboard } from "@/lib/battle-loader";
+import { getBattleJudgeCost, getBattleLeaderboard } from "@/lib/battle-loader";
+import { formatLatencyBudget } from "@/lib/format";
+import { loadGatewayPrices } from "@/lib/gateway-prices";
+import { getLeaderboardEntries } from "@/lib/leaderboard";
 import { EVAL_MODELS } from "@/lib/models";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
 import { supportsJudgeMode } from "@/lib/types";
@@ -102,6 +105,7 @@ async function TaskHeader({ params }: TaskRouteProps) {
         <ContainerDescription>
           Choose a model to run evaluations on {task.testCases.length} test cases (
           {RUNS_PER_TEST_CASE} runs each)
+          {task.latencyBudget && `. Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
         </ContainerDescription>
       </ContainerHeaderGroup>
 
@@ -122,19 +126,18 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
   const judgeModeSupported = supportsJudgeMode(task);
 
-  const battleEntriesPromise = judgeModeSupported
-    ? getBattleLeaderboard(taskId)
-    : Promise.resolve([]);
-
-  const [modelsWithResults, battleEntries] = await Promise.all([
+  const [modelsWithResults, battleEntries, battleJudgeCost, prices] = await Promise.all([
     getModelsWithResults(taskId),
-    battleEntriesPromise,
+    judgeModeSupported ? getBattleLeaderboard(taskId) : [],
+    judgeModeSupported ? getBattleJudgeCost(taskId) : 0,
+    loadGatewayPrices(),
   ]);
 
   return (
     <LeaderboardTabs
       battleEntries={battleEntries}
-      results={modelsWithResults}
+      battleJudgeCost={battleJudgeCost}
+      entries={getLeaderboardEntries({ prices, results: modelsWithResults, task })}
       supportsJudgeMode={judgeModeSupported}
       taskId={taskId}
     />
@@ -146,13 +149,18 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
  * mutable eval files and should not be frozen into the shared App Shell.
  */
 async function TaskModelGrid({ params }: TaskRouteProps) {
-  const { taskId } = await getTaskRouteFromParams(params);
-  const sortedModels = await getSortedModels(taskId);
+  const { task, taskId } = await getTaskRouteFromParams(params);
+  const [sortedModels, prices] = await Promise.all([getSortedModels(task), loadGatewayPrices()]);
 
   return (
     <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {sortedModels.map((model) => (
-        <ModelCard key={model.id} model={model} taskId={taskId} />
+        <ModelCard
+          key={model.id}
+          model={model}
+          pricing={prices.models[model.gatewayModelId]}
+          taskId={taskId}
+        />
       ))}
     </section>
   );

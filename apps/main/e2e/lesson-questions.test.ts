@@ -7,15 +7,10 @@ import {
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
-import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { normalizeString } from "@zoonk/utils/string";
-import { advanceToCompletionSummary } from "./completion";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { expect, test } from "./fixtures";
+import { MODES, expectMode, showInMode } from "./learn-personas";
+import { fulfillTutorAnswer } from "./tutor-answer";
 
 const FORMATTED_ANSWER = [
   "### Key idea",
@@ -31,27 +26,6 @@ const FORMATTED_ANSWER = [
 ].join("\n\n");
 
 const ANSWER_TEXT = "Gravity keeps pulling while the satellite moves forward, bending its path.";
-
-const UI_MESSAGE_STREAM_HEADERS = {
-  "Cache-Control": "no-cache",
-  "Content-Type": "text/event-stream",
-  "x-vercel-ai-ui-message-stream": "v1",
-};
-
-function uiMessageEvent(event: object) {
-  return `data: ${JSON.stringify(event)}\n\n`;
-}
-
-function uiMessageStreamBody(chunks: string[]) {
-  return [
-    uiMessageEvent({ type: "start" }),
-    uiMessageEvent({ id: "answer", type: "text-start" }),
-    ...chunks.map((delta) => uiMessageEvent({ delta, id: "answer", type: "text-delta" })),
-    uiMessageEvent({ id: "answer", type: "text-end" }),
-    uiMessageEvent({ type: "finish" }),
-    "data: [DONE]\n\n",
-  ].join("");
-}
 
 async function getRequiredElementBox(locator: Locator) {
   const box = await locator.boundingBox();
@@ -82,7 +56,6 @@ function questionResource({
 type QuestionLessonScenario = {
   correctOption: string;
   correctOptionId: string;
-  hiddenFeedback: string;
   lessonId: string;
   question: string;
   stepIds: string[];
@@ -90,120 +63,74 @@ type QuestionLessonScenario = {
   url: string;
   wrongOption: string;
   wrongOptionId: string;
+  wrongReason: string;
 };
 
+/**
+ * A Library lesson played in the lesson player, whose tutor is the questions sheet: a check (or,
+ * with `staticOnly`, an explanation) first, then optionally an explanation.
+ */
 async function createQuestionLesson({
   includeSecondStep = false,
   staticOnly = false,
 }: { includeSecondStep?: boolean; staticOnly?: boolean } = {}): Promise<QuestionLessonScenario> {
-  const organization = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
-  const courseTitle = `E2E Questions Course ${uniqueId}`;
-
-  const course = await courseFixture({
-    isPublished: true,
-    normalizedTitle: normalizeString(courseTitle),
-    organizationId: organization.id,
-    slug: `e2e-questions-course-${uniqueId}`,
-    title: courseTitle,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: organization.id,
-    position: 0,
-    slug: `e2e-questions-chapter-${uniqueId}`,
-    title: `Orbital motion ${uniqueId}`,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    description: `Learn why falling can create an orbit ${uniqueId}.`,
-    isPublished: true,
-    kind: staticOnly ? "explanation" : "quiz",
-    organizationId: organization.id,
-    slug: `e2e-questions-lesson-${uniqueId}`,
-    title: `Staying in orbit ${uniqueId}`,
-  });
-
   const question = `Why does a satellite stay in orbit ${uniqueId}?`;
   const correctOption = `Gravity bends its path ${uniqueId}`;
   const correctOptionId = `right-${uniqueId}`;
   const wrongOption = `There is no gravity ${uniqueId}`;
   const wrongOptionId = `wrong-${uniqueId}`;
-  const hiddenFeedback = `Hidden correction ${uniqueId}`;
-  const firstStepTitle = `Orbit concept ${uniqueId}`;
+  const wrongReason = `Gravity is still there ${uniqueId}`;
+  const stepTitles = [`Orbit concept ${uniqueId}`, `A second perspective ${uniqueId}`];
 
-  const firstStep = await stepFixture({
-    content: staticOnly
-      ? { text: question, title: firstStepTitle, variant: "text" }
-      : {
+  const firstStep = staticOnly
+    ? { content: { text: question, title: stepTitles[0] }, kind: "explanation" as const }
+    : {
+        content: {
           options: [
-            {
-              feedback: `Correct feedback ${uniqueId}`,
-              id: correctOptionId,
-              isCorrect: true,
-              text: correctOption,
-            },
-            { feedback: hiddenFeedback, id: wrongOptionId, isCorrect: false, text: wrongOption },
+            { id: correctOptionId, isCorrect: true, reason: "Right.", text: correctOption },
+            { id: wrongOptionId, isCorrect: false, reason: wrongReason, text: wrongOption },
           ],
           question,
         },
-    isPublished: true,
-    kind: staticOnly ? "static" : "multipleChoice",
-    lessonId: lesson.id,
-    position: 0,
-  });
+        kind: "check" as const,
+      };
 
-  if (!includeSecondStep) {
-    return {
-      correctOption,
-      correctOptionId,
-      hiddenFeedback,
-      lessonId: lesson.id,
-      question,
-      stepIds: [firstStep.id],
-      stepTitles: [firstStepTitle],
-      url: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
-      wrongOption,
-      wrongOptionId,
-    };
-  }
+  const secondStep = {
+    content: { text: `An orbit is continuous free fall ${uniqueId}.`, title: stepTitles[1] },
+    kind: "explanation" as const,
+  };
 
-  const secondStepTitle = `A second perspective ${uniqueId}`;
-
-  const secondStep = await stepFixture({
-    content: {
-      text: `An orbit is continuous free fall ${uniqueId}.`,
-      title: secondStepTitle,
-      variant: "text",
-    },
-    isPublished: true,
-    kind: "static",
-    lessonId: lesson.id,
-    position: 1,
+  const { lesson, steps } = await playableLessonFixture({
+    lesson: { title: `Staying in orbit ${uniqueId}` },
+    steps: includeSecondStep ? [firstStep, secondStep] : [firstStep],
   });
 
   return {
     correctOption,
     correctOptionId,
-    hiddenFeedback,
     lessonId: lesson.id,
     question,
-    stepIds: [firstStep.id, secondStep.id],
-    stepTitles: [firstStepTitle, secondStepTitle],
-    url: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+    stepIds: steps.map((step) => step.id),
+    stepTitles: includeSecondStep ? stepTitles : stepTitles.slice(0, 1),
+    url: `/learn/${lesson.id}`,
     wrongOption,
     wrongOptionId,
+    wrongReason,
   };
+}
+
+/** Picks an option on the check and checks it, as the learner would. */
+async function checkOption(page: Page, option: string) {
+  await page.getByRole("radio", { name: option }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
 }
 
 function getContextSummary(
   context: CreateLessonQuestionInput["context"],
 ): LessonQuestionContextSummary {
-  if (context.kind === "lesson") {
-    return { kind: "lesson" };
+  if (context.kind !== "step" && context.kind !== "answer") {
+    return { kind: context.kind };
   }
 
   return { kind: context.kind, stepId: context.stepId, stepNumber: context.stepNumber };
@@ -240,7 +167,7 @@ function matchesQuestionScope({
   stepId: string | null;
   contextKind: string | null;
 }) {
-  if (stepId && (question.context.kind === "lesson" || question.context.stepId !== stepId)) {
+  if (stepId && (!("stepId" in question.context) || question.context.stepId !== stepId)) {
     return false;
   }
 
@@ -515,12 +442,14 @@ async function mockQuestionApi({
         contentType: "application/json",
         json: {
           error: {
-            code: "GENERATION_LIMIT_REACHED",
-            details: { period: "day", resource: "lessonQuestion", viewer: "subscriber" },
-            message: "Generation limit reached",
+            code: "USAGE_LIMIT_REACHED",
+            details: {
+              limit: { limit: 10, period: "day", resource: "tutorMessage", tier: "free" },
+            },
+            message: "This plan's limit is reached",
           },
         },
-        status: 429,
+        status: 402,
       });
 
       return;
@@ -532,11 +461,7 @@ async function mockQuestionApi({
         : question,
     );
 
-    await route.fulfill({
-      body: uiMessageStreamBody([ANSWER_TEXT]),
-      headers: UI_MESSAGE_STREAM_HEADERS,
-      status: 200,
-    });
+    await fulfillTutorAnswer(route, ANSWER_TEXT);
   });
 
   return state;
@@ -546,17 +471,20 @@ async function installStreamingAnswerResponse({
   chunks,
   delayMilliseconds,
   maxStreamedAnswers = Number.MAX_SAFE_INTEGER,
+  memoryAfterFinish = null,
   page,
   releaseAfterFirstChunkEvent = null,
 }: {
   chunks: string[];
   delayMilliseconds: number;
   maxStreamedAnswers?: number;
+  /** Like the API, the answer's `finish` comes once it's saved; memory's part follows on `event`. */
+  memoryAfterFinish?: { changes: object[]; event: string } | null;
   page: Page;
   releaseAfterFirstChunkEvent?: string | null;
 }) {
   await page.addInitScript(
-    ({ answerChunks, chunkDelay, releaseEvent, streamLimit }) => {
+    ({ answerChunks, chunkDelay, memory, releaseEvent, streamLimit }) => {
       const originalFetch = globalThis.fetch.bind(globalThis);
       let streamedAnswerCount = 0;
 
@@ -589,11 +517,32 @@ async function installStreamingAnswerResponse({
                 function enqueueChunk(index: number) {
                   const chunk = answerChunks[index];
 
+                  function end() {
+                    controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+                    controller.close();
+                  }
+
                   if (chunk === undefined) {
                     controller.enqueue(encodeEvent({ id: "answer", type: "text-end" }));
                     controller.enqueue(encodeEvent({ type: "finish" }));
-                    controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-                    controller.close();
+
+                    if (!memory) {
+                      end();
+                      return;
+                    }
+
+                    globalThis.addEventListener(
+                      memory.event,
+                      () => {
+                        controller.enqueue(
+                          encodeEvent({ data: memory.changes, type: "data-memory" }),
+                        );
+
+                        end();
+                      },
+                      { once: true },
+                    );
+
                     return;
                   }
 
@@ -630,6 +579,7 @@ async function installStreamingAnswerResponse({
     {
       answerChunks: chunks,
       chunkDelay: delayMilliseconds,
+      memory: memoryAfterFinish,
       releaseEvent: releaseAfterFirstChunkEvent,
       streamLimit: maxStreamedAnswers,
     },
@@ -654,7 +604,7 @@ async function expectCreateRecoveryAction({
   });
 
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await page.getByRole("button", { name: "Ask a question" }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Can I ask this?");
   await dialog.getByRole("button", { name: "Send" }).click();
@@ -665,98 +615,78 @@ async function expectCreateRecoveryAction({
   expect(api.inputs).toHaveLength(1);
 }
 
-test("asks from the active step, copies safe context, follows up, and resumes", async ({
-  subscriberPage: authenticatedPage,
-}) => {
-  const scenario = await createQuestionLesson({ includeSecondStep: true });
-  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
+test.describe("The tutor in Focus and Fun", () => {
+  for (const mode of MODES) {
+    test(`asks from the screen in view and follows up on the next one in its own thread in ${mode}`, async ({
+      browser,
+      subscriberUser,
+    }) => {
+      const context = await browser.newContext({ storageState: subscriberUser.storageState });
+      await showInMode(context, { mode, userId: subscriberUser.id });
+      const authenticatedPage = await context.newPage();
 
-  await authenticatedPage.goto(scenario.url);
-  await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
-  const lessonUrl = authenticatedPage.url();
+      try {
+        const scenario = await createQuestionLesson({ includeSecondStep: true });
+        const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  const dialog = authenticatedPage.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
+        await authenticatedPage.goto(scenario.url);
+        await expectMode(authenticatedPage, mode);
+        await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
+        const lessonUrl = authenticatedPage.url();
 
-  const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
-  await expect(textbox).toHaveAttribute("placeholder", "Ask about the lesson content…");
-  const firstQuestion = `Can you explain this orbit ${randomUUID().slice(0, 6)}?`;
-  await textbox.fill(firstQuestion);
+        await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
+        const dialog = authenticatedPage.getByRole("dialog");
+        await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
+        await expect(dialog.getByText("Part 1 of 2")).toBeVisible();
 
-  await authenticatedPage
-    .context()
-    .grantPermissions(["clipboard-read", "clipboard-write"], {
-      origin: new URL(authenticatedPage.url()).origin,
+        const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
+        await expect(textbox).toHaveAttribute("placeholder", "Ask about the lesson content…");
+        const firstQuestion = `Can you explain this orbit ${randomUUID().slice(0, 6)}?`;
+        await textbox.fill(firstQuestion);
+        await textbox.press("Enter");
+        await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+
+        expect(api.inputs[0]).toMatchObject({
+          context: { kind: "step", stepId: scenario.stepIds[0], stepNumber: 1 },
+          question: firstQuestion,
+        });
+
+        await authenticatedPage.keyboard.press("Escape");
+        await expect(dialog).not.toBeVisible();
+        expect(authenticatedPage.url()).toBe(lessonUrl);
+        await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
+
+        await expect(
+          authenticatedPage.getByRole("radio", { name: scenario.wrongOption }),
+        ).not.toBeChecked();
+
+        await checkOption(authenticatedPage, scenario.correctOption);
+        await authenticatedPage.getByRole("button", { name: /^Continue/u }).click();
+        const secondStepTitle = scenario.stepTitles[1];
+
+        if (!secondStepTitle) {
+          throw new Error("Question follow-up scenario is missing its second step");
+        }
+
+        await expect(authenticatedPage.getByText(secondStepTitle)).toBeVisible();
+        await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
+        await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
+
+        const followUp = "How does that connect to free fall?";
+        await dialog.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
+        await dialog.getByRole("button", { name: "Send" }).click();
+        await expect(dialog.getByText(followUp)).toBeVisible();
+        await expect.poll(() => api.inputs.length).toBe(2);
+
+        expect(api.inputs[1]).toMatchObject({
+          context: { kind: "step", stepId: scenario.stepIds[1], stepNumber: 2 },
+          question: followUp,
+        });
+      } finally {
+        await context.close();
+      }
     });
-
-  await dialog.getByRole("button", { name: "Copy lesson content" }).click();
-  await expect(dialog.getByRole("button", { name: "Copied" })).toBeVisible();
-  await authenticatedPage.keyboard.press("2");
-  const copied = await authenticatedPage.evaluate(() => navigator.clipboard.readText());
-  expect(copied).toContain(scenario.question);
-  expect(copied).toContain(scenario.correctOption);
-  expect(copied).toContain(scenario.wrongOption);
-  expect(copied).toContain(firstQuestion);
-  expect(copied).toContain("Currently viewing: Part 1 of 2");
-  expect(copied).toContain(scenario.stepTitles[1]);
-  expect(copied).not.toContain(scenario.hiddenFeedback);
-  expect(copied).not.toContain(scenario.stepIds[0]);
-
-  await textbox.press("Enter");
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
-
-  expect(api.inputs[0]).toMatchObject({
-    context: { kind: "step", stepId: scenario.stepIds[0], stepNumber: 1 },
-    question: firstQuestion,
-  });
-
-  await authenticatedPage.keyboard.press("Escape");
-  await expect(dialog).not.toBeVisible();
-  expect(authenticatedPage.url()).toBe(lessonUrl);
-  await expect(authenticatedPage.getByText(scenario.question)).toBeVisible();
-
-  await expect(
-    authenticatedPage.getByRole("radio", { name: scenario.wrongOption }),
-  ).not.toBeChecked();
-
-  await authenticatedPage.getByRole("radio", { name: scenario.correctOption }).click();
-  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
-  await authenticatedPage.getByRole("button", { name: /continue/iu }).click();
-  const secondStepTitle = scenario.stepTitles[1];
-
-  if (!secondStepTitle) {
-    throw new Error("Question follow-up scenario is missing its second step");
   }
-
-  await expect(authenticatedPage.getByText(secondStepTitle)).toBeVisible();
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
-
-  const followUp = "How does that connect to free fall?";
-  await dialog.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
-  await dialog.getByRole("button", { name: "Send" }).click();
-  await expect(dialog.getByText(followUp)).toBeVisible();
-  await expect.poll(() => api.inputs.length).toBe(2);
-
-  expect(api.inputs[1]).toMatchObject({
-    context: { kind: "step", stepId: scenario.stepIds[1], stepNumber: 2 },
-    question: followUp,
-  });
-
-  await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.reload();
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  await expect(dialog.getByText(firstQuestion)).toBeVisible();
-  await expect(dialog.getByText(followUp)).not.toBeVisible();
-  await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.getByRole("radio", { name: scenario.correctOption }).click();
-  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
-  await authenticatedPage.getByRole("button", { name: /continue/iu }).click();
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  await expect(dialog.getByText(followUp)).toBeVisible();
-  await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
-  await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(1);
 });
 
 test("keeps a late history preload in its own step and restores it on return", async ({
@@ -787,8 +717,8 @@ test("keeps a late history preload in its own step and restores it on return", a
 
   await page.goto(scenario.url);
   await expect.poll(() => api.getRequests).toBe(1);
-  await page.getByRole("button", { name: "Next step" }).click();
-  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await page.getByRole("button", { name: /^Next/u }).click();
+  await page.getByRole("button", { name: "Ask a question" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByText(secondQuestion.question)).toBeVisible();
   api.releaseGetResponse(1);
@@ -800,8 +730,8 @@ test("keeps a late history preload in its own step and restores it on return", a
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await page.keyboard.press("ArrowLeft");
-  await expect(page.getByRole("button", { name: "Previous step" })).not.toBeVisible();
-  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await expect(page.getByRole("button", { name: "Previous screen" })).not.toBeVisible();
+  await page.getByRole("button", { name: "Ask a question" }).click();
   await expect(dialog.getByText(firstQuestion.question)).toBeVisible();
   await expect(dialog.getByText(secondQuestion.question)).not.toBeVisible();
   expect(api.getRequests).toBe(2);
@@ -821,12 +751,13 @@ test("renders streamed answers as markdown", async ({ subscriberPage: authentica
   await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Explain the orbit.");
   await dialog.getByRole("button", { name: "Send" }).click();
 
   await expect(dialog.getByRole("heading", { level: 3, name: "Key idea" })).toBeVisible();
+  await expect(dialog.getByText("AI tutor")).toBeVisible();
   await expect(dialog.getByLabel("Answering")).toHaveCount(0);
 
   await authenticatedPage.evaluate(
@@ -846,6 +777,51 @@ test("renders streamed answers as markdown", async ({ subscriberPage: authentica
   await expect(dialog.getByRole("table").getByRole("cell", { name: "km/s" })).toBeVisible();
   await expect(dialog.getByRole("math")).toHaveCount(2);
   await expect(dialog.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
+});
+
+test("an answer is done once it's saved, and what memory learned follows", async ({
+  subscriberPage: page,
+}) => {
+  const scenario = await createQuestionLesson();
+  const memoryEvent = "release-answer-memory";
+
+  await installStreamingAnswerResponse({
+    chunks: [ANSWER_TEXT],
+    delayMilliseconds: 10,
+    memoryAfterFinish: {
+      changes: [
+        {
+          action: "added",
+          fact: { id: randomUUID(), statement: "Preparing for a pilot exam" },
+          previous: null,
+        },
+      ],
+      event: memoryEvent,
+    },
+    page,
+  });
+
+  await mockQuestionApi({ lessonId: scenario.lessonId, page });
+
+  await page.goto(scenario.url);
+  await page.getByRole("button", { name: "Ask a question" }).click();
+  const dialog = page.getByRole("dialog");
+  const composer = dialog.getByRole("textbox", { name: "Ask a question" });
+  await composer.fill("Why doesn't it fall?");
+  await dialog.getByRole("button", { name: "Send" }).click();
+
+  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+
+  // Memory is still learning from the exchange, and the learner can already ask again.
+  await composer.fill("And the Moon?");
+  await expect(dialog.getByRole("button", { name: "Send" })).toBeEnabled();
+  await expect(dialog.getByRole("status").filter({ hasText: "Memory updated:" })).toHaveCount(0);
+
+  await page.evaluate((eventName) => globalThis.dispatchEvent(new Event(eventName)), memoryEvent);
+
+  await expect(dialog.getByRole("status").filter({ hasText: "Memory updated:" })).toContainText(
+    "Preparing for a pilot exam",
+  );
 });
 
 test("renders preloaded Markdown immediately while optional scripts load", async ({
@@ -869,7 +845,7 @@ test("renders preloaded Markdown immediately while optional scripts load", async
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
   await expect.poll(() => api.completedGetRequests).toBe(1);
-  await expect(page.getByRole("button", { name: "Ask about this lesson" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ask a question" })).toBeVisible();
   const releaseScripts = Promise.withResolvers<null>();
   const errors: Error[] = [];
   page.on("pageerror", (error) => errors.push(error));
@@ -883,7 +859,7 @@ test("renders preloaded Markdown immediately while optional scripts load", async
   const dialog = page.getByRole("dialog");
 
   try {
-    await page.getByRole("button", { name: "Ask about this lesson" }).click();
+    await page.getByRole("button", { name: "Ask a question" }).click();
     await expect(dialog.getByRole("heading", { name: "Key idea" })).toBeVisible();
     await expect(dialog.getByRole("status")).toHaveCount(0);
     expect(api.getRequests).toBe(1);
@@ -933,7 +909,7 @@ test("confirms external links in a localized accessible dialog", async ({
 
   await authenticatedPage.goto(`/pt${scenario.url}`);
 
-  await authenticatedPage.getByRole("button", { name: "Pergunte sobre esta aula" }).click();
+  await authenticatedPage.getByRole("button", { name: "Faça uma pergunta" }).click();
 
   const questionSheet = authenticatedPage.getByRole("dialog");
 
@@ -982,7 +958,7 @@ test("does not request images embedded in generated markdown", async ({
   await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Show a safe answer.");
   await dialog.getByRole("button", { name: "Send" }).click();
@@ -1004,7 +980,7 @@ test("recovers a lost create before sending a follow-up typed while waiting", as
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
   const question = "Can you explain the orbit again?";
@@ -1050,7 +1026,7 @@ test("preserves an answer completed elsewhere while replaying a lost create", as
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Explain this replay.");
   await dialog.getByRole("button", { name: "Send" }).click();
@@ -1074,47 +1050,39 @@ test("offers plan selection when question access is no longer available", async 
   await expectCreateRecoveryAction({ action: "View plans", page: authenticatedPage, status: 402 });
 });
 
-test("shows a stable support action when the daily question limit is reached", async ({
-  subscriberPage: authenticatedPage,
+test("offers plans and blocks sending once a free learner's daily tutor allowance is used", async ({
+  authenticatedPage: freePage,
 }) => {
-  await authenticatedPage.clock.install({ time: new Date("2026-08-21T23:59:50.000Z") });
   const scenario = await createQuestionLesson();
 
   const api = await mockQuestionApi({
     answerLimitRequestNumbers: [1],
     lessonId: scenario.lessonId,
-    page: authenticatedPage,
+    page: freePage,
   });
 
-  await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  const dialog = authenticatedPage.getByRole("dialog");
+  await freePage.goto(scenario.url);
+  await freePage.getByRole("button", { name: "Ask a question" }).click();
+  const dialog = freePage.getByRole("dialog");
+  const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
 
-  await dialog
-    .getByRole("textbox", { name: "Ask a question" })
-    .fill("Explain this within my limit.");
-
+  await textbox.fill("Explain this within my limit.");
   await dialog.getByRole("button", { name: "Send" }).click();
 
-  await expect(dialog.getByText(/today's question limit/iu)).toBeVisible();
-  await expect(dialog.getByRole("link", { name: "Contact support" })).toBeVisible();
+  await expect(dialog.getByText(/asked all of today's questions/iu)).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "View plans" })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Try again" })).toHaveCount(0);
-  await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
   expect(api.answerRequests).toBe(1);
 
-  await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  await expect(dialog.getByText(/today's question limit/iu)).toBeVisible();
-  await expect(dialog.getByRole("button", { name: "Try again" })).toHaveCount(0);
+  await textbox.fill("A question for tomorrow.");
+  await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
 
-  await dialog.getByRole("textbox", { name: "Ask a question" }).fill("A question for tomorrow.");
+  await freePage.keyboard.press("Escape");
+  await freePage.getByRole("button", { name: "Ask a question" }).click();
+  await expect(dialog.getByText(/asked all of today's questions/iu)).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "View plans" })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
-  await authenticatedPage.clock.fastForward(11_000);
-  await expect(dialog.getByRole("button", { name: "Try again" })).toBeVisible();
-  await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
-  await dialog.getByRole("button", { name: "Try again" }).click();
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
-  await expect(dialog.getByRole("button", { name: "Send" })).toBeEnabled();
+  expect(api.answerRequests).toBe(1);
 });
 
 test("reconciles a remote unfinished turn after question creation conflicts", async ({
@@ -1135,7 +1103,7 @@ test("reconciles a remote unfinished turn after question creation conflicts", as
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
   await textbox.fill("A local question waiting its turn.");
@@ -1166,7 +1134,7 @@ test("resumes a question persisted before its answer request started", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(pendingQuestion.question)).toBeVisible();
@@ -1194,12 +1162,12 @@ test("resumes a pending question again after transient recovery failures", async
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText("We couldn't finish this answer.")).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
 
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
   expect(api.answerRequests).toBe(2);
@@ -1224,7 +1192,7 @@ test("reconciles an answer that kept running after a reload", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(runningQuestion.question)).toBeVisible();
@@ -1255,7 +1223,7 @@ test("recovers an abandoned answer when the learner checks again", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("My follow-up question.");
   await expect(dialog.getByRole("button", { name: "Send" })).toBeDisabled();
@@ -1290,7 +1258,7 @@ test("keeps waiting when another session is still generating the answer", async 
   );
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("My follow-up question.");
 
@@ -1338,7 +1306,7 @@ test("does not restart an answer when an older manual check arrives after pollin
 
   // Load the lazy conversation before freezing timers, then reopen with polling under test control.
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await page.getByRole("button", { name: "Ask a question" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("button", { name: "Check again" })).toBeVisible();
   await page.keyboard.press("Escape");
@@ -1362,7 +1330,7 @@ test("does not restart an answer when an older manual check arrives after pollin
     completedRequests.push(route.request().url());
   });
 
-  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await page.getByRole("button", { name: "Ask a question" }).click();
 
   try {
     await dialog.getByRole("button", { name: "Check again" }).click();
@@ -1398,7 +1366,7 @@ test("keeps polling a remote answer after a transient refresh failure", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible({ timeout: 7000 });
@@ -1426,7 +1394,7 @@ test("pauses remote answer polling while the learner is offline", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(runningQuestion.question)).toBeVisible();
 
@@ -1459,7 +1427,7 @@ test("stops polling and offers sign-in when a remote answer loses its session", 
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText(runningQuestion.question)).toBeVisible();
@@ -1492,7 +1460,7 @@ test("offers plan selection when a manual answer check loses question access", a
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
 
   const dialog = authenticatedPage.getByRole("dialog");
 
@@ -1523,7 +1491,7 @@ test("refreshes saved questions whenever the panel is reopened", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(firstQuestion.question)).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
@@ -1537,7 +1505,7 @@ test("refreshes saved questions whenever the panel is reopened", async ({
 
   api.questions = [...api.questions, remoteQuestion];
 
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   await expect(dialog.getByText(remoteQuestion.question)).toBeVisible();
   await expect(dialog.getByText(remoteQuestion.answer ?? "")).toBeVisible();
   expect(api.getRequests).toBeGreaterThanOrEqual(2);
@@ -1565,7 +1533,7 @@ test("retries a failed preload when the question panel is first opened", async (
   await page.goto(scenario.url);
   await expect.poll(() => api.getRequests).toBe(1);
   await page.waitForLoadState("networkidle");
-  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await page.getByRole("button", { name: "Ask a question" }).click();
 
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
@@ -1585,7 +1553,7 @@ test("announces the initial question history load", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
 
   const dialog = authenticatedPage.getByRole("dialog");
   const loadingStatus = dialog.getByRole("status");
@@ -1619,12 +1587,12 @@ test("keeps saved history visible but blocks sending during a reopen refresh", a
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
 
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   await expect.poll(() => api.getRequests).toBe(2);
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Wait for the refresh.");
@@ -1668,18 +1636,18 @@ test("ignores an older reopen response that arrives after a newer refresh", asyn
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await expect(dialog.getByText(firstQuestion.question)).toBeVisible();
   await authenticatedPage.keyboard.press("Escape");
 
   api.questions = [staleQuestion];
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   await expect.poll(() => api.getRequests).toBe(2);
   await authenticatedPage.keyboard.press("Escape");
 
   api.questions = [newestQuestion];
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   await expect(dialog.getByText(newestQuestion.question)).toBeVisible();
   await expect(dialog.getByText(staleQuestion.question)).toHaveCount(0);
 
@@ -1715,7 +1683,7 @@ test("loads earlier saved questions without dropping the latest page", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await expect(dialog.getByText("Oldest saved question")).toHaveCount(0);
@@ -1729,7 +1697,7 @@ test("loads earlier saved questions without dropping the latest page", async ({
   await expect(dialog.getByRole("button", { name: "Load earlier questions" })).toHaveCount(0);
 
   await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   await expect.poll(() => api.completedGetRequests).toBe(3);
   await expect(dialog.getByText("Oldest saved question", { exact: true })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Load earlier questions" })).toHaveCount(0);
@@ -1763,7 +1731,7 @@ test("ignores an earlier page that finishes after the latest page refreshes", as
 
   await authenticatedPage.goto(scenario.url);
 
-  const openQuestions = authenticatedPage.getByRole("button", { name: "Ask about this lesson" });
+  const openQuestions = authenticatedPage.getByRole("button", { name: "Ask a question" });
 
   await openQuestions.click();
   const dialog = authenticatedPage.getByRole("dialog");
@@ -1825,7 +1793,7 @@ test("keeps earlier history while the latest answer is reconciled", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   await dialog.getByRole("button", { name: "Load earlier questions" }).click();
 
@@ -1869,7 +1837,7 @@ test("keeps a streamed answer in view while the learner follows the bottom", asy
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const questionLog = dialog.getByRole("log", { name: "Questions about this lesson" });
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Stream this answer.");
@@ -1922,7 +1890,7 @@ test("does not move a learner who scrolls up while an answer streams", async ({
 
   await authenticatedPage.setViewportSize({ height: 812, width: 375 });
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const questionLog = dialog.getByRole("log", { name: "Questions about this lesson" });
 
@@ -1967,7 +1935,7 @@ test("checks an interrupted running answer before retrying an older failure", as
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
   const retryButton = dialog.getByRole("button", { name: "Try again" });
 
@@ -2000,7 +1968,7 @@ test("blocks a new question until a failed answer is retried", async ({
   });
 
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
 
   await dialog.getByRole("textbox", { name: "Ask a question" }).fill("A follow-up question.");
@@ -2014,267 +1982,33 @@ test("blocks a new question until a failed answer is retried", async ({
   expect(api.answerRequests).toBe(2);
 });
 
-test("explains correct and incorrect answers on demand with validated answer context", async ({
+test("asks about the answer just checked with that answer as context", async ({
   subscriberPage: authenticatedPage,
 }) => {
   const scenario = await createQuestionLesson();
   const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
 
-  await authenticatedPage.setViewportSize({ height: 812, width: 375 });
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("radio", { name: scenario.wrongOption }).click();
-  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
-  await expect(authenticatedPage.getByText(scenario.hiddenFeedback)).toBeVisible();
+  await checkOption(authenticatedPage, scenario.wrongOption);
+  await expect(authenticatedPage.getByText(scenario.wrongReason)).toBeVisible();
   expect(api.inputs).toHaveLength(0);
 
-  await authenticatedPage.getByRole("button", { name: "Explain answer" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
   const dialog = authenticatedPage.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-
-  await expect(
-    dialog.getByText("Why was my answer wrong? Explain the correct answer."),
-  ).toBeVisible();
-
+  const question = "Why isn't it this one?";
+  await dialog.getByRole("textbox", { name: "Ask a question" }).fill(question);
+  await dialog.getByRole("button", { name: "Send" }).click();
   await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
 
   expect(api.inputs[0]).toMatchObject({
     context: {
-      answer: { kind: "multipleChoice", selectedOptionId: scenario.wrongOptionId },
+      answer: { kind: "check", optionId: scenario.wrongOptionId },
       kind: "answer",
       stepId: scenario.stepIds[0],
       stepNumber: 1,
     },
-    question: "Why was my answer wrong? Explain the correct answer.",
+    question,
   });
-
-  await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.getByRole("button", { name: "Explain answer" }).click();
-
-  await expect(
-    dialog.getByText("Why was my answer wrong? Explain the correct answer."),
-  ).toHaveCount(1);
-
-  await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(1);
-  expect(api.questions).toHaveLength(1);
-  expect(api.answerRequests).toBe(1);
-
-  await authenticatedPage.keyboard.press("Escape");
-  await authenticatedPage.reload();
-  await authenticatedPage.getByRole("radio", { name: scenario.correctOption }).click();
-  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
-  await authenticatedPage.getByRole("button", { name: "Explain answer" }).click();
-
-  await expect(dialog.getByText("Why is this answer correct?")).toBeVisible();
-  await expect(dialog.getByText(ANSWER_TEXT)).toHaveCount(2);
-
-  expect(api.inputs.at(-1)).toMatchObject({
-    context: {
-      answer: { kind: "multipleChoice", selectedOptionId: scenario.correctOptionId },
-      kind: "answer",
-      stepId: scenario.stepIds[0],
-      stepNumber: 1,
-    },
-    question: "Why is this answer correct?",
-  });
-});
-
-async function expectReopenedSavedExplanation({
-  page: authenticatedPage,
-  pageSize,
-}: {
-  page: Page;
-  pageSize: number;
-}) {
-  const scenario = await createQuestionLesson();
-
-  const api = await mockQuestionApi({
-    lessonId: scenario.lessonId,
-    page: authenticatedPage,
-    threadPageSize: pageSize,
-  });
-
-  await authenticatedPage.setViewportSize({ height: 812, width: 375 });
-  await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("radio", { name: scenario.wrongOption }).click();
-  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
-  const explainAnswer = authenticatedPage.getByRole("button", { name: "Explain answer" });
-  await explainAnswer.click();
-
-  const dialog = authenticatedPage.getByRole("dialog");
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
-  await authenticatedPage.keyboard.press("Escape");
-
-  const followUps = Array.from({ length: 6 }, (_, index) => ({
-    ...questionResource({
-      answer: `Follow-up explanation ${index}. ${"Gravity bends the satellite's path. ".repeat(12)}`,
-      context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
-      question: `Follow-up question ${index}`,
-      status: "completed",
-    }),
-    createdAt: new Date(Date.now() + index + 1).toISOString(),
-  }));
-
-  api.questions = [...api.questions, ...followUps];
-  await explainAnswer.click();
-
-  await expect(
-    dialog
-      .getByRole("article", { name: "Your question" })
-      .getByText("Why was my answer wrong? Explain the correct answer."),
-  ).toBeInViewport();
-
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeInViewport();
-  expect(api.questions).toHaveLength(7);
-  expect(api.answerRequests).toBe(1);
-
-  const loadEarlier = dialog.getByRole("button", { name: "Load earlier questions" });
-
-  async function loadAllEarlierQuestions() {
-    if (!(await loadEarlier.isVisible())) {
-      return;
-    }
-
-    const completedRequests = api.completedGetRequests;
-    await loadEarlier.click();
-    await expect.poll(() => api.completedGetRequests).toBeGreaterThan(completedRequests);
-    await loadAllEarlierQuestions();
-  }
-
-  await loadAllEarlierQuestions();
-
-  const turns = dialog.getByRole("article", { name: "Your question" });
-  await expect(turns).toHaveCount(7);
-  await expect(turns.nth(0)).toContainText(ANSWER_TEXT);
-
-  await Promise.all(
-    followUps.map((question, index) =>
-      expect(turns.nth(index + 1)).toContainText(question.question),
-    ),
-  );
-}
-
-test("reopens the saved explanation after follow-ups in the loaded page", async ({
-  subscriberPage,
-}) => {
-  await expectReopenedSavedExplanation({ page: subscriberPage, pageSize: 50 });
-});
-
-test("reopens the saved explanation outside the latest page", async ({ subscriberPage }) => {
-  await expectReopenedSavedExplanation({ page: subscriberPage, pageSize: 2 });
-});
-
-test("keeps questions accessible while an active answer blocks automatic explanation", async ({
-  subscriberPage: authenticatedPage,
-}) => {
-  const scenario = await createQuestionLesson();
-  const releaseFirstAnswerEvent = "zoonk:e2e-release-first-lesson-question-answer";
-
-  await installStreamingAnswerResponse({
-    chunks: ["FIRST_ANSWER_STARTED", " FIRST_ANSWER_FINISHED"],
-    delayMilliseconds: 0,
-    maxStreamedAnswers: 1,
-    page: authenticatedPage,
-    releaseAfterFirstChunkEvent: releaseFirstAnswerEvent,
-  });
-
-  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
-
-  await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-
-  const dialog = authenticatedPage.getByRole("dialog");
-
-  await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Explain this first.");
-  await dialog.getByRole("button", { name: "Send" }).click();
-  await expect(dialog.getByText(/FIRST_ANSWER_STARTED/u)).toBeVisible();
-  await authenticatedPage.keyboard.press("Escape");
-
-  await authenticatedPage.getByRole("radio", { name: scenario.wrongOption }).click();
-  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
-
-  const openQuestions = authenticatedPage.getByRole("button", { name: "Open questions" });
-
-  await expect(openQuestions).toBeEnabled();
-  await openQuestions.click();
-  await expect(dialog.getByText(/FIRST_ANSWER_STARTED/u)).toBeVisible();
-
-  await authenticatedPage.evaluate((eventName) => {
-    globalThis.dispatchEvent(new Event(eventName));
-  }, releaseFirstAnswerEvent);
-
-  await expect(dialog.getByLabel("Answering")).toHaveCount(0);
-
-  api.questions = api.questions.map((question) => ({
-    ...question,
-    answer: "The first answer completed.",
-    status: "completed",
-  }));
-
-  await authenticatedPage.keyboard.press("Escape");
-  const explainAnswer = authenticatedPage.getByRole("button", { name: "Explain answer" });
-  await expect(explainAnswer).toBeEnabled();
-  await explainAnswer.click();
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
-
-  expect(api.inputs).toHaveLength(2);
-  expect(api.answerRequests).toBe(1);
-});
-
-test("automatically explains after a stale blocker finishes elsewhere", async ({
-  subscriberPage: authenticatedPage,
-}) => {
-  const scenario = await createQuestionLesson();
-
-  const failedQuestion = questionResource({
-    context: { kind: "step", stepId: scenario.stepIds[0] ?? null, stepNumber: 1 },
-    question: "An interrupted question from this lesson.",
-    status: "failed",
-  });
-
-  const api = await mockQuestionApi({
-    initialQuestions: [failedQuestion],
-    lessonId: scenario.lessonId,
-    page: authenticatedPage,
-  });
-
-  await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  const dialog = authenticatedPage.getByRole("dialog");
-  await expect(dialog.getByText(failedQuestion.question)).toBeVisible();
-  await authenticatedPage.keyboard.press("Escape");
-
-  api.questions = [
-    { ...failedQuestion, answer: "This answer finished in another tab.", status: "completed" },
-  ];
-
-  await authenticatedPage.getByRole("radio", { name: scenario.wrongOption }).click();
-  await authenticatedPage.getByRole("button", { name: /check/iu }).click();
-  await authenticatedPage.getByRole("button", { name: "Explain answer" }).click();
-
-  await expect(
-    dialog.getByText("Why was my answer wrong? Explain the correct answer."),
-  ).toBeVisible();
-
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
-  expect(api.inputs).toHaveLength(1);
-});
-
-test("asks from structural lesson completion with every displayed step", async ({
-  subscriberPage: authenticatedPage,
-}) => {
-  const scenario = await createQuestionLesson({ staticOnly: true });
-  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page: authenticatedPage });
-
-  await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Next step" }).click();
-  await advanceToCompletionSummary({ page: authenticatedPage });
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
-  const dialog = authenticatedPage.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-  await dialog.getByRole("textbox", { name: "Ask a question" }).fill("Summarize this lesson.");
-  await dialog.getByRole("button", { name: "Send" }).click();
-  await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
-  expect(api.inputs[0]).toMatchObject({ context: { kind: "lesson", stepIds: scenario.stepIds } });
 });
 
 test("reopens saved mobile history without moving focus into the composer", async ({
@@ -2299,35 +2033,28 @@ test("reopens saved mobile history without moving focus into the composer", asyn
 
   await authenticatedPage.setViewportSize({ height: 812, width: 375 });
   await authenticatedPage.goto(scenario.url);
-  await authenticatedPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await authenticatedPage.getByRole("button", { name: "Ask a question" }).click();
 
   const dialog = authenticatedPage.getByRole("dialog");
   const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
   const title = dialog.getByRole("heading", { name: "Ask questions" });
   const close = dialog.getByRole("button", { name: "Close questions" });
-  const copy = dialog.getByRole("button", { name: "Copy lesson content" });
   const log = dialog.getByRole("log", { name: "Questions about this lesson" });
 
   await expect(dialog.getByText(savedQuestion.question)).toBeVisible();
   await expect(dialog.getByText(longAnswer)).toBeVisible();
   await expect(title).toBeVisible();
   await expect(close).toBeVisible();
-  await expect(copy).toBeVisible();
   await expect(textbox).not.toBeFocused();
 
-  const [dialogBox, titleBox, closeBox, copyBox, logBox] = await Promise.all([
+  const [dialogBox, titleBox, closeBox, logBox] = await Promise.all([
     getRequiredElementBox(dialog),
     getRequiredElementBox(title),
     getRequiredElementBox(close),
-    getRequiredElementBox(copy),
     getRequiredElementBox(log),
   ]);
 
-  const headerBottom = Math.max(
-    titleBox.y + titleBox.height,
-    closeBox.y + closeBox.height,
-    copyBox.y + copyBox.height,
-  );
+  const headerBottom = Math.max(titleBox.y + titleBox.height, closeBox.y + closeBox.height);
 
   expect(titleBox.width).toBeGreaterThan(80);
   expect(closeBox.x + closeBox.width).toBeLessThanOrEqual(dialogBox.x + dialogBox.width);
@@ -2342,7 +2069,7 @@ test("lets a signed-in learner ask about a free lesson without subscribing", asy
 
   await nonSubscriberPage.setViewportSize({ height: 812, width: 375 });
   await nonSubscriberPage.goto(scenario.url);
-  await nonSubscriberPage.getByRole("button", { name: "Ask about this lesson" }).click();
+  await nonSubscriberPage.getByRole("button", { name: "Ask a question" }).click();
 
   const dialog = nonSubscriberPage.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
@@ -2356,22 +2083,18 @@ test("lets a signed-in learner ask about a free lesson without subscribing", asy
   expect(api.statusRequests).toBe(0);
 });
 
-test("keeps the mobile guest flow focused on sign-in or copying lesson content", async ({
-  page,
-}) => {
+test("keeps the mobile visitor flow focused on signing in", async ({ page }) => {
   const scenario = await createQuestionLesson({ staticOnly: true });
   const api = await mockQuestionApi({ lessonId: scenario.lessonId, page });
 
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Continue without saving" }).click();
-  await page.getByRole("button", { name: "Ask about this lesson" }).click();
+  await page.getByRole("button", { name: "Ask a question" }).click();
 
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
   await expect(dialog.getByText("Sign in to ask questions")).toBeVisible();
   await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveCount(0);
-  await expect(dialog.getByRole("button", { name: "Copy lesson content" })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Send" })).toHaveCount(0);
   await expect(dialog.getByRole("link", { name: "Sign in" })).toBeVisible();
   expect(api.getRequests).toBe(0);

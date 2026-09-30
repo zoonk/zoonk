@@ -1,8 +1,11 @@
-import { getModelById, getReasoningLabel } from "@/lib/models";
+import { type LanguageSummary, summarizeByLanguage } from "@/lib/case-languages";
+import { type GatewayPrices } from "@/lib/gateway-prices";
+import { meetsLatencyBudget } from "@/lib/latency";
+import { getModelById, getModelFamily, getReasoningLabel } from "@/lib/models";
 import { calculateScore } from "@/lib/score-calculation";
 import { summarizeCategoryScores } from "@/lib/score-categories";
 import { getStatsFromResults } from "@/lib/stats";
-import { type CategoryScoreSummary, type TaskEvalResults } from "@/lib/types";
+import { type CategoryScoreSummary, type RegisteredTask, type TaskEvalResults } from "@/lib/types";
 
 function roundScoreToFixed(score: number): number {
   return Number(score.toFixed(2));
@@ -32,9 +35,16 @@ export type LeaderboardEntry = {
   provider: string;
   reasoning: string;
   averageScore: number;
-  averageDuration: number;
-  totalCost: number;
+  /** Share of cases with the expected label, for classifiers only. */
+  accuracy: number | null;
+  latencyP50: number;
+  latencyP95: number;
+  /** Null when the task has no latency budget. */
+  meetsLatencyBudget: boolean | null;
+  costPer1000Runs: number;
+  judgeCost: number;
   categoryScores: CategoryScoreSummary[];
+  languages: LanguageSummary[];
 };
 
 export type SortKey =
@@ -42,15 +52,24 @@ export type SortKey =
   | "provider"
   | "reasoning"
   | "averageScore"
-  | "averageDuration"
-  | "totalCost";
+  | "latencyP50"
+  | "latencyP95"
+  | "costPer1000Runs";
 export type SortDirection = "asc" | "desc";
 
 /**
  * Build leaderboard entries from raw task evaluation results.
  * Filters out results whose model cannot be resolved.
  */
-export function getLeaderboardEntries(results: TaskEvalResults[]): LeaderboardEntry[] {
+export function getLeaderboardEntries({
+  prices,
+  results,
+  task,
+}: {
+  prices: GatewayPrices;
+  results: TaskEvalResults[];
+  task: Pick<RegisteredTask, "latencyBudget" | "testCases">;
+}): LeaderboardEntry[] {
   return results.flatMap((result) => {
     const model = getModelById(result.modelId);
 
@@ -58,35 +77,49 @@ export function getLeaderboardEntries(results: TaskEvalResults[]): LeaderboardEn
       return [];
     }
 
-    const stats = getStatsFromResults(result);
+    const stats = getStatsFromResults({ evalResults: result, prices });
 
     return [
       {
-        averageDuration: stats.averageDuration,
+        accuracy: stats.classification?.accuracy ?? null,
         averageScore: calculateAverageScore(result),
         categoryScores: summarizeCategoryScores(
           result.results.map((evalResult) => evalResult.categoryScores),
         ),
+        costPer1000Runs: stats.costPer1000Runs,
+        judgeCost: stats.judgeCost,
+        languages: summarizeByLanguage({ results: result.results, testCases: task.testCases }),
+        latencyP50: stats.latencyP50,
+        latencyP95: stats.latencyP95,
+        meetsLatencyBudget: meetsLatencyBudget({
+          budget: task.latencyBudget,
+          latency: { p50: stats.latencyP50, p95: stats.latencyP95 },
+        }),
         modelId: result.modelId,
         modelName: model.name,
-        provider: result.modelId.split("/")[0] ?? result.modelId,
-        reasoning: getReasoningLabel(model.reasoning),
-        totalCost: stats.totalCost,
+        provider: getModelFamily(model),
+        // Evaluation adapters and image models run without reasoning.
+        reasoning: model.kind === "generation" ? getReasoningLabel(model.reasoning) : "—",
       } satisfies LeaderboardEntry,
     ];
   });
 }
 
+const NUMERIC_SORT_KEYS = new Set<SortKey>([
+  "averageScore",
+  "costPer1000Runs",
+  "latencyP50",
+  "latencyP95",
+]);
+
 export function getDefaultSortDirection(key: SortKey): SortDirection {
-  return key === "averageScore" || key === "totalCost" || key === "averageDuration"
-    ? "desc"
-    : "asc";
+  return NUMERIC_SORT_KEYS.has(key) ? "desc" : "asc";
 }
 
 /**
  * Compare two leaderboard entries for a given sort key.
  * Always returns values for ascending order; caller applies direction.
- * For averageScore: implements tie-breaker using averageDuration (lower duration wins ties).
+ * For averageScore: implements tie-breaker using p50 latency (faster wins ties).
  */
 function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey): number {
   if (key === "averageScore") {
@@ -98,10 +131,10 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
       return byScore;
     }
 
-    return b.averageDuration - a.averageDuration;
+    return b.latencyP50 - a.latencyP50;
   }
 
-  if (key === "totalCost" || key === "averageDuration") {
+  if (key === "costPer1000Runs" || key === "latencyP50" || key === "latencyP95") {
     return a[key] - b[key];
   }
 

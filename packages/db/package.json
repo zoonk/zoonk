@@ -4,11 +4,14 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./seed/v2": "./src/prisma/seed/v2/index.ts",
+    "./seed/v2/localize": "./src/prisma/seed/v2/_utils/localize.ts",
+    "./seed/v2/personas": "./src/prisma/seed/v2/learners/seed-personas.ts",
     "./utils": "./src/utils.ts",
     "./test-environment": "./src/test-environment.ts"
   },
   "scripts": {
-    "db:deploy": "prisma migrate deploy",
+    "db:deploy": "tsx src/scripts/deploy-migrations.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",

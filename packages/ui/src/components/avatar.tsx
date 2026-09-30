@@ -90,7 +90,10 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<"div">) 
 function AvatarSkeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("bg-muted size-8 shrink-0 animate-pulse rounded-full", className)}
+      className={cn(
+        "bg-muted size-8 shrink-0 animate-pulse rounded-full motion-reduce:animate-none",
+        className,
+      )}
       data-slot="avatar-skeleton"
       {...props}
     />

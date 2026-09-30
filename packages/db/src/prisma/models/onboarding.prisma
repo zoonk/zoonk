@@ -1,0 +1,64 @@
+enum OnboardingDraftStatus {
+  understanding
+  understood
+  failed
+}
+
+/// What onboarding understood from a typed goal: its kind, the goals it names and the facts it
+/// already answers. Shared by everyone who types the same words in the same language, since it
+/// reads only those words; relative dates ("this year") make it fresh for a day. Provenance is
+/// the run that wrote it.
+model GoalUnderstanding {
+  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language         String   @db.VarChar(10)
+  normalizedPrompt String   @map("normalized_prompt")
+  result           Json
+  model            String?
+  promptVersion    String?  @map("prompt_version")
+  runId            String?  @map("run_id")
+  generatedAt      DateTime @default(now()) @map("generated_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([language, normalizedPrompt], name: "languageNormalizedPrompt")
+  @@map("goal_understandings")
+}
+
+/// A learner waiting for lessons that teach them to play an instrument. Those lessons need to hear
+/// the learner play, so onboarding offers musicianship as a learn goal and this waitlist instead.
+/// `instrument` is in the learner's words ("violão"); `normalizedInstrument` keeps one entry per
+/// instrument per learner.
+model InstrumentWaitlistEntry {
+  id                   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId               String   @map("user_id") @db.Uuid
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  instrument           String
+  normalizedInstrument String   @map("normalized_instrument")
+  language             String   @db.VarChar(10)
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, normalizedInstrument], name: "userInstrument")
+  @@index([normalizedInstrument])
+  @@map("instrument_waitlist_entries")
+}
+
+/// A goal a learner typed in onboarding, kept while they look at what was understood, so a refresh
+/// shows the same screen instead of starting over. `understanding` is what was read with the
+/// learner's fixes applied, null while the run reads the words; `runId` is that run. Goals created
+/// from it carry its id as `details.onboardingId`, which is how a draft finds its goals.
+model OnboardingDraft {
+  id            String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId        String                @map("user_id") @db.Uuid
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt        String
+  language      String                @db.VarChar(10)
+  timeZone      String                @map("time_zone")
+  status        OnboardingDraftStatus @default(understanding)
+  understanding Json?
+  runId         String?               @map("run_id")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId, updatedAt])
+  @@map("onboarding_drafts")
+}

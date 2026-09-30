@@ -1,16 +1,23 @@
-import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contract";
-import { getGenerationLimit } from "@zoonk/core/generation-quotas/parse-limit";
 import {
   type CreateLessonQuestionInput,
   type GetLessonQuestionThreadInput,
+  LESSON_QUESTION_MEMORY_PART,
+  type LessonQuestionMemoryChange,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
+  type TutorTarget,
+  lessonQuestionMemoryChangesSchema,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { DefaultChatTransport, type UIMessageChunk } from "ai";
-import { getLessonQuestionLimitRetryAt } from "./lesson-question-limit";
+import { type UIMessageChunk } from "ai";
+import {
+  type LessonQuestionUsageRefusal,
+  getRefusalError,
+  isRefusal,
+} from "./lesson-question-usage";
+import { getTutorQuestionsPath } from "./tutor-questions-path";
 
 export type LessonQuestionConnection = {
   apiUrl: string;
@@ -26,19 +33,17 @@ type LessonQuestionApiErrorKind =
   | "unknown";
 
 export type LessonQuestionApiError =
-  | { kind: LessonQuestionApiErrorKind }
-  | { kind: "limit"; limit: GenerationQuotaLimit; retryAt: string };
+  | LessonQuestionUsageRefusal
+  | { kind: LessonQuestionApiErrorKind };
 
-export type LessonQuestionApiResult<Value> =
+type LessonQuestionApiResult<Value> =
   | { data: Value; status: "success" }
   | { error: LessonQuestionApiError; status: "error" };
 
 const HTTP_STATUS_BAD_REQUEST = 400;
 const HTTP_STATUS_UNAUTHORIZED = 401;
-const HTTP_STATUS_PAYMENT_REQUIRED = 402;
 const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_CONFLICT = 409;
-const HTTP_STATUS_TOO_MANY_REQUESTS = 429;
 const HTTP_STATUS_UNPROCESSABLE_ENTITY = 422;
 
 async function getApiError(response: Response): Promise<LessonQuestionApiError> {
@@ -46,8 +51,8 @@ async function getApiError(response: Response): Promise<LessonQuestionApiError> 
     return { kind: "authentication" };
   }
 
-  if (response.status === HTTP_STATUS_PAYMENT_REQUIRED) {
-    return { kind: "subscription" };
+  if (isRefusal(response)) {
+    return getRefusalError(response);
   }
 
   if (response.status === HTTP_STATUS_NOT_FOUND) {
@@ -56,19 +61,6 @@ async function getApiError(response: Response): Promise<LessonQuestionApiError> 
 
   if (response.status === HTTP_STATUS_CONFLICT) {
     return { kind: "conflict" };
-  }
-
-  if (response.status === HTTP_STATUS_TOO_MANY_REQUESTS) {
-    const { data } = await safeAsync<unknown>(() => response.json());
-    const limit = getGenerationLimit(data);
-
-    return limit
-      ? {
-          kind: "limit",
-          limit,
-          retryAt: getLessonQuestionLimitRetryAt({ now: new Date(), period: limit.period }),
-        }
-      : { kind: "unknown" };
   }
 
   if (
@@ -81,14 +73,14 @@ async function getApiError(response: Response): Promise<LessonQuestionApiError> 
   return { kind: "unknown" };
 }
 
-function lessonQuestionsUrl({
+function questionsUrl({
   connection,
   contextKind,
   cursor,
-  lessonId,
   stepId,
-}: { connection: LessonQuestionConnection; lessonId: string } & GetLessonQuestionThreadInput) {
-  const url = new URL(`/v1/lessons/${encodeURIComponent(lessonId)}/questions`, connection.apiUrl);
+  target,
+}: { connection: LessonQuestionConnection; target: TutorTarget } & GetLessonQuestionThreadInput) {
+  const url = new URL(getTutorQuestionsPath(target), connection.apiUrl);
 
   if (cursor) {
     url.searchParams.set("cursor", cursor);
@@ -156,16 +148,16 @@ export async function getLessonQuestionThreadRequest({
   connection,
   contextKind,
   cursor,
-  lessonId,
   stepId,
+  target,
 }: {
   connection: LessonQuestionConnection;
-  lessonId: string;
+  target: TutorTarget;
 } & GetLessonQuestionThreadInput): Promise<
   LessonQuestionApiResult<LessonQuestionThreadResource | null>
 > {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(lessonQuestionsUrl({ connection, contextKind, cursor, lessonId, stepId }), {
+    fetch(questionsUrl({ connection, contextKind, cursor, stepId, target }), {
       cache: "no-store",
       headers: await connection.getHeaders(),
     }),
@@ -192,14 +184,14 @@ export async function getLessonQuestionThreadRequest({
 export async function createLessonQuestionRequest({
   connection,
   input,
-  lessonId,
+  target,
 }: {
   connection: LessonQuestionConnection;
   input: CreateLessonQuestionInput;
-  lessonId: string;
+  target: TutorTarget;
 }): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(lessonQuestionsUrl({ connection, lessonId }), {
+    fetch(questionsUrl({ connection, target }), {
       body: JSON.stringify(input),
       cache: "no-store",
       headers: await getJsonHeaders(connection),
@@ -260,11 +252,30 @@ export async function getLessonQuestionRequest({
   return { data: parsed.data, status: "success" };
 }
 
-async function readAnswerStream({
-  onChunk,
-  reader,
-}: {
+type AnswerStreamHandlers = {
   onChunk: (chunk: string) => void;
+  onMemory: (changes: LessonQuestionMemoryChange[]) => void;
+  /** The server sends `finish` once the answer is saved; memory changes may still follow. */
+  onSaved: () => void;
+};
+
+/** A Library lesson's answer ends with what it changed in memory; a malformed part is ignored. */
+function readMemoryPart({ chunk, onMemory }: { chunk: UIMessageChunk } & AnswerStreamHandlers) {
+  if (chunk.type !== LESSON_QUESTION_MEMORY_PART || !("data" in chunk)) {
+    return;
+  }
+
+  const parsed = lessonQuestionMemoryChangesSchema.safeParse(chunk.data);
+
+  if (parsed.success) {
+    onMemory(parsed.data);
+  }
+}
+
+async function readAnswerStream({
+  reader,
+  ...handlers
+}: AnswerStreamHandlers & {
   reader: ReadableStreamDefaultReader<UIMessageChunk>;
 }): Promise<number> {
   const result = await reader.read();
@@ -277,24 +288,39 @@ async function readAnswerStream({
     throw new Error(result.value.errorText);
   }
 
-  if (result.value.type !== "text-delta") {
-    return readAnswerStream({ onChunk, reader });
+  if (result.value.type === "finish") {
+    handlers.onSaved();
   }
 
-  onChunk(result.value.delta);
+  if (result.value.type !== "text-delta") {
+    readMemoryPart({ chunk: result.value, ...handlers });
+    return readAnswerStream({ reader, ...handlers });
+  }
 
-  return result.value.delta.length + (await readAnswerStream({ onChunk, reader }));
+  handlers.onChunk(result.value.delta);
+
+  return result.value.delta.length + (await readAnswerStream({ reader, ...handlers }));
 }
 
+/**
+ * Streams a tutor answer. `onSaved` runs as soon as the server saved the answer, before what the
+ * exchange taught memory arrives, so the learner can ask again at once; a stream cut after that
+ * still counts as answered.
+ */
 export async function streamLessonQuestionAnswerRequest({
   connection,
   onChunk,
+  onSaved,
   questionId,
 }: {
   connection: LessonQuestionConnection;
   onChunk: (chunk: string) => void;
+  onSaved: () => void;
   questionId: string;
-}): Promise<LessonQuestionApiResult<null>> {
+}): Promise<LessonQuestionApiResult<{ memoryChanges: LessonQuestionMemoryChange[] }>> {
+  // The AI SDK's client (and the schemas it brings) loads when the learner asks, not with every lesson.
+  const { DefaultChatTransport } = await import("ai");
+
   const transport = new DefaultChatTransport({
     api: questionAnswerUrl({ connection, questionId }),
     fetch: fetchLessonQuestionAnswer,
@@ -319,13 +345,26 @@ export async function streamLessonQuestionAnswerRequest({
     return { error: { kind: "unknown" }, status: "error" };
   }
 
+  let memoryChanges: LessonQuestionMemoryChange[] = [];
+  let saved = false;
+
   const { data: characterCount, error: streamError } = await safeAsync(() =>
-    readAnswerStream({ onChunk, reader: stream.getReader() }),
+    readAnswerStream({
+      onChunk,
+      onMemory: (changes) => {
+        memoryChanges = changes;
+      },
+      onSaved: () => {
+        saved = true;
+        onSaved();
+      },
+      reader: stream.getReader(),
+    }),
   );
 
-  if (streamError || !characterCount) {
+  if (!saved && (streamError || !characterCount)) {
     return { error: { kind: "unknown" }, status: "error" };
   }
 
-  return { data: null, status: "success" };
+  return { data: { memoryChanges }, status: "success" };
 }

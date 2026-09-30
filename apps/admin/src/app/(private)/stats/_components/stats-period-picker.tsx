@@ -13,7 +13,7 @@ import {
 import { CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type SyntheticEvent, useState } from "react";
-import { type StatsAnalysisPath } from "../_utils/stats-analysis";
+import { type StatsAnalysisPath } from "../_utils/stats-analysis-groups";
 import { type AdminStatsPeriod, type StatsPeriod } from "../_utils/stats-period";
 
 const PERIODS = [

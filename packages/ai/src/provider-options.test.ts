@@ -54,6 +54,23 @@ describe(buildProviderOptions, () => {
     ).toStrictEqual({ gateway: { models: ["openai/gpt-6-luna"] } });
   });
 
+  it.each(["priority", "flex"] as const)("asks the gateway for the %s tier", (serviceTier) => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["anthropic/claude-opus-5.5"],
+        model: "openai/gpt-6-sol",
+        serviceTier,
+        useFallback: true,
+      }),
+    ).toStrictEqual({
+      gateway: {
+        models: ["anthropic/claude-opus-5.5"],
+        order: ["openai", "azure", "google", "anthropic", "vertex"],
+        serviceTier,
+      },
+    });
+  });
+
   it("keeps provider order when fallback routing has no fallback models", () => {
     expect(
       buildProviderOptions({ fallbackModels: [], model: "openai/gpt-6-sol", useFallback: true }),

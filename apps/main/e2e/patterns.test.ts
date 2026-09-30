@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
+import { MODES, type Mode, expectMode, showInMode } from "./learn-personas";
 
 const TIME_PERIODS = ["Night", "Morning", "Afternoon", "Evening"] as const;
 const TUESDAY = 2;
@@ -26,34 +27,36 @@ const WEEKDAYS = [
 ] as const;
 
 /**
- * Builds answer rows with an explicit hour bucket so Patterns assertions never
- * inherit whichever local day and time happened to create shared progress data.
+ * Builds one finished activity per daypart with an explicit learner-local hour
+ * so Patterns assertions never inherit whichever local day and time happened
+ * to create shared progress data.
  */
-function buildStepAttemptRows({
-  answeredAt,
-  count,
-  hourOfDay,
-  isCorrect,
-  stepId,
+function buildLedgerRow({
+  correctAnswers,
+  endedAt,
+  hour,
+  incorrectAnswers,
+  localDate,
   userId,
 }: {
-  answeredAt: Date;
-  count: number;
-  hourOfDay: number;
-  isCorrect: boolean;
-  stepId: string;
+  correctAnswers: number;
+  endedAt: Date;
+  hour: number;
+  incorrectAnswers: number;
+  localDate: Date;
   userId: string;
 }) {
-  return Array.from({ length: count }, () => ({
-    answer: { selectedOption: isCorrect ? 1 : 0 },
-    answeredAt,
-    dayOfWeek: TUESDAY,
-    durationSeconds: 15,
-    hourOfDay,
-    isCorrect,
-    stepId,
+  return {
+    correctAnswers,
+    endedAt,
+    hour,
+    incorrectAnswers,
+    kind: "lesson" as const,
+    localDate,
+    startedAt: endedAt,
     userId,
-  }));
+    weekday: TUESDAY,
+  };
 }
 
 /**
@@ -62,68 +65,26 @@ function buildStepAttemptRows({
  * Friday, and hour buckets are explicit so timezone changes cannot alter which
  * labels the page must select.
  */
-async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; browser: Browser }) {
+async function createPatternsTestPage({
+  baseURL,
+  browser,
+  mode = "focus",
+}: {
+  baseURL: string;
+  browser: Browser;
+  mode?: Mode;
+}) {
   const user = await createE2EUser(baseURL, { orgRole: "member", withProgress: true });
-  const existingAttempt = await prisma.stepAttempt.findFirstOrThrow({ where: { userId: user.id } });
+
   const now = new Date();
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const yesterday = new Date(today.getTime() - MS_PER_DAY);
-  const answeredAt = new Date(now.getTime() - MS_PER_DAY);
-
-  const attempts = [
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 9,
-      hourOfDay: 9,
-      isCorrect: true,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 1,
-      hourOfDay: 9,
-      isCorrect: false,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 1,
-      hourOfDay: 15,
-      isCorrect: true,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 4,
-      hourOfDay: 15,
-      isCorrect: false,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 2,
-      hourOfDay: 21,
-      isCorrect: true,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 3,
-      hourOfDay: 21,
-      isCorrect: false,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-  ];
+  const endedAt = new Date(now.getTime() - MS_PER_DAY);
+  const ledgerRow = { endedAt, localDate: yesterday, userId: user.id };
 
   await prisma.$transaction([
     prisma.dailyProgress.deleteMany({ where: { userId: user.id } }),
-    prisma.stepAttempt.deleteMany({ where: { userId: user.id } }),
+    prisma.learningEvent.deleteMany({ where: { userId: user.id } }),
     prisma.dailyProgress.createMany({
       data: [
         {
@@ -142,10 +103,17 @@ async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; b
         },
       ],
     }),
-    prisma.stepAttempt.createMany({ data: attempts }),
+    prisma.learningEvent.createMany({
+      data: [
+        buildLedgerRow({ ...ledgerRow, correctAnswers: 9, hour: 9, incorrectAnswers: 1 }),
+        buildLedgerRow({ ...ledgerRow, correctAnswers: 1, hour: 15, incorrectAnswers: 4 }),
+        buildLedgerRow({ ...ledgerRow, correctAnswers: 2, hour: 21, incorrectAnswers: 3 }),
+      ],
+    }),
   ]);
 
   const browserContext = await browser.newContext({ storageState: user.storageState });
+  await showInMode(browserContext, { mode, userId: user.id });
   const page = await browserContext.newPage();
 
   return { browserContext, page };
@@ -189,41 +157,48 @@ test.describe("Patterns", () => {
     ).toBeVisible();
   });
 
-  test("shows every weekday and selects the strongest explicit weekday", async ({
-    baseURL,
-    browser,
-  }) => {
-    const { browserContext, page } = await createPatternsTestPage({ baseURL: baseURL!, browser });
+  for (const mode of MODES) {
+    test(`shows every weekday and selects the strongest explicit weekday in ${mode}`, async ({
+      baseURL,
+      browser,
+    }) => {
+      const { browserContext, page } = await createPatternsTestPage({
+        baseURL: baseURL!,
+        browser,
+        mode,
+      });
 
-    try {
-      await page.goto("/patterns");
+      try {
+        await page.goto("/patterns");
+        await expectMode(page, mode);
 
-      const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
+        const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
 
-      await expect(weeklyRhythm).toContainText(/past 90 days/iu);
-      await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
+        await expect(weeklyRhythm).toContainText(/past 90 days/iu);
+        await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
 
-      await Promise.all(
-        WEEKDAYS.map((weekday) =>
-          expect(
-            weeklyRhythm.getByRole("button", { name: new RegExp(weekday, "iu") }),
-          ).toBeVisible(),
-        ),
-      );
+        await Promise.all(
+          WEEKDAYS.map((weekday) =>
+            expect(
+              weeklyRhythm.getByRole("button", { name: new RegExp(weekday, "iu") }),
+            ).toBeVisible(),
+          ),
+        );
 
-      await expect(weeklyRhythm.getByRole("status")).toContainText(
-        /you do better on tuesdays.*90% across 10 answers/iu,
-      );
+        await expect(weeklyRhythm.getByRole("status")).toContainText(
+          /you do better on tuesdays.*90% across 10 answers/iu,
+        );
 
-      await weeklyRhythm.getByRole("button", { name: /friday/iu }).click();
+        await weeklyRhythm.getByRole("button", { name: /friday/iu }).click();
 
-      await expect(weeklyRhythm.getByRole("status")).toContainText(
-        /friday performance.*10% across 10 answers/iu,
-      );
-    } finally {
-      await browserContext.close();
-    }
-  });
+        await expect(weeklyRhythm.getByRole("status")).toContainText(
+          /friday performance.*10% across 10 answers/iu,
+        );
+      } finally {
+        await browserContext.close();
+      }
+    });
+  }
 
   test("shows every time period with its accuracy and answer count", async ({
     baseURL,

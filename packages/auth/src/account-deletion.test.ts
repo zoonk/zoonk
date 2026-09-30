@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { del, list } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   captureAccountDeletionCleanup,
   deleteUserDependenciesBeforeAuthDelete,
@@ -17,6 +18,9 @@ vi.mock("./providers/apple-revocation", () => ({
   revokeStoredAppleAuthorization: mocks.revokeStoredAppleAuthorization,
 }));
 
+/** Vercel Blob is the external storage the learner's uploads and recordings live in. */
+vi.mock("@vercel/blob", () => ({ del: vi.fn(), list: vi.fn() }));
+
 vi.mock("./stripe/client", () => ({
   stripeClient: { subscriptions: { cancel: mocks.cancelStripeSubscription } },
 }));
@@ -30,25 +34,6 @@ function createTestUser() {
 
   return prisma.user.create({
     data: { email: `account-deletion-${id}@example.test`, id, name: "Deletion Test User" },
-  });
-}
-
-/**
- * Creates the smallest real course shape needed to prove membership cleanup
- * updates denormalized learner counts without coupling this package to shared fixtures.
- */
-function createTestCourse({ userId }: { userId: null | string }) {
-  const id = randomUUID();
-
-  return prisma.course.create({
-    data: {
-      language: "en",
-      normalizedTitle: `account deletion ${id}`,
-      slug: `account-deletion-${id}`,
-      title: "Account deletion test course",
-      userCount: 1,
-      userId,
-    },
   });
 }
 
@@ -112,38 +97,6 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     ).resolves.toBeNull();
   });
 
-  it("removes course memberships and decrements every surviving course user count", async () => {
-    const [deletingUser, otherOwner] = await Promise.all([createTestUser(), createTestUser()]);
-
-    const [sharedCourse, otherOwnedCourse, deletingUserOwnedCourse] = await Promise.all([
-      createTestCourse({ userId: null }),
-      createTestCourse({ userId: otherOwner.id }),
-      createTestCourse({ userId: deletingUser.id }),
-    ]);
-
-    await prisma.courseUser.createMany({
-      data: [sharedCourse, otherOwnedCourse, deletingUserOwnedCourse].map((course) => ({
-        courseId: course.id,
-        userId: deletingUser.id,
-      })),
-    });
-
-    await deleteUserDependenciesBeforeAuthDelete(deletingUser);
-
-    const [membershipCount, updatedSharedCourse, updatedOtherOwnedCourse, ownedCourse] =
-      await Promise.all([
-        prisma.courseUser.count({ where: { userId: deletingUser.id } }),
-        prisma.course.findUniqueOrThrow({ where: { id: sharedCourse.id } }),
-        prisma.course.findUniqueOrThrow({ where: { id: otherOwnedCourse.id } }),
-        prisma.course.findUniqueOrThrow({ where: { id: deletingUserOwnedCourse.id } }),
-      ]);
-
-    expect(membershipCount).toBe(0);
-    expect(updatedSharedCourse.userCount).toBe(0);
-    expect(updatedOtherOwnedCourse.userCount).toBe(0);
-    expect(ownedCourse.userCount).toBe(1);
-  });
-
   it("attempts stored Apple revocation before removing local account state", async () => {
     const user = await createTestUser();
     const normalizedEmail = user.email.toLowerCase();
@@ -196,5 +149,128 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     await expect(
       prisma.verification.count({ where: { identifier: { in: verificationIdentifiers } } }),
     ).resolves.toBe(0);
+  });
+});
+
+/** One page of files in the private store, as Blob lists them. */
+function listed({ cursor, urls }: { cursor?: string; urls: string[] }) {
+  return {
+    blobs: urls.map((url) => ({ url })),
+    cursor,
+    folders: [],
+    hasMore: Boolean(cursor),
+  } as never;
+}
+
+describe("deleting a learner's private files", () => {
+  const PRIVATE_STORE = { storeId: "store_private", token: undefined };
+
+  beforeEach(() => {
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", PRIVATE_STORE.storeId);
+    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("deletes every upload and private course picture in the learner's folders, page by page, before anything else", async () => {
+    const user = await createTestUser();
+
+    vi.mocked(list).mockImplementation(async ({ cursor, prefix } = {}) => {
+      if (prefix === `sources/${user.id}/`) {
+        return cursor
+          ? listed({ urls: ["https://blob.test/sources/b.pdf"] })
+          : listed({ cursor: "next", urls: ["https://blob.test/sources/a.pdf"] });
+      }
+
+      return listed({ urls: [`https://blob.test/images/${user.id}/step.webp`] });
+    });
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+
+    expect(list).toHaveBeenCalledWith(
+      expect.objectContaining({ prefix: `images/${user.id}/`, ...PRIVATE_STORE }),
+    );
+
+    expect(del).toHaveBeenCalledWith(["https://blob.test/sources/a.pdf"], PRIVATE_STORE);
+    expect(del).toHaveBeenCalledWith(["https://blob.test/sources/b.pdf"], PRIVATE_STORE);
+
+    expect(del).toHaveBeenCalledWith(
+      [`https://blob.test/images/${user.id}/step.webp`],
+      PRIVATE_STORE,
+    );
+
+    expect(vi.mocked(del).mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.cancelStripeSubscription.mock.invocationCallOrder[0] ?? Number.POSITIVE_INFINITY,
+    );
+  });
+
+  it("keeps an upload its publisher made public, which every learner now shares", async () => {
+    const user = await createTestUser();
+    const sharedUrl = `https://blob.test/sources/${user.id}/notice-${randomUUID()}.pdf`;
+    const ownUrl = `https://blob.test/sources/${user.id}/notes-${randomUUID()}.pdf`;
+
+    await prisma.source.create({
+      data: {
+        blobUrl: sharedUrl,
+        contentHash: randomUUID(),
+        fetchedAt: new Date(),
+        identityKey: randomUUID(),
+        kind: "upload",
+        language: "pt",
+        title: "Edital",
+        visibility: "public",
+      },
+    });
+
+    vi.mocked(list).mockImplementation(async ({ prefix } = {}) =>
+      listed({ urls: prefix === `sources/${user.id}/` ? [sharedUrl, ownUrl] : [] }),
+    );
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+
+    expect(del).toHaveBeenCalledExactlyOnceWith([ownUrl], PRIVATE_STORE);
+  });
+
+  it("deletes the pictures of a private course that came from their guest, still in the guest's folder", async () => {
+    const user = await createTestUser();
+    const id = randomUUID();
+    const movedUrl = `https://blob.test/images/${randomUUID()}/step-${id}.webp`;
+    vi.mocked(list).mockResolvedValue(listed({ urls: [] }));
+
+    await prisma.mediaAsset.create({
+      data: {
+        kind: "image",
+        model: "test-model",
+        ownerId: user.id,
+        promptVersion: "test",
+        reuseKey: `private:${user.id}:image:${id}`,
+        runId: `test-run-${id}`,
+        url: movedUrl,
+        visibility: "private",
+      },
+    });
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+
+    expect(del).toHaveBeenCalledExactlyOnceWith([movedUrl], PRIVATE_STORE);
+  });
+
+  it("has nothing to delete where no private store was ever configured", async () => {
+    const user = await createTestUser();
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+
+    expect(list).not.toHaveBeenCalled();
+  });
+
+  it("stops the deletion when the files can't be deleted, so a retry finishes it", async () => {
+    const user = await createTestUser();
+    vi.mocked(list).mockRejectedValue(new Error("Blob unavailable"));
+
+    await expect(deleteUserDependenciesBeforeAuthDelete(user)).rejects.toThrow("Blob unavailable");
+    expect(mocks.revokeStoredAppleAuthorization).not.toHaveBeenCalled();
   });
 });

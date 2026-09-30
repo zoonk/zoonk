@@ -52,12 +52,31 @@ function SubmitIcon({
 
 const CREATE_NAVIGATION_ERROR_KINDS = new Set([
   "authentication",
-  "limit",
   "subscription",
   "unavailable",
+  "usageLimit",
 ]);
 
 const LESSON_QUESTION_COMPOSER_ID = "lesson-question-composer";
+
+function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
+  const t = useExtracted();
+
+  switch (contextKind) {
+    case "chapter":
+      return t("Ask about this chapter…");
+    case "mock":
+      return t("Ask about this mock exam…");
+    case "plan":
+      return t("Ask about your plan…");
+    case "answer":
+    case "lesson":
+    case "step":
+      return t("Ask about the lesson content…");
+    default:
+      return contextKind satisfies never;
+  }
+}
 
 function getComposerAvailability({
   isResolvingPreviousQuestion,
@@ -77,12 +96,13 @@ function getComposerAvailability({
     Boolean(state.requestError && CREATE_NAVIGATION_ERROR_KINDS.has(state.requestError.kind));
 
   const isReady = state.loadStatus === "ready";
-  const hasGenerationLimit = state.answerError?.reason.kind === "limit";
+
+  const hasUsageLimit = state.answerError?.reason.kind === "usageLimit";
+
   const hasQuestionToSend = Boolean(state.draft.trim()) || isResolvingPreviousQuestion;
 
   return {
-    canSend:
-      isReady && !isBusy && !createNavigationError && !hasGenerationLimit && hasQuestionToSend,
+    canSend: isReady && !isBusy && !createNavigationError && !hasUsageLimit && hasQuestionToSend,
     createNavigationError,
   };
 }
@@ -98,6 +118,7 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
   });
 
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
+  const placeholder = useComposerPlaceholder(state.context.kind);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {
@@ -120,7 +141,7 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
           maxLength={MAX_LESSON_QUESTION_LENGTH}
           onChange={(event) => controller.changeDraft(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={t("Ask about the lesson content…")}
+          placeholder={placeholder}
           value={state.draft}
         />
         <InputGroupAddon align="block-end" className="justify-end pt-0">

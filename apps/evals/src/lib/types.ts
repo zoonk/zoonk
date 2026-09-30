@@ -1,5 +1,4 @@
 import { type Reasoning } from "@zoonk/ai/provider-options";
-import { type LanguageModelUsage } from "ai";
 import z from "zod";
 
 const MIN_SCORE = 6;
@@ -37,7 +36,21 @@ export type TestCase<TExpected = unknown, TInput = Record<string, unknown>> = {
   userInput: TInput;
   expectations?: string;
   expected?: TExpected;
+  /**
+   * The case's language when the input doesn't carry one (`language` or
+   * `learnerLanguage`) and the id doesn't start with it ("pt-..."), such as a
+   * goal typed in Portuguese. Results are reported per language from it.
+   */
+  language?: string;
+  /** Built from an anonymized `sample:production` row instead of written by hand. */
+  origin?: "production";
 };
+
+/**
+ * The slowest a task may be, in seconds, for the model to count as a fit.
+ * Tight where learners wait on the answer, and absent for work made ahead of time.
+ */
+export type LatencyBudget = { p50: number; p95: number };
 
 /**
  * Judge-based scoring needs a prose rubric, while deterministic scorers can
@@ -65,14 +78,67 @@ export function supportsJudgeMode(task: Pick<RegisteredTask, "score" | "testCase
   );
 }
 
-type TaskResult<T = unknown> = {
-  data: T;
-  usage: LanguageModelUsage;
-  userPrompt: string;
-  systemPrompt: string;
+/**
+ * Generation tasks return the AI SDK's full usage, while evaluation models only
+ * report input and output totals. This shape accepts both so routing by model
+ * kind does not need separate result types.
+ */
+type TaskUsage = {
+  inputTokens: number | undefined;
+  outputTokens: number | undefined;
+  inputTokenDetails?: { cacheReadTokens: number | undefined; cacheWriteTokens: number | undefined };
+  outputTokenDetails?: { reasoningTokens: number | undefined };
 };
 
-type TaskScoreResult = { score: number; steps: Score["steps"]; categoryScores?: CategoryScore[] };
+/** Normalized token counts persisted with every output and judgment. */
+export type TokenUsage = {
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+  reasoningTokens?: number;
+};
+
+/**
+ * Keeps cache and reasoning counts only when the provider reported them, so
+ * saved files from before this detail existed still price as plain input.
+ */
+export function toTokenUsage(usage: TaskUsage): TokenUsage {
+  return {
+    cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens,
+    cacheWriteTokens: usage.inputTokenDetails?.cacheWriteTokens,
+    inputTokens: usage.inputTokens ?? 0,
+    outputTokens: usage.outputTokens ?? 0,
+    reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
+  };
+}
+
+type TaskResult<T = unknown> = {
+  data: T;
+  usage: TaskUsage;
+  userPrompt: string;
+  systemPrompt: string;
+  /** Label probabilities from evaluation models, kept for threshold tuning. */
+  probabilities?: Record<string, number>;
+};
+
+/**
+ * What a classifier expected and produced for one case. Scorers that compare
+ * labels return it so results can show per-label accuracy and a confusion
+ * matrix instead of one average.
+ */
+export type ClassificationOutcome = { expected: string; predicted: string | null };
+
+/** The model that scored an output and what that call used, so judge spend is visible. */
+export type JudgeRun = { modelId: string; usage: TokenUsage };
+
+export type TaskScoreResult = {
+  score: number;
+  steps: Score["steps"];
+  categoryScores?: CategoryScore[];
+  classification?: ClassificationOutcome;
+  judge?: JudgeRun;
+};
 
 type TaskScoreParams<TExpected = unknown> = { output: string; testCase: TestCase<TExpected> };
 
@@ -86,13 +152,13 @@ type TaskGenerateInput<TInput> = TInput & {
   reasoning?: Reasoning;
 };
 
-export type EvalResult = {
+export type EvalResult = TokenUsage & {
   testCase: TestCase;
   output: string;
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
-  inputTokens: number;
-  outputTokens: number;
+  classification?: ClassificationOutcome;
+  judge?: JudgeRun;
   duration: number;
 };
 
@@ -109,8 +175,20 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   description: string;
   testCases: TestCase<TExpected, TInput>[];
   generate: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
+  /**
+   * Answers the task with an evaluation model (Jev, or a language model through
+   * the evaluation adapter) and returns the same output shape as `generate`,
+   * so one scorer compares both kinds of model. Only classifiers define it.
+   */
+  evaluate?: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
   score?: TaskScorer<TExpected>;
   scoreCategories?: ScoreCategory[];
+  latencyBudget?: LatencyBudget;
+  /**
+   * Tasks that draw images, transcribe audio or talk over a realtime session run on those models
+   * only, and text tasks never do.
+   */
+  output?: "image" | "realtime" | "transcription";
 };
 
 /**
@@ -126,14 +204,13 @@ export type RegisteredTask = Omit<Task<never, unknown, never>, "score" | "testCa
 
 // === Output Types (Separated from Eval Results) ===
 
-export type OutputEntry = {
+export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
-  inputTokens: number;
-  outputTokens: number;
   duration: number;
   systemPrompt: string;
   userPrompt: string;
+  probabilities?: Record<string, number>;
 };
 
 export type ModelOutputs = {
@@ -158,6 +235,8 @@ export type ScoredResult = {
   testCase: TestCase;
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
+  classification?: ClassificationOutcome;
+  judge?: JudgeRun;
 };
 
 export type ScoredTaskResults = { taskId: string; modelId: string; results: ScoredResult[] };
@@ -172,7 +251,7 @@ export type ModelRanking = {
   categoryScores?: CategoryScore[];
 };
 
-type JudgeRanking = { judgeId: string; rankings: ModelRanking[] };
+type JudgeRanking = { judgeId: string; rankings: ModelRanking[]; usage?: TokenUsage };
 
 export type BattleMatchup = {
   taskId: string;
@@ -182,14 +261,18 @@ export type BattleMatchup = {
   judgments: JudgeRanking[];
 };
 
+/**
+ * Judges never score their own model family, so contestants get different
+ * numbers of judgments. Rankings use the average score, never a sum.
+ */
 export type BattleLeaderboardEntry = {
   modelId: string;
   modelName: string;
   provider: string;
-  totalScore: number;
   averageScore: number;
-  averageDuration: number;
-  averageCost: number;
+  latencyP50: number;
+  latencyP95: number;
+  costPer1000Runs: number;
   scoresByJudge: Record<string, number>;
   scoresByTestCase: Record<string, number>;
   categoryScores: CategoryScoreSummary[];

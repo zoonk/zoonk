@@ -1,0 +1,11 @@
+{
+  "inviteAction": "Accepter l'invitation",
+  "inviteDisclaimer": "Si vous ne connaissez pas {name}, vous pouvez ignorer ce message.",
+  "inviteExpiry": "Cette invitation expire dans 7 jours.",
+  "inviteIntro": "{name} apprend sur Zoonk et vous a invité à être son responsable légal.",
+  "inviteSubject": "{name} vous invite à être son responsable légal sur Zoonk",
+  "inviteWhatYouCanDo": "En tant que responsable, vous pouvez voir son activité de la semaine, fixer une limite de temps par jour et approuver un abonnement Plus. Connectez-vous avec cette adresse e-mail pour accepter.",
+  "plusApprovalAction": "Voir la demande",
+  "plusApprovalIntro": "{name} aimerait s'abonner à Zoonk Plus. L'abonnement n'est possible qu'après votre accord.",
+  "plusApprovalSubject": "{name} vous demande d'approuver Zoonk Plus"
+}

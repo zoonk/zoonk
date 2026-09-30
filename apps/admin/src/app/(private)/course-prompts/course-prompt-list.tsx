@@ -179,10 +179,8 @@ function CoursePromptRow({ prompt }: { prompt: ListedCoursePrompt }) {
   return (
     <TableRow>
       <TableCell className="max-w-xl min-w-80 whitespace-normal">
-        <Link className="block" href={`/course-prompts/${prompt.id}`} prefetch>
-          <span className="font-medium">{prompt.prompt}</span>
-          <span className="text-muted-foreground block text-xs uppercase">{prompt.language}</span>
-        </Link>
+        <span className="font-medium">{prompt.prompt}</span>
+        <span className="text-muted-foreground block text-xs uppercase">{prompt.language}</span>
       </TableCell>
       <TableCell>
         <Badge className="capitalize" variant="secondary">
@@ -223,10 +221,7 @@ function CoursePromptRow({ prompt }: { prompt: ListedCoursePrompt }) {
   );
 }
 
-/**
- * Generation status is only present for prompts that can enter the current
- * course-generation workflow. Other prompt classifications are routed but not generated yet.
- */
+/** Only prompts that entered the old course-generation workflow have a generation status. */
 function GenerationStatusBadge({ prompt }: { prompt: ListedCoursePrompt }) {
   if (!prompt.generationStatus) {
     return <Badge variant="outline">No generation</Badge>;

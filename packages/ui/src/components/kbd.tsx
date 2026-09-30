@@ -7,8 +7,9 @@ const shortcutKbdVariants = cva("", {
     tone: { default: "", inverse: "bg-primary-foreground/15 text-primary-foreground" },
     variant: {
       badge:
-        "bg-background text-muted-foreground ring-border/60 absolute -top-1 -right-1 hidden h-4 min-w-4 rounded-full px-1 text-[9px] leading-none shadow-sm ring-1 lg:pointer-fine:inline-flex",
-      inline: "hidden opacity-70 lg:pointer-fine:inline-flex",
+        "bg-background text-muted-foreground ring-border/60 absolute -top-1.5 -right-1.5 hidden h-5 min-w-5 rounded-full px-1 text-xs leading-none shadow-sm ring-1 lg:pointer-fine:inline-flex",
+      // No extra fading: the muted colors already keep hints quiet and readable (AA).
+      inline: "hidden lg:pointer-fine:inline-flex",
     },
   },
 });

@@ -5,7 +5,7 @@ import { WIDE_CONTENT_MAX_WIDTH_CLASS } from "@zoonk/ui/components/layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { ArrowUpIcon, CircleCheckIcon, CircleDashedIcon } from "lucide-react";
+import { ArrowUpIcon } from "lucide-react";
 
 /**
  * Grid frames provide the shared wide browsing column for tile-based pages, so
@@ -22,22 +22,12 @@ const gridVariants = cva("flex w-full flex-col gap-5", {
   },
 });
 
-export type GridVariant = NonNullable<VariantProps<typeof gridVariants>["variant"]>;
-
 type GridProps = React.ComponentProps<"section"> & VariantProps<typeof gridVariants>;
 
 export function Grid({ className, variant, ...props }: GridProps) {
   return (
     <section className={cn(gridVariants({ variant }), className)} data-slot="grid" {...props} />
   );
-}
-
-/**
- * Grid toolbars sit inside the grid frame padding, so action rows and search
- * controls can align with tiles without every page resetting list padding.
- */
-export function GridToolbar({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex gap-2", className)} data-slot="grid-toolbar" {...props} />;
 }
 
 /**
@@ -67,7 +57,7 @@ export function GridBackToTop({
     <a
       className={cn(
         buttonVariants({ size: "sm", variant: "ghost" }),
-        "text-muted-foreground/80 hover:text-foreground px-2 text-xs",
+        "text-muted-foreground hover:text-foreground px-2 text-xs",
         className,
       )}
       data-slot="grid-back-to-top"
@@ -96,7 +86,7 @@ const gridGroupVariants = cva("grid grid-cols-1 gap-4", {
   },
 });
 
-export type GridGroupVariant = NonNullable<VariantProps<typeof gridGroupVariants>["variant"]>;
+type GridGroupVariant = NonNullable<VariantProps<typeof gridGroupVariants>["variant"]>;
 
 type GridGroupProps = React.ComponentProps<"div"> & VariantProps<typeof gridGroupVariants>;
 
@@ -195,153 +185,21 @@ export function GridItemTitle({ className, ...props }: React.ComponentProps<"div
   );
 }
 
-const gridItemPositionVariants = cva(
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-base font-bold shadow-[inset_0_0_0_1px_rgb(255_255_255/0.55)]",
-  {
-    defaultVariants: { tone: "blue" },
-    variants: {
-      tone: {
-        black: "bg-foreground/10 text-foreground",
-        blue: "bg-belt-blue/10 text-belt-blue",
-        brown: "bg-belt-brown/10 text-belt-brown",
-        gray: "bg-belt-gray/10 text-belt-gray",
-        green: "bg-belt-green/10 text-belt-green",
-        orange: "bg-belt-orange/15 text-energy",
-        purple: "bg-belt-purple/10 text-belt-purple",
-        red: "bg-belt-red/10 text-belt-red",
-        white: "bg-muted text-muted-foreground",
-        yellow: "bg-belt-yellow/25 text-warning",
-      },
-    },
-  },
-);
-
-export type GridItemTone = NonNullable<VariantProps<typeof gridItemPositionVariants>["tone"]>;
-
-type GridItemPositionProps = React.ComponentProps<"span"> &
-  VariantProps<typeof gridItemPositionVariants>;
-
-/**
- * Number prefixes are text, not decoration, and predefined tones keep app code
- * from passing raw color classes that can drift from the design tokens.
- */
-export function GridItemPosition({ className, tone, ...props }: GridItemPositionProps) {
-  return (
-    <span
-      className={cn(gridItemPositionVariants({ tone }), className)}
-      data-slot="grid-item-position"
-      {...props}
-    />
-  );
-}
-
 /**
  * Descriptions give just enough supporting context to choose a tile while the
- * title remains the primary identity.
+ * title remains the primary identity. Pass a short summary (e.g. a first
+ * sentence): the tile shows all of it rather than cutting it off mid-thought.
  */
 export function GridItemDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-muted-foreground line-clamp-3 text-sm leading-relaxed text-pretty sm:text-base",
+        "text-muted-foreground text-sm leading-relaxed text-pretty sm:text-base",
         className,
       )}
       data-slot="grid-item-description"
       {...props}
     />
-  );
-}
-
-/**
- * The footer reserves one place for secondary state so status pills do not
- * jump around based on title or description length.
- */
-export function GridItemFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex pt-4", className)} data-slot="grid-item-footer" {...props} />;
-}
-
-/**
- * Empty messages should use the same quiet centered treatment anywhere a caller
- * decides there are no grid items to show.
- */
-export function GridEmpty({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-muted-foreground py-8 text-center text-sm", className)}
-      data-slot="grid-empty"
-      {...props}
-    />
-  );
-}
-
-/**
- * Completed status is a compact success pill because completion is useful but
- * should stay secondary to the main tile action.
- */
-export function GridItemStatusCompleted({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "text-success bg-success/10 flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-        className,
-      )}
-      data-slot="grid-item-status"
-      {...props}
-    >
-      <CircleCheckIcon aria-hidden="true" className="size-3.5" />
-      {children}
-    </span>
-  );
-}
-
-/**
- * Partial progress uses a blue design token so it reads as active progress
- * rather than a warning or an unfinished error state.
- */
-export function GridItemStatusProgress({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "bg-belt-blue/10 text-belt-blue flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-        className,
-      )}
-      data-slot="grid-item-status"
-      {...props}
-    >
-      <CircleDashedIcon aria-hidden="true" className="size-3.5" />
-      {children}
-    </span>
-  );
-}
-
-/**
- * Idle status intentionally stays neutral so untouched content remains visible
- * without creating a sense of failure.
- */
-export function GridItemStatusIdle({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "text-muted-foreground bg-muted shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold",
-        className,
-      )}
-      data-slot="grid-item-status"
-      {...props}
-    >
-      {children}
-    </span>
   );
 }
 

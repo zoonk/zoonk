@@ -1,171 +1,52 @@
-export type StatsAnalysisPath = "/stats/content" | "/stats/engagement" | "/stats/growth";
+import { STATS_ANALYSIS_GROUPS, type StatsAnalysisPath } from "./stats-analysis-groups";
 
-type StatsAnalysisBase = { label: string; usesPeriod: boolean };
+export type StatsAnalysisView = (typeof STATS_ANALYSIS_GROUPS)[number]["views"][number];
 
-export type GrowthAnalysisView = StatsAnalysisBase & {
-  id: "activation-rate" | "free-to-paid" | "new-signups" | "subscribers-by-plan";
-  path: "/stats/growth";
-};
+export type StatsAnalysisViewAt<Path extends StatsAnalysisPath> = Extract<
+  StatsAnalysisView,
+  { path: Path }
+>;
 
-export type EngagementAnalysisView = StatsAnalysisBase & {
-  id:
-    | "accuracy-rate"
-    | "active-learners"
-    | "avg-lesson-time"
-    | "completion-rate"
-    | "learner-milestones"
-    | "lesson-time-breakdown"
-    | "total-learning-time";
-  path: "/stats/engagement";
-};
-
-export type ContentAnalysisView = StatsAnalysisBase & {
-  id:
-    | "completed-lessons-by-kind"
-    | "content-creation"
-    | "content-totals"
-    | "new-courses"
-    | "new-lessons";
-  path: "/stats/content";
-};
-
-export type StatsAnalysisView = ContentAnalysisView | EngagementAnalysisView | GrowthAnalysisView;
-type StatsAnalysisId = StatsAnalysisView["id"];
-
-export const STATS_ANALYSIS_GROUPS = [
-  {
-    label: "Growth",
-    views: [
-      { id: "new-signups", label: "New signups", path: "/stats/growth", usesPeriod: true },
-      { id: "activation-rate", label: "Activation rate", path: "/stats/growth", usesPeriod: true },
-      { id: "free-to-paid", label: "Free-to-paid", path: "/stats/growth", usesPeriod: true },
-      {
-        id: "subscribers-by-plan",
-        label: "Subscribers by plan",
-        path: "/stats/growth",
-        usesPeriod: false,
-      },
-    ],
-  },
-  {
-    label: "Engagement",
-    views: [
-      {
-        id: "active-learners",
-        label: "Active learners",
-        path: "/stats/engagement",
-        usesPeriod: true,
-      },
-      { id: "accuracy-rate", label: "Accuracy rate", path: "/stats/engagement", usesPeriod: true },
-      {
-        id: "completion-rate",
-        label: "Completion rate",
-        path: "/stats/engagement",
-        usesPeriod: true,
-      },
-      {
-        id: "avg-lesson-time",
-        label: "Avg time / lesson",
-        path: "/stats/engagement",
-        usesPeriod: true,
-      },
-      {
-        id: "total-learning-time",
-        label: "Total learning time",
-        path: "/stats/engagement",
-        usesPeriod: true,
-      },
-      {
-        id: "lesson-time-breakdown",
-        label: "Lesson time breakdown",
-        path: "/stats/engagement",
-        usesPeriod: true,
-      },
-      {
-        id: "learner-milestones",
-        label: "Learner milestones",
-        path: "/stats/engagement",
-        usesPeriod: false,
-      },
-    ],
-  },
-  {
-    label: "Content",
-    views: [
-      { id: "new-courses", label: "New courses", path: "/stats/content", usesPeriod: true },
-      { id: "new-lessons", label: "New lessons", path: "/stats/content", usesPeriod: true },
-      {
-        id: "content-creation",
-        label: "Content creation trend",
-        path: "/stats/content",
-        usesPeriod: true,
-      },
-      { id: "content-totals", label: "Content totals", path: "/stats/content", usesPeriod: true },
-      {
-        id: "completed-lessons-by-kind",
-        label: "Completed lessons by kind",
-        path: "/stats/content",
-        usesPeriod: false,
-      },
-    ],
-  },
-] as const satisfies readonly { label: string; views: readonly StatsAnalysisView[] }[];
+export type ContentAnalysisView = StatsAnalysisViewAt<"/stats/content">;
+export type EngagementAnalysisView = StatsAnalysisViewAt<"/stats/engagement">;
+export type GrowthAnalysisView = StatsAnalysisViewAt<"/stats/growth">;
+export type LearningAnalysisView = StatsAnalysisViewAt<"/stats/learning">;
+export type OutcomesAnalysisView = StatsAnalysisViewAt<"/stats/outcomes">;
 
 const DEFAULT_ANALYSIS_BY_PATH = {
   "/stats/content": "new-courses",
   "/stats/engagement": "active-learners",
   "/stats/growth": "new-signups",
-} as const satisfies Record<StatsAnalysisPath, StatsAnalysisId>;
+  "/stats/learning": "daily-active-learners",
+  "/stats/modes": "focus-vs-fun",
+  "/stats/outcomes": "goals-reached",
+} as const satisfies { [Path in StatsAnalysisPath]: StatsAnalysisViewAt<Path>["id"] };
 
 /**
  * Keeps every analytics view in one shared navigation model so adding a stat
- * cannot silently make it unreachable from one of the three stats routes.
+ * cannot silently make it unreachable from one of the stats routes. An unknown
+ * or missing view falls back to the route's default analysis.
  */
-export function getStatsAnalysisView(input: {
-  path: "/stats/growth";
-  value?: string | string[];
-}): GrowthAnalysisView;
-export function getStatsAnalysisView(input: {
-  path: "/stats/engagement";
-  value?: string | string[];
-}): EngagementAnalysisView;
-export function getStatsAnalysisView(input: {
-  path: "/stats/content";
-  value?: string | string[];
-}): ContentAnalysisView;
-export function getStatsAnalysisView({
+export function getStatsAnalysisView<Path extends StatsAnalysisPath>({
   path,
   value,
 }: {
-  path: StatsAnalysisPath;
+  path: Path;
   value?: string | string[];
-}): StatsAnalysisView {
-  const requestedView = Array.isArray(value) ? value[0] : value;
-  const views = getAllStatsAnalysisViews();
-  const matchingView = views.find((view) => view.path === path && view.id === requestedView);
+}): StatsAnalysisViewAt<Path> {
+  const requestedId = Array.isArray(value) ? value[0] : value;
+  const defaultId: string = DEFAULT_ANALYSIS_BY_PATH[path];
 
-  return matchingView ?? getStatsAnalysisViewById(DEFAULT_ANALYSIS_BY_PATH[path]);
-}
+  const views = STATS_ANALYSIS_GROUPS.flatMap((group) => [...group.views]).filter(
+    (view): view is StatsAnalysisViewAt<Path> => view.path === path,
+  );
 
-/**
- * Resolves a known analysis identifier to its complete navigation metadata so
- * picker rendering and route-specific data loading share one source of truth.
- */
-function getStatsAnalysisViewById(id: StatsAnalysisId): StatsAnalysisView {
-  const views = getAllStatsAnalysisViews();
-  const matchingView = views.find((view) => view.id === id);
+  const selectedView =
+    views.find((view) => view.id === requestedId) ?? views.find((view) => view.id === defaultId);
 
-  if (!matchingView) {
-    throw new Error(`Unknown stats analysis view: ${id}`);
+  if (!selectedView) {
+    throw new Error(`Stats route has no default analysis: ${path}`);
   }
 
-  return matchingView;
-}
-
-/**
- * Normalizes the differently sized readonly view tuples into one shared list
- * for lookup without weakening each individual view's discriminated type.
- */
-function getAllStatsAnalysisViews(): StatsAnalysisView[] {
-  return STATS_ANALYSIS_GROUPS.flatMap((group) => [...group.views]);
+  return selectedView;
 }

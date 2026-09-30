@@ -1,22 +1,22 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toChapterResource } from "@/lib/catalog-responses";
-import { chapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { getChapterById } from "@zoonk/core/chapters/get-by-id";
+import { parseChapterContext } from "@/lib/chapter-context";
+import { getCatalogChapter } from "@zoonk/core/catalog/chapter";
 import { NextResponse } from "next/server";
 
 /**
- * Returns the canonical metadata for one published chapter.
+ * Returns one chapter as a course the viewer can open places it: the course
+ * from the query, or the chapter's home course.
  */
-async function getChapter(_request: Request, context: RouteContext<"/v1/chapters/[chapterId]">) {
-  const parsed = parsePathParams({ params: await context.params, schema: chapterPathParamsSchema });
+async function getChapter(request: Request, context: RouteContext<"/v1/chapters/[chapterId]">) {
+  const parsed = parseChapterContext({ params: await context.params, request });
 
   if (!parsed.success) {
     return errors.validation(parsed.error);
   }
 
-  const chapter = await getChapterById({ chapterId: parsed.data.chapterId });
+  const chapter = await getCatalogChapter(parsed.data);
 
   if (!chapter) {
     return errors.notFound("Chapter not found");

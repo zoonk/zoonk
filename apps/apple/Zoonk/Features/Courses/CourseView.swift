@@ -25,7 +25,7 @@ struct CourseView: View {
     .background(Color(uiColor: .systemBackground))
     .task(
       id: CatalogDetailTaskID(
-        resourceID: course.id,
+        resource: course.id,
         session: session.authenticatedSession)
     ) {
       await catalog.loadCourseIfNeeded(id: course.id)
@@ -64,7 +64,9 @@ private struct CourseDetailContent: View {
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        defaultEmail: session.account?.user.email)
+        context: FeedbackContext(contentID: detail.course.id, contentKind: .course),
+        defaultEmail: session.account?.user.email,
+        token: session.authenticatedSession?.bearerToken)
     }
   }
 }
@@ -72,6 +74,8 @@ private struct CourseDetailContent: View {
 private struct CourseDetailList: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isSearching) private var isSearching
+  // Read outside the List, which doesn't pass the page's refresh action to its rows.
+  @Environment(\.refresh) private var refresh
 
   let detail: CourseDetail
   @Binding var isInformationPresented: Bool
@@ -96,34 +100,24 @@ private struct CourseDetailList: View {
           emptyChaptersView
             .listRowSeparator(.hidden)
         } else {
-          ForEach(filteredChapters) { chapter in
-            NavigationLink(
-              value: CourseDestination.chapter(
-                ChapterReference((course: detail.course, chapter: chapter)))
-            ) {
-              CatalogNumberedRow(
-                description: chapter.description,
-                imageURL: chapter.imageURL ?? detail.course.imageURL,
-                number: chapter.position + 1,
-                systemImage: "rectangle.stack.fill",
-                title: chapter.title
-              ) {
-                if let progress = catalogChapterProgress(
-                  chapter: chapter,
-                  progress: detail.progress)
-                {
-                  CatalogProgressLabel(progress: progress)
-                }
+          ForEach(courseLevelBands(filteredChapters)) { band in
+            Section {
+              ForEach(band.chapters) { chapter in
+                chapterRow(chapter)
               }
+            } header: {
+              // Section headers don't take the list's content margins, so they align with the rows here.
+              Text(band.level.localizedTitle)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                .accessibilityAddTraits(.isHeader)
+                .listRowInsets(
+                  EdgeInsets(
+                    top: 16,
+                    leading: CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
+                    bottom: 4,
+                    trailing: 0))
             }
-            .listRowInsets(
-              EdgeInsets(
-                top: CatalogDetailLayout.curriculumRowVerticalInset(
-                  for: horizontalSizeClass),
-                leading: 0,
-                bottom: CatalogDetailLayout.curriculumRowVerticalInset(
-                  for: horizontalSizeClass),
-                trailing: 0))
           }
         }
       }
@@ -136,6 +130,36 @@ private struct CourseDetailList: View {
     }
     .frame(maxWidth: 900)
     .frame(maxWidth: .infinity)
+  }
+
+  private func chapterRow(_ chapter: CourseChapter) -> some View {
+    NavigationLink(
+      value: CourseDestination.chapter(
+        ChapterReference((course: detail.course, chapter: chapter)))
+    ) {
+      CatalogNumberedRow(
+        description: chapter.description,
+        imageURL: detail.course.imageURL,
+        number: chapter.position + 1,
+        systemImage: "rectangle.stack.fill",
+        title: chapter.title
+      ) {
+        if let progress = catalogChapterProgress(
+          chapter: chapter,
+          progress: detail.progress)
+        {
+          CatalogProgressLabel(progress: progress)
+        }
+      }
+    }
+    .listRowInsets(
+      EdgeInsets(
+        top: CatalogDetailLayout.curriculumRowVerticalInset(
+          for: horizontalSizeClass),
+        leading: 0,
+        bottom: CatalogDetailLayout.curriculumRowVerticalInset(
+          for: horizontalSizeClass),
+        trailing: 0))
   }
 
   private var detailHeader: some View {
@@ -186,6 +210,13 @@ private struct CourseDetailList: View {
   private var emptyChaptersView: some View {
     if catalogText(searchText) != nil {
       ContentUnavailableView.search(text: searchText)
+    } else if detail.course.generationStatus.isBeingWritten {
+      CatalogGenerationInProgressView(
+        checkAgain: refresh,
+        title: Text(
+          "Chapters are being written",
+          tableName: "Courses",
+          comment: "Title while a course's chapters are still being written."))
     } else {
       ContentUnavailableView {
         Label {
@@ -225,9 +256,11 @@ private struct CourseInformationView: View {
         }
 
         VStack(alignment: .leading, spacing: 12) {
-          Text(course.organization.name)
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(.secondary)
+          if let organization = course.organization {
+            Text(organization.name)
+              .font(.subheadline.weight(.semibold))
+              .foregroundStyle(.secondary)
+          }
 
           if !course.categories.isEmpty {
             Text(categoryDescription)
@@ -238,7 +271,7 @@ private struct CourseInformationView: View {
               .background(.quaternary, in: Capsule())
           }
 
-          if course.organization.slug == "ai" {
+          if course.organization?.slug == "ai" {
             Label {
               Text(
                 "Created with AI",

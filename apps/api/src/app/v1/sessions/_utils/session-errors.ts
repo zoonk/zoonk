@@ -1,3 +1,4 @@
+import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { sessionErrorCodes } from "@/lib/session-error-codes";
 import { DISPOSABLE_EMAIL_ERROR_MESSAGE } from "@zoonk/auth/email-signup-contract";
@@ -42,6 +43,14 @@ function getAccountDisabledErrorResponse(error: unknown) {
 
 function getSharedSessionErrorResponse(error: unknown) {
   const authError = getAuthError(error);
+
+  if (authError?.code === accessErrorCodes.botDetected) {
+    return createErrorResponse({
+      code: accessErrorCodes.botDetected,
+      message: "This request looks automated",
+      status: httpStatus.forbidden,
+    });
+  }
 
   if (authError?.code === sessionErrorCodes.disposableEmail) {
     return createErrorResponse({

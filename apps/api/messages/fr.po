@@ -6,6 +6,176 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Message-Key: msgctxt\n"
 
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "eq8fyl"
+msgid "End link"
+msgstr "Mettre fin au lien"
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "yXrPHy"
+msgid "Stop being {name}'s guardian?"
+msgstr "Ne plus être le tuteur de {name} ?"
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "350UFs"
+msgid "You'll stop seeing their week, and your daily limit and Plus approval end. They can invite you again later."
+msgstr "Tu ne verras plus son activité de la semaine, et ta limite quotidienne ainsi que ton approbation Plus prendront fin. Cette personne pourra t'inviter à nouveau plus tard."
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "OZbt2X"
+msgid "We couldn't end the link. Try again."
+msgstr "Impossible de mettre fin au lien. Réessaie."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "JzvSPP"
+msgid "Daily time limit"
+msgstr "Limite de temps par jour"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "PfW4AI"
+msgid "No limit"
+msgstr "Aucune limite"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "AVWDvG"
+msgid "{minutes} min a day"
+msgstr "{minutes} min par jour"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Enregistrer"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "OxnxZb"
+msgid "Daily limit saved"
+msgstr "Limite quotidienne enregistrée"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "fynQpZ"
+msgid "We couldn't save the limit. Try again."
+msgstr "On n’a pas pu enregistrer la limite. Réessaie."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "3-s4XD"
+msgid "You approved Plus on {date}."
+msgstr "Tu as approuvé Plus le {date}."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "U9BvCE"
+msgid "{name} needs your approval to subscribe to Plus."
+msgstr "{name} a besoin de ton accord pour s’abonner à Plus."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "330Hte"
+msgid "Approve Plus"
+msgstr "Autoriser Plus"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "Mfp11j"
+msgid "We couldn't save your approval. Try again."
+msgstr "On n’a pas pu enregistrer ton approbation. Réessaie."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "gpodmF"
+msgid "Minutes each day"
+msgstr "Minutes par jour"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "lDjcBg"
+msgid "{day}: {minutes, plural, one {# minute} other {# minutes}}, {lessons, plural, one {# lesson} other {# lessons}}"
+msgstr "{day} : {minutes, plural, one {# minute} other {# minutes}}, {lessons, plural, one {# leçon} other {# leçons}}"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "37rrex"
+msgid "Last 7 days: {minutes, plural, one {# minute} other {# minutes}} and {lessons, plural, one {# lesson} other {# lessons}}"
+msgstr "7 derniers jours : {minutes, plural, one {# minute} other {# minutes}} et {lessons, plural, one {# leçon} other {# leçons}}"
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "arjdPf"
+msgid "Confirm your email address first, then open the invite again."
+msgstr "Confirme d’abord ton adresse e-mail, puis rouvre l’invitation."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "6ychX4"
+msgid "This invite was sent to another email. Sign in with that email to accept it."
+msgstr "Cette invitation a été envoyée à une autre adresse e-mail. Connecte-toi avec cette adresse pour l’accepter."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "VWppro"
+msgid "This invite expired. Ask for a new one."
+msgstr "Cette invitation a expiré. Demande-en une nouvelle."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "NKNtUt"
+msgid "Sign in with the email this invite was sent to."
+msgstr "Connecte-toi avec l’adresse e-mail à laquelle cette invitation a été envoyée."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "S3n5VD"
+msgid "We couldn't find this invite. It may have been canceled."
+msgstr "On n’a pas trouvé cette invitation. Elle a peut-être été annulée."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "8YMK0-"
+msgid "Accept invite"
+msgstr "Accepter l’invitation"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "poUf8i"
+msgid "Guardian"
+msgstr "Parent ou tuteur"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "je39I0"
+msgid "Sign in with the email this invite was sent to. It's free."
+msgstr "Connecte-toi avec l’adresse e-mail à laquelle cette invitation a été envoyée. C’est gratuit."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "ZJzI65"
+msgid "Sign in to see the learners who invited you."
+msgstr "Connecte-toi pour voir les apprenants qui t’ont invité."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "szo7Rq"
+msgid "Sign in to continue"
+msgstr "Connecte-toi pour continuer"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "lSvmLC"
+msgid "Accept the invite"
+msgstr "Accepter l’invitation"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "ckjkdP"
+msgid "As their guardian, you'll see their weekly activity, can set a daily time limit and approve Plus. You won't see their answers or messages."
+msgstr "En tant que responsable légal, tu verras son activité de la semaine. Tu pourras définir une limite de temps par jour et autoriser Plus. Tu ne verras pas ses réponses ni ses messages."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "JPtSV8"
+msgid "Your learners"
+msgstr "Tes apprenants"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "xltR8k"
+msgid "Invite accepted. Here's their week and the controls you can set."
+msgstr "Invitation acceptée. Voici son activité de la semaine et les réglages que tu peux modifier."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "UmTQLH"
+msgid "Their last seven days and the controls you can set."
+msgstr "Son activité des sept derniers jours et les réglages que tu peux modifier."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "n19CR6"
+msgid "No learner has invited you yet. Invites arrive by email."
+msgstr "Aucun apprenant ne t’a encore invité. Les invitations arrivent par e-mail."
+
 #: src/app/auth/layout.tsx
 msgctxt "dVItHD"
 msgid "Sign in to Zoonk"
@@ -71,6 +241,11 @@ msgid "Continue with Apple"
 msgstr "Continuer avec Apple"
 
 #: src/app/auth/otp/otp-form.tsx
+msgctxt "5UeJRL"
+msgid "Code from the email"
+msgstr "Code reçu par e-mail"
+
+#: src/app/auth/otp/otp-form.tsx
 msgctxt "HkHvQv"
 msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 msgstr "Le code saisi est incorrect. Réessaie ou contacte hello@zoonk.com"
@@ -88,7 +263,7 @@ msgstr "Consulte tes e-mails"
 #: src/app/auth/otp/page.tsx
 msgctxt "LZHcmZ"
 msgid "Enter the code we sent to {email}:"
-msgstr "Saisis le code envoyé à {email} :"
+msgstr "Saisis le code envoyé à {email} :"
 
 #: src/app/auth/setup/page.tsx
 msgctxt "CYqIel"

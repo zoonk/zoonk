@@ -46,7 +46,7 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
 
   return (
     <OTPFormContainer onSubmit={handleSubmit}>
-      <OTPInput />
+      <OTPInput aria-label={t("Code from the email")} />
       <OTPError hasError={state === "error" || state === "disposableEmail"}>
         {state === "disposableEmail"
           ? t("Temporary email addresses aren't supported. Use another email or a privacy alias.")

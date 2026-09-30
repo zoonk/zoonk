@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   deduplicateNormalizedTexts,
-  deduplicateSlugs,
-  emptyToNull,
   ensureLocaleSuffix,
-  extractUniqueSentenceWords,
+  getFirstSentence,
   normalizePunctuation,
   normalizeString,
   removeAccents,
@@ -72,28 +70,6 @@ describe(normalizeString, () => {
 
   it("handles string with only spaces", () => {
     expect(normalizeString("   ")).toBe("");
-  });
-});
-
-describe(emptyToNull, () => {
-  it("converts empty string to null", () => {
-    expect(emptyToNull("")).toBeNull();
-  });
-
-  it("converts whitespace-only string to null", () => {
-    expect(emptyToNull("  ")).toBeNull();
-  });
-
-  it("converts null to null", () => {
-    expect(emptyToNull(null)).toBeNull();
-  });
-
-  it("converts undefined to null", () => {
-    expect(emptyToNull()).toBeNull();
-  });
-
-  it("returns non-empty string as-is", () => {
-    expect(emptyToNull("romaji")).toBe("romaji");
   });
 });
 
@@ -216,57 +192,6 @@ describe(toSlug, () => {
     expect(toSlug("Existing Completed Course 7cf0f58c-c844-4e77-b93d-862b088c72e0")).toBe(
       "existing-completed-course-7cf0f58c-c844-4e77-b93d",
     );
-  });
-});
-
-describe(deduplicateSlugs, () => {
-  it("leaves unique slugs unchanged", () => {
-    const items = [{ slug: "a" }, { slug: "b" }];
-    expect(deduplicateSlugs(items)).toStrictEqual([{ slug: "a" }, { slug: "b" }]);
-  });
-
-  it("appends counter suffix to duplicate slugs", () => {
-    const items = [{ slug: "x" }, { slug: "x" }, { slug: "x" }];
-
-    expect(deduplicateSlugs(items)).toStrictEqual([
-      { slug: "x" },
-      { slug: "x-1" },
-      { slug: "x-2" },
-    ]);
-  });
-
-  it("uses 1-based counter regardless of array position", () => {
-    const items = [{ slug: "a" }, { slug: "x" }, { slug: "x" }];
-    expect(deduplicateSlugs(items)).toStrictEqual([{ slug: "a" }, { slug: "x" }, { slug: "x-1" }]);
-  });
-
-  it("avoids collision with pre-existing slugs", () => {
-    const items = [{ slug: "x" }, { slug: "x" }, { slug: "x-1" }];
-
-    expect(deduplicateSlugs(items)).toStrictEqual([
-      { slug: "x" },
-      { slug: "x-2" },
-      { slug: "x-1" },
-    ]);
-  });
-
-  it("preserves extra properties", () => {
-    const items = [
-      { slug: "a", title: "A" },
-      { slug: "a", title: "B" },
-    ];
-
-    const result = deduplicateSlugs(items);
-    expect(result[0]).toStrictEqual({ slug: "a", title: "A" });
-    expect(result[1]).toStrictEqual({ slug: "a-1", title: "B" });
-  });
-
-  it("handles empty array", () => {
-    expect(deduplicateSlugs([])).toStrictEqual([]);
-  });
-
-  it("handles single item", () => {
-    expect(deduplicateSlugs([{ slug: "a" }])).toStrictEqual([{ slug: "a" }]);
   });
 });
 
@@ -398,43 +323,6 @@ describe(stripPunctuation, () => {
   });
 });
 
-describe(extractUniqueSentenceWords, () => {
-  it("extracts unique lowercase words from sentences", () => {
-    const result = extractUniqueSentenceWords(["Hola mundo", "Buenos dias"]);
-    expect(result).toStrictEqual(["hola", "mundo", "buenos", "dias"]);
-  });
-
-  it("deduplicates words across sentences", () => {
-    const result = extractUniqueSentenceWords(["gato bonito", "gato grande"]);
-    expect(result).toContain("gato");
-    expect(result.filter((word) => word === "gato")).toHaveLength(1);
-  });
-
-  it("strips punctuation from words", () => {
-    const result = extractUniqueSentenceWords(["Hola, como estas?"]);
-    expect(result).toContain("hola");
-    expect(result).toContain("como");
-    expect(result).toContain("estas");
-    expect(result).not.toContain("estas?");
-  });
-
-  it("filters out empty tokens", () => {
-    const result = extractUniqueSentenceWords(["hello  world"]);
-    expect(result).not.toContain("");
-  });
-
-  it("returns empty array for empty input", () => {
-    expect(extractUniqueSentenceWords([])).toStrictEqual([]);
-  });
-
-  it("handles non-space-delimited text via Intl.Segmenter", () => {
-    const result = extractUniqueSentenceWords(["猫は食べる"]);
-    expect(result.length).toBeGreaterThan(1);
-    expect(result).toContain("猫");
-    expect(result).toContain("食べる");
-  });
-});
-
 describe(replaceNamePlaceholder, () => {
   it("replaces {{NAME}} with provided name", () => {
     expect(replaceNamePlaceholder("Hello, {{NAME}}!", "Alice")).toBe("Hello, Alice!");
@@ -471,5 +359,34 @@ describe(replaceNamePlaceholder, () => {
   it("returns original text when no placeholder present", () => {
     expect(replaceNamePlaceholder("No placeholder here", "Alice")).toBe("No placeholder here");
     expect(replaceNamePlaceholder("No placeholder here", null)).toBe("No placeholder here");
+  });
+});
+
+describe(getFirstSentence, () => {
+  it("keeps only the first sentence, trimmed", () => {
+    expect(
+      getFirstSentence(
+        "A matemática estuda números e formas. O curso desenvolve raciocínio lógico.",
+        "pt",
+      ),
+    ).toBe("A matemática estuda números e formas.");
+  });
+
+  it("returns a single sentence as it is", () => {
+    expect(getFirstSentence("Dutch is a West Germanic language.", "en")).toBe(
+      "Dutch is a West Germanic language.",
+    );
+  });
+
+  it("returns text without a sentence end as it is", () => {
+    expect(getFirstSentence("  Quantum physics from scratch  ", "en")).toBe(
+      "Quantum physics from scratch",
+    );
+  });
+
+  it("splits sentences in languages without spaces", () => {
+    expect(getFirstSentence("日本語は日本の言語です。会話を学びます。", "ja")).toBe(
+      "日本語は日本の言語です。",
+    );
   });
 });

@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { expect, test } from "./fixtures";
+
+type SitemapResource = "courses" | "library-chapters" | "library-lessons";
 
 /**
  * Checks every sitemap page because a new fixture may sort after the first
@@ -19,7 +20,7 @@ async function sitemapContainsUrl({
 }: {
   expectedUrl: string;
   page?: number;
-  resource: "courses" | "chapters" | "lessons";
+  resource: SitemapResource;
 }): Promise<boolean> {
   const response = await fetch(`${getBaseURL()}/sitemaps/${resource}/sitemap/${page}.xml`);
 
@@ -48,7 +49,7 @@ async function expectPortugueseSitemapUrl({
   resource,
 }: {
   path: string;
-  resource: "courses" | "chapters" | "lessons";
+  resource: SitemapResource;
 }) {
   const matches = await Promise.all([
     sitemapContainsUrl({ expectedUrl: `<loc>https://www.zoonk.com/pt${path}</loc>`, resource }),
@@ -67,10 +68,12 @@ test.describe("robots.txt", () => {
     expect(body).toContain("Disallow: /auth/");
     expect(body).toContain("Disallow: /login");
     expect(body).toContain("Disallow: /*/login");
-    expect(body).toContain("Disallow: /generate/");
-    expect(body).toContain("Disallow: /*/generate/");
-    expect(body).toContain("Disallow: /*/p/");
-    expect(body).toContain("Sitemap: https://www.zoonk.com/sitemaps/lessons/sitemap/0.xml");
+    expect(body).toContain("Disallow: /*/learn/");
+    expect(body).toContain("Sitemap: https://www.zoonk.com/sitemaps/courses/sitemap/0.xml");
+
+    expect(body).toContain(
+      "Sitemap: https://www.zoonk.com/sitemaps/library-chapters/sitemap/0.xml",
+    );
   });
 });
 
@@ -85,6 +88,8 @@ test.describe("sitemap.xml", () => {
     expect(body).toContain("<loc>https://www.zoonk.com/pt/courses</loc>");
     expect(body).toContain("<loc>https://www.zoonk.com/courses/science</loc>");
     expect(body).toContain("<loc>https://www.zoonk.com/pt/courses/science</loc>");
+    expect(body).toContain("<loc>https://www.zoonk.com/pricing</loc>");
+    expect(body).toContain("<loc>https://www.zoonk.com/pt/pricing</loc>");
   });
 });
 
@@ -110,26 +115,17 @@ test.describe("catalog sitemaps", () => {
       slug: `e2e-sitemap-course-${uniqueId}`,
     });
 
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      generationStatus: "completed",
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
+    const chapter = await libraryChapterFixture({
+      homeCourseId: course.id,
+      language: "pt-BR",
       slug: `e2e-sitemap-chapter-${uniqueId}`,
     });
 
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      description: `E2E sitemap lesson description ${uniqueId}`,
-      generationStatus: "completed",
-      isPublished: true,
-      organizationId: organization.id,
+    const lesson = await libraryLessonFixture({
+      homeChapterId: chapter.id,
+      language: "pt-BR",
       slug: `e2e-sitemap-lesson-${uniqueId}`,
-      title: `E2E Sitemap Lesson ${uniqueId}`,
     });
-
-    await stepFixture({ isPublished: true, lessonId: lesson.id });
 
     const coursePath = `/b/${organization.slug}/c/${course.slug}`;
     const chapterPath = `${coursePath}/ch/${chapter.slug}`;
@@ -137,8 +133,8 @@ test.describe("catalog sitemaps", () => {
 
     await Promise.all([
       expectPortugueseSitemapUrl({ path: coursePath, resource: "courses" }),
-      expectPortugueseSitemapUrl({ path: chapterPath, resource: "chapters" }),
-      expectPortugueseSitemapUrl({ path: lessonPath, resource: "lessons" }),
+      expectPortugueseSitemapUrl({ path: chapterPath, resource: "library-chapters" }),
+      expectPortugueseSitemapUrl({ path: lessonPath, resource: "library-lessons" }),
     ]);
   });
 
@@ -151,20 +147,11 @@ test.describe("catalog sitemaps", () => {
       organizationId: organization.id,
     });
 
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-    });
-
-    await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+    await libraryLessonFixture({ homeChapterId: chapter.id });
 
     const matches = await Promise.all(
-      (["courses", "chapters", "lessons"] as const).map((resource) =>
+      (["courses", "library-chapters", "library-lessons"] as const).map((resource) =>
         sitemapContainsUrl({ expectedUrl: course.slug, resource }),
       ),
     );

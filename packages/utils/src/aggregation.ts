@@ -53,22 +53,3 @@ export function aggregateByPeriod<T extends { date: Date }>(
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
-
-export type ScoredRow = { key: number; correct: number; incorrect: number };
-
-export function findBestByScore(rows: ScoredRow[]): { key: number; score: number } | null {
-  const scored = rows
-    .filter((row) => row.correct + row.incorrect > 0)
-    .map((row) => {
-      const total = row.correct + row.incorrect;
-      return { key: row.key, score: (row.correct / total) * 100, total };
-    });
-
-  const best = scored.toSorted((a, b) => b.score - a.score || b.total - a.total).at(0);
-
-  if (!best) {
-    return null;
-  }
-
-  return { key: best.key, score: best.score };
-}

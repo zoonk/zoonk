@@ -1,0 +1,561 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The jacket's sale tag clearly contrasts the crossed-out $80 original price with the prominent $60 discounted price. The -25% badge reinforces the correct calculation and matches the screen.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One focal sale tag, attached to the jacket and carrying a small discount badge, communicates one idea without clutter.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "All three labels are useful, brief, and accurate. The required prices are exactly $80 and $60, and the optional -25% badge adds relevant information rather than a caption.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Each label target gives a concrete placement: the tag's top half, its corner badge, or its bottom.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1284,
+          "inputTokens": 1287,
+          "outputTokens": 389,
+          "reasoningTokens": 55
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "A discount as before and after: an old price tag and a new one, maybe a -25% badge. Labels with the prices help here and must be exactly $80 and $60.",
+        "expected": { "labels": "some" },
+        "id": "discount-en-1",
+        "userInput": {
+          "context": "Personal finance › Percentages › Discounts",
+          "format": "step",
+          "language": "en",
+          "request": "Show a price before and after a 25% discount",
+          "screenText": "A jacket costs $80. With 25% off, you pay 75% of the price: $60.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The dots are densest around a tiny central nucleus and become sparse outward. This directly illustrates the requested electron cloud without drawing an orbital path or contradicting the screen text.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One focal cloud and one tiny supporting sphere communicate a single idea without a multipart diagram or unrelated objects.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Both labels are short and correctly spelled in Portuguese, but 'nuvem eletrônica' captions the obvious focal cloud and exceeds the task's allowance for at most one short label. The redundant-caption cap of 6 applies.",
+          "score": 6,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All non-label prose is in English. Both label targets specify placement relative to visible objects: next to the central sphere and pointing to the outer dots.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1306,
+          "inputTokens": 1309,
+          "outputTokens": 532,
+          "reasoningTokens": 159
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The additional label 'nuvem eletrônica' exceeds the allowance for at most one short label and captions the already-visible cloud. Remove it and retain only 'núcleo'.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The electron cloud: dots densest near a small nucleus, fading outward. At most a short label in Portuguese such as 'núcleo'. No orbit drawn as a path.",
+        "expected": { "labels": "any" },
+        "id": "electron-cloud-pt-1",
+        "userInput": {
+          "context": "Física quântica › O átomo › Por que o elétron não cai no núcleo",
+          "format": "step",
+          "language": "pt",
+          "request": "A nuvem eletrônica, mais densa perto do núcleo",
+          "screenText": "O elétron não gira como um planeta. Ele se espalha numa nuvem de possibilidades: um mapa de onde ele pode estar.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The recognizable water molecule and curved double-headed arrows communicate back-and-forth rotation, and the nearby wave establishes a basic relationship. However, the scene omits both food and a visible heating outcome, so it does not teach the complete cause-and-effect idea at a glance.",
+          "score": 7,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "There is one focal molecule and one supporting wave, with a single motion cue. The scene is focused and avoids a multipart diagram.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Both labels are short, correctly spelled English terms that help identify otherwise ambiguous scientific representations. Neither serves as a caption or unnecessarily repeats an obvious everyday object.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English, and both label targets specify placement above a particular depicted object.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1293,
+          "inputTokens": 1296,
+          "outputTokens": 660,
+          "reasoningTokens": 256
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The scene shows a microwave wave and a rotating water molecule, but no food or visible heating. It therefore illustrates the first causal link without showing the requested outcome: microwaves heating food.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the wave's effect on the molecule more visually direct; merely passing behind it conveys interaction less clearly than a wave visibly driving the back-and-forth rotation.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cause and effect: a microwave heating food, linked to water molecules spinning. Uses a sequence layout or a clear relation; motion shows spinning.",
+        "expected": { "labels": "any" },
+        "id": "microwave-en-1",
+        "userInput": {
+          "context": "Everyday physics › Heat › How a microwave heats food",
+          "format": "step",
+          "language": "en",
+          "request": "How microwaves make water molecules in food spin and heat up",
+          "screenText": "Microwaves make the water molecules in food spin back and forth millions of times a second. That motion is heat.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The house and front-lawn real-estate sign with a key icon provide a concrete, drawable representation of a home available to rent, without contradicting the screen text.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "There is one focal house and one supporting signpost, keeping the scene focused on a single idea.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The labels array is empty, and the sign displays only a key icon, satisfying the prohibition on labels and written words.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. No labels require placement targets, and the sign's position in front of the house is explicit.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1223,
+          "inputTokens": 1226,
+          "outputTokens": 362,
+          "reasoningTokens": 48
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "A language course scene for renting a place: a small house with a 'for rent' sign that uses a symbol. No labels at all, and no words written on the sign.",
+        "expected": { "labels": "none" },
+        "id": "language-house-1",
+        "userInput": {
+          "context": "Spanish for Brazilians › Finding a place to live",
+          "format": "step",
+          "language": "pt",
+          "request": "Uma casa para alugar com uma placa na frente",
+          "screenText": "Se alquila: a casa está disponível para alugar.",
+          "textAllowed": false
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "A green leaf receiving sunlight is an explicitly suitable representation of photosynthesis for this cover. The water droplet is relevant, and nothing contradicts the requested idea.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The leaf is a clear focal object and the scene is uncomplicated, but the two specified supporting elements exceed the task-specific allowance of one small supporting object.",
+          "score": 8,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The labels array is empty, correctly satisfying the prohibition on labels for covers and the user's textAllowed setting.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1200,
+          "inputTokens": 1203,
+          "outputTokens": 575,
+          "reasoningTokens": 222
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The result specifies two supporting elements—a sunbeam and a water droplet—where the cover expectations allow only one small supporting object. Removing the droplet would preserve the leaf-in-sunlight concept and meet the stricter cover requirement.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "A chapter cover: one object that stands for photosynthesis, such as a leaf in sunlight. No labels. Nothing more than a small supporting object.",
+        "expected": { "labels": "none" },
+        "id": "cover-photosynthesis-1",
+        "userInput": {
+          "context": "Biology",
+          "format": "cover",
+          "language": "en",
+          "request": "Photosynthesis. How plants turn light, water and carbon dioxide into sugar.",
+          "textAllowed": false
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side-by-side rice sacks show a larger quantity costing proportionally more. The labels exactly match 2 kg for R$ 10 and 3 kg for R$ 15.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One focal sack and one supporting sack communicate a single comparison without unnecessary objects or diagram elements.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Both labels are necessary to communicate the quantities and prices, stay within four words each, and use the exact required numbers and Brazilian currency notation. Neither is a redundant caption.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English, and each label target explicitly places it below the corresponding sack.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1295,
+          "inputTokens": 1298,
+          "outputTokens": 410,
+          "reasoningTokens": 92
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "A proportion with a scale or bags of rice: 2 kg for R$ 10 next to 3 kg for R$ 15. Labels, if any, must use exactly these numbers and Brazilian Portuguese.",
+        "expected": { "labels": "some" },
+        "id": "rule-of-three-pt-1",
+        "userInput": {
+          "context": "Matemática básica › Proporções › Regra de três",
+          "format": "step",
+          "language": "pt",
+          "request": "Mostrar que mais quilos custam proporcionalmente mais",
+          "screenText": "Se 2 kg de arroz custam R$ 10, 3 kg custam R$ 15.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The ocean, shining sun, and upward dashed arrows clearly show evaporation. The arrows represent movement without incorrectly depicting invisible vapor as visible clouds. Nothing contradicts the screen text.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The scene has one focal object, the ocean, and one supporting object, the sun. It correctly drops condensation, precipitation, collection, runoff, and groundwater from the overloaded request.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The single label, “evaporation,” usefully identifies the process represented by the arrows rather than captioning the scene or naming an obvious object. It is correctly spelled, in English, and within the four-word limit.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All non-label fields are written in English, and the label target explicitly places it beside the rising dashed arrows.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1270,
+          "inputTokens": 1273,
+          "outputTokens": 472,
+          "reasoningTokens": 125
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Only evaporation, the idea on this screen: water rising from a lake or ocean into the air in the sun. It must drop the rest of the water cycle the request lists.",
+        "expected": { "labels": "any" },
+        "id": "overloaded-water-cycle-1",
+        "userInput": {
+          "context": "Earth science › The water cycle › Evaporation",
+          "format": "step",
+          "language": "en",
+          "request": "A diagram of the whole water cycle with evaporation, condensation, precipitation, collection, runoff and groundwater, all labeled",
+          "screenText": "The sun heats the ocean, and water rises into the air as invisible vapor. This is evaporation.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "One recognizable press, a tall stack of identical books, and an arrow connecting them clearly communicate one press producing many copies. Showing the stack actively growing would strengthen the visual explanation.",
+          "score": 9,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The scene has one focal press and one supporting stack, with a single clear relationship and no unnecessary comparison or multipart diagram.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The three-word English label 'Hundreds of copies' matches the screen's quantity and adds a scale that the stack alone cannot communicate precisely. It is not merely naming the visible books.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All fields are in English, and the label target explicitly places it above the stack of books.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1264,
+          "inputTokens": 1267,
+          "outputTokens": 769,
+          "reasoningTokens": 421
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Show identical copies accumulating in the stack, rather than relying only on a directional arrow, to make repeated production more immediately visible.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The printing press spreading books: a press and a growing stack or flow of copies. A sequence or motion shows many copies coming from one press. Labels only if short.",
+        "expected": { "labels": "any" },
+        "id": "printing-press-en-1",
+        "userInput": {
+          "context": "World history › The Renaissance › The printing press",
+          "format": "step",
+          "language": "en",
+          "request": "One press making many copies of the same book",
+          "screenText": "Before the press, one scribe took months to copy a book. A press could print hundreds of copies in the same time.",
+          "textAllowed": true
+        }
+      }
+    }
+  ],
+  "taskId": "image-scene"
+}

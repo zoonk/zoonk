@@ -1,26 +1,49 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
-import { getGatewayModelId, getModelById } from "./models";
+import { settleWithConcurrency } from "./concurrency";
+import { type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
-import { type ModelOutputs, type OutputEntry, type RegisteredTask, type TestCase } from "./types";
+import {
+  type ModelOutputs,
+  type OutputEntry,
+  type RegisteredTask,
+  type TestCase,
+  toTokenUsage,
+} from "./types";
+
+/**
+ * Few enough calls in flight that one run doesn't queue behind itself at the
+ * provider, so p50 and p95 measure the model instead of our own burst.
+ */
+const GENERATION_CONCURRENCY = 4;
+
+/**
+ * Evaluation models answer through the task's `evaluate` route; everything else
+ * runs the task's own prompt. Tasks without an evaluation route can't be run
+ * with an evaluation model, so that mismatch fails before any call.
+ */
+function getTaskRunner({ model, task }: { model: ModelConfig; task: RegisteredTask }) {
+  if (model.kind !== "evaluation") {
+    return task.generate;
+  }
+
+  if (!task.evaluate) {
+    throw new Error(`Task ${task.id} has no evaluation route for ${model.id}.`);
+  }
+
+  return task.evaluate;
+}
 
 /**
  * The eval registry intentionally erases each task's concrete input type so it
  * can list heterogeneous tasks together. This builds the runtime input from
- * the paired test case; the generator call casts it back at the boundary.
+ * the paired test case; the runner call casts it back at the boundary.
  */
-function getTaskGenerateInput({ modelId, testCase }: { modelId: string; testCase: TestCase }) {
-  const model = getModelById(modelId);
-  const gatewayModelId = getGatewayModelId(modelId);
-
-  if (!model) {
-    throw new Error(`Model ${modelId} not found`);
-  }
-
+function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: TestCase }) {
   return {
     ...testCase.userInput,
-    model: gatewayModelId,
+    model: model.gatewayModelId,
     reasoning: model.reasoning,
     useFallback: false,
   };
@@ -31,29 +54,32 @@ function getTaskGenerateInput({ modelId, testCase }: { modelId: string; testCase
  * because registry tasks are intentionally type-erased, while each task module
  * still keeps its concrete input type.
  */
-async function generateOutputForTestCase(
-  task: RegisteredTask,
-  testCase: TestCase,
-  modelId: string,
-  runNumber: number,
-): Promise<OutputEntry> {
+async function generateOutputForTestCase({
+  model,
+  runNumber,
+  task,
+  testCase,
+}: {
+  model: ModelConfig;
+  runNumber: number;
+  task: RegisteredTask;
+  testCase: TestCase;
+}): Promise<OutputEntry> {
   logInfo(`Generating output for: ${testCase.id} (run ${runNumber})`);
 
+  const runTask = getTaskRunner({ model, task });
+  const input = getTaskRunInput({ model, testCase });
   const startTime = performance.now();
-  const input = getTaskGenerateInput({ modelId, testCase });
-  const result = await task.generate(input as never);
-
+  const result = await runTask(input as never);
   const duration = performance.now() - startTime;
 
-  const testCaseId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
-
   return {
+    ...toTokenUsage(result.usage),
     duration,
-    inputTokens: result.usage.inputTokens ?? 0,
     output: JSON.stringify(result.data, null, 2),
-    outputTokens: result.usage.outputTokens ?? 0,
+    probabilities: result.probabilities,
     systemPrompt: result.systemPrompt,
-    testCaseId,
+    testCaseId: getTestCaseRunId({ runNumber, testCaseId: testCase.id }),
     userPrompt: result.userPrompt,
   };
 }
@@ -106,6 +132,12 @@ export async function generateOutputs(
   modelId: string,
 ): Promise<ModelOutputs> {
   const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
+  const model = getModelById(modelId);
+
+  if (!model) {
+    throw new Error(`Model ${safeModelId} not found`);
+  }
+
   logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
 
   logInfo(
@@ -124,11 +156,12 @@ export async function generateOutputs(
     return existingOutputs ?? createModelOutputs(task.id, modelId, []);
   }
 
-  const results = await Promise.allSettled(
-    runsToExecute.map(({ testCase, runNumber }) =>
-      generateOutputForTestCase(task, testCase, modelId, runNumber),
-    ),
-  );
+  const results = await settleWithConcurrency({
+    concurrency: GENERATION_CONCURRENCY,
+    items: runsToExecute,
+    run: ({ testCase, runNumber }) =>
+      generateOutputForTestCase({ model, runNumber, task, testCase }),
+  });
 
   const allOutputs = [...existingEntries, ...extractSuccessfulOutputs(results)];
   const modelOutputs = createModelOutputs(task.id, modelId, allOutputs);

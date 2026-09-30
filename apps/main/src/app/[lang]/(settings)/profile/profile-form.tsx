@@ -5,6 +5,7 @@ import {
   type UsernameStatus as UsernameStatusType,
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
+import { FUN_PRIMARY_BUTTON_CLASS } from "@zoonk/learn/fun-primary";
 import {
   Field,
   FieldContent,
@@ -30,7 +31,7 @@ function UsernameStatus({ status, username }: { status: UsernameStatusType; user
     return (
       <FieldDescription className="flex items-center gap-1">
         <Spinner className="size-3" />
-        {t("Checking...")}
+        {t("Checking…")}
       </FieldDescription>
     );
   }
@@ -138,10 +139,7 @@ export function ProfileForm({
         </FieldContent>
       </Field>
 
-      <SubmitButton
-        className={cn("w-fit", { "opacity-50": isSubmitDisabled })}
-        disabled={isSubmitDisabled}
-      >
+      <SubmitButton className={cn("w-fit", FUN_PRIMARY_BUTTON_CLASS)} disabled={isSubmitDisabled}>
         {t("Save changes")}
       </SubmitButton>
     </form>

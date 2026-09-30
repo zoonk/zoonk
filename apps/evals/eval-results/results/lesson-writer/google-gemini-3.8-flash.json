@@ -1,0 +1,840 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The calculations, formulas, and marked answers are correct. The salary increase is 15%, the game discount is 20%, and the recovery increases are 100%, 25%, and approximately 11.1%. Each scored multiple-choice question has one defensible answer, and the stock activity labels its data as an example. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Most explanations use short, accessible language, and both worked examples show the arithmetic step by step. However, the abstract recipe arrives before the concrete dollar-division intuition, with the cents-per-dollar explanation coming afterward. The technical term 'decimal' is also used without a prior everyday explanation. These multiple beginner-scaffolding gaps trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks after both worked examples require independent calculation with less help, and both include the important new-value denominator trap with useful feedback. However, the activity check repeats the exact question and answer just revealed, and the 30% salary distractor has a weak explanation of its underlying misconception. These multiple weaknesses trigger the cap of 7. The final application also supplies calculations the learner was supposed to perform.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses US English, familiar dollar amounts, and the planned surprise without an introductory preamble. However, it spoils the hook immediately, introduces the formula before the required concrete division intuition, and changes the planned application into a narrower check with the intermediate results supplied. The generic company setting also falls short of naming a concrete place. These several slips trigger the cap of 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 6685,
+          "inputTokens": 6688,
+          "outputTokens": 1179,
+          "reasoningTokens": 515
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The hook reveals $75 immediately instead of withholding the answer as planned. The general formula appears before a concrete explanation of dividing the dollar change by the starting dollars. The final planned application is replaced by a check that supplies both salary changes rather than having the learner calculate them and identify the $30 shortfall.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The activity's follow-up question asks for the same 25% answer just revealed, so it can be answered by recall. The salary check's 30% distractor feedback does not explain how using the $300 change leads to that particular mistake. The application names only a generic company rather than a concrete, recognizable workplace.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Show the $75 intermediate price in the recovery illustration alongside the $100 recovery target, making the difference between a 50% rise and a 100% rise visible.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for a beginner\n      - The hook uses the planned surprise (a price that drops 50% and doesn't come back with a 50% rise) as a guess, with no introduction\n      - Percent change is explained as change divided by the starting value, concretely with dollars, before any formula; the formula, if any, is explained piece by piece\n      - Worked examples show every step with correct arithmetic, and the check after each one is a similar problem with less help\n      - Checks include the classic trap of dividing by the new value, and every option's reason explains why it's tempting and why it's wrong\n      - The estimate-then-reveal activity makes the learner commit to a guess before the math, tied to the screen's idea\n      - The application is a realistic case (rent, salary, a sale) in a place the learner recognizes\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-beginner-1",
+        "userInput": {
+          "chapterTitle": "Fractions and percentages",
+          "courseTitle": "Mathematics",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Calculate how much a price changed in percent",
+            "description": "Learn to work out how much a price or salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Pose a quick guess that doesn't count: a $100 sneaker drops 50% in a sale, then its price rises 50%. Is it back to $100? Options: yes, more than $100, less than $100. Don't reveal the answer yet; say we'll find out.",
+                "skills": [],
+                "visual": "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Start concrete: a movie ticket went from $20 to $25. The change is new minus old: $25 - $20 = $5. Explain that $5 alone doesn't tell us if that's a big jump, because $5 on a $20 ticket feels bigger than $5 on a $500 TV.",
+                "skills": [0],
+                "visual": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Introduce percent change: compare the change to the ORIGINAL price, like asking 'how many cents of change per dollar we started with?' Show the recipe piece by piece: change ÷ original × 100. Stress that 'original' means the starting value, before the change.",
+                "skills": [0],
+                "visual": "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Work the ticket example step by step: change = 25 - 20 = 5; divide by original 20: 5 ÷ 20 = 0.25; times 100 = 25%. So the price went up 25%.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Learner calculates: a salary rose from $2,000 to $2,300 a month. What's the percent increase? Correct: 15%. Include the tempting wrong answer 13% (dividing $300 by the new salary $2,300).",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Show a decrease: a jacket goes from $80 to $60. Change = 60 - 80 = -20; -20 ÷ 80 = -0.25; × 100 = -25%. A minus sign means the price went down 25%. Point out we still divide by the starting price, $80.",
+                "skills": [0],
+                "visual": "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Learner calculates: a video game drops from $50 to $40. What's the percent change? Correct: a 20% decrease. Include the tempting wrong answer 25% (dividing $10 by the new price $40).",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Return to the hook: $100 drops 50% to $50. A 50% rise from $50 is only $25, giving $75, not $100. To get back, the price must rise $50 on a base of $50: 50 ÷ 50 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
+                "skills": [1],
+                "visual": "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50)."
+              },
+              {
+                "activityTemplate": "estimateReveal",
+                "kind": "activity",
+                "brief": "A stock falls 20%, from $100 to $80. Learner commits to an estimate of the percent rise needed to get back to $100, then sees the real answer: $20 ÷ $80 = 25%. Many will guess 20%; show how far off they were and why.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Your monthly pay of $3,000 is cut 10% during a slow season, then raised 10% later. Learner calculates each step ($3,000 → $2,700 → $2,970), finds they're still $30 short, and works out the percent rise actually needed from $2,700 to get back to $3,000 (about 11.1%).",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Find how much a value went up or down compared to where it started, as a percent.",
+                "example": "A ticket going from $20 to $25 is a (25 − 20) ÷ 20 × 100 = 25% increase.",
+                "hard": true,
+                "name": "Calculate a percent change",
+                "topic": "Percent change",
+                "useCase": "Checking how much your rent, salary or grocery prices really went up or down."
+              },
+              {
+                "description": "A drop and the rise needed to undo it are different percents, because the rise is measured from the smaller, lower value.",
+                "example": "After $100 drops 50% to $50, it needs a 100% rise to get back to $100.",
+                "hard": false,
+                "name": "Explain why drops and recoveries differ",
+                "topic": "Reversing a percent change",
+                "useCase": "Understanding why a stock or pay cut takes a bigger percent rise to recover."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Percent change"
+          },
+          "activityTemplates": [
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway. Check kinds this template supports: numeric.",
+              "id": "estimateReveal",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"comparison\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"scale\":{\"type\":\"string\",\"enum\":[\"linear\",\"log\"]},\"takeaway\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16},\"workings\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"expression\",\"label\"],\"additionalProperties\":false}}},\"required\":[\"comparison\",\"expression\",\"max\",\"min\",\"scale\",\"takeaway\",\"unit\",\"workings\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"estimateReveal\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All supplied worked calculations and default mathCheck answers are correct: 3 days, 5 hours, 6 hours, 4 hours, and 5 hours. The intended misconception calculations also match their reasons. However, both the explanation and summary teach that increasing together or moving in opposite directions establishes proportionality. That is false without the same-factor or reciprocal-factor condition, triggering the maximum score of 6 for teaching an incorrect concept.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The worked calculations are broken into manageable steps, but several technical terms are used without everyday explanations, including 'grandezas', 'fator', and the initial use of an inverted factor. Direct and inverse proportionality are introduced together rather than one new term per screen. The compound explanation is particularly abstract before the example supplies meaning. Several unexplained terms and procedural gaps trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The main checks require prediction or calculation rather than recall. Their distractors represent genuine misconceptions, explicitly including treating machines as directly proportional to time, and their feedback explains the errors. They also avoid giving the formula in the question. However, the inverse worked example is not followed by a similar inverse calculation, and learners receive no standalone direct worked example before the direct check. This weakens the explicitly requested model-then-practice coverage.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses Brazilian Portuguese, opens with a concrete question, and includes relevant construction, printing, manufacturing, and Belo Horizonte bakery contexts. The first post-hook check is answerable before the main explanation, and classification precedes rule-of-three setup. However, the hook explicitly marks answers and reveals the solution when its brief requires an unevaluated guess. The requested direct/inverse worked-example-and-similar-check coverage is also incomplete. These multiple task-fit slips trigger the maximum score of 7. The summary does keep one sentence per item.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "8 of 11 parts passed. Screen 6: Step 2 doesn't parse: Unexpected character \"{\". Screen 9: Step 2 doesn't parse: Unexpected character \"{\". Screen 10: Step 2 doesn't parse: Unexpected character \"{\".",
+          "score": 7.545454545454546,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 6756,
+          "inputTokens": 6759,
+          "outputTokens": 1034,
+          "reasoningTokens": 252
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation and summary incorrectly define proportionality as merely moving in the same or opposite directions; direct proportionality requires a constant ratio, and inverse proportionality a constant product. The hook also grades and explains the guess despite the explicit instruction not to evaluate it. The requested practice sequence is incomplete: there is no standalone worked direct case, and the inverse worked example is followed by a direct-proportion check rather than a similar inverse check.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several explanations introduce technical language without unpacking it: 'grandezas', 'fator', and 'razão invertida'. The direct/inverse screen introduces both technical labels together, contrary to the one-new-term expectation. The compound-rule explanation gives an abstract procedure instead of grounding each fraction immediately in the planned labels-and-printers comparison.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Explicitly state that workers and machines maintain the same individual production rate throughout the relevant problems. Explain each multiplier as 'new amount divided by old amount' or 'old machine count divided by new machine count', and make the summary preserve those directions rather than referring generically to direct and inverted fractions.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for intermediate learners who partly know the idea (question first)\n      - The first check after the hook is something learners can try before the explanation, and the next explanation builds on it\n      - Telling direct from inverse proportion comes before setting up the rule of three, with an everyday comparison (more workers, fewer days)\n      - Worked examples of a direct and an inverse case, each followed by a similar check; numbers must be right\n      - Checks name the classic trap of treating an inverse proportion as direct\n      - Everyday Brazilian contexts (obra, receita, combustível, reais), not textbook abstractions\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-de-tres-intermediate-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The well equation, boundary conditions, allowed wavenumbers, energy formula, node counts, numerical energies, and 1100 nm transition calculation are correct. The scored options have unique defensible answers. However, the summary explicitly teaches that level spacing grows as n², confusing energy levels with adjacent gaps, which grow linearly with n. This triggers the cap of 6 for teaching something wrong.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Several terms appear without prior everyday explanations, including wavefunction, boundary condition, wavenumber, and stationary state. Quantization is explained only after its use in the worked-example title. The string analogy comes after notation rather than before it. Phrases such as 'non-trivial solution' and 'arbitrary global minus sign' create textbook tone, while normalization skips its calculation. These multiple failures trigger the cap of 7, although an advanced learner can still follow the main derivation.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The boundary-condition, width-scaling, and quantum-dot questions require application and include useful misconception-based feedback. The activity correctly checks the energy ratio, but its node question asks learners to inspect wave functions that the configured graph does not display. The n = 0 question repeats the immediately preceding explanation. These weaknesses prevent a high score; the recall-only check triggers a cap of 8.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English, opens directly with quantum dots, provides advanced mathematics, and names commercial quantum-dot displays as a concrete application. It broadly follows the planned sequence and gives one sentence per summary item. However, it misses the required standing-wave-first ordering, does not provide the planned wave-function and probability-density activity, and labels the final planned application as a check. These multiple plan and presentation slips support the cap of 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 9314,
+          "inputTokens": 9317,
+          "outputTokens": 1289,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The summary incorrectly says level spacing grows as n²: energies grow as n², but adjacent gaps are (2n + 1)E₁. The required intuition-first sequence is also missing: notation precedes the string comparison, and wave function, boundary condition, and quantization are not explained before first use. The activity only graphs n², although its instructions promise standing waves and node counts; learners cannot inspect the requested nodes on that graph.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some derivation steps bundle multiple moves, especially dividing out A, finding the sine zeros, and solving for k. Normalization jumps directly from the integral condition to A = √(2/L). The numerical example never explicitly reports the planned E₂ ≈ 1.50 eV. The n = 0 check largely repeats the explanation immediately preceding it rather than requiring a fresh inference.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Define m, ħ, and k alongside their first use, and explain normalization as making the total probability equal one. Show the normalization integral evaluating to L/2. To strengthen transfer, ask learners to assess a proposed zero-energy wave function rather than recognize the explanation they just read.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for advanced learners\n      - The derivation is complete and correct: the time-independent equation inside the box, boundary conditions ψ(0) = ψ(L) = 0, sine solutions, kL = nπ, and E_n = n²π²ħ²/(2mL²)\n      - Standing waves on a string come before the notation, and each new term (wave function, boundary condition, quantized) is explained when it first appears\n      - Notation is consistent across screens (ħ, m, L, n), and the worked derivation reveals one move per step\n      - The slider graph shows how energy depends on n or L, with a check about what the learner saw\n      - Checks need real understanding (why n = 0 isn't allowed, how E scales with L), with reasons for every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-particle-in-a-box-advanced-1",
+        "userInput": {
+          "chapterTitle": "The Schrödinger equation",
+          "courseTitle": "Quantum mechanics",
+          "language": "en",
+          "level": "advanced",
+          "spec": {
+            "canDo": "Derive and use the quantized energy levels of a particle in a box",
+            "description": "Solve the time-independent Schrödinger equation for an infinite 1D well, show how the boundary conditions force discrete energies E_n = n²h²/(8mL²), and use them to predict real spectra.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Show vials of CdSe quantum dots made of the same material but different sizes: the 2 nm dots glow blue and the 6 nm dots glow red. Ask the learner to guess, without scoring, why size alone would set the color of emitted light.",
+                "skills": [],
+                "visual": "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Set up the model: V(x) = 0 for 0 < x < L and V = ∞ outside, so ψ = 0 outside the box. Continuity of ψ then gives the boundary conditions ψ(0) = 0 and ψ(L) = 0, just like a guitar string pinned at both ends.",
+                "skills": [0],
+                "visual": "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Inside the box the equation becomes −(ħ²/2m)ψ'' = Eψ, which is ψ'' = −k²ψ with k = √(2mE)/ħ. Its general solution is ψ(x) = A sin kx + B cos kx, the same oscillation as a vibrating string.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "The learner applies ψ(0) = 0 to ψ = A sin kx + B cos kx and chooses which term survives. Include the tempting wrong answer 'the cos term survives because cos is maximal at 0', and give feedback that cos 0 = 1 forces B = 0.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Work through ψ(L) = 0: A sin kL = 0, and A ≠ 0 (otherwise there is no particle), so kL = nπ. Exclude n = 0 because ψ would vanish, and exclude negative n because they give the same state up to a sign. Substitute k_n = nπ/L into E = ħ²k²/2m to get E_n = n²π²ħ²/(2mL²) = n²h²/(8mL²).",
+                "skills": [0, 1],
+                "visual": "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Ask why the lowest state is n = 1 rather than n = 0. Include the tempting wrong answer 'n = 0 is the ground state with zero energy', and explain that n = 0 gives ψ ≡ 0, so the particle can never be at rest and has a zero-point energy E_1 > 0.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Normalizing ∫|ψ|²dx = 1 over the box gives A = √(2/L), so ψ_n(x) = √(2/L) sin(nπx/L). These are standing waves: ψ_n fits n half-wavelengths into L and has n − 1 interior nodes, and the level spacing grows as E_n ∝ n².",
+                "skills": [2],
+                "visual": "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked."
+              },
+              {
+                "activityTemplate": "sliderGraph",
+                "kind": "activity",
+                "brief": "The learner moves a slider for n from 1 to 6 and watches ψ_n(x) and |ψ_n|² redraw, with E_n/E_1 displayed. Then ask how many nodes ψ_4 has (3) and what E_3/E_1 is (9, not 3).",
+                "skills": [1, 2],
+                "visual": "Graph of ψ_n(x) and |ψ_n(x)|² on 0 to L with an n slider and a live readout of E_n/E_1."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Treat an electron in a box with L = 1.0 nm: E_1 = h²/(8m_eL²) ≈ 6.0 × 10⁻²⁰ J ≈ 0.38 eV, and E_2 = 4E_1 ≈ 1.50 eV. The 2 → 1 photon has ΔE = 3E_1 ≈ 1.13 eV, so λ = hc/ΔE ≈ 1100 nm, in the near infrared.",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "The learner calculates E_1 for the same electron in a box half as wide, with L = 0.5 nm, and picks the answer ≈ 1.5 eV. Include the tempting wrong answer ≈ 0.75 eV, which assumes E ∝ 1/L instead of 1/L².",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Return to the quantum dots and model the confinement energy as a particle in a box, E ∝ 1/L². The learner predicts by what factor the confinement contribution grows from a 6 nm dot to a 3 nm dot (a factor of 4) and explains why smaller dots emit bluer light.",
+                "skills": [0, 1, 2],
+                "visual": "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue."
+              }
+            ],
+            "skills": [
+              {
+                "description": "Impose the conditions ψ(0) = ψ(L) = 0 on the general solution inside an infinite well to show that only discrete wavenumbers k_n = nπ/L are allowed.",
+                "example": "From ψ = A sin kx + B cos kx, ψ(0) = 0 gives B = 0, and ψ(L) = 0 gives kL = nπ with n = 1, 2, 3, …",
+                "hard": true,
+                "name": "Apply boundary conditions to an infinite well",
+                "topic": "Infinite square well",
+                "useCase": "Setting up any confined quantum system, from electrons in nanowires to modes in optical cavities."
+              },
+              {
+                "description": "Combine the quantized wavenumbers with E = ħ²k²/2m to get E_n = n²h²/(8mL²) and use it to compute level energies and transition photons.",
+                "example": "An electron in a 1.0 nm box has E_1 ≈ 0.38 eV, and its 2 → 1 transition emits a photon near 1100 nm.",
+                "hard": true,
+                "name": "Calculate particle-in-a-box energy levels",
+                "topic": "Energy quantization",
+                "useCase": "Estimating absorption and emission wavelengths of quantum dots, dyes and nanostructures."
+              },
+              {
+                "description": "The stationary states ψ_n = √(2/L) sin(nπx/L) are normalized standing waves with n − 1 interior nodes, and the lowest energy is never zero.",
+                "example": "ψ_3 fits three half-wavelengths in the box, has 2 nodes, and has energy 9E_1.",
+                "hard": false,
+                "name": "Describe the stationary states of a box",
+                "topic": "Stationary states",
+                "useCase": "Reading probability densities and node patterns in molecular orbitals and semiconductor devices."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Particle in a box"
+          },
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question. Check kinds this template supports: choice, numeric. It shows data: set `data` to `{ \"source\": { ... } }` for real data or `{ \"isExample\": true }` for an example.",
+              "id": "sliderGraph",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"compareAt\":{\"type\":\"number\"},\"formula\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"output\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\"],\"additionalProperties\":false},\"variable\":{\"type\":\"object\",\"properties\":{\"initial\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"initial\",\"label\",\"max\",\"min\",\"name\",\"step\"],\"additionalProperties\":false}},\"required\":[\"formula\",\"output\",\"variable\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"sliderGraph\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The central physics is substantially correct: opposite charges attract, localization costs energy, and the lowest-energy electron distribution remains spatially extended. Each scored check has one defensible correct answer. However, the flashlight-trail analogy introduces a misleading trajectory interpretation, and the elastic comparison risks treating confinement energy as a literal opposing mechanism. The required radiation-and-spiraling explanation is absent. These weaknesses prevent a high accuracy score, without making the central account outright false.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The screens are short and mostly conversational, and confinement receives an accessible suitcase comparison. However, the classical-orbit failure is asserted rather than explained, 'carga positiva' is introduced without explanation, and the elastic-band example skips how a stable size emerges from competing energy changes. The cloud is not explicitly distinguished from ordinary matter or a trail. Several unexplained or skipped elements trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The error-identification check usefully targets the misconception that the nucleus repels the electron, and every option in the three scored checks has feedback. However, the first check repeats the explanation almost directly, and the phone check largely repeats the same answer with a new setting. Wind-making electrons and temperature-dependent repulsion are weak distractors rather than convincing misconceptions. The opening options have only a shared reveal, not individual reasons. Several recall or feedback weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The language is Brazilian Portuguese, the hook opens directly with the problem, and the phone is a concrete, realistic application. There are no formulas, and the summary gives one sentence per idea. Nevertheless, the application does not ask the learner to construct the explanation specified by the plan and is labeled as a check rather than an application. The cloud explanation omits the planned distinction from a trail and ordinary material cloud, and the image request includes a positive-charge sign despite the no-notation requirement. These multiple slips trigger the cap of 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4430,
+          "inputTokens": 4433,
+          "outputTokens": 1096,
+          "reasoningTokens": 309
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required explanation of why classical orbits fail is missing: a circling charge would radiate, lose energy, and spiral inward. Simply rejecting the planetary picture leaves a central causal step unexplained. The final planned application is replaced by another multiple-choice check, so the learner never explains the phone's stability to someone using attraction, cloud, and confinement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The long-exposure flashlight analogy suggests a moving particle's trail, without explicitly distinguishing the electron cloud from a trail or ordinary material cloud. The elastic-band comparison does not explain the energy balance clearly. Several checks largely repeat the taught answer, some distractors are implausible, and the opening guess lacks reasons for each option. The requested positive-charge sign also conflicts with the no-notation requirement.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a probability-cloud comparison that clearly separates likelihood from motion blur. Explain in everyday words why neither unlimited spreading nor unlimited squeezing gives the lowest-energy arrangement. End with a short learner-written explanation about the phone, with grading points for attraction, probability cloud, and the energy cost of confinement.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a curious adult (overview)\n      - No formulas, equations or notation anywhere; the idea is told as a story with everyday comparisons (a cloud, a blurred fan)\n      - Physically correct: the old orbit picture is wrong because a circling charge would radiate and spiral in; the electron is described by a cloud of where it's likely to be, and confinement costs energy\n      - Checks are light and fun but still make the learner use the idea, with reasons for every option\n      - The application ties the idea to something real (atoms and matter being stable, the learner's own body existing)\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-nucleo-overview-1",
+        "userInput": {
+          "chapterTitle": "O átomo por dentro",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "spec": {
+            "canDo": "Explicar por que o elétron não cai no núcleo",
+            "description": "Mostra por que a atração pelo núcleo não concentra o elétron ali e como isso permite que os átomos permaneçam estáveis.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "O núcleo atrai o elétron. Peça um palpite, sem valer ponto: por que o elétron não termina espremido no núcleo?",
+                "skills": [],
+                "visual": "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
+                "skills": [0],
+                "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
+                "skills": [0],
+                "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
+                "skills": [0],
+                "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "O elétron é atraído pelo núcleo, mas concentrá-lo demais exige energia; por isso, seu arranjo mais estável ocupa uma região ao redor do núcleo.",
+                "example": "Mesmo no estado de menor energia de um átomo, o elétron não fica espremido num ponto no núcleo.",
+                "hard": false,
+                "name": "Explicar por que o elétron não cai no núcleo",
+                "topic": "Estabilidade do átomo",
+                "useCase": "Entender por que os átomos que formam objetos cotidianos, como um celular, permanecem estáveis."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Por que o elétron não cai no núcleo"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The ATP quantities, subtraction, NADH production, cellular locations, and marked answers agree with the slides. Each check has exactly one defensible correct answer, and its reasons match the options. However, 'quebra completa' introduces a small imprecision that could blur the distinction between glycolysis and complete glucose oxidation, triggering the maximum score of 8 for imprecision. The specific Descomplica attribution is also unsupported.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The money and loan comparisons help explain investment and net ATP, and ATP is introduced as an energy currency. However, several technical terms remain unexplained, and both explanations introduce multiple unfamiliar terms together. Cytoplasm is named rather than explained, and defining NADH through electrons and the respiratory chain relies on further unexplained concepts. The cap of 7 for several unexplained terms applies.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The ATP check supports calculating a net amount and includes the required tempting answer of 4, plus the plausible mistake of adding investment to production. Both formal checks provide accurate feedback for every option and include the mitochondrial trap. However, the location check is recall-only, and the hook lacks individual reasons, particularly an explanation of why 0 ATP is wrong. These multiple feedback and check-design weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, opens directly with the ATP puzzle, follows the five planned screen functions in order, and ends with concise one-sentence summary ideas. All images are null. The loan and money examples suit the learner, and the practice-test setting supplies a concrete application. The formula follows the investment intuition, and the required slide content remains central without making additional biochemical detail necessary for the test.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Screen 1: Uses \"glicólise\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term. Screen 1: Uses \"ATP\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3624,
+          "inputTokens": 3627,
+          "outputTokens": 1246,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanations introduce several technical terms without beginner-friendly explanations, including cytoplasm, electrons, mitochondrial matrix, cristae, and respiratory chain. Expanding CMC into more unfamiliar terms does not explain them. This materially weakens accessibility for the stated beginner audience.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The location check only asks learners to recall a stated fact. The hook has no option-specific reasons, and its shared reveal does not address the 0 ATP choice. The phrase 'quebra completa' is imprecise because glycolysis is not complete glucose oxidation. The named Descomplica question is presented as an actual occurrence without supporting material or hypothetical framing.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explain cytoplasm with a simple everyday comparison and briefly unpack the electron-carrying role of NADH without adding test requirements. Turn the location check into identifying and correcting a student's mitochondrial-location mistake. Give feedback for every hook option, replace 'quebra completa' with 'durante a glicólise de uma molécula de glicose,' and frame the practice-test setting as hypothetical.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner studying for a school test from their teacher's slides (MATERIAL)\n      - Teaches what the slides say, with their terms, numbers and memory aids: 2 ATP spent in the investment phase (the \"empréstimo\" comparison), 4 ATP and 2 NADH produced, a net of 2 ATP per glucose, glycolysis in the cytoplasm\n      - Nothing contradicts the slides, and nothing beyond them is presented as needed for the test\n      - The checks use the slides' exam traps (answering 4 instead of 2; placing glycolysis in the mitochondria), with a reason on every option\n      - No pictures (every image is null): the slides have their own\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-glicolise-from-slides-1",
+        "userInput": {
+          "chapterTitle": "Glicólise",
+          "courseTitle": "Prova de biologia: respiração celular",
+          "language": "pt",
+          "level": "beginner",
+          "material": "<page ref=\"S1:2\" of=\"Aula 5 - Glicolise, slide 2\">\nPor que as células respiram?\nObjetivo: transformar a energia da glicose em ATP\nATP = a 'moeda de energia' da célula\nRespiração aeróbia: C6H12O6 + 6 O2 → 6 CO2 + 6 H2O + energia\n</page>\n<page ref=\"S1:3\" of=\"Aula 5 - Glicolise, slide 3\">\nAs três etapas\n1. Glicólise – no citoplasma\n2. Ciclo de Krebs – na matriz mitocondrial\n3. Cadeia respiratória – nas cristas mitocondriais\nMacete da aula: 'Cito-Matriz-Cristas' (CMC)\n</page>\n<page ref=\"S1:5\" of=\"Aula 5 - Glicolise, slide 5\">\nGlicólise: fase de investimento\nGasta 2 ATP para 'ativar' a glicose\nPense num empréstimo: investe 2 para ganhar mais depois\n</page>\n<page ref=\"S1:6\" of=\"Aula 5 - Glicolise, slide 6\">\nGlicólise: fase de rendimento\nProduz 4 ATP (fosforilação no nível do substrato)\nProduz 2 NADH (carrega elétrons para a cadeia respiratória)\nSaldo: 4 − 2 = 2 ATP por glicose\n</page>\n<page ref=\"S1:10\" of=\"Aula 5 - Glicolise, slide 10\">\nPegadinhas de prova\nGlicólise NÃO acontece na mitocôndria\nO saldo da glicólise é 2 ATP, não 4\n</page>",
+          "spec": {
+            "canDo": "Calcular o saldo de ATP da glicólise",
+            "description": "Mostra quanto ATP a glicólise gasta e produz, e por que o saldo é 2 por glicose.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Palpite sem valer ponto: a glicólise produz 4 ATP. Quanto sobra por glicose?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A glicólise gasta 2 ATP, produz 4 e termina com saldo de 2 ATP por glicose.",
+                "example": "4 produzidos − 2 gastos = 2 ATP",
+                "hard": false,
+                "name": "Calcular o saldo energético da glicólise",
+                "topic": "Glicólise",
+                "useCase": "Questões de prova que pedem o saldo de ATP de cada etapa"
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Saldo de ATP da glicólise"
+          },
+          "activityTemplates": []
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-writer"
+}

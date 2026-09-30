@@ -19,7 +19,7 @@ export function LogoutDropdownItem({ isLoggedIn }: { isLoggedIn: boolean }) {
   }
 
   return (
-    <DropdownMenuItem onClick={() => logout()}>
+    <DropdownMenuItem onClick={() => void logout()}>
       <LogOut aria-hidden="true" />
       {t("Logout")}
     </DropdownMenuItem>

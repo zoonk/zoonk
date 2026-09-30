@@ -16,7 +16,7 @@ const { createGoogleMock, generateSpeechMock, googleSpeechMock, openAISpeechMock
 
 vi.mock("ai", () => ({ generateSpeech: generateSpeechMock }));
 vi.mock("@ai-sdk/google", () => ({ createGoogle: createGoogleMock }));
-vi.mock("@ai-sdk/openai", () => ({ openai: { speech: openAISpeechMock } }));
+vi.mock("@ai-sdk/openai", () => ({ createOpenAI: () => ({ speech: openAISpeechMock }) }));
 
 describe(generateSpeechWithProvider, () => {
   beforeEach(() => {

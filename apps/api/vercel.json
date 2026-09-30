@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [{ "path": "/cron/daily-sweeps", "schedule": "0 6 * * *" }],
+  "functions": { "src/app/v1/generations/*/events/route.ts": { "supportsCancellation": true } }
+}

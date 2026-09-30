@@ -1,18 +1,17 @@
-import { ContactForm, ContactFormSkeleton } from "@/components/feedback/contact-form";
 import { getSocialProfiles } from "@/lib/social";
 import { getSession } from "@zoonk/core/users/session";
+import { FeedbackForm, FeedbackFormSkeleton } from "@zoonk/learn/feedback/form";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
-  Container,
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
-  ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { ItemSeparator } from "@zoonk/ui/components/item";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
+import { SettingsPage, SettingsPageTitle } from "../_components/settings-page";
 
 /**
  * Adds the signed-in learner's email without holding back the rest of the support page.
@@ -20,7 +19,9 @@ import { Suspense } from "react";
 async function ContactSupport() {
   const session = await getSession();
 
-  return <ContactForm defaultEmail={session?.user.email} />;
+  const email = session && !session.user.isAnonymous ? session.user.email : null;
+
+  return <FeedbackForm context={{ screen: "support" }} defaultEmail={email} />;
 }
 
 export async function SupportContent() {
@@ -29,10 +30,10 @@ export async function SupportContent() {
   const socials = getSocialProfiles(locale);
 
   return (
-    <Container>
+    <SettingsPage>
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Feedback & Support")}</ContainerTitle>
+          <SettingsPageTitle>{t("Feedback & Support")}</SettingsPageTitle>
           <ContainerDescription>
             {t("Share feedback, ask questions, or get help with your account and courses.")}
           </ContainerDescription>
@@ -40,7 +41,7 @@ export async function SupportContent() {
       </ContainerHeader>
 
       <ContainerBody className="lg:max-w-md">
-        <Suspense fallback={<ContactFormSkeleton />}>
+        <Suspense fallback={<FeedbackFormSkeleton />}>
           <ContactSupport />
         </Suspense>
       </ContainerBody>
@@ -68,6 +69,6 @@ export async function SupportContent() {
           ))}
         </div>
       </ContainerBody>
-    </Container>
+    </SettingsPage>
   );
 }

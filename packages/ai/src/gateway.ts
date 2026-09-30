@@ -3,11 +3,9 @@ import {
   type GatewayProviderSettings,
   createGateway,
 } from "@ai-sdk/gateway";
+import { isTestEnvironment } from "./_utils/is-test-environment";
 
-const isTest =
-  process.env.E2E_TESTING === "true" ||
-  process.env.NODE_ENV === "test" ||
-  process.env.VITEST === "true";
+const isTest = isTestEnvironment();
 
 /**
  * Tests can exercise real server routes or integration code, so missed mocks

@@ -10,7 +10,7 @@ export async function UserAvatarMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={t("User menu")}
-        className="focus-visible:border-ring focus-visible:ring-ring/50 rounded-full focus-visible:ring-[3px]"
+        className="focus-visible:border-ring focus-visible:ring-ring/50 hit-area relative rounded-full focus-visible:ring-[3px]"
       >
         <UserAvatar />
       </DropdownMenuTrigger>

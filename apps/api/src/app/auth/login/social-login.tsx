@@ -1,8 +1,8 @@
 "use client";
 
 import { LoginError, LoginSocial, LoginWithApple, LoginWithGoogle } from "@/components/login";
-import { trackSignInMethodChosen } from "@/lib/track-events";
 import { authClient } from "@zoonk/auth/client";
+import { trackEvent } from "@zoonk/core/analytics/client";
 import { logError } from "@zoonk/utils/logger";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -19,7 +19,7 @@ export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
 
   const signIn = async (provider: "google" | "apple") => {
     setState(getLoadingState(provider));
-    trackSignInMethodChosen({ method: provider });
+    trackEvent({ name: "Sign In Method Chosen", properties: { method: provider } });
 
     const callbackURL = redirectTo
       ? `/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`

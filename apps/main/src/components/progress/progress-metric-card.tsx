@@ -20,7 +20,7 @@ export function ProgressMetricCard({
   return (
     <FeatureCard
       className={cn(
-        "text-muted-foreground grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1.5 gap-y-0",
+        "text-muted-foreground grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-1.5 gap-y-0",
         className,
       )}
       data-slot="progress-metric-card"
@@ -39,7 +39,7 @@ export function ProgressMetricCardIcon({
 }: React.ComponentProps<typeof FeatureCardIcon>) {
   return (
     <FeatureCardIcon
-      className={cn("col-start-1 row-start-1", className)}
+      className={cn("col-start-1 row-start-1 h-lh items-center text-sm", className)}
       data-slot="progress-metric-card-icon"
       {...props}
     >
@@ -50,7 +50,7 @@ export function ProgressMetricCardIcon({
 
 /**
  * Keeps the translated metric name beside its icon while allowing the label to
- * provide the card's accessible name through a caller-owned id.
+ * provide the card's accessible name through a caller-owned id. Long names wrap.
  */
 export function ProgressMetricCardLabel({
   children,
@@ -59,7 +59,7 @@ export function ProgressMetricCardLabel({
 }: React.ComponentProps<typeof FeatureCardLabel>) {
   return (
     <FeatureCardLabel
-      className={cn("col-start-2 row-start-1", className)}
+      className={cn("col-start-2 row-start-1 whitespace-normal", className)}
       data-slot="progress-metric-card-label"
       {...props}
     >
@@ -89,8 +89,8 @@ export function ProgressMetricCardTrailing({
 }
 
 /**
- * Places the formatted metric on its own row while reusing FeatureCard's
- * established title typography and truncation behavior.
+ * Places the formatted metric on its own row with FeatureCard's title
+ * typography; a long value ("15 Std. 35 Min.") wraps instead of being cut.
  */
 export function ProgressMetricCardValue({
   children,
@@ -99,7 +99,10 @@ export function ProgressMetricCardValue({
 }: React.ComponentProps<typeof FeatureCardTitle>) {
   return (
     <FeatureCardTitle
-      className={cn("col-span-3 col-start-1 row-start-2 mt-2", className)}
+      className={cn(
+        "col-span-3 col-start-1 row-start-2 mt-2 leading-tight whitespace-normal",
+        className,
+      )}
       data-slot="progress-metric-card-value"
       {...props}
     >
@@ -119,7 +122,7 @@ export function ProgressMetricCardSubtitle({
 }: React.ComponentProps<typeof FeatureCardSubtitle>) {
   return (
     <FeatureCardSubtitle
-      className={cn("col-span-3 col-start-1 row-start-3 mt-0.5", className)}
+      className={cn("col-span-3 col-start-1 row-start-3 mt-0.5 whitespace-normal", className)}
       data-slot="progress-metric-card-subtitle"
       {...props}
     >
@@ -151,20 +154,6 @@ export function ProgressMetricCardValueSkeleton({
     <Skeleton
       className={cn("col-span-3 col-start-1 row-start-2 mt-2 h-4 w-full", className)}
       data-slot="progress-metric-card-value-skeleton"
-      {...props}
-    />
-  );
-}
-
-/** Reserves the shared supporting-text row while a metric card's content streams. */
-export function ProgressMetricCardSubtitleSkeleton({
-  className,
-  ...props
-}: React.ComponentProps<typeof Skeleton>) {
-  return (
-    <Skeleton
-      className={cn("col-span-3 col-start-1 row-start-3 mt-0.5 h-3 w-full", className)}
-      data-slot="progress-metric-card-subtitle-skeleton"
       {...props}
     />
   );

@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { getSession } from "@zoonk/core/users/session";
+import { SendFeedbackMenuItem } from "@zoonk/learn/feedback/send";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -17,6 +18,7 @@ export async function UserDropdownMenu() {
 
   const accountMenu = [
     { key: t("Profile"), ...getMenu("profile") },
+    { key: t("Appearance"), ...getMenu("appearance") },
     { key: t("Subscription"), ...getMenu("subscription") },
   ];
 
@@ -51,6 +53,8 @@ export async function UserDropdownMenu() {
           {menu.key}
         </DropdownMenuItem>
       ))}
+
+      <SendFeedbackMenuItem screen="account-menu" />
 
       <DropdownMenuSeparator />
 

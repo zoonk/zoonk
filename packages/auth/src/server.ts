@@ -23,8 +23,13 @@ import {
 } from "./config";
 import { ensureUserProgressAfterAuthCreate } from "./db-hooks";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
-import { validateEmailBeforeOTP, validateEmailBeforeUserCreate } from "./email-signup-policy";
+import { validateEmailBeforeOTP } from "./email-signup-policy";
+import { guardUserCreation } from "./guests/account-creation-guard";
 import { ac, admin, member, owner } from "./permissions";
+import { accessGuardsPlugin } from "./plugins/access-guards";
+import { accountMarkerPlugin } from "./plugins/account-marker";
+import { botCheckPlugin } from "./plugins/bot-check";
+import { guestPlugin } from "./plugins/guest";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
@@ -48,9 +53,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   databaseHooks: {
-    user: {
-      create: { after: ensureUserProgressAfterAuthCreate, before: validateEmailBeforeUserCreate },
-    },
+    user: { create: { after: ensureUserProgressAfterAuthCreate, before: guardUserCreation } },
   },
   hooks: { before: validateEmailBeforeOTP },
   session: {
@@ -87,11 +90,15 @@ export const baseAuthPlugins = [
 ] as const;
 
 export const fullPlugins = [
+  botCheckPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
+  guestPlugin(),
+  accessGuardsPlugin(),
+  accountMarkerPlugin(),
   // NextCookies should be the last plugin in the array
   nextCookies(),
 ] as const;

@@ -2,14 +2,10 @@ import {
   type FillBlankStepContent,
   type MatchColumnsStepContent,
   type MultipleChoiceStepContent,
-  type SelectImageStepContent,
-  type SortOrderStepContent,
-} from "@zoonk/core/steps/contract/content";
-import { MAX_MATCH_COLUMNS_MISTAKES } from "./_utils/match-columns-limits";
+} from "../../library/steps/contract/language-exercises";
 import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
 export type AnswerResult = {
-  answerCounts?: { correct: number; incorrect: number };
   correctAnswer: string | null;
   isCorrect: boolean;
   feedback: string | null;
@@ -99,48 +95,11 @@ export function checkMatchColumnsAnswer(
   userPairs: { left: string; right: string }[],
   mistakes: number,
 ): AnswerResult {
-  const allPairsCorrect = hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
-
-  if (
-    !allPairsCorrect ||
-    !Number.isSafeInteger(mistakes) ||
-    mistakes < 0 ||
-    mistakes > MAX_MATCH_COLUMNS_MISTAKES
-  ) {
-    return { correctAnswer: null, feedback: null, isCorrect: false };
-  }
-
   /** The player requires every pair to be solved and records wrong attempts separately. */
-  return {
-    answerCounts: { correct: content.pairs.length, incorrect: mistakes },
-    correctAnswer: null,
-    feedback: null,
-    isCorrect: mistakes === 0,
-  };
-}
+  const isCorrect =
+    mistakes === 0 && hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
 
-export function checkSortOrderAnswer(
-  content: SortOrderStepContent,
-  userOrder: string[],
-): AnswerResult {
-  const correctAnswer = content.items.join(" → ");
-  const isSameLength = content.items.length === userOrder.length;
-  const isCorrect = isSameLength && content.items.every((item, index) => item === userOrder[index]);
-  return { correctAnswer, feedback: content.feedback, isCorrect };
-}
-
-export function checkSelectImageAnswer(
-  content: SelectImageStepContent,
-  selectedOptionId: string,
-): AnswerResult {
-  const correctAnswer = content.options.find((option) => option.isCorrect)?.prompt ?? null;
-  const option = content.options.find((item) => item.id === selectedOptionId);
-
-  if (!option) {
-    return { correctAnswer, feedback: null, isCorrect: false };
-  }
-
-  return { correctAnswer, feedback: option.feedback, isCorrect: option.isCorrect };
+  return { correctAnswer: null, feedback: null, isCorrect };
 }
 
 export function checkTranslationAnswer(

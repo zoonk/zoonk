@@ -8,7 +8,7 @@ import {
   LoginForm,
   LoginSubmit,
 } from "@/components/login";
-import { trackSignInMethodChosen } from "@/lib/track-events";
+import { trackEvent } from "@zoonk/core/analytics/client";
 import { useExtracted } from "next-intl";
 import { useActionState } from "react";
 import { sendVerificationOTPAction } from "./actions";
@@ -37,7 +37,10 @@ export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
   }[state.status];
 
   return (
-    <LoginForm action={formAction} onSubmit={() => trackSignInMethodChosen({ method: "otp" })}>
+    <LoginForm
+      action={formAction}
+      onSubmit={() => trackEvent({ name: "Sign In Method Chosen", properties: { method: "otp" } })}
+    >
       <input name="redirectTo" type="hidden" value={redirectTo ?? ""} />
 
       <LoginField>
