@@ -1,4 +1,4 @@
-import { FAIR_USE_SPACING_SECONDS } from "@zoonk/core/entitlements/limits";
+import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits, getPlusPlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import {
   Table,
@@ -10,6 +10,7 @@ import {
 } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
+import { type ReactNode } from "react";
 
 type ComparisonRow = { feature: string; free: string; plus: string };
 
@@ -22,28 +23,42 @@ function withFairUseMark(text: string) {
 
 const NOTE_CLASS = "text-muted-foreground text-sm leading-relaxed text-pretty";
 
+function renderFairUseLink(chunks: ReactNode) {
+  return (
+    <Link
+      className="text-foreground font-medium underline underline-offset-4"
+      href="/terms#fair-use"
+    >
+      {chunks}
+    </Link>
+  );
+}
+
 /**
- * The note under the marked values: what fair use does, with the spacing the allowance applies,
- * and Plus's one hard cap, so "Unlimited" never hides a limit.
+ * The note under the marked values: unlimited for personal use, with the details in the terms'
+ * fair use section, then Plus's one hard cap, so "Unlimited" never hides a limit.
  */
-async function getFairUseNote() {
+async function FairUseNote() {
   const t = await getExtracted();
   const { newGoalsPerDay } = getPlusPlanLimits();
 
-  const fairUse = t(
-    "Fair use: after very heavy use in a day, you wait {minutes, plural, one {# minute} other {# minutes}} between new lessons or messages.",
-    { minutes: FAIR_USE_SPACING_SECONDS / 60 },
+  return (
+    <p className={NOTE_CLASS}>
+      {FAIR_USE_MARK}
+      {t.rich("Unlimited for personal use, under our <link>fair use policy</link>.", {
+        link: renderFairUseLink,
+      })}
+      {newGoalsPerDay !== null && (
+        <>
+          {" "}
+          {t(
+            "With Plus, you can start up to {count, plural, one {# new goal} other {# new goals}} a day.",
+            { count: newGoalsPerDay },
+          )}
+        </>
+      )}
+    </p>
   );
-
-  const goalCap =
-    newGoalsPerDay === null
-      ? null
-      : t(
-          "With Plus, you can start up to {count, plural, one {# new goal} other {# new goals}} a day.",
-          { count: newGoalsPerDay },
-        );
-
-  return [`${FAIR_USE_MARK}${fairUse}`, goalCap].filter(Boolean).join(" ");
 }
 
 /**
@@ -51,12 +66,12 @@ async function getFairUseNote() {
  * drift from what learners actually get. Plus's values are unlimited with fair use, marked and
  * explained in the note under them.
  */
-async function getPlanComparison(): Promise<{ fairUseNote: string; rows: ComparisonRow[] }> {
-  const [t, fairUseNote] = await Promise.all([getExtracted(), getFairUseNote()]);
+async function getPlanComparison(): Promise<ComparisonRow[]> {
+  const t = await getExtracted();
   const limits = getFreePlanLimits();
   const unlimited = withFairUseMark(t("Unlimited"));
 
-  const rows = [
+  return [
     {
       feature: t("Active goals"),
       free: t("{count, plural, one {# goal} other {# goals}}", { count: limits.activeGoals ?? 0 }),
@@ -96,8 +111,6 @@ async function getPlanComparison(): Promise<{ fairUseNote: string; rows: Compari
       plus: unlimited,
     },
   ];
-
-  return { fairUseNote, rows };
 }
 
 /** Phones stack each row: the feature on top, then Free and Plus in two columns under their headers. */
@@ -112,7 +125,7 @@ function keepNumbersWithWords(text: string) {
 
 /** What a subscriber has with Plus, from the same rows the comparison shows. */
 export async function PlusIncluded() {
-  const { fairUseNote, rows } = await getPlanComparison();
+  const rows = await getPlanComparison();
 
   return (
     <div className="flex flex-col gap-4">
@@ -125,7 +138,7 @@ export async function PlusIncluded() {
         ))}
       </dl>
 
-      <p className={NOTE_CLASS}>{fairUseNote}</p>
+      <FairUseNote />
     </div>
   );
 }
@@ -135,8 +148,7 @@ export async function PlusIncluded() {
  * The explicit roles keep it a table for assistive technology while phones change its layout.
  */
 export async function PlanComparison({ isVisitor }: { isVisitor: boolean }) {
-  const t = await getExtracted();
-  const { fairUseNote, rows } = await getPlanComparison();
+  const [t, rows] = await Promise.all([getExtracted(), getPlanComparison()]);
   const { guestLessons } = getFreePlanLimits();
 
   return (
@@ -186,7 +198,7 @@ export async function PlanComparison({ isVisitor }: { isVisitor: boolean }) {
       </Table>
 
       <div className="flex flex-col gap-2">
-        <p className={NOTE_CLASS}>{fairUseNote}</p>
+        <FairUseNote />
 
         {isVisitor && guestLessons !== null && (
           <p className={NOTE_CLASS}>
