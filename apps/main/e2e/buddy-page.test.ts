@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectAccessibleRoutes, expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { toUTCMidnight } from "@zoonk/utils/date";
@@ -17,7 +18,7 @@ async function wornGlasses(userId: string) {
 }
 
 test.describe("Buddy page", () => {
-  test("Fun: the dock's buddy leads to its page, and earned glasses go on with one tap", async ({
+  test("Fun: the dock's buddy leads to its page, earned glasses go on with one tap, and studying wakes it", async ({
     browser,
   }) => {
     const { user } = await createModeLearner("fun");
@@ -51,6 +52,7 @@ test.describe("Buddy page", () => {
     await expect(page.getByText("This week Zu ate")).toBeVisible();
     await expect(page.getByText("2 of 6")).toBeVisible();
     await expect(page.getByText("0/7 full meals")).toBeVisible();
+    await expectAccessibleScreen(page, "the buddy page");
 
     const star = page.getByRole("button", { name: /Star/u });
     await star.click();
@@ -63,6 +65,24 @@ test.describe("Buddy page", () => {
     await expect(star).toBeFocused();
     await expect(page.getByRole("button", { name: /Monocle/u })).toBeDisabled();
 
+    // Studying today wakes it, however low Energy is.
+    await dailyProgressFixtureMany([
+      {
+        correctAnswers: 3,
+        date: toUTCMidnight(new Date()),
+        timeSpentSeconds: STUDY_SECONDS,
+        userId: user.id,
+      },
+    ]);
+
+    await page.reload();
+
+    await expect(page.getByText("That was tasty. Thank you!")).toBeVisible();
+    await expect(page.getByText(/took a nap/u)).toHaveCount(0);
+    await expect(page.getByRole("img", { name: "Zu" })).toHaveAttribute("data-energy", "awake");
+
+    // No Fun flow passes through My courses, so it's scanned here.
+    await expectAccessibleRoutes(page, [{ path: "/my" }]);
     await page.context().close();
   });
 
@@ -74,6 +94,7 @@ test.describe("Buddy page", () => {
 
     await expect(page.getByRole("heading", { name: "Buddies live in Fun mode" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Open Appearance" })).toBeVisible();
+    await expectAccessibleScreen(page, "the buddy page");
     await page.context().close();
   });
 
@@ -90,32 +111,23 @@ test.describe("Buddy page", () => {
     const page = await openAs(browser, user);
     await page.goto("/buddy");
 
-    await expect(page.getByRole("heading", { name: "Pick your buddy" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Open Appearance" })).toBeVisible();
-    await page.context().close();
-  });
+    // The dock has a plain Buddy item until one is picked.
+    const dock = page
+      .getByRole("navigation")
+      .filter({ has: page.getByRole("link", { name: "Route" }) });
 
-  test("Fun: a learner who studied today never sees a napping buddy, even with low Energy", async ({
-    browser,
-  }) => {
-    const { user } = await createModeLearner("fun");
+    await expect(dock.getByRole("link")).toHaveText(["Today", "Route", "Cards", "Buddy"]);
+    const dockBuddy = dock.getByRole("link", { name: "Buddy" });
+    await expect(dockBuddy).toHaveAttribute("href", "/buddy");
+    await expect(dockBuddy).toHaveAttribute("aria-current", "page");
 
-    await dailyProgressFixtureMany([
-      {
-        correctAnswers: 3,
-        date: toUTCMidnight(new Date()),
-        timeSpentSeconds: STUDY_SECONDS,
-        userId: user.id,
-      },
-    ]);
+    await expect(page.getByRole("heading", { level: 1, name: "Pick your buddy" })).toBeVisible();
 
-    const page = await openAs(browser, user);
+    await expect(page.getByRole("link", { name: "Open Appearance" })).toHaveAttribute(
+      "href",
+      "/settings/appearance",
+    );
 
-    await page.goto("/buddy");
-
-    await expect(page.getByText("That was tasty. Thank you!")).toBeVisible();
-    await expect(page.getByText(/took a nap/u)).toHaveCount(0);
-    await expect(page.getByRole("img", { name: "Zu" })).toHaveAttribute("data-energy", "awake");
     await page.context().close();
   });
 });

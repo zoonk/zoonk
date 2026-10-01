@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -46,7 +47,7 @@ test.describe("My Courses", () => {
     ).toBeVisible();
   });
 
-  test("lists the courses of the learner's goals and started lessons", async ({
+  test("lists the courses of the learner's goals and started lessons, with a language course's flag", async ({
     baseURL,
     browser,
   }) => {
@@ -57,16 +58,26 @@ test.describe("My Courses", () => {
       catalogCourseFixture({ lessonCounts: [1], title: `Started course ${uniqueId}` }),
     ]);
 
-    const privateCourse = await courseFixture({
-      title: `My own course ${uniqueId}`,
-      userId: user.id,
-      visibility: "private",
-    });
+    const [privateCourse, languageCourse] = await Promise.all([
+      courseFixture({ title: `My own course ${uniqueId}`, userId: user.id, visibility: "private" }),
+      courseFixture({
+        targetLanguage: "es",
+        title: `Spanish course ${uniqueId}`,
+        userId: user.id,
+        visibility: "private",
+      }),
+    ]);
 
     await Promise.all([
       goalFixture({
         primaryCourseId: privateCourse.id,
         updatedAt: new Date(Date.now() - 60_000),
+        userId: user.id,
+      }),
+      goalFixture({
+        kind: "language",
+        primaryCourseId: languageCourse.id,
+        targetLanguage: "es",
         userId: user.id,
       }),
       learningEventFixture({
@@ -82,6 +93,7 @@ test.describe("My Courses", () => {
 
     const startedLink = page.getByRole("link", { name: started.course.title });
     const privateLink = page.getByRole("link", { name: privateCourse.title });
+    const languageLink = page.getByRole("link", { name: new RegExp(languageCourse.title, "u") });
 
     await expect(startedLink).toHaveAttribute(
       "href",
@@ -89,42 +101,13 @@ test.describe("My Courses", () => {
     );
 
     await expect(privateLink).toHaveAttribute("href", "/plan");
+    await expect(languageLink.getByRole("img", { name: "European Spanish" })).toBeVisible();
     await expect(page.getByRole("button", { name: /more options/iu })).toHaveCount(0);
+    await expectAccessibleScreen(page, "My courses");
 
     await startedLink.click();
 
     await expect(page.getByRole("heading", { level: 1, name: started.course.title })).toBeVisible();
-
-    await browserContext.close();
-  });
-
-  test("a language course shows the flag of the variety it teaches", async ({
-    baseURL,
-    browser,
-  }) => {
-    const user = await createE2EUser(baseURL!);
-
-    const course = await courseFixture({
-      targetLanguage: "es",
-      title: `Spanish course ${randomUUID().slice(0, 8)}`,
-      userId: user.id,
-      visibility: "private",
-    });
-
-    await goalFixture({
-      kind: "language",
-      primaryCourseId: course.id,
-      targetLanguage: "es",
-      userId: user.id,
-    });
-
-    const browserContext = await browser.newContext({ storageState: user.storageState });
-    const page = await browserContext.newPage();
-
-    await page.goto("/my");
-
-    const link = page.getByRole("link", { name: new RegExp(course.title, "u") });
-    await expect(link.getByRole("img", { name: "European Spanish" })).toBeVisible();
 
     await browserContext.close();
   });

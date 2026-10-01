@@ -18,6 +18,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { scheduleMemoryAfterSession } from "../after-session";
+import { readInsightPayload } from "./_utils/insight-view";
 import { getCurrentMemoryInsight } from "./get-current-memory-insight";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
 
@@ -213,6 +214,31 @@ describe("gap sizing for plan-change insights", () => {
     // Prerequisites first, right before the skill they prepare for.
     expect(skillIds.filter((id) => added.includes(id))).toStrictEqual(added);
     expect(skillIds.indexOf(weak.id) - skillIds.indexOf(basics?.id ?? "")).toBe(3);
+  });
+
+  it("declines the proposal when the learner says no, leaving the plan as it was", async () => {
+    const { goal, user, weak } = await setup();
+
+    await chainFixture({
+      before: weak,
+      names: ["Fractions as percentages", "Equivalent fractions", "What fractions are"],
+    });
+
+    await runAfterSession({ goalId: goal.id, userId: user.id });
+
+    const [insight, before] = await Promise.all([loadInsight(user.id), loadPlanSkillIds(goal.id)]);
+
+    mockSession(user.id);
+
+    await expect(
+      respondToMemoryInsight({ input: { status: "dismissed" }, insightId: insight.id }),
+    ).resolves.toMatchObject({ insight: { status: "dismissed" }, status: "updated" });
+
+    const changeId = readInsightPayload(insight.payload).planChangeId ?? "";
+    const change = await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } });
+
+    expect(change.status).toBe("declined");
+    await expect(loadPlanSkillIds(goal.id)).resolves.toStrictEqual(before);
   });
 
   it("stops at a prerequisite the learner already knows, so one lesson applies at once", async () => {

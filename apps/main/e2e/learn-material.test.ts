@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
 import { setDeviceMode } from "./learn-personas";
@@ -10,7 +9,7 @@ import { setDeviceMode } from "./learn-personas";
  * Studying your own material: the paperclip takes a file, pasted text or a link, then "What do you
  * want to do?" turns it into an exam plan, lessons built from it, or answers from its pages. The
  * uploads and questions APIs are external here (Blob storage and a model), so they answer as they
- * would; lessons built from the material cite their slide in the player.
+ * would.
  */
 
 const PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
@@ -181,64 +180,5 @@ test.describe("Studying your own material", () => {
 
     // Asking isn't a goal: nothing was created.
     await expect(prisma.goal.count({ where: { userId: noProgressUser.id } })).resolves.toBe(0);
-  });
-
-  test("a lesson built from the learner's slides cites its slide", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const slides = await sourceFixture({
-      kind: "upload",
-      mimeType: PPTX,
-      ownerId: noProgressUser.id,
-      title: "Aula 5 - Glicolise",
-      visibility: "private",
-    });
-
-    const { lesson, steps } = await playableLessonFixture({
-      lesson: { ownerId: noProgressUser.id, visibility: "private" },
-      steps: ["explanation", "check"],
-    });
-
-    await prisma.step.update({
-      data: { sourceId: slides.id, sourcePage: 3 },
-      where: { id: steps[0]?.id },
-    });
-
-    await setDeviceMode(page.context(), "fun");
-    await page.goto(`/learn/${lesson.id}`);
-
-    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
-    await expect(page.getByLabel("From your material: Aula 5 - Glicolise, slide 3")).toBeVisible();
-  });
-
-  test("an explanation no slide supports says it isn't in the material", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const slides = await sourceFixture({
-      kind: "upload",
-      mimeType: PPTX,
-      ownerId: noProgressUser.id,
-      title: "Aula 6 - Ciclo de Krebs",
-      visibility: "private",
-    });
-
-    const { lesson, steps } = await playableLessonFixture({
-      lesson: { ownerId: noProgressUser.id, visibility: "private" },
-      steps: ["explanation", "check"],
-    });
-
-    await prisma.step.update({
-      data: { sourceId: slides.id, sourcePage: 5 },
-      where: { id: steps[1]?.id },
-    });
-
-    await setDeviceMode(page.context(), "focus");
-    await page.goto(`/learn/${lesson.id}`);
-
-    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-    await expect(page.getByText("Not in your material")).toBeVisible();
   });
 });

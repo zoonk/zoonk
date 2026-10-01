@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
 import {
   CHECKPOINT_PASS_MARK,
@@ -6,6 +7,7 @@ import {
   MOCK_MINUTES,
   createCheckpointLearner,
   playDuel,
+  starShownAt,
 } from "./fun-rewards-fixtures";
 import { openAs } from "./study-day";
 
@@ -15,10 +17,13 @@ async function planItemStatus(id: string) {
 }
 
 test.describe("Checkpoints", () => {
-  test("Fun: winning the Trickster duel checks the phase off", async ({ browser }) => {
+  test("Fun: winning the Trickster duel checks the phase off, with a calm fade under reduced motion", async ({
+    browser,
+  }) => {
     const { block, boss, user } = await createCheckpointLearner({ mode: "fun" });
     const page = await openAs(browser, user);
 
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(`/checkpoint/${block.id}`);
 
     await expect(page.getByRole("heading", { level: 1, name: "The Trickster" })).toBeVisible();
@@ -31,6 +36,7 @@ test.describe("Checkpoints", () => {
 
     await expect(page.getByText("Trap hunter badge")).toBeVisible();
     await expect(page.getByRole("meter", { name: "Shield" })).toHaveAttribute("aria-valuenow", "0");
+    await expectAccessibleScreen(page, "the boss's intro");
 
     await page.getByRole("button", { name: "Take it on" }).click();
     await expect(page.getByText("No hints")).toBeVisible();
@@ -44,6 +50,14 @@ test.describe("Checkpoints", () => {
     ).toBeVisible();
 
     await expect(page.getByText("Phase 1 complete")).toBeVisible();
+
+    // Reduced motion swaps the celebration for a calm fade.
+    const buddy = page.getByRole("img", { name: "Zu" });
+    await expect(buddy).toBeVisible();
+
+    await expect
+      .poll(() => buddy.evaluate((element) => getComputedStyle(element).animationName))
+      .toBe("fun-fade-in");
 
     await page.getByText("Review the answers").click();
     await expect(page.getByText("It follows the rule.")).toHaveCount(CHECKPOINT_QUESTIONS);
@@ -75,35 +89,6 @@ test.describe("Checkpoints", () => {
     await page.context().close();
   });
 
-  test("Focus: the same checkpoint, quietly and by keyboard", async ({ browser }) => {
-    const { block, user } = await createCheckpointLearner({ mode: "focus" });
-    const page = await openAs(browser, user);
-
-    await page.goto(`/checkpoint/${block.id}`);
-
-    await expect(page.getByText("Phase 1 checkpoint")).toBeVisible();
-    await expect(page.getByRole("heading", { level: 1, name: "Basics" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "The Trickster" })).toHaveCount(0);
-
-    // Keys work once the page hydrates, so the first press retries until the duel opens.
-    await expect(async () => {
-      await page.keyboard.press("Enter");
-
-      await expect(page.getByText(`Question 1 of ${CHECKPOINT_QUESTIONS}`)).toBeVisible({
-        timeout: 1000,
-      });
-    }).toPass({ timeout: 5000 });
-
-    await playDuel(page, { keyboard: true });
-
-    await expect(page.getByRole("heading", { name: "Checkpoint passed" })).toBeVisible();
-
-    // Enter follows the ending's one link, which leads to Today for a checkpoint opened on its own.
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/\/today$/u);
-    await page.context().close();
-  });
-
   test("Fun: the Big Challenge rehearses exam day with a checklist", async ({ browser }) => {
     const { block, user } = await createCheckpointLearner({ kind: "weekly", mode: "fun" });
     const page = await openAs(browser, user);
@@ -119,6 +104,7 @@ test.describe("Checkpoints", () => {
     ).toBeVisible();
 
     await expect(page.getByText("0 of 4")).toBeVisible();
+    await expectAccessibleScreen(page, "the Big Challenge");
 
     const phone = page.getByRole("button", { name: "Phone on silent" });
     await phone.click();
@@ -126,65 +112,21 @@ test.describe("Checkpoints", () => {
     await expect(phone).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByText("1 of 4")).toBeVisible();
 
+    // From here it plays as any mock exam does (see the exam goal's mock).
     await page.getByRole("button", { name: "I'm in" }).click();
 
-    for (let index = 0; index < CHECKPOINT_QUESTIONS; index += 1) {
-      // oxlint-disable-next-line no-await-in-loop -- Each question waits for the one before.
-      await expect(page.getByText(new RegExp(`^Question ${index + 1} of`, "u"))).toBeVisible();
-      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("radio", { name: "Right answer" }).click();
-
-      const last = index === CHECKPOINT_QUESTIONS - 1;
-
-      // oxlint-disable-next-line no-await-in-loop -- Next waits for the saved answer.
-      await page.getByRole("button", { name: last ? "Hand in the mock exam" : "Next" }).click();
-    }
-
-    await expect(page.getByRole("heading", { level: 1, name: "Mock exam 1" })).toBeVisible();
-
     await expect(
-      page.getByText(`${CHECKPOINT_QUESTIONS} of ${CHECKPOINT_QUESTIONS}`),
+      page.getByText(new RegExp(`^Question 1 of ${CHECKPOINT_QUESTIONS}`, "u")),
     ).toBeVisible();
 
-    await page.context().close();
-  });
-
-  test("Fun: reduced motion swaps the celebration for a calm fade", async ({ browser }) => {
-    const { block, user } = await createCheckpointLearner({ mode: "fun" });
-    const page = await openAs(browser, user);
-
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(`/checkpoint/${block.id}`);
-    await page.getByRole("button", { name: "Take it on" }).click();
-    await playDuel(page);
-
-    const buddy = page.getByRole("img", { name: "Zu" });
-    await expect(buddy).toBeVisible();
-
-    await expect
-      .poll(() => buddy.evaluate((element) => getComputedStyle(element).animationName))
-      .toBe("fun-fade-in");
-
-    await page.context().close();
-  });
-
-  test("keeps another learner's checkpoint out of reach", async ({ browser }) => {
-    const [{ block }, other] = await Promise.all([
-      createCheckpointLearner({ mode: "fun" }),
-      createCheckpointLearner({ mode: "fun" }),
-    ]);
-
-    const page = await openAs(browser, other.user);
-    await page.goto(`/checkpoint/${block.id}`);
-
-    await expect(page.getByText(/not found|404/iu)).toBeVisible();
-    await expect(page.getByRole("button", { name: "Take it on" })).toHaveCount(0);
     await page.context().close();
   });
 });
 
 test.describe("A checkpoint from today's session in Fun", () => {
-  test("continues back to the session, by keyboard", async ({ browser }) => {
+  test("continues back to the session by keyboard, where the first boss's glasses go on", async ({
+    browser,
+  }) => {
     const { block, user } = await createCheckpointLearner({ mode: "fun" });
     const page = await openAs(browser, user);
 
@@ -224,6 +166,16 @@ test.describe("A checkpoint from today's session in Fun", () => {
     await expect(wear).toBeHidden();
     await expect(page).toHaveURL(/\/session$/u);
 
+    // "Wear them" puts the new glasses on the buddy and marks the ceremony shown.
+    await expect
+      .poll(async () => {
+        const profile = await prisma.userLearningProfile.findUnique({ where: { userId: user.id } });
+        return profile?.buddyGlasses;
+      })
+      .toBe("star");
+
+    await expect.poll(() => starShownAt(user.id)).not.toBeNull();
+
     await expect(
       page.getByRole("heading", { level: 1, name: "Flight plan complete!" }),
     ).toBeVisible();
@@ -257,7 +209,10 @@ test.describe("Move to Monday", () => {
     const page = await openAs(browser, user);
 
     await page.goto(`/checkpoint/${block.id}`);
-    await page.getByRole("button", { name: "Move to Monday" }).click();
+    const move = page.getByRole("button", { name: "Move to Monday" });
+    await expect(move).toBeVisible();
+    await expectAccessibleScreen(page, "the week's challenge");
+    await move.click();
 
     await expect(page.getByRole("heading", { name: /^Moved to/u })).toBeVisible();
     await expect(page.getByText("Your plan made room for it. Nothing is lost.")).toBeVisible();

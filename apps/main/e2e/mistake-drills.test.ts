@@ -1,11 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { type Page, expect, test } from "./fixtures";
-import {
-  LESSON_IDEA,
-  createDrillSession,
-  createMistakeLearner,
-  drillQuestion,
-} from "./mistake-drill-days";
+import { LESSON_IDEA, createDrillSession, drillQuestion } from "./mistake-drill-days";
 import { answerRight, openAs } from "./study-day";
 
 /** A timed drill gives each question 45 seconds; the clock jumps just past them. */
@@ -35,18 +30,6 @@ async function expectIdeaFirst(page: Page, lessonId: string) {
   }).toPass({ timeout: 5000 });
 }
 
-/** "Practice mistakes": a number picks the right option, Enter checks and goes on. */
-async function practiceRight(page: Page, question: string) {
-  const verdict = page.getByRole("status").filter({ hasText: /^Right!/u });
-
-  await expect(page.getByRole("heading", { name: question })).toBeVisible();
-  await page.keyboard.press("1");
-  await page.keyboard.press("Enter");
-  await expect(verdict).toBeVisible();
-  await page.keyboard.press("Enter");
-  await expect(verdict).toBeHidden();
-}
-
 /** The timed question's clock, then the jump past its 45 seconds. */
 async function runOutOfTime(page: Page) {
   await expect(page.getByText("45 seconds a question, like on the day.")).toBeVisible();
@@ -65,33 +48,6 @@ async function expectTimedOut({ itemId, userId }: { itemId: string; userId: stri
 }
 
 test.describe("Mistake drills", () => {
-  test("Practice mistakes brings a gap's idea back first and times a timed drill", async ({
-    browser,
-  }) => {
-    const { drills, user } = await createMistakeLearner({ causes: ["gap", "time"], mode: "focus" });
-    const [gap, time] = drills;
-    const page = await openAs(browser, user);
-
-    await page.clock.install();
-    await page.goto("/mistakes/practice");
-    await expectIdeaFirst(page, gap?.lesson.id ?? "");
-    await practiceRight(page, drillQuestion("gap", "original"));
-    await practiceRight(page, drillQuestion("gap", "extra"));
-
-    await expect(
-      page.getByRole("heading", { name: drillQuestion("time", "original") }),
-    ).toBeVisible();
-
-    await runOutOfTime(page);
-
-    await expect(page.getByText(TIMES_UP)).toBeVisible();
-    await expect(page.getByRole("status").filter({ hasText: /^Not quite\./u })).toBeVisible();
-    await expect(page.getByRole("timer")).toBeHidden();
-
-    await expectTimedOut({ itemId: time?.original.id ?? "", userId: user.id });
-    await page.context().close();
-  });
-
   test("today's practice plays each mistake's drill by its cause", async ({ browser }) => {
     const { drills, user } = await createDrillSession({ causes: ["gap", "time"], mode: "fun" });
     const [gap, time] = drills;
@@ -109,6 +65,8 @@ test.describe("Mistake drills", () => {
       page.getByRole("heading", { name: drillQuestion("time", "original") }),
     ).toBeVisible();
 
+    // While the clock runs, the question can't be voted on.
+    await expect(page.getByRole("button", { name: "Question options" })).toBeHidden();
     await runOutOfTime(page);
 
     await expect(feedback.getByText("Not quite")).toBeVisible();
@@ -116,6 +74,20 @@ test.describe("Mistake drills", () => {
     await expect(page.getByRole("timer")).toBeHidden();
 
     await expectTimedOut({ itemId: time?.original.id ?? "", userId: user.id });
+
+    // Its "…" menu takes a vote once the time is up, kept with the mode it was asked in.
+    await page.getByRole("button", { name: "Question options" }).click();
+    await page.getByRole("menuitemcheckbox", { exact: true, name: "Helpful" }).click();
+
+    await expect
+      .poll(() =>
+        prisma.contentFeedback.findFirst({
+          select: { contentKind: true, mode: true, vote: true },
+          where: { contentId: time?.original.id, userId: user.id },
+        }),
+      )
+      .toStrictEqual({ contentKind: "item", mode: "fun", vote: "up" });
+
     await page.context().close();
   });
 });

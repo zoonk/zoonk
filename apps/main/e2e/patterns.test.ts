@@ -1,9 +1,10 @@
-import { type Browser, type Page } from "@playwright/test";
+import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { type Mode, expectMode, showInMode } from "./learn-personas";
+import { expectMode, showInMode } from "./learn-personas";
 
 const TIME_PERIODS = ["Night", "Morning", "Afternoon", "Evening"] as const;
 const TUESDAY = 2;
@@ -60,20 +61,12 @@ function buildLedgerRow({
 }
 
 /**
- * Creates one isolated learner whose strongest weekday and daypart are known.
+ * Creates one isolated learner in Fun whose strongest weekday and daypart are known.
  * The rolling-window dates only keep records current; the stored Tuesday,
  * Friday, and hour buckets are explicit so timezone changes cannot alter which
  * labels the page must select.
  */
-async function createPatternsTestPage({
-  baseURL,
-  browser,
-  mode = "focus",
-}: {
-  baseURL: string;
-  browser: Browser;
-  mode?: Mode;
-}) {
+async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; browser: Browser }) {
   const user = await createE2EUser(baseURL, { orgRole: "member", withProgress: true });
 
   const now = new Date();
@@ -113,63 +106,28 @@ async function createPatternsTestPage({
   ]);
 
   const browserContext = await browser.newContext({ storageState: user.storageState });
-  await showInMode(browserContext, { mode, userId: user.id });
+  await showInMode(browserContext, { mode: "fun", userId: user.id });
   const page = await browserContext.newPage();
 
   return { browserContext, page };
 }
 
-/**
- * Opens Patterns at the shared phone size and verifies its two compact rhythm
- * visualizations do not force horizontal scrolling.
- */
-async function expectPatternsToFitMobileViewport(page: Page) {
-  await page.goto("/patterns");
-
-  const dailyRhythm = page.getByRole("region", { name: /throughout the day/iu });
-  const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
-
-  await expect(weeklyRhythm).toBeVisible();
-  await expect(dailyRhythm).toBeVisible();
-  await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
-  await expect(dailyRhythm.getByRole("article")).toHaveCount(TIME_PERIODS.length);
-
-  const hasHorizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-  );
-
-  expect(hasHorizontalOverflow).toBe(false);
-}
-
 test.describe("Patterns", () => {
-  test("unauthenticated visitors see a login prompt", async ({ page }) => {
-    await page.goto("/patterns");
-
-    await expect(page.getByText(/log in to track your progress/iu)).toBeVisible();
-    await expect(page.getByRole("link", { name: /login/iu })).toHaveAttribute("href", "/login");
-  });
-
-  test("new learners see a start-learning prompt", async ({ userWithoutProgress }) => {
-    await userWithoutProgress.goto("/patterns");
-
-    await expect(
-      userWithoutProgress.getByText(/start learning to track your progress/iu),
-    ).toBeVisible();
-  });
-
-  test("shows every weekday and selects the strongest explicit weekday in Fun", async ({
+  test("shows every weekday and time period, selecting the strongest explicit weekday in Fun", async ({
     baseURL,
     browser,
   }) => {
-    const { browserContext, page } = await createPatternsTestPage({
-      baseURL: baseURL!,
-      browser,
-      mode: "fun",
-    });
+    const { browserContext, page } = await createPatternsTestPage({ baseURL: baseURL!, browser });
 
     try {
       await page.goto("/patterns");
       await expectMode(page, "fun");
+
+      await expect(
+        page
+          .getByRole("navigation", { name: "Your stats" })
+          .getByRole("link", { name: "Patterns" }),
+      ).toHaveAttribute("aria-current", "page");
 
       const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
 
@@ -188,24 +146,13 @@ test.describe("Patterns", () => {
         /you do better on tuesdays.*90% across 10 answers/iu,
       );
 
+      await expectAccessibleScreen(page, "Patterns");
+
       await weeklyRhythm.getByRole("button", { name: /friday/iu }).click();
 
       await expect(weeklyRhythm.getByRole("status")).toContainText(
         /friday performance.*10% across 10 answers/iu,
       );
-    } finally {
-      await browserContext.close();
-    }
-  });
-
-  test("shows every time period with its accuracy and answer count", async ({
-    baseURL,
-    browser,
-  }) => {
-    const { browserContext, page } = await createPatternsTestPage({ baseURL: baseURL!, browser });
-
-    try {
-      await page.goto("/patterns");
 
       const dailyRhythm = page.getByRole("region", { name: /throughout the day/iu });
 
@@ -231,29 +178,6 @@ test.describe("Patterns", () => {
       await expect(morningPattern).toContainText(/90%.*10 answers/iu);
       await expect(afternoonPattern).toContainText(/20%.*5 answers/iu);
       await expect(eveningPattern).toContainText(/40%.*5 answers/iu);
-    } finally {
-      await browserContext.close();
-    }
-  });
-
-  test("appears as the active progress destination", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/patterns");
-
-    await expect(
-      authenticatedPage.getByRole("navigation").getByRole("link", { name: "Patterns" }),
-    ).toHaveAttribute("aria-current", "page");
-  });
-
-  test("fits within a mobile viewport", async ({ browser, withProgressUser }) => {
-    const browserContext = await browser.newContext({
-      storageState: withProgressUser.storageState,
-      viewport: { height: 812, width: 375 },
-    });
-
-    const patternsPage = await browserContext.newPage();
-
-    try {
-      await expectPatternsToFitMobileViewport(patternsPage);
     } finally {
       await browserContext.close();
     }

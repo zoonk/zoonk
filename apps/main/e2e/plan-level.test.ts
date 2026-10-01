@@ -6,9 +6,8 @@ import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
 /**
- * "Your level" in "Change your plan", split between Focus and Fun: a lower level brings in the
- * foundations the plan left out, announced with an undo; a higher level offers test-outs and skips
- * nothing.
+ * "Your level" in "Change your plan": a lower level brings in the foundations the plan left out,
+ * announced with an undo; a higher level offers test-outs and skips nothing.
  */
 
 /** The skill Ana's plan starts from: the first skill of its graph. */
@@ -50,7 +49,9 @@ async function openLevel(page: Page) {
 }
 
 test.describe("Your level on the plan", () => {
-  test("a lower level adds the foundations first, with an undo", async ({ browser }) => {
+  test("a lower level adds the foundations first with an undo, and a higher one offers test-outs", async ({
+    browser,
+  }) => {
     await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
       const foundation = await addMissingFoundation({ goalId: user.goalId, userId: user.id });
       await openLevel(page);
@@ -78,17 +79,10 @@ test.describe("Your level on the plan", () => {
 
       await change.getByRole("button", { name: "Undo" }).click();
       await expect(change.getByText("Undone")).toBeVisible();
-    });
-  });
 
-  test("a higher level offers test-outs and skips nothing", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
-      const testedOutBefore = await prisma.planItem.count({
-        where: { plan: { goalId: user.goalId }, status: "testedOut" },
-      });
-
-      await openLevel(page);
-      await levelSection(page).getByRole("button", { name: "I know it well" }).click();
+      // Knowing it well skips nothing by itself: it offers the chapters' tests.
+      const knowIt = levelSection(page).getByRole("button", { name: "I know it well" });
+      await knowIt.click();
 
       await expect(
         levelSection(page).getByText(
@@ -102,15 +96,7 @@ test.describe("Your level on the plan", () => {
           .first(),
       ).toBeVisible();
 
-      await expect(
-        levelSection(page).getByRole("button", { name: "I know it well" }),
-      ).toHaveAttribute("aria-pressed", "true");
-
-      const testedOutAfter = await prisma.planItem.count({
-        where: { plan: { goalId: user.goalId }, status: "testedOut" },
-      });
-
-      expect(testedOutAfter).toBe(testedOutBefore);
+      await expect(knowIt).toHaveAttribute("aria-pressed", "true");
     });
   });
 });

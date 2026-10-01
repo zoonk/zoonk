@@ -3,6 +3,9 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./accessibility/motion": "./src/accessibility/motion.ts",
+    "./accessibility/scan": "./src/accessibility/scan.ts",
+    "./accessibility/target-size": "./src/accessibility/target-size.ts",
     "./fixtures/accounts": "./src/fixtures/accounts.ts",
     "./fixtures/activity-checks": "./src/fixtures/activity-contents/activity-checks.ts",
     "./fixtures/activity-contents": "./src/fixtures/activity-contents.ts",
@@ -45,6 +48,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
+    "axe-core": "4.13.0",
     "typescript": "catalog:"
   }
 }

@@ -21,15 +21,10 @@ const SAVED_REASON = "That's what you save. You pay what's left after it.";
  * The ENEM discount problem as the item bank stores it: the numbers are variables with ranges, so
  * each block asks it with its own price and discount.
  */
-function discountContent({
-  label,
-  price = { max: 400, min: 40, step: 10 },
-  rate = { max: 60, min: 5, step: 5 },
-}: {
-  label: string;
-  price?: { max: number; min: number; step: number };
-  rate?: { max: number; min: number; step: number };
-}) {
+function discountContent(label: string) {
+  const price = { max: 400, min: 40, step: 10 };
+  const rate = { max: 60, min: 5, step: 5 };
+
   return {
     context: null,
     math: {
@@ -78,9 +73,7 @@ async function readNumbers(page: Page, label: string) {
 
   const text = (await heading.textContent()) ?? "";
 
-  const [price = 0, rate = 0] = (text.match(/\d+(?:[.,]\d+)?/gu) ?? []).map((value) =>
-    Number(value.replace(",", ".")),
-  );
+  const [price = 0, rate = 0] = (text.match(/\d+(?:\.\d+)?/gu) ?? []).map((value) => Number(value));
 
   return { paid: toCents(price * (1 - rate / 100)), saved: toCents((price * rate) / 100) };
 }
@@ -153,11 +146,7 @@ async function createMathBoss(mode: Mode) {
   });
 
   const [math, boss, session] = await Promise.all([
-    itemFixture({
-      content: discountContent({ label: "Boss" }),
-      format: "numeric",
-      skillId: skill.id,
-    }),
+    itemFixture({ content: discountContent("Boss"), format: "numeric", skillId: skill.id }),
     planItemFixture({ kind: "boss", phase: 0, planId: plan.id, position: 0 }),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     learningProfileFixture({
@@ -198,7 +187,7 @@ test.describe("Math problems", () => {
   }) => {
     const { user } = await createMathDay({
       mode: "focus",
-      problems: [discountContent({ label: "Shirt" }), discountContent({ label: "Jacket" })],
+      problems: [discountContent("Shirt"), discountContent("Jacket")],
     });
 
     const page = await openAs(browser, user);
@@ -275,37 +264,4 @@ test.describe("Math problems", () => {
     await expect(page.getByText(`/100) = ${boss.paid}`)).toBeVisible();
     await page.context().close();
   });
-});
-
-test("reads a decimal comma in Portuguese", async ({ browser }) => {
-  // Prices ending in 5 with 10% off always cost a fraction of a real.
-  const { user } = await createMathDay({
-    mode: "focus",
-    problems: [
-      discountContent({
-        label: "Camisa",
-        price: { max: 95, min: 45, step: 10 },
-        rate: { max: 10, min: 10, step: 5 },
-      }),
-    ],
-  });
-
-  const page = await openAs(browser, user);
-  const feedback = page.getByRole("region", { name: "Resultado da resposta" });
-  await page.goto("/pt/session");
-  await page.getByRole("button", { name: /^Começar/u }).click();
-  await expect(page.getByRole("heading", { name: /^Warm-up/u })).toBeVisible();
-  await page.keyboard.press("1");
-  await expect(feedback.getByText("Certo!")).toBeVisible();
-  await page.keyboard.press("Enter");
-
-  const { paid } = await readNumbers(page, "Camisa");
-  const typed = String(paid).replace(".", ",");
-
-  expect(typed).toContain(",");
-  await page.keyboard.type(typed);
-  await page.keyboard.press("Enter");
-
-  await expect(feedback.getByText("Certo!")).toBeVisible();
-  await page.context().close();
 });

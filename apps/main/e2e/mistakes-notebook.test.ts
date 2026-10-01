@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { TRAP, createMistakeLearner, drillQuestion } from "./mistake-drill-days";
@@ -18,6 +19,7 @@ test.describe("Mistakes notebook", () => {
       ).toBeVisible();
 
       await expect(page.getByText(/^3 to fix · 1 fixed$/u)).toBeVisible();
+      await expectAccessibleScreen(page, "the mistakes notebook");
 
       await expect(
         page.getByRole("heading", { name: "Calcular o preço com desconto" }),
@@ -38,11 +40,20 @@ test.describe("Mistakes notebook", () => {
     });
   });
 
-  test("practice drills a mistake by its cause and gives the why", async ({ browser }) => {
+  test("practice drills a mistake by its cause and gives the why, by keyboard", async ({
+    browser,
+  }) => {
     await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
       const attemptsBefore = await prisma.attempt.count({ where: { userId: user.id } });
+      const right = page.getByRole("status").filter({ hasText: /^Right!/u });
 
       await page.goto("/mistakes");
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Mistakes notebook" }),
+      ).toBeVisible();
+
+      await expectAccessibleScreen(page, "the mistakes notebook");
       await page.getByRole("link", { name: "Practice mistakes" }).click();
 
       await expect(page.getByText("Read every word before you answer.")).toBeVisible();
@@ -50,24 +61,7 @@ test.describe("Mistakes notebook", () => {
 
       // A misread is drilled by reading first: the answers show once the question is read.
       await expect(page.getByRole("button", { name: "R$ 2.040" })).toBeHidden();
-      await page.getByRole("button", { name: /^I've read it\. Show the answers/u }).click();
-
-      await page.getByRole("button", { name: "R$ 2.040" }).click();
-      await page.getByRole("button", { name: "Check" }).click();
-
-      await expect(page.getByRole("status").filter({ hasText: /^Right!/u })).toBeVisible();
-      await page.getByRole("button", { name: "Continue" }).click();
-
-      await expect
-        .poll(async () => prisma.attempt.count({ where: { userId: user.id } }))
-        .toBe(attemptsBefore + 1);
-    });
-  });
-
-  test("practice by keyboard: a number picks, Enter checks and goes on", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
-      await page.goto("/mistakes/practice");
-      await expect(page.getByText("Read every word before you answer.")).toBeVisible();
+      await expectAccessibleScreen(page, "practice mistakes");
 
       // Keys work once the page hydrates, so the first press retries. Enter shows the answers of
       // a question read first, then a number picks; picking again is harmless.
@@ -80,11 +74,15 @@ test.describe("Mistakes notebook", () => {
         });
       }).toPass({ timeout: 5000 });
 
+      // Enter checks, then goes on.
       await page.keyboard.press("Enter");
-      await expect(page.getByRole("status").filter({ hasText: /^Right!/u })).toBeVisible();
+      await expect(right).toBeVisible();
+      await page.keyboard.press("Enter");
+      await expect(right).toBeHidden();
 
-      await page.keyboard.press("Enter");
-      await expect(page.getByRole("status").filter({ hasText: /^Right!/u })).toBeHidden();
+      await expect
+        .poll(async () => prisma.attempt.count({ where: { userId: user.id } }))
+        .toBe(attemptsBefore + 1);
     });
   });
 
@@ -150,6 +148,7 @@ test.describe("Mistakes notebook", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("button", { name: "I'm not sure" })).toBeVisible();
+    await expectAccessibleScreen(page, "practice mistakes");
 
     // The menu opens from the keyboard, and a number key pressed in it picks no answer.
     await page.getByRole("button", { name: "Question options" }).focus();

@@ -1,3 +1,4 @@
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
@@ -9,7 +10,9 @@ const STUDY_SECONDS = 1500;
 const RIGHT_ANSWERS = 12;
 
 test.describe("Logbook", () => {
-  test("Fun: the week as a short story, from the numbers to next week", async ({ browser }) => {
+  test("Fun: the week as a short story, turned by pointer and keyboard, to next week and Today", async ({
+    browser,
+  }) => {
     const { user } = await createModeLearner("fun");
 
     await dailyProgressFixtureMany([
@@ -28,11 +31,13 @@ test.describe("Logbook", () => {
     const pageErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
 
+    await page.setViewportSize({ height: 900, width: 1280 });
     await page.goto("/logbook");
 
     await expect(page.getByRole("heading", { name: /What a week/u })).toBeVisible();
     await expect(page.getByText("1 day", { exact: true })).toBeVisible();
     await expect(page.getByText("25 min", { exact: true })).toBeVisible();
+    await expectAccessibleScreen(page, "the logbook");
 
     await page.getByRole("button", { name: "Next" }).click();
     await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeVisible();
@@ -43,38 +48,19 @@ test.describe("Logbook", () => {
 
     await page.keyboard.press("ArrowLeft");
     await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeVisible();
-    expect(pageErrors).toStrictEqual([]);
-
-    await page.context().close();
-  });
-
-  test("Fun by keyboard: Enter turns the page, a focused Back goes back, the end leads to Today", async ({
-    browser,
-  }) => {
-    const { user } = await createModeLearner("fun");
-    const page = await openAs(browser, user);
-
-    await page.setViewportSize({ height: 900, width: 1280 });
-    await page.goto("/logbook");
-    await expect(page.getByRole("button", { name: "Next" })).toBeVisible();
-
-    // Keys work once the page hydrates, so the first press retries until the page turns.
-    await expect(async () => {
-      await page.keyboard.press("Enter");
-
-      await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeVisible({
-        timeout: 1000,
-      });
-    }).toPass({ timeout: 5000 });
 
     // Enter on a focused Back presses Back instead of turning the page.
     await tabTo(page, page.getByRole("button", { name: "Back" }));
     await page.keyboard.press("Enter");
     await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeHidden();
 
-    await page.keyboard.press("ArrowRight");
+    // Elsewhere, Enter turns the page.
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeVisible();
+
     await page.keyboard.press("ArrowRight");
     await expect(page.getByText("Ready for next week?")).toBeVisible();
+    expect(pageErrors).toStrictEqual([]);
 
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
@@ -95,6 +81,7 @@ test.describe("Logbook", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("heading", { name: "What you learned" })).toBeVisible();
+    await expectAccessibleScreen(page, "the weekly summary");
 
     await expect(page.getByRole("link", { name: "Close weekly summary" })).toHaveAttribute(
       "href",

@@ -1,100 +1,51 @@
 import { prisma } from "@zoonk/db";
-import { stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
-import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
-import { asPersona } from "./learn-personas";
-
-const DEEPER_TEXT =
-  "The electron is described by a **wave function**; its squared magnitude gives the probability density.";
 
 /**
  * "Go deeper" by default, for learners who asked for a more technical register: a switch in
- * Appearance (on by itself when memory noticed it, and saying so), and explanations that open their
- * deeper version first, with one tap back to the original.
+ * Appearance, on by itself when memory noticed it (and saying so), until the learner's own choice
+ * replaces it. The player's side, explanations opening their deeper version first, is in the
+ * player's browser tests.
  */
 test.describe("Go deeper by default", () => {
-  test("turns it on in Appearance and keeps it", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
-      await page.goto("/settings/appearance");
-
-      const setting = page.getByRole("switch", { name: "Go deeper by default" });
-      await expect(setting).not.toBeChecked();
-      await setting.click();
-      await expect(setting).toBeChecked();
-
-      await expect
-        .poll(async () => {
-          const profile = await prisma.userLearningProfile.findUnique({
-            where: { userId: user.id },
-          });
-
-          return profile?.deeperByDefault;
-        })
-        .toBe(true);
-
-      await page.reload();
-      await expect(page.getByRole("switch", { name: "Go deeper by default" })).toBeChecked();
+  test("says when memory turned it on, and the learner's choice replaces it and stays", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    await learningProfileFixture({
+      experienceMode: "focus",
+      memoryAsksDeeper: true,
+      userId: noProgressUser.id,
     });
-  });
 
-  test("opens an explanation's deeper version first", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page, user }) => {
-      const { lesson, steps } = await playableLessonFixture({ steps: ["explanation", "check"] });
-      const [explanation] = steps;
+    await page.goto("/settings/appearance");
 
-      if (!explanation) {
-        throw new Error("The lesson has no explanation");
-      }
+    const setting = page.getByRole("switch", { name: "Go deeper by default" });
+    await expect(setting).toBeChecked();
 
-      await Promise.all([
-        stepVariantFixture({
-          content: { text: DEEPER_TEXT, title: "The wave function" },
-          kind: "deeper",
-          stepId: explanation.id,
-        }),
-        prisma.userLearningProfile.update({
-          data: { deeperByDefault: true },
-          where: { userId: user.id },
-        }),
-      ]);
+    await expect(
+      page.getByText("On because you asked for more technical explanations"),
+    ).toBeVisible();
 
-      await page.goto(`/learn/${lesson.id}`);
+    await setting.click();
+    await expect(setting).not.toBeChecked();
 
-      await expect(page.getByText("Deeper version")).toBeVisible();
-      await expect(page.getByText("The wave function")).toBeVisible();
-      await expect(page.getByText("A cloud, not a little ball")).toHaveCount(0);
+    await expect(
+      page.getByText("Explanations open their more technical version first"),
+    ).toBeVisible();
 
-      await page.getByRole("button", { name: "Show the original" }).click();
-      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-      await expect(page.getByText("Deeper version")).toHaveCount(0);
+    await expect
+      .poll(async () => {
+        const profile = await prisma.userLearningProfile.findUnique({
+          where: { userId: noProgressUser.id },
+        });
 
-      await page.getByRole("button", { name: "Go deeper" }).click();
-      await expect(page.getByText("The wave function")).toBeVisible();
-    });
-  });
+        return profile?.deeperByDefault;
+      })
+      .toBe(false);
 
-  test("says when memory turned it on, and a choice replaces it", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
-      await prisma.userLearningProfile.update({
-        data: { memoryAsksDeeper: true },
-        where: { userId: user.id },
-      });
-
-      await page.goto("/settings/appearance");
-
-      const setting = page.getByRole("switch", { name: "Go deeper by default" });
-      await expect(setting).toBeChecked();
-
-      await expect(
-        page.getByText("On because you asked for more technical explanations"),
-      ).toBeVisible();
-
-      await setting.click();
-      await expect(setting).not.toBeChecked();
-
-      await expect(
-        page.getByText("Explanations open their more technical version first"),
-      ).toBeVisible();
-    });
+    await page.reload();
+    await expect(page.getByRole("switch", { name: "Go deeper by default" })).not.toBeChecked();
   });
 });

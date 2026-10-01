@@ -1,5 +1,6 @@
 import { EXPERIENCE_MODE_COOKIE } from "@zoonk/core/profile/mode-cookie";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
@@ -9,6 +10,10 @@ import { type Page, expect, test } from "./fixtures";
  * Appearance: Focus or Fun switches instantly and changes no learning data, the Fun buddy can be
  * changed, renamed and given earned glasses, and sounds turn on and off.
  */
+
+/** Deep space, Fun's canvas (`--fun-canvas` in `@zoonk/ui/fun.css`). */
+const DEEP_SPACE = "rgb(12, 10, 34)";
+const WHITE = "rgb(255, 255, 255)";
 
 function findProfile(userId: string) {
   return prisma.userLearningProfile.findUnique({ where: { userId } });
@@ -37,6 +42,18 @@ test.describe("Appearance", () => {
 
     await expect(page.getByRole("radio", { name: /^Focus/u })).toBeChecked();
     await expect(page.getByText("Your buddy")).toBeHidden();
+    await expectAccessibleScreen(page, "the appearance settings");
+
+    // The scan leaves the device light: the Fun choice previews deep space while Focus stays light.
+    await expect(page.getByRole("radiogroup").locator('[data-mode="fun"]')).toHaveCSS(
+      "background-color",
+      DEEP_SPACE,
+    );
+
+    await expect(page.locator('[data-slot="mode-root"] [data-slot="learn-shell"]')).toHaveCSS(
+      "background-color",
+      WHITE,
+    );
 
     await page.getByRole("radio", { name: /^Fun/u }).click();
 
@@ -59,29 +76,7 @@ test.describe("Appearance", () => {
     });
   });
 
-  test("switching from Fun back to Focus keeps the buddy for later", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    await learningProfileFixture({
-      buddyKind: "otto",
-      buddyName: "Octo",
-      experienceMode: "fun",
-      userId: noProgressUser.id,
-    });
-
-    await openAppearance(page);
-    await expect(page.getByRole("main").getByText("Octo", { exact: true })).toBeVisible();
-
-    await page.getByRole("radio", { name: /^Focus/u }).click();
-    await expect(page.getByRole("main").getByText("Octo", { exact: true })).toBeHidden();
-
-    await expect
-      .poll(() => findProfile(noProgressUser.id))
-      .toMatchObject({ buddyKind: "otto", buddyName: "Octo", experienceMode: "focus" });
-  });
-
-  test("changes and renames the buddy, with only earned glasses to pick", async ({
+  test("changes and renames the buddy with only earned glasses, and keeps it when back in Focus", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -91,6 +86,7 @@ test.describe("Appearance", () => {
     ]);
 
     await openAppearance(page);
+    await expectAccessibleScreen(page, "the Fun appearance settings");
     await page.getByRole("button", { name: "Change" }).click();
 
     const editor = page.getByRole("dialog", { name: "Your buddy" });
@@ -102,14 +98,31 @@ test.describe("Appearance", () => {
     await editor.getByRole("button", { name: "Save" }).click();
 
     await expect(editor).toBeHidden();
-    await expect(page.getByRole("main").getByText("Octavia")).toBeVisible();
+
+    const buddyName = page.getByRole("main").getByText("Octavia", { exact: true });
+    await expect(buddyName).toBeVisible();
 
     await expect
       .poll(() => findProfile(noProgressUser.id))
       .toMatchObject({ buddyGlasses: "star", buddyKind: "otto", buddyName: "Octavia" });
+
+    await page.getByRole("radio", { name: /^Focus/u }).click();
+    await expect(buddyName).toBeHidden();
+
+    await expect
+      .poll(() => findProfile(noProgressUser.id))
+      .toMatchObject({
+        buddyGlasses: "star",
+        buddyKind: "otto",
+        buddyName: "Octavia",
+        experienceMode: "focus",
+      });
   });
 
-  test("turns sounds off and on", async ({ noProgressUser, userWithoutProgress: page }) => {
+  test("turns sounds off and on, and sets the learner's own daily time limit", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
     await openAppearance(page);
 
     const sounds = page.getByRole("switch", { name: "Sounds" });
@@ -123,13 +136,6 @@ test.describe("Appearance", () => {
     await sounds.click();
     await expect(sounds).toBeChecked();
     await expect.poll(() => findProfile(noProgressUser.id)).toMatchObject({ soundsEnabled: true });
-  });
-
-  test("sets the learner's own daily time limit", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    await openAppearance(page);
 
     const limit = page.getByRole("combobox", { name: "Daily time limit" });
     await expect(limit).toHaveValue("none");

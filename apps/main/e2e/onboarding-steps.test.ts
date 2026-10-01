@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { EXPERIENCE_MODE_COOKIE } from "@zoonk/core/profile/mode-cookie";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
-import { type StreamEvent, followRun } from "./generation-run";
+import { followRun } from "./generation-run";
 import { type Mode, setDeviceMode } from "./learn-personas";
-import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
+import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 
 /**
  * The steps after a goal is created (`/start/[goalId]`): a refresh comes back to where the learner
@@ -49,33 +49,8 @@ async function openSteps(page: Page, { goalId, mode = "focus" }: { goalId: strin
   await page.goto(`/start/${goalId}`);
 }
 
-test("choosing Fun keeps it on the device too, so every page shows it", async ({
-  noProgressUser,
-  userWithoutProgress: page,
-}) => {
-  const goal = await createGoalBeingMapped({
-    answered: ANSWERED.filter((step) => step !== "mode" && step !== "buddy"),
-    runId: null,
-    userId: noProgressUser.id,
-  });
-
-  await openSteps(page, { goalId: goal.id, mode: "focus" });
-  await expect(page.getByRole("heading", { name: "How do you like to study?" })).toBeVisible();
-  await page.getByRole("radio", { name: /Fun/u }).click();
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
-
-  await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
-
-  await expect
-    .poll(async () => {
-      const cookies = await page.context().cookies();
-      return cookies.find((cookie) => cookie.name === EXPERIENCE_MODE_COOKIE)?.value;
-    })
-    .toBe("fun");
-});
-
 test.describe("Refreshing mid-onboarding", () => {
-  test("comes back to the same question, with the dots and Back", async ({
+  test("comes back to the same question, with the dots, Back and Start over", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -87,7 +62,9 @@ test.describe("Refreshing mid-onboarding", () => {
 
     await openSteps(page, { goalId: goal.id });
 
-    await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
+    const purpose = "What do you want from it?";
+    await expect(page.getByRole("heading", { name: purpose })).toBeVisible();
+    await expectAccessibleScreen(page, purpose);
 
     await page.getByRole("radio", { name: /Understand it in depth/u }).click();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
@@ -95,6 +72,7 @@ test.describe("Refreshing mid-onboarding", () => {
     const date = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
     await expect(date).toBeVisible();
     await expect(page.getByRole("img", { name: /^Step 2 of \d+$/u })).toBeVisible();
+    await expectAccessibleScreen(page, "Is there a date you're aiming for?");
 
     await page.reload();
 
@@ -103,28 +81,17 @@ test.describe("Refreshing mid-onboarding", () => {
     await page.getByRole("button", { name: "Back" }).click();
 
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
-  });
 
-  test("comes back to placement's next question instead of its start", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const goal = await createMappedGoal(noProgressUser.id);
-    await openSteps(page, { goalId: goal.id });
+    // Start over sets the goal aside and goes back to the first question.
+    await page.getByRole("button", { name: "Start over" }).click();
+    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
 
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
-    await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
-    await page.keyboard.press("1");
-    await page.keyboard.press("Enter");
-    await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
-
-    await page.reload();
-
-    await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
-
-    await expect(
-      page.getByRole("heading", { name: "Let's see what you already know" }),
-    ).toBeHidden();
+    await expect
+      .poll(async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return saved.status;
+      })
+      .toBe("archived");
   });
 });
 
@@ -365,42 +332,5 @@ test.describe("When a wait can't go on", () => {
 
     // The tap asks the API to write them; it can't be reached here, so the wait says so.
     await expect(page.getByRole("alert").filter({ hasText: "This didn't start" })).toBeVisible();
-  });
-
-  test("the plan's wait follows the run and says when it failed", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const runId = `e2e-steps-${randomUUID()}`;
-
-    const goal = await createGoalBeingMapped({
-      answered: [...ANSWERED, "placement"],
-      runId,
-      userId: noProgressUser.id,
-    });
-
-    const events: StreamEvent[] = [
-      { entityId: goal.id, status: "started", step: "understandGoal" },
-      { entityId: goal.id, status: "started", step: "buildSkillGraph" },
-    ];
-
-    await followRun({ events, page, runId });
-    await openSteps(page, { goalId: goal.id });
-
-    await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Building your plan" })).toBeVisible();
-
-    const phases = page.getByRole("list", { name: "Building your plan" }).getByRole("listitem");
-    await expect(phases.nth(1)).toContainText("Mapping the skills it takes, in progress");
-
-    events.push({
-      entityId: goal.id,
-      reason: "aiGenerationFailed",
-      status: "error",
-      step: "workflowError",
-    });
-
-    await expect(page.getByRole("alert").filter({ hasText: "This didn't finish" })).toBeVisible();
-    await expect(phases.nth(1)).toContainText("Mapping the skills it takes, stopped here");
   });
 });

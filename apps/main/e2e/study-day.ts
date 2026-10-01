@@ -80,6 +80,8 @@ type StudyDayOptions = {
   earlierStudyDay?: boolean;
   freshStart?: "newWeek" | "welcomeBack" | null;
   mode: Mode;
+  /** The capsules already played, so the session opens on its lesson. */
+  reviewDone?: boolean;
   /** False for a lesson still being written, so the session has to wait for it. */
   writtenLesson?: boolean;
 };
@@ -93,6 +95,7 @@ export async function createStudyDay({
   earlierStudyDay = false,
   freshStart = null,
   mode,
+  reviewDone = false,
   writtenLesson = true,
 }: StudyDayOptions) {
   const [user, content] = await Promise.all([
@@ -167,6 +170,7 @@ export async function createStudyDay({
       },
       position: 0,
       sessionId: session.id,
+      ...(reviewDone ? { status: "completed" as const } : {}),
     }),
     studySessionBlockFixture({
       canDo: LESSON_CAN_DO,

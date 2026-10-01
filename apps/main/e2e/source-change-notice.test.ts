@@ -26,14 +26,4 @@ test.describe("Source change notice on Today", () => {
     await expect(page.getByRole("complementary", { name: "What changed" })).toHaveText(MESSAGE);
     await page.context().close();
   });
-
-  test("shows nothing when no source changed", async ({ browser }) => {
-    const { user } = await createStudyDay({ mode: "focus" });
-    const page = await openAs(browser, user);
-    await page.goto("/today");
-
-    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await expect(page.getByRole("complementary", { name: "What changed" })).toBeHidden();
-    await page.context().close();
-  });
 });

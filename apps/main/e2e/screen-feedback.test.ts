@@ -5,11 +5,12 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { mockFeedbackSubmission } from "./feedback";
 import { type Page, expect, test } from "./fixtures";
-import { type Mode, asPersona, setDeviceMode } from "./learn-personas";
+import { type Mode, setDeviceMode } from "./learn-personas";
 
 /**
  * Votes and reports on AI content from the lesson player: the screen's menu, the light downvote
- * sheet, "Report a problem" and the quiet thumbs on the completion moment.
+ * sheet and "Report a problem". The completion moment's thumbs are voted in
+ * `library-lesson-player.test.ts`, and the plan's in `plan-tab.test.ts`.
  */
 
 async function openLesson(page: Page, { lessonId, mode }: { lessonId: string; mode: Mode }) {
@@ -28,54 +29,7 @@ async function openScreenMenu(page: Page) {
 }
 
 test.describe("Screen feedback", () => {
-  test("votes from the screen menu, and a downvote asks why with reasons and a comment", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const { lesson, steps } = await playableLessonFixture({ steps: ["explanation", "check"] });
-    const screen = { contentId: steps[0]!.id, userId: noProgressUser.id };
-    await openLesson(page, { lessonId: lesson.id, mode: "focus" });
-
-    await openScreenMenu(page);
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Helpful" }).click();
-    await expect.poll(() => findVote(screen)).toMatchObject({ vote: "up" });
-
-    await openScreenMenu(page);
-
-    await expect(
-      page.getByRole("menuitemcheckbox", { exact: true, name: "Helpful" }),
-    ).toBeChecked();
-
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).click();
-
-    const sheet = page.getByRole("dialog", { name: "What went wrong?" });
-    await expect(sheet.getByText("This screen is attached")).toBeVisible();
-    await sheet.getByRole("button", { name: "Hard to follow" }).click();
-
-    await expect(sheet.getByRole("button", { name: "Hard to follow" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-
-    await sheet.getByRole("textbox", { name: "Tell us more (optional)" }).fill("Too many ideas");
-    await sheet.getByRole("button", { name: "Send" }).click();
-    await expect(sheet).toBeHidden();
-
-    await expect
-      .poll(() => findVote(screen))
-      .toMatchObject({
-        comment: "Too many ideas",
-        contentKind: "step",
-        language: "en",
-        reasons: ["hardToFollow"],
-        vote: "down",
-      });
-
-    // The lesson goes on where it was.
-    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-  });
-
-  test("votes on a screen's simpler version and on its image, each on its own", async ({
+  test("votes on a screen, its simpler version and its image, each on its own, and keeps the vote", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -94,27 +48,73 @@ test.describe("Screen feedback", () => {
       ],
     });
 
-    const screenId = steps[0]!.id;
+    const screen = { contentId: steps[0]!.id, userId: noProgressUser.id };
 
     const simpler = await stepVariantFixture({
       content: { text: "Think of a blur instead of a dot." },
       kind: "simpler",
-      stepId: screenId,
+      stepId: screen.contentId,
     });
 
-    await openLesson(page, { lessonId: lesson.id, mode: "fun" });
+    await openLesson(page, { lessonId: lesson.id, mode: "focus" });
 
-    // The simpler version has its own menu, in its sheet.
+    const helpful = page.getByRole("menuitemcheckbox", { exact: true, name: "Helpful" });
+    const notHelpful = page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" });
+
+    await openScreenMenu(page);
+    await helpful.click();
+    await expect.poll(() => findVote(screen)).toMatchObject({ vote: "up" });
+
+    // The menu shows the vote, and still does the next time the lesson opens.
+    await openScreenMenu(page);
+    await expect(helpful).toBeChecked();
+    await page.keyboard.press("Escape");
+    await page.reload();
+    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+    await openScreenMenu(page);
+    await expect(helpful).toBeChecked();
+    await expect(notHelpful).not.toBeChecked();
+
+    // A downvote asks why, and replaces the vote rather than adding a second one.
+    await notHelpful.click();
+
+    const sheet = page.getByRole("dialog", { name: "What went wrong?" });
+    await expect(sheet.getByText("This screen is attached")).toBeVisible();
+    await sheet.getByRole("button", { name: "Hard to follow" }).click();
+
+    await expect(sheet.getByRole("button", { name: "Hard to follow" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    await sheet.getByRole("textbox", { name: "Tell us more (optional)" }).fill("Too many ideas");
+    await sheet.getByRole("button", { name: "Send" }).click();
+    await expect(sheet).toBeHidden();
+
+    const screenVote = {
+      comment: "Too many ideas",
+      contentKind: "step",
+      language: "en",
+      reasons: ["hardToFollow"],
+      vote: "down",
+    };
+
+    await expect
+      .poll(() => prisma.contentFeedback.findMany({ where: screen }))
+      .toMatchObject([screenVote]);
+
+    // The simpler version has its own menu, in its sheet; skipping "why" keeps its downvote.
     await page.getByRole("button", { name: "Simpler" }).click();
     const version = page.getByRole("dialog", { name: "Simpler" });
     await expect(version.getByText("Think of a blur instead of a dot.")).toBeVisible();
     await version.getByRole("button", { name: "Version options" }).click();
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).click();
+    await notHelpful.click();
     await page.getByRole("button", { name: "Skip" }).click();
+    await expect(sheet).toBeHidden();
 
     await expect
       .poll(() => findVote({ contentId: simpler.id, userId: noProgressUser.id }))
-      .toMatchObject({ contentKind: "stepVariant", vote: "down" });
+      .toMatchObject({ contentKind: "stepVariant", reasons: [], vote: "down" });
 
     await version.getByRole("button", { name: "Got it" }).click();
     await expect(version).toBeHidden();
@@ -132,27 +132,12 @@ test.describe("Screen feedback", () => {
       .poll(() => findVote({ contentId: image.id, userId: noProgressUser.id }))
       .toMatchObject({ contentKind: "mediaAsset", vote: "up" });
 
-    // Neither vote landed on the screen's own text.
-    await expect(findVote({ contentId: screenId, userId: noProgressUser.id })).resolves.toBeNull();
+    // Neither vote landed on the screen's own, and the lesson goes on where it was.
+    await expect(prisma.contentFeedback.findMany({ where: screen })).resolves.toMatchObject([
+      screenVote,
+    ]);
 
     await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-  });
-
-  test("skipping the sheet keeps the downvote", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const { lesson, steps } = await playableLessonFixture({ steps: ["explanation"] });
-    await openLesson(page, { lessonId: lesson.id, mode: "focus" });
-
-    await openScreenMenu(page);
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).click();
-    await page.getByRole("button", { name: "Skip" }).click();
-    await expect(page.getByRole("dialog", { name: "What went wrong?" })).toBeHidden();
-
-    await expect
-      .poll(() => findVote({ contentId: steps[0]!.id, userId: noProgressUser.id }))
-      .toMatchObject({ reasons: [], vote: "down" });
   });
 
   test("reports a problem with the screen attached", async ({
@@ -188,26 +173,6 @@ test.describe("Screen feedback", () => {
       email: noProgressUser.email,
       message: "The picture is upside down",
     });
-  });
-
-  test("thumbs on the completion moment vote on the lesson", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const { lesson } = await playableLessonFixture({ steps: ["explanation"] });
-    await openLesson(page, { lessonId: lesson.id, mode: "focus" });
-
-    await page.getByRole("button", { name: /^Continue/u }).click();
-    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-    await expect(page.getByText("Was this lesson helpful?")).toBeVisible();
-
-    const helpful = page.getByRole("button", { exact: true, name: "Helpful" });
-    await helpful.click();
-    await expect(helpful).toHaveAttribute("aria-pressed", "true");
-
-    await expect
-      .poll(() => findVote({ contentId: lesson.id, userId: noProgressUser.id }))
-      .toMatchObject({ vote: "up" });
   });
 });
 
@@ -265,7 +230,7 @@ async function createTutorAnswer({
   return question;
 }
 
-test.describe("Tutor and plan feedback", () => {
+test.describe("Tutor feedback", () => {
   test("thumbs under a tutor answer vote on it", async ({
     noProgressUser,
     userWithoutProgress: page,
@@ -289,40 +254,6 @@ test.describe("Tutor and plan feedback", () => {
     await expect
       .poll(() => findVote({ contentId: question.id, userId: noProgressUser.id }))
       .toMatchObject({ vote: "up" });
-  });
-
-  test("votes on the plan and a plan change", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
-      const plan = await prisma.plan.findUniqueOrThrow({
-        include: { changes: { where: { status: "applied" } } },
-        where: { goalId: user.goalId },
-      });
-
-      await page.goto("/plan");
-      await expect(page.getByText("Does this plan fit you?")).toBeVisible();
-
-      const steering = page.getByRole("region", { name: "How is it going?" });
-      await steering.getByRole("button", { exact: true, name: "Helpful" }).click();
-
-      await expect
-        .poll(() => findVote({ contentId: plan.id, userId: user.id }))
-        .toMatchObject({ vote: "up" });
-
-      // Changes are listed newest first; the vote goes on the latest one.
-      const changes = page.getByRole("region", { name: "Changes to your plan" });
-      await changes.getByRole("button", { exact: true, name: "Not helpful" }).first().click();
-      await page.getByRole("button", { name: "Skip" }).click();
-
-      await expect
-        .poll(() =>
-          prisma.contentFeedback.findFirst({
-            where: { contentKind: "planChange", userId: user.id },
-          }),
-        )
-        .toMatchObject({ vote: "down" });
-
-      expect(plan.changes.length).toBeGreaterThan(0);
-    });
   });
 });
 

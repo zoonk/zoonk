@@ -133,41 +133,16 @@ test.describe("Analytics", () => {
 
     await page.context().close();
   });
-
-  test("the player's hook and leaving mid-lesson carry Fun", async ({ browser }) => {
-    const [{ user }, { lesson }] = await Promise.all([
-      createStudyDay({ mode: "fun" }),
-      playableLessonFixture({ steps: ["hook", "check", "explanation"] }),
-    ]);
-
-    const page = await openAs(browser, user);
-    const sent = await capturePostHog(page);
-    await page.goto(`/learn/${lesson.id}`);
-
-    await page.getByRole("radio", { name: "No" }).click();
-    await page.getByRole("button", { name: /^See the answer/u }).click();
-    await expectSent(sent, "Hook Answered", { lesson_id: lesson.id, mode: "fun" });
-    await page.getByRole("button", { name: /^Continue/u }).click();
-
-    await page.getByRole("radio", { name: "The electron's exact path" }).click();
-    await page.getByRole("button", { name: /^Check/u }).click();
-    await expect(page.getByRole("status").filter({ hasText: /\S/u })).toBeVisible();
-    await page.getByRole("link", { name: "Close lesson" }).click();
-
-    await expectSent(sent, "Activity Abandoned", {
-      lesson_id: lesson.id,
-      mode: "fun",
-      screen: 2,
-      step_kind: "check",
-      wrong_in_a_row: 1,
-    });
-
-    await page.context().close();
-  });
 });
 
-test("switching to Fun sends Mode Switched, and later events carry Fun", async ({ browser }) => {
-  const { user } = await createStudyDay({ mode: "focus" });
+test("switching to Fun sends Mode Switched, and later events, the player's among them, carry Fun", async ({
+  browser,
+}) => {
+  const [{ user }, { lesson }] = await Promise.all([
+    createStudyDay({ mode: "focus" }),
+    playableLessonFixture({ steps: ["hook", "check", "explanation"] }),
+  ]);
+
   const page = await openAs(browser, user);
   const sent = await capturePostHog(page);
 
@@ -180,6 +155,28 @@ test("switching to Fun sends Mode Switched, and later events carry Fun", async (
 
   // Page views carry only the registered shared properties, so they show the switch reached them.
   await expectSent(sent, "$pageview", { $pathname: "/today", mode: "fun" });
+
+  // The player's hook, and leaving mid-lesson after a wrong answer.
+  await page.goto(`/learn/${lesson.id}`);
+
+  await page.getByRole("radio", { name: "No" }).click();
+  await page.getByRole("button", { name: /^See the answer/u }).click();
+  await expectSent(sent, "Hook Answered", { lesson_id: lesson.id, mode: "fun" });
+  await page.getByRole("button", { name: /^Continue/u }).click();
+
+  await page.getByRole("radio", { name: "The electron's exact path" }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await expect(page.getByRole("status").filter({ hasText: /\S/u })).toBeVisible();
+  await page.getByRole("link", { name: "Close lesson" }).click();
+
+  await expectSent(sent, "Activity Abandoned", {
+    lesson_id: lesson.id,
+    mode: "fun",
+    screen: 2,
+    step_kind: "check",
+    wrong_in_a_row: 1,
+  });
+
   await page.context().close();
 });
 

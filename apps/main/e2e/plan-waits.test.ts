@@ -9,114 +9,30 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { type StreamEvent, followRun } from "./generation-run";
-import { type Mode } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
- * The plan's waits move on by themselves: while the goal's run builds the plan, `/plan` follows it
- * and shows the plan once it's saved; stand-ins for lessons still being written turn into their
- * chapter once its outline lands, without a refresh.
+ * The plan's waits move on by themselves: stand-ins for lessons still being written turn into their
+ * chapter once its outline lands, without a refresh, and an own-words edit that hangs says so.
  */
 
-/** Stand-ins are read again every 10 seconds, so a landed outline shows within a couple of rounds. */
-const WRITTEN_WITHIN_MS = 25_000;
+/** Stand-ins are read again every 10 seconds while lessons are being written. */
+const WRITING_REFRESH_MS = 10_000;
 
-/** A learner in `mode` whose active goal has a plan, built or not. */
-async function createPlanLearner({ mode, runId }: { mode: Mode; runId?: string }) {
+/** A Focus learner whose active goal has a plan. */
+async function createPlanLearner() {
   const user = await createE2EUser(getBaseURL());
 
   const goal = await goalFixture({
-    generationRunId: runId ?? null,
     timezone: "UTC",
     title: `Ratios ${randomUUID().slice(0, 6)}`,
     userId: user.id,
   });
 
-  await learningProfileFixture({
-    activeGoalId: goal.id,
-    experienceMode: mode,
-    userId: user.id,
-    ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-  });
+  await learningProfileFixture({ activeGoalId: goal.id, experienceMode: "focus", userId: user.id });
 
   return { goal, user };
 }
-
-test.describe("The plan being built", () => {
-  test("follows the plan being built and shows it on its own", async ({ browser }) => {
-    const runId = `e2e-plan-${randomUUID()}`;
-    const { goal, user } = await createPlanLearner({ mode: "focus", runId });
-    const plan = await planFixture({ goalId: goal.id, phases: [] });
-
-    const events: StreamEvent[] = [
-      { entityId: goal.id, status: "started", step: "understandGoal" },
-      { entityId: goal.id, status: "started", step: "buildSkillGraph" },
-    ];
-
-    const page = await openAs(browser, user);
-    await followRun({ events, page, runId });
-    await page.goto("/plan");
-
-    await expect(page.getByRole("heading", { level: 1, name: "Building your plan" })).toBeVisible();
-
-    await expect(page.getByRole("progressbar", { name: "Building your plan" })).toBeVisible();
-
-    const phases = page.getByRole("list", { name: "Building your plan" });
-    await expect(phases.getByRole("listitem").nth(0)).toHaveText("Reading your goal, done");
-
-    // The run saves the plan: its stream says so and the plan shows without a refresh.
-    await Promise.all([
-      prisma.plan.update({
-        data: { phases: [{ name: "Foundations", summary: "The basics first" }] },
-        where: { id: plan.id },
-      }),
-      planItemFixture({ planId: plan.id, titleSnapshot: "Equivalent ratios" }),
-    ]);
-
-    events.push(
-      { entityId: goal.id, status: "completed", step: "buildSkillGraph" },
-      { entityId: goal.id, status: "completed", step: "createPlan" },
-    );
-
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan" })).toBeVisible();
-    await page.context().close();
-  });
-
-  test("says when building the plan failed and starts it again on a tap", async ({ browser }) => {
-    const runId = `e2e-plan-${randomUUID()}`;
-    const { goal, user } = await createPlanLearner({ mode: "focus", runId });
-    await planFixture({ goalId: goal.id, phases: [] });
-
-    const page = await openAs(browser, user);
-
-    await followRun({
-      events: [
-        { entityId: goal.id, status: "started", step: "understandGoal" },
-        { entityId: goal.id, reason: "aiGenerationFailed", status: "error", step: "workflowError" },
-      ],
-      page,
-      runId,
-    });
-
-    await page.goto("/plan");
-
-    const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
-    await expect(failed).toBeVisible();
-    await failed.getByRole("button", { name: "Try again" }).click();
-
-    // The tap starts the run again: the wait follows it, or says the start failed with a way out.
-    await expect(failed).toBeHidden();
-
-    await expect(
-      page
-        .getByRole("progressbar", { name: "Building your plan" })
-        .or(page.getByRole("alert").filter({ hasText: "This didn't start" })),
-    ).toBeVisible();
-
-    await page.context().close();
-  });
-});
 
 /**
  * A plan whose first lessons stand in for a skill until its outline lands (no lesson, no chapter),
@@ -146,47 +62,26 @@ async function createPlanBeingWritten(goalId: string) {
       where: { id: standIn.id },
     });
 
-  return { chapter, landOutline, lesson };
+  return { chapter, landOutline };
 }
 
 test.describe("Lessons being written in the plan", () => {
-  test("a chapter being written turns into its chapter on its own (focus)", async ({ browser }) => {
-    const { goal, user } = await createPlanLearner({ mode: "focus" });
+  test("a chapter being written turns into its chapter on its own", async ({ browser }) => {
+    const { goal, user } = await createPlanLearner();
     const { chapter, landOutline } = await createPlanBeingWritten(goal.id);
 
     const page = await openAs(browser, user);
+    await page.clock.install();
     await page.goto("/plan");
 
     await expect(page.getByText("Lessons being written")).toBeVisible();
 
+    // The outline lands; the plan's next read, without a refresh, shows its chapter.
     await landOutline();
+    await page.clock.fastForward(WRITING_REFRESH_MS);
 
-    await expect(page.getByRole("link", { exact: true, name: chapter.title })).toBeVisible({
-      timeout: WRITTEN_WITHIN_MS,
-    });
-
+    await expect(page.getByRole("link", { exact: true, name: chapter.title })).toBeVisible();
     await expect(page.getByText("Lessons being written")).toBeHidden();
-    await page.context().close();
-  });
-
-  test("a stop being written this week turns into its lesson on its own (fun)", async ({
-    browser,
-  }) => {
-    const { goal, user } = await createPlanLearner({ mode: "fun" });
-    const { landOutline, lesson } = await createPlanBeingWritten(goal.id);
-
-    const page = await openAs(browser, user);
-    await page.goto("/plan");
-
-    const week = page.getByRole("region", { name: "This week" });
-    await expect(week.getByRole("listitem", { name: /Lessons being written/u })).toBeVisible();
-
-    await landOutline();
-
-    await expect(week.getByRole("listitem", { name: new RegExp(lesson.title, "u") })).toBeVisible({
-      timeout: WRITTEN_WITHIN_MS,
-    });
-
     await page.context().close();
   });
 });

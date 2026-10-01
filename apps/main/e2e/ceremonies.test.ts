@@ -1,32 +1,11 @@
-import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { type Page, expect, test } from "./fixtures";
-import { createCheckpointLearner, playDuel } from "./fun-rewards-fixtures";
+import { createCheckpointLearner, playDuel, starShownAt } from "./fun-rewards-fixtures";
 import { openAs } from "./study-day";
 
-/**
- * Wins the session's boss with every answer right, then continues to the end of the session. The
- * boss opens from its session, as today's session opens it, so it continues back to it.
- */
-async function winBossAndContinue({
-  block,
-  page,
-}: {
-  block: { id: string; sessionId: string };
-  page: Page;
-}) {
-  await page.goto(`/checkpoint/${block.id}?session=${block.sessionId}`);
-  await page.getByRole("button", { name: /Take it on|Start/u }).click();
-  await playDuel(page);
-  await page.getByRole("link", { name: "Continue" }).click();
-  await expect(page).toHaveURL(/\/session$/u);
-}
-
-async function starShownAt(userId: string) {
-  const milestone = await prisma.milestone.findFirstOrThrow({
-    where: { key: "star", kind: "glasses", userId },
-  });
-
-  return milestone.shownAt;
+/** The boss as today's session opens it, so it continues back to the session. */
+function openSessionBoss(page: Page, block: { id: string; sessionId: string }) {
+  return page.goto(`/checkpoint/${block.id}?session=${block.sessionId}`);
 }
 
 test.describe("Ceremonies", () => {
@@ -36,7 +15,11 @@ test.describe("Ceremonies", () => {
     const { block, user } = await createCheckpointLearner({ mode: "fun" });
     const page = await openAs(browser, user);
 
-    await winBossAndContinue({ block, page });
+    await openSessionBoss(page, block);
+    await page.getByRole("button", { name: "Take it on" }).click();
+    await playDuel(page);
+    await page.getByRole("link", { name: "Continue" }).click();
+    await expect(page).toHaveURL(/\/session$/u);
 
     const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
     await expect(ceremony).toBeVisible();
@@ -53,32 +36,24 @@ test.describe("Ceremonies", () => {
     await page.context().close();
   });
 
-  test("Fun: 'Wear them' puts the new glasses on the buddy", async ({ browser }) => {
-    const { block, user } = await createCheckpointLearner({ mode: "fun" });
-    const page = await openAs(browser, user);
-
-    await winBossAndContinue({ block, page });
-
-    const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
-    await ceremony.getByRole("button", { name: "Wear them" }).click();
-    await expect(ceremony).toBeHidden();
-
-    await expect
-      .poll(async () => {
-        const profile = await prisma.userLearningProfile.findUnique({ where: { userId: user.id } });
-        return profile?.buddyGlasses;
-      })
-      .toBe("star");
-
-    await expect.poll(() => starShownAt(user.id)).not.toBeNull();
-    await page.context().close();
-  });
-
-  test("Focus: the same milestone lands quietly, with no overlay", async ({ browser }) => {
+  test("Focus: the same checkpoint and milestone land quietly, with no overlay", async ({
+    browser,
+  }) => {
     const { block, user } = await createCheckpointLearner({ mode: "focus" });
     const page = await openAs(browser, user);
 
-    await winBossAndContinue({ block, page });
+    await openSessionBoss(page, block);
+
+    await expect(page.getByText("Phase 1 checkpoint")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Basics" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The Trickster" })).toHaveCount(0);
+    await expectAccessibleScreen(page, "the checkpoint's intro");
+
+    await page.getByRole("button", { name: "Start" }).click();
+    await playDuel(page);
+    await expect(page.getByRole("heading", { name: "Checkpoint passed" })).toBeVisible();
+    await page.getByRole("link", { name: "Continue" }).click();
+    await expect(page).toHaveURL(/\/session$/u);
 
     await expect(page.getByText("First phase checkpoint passed")).toBeVisible();
     await expect(page.getByRole("dialog")).toHaveCount(0);

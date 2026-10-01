@@ -92,29 +92,29 @@ async function getOpenGraphImageUrl({ page, path }: { page: Page; path: string }
  * Metadata image routes include a build fingerprint, so callers need the full
  * path and query string when requesting the generated image from the test app.
  */
-async function getOpenGraphImagePath({ page, path }: { page: Page; path: string }) {
-  const url = await getOpenGraphImageUrl({ page, path });
+function toImageRequestPath(url: URL) {
   return `${url.pathname}${url.search}`;
 }
 
-test("uses the current app origin for the shared open graph image", async ({ page, request }) => {
-  const imageUrl = await getOpenGraphImageUrl({ page, path: "/" });
-
-  expect(imageUrl.origin).toBe(getExpectedMetadataBase());
-
-  await expectGeneratedOpenGraphImage({ path: `${imageUrl.pathname}${imageUrl.search}`, request });
-});
-
-test("localizes the shared open graph image for every locale", async ({ context, request }) => {
+test("localizes the shared open graph image for every locale, on the app's origin", async ({
+  context,
+  request,
+}) => {
   const pagePaths = ["/", "/de", "/es", "/fr", "/pt"];
   const pages = await Promise.all(pagePaths.map(() => context.newPage()));
 
-  const imagePaths = await Promise.all(
-    pagePaths.map((path, index) => getOpenGraphImagePath({ page: pages[index]!, path })),
+  const imageUrls = await Promise.all(
+    pagePaths.map((path, index) => getOpenGraphImageUrl({ page: pages[index]!, path })),
+  );
+
+  expect(imageUrls.map((url) => url.origin)).toStrictEqual(
+    pagePaths.map(() => getExpectedMetadataBase()),
   );
 
   const images = await Promise.all(
-    imagePaths.map((path) => expectGeneratedOpenGraphImage({ path, request })),
+    imageUrls.map((url) =>
+      expectGeneratedOpenGraphImage({ path: toImageRequestPath(url), request }),
+    ),
   );
 
   const imageHashes = new Set(images.map((image) => getImageHash(image)));
@@ -152,13 +152,13 @@ test("generates open graph images for course, chapter, and lesson pages", async 
   const chapterPath = `${coursePath}/ch/${chapter.slug}`;
   const lessonPath = `${chapterPath}/l/${lesson.slug}`;
 
-  const courseImagePath = await getOpenGraphImagePath({ page, path: coursePath });
-  const chapterImagePath = await getOpenGraphImagePath({ page, path: chapterPath });
-  const lessonImagePath = await getOpenGraphImagePath({ page, path: lessonPath });
+  const courseImageUrl = await getOpenGraphImageUrl({ page, path: coursePath });
+  const chapterImageUrl = await getOpenGraphImageUrl({ page, path: chapterPath });
+  const lessonImageUrl = await getOpenGraphImageUrl({ page, path: lessonPath });
 
-  await Promise.all([
-    expectGeneratedOpenGraphImage({ path: courseImagePath, request }),
-    expectGeneratedOpenGraphImage({ path: chapterImagePath, request }),
-    expectGeneratedOpenGraphImage({ path: lessonImagePath, request }),
-  ]);
+  await Promise.all(
+    [courseImageUrl, chapterImageUrl, lessonImageUrl].map((url) =>
+      expectGeneratedOpenGraphImage({ path: toImageRequestPath(url), request }),
+    ),
+  );
 });

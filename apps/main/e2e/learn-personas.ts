@@ -5,9 +5,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EPersona, createE2EPersona } from "@zoonk/e2e/fixtures/personas";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 
-export const MODES = ["focus", "fun"] as const;
-
-export type Mode = (typeof MODES)[number];
+export type Mode = "focus" | "fun";
 
 type PersonaName = Parameters<typeof createE2EPersona>[1]["persona"];
 

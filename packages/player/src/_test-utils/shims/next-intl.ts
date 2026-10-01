@@ -169,6 +169,8 @@ export function useFormatter() {
   const locale = useLocale();
 
   return {
+    dateTime: (value: Date | number, options?: Intl.DateTimeFormatOptions) =>
+      new Intl.DateTimeFormat(locale, options).format(value),
     number: (value: number | bigint, options?: Intl.NumberFormatOptions) =>
       new Intl.NumberFormat(locale, options).format(value),
   };

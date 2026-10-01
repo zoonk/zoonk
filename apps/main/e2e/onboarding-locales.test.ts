@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 /** `/start` in every interface language: the question and the examples in that language. */
 const LOCALES = [
@@ -9,14 +9,17 @@ const LOCALES = [
   { heading: "Was möchtest du erreichen?", path: "/de/start" },
 ] as const;
 
-for (const { heading, path } of LOCALES) {
-  test.describe(path, () => {
-    test("asks for the goal in its language", async ({ page }) => {
-      await page.goto(path);
+async function expectGoalQuestion(page: Page, { heading, path }: (typeof LOCALES)[number]) {
+  await page.goto(path);
 
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
-      await expect(page.getByRole("textbox")).toBeVisible();
-      await expect(page.getByRole("region", { name: /./u }).getByRole("listitem")).toHaveCount(5);
-    });
-  });
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
+  await expect(page.getByRole("textbox")).toBeVisible();
+  await expect(page.getByRole("region", { name: /./u }).getByRole("listitem")).toHaveCount(5);
 }
+
+test("/start asks for the goal in each interface language", async ({ page }) => {
+  for (const locale of LOCALES) {
+    // oxlint-disable-next-line no-await-in-loop -- One page visits each language in turn.
+    await expectGoalQuestion(page, locale);
+  }
+});

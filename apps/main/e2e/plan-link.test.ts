@@ -1,10 +1,10 @@
 import { prisma } from "@zoonk/db";
-import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
-import { createE2EPersona } from "@zoonk/e2e/fixtures/personas";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { z } from "zod";
 import { expect, test } from "./fixtures";
-import { asPersona, expectMode } from "./learn-personas";
+import { expectMode, setDeviceMode } from "./learn-personas";
 
 /** Only the size of a plan's skill graph matters here. */
 const graphSchema = z.object({ skills: z.array(z.unknown()) });
@@ -13,16 +13,24 @@ function skillCount(graph: unknown) {
   return graphSchema.parse(graph).skills.length;
 }
 
+/** A shared seeded persona's plan, which these tests only read through its link. */
+async function findSeededPlan(email: string) {
+  return prisma.plan.findFirstOrThrow({
+    include: { goal: true },
+    where: { goal: { user: { email } } },
+  });
+}
+
 /**
  * A plan's link opened by someone else: the subject and the plan's shape, never the owner's name
- * or progress, noindex, and a way to start their own plan from it. The owner lands on their plan.
+ * or progress, noindex, and a way to start their own plan from it. The owner landing on their plan
+ * is in plan-tab.test.ts, after sharing it.
  */
 test.describe("Plan links", () => {
   test("visitors see the plan's shape without the owner, and onboarding starts from the plan", async ({
     page,
   }) => {
-    const owner = await createE2EPersona(getBaseURL(), { persona: "exam" });
-    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: owner.goalId } });
+    const plan = await findSeededPlan("v2-exam@zoonk.test");
 
     await page.goto(`/plan-link/${plan.id}`);
 
@@ -39,6 +47,8 @@ test.describe("Plan links", () => {
         ),
       )
       .toContain("noindex");
+
+    await expectAccessibleScreen(page, "a shared plan");
 
     // Onboarding reads the subject the way it reads any typed goal; the stored understanding skips the AI.
     await goalUnderstandingFixture({
@@ -62,41 +72,38 @@ test.describe("Plan links", () => {
       where: { goalId },
     });
 
-    expect(copy.goal.userId).not.toBe(owner.id);
+    expect(copy.goal.userId).not.toBe(plan.goal.userId);
     expect(skillCount(copy.graph)).toBeGreaterThan(0);
     expect(skillCount(copy.graph)).toBeLessThanOrEqual(skillCount(plan.graph));
   });
 
-  test("a signed-in learner starts their own plan from the link", async ({ browser }) => {
-    const owner = await createE2EPersona(getBaseURL(), { persona: "hugeGoal" });
-    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: owner.goalId } });
+  test("a signed-in learner starts their own plan from the link", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [plan] = await Promise.all([
+      findSeededPlan("v2-learn@zoonk.test"),
+      learningProfileFixture({
+        birthMonth: 3,
+        birthYear: 1995,
+        experienceMode: "focus",
+        userId: noProgressUser.id,
+      }),
+      setDeviceMode(page.context(), "focus"),
+    ]);
 
-    await asPersona(browser, { mode: "focus", persona: "explain" }, async ({ page, user }) => {
-      await page.goto(`/plan-link/${plan.id}`);
+    await page.goto(`/plan-link/${plan.id}`);
 
-      await page.getByLabel("How much time a day?").selectOption("30");
-      await page.getByRole("button", { name: "Start from this plan" }).click();
+    await page.getByLabel("How much time a day?").selectOption("30");
+    await page.getByRole("button", { name: "Start from this plan" }).click();
 
-      await expect(page).toHaveURL(/\/plan$/u);
-      await expectMode(page, "focus");
+    await expect(page).toHaveURL(/\/plan$/u);
+    await expectMode(page, "focus");
 
-      await expect
-        .poll(async () => prisma.goal.count({ where: { dailyMinutes: 30, userId: user.id } }))
-        .toBe(1);
-    });
-  });
-
-  test("the owner opening their own link lands on their plan", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
-
-      await page.goto(`/plan-link/${plan.id}`);
-
-      await expect(page).toHaveURL(/\/plan$/u);
-      await expectMode(page, "fun");
-
-      // Fun calls the plan the Route; Focus names it by its date.
-      await expect(page.getByRole("heading", { level: 1, name: "Route" })).toBeVisible();
-    });
+    await expect
+      .poll(async () =>
+        prisma.goal.count({ where: { dailyMinutes: 30, userId: noProgressUser.id } }),
+      )
+      .toBe(1);
   });
 });

@@ -1,4 +1,4 @@
-import { type APIResponse, type BrowserContext } from "@playwright/test";
+import { type APIResponse, type BrowserContext, type Page } from "@playwright/test";
 import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "@zoonk/core/auth/ott/state";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
@@ -33,17 +33,34 @@ function getRequiredSearchParam({ name, url }: { name: string; url: string }): s
 }
 
 /**
- * Reads the single intercepted central-auth URL after Playwright has confirmed
- * that the login page made exactly one auth request.
+ * Opens a login page and reads the central-auth URL it went to, with central auth stood in for, and
+ * checks the login state in its callback is the one `/login` bound to this browser's cookie.
  */
-function getInterceptedAuthUrl(authUrls: string[]): string {
-  const authUrl = authUrls.at(0);
+async function startLogin({
+  authUrls,
+  context,
+  page,
+  path,
+}: {
+  authUrls: string[];
+  context: BrowserContext;
+  page: Page;
+  path: string;
+}) {
+  const before = authUrls.length;
 
-  if (!authUrl) {
-    throw new Error("Expected login to request the central auth URL");
-  }
+  await page.goto(path);
+  await expect.poll(() => authUrls.length).toBe(before + 1);
 
-  return authUrl;
+  const authUrl = authUrls.at(-1) ?? "";
+  const callbackUrl = getRequiredSearchParam({ name: "redirectTo", url: authUrl });
+  const state = getRequiredSearchParam({ name: "state", url: callbackUrl });
+  const cookies = await context.cookies(getBaseURL());
+  const stateCookie = cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE);
+
+  expect(stateCookie?.value).toBe(state);
+
+  return { authUrl: new URL(authUrl), callbackUrl: new URL(callbackUrl) };
 }
 
 /**
@@ -78,26 +95,15 @@ function expectAuthErrorRedirect(response: APIResponse): void {
 }
 
 test.describe("Auth Callback", () => {
-  test("passes the current locale to central auth", async ({ page }) => {
+  test("starts login in the page's language with a state-bound return path, never an unsafe one", async ({
+    context,
+    page,
+  }) => {
     const authUrls: string[] = [];
+    const nextPath = "/b/ai/c/course/ch/chapter/l/lesson";
+    const unsafeNextPath = String.raw`/\\evil.example/path`;
 
-    await page.route("**/auth/login**", async (route) => {
-      authUrls.push(route.request().url());
-      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
-    });
-
-    await page.goto("/pt/login");
-    await expect.poll(() => authUrls.length).toBe(1);
-
-    const authUrl = getInterceptedAuthUrl(authUrls);
-
-    expect(new URL(authUrl).searchParams.get("locale")).toBe("pt");
-  });
-
-  test("starts login when randomUUID is unavailable", async ({ context, page }) => {
-    const baseURL = getBaseURL();
-    const authUrls: string[] = [];
-
+    // The login state comes from `getRandomValues`, so it starts where `randomUUID` is missing.
     await page.addInitScript(() => {
       Object.defineProperty(globalThis.crypto, "randomUUID", { value: undefined });
     });
@@ -107,65 +113,27 @@ test.describe("Auth Callback", () => {
       await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
     });
 
-    await page.goto("/login");
-    await expect.poll(() => authUrls.length).toBe(1);
+    const localized = await startLogin({ authUrls, context, page, path: "/pt/login" });
+    expect(localized.authUrl.searchParams.get("locale")).toBe("pt");
 
-    const authUrl = getInterceptedAuthUrl(authUrls);
-    const callbackUrl = getRequiredSearchParam({ name: "redirectTo", url: authUrl });
-    const state = getRequiredSearchParam({ name: "state", url: callbackUrl });
-    const cookies = await context.cookies(baseURL);
-    const stateCookie = cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE);
-
-    expect(stateCookie?.value).toBe(state);
-  });
-
-  test("starts login with a state-bound return path", async ({ context, page }) => {
-    const baseURL = getBaseURL();
-    const authUrls: string[] = [];
-    const nextPath = "/b/ai/c/course/ch/chapter/l/lesson";
-
-    await page.route("**/auth/login**", async (route) => {
-      authUrls.push(route.request().url());
-      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
+    const returning = await startLogin({
+      authUrls,
+      context,
+      page,
+      path: `/login?next=${encodeURIComponent(nextPath)}`,
     });
 
-    await page.goto(`/login?next=${encodeURIComponent(nextPath)}`);
-    await expect.poll(() => authUrls.length).toBe(1);
+    expect(returning.callbackUrl.searchParams.get("next")).toBe(nextPath);
 
-    const authUrl = getInterceptedAuthUrl(authUrls);
-    const callbackUrl = getRequiredSearchParam({ name: "redirectTo", url: authUrl });
-    const state = getRequiredSearchParam({ name: "state", url: callbackUrl });
-    const cookies = await context.cookies(baseURL);
-    const stateCookie = cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE);
-
-    expect(new URL(callbackUrl).searchParams.get("next")).toBe(nextPath);
-    expect(stateCookie?.value).toBe(state);
-  });
-
-  test("drops backslash-based network-path return targets when starting login", async ({
-    context,
-    page,
-  }) => {
-    const baseURL = getBaseURL();
-    const authUrls: string[] = [];
-    const unsafeNextPath = String.raw`/\\evil.example/path`;
-
-    await page.route("**/auth/login**", async (route) => {
-      authUrls.push(route.request().url());
-      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
+    // A backslash-based network-path return target is dropped.
+    const unsafe = await startLogin({
+      authUrls,
+      context,
+      page,
+      path: `/login?next=${encodeURIComponent(unsafeNextPath)}`,
     });
 
-    await page.goto(`/login?next=${encodeURIComponent(unsafeNextPath)}`);
-    await expect.poll(() => authUrls.length).toBe(1);
-
-    const authUrl = getInterceptedAuthUrl(authUrls);
-    const callbackUrl = getRequiredSearchParam({ name: "redirectTo", url: authUrl });
-    const state = getRequiredSearchParam({ name: "state", url: callbackUrl });
-    const cookies = await context.cookies(baseURL);
-    const stateCookie = cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE);
-
-    expect(new URL(callbackUrl).searchParams.get("next")).toBeNull();
-    expect(stateCookie?.value).toBe(state);
+    expect(unsafe.callbackUrl.searchParams.get("next")).toBeNull();
   });
 
   test("signs in on a valid token and opens the learner's home", async ({ browser }) => {
@@ -184,9 +152,8 @@ test.describe("Auth Callback", () => {
     // Home sends a learner without a goal to Today, which asks them to start one.
     await page.waitForURL(/\/start$/u);
 
-    await page.goto("/courses");
-    await page.getByRole("button", { name: /user menu/iu }).click();
-    await expect(page.getByText(/logout/iu)).toBeVisible();
+    const session = await page.request.get("/api/auth/get-session");
+    expect(await session.json()).toMatchObject({ user: { email: user.email } });
 
     await ctx.close();
   });

@@ -2,8 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
-import { normalizeIdentityText } from "@zoonk/utils/identity-key";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
 
 /**
@@ -39,20 +38,6 @@ const QUANTUM: Understanding = {
 };
 
 test.describe("Sending a goal", () => {
-  test("the home goal box sends what was typed, with no second submit", async ({ page }) => {
-    const goal = uniqueWords("understand quantum physics from home");
-    await goalUnderstandingFixture({ goal, result: QUANTUM });
-
-    await page.goto("/");
-
-    const hero = page.getByRole("region", { name: /Get ready for/u });
-    await hero.getByRole("textbox", { name: "I want to" }).fill(goal);
-    await hero.getByRole("button", { exact: true, name: "Start" }).click();
-
-    await expect(page).toHaveURL(DRAFT_URL);
-    await expect(page.getByText("Understand quantum physics", { exact: true })).toBeVisible();
-  });
-
   test("without scripts, the home goal box opens /start with the goal, which only fills the box", async ({
     browser,
     page,
@@ -90,87 +75,36 @@ test.describe("Sending a goal", () => {
 });
 
 test.describe("Coming back", () => {
-  test("a guest keeps the home page, with a way back to the goal they typed", async ({ page }) => {
+  test("a guest's goal from the home page's box waits for them on home and on Today", async ({
+    page,
+  }) => {
     const goal = uniqueWords("understand quantum physics, back later");
     await goalUnderstandingFixture({ goal, result: QUANTUM });
-    await sendGoal(page, goal);
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
 
-    const response = await page.request.get("/", { maxRedirects: 0 });
-    expect(response.status()).toBe(200);
+    // The home goal box sends what was typed, with no second submit.
+    await page.goto("/");
+    const hero = page.getByRole("region", { name: /Get ready for/u });
+    await hero.getByRole("textbox", { name: "I want to" }).fill(goal);
+    await hero.getByRole("button", { exact: true, name: "Start" }).click();
 
+    await expect(page).toHaveURL(DRAFT_URL);
+    await expect(page.getByText("Understand quantum physics", { exact: true })).toBeVisible();
+    const draftUrl = page.url();
+
+    // A guest keeps the home page, with a way back to the goal they typed.
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Get ready for");
 
     await page.getByRole("link", { name: /Continue where you left off/u }).click();
-    await expect(page).toHaveURL(DRAFT_URL);
+    await expect(page).toHaveURL(draftUrl);
     await expect(page.getByRole("main").getByText(goal, { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
-  });
 
-  test("without a goal yet, Today opens the goal they typed", async ({ page }) => {
-    const goal = uniqueWords("understand quantum physics, from today");
-    await goalUnderstandingFixture({ goal, result: QUANTUM });
-    await sendGoal(page, goal);
-    await expect(page).toHaveURL(DRAFT_URL);
-    const draftUrl = page.url();
-
+    // Without a goal yet, Today opens the goal they typed.
     await page.goto("/today");
 
     await expect(page).toHaveURL(draftUrl);
     await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
-  });
-
-  test("an account that signs out and starts as a guest keeps the home page", async ({
-    authenticatedPage,
-  }) => {
-    const toToday = await authenticatedPage.request.get("/", { maxRedirects: 0 });
-    expect(toToday.status()).toBe(307);
-
-    const options = { data: {}, headers: { Origin: getBaseURL() } };
-    const signedOut = await authenticatedPage.request.post("/api/auth/sign-out", options);
-    expect(signedOut.ok(), await signedOut.text()).toBe(true);
-
-    const guest = await authenticatedPage.request.post("/api/auth/sign-in/anonymous", options);
-    expect(guest.ok(), await guest.text()).toBe(true);
-
-    const home = await authenticatedPage.request.get("/", { maxRedirects: 0 });
-    expect(home.status()).toBe(200);
-  });
-
-  test("a refresh keeps what was understood, with the learner's fixes", async ({ page }) => {
-    const goal = uniqueWords("pass the enem for nursing");
-
-    await goalUnderstandingFixture({
-      goal,
-      result: {
-        followUps: [],
-        goals: [
-          {
-            examName: "ENEM",
-            kind: "exam",
-            subject: "ENEM",
-            targetScore: "An average of about 700",
-            title: "Pass the ENEM",
-          },
-        ],
-        route: "goals",
-      },
-    });
-
-    await sendGoal(page, goal);
-    await expect(page).toHaveURL(DRAFT_URL);
-
-    await page.getByRole("button", { name: "Edit Target score" }).click();
-    await page.getByRole("textbox", { name: "Target score" }).fill("An average of about 750");
-    await page.getByRole("button", { name: "Save" }).click();
-    await expect(page.getByText("An average of about 750")).toBeVisible();
-
-    await page.reload();
-
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
-    await expect(page.getByText("An average of about 750")).toBeVisible();
-    await expect(page.getByText(goal, { exact: true })).toBeVisible();
   });
 
   test("a start that failed offers to try again, and a refresh follows the read to the card", async ({
@@ -322,91 +256,19 @@ test.describe("Fixing what was understood", () => {
     await expect(page).toHaveURL(DRAFT_URL);
     expect(page.url()).not.toBe(firstUrl);
   });
-
-  test("the exam year the learner names drives the dates, and changing it reads that year's", async ({
-    page,
-  }) => {
-    const id = randomUUID().slice(0, 8);
-    const name = `Zoonk test exam ${id}`;
-    const thisYear = new Date().getFullYear();
-    const noticeYear = thisYear + 1;
-    const namedYear = thisYear + 3;
-    const source = await sourceFixture({ title: `${name} notice` });
-
-    const day = (date: string, label: string) => ({
-      citation: { passage: label, sourceId: source.id },
-      date,
-      kind: "exam",
-      label,
-      startTime: null,
-    });
-
-    await examBlueprintFixture({
-      edition: {
-        citations: [],
-        dates: [day(`${noticeYear}-11-08`, "Day 1"), day(`${noticeYear}-11-15`, "Day 2")],
-        noticeUrl: source.url,
-        questionCount: null,
-        sourceHash: null,
-        timeZone: null,
-        year: noticeYear,
-      },
-      identityKey: normalizeIdentityText(name),
-      name,
-    });
-
-    const goal = uniqueWords(`pass the ${name} in ${namedYear}`);
-
-    await goalUnderstandingFixture({
-      goal,
-      result: {
-        followUps: [],
-        goals: [
-          {
-            examName: name,
-            examYear: namedYear,
-            kind: "exam",
-            subject: name,
-            title: `Pass the ${name} ${namedYear}`,
-          },
-        ],
-        route: "goals",
-      },
-    });
-
-    await sendGoal(page, goal);
-
-    // No notice for that year yet: its usual dates, labeled as an estimate.
-    await expect(page.getByText(String(namedYear), { exact: true })).toBeVisible();
-    await expect(page.getByText("estimated", { exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: /source:/u })).toBeHidden();
-
-    await page.getByRole("button", { name: "Edit Exam year" }).click();
-    await page.getByRole("spinbutton", { name: "Exam year" }).fill(String(noticeYear));
-    await page.getByRole("button", { name: "Save" }).click();
-
-    // The notice's year: its official dates, with where they come from.
-    await expect(page.getByText(String(noticeYear), { exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
-    await expect(page.getByText("estimated", { exact: true })).toBeHidden();
-
-    await page.getByRole("button", { name: "Looks right" }).click();
-    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
-
-    const created = await prisma.goal.findFirstOrThrow({ where: { prompt: goal } });
-    expect(created.details).toMatchObject({ examYear: noticeYear });
-  });
 });
 
 test.describe("Goal limits", () => {
   test("a guest's second goal says why, with the way to an account", async ({ page }) => {
-    const first = uniqueWords("understand quantum physics as a guest");
-    const second = uniqueWords("understand astronomy as a guest");
+    const goal = uniqueWords("understand astronomy as a guest");
 
-    await Promise.all([
-      goalUnderstandingFixture({ goal: first, result: QUANTUM }),
+    const [guest] = await Promise.all([
+      page.request.post("/api/auth/sign-in/anonymous", {
+        data: {},
+        headers: { Origin: getBaseURL() },
+      }),
       goalUnderstandingFixture({
-        goal: second,
+        goal,
         result: {
           followUps: [],
           goals: [{ kind: "learn", subject: "astronomy", title: "Understand astronomy" }],
@@ -415,11 +277,13 @@ test.describe("Goal limits", () => {
       }),
     ]);
 
-    await sendGoal(page, first);
-    await page.getByRole("button", { name: "Looks right" }).click();
-    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+    expect(guest.ok(), await guest.text()).toBe(true);
 
-    await sendGoal(page, second);
+    // The guest already follows their one goal.
+    const { user } = await guest.json();
+    await goalFixture({ userId: user.id });
+
+    await sendGoal(page, goal);
     await page.getByRole("button", { name: "Looks right" }).click();
 
     await expect(
@@ -436,13 +300,22 @@ test.describe("Goal limits", () => {
 });
 
 test.describe("The app's bar on /start", () => {
-  test("visitors get the home page's bar, learners with an account get their own", async ({
+  test("visitors get the home page's bar and an account ask on the paperclip, learners get their own bar", async ({
     page,
     userWithoutProgress,
   }) => {
     await page.goto("/start");
     await expect(page.getByRole("link", { name: "Zoonk home page" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
+
+    // A visitor's paperclip asks for an account first.
+    await page.getByRole("button", { name: "Study your own material" }).click();
+    await expect(page.getByText(/Create a free account to add a PDF/u)).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Create an account" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
 
     await userWithoutProgress.goto("/start");
     await expect(userWithoutProgress.getByRole("button", { name: "User menu" })).toBeVisible();

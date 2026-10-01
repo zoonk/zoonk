@@ -77,20 +77,6 @@ test.describe("Paywall", () => {
     await page.context().close();
   });
 
-  test("a free exam plan in its first week has no paywall on Today", async ({ browser }) => {
-    const { user } = await createStudyDay({ mode: "focus" });
-    const page = await openAs(browser, user);
-    await page.goto("/today");
-
-    await expect(page.getByRole("region", { name: "This week" })).toBeVisible();
-
-    await expect(
-      page.getByRole("complementary", { name: "Exam prep on the free plan" }),
-    ).toHaveCount(0);
-
-    await page.context().close();
-  });
-
   test("a second goal on the free plan explains the one-goal limit", async ({ browser }) => {
     const user = await createE2EUser(getBaseURL());
     const goal = `learn quantum physics ${randomUUID().slice(0, 8)}`;

@@ -1,4 +1,5 @@
 import { type Locator, type Page } from "@playwright/test";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
@@ -24,31 +25,18 @@ async function selectLanguage({
 }
 
 test.describe("Language settings page", () => {
-  test("displays language selector with current locale", async ({ page }) => {
+  test("switches the UI through every language and drops the prefix back in English", async ({
+    page,
+  }) => {
     await page.goto("/language");
 
     await expect(page.getByRole("heading", { level: 1, name: /^language$/iu })).toBeVisible();
 
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-    await expect(selector).toBeVisible();
-    await expect(selector).toHaveValue("en");
-  });
+    const english = page.getByRole("combobox", { name: /update language/iu });
+    await expect(english).toHaveValue("en");
+    await expectAccessibleScreen(page, "the language settings");
 
-  test("switches UI to Spanish when selected", async ({ page }) => {
-    await page.goto("/language");
-
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/es/language", locale: "es", page, selector });
-    await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
-  });
-
-  test("switches UI to Portuguese when selected", async ({ page }) => {
-    await page.goto("/language");
-
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/pt/language", locale: "pt", page, selector });
+    await selectLanguage({ expectedPath: "/pt/language", locale: "pt", page, selector: english });
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
 
     await expect(
@@ -57,36 +45,36 @@ test.describe("Language settings page", () => {
         name: /escolha o idioma do app que você prefere neste dispositivo/iu,
       }),
     ).toBeVisible();
-  });
 
-  test("switches UI to French when selected", async ({ page }) => {
-    await page.goto("/language");
+    await selectLanguage({
+      expectedPath: "/fr/language",
+      locale: "fr",
+      page,
+      selector: page.getByRole("combobox", { name: /alterar idioma/iu }),
+    });
 
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/fr/language", locale: "fr", page, selector });
     await expect(page.getByRole("heading", { level: 1, name: /^langue$/iu })).toBeVisible();
-  });
 
-  test("switches UI to German when selected", async ({ page }) => {
-    await page.goto("/language");
+    await selectLanguage({
+      expectedPath: "/de/language",
+      locale: "de",
+      page,
+      selector: page.getByRole("combobox", { name: /changer la langue/iu }),
+    });
 
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/de/language", locale: "de", page, selector });
     await expect(page.getByRole("heading", { level: 1, name: /^sprache$/iu })).toBeVisible();
-  });
 
-  test("removes the prefix when switching back to English", async ({ page }) => {
-    await setLocale(page, "pt");
-    await page.goto("/language");
+    await selectLanguage({
+      expectedPath: "/language",
+      locale: "en",
+      page,
+      selector: page.getByRole("combobox", { name: /sprache ändern/iu }),
+    });
 
-    const selector = page.getByRole("combobox", { name: /alterar idioma/iu });
-    await selectLanguage({ expectedPath: "/language", locale: "en", page, selector });
     await expect(page.getByRole("heading", { level: 1, name: /^language$/iu })).toBeVisible();
   });
 
-  test("renders French privacy policy", async ({ page }) => {
+  test("renders the French privacy policy and the German terms of service", async ({ page }) => {
     await setLocale(page, "fr");
     await page.goto("/privacy");
 
@@ -95,9 +83,9 @@ test.describe("Language settings page", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /^politique de confidentialité$/iu }),
     ).toBeVisible();
-  });
 
-  test("renders German terms of service", async ({ page }) => {
+    await expectAccessibleScreen(page, "the privacy policy");
+
     await setLocale(page, "de");
     await page.goto("/terms");
 
@@ -106,6 +94,8 @@ test.describe("Language settings page", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /^nutzungsbedingungen$/iu }),
     ).toBeVisible();
+
+    await expectAccessibleScreen(page, "the terms of service");
   });
 });
 
@@ -120,6 +110,7 @@ test.describe("Language settings in Fun", () => {
 
     await page.goto("/language");
     await expectMode(page, "fun");
+    await expectAccessibleScreen(page, "the Fun language settings");
 
     const selector = page.getByRole("combobox", { name: /update language/iu });
 

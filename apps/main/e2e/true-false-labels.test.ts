@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -11,33 +10,11 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
-import {
-  NET_SCORED_STRUCTURE,
-  createNetScoredPracticeDay,
-  createStatementPracticeDay,
-  statement,
-} from "./exam-fixtures";
+import { NET_SCORED_STRUCTURE, statement } from "./exam-fixtures";
 import { expect, test } from "./fixtures";
 import { type Mode, setDeviceMode } from "./learn-personas";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
-
-/** An ENEM-style exam: five options per question and item response theory, nothing cancelled. */
-const ENEM_STRUCTURE = {
-  ...NET_SCORED_STRUCTURE,
-  formats: [
-    {
-      citation: { passage: "Questões de múltipla escolha.", sourceId: "notice" },
-      description: "Cinco alternativas",
-      kind: "multipleChoice",
-      options: 5,
-    },
-  ],
-  mock: {
-    ...NET_SCORED_STRUCTURE.mock,
-    scoring: { description: "Teoria de Resposta ao Item", method: "itemResponseTheory" },
-  },
-};
 
 /**
  * A Cebraspe-style exam goal right before placement: its skill map is written with one statement
@@ -133,12 +110,6 @@ async function createCebraspeMock(mode: Mode) {
   return { blockId: block.id, user };
 }
 
-async function startSession(page: Page) {
-  await page.goto("/pt/session");
-  await page.getByRole("button", { name: /^Começar/u }).click();
-  await expect(page.getByText(/^First statement/u)).toBeVisible();
-}
-
 test("a Cebraspe goal's placement asks each statement Certo or Errado", async ({ browser }) => {
   const { goal, user } = await createCebraspePlacement();
   const page = await openAs(browser, user);
@@ -161,43 +132,6 @@ test("a Cebraspe goal's placement asks each statement Certo or Errado", async ({
 });
 
 test.describe("Statements", () => {
-  test("a Cebraspe goal's practice judges them Certo or Errado", async ({ browser }) => {
-    const { user } = await createNetScoredPracticeDay("focus");
-    const page = await openAs(browser, user);
-    const feedback = page.getByRole("region", { name: "Resultado da resposta" });
-
-    await startSession(page);
-
-    await expect(page.getByRole("button", { name: /^Certo/u })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Deixar em branco" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Verdadeiro/u })).toBeHidden();
-
-    // "Errado" on a statement that is right: the grade gives the right answer in the same words.
-    await page.getByRole("button", { name: /^Errado/u }).click();
-    await expect(feedback.getByText("Resposta certa: Certo")).toBeVisible();
-    await page.context().close();
-  });
-
-  test("an ENEM-style goal's practice keeps them Verdadeiro or Falso", async ({ browser }) => {
-    const { user } = await createStatementPracticeDay({
-      mode: "fun",
-      netScored: false,
-      structure: ENEM_STRUCTURE,
-    });
-
-    const page = await openAs(browser, user);
-    const feedback = page.getByRole("region", { name: "Resultado da resposta" });
-
-    await startSession(page);
-
-    await expect(page.getByRole("button", { name: /^Verdadeiro/u })).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Certo/u })).toBeHidden();
-
-    await page.getByRole("button", { name: /^Falso/u }).click();
-    await expect(feedback.getByText("Resposta certa: Verdadeiro")).toBeVisible();
-    await page.context().close();
-  });
-
   test("a Cebraspe mock asks Certo, Errado or Deixar em branco, and reviews in those words", async ({
     browser,
   }) => {

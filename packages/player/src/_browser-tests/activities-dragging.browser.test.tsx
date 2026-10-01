@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { type Locator, page } from "vitest/browser";
 import { dragOnto, openActivity } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const MOVE_STEPS = 12;
+
+/** A small phone, where the lesson scrolls and the Check bar sits over the bottom of it. */
+const PHONE = { height: 812, width: 375 };
 
 /** Brings the target on screen with the item still in view, as a learner sees both before a drag. */
 async function dragWithMouse({ from, to }: { from: Locator; to: Locator }) {
@@ -24,6 +28,21 @@ describe("dragging activity items with a mouse", () => {
     await expect
       .element(page.getByRole("button", { name: "Spot 4, bottom: Right ventricle" }))
       .toBeVisible();
+  });
+
+  it("labeled diagram: a name dragged onto a spot labels it on a phone", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ template: "labeledDiagram" });
+
+      await dragWithMouse({
+        from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
+        to: page.getByRole("button", { name: "Spot 4, bottom: empty" }),
+      });
+
+      await expect
+        .element(page.getByRole("button", { name: "Spot 4, bottom: Right ventricle" }))
+        .toBeVisible();
+    });
   });
 
   it("categorize: an item dragged onto a group is sorted into it", async () => {

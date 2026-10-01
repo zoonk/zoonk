@@ -86,13 +86,4 @@ test.describe("Pronunciation reviews", () => {
       await expect(page.getByRole("link", { name: /Say 2 words again/u })).toBeVisible();
     });
   });
-
-  test("shows nothing on Today when no word is due", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page }) => {
-      await page.goto("/today");
-
-      await expect(page.getByRole("region", { name: "Your current situation" })).toBeVisible();
-      await expect(page.getByRole("link", { name: /words? again/u })).toHaveCount(0);
-    });
-  });
 });

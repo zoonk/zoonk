@@ -1,11 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import {
@@ -17,9 +15,9 @@ import { type Mode } from "./learn-personas";
 import { openAs } from "./study-day";
 
 /**
- * Screens and questions built from a public document (a law, an exam notice) show a dated
- * "Sources" chip: when the document was last checked, and a tap opens its title, publisher and
- * link. The chip is the same in Focus and Fun.
+ * Questions built from a public document (a law, an exam notice) show a dated "Sources" chip:
+ * when the document was last checked, and a tap opens its title, publisher and link. The chip is
+ * the same in Focus and Fun, and on lesson screens, which the player's tests cover.
  */
 
 const LAW_URL = "https://www.planalto.gov.br/ccivil_03/leis/l8112cons.htm";
@@ -34,15 +32,12 @@ function lawFixture() {
   });
 }
 
-async function learnerIn(mode: Mode, goalId?: string) {
+async function learnerIn(mode: Mode) {
   const user = await createE2EUser(getBaseURL());
-
-  const goal = goalId
-    ? null
-    : await goalFixture({ kind: "exam", timezone: "UTC", userId: user.id });
+  const goal = await goalFixture({ kind: "exam", timezone: "UTC", userId: user.id });
 
   await learningProfileFixture({
-    activeGoalId: goalId ?? goal?.id,
+    activeGoalId: goal.id,
     experienceMode: mode,
     userId: user.id,
     ...(mode === "fun" ? { buddyKind: "zu" } : {}),
@@ -60,7 +55,7 @@ async function createSourcedPractice(mode: Mode) {
     libraryLessonFixture({ title: "Probation" }),
   ]);
 
-  const plan = await planFixture({ goalId: goal?.id ?? "" });
+  const plan = await planFixture({ goalId: goal.id });
 
   const [drill, session] = await Promise.all([
     itemFixture({
@@ -69,7 +64,7 @@ async function createSourcedPractice(mode: Mode) {
       sourceCitation: "Law 8,112, Art. 20",
       sourceId: law.id,
     }),
-    studySessionFixture({ goalId: goal?.id, userId: user.id }),
+    studySessionFixture({ goalId: goal.id, userId: user.id }),
     planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
   ]);
 
@@ -85,40 +80,6 @@ async function createSourcedPractice(mode: Mode) {
 }
 
 test.describe("Sources chip", () => {
-  test("a lesson screen built from a law says when it was checked and opens it", async ({
-    browser,
-  }) => {
-    const [{ user }, { lesson, steps }, law] = await Promise.all([
-      learnerIn("focus"),
-      playableLessonFixture({ steps: ["explanation", "check"] }),
-      lawFixture(),
-    ]);
-
-    await prisma.step.update({ data: { sourceId: law.id }, where: { id: steps[0]?.id } });
-
-    const page = await openAs(browser, user);
-    await page.goto(`/learn/${lesson.id}`);
-
-    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-    await page.getByRole("button", { name: CHIP }).click();
-
-    const source = page.getByRole("dialog");
-    await expect(source.getByRole("heading", { name: law.title })).toBeVisible();
-    await expect(source.getByText("Planalto · Checked Sep 12, 2026")).toBeVisible();
-
-    await expect(source.getByRole("link", { name: "Open the source" })).toHaveAttribute(
-      "href",
-      LAW_URL,
-    );
-
-    // Closing it leaves the lesson where it was.
-    await page.keyboard.press("Escape");
-    await expect(source).toBeHidden();
-    await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
-    await page.context().close();
-  });
-
   test("a practice question's feedback shows the article and its dated source", async ({
     browser,
   }) => {

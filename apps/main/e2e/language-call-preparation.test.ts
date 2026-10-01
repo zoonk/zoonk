@@ -1,14 +1,14 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
-import { toCefrLevel } from "@zoonk/utils/cefr";
 import { expect, test } from "./fixtures";
-import { asPersona } from "./learn-personas";
+import { createLanguageLearner } from "./language-learner";
+import { openAs } from "./study-day";
 
 /** Speaking level B1 on the CEFR score scale (A1 is 0). */
 const B1_SCORE = 2;
@@ -20,22 +20,34 @@ const IELTS_SCENARIO = {
   title: "Simulado de Speaking do IELTS",
 };
 
-/**
- * A learner of the private copy whose own language goal reached its renting unit's boss today,
- * speaking at B1: the unit's call is only written at A2, so the checkpoint's call isn't written.
- */
-async function unwrittenCheckpointFixture(userId: string) {
-  await prisma.languageSkillLevel.upsert({
-    create: { language: "en", score: B1_SCORE, skill: "speaking", startScore: B1_SCORE, userId },
-    update: { score: B1_SCORE },
-    where: { userLanguageSkill: { language: "en", skill: "speaking", userId } },
+/** A Focus language learner speaking at B1, while the renting unit's call is only written at A2. */
+async function createB1Learner() {
+  const learner = await createLanguageLearner("focus");
+  const { user } = learner;
+
+  await prisma.languageSkillLevel.create({
+    data: {
+      language: "en",
+      score: B1_SCORE,
+      skill: "speaking",
+      startScore: B1_SCORE,
+      userId: user.id,
+    },
   });
 
-  const { goal, plan, renting } = await languageGoalFixture({ userId });
+  return learner;
+}
+
+/**
+ * A B1 learner whose renting unit's boss is in today's session: the unit's call is only written
+ * at A2, so the checkpoint's call isn't written.
+ */
+async function createUnwrittenCheckpoint() {
+  const { goal, plan, renting, user } = await createB1Learner();
 
   const [boss, session] = await Promise.all([
     planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 }),
-    studySessionFixture({ goalId: goal.id, userId }),
+    studySessionFixture({ goalId: goal.id, userId: user.id }),
   ]);
 
   const block = await studySessionBlockFixture({
@@ -54,27 +66,42 @@ async function unwrittenCheckpointFixture(userId: string) {
     sessionId: session.id,
   });
 
-  return { block, renting };
+  return { block, renting, user };
 }
 
-/** Marcos's goal as an IELTS goal, with a mock written ahead at his level and not opened yet. */
-async function waitingMockFixture({ goalId, userId }: { goalId: string; userId: string }) {
+/** The unit's call written at B1, as a session's preparation writes it. */
+async function writeB1Call(chapterId: string) {
+  await prisma.conversationScenario.create({
+    data: {
+      chapterId,
+      content: RENTING_SCENARIO,
+      level: "B1",
+      model: "test",
+      promptVersion: "test",
+      runId: "test",
+    },
+  });
+}
+
+/**
+ * The goal names the IELTS, so Progress offers its speaking mock; with no speaking level yet, the
+ * goal's A2 is the level its examiner speaks at.
+ */
+async function ieltsGoal(goalId: string) {
   await prisma.goal.update({
     data: { details: { level: "A2", reason: "Vou fazer o IELTS em março", targetLevel: "B1+" } },
     where: { id: goalId },
   });
+}
 
-  const speaking = await prisma.languageSkillLevel.findUnique({
-    where: { userLanguageSkill: { language: "en", skill: "speaking", userId } },
-  });
-
+/** The goal's next IELTS mock, written ahead at its A2 and not opened yet. */
+async function waitingMockFixture({ goalId, userId }: { goalId: string; userId: string }) {
   return prisma.languageConversation.create({
     data: {
       goalId,
       kind: "speakingMock",
       language: "pt",
-      // With no speaking level yet, the goal's A2 is where the examiner starts.
-      level: speaking ? toCefrLevel(speaking.score) : "A2",
+      level: "A2",
       liveModel: "openai/gpt-live-1",
       minutes: 5,
       scenario: IELTS_SCENARIO,
@@ -82,14 +109,6 @@ async function waitingMockFixture({ goalId, userId }: { goalId: string; userId: 
       titleSnapshot: IELTS_SCENARIO.title,
       userId,
     },
-  });
-}
-
-/** The goal names the IELTS, so Progress offers its speaking mock; none is written ahead yet. */
-async function ieltsGoal(goalId: string) {
-  await prisma.goal.update({
-    data: { details: { level: "A2", reason: "Vou fazer o IELTS em março", targetLevel: "B1+" } },
-    where: { id: goalId },
   });
 }
 
@@ -115,134 +134,109 @@ async function holdServerActions(page: Page) {
 }
 
 test.describe("Language calls written ahead", () => {
-  test("a checkpoint whose call isn't written yet writes it when the learner asks", async ({
+  test("a checkpoint whose call isn't written yet writes it when the learner asks, then opens it at once", async ({
     browser,
   }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
-      const { block, renting } = await unwrittenCheckpointFixture(user.id);
+    const { block, renting, user } = await createUnwrittenCheckpoint();
+    const page = await openAs(browser, user);
 
-      await page.goto(`/checkpoint/${block.id}`);
+    await page.goto(`/checkpoint/${block.id}`);
 
-      await expect(page.getByText("Unit checkpoint")).toBeVisible();
+    await expect(page.getByText("Unit checkpoint")).toBeVisible();
 
-      await expect(page.getByRole("heading", { level: 1, name: renting.title })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: renting.title })).toBeVisible();
 
-      // Opening the checkpoint writes nothing: the call waits for the learner's tap.
-      await expect(
-        prisma.languageConversation.count({ where: { studyBlockId: block.id } }),
-      ).resolves.toBe(0);
+    // Opening the checkpoint writes nothing: the call waits for the learner's tap.
+    await expect(
+      prisma.languageConversation.count({ where: { studyBlockId: block.id } }),
+    ).resolves.toBe(0);
 
-      await page.getByRole("button", { name: "Get the call ready" }).click();
+    await page.getByRole("button", { name: "Get the call ready" }).click();
 
-      // No model writes in tests, so this call can't be written, and the wait says so.
-      await expect(page.getByText("This didn't start")).toBeVisible();
+    // No model writes in tests, so this call can't be written, and the wait says so.
+    await expect(page.getByText("This didn't start")).toBeVisible();
 
-      // Meanwhile the unit's call is written, as a session's preparation writes it: trying
-      // again opens the call.
-      await prisma.conversationScenario.create({
-        data: {
-          chapterId: renting.id,
-          content: RENTING_SCENARIO,
-          level: "B1",
-          model: "test",
-          promptVersion: "test",
-          runId: "test",
-        },
-      });
+    // Meanwhile the unit's call is written, as a session's preparation writes it: trying
+    // again opens the call.
+    await writeB1Call(renting.id);
+    await page.getByRole("button", { name: "Try again" }).click();
 
-      await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page).toHaveURL(/\/conversation\//u);
+    await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
 
-      await expect(page).toHaveURL(/\/conversation\//u);
-      await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
-    });
+    // Once written, the checkpoint opens the unit's call straight away.
+    await page.goto(`/checkpoint/${block.id}`);
+
+    await expect(page).toHaveURL(/\/conversation\//u);
+    await expect(page.getByText("Unit checkpoint")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
+    await page.context().close();
   });
 
   test("a speaking mock that isn't written yet shows it being written", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "language" }, async ({ page, user }) => {
-      await ieltsGoal(user.goalId);
-      await page.goto("/progress");
+    const { goal, user } = await createLanguageLearner("fun");
+    await ieltsGoal(goal.id);
 
-      const card = page.getByRole("region", { name: "IELTS speaking mock" });
-      const release = await holdServerActions(page);
-      await card.getByRole("button", { name: "Start the mock" }).click();
+    const page = await openAs(browser, user);
+    await page.goto("/progress");
 
-      await expect(card.getByRole("progressbar", { name: "Writing your mock" })).toBeVisible();
+    const card = page.getByRole("region", { name: "IELTS speaking mock" });
+    const release = await holdServerActions(page);
+    await card.getByRole("button", { name: "Start the mock" }).click();
 
-      await expect(
-        card
-          .getByRole("list", { name: "Writing your mock" })
-          .getByText("Writing the examiner's script"),
-      ).toBeVisible();
+    await expect(card.getByRole("progressbar", { name: "Writing your mock" })).toBeVisible();
 
-      await expect(card.getByText("Your mock opens as soon as it's ready.")).toBeVisible();
+    await expect(
+      card
+        .getByRole("list", { name: "Writing your mock" })
+        .getByText("Writing the examiner's script"),
+    ).toBeVisible();
 
-      release();
+    await expect(card.getByText("Your mock opens as soon as it's ready.")).toBeVisible();
 
-      // No model writes in tests, so this mock can't be written, and the wait says so.
-      await expect(card.getByText("This didn't start")).toBeVisible();
+    release();
 
-      // Meanwhile the next mock is written ahead, as a session's preparation writes it: trying
-      // again opens it.
-      const waiting = await waitingMockFixture({ goalId: user.goalId, userId: user.id });
-      await card.getByRole("button", { name: "Try again" }).click();
+    // No model writes in tests, so this mock can't be written, and the wait says so.
+    await expect(card.getByText("This didn't start")).toBeVisible();
 
-      await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}$`, "u"));
-      await expect(page.getByRole("heading", { level: 1, name: "Emma" })).toBeVisible();
-    });
+    // Meanwhile the next mock is written ahead, as a session's preparation writes it: trying
+    // again opens it.
+    const waiting = await waitingMockFixture({ goalId: goal.id, userId: user.id });
+    await card.getByRole("button", { name: "Try again" }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}$`, "u"));
+    await expect(page.getByRole("heading", { level: 1, name: "Emma" })).toBeVisible();
+    await page.context().close();
   });
 
   test("a unit's practice call that isn't written at the learner's level shows it being written", async ({
     browser,
   }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
-      // Speaking at B1, while the unit's call is only written at A2.
-      const { renting } = await unwrittenCheckpointFixture(user.id);
-      await page.goto(`/content/units/${renting.id}`);
+    const { renting, user } = await createB1Learner();
+    const page = await openAs(browser, user);
+    await page.goto(`/content/units/${renting.id}`);
 
-      const call = page.getByRole("region", { name: "Practice a conversation" });
-      const release = await holdServerActions(page);
-      await call.getByRole("button", { name: "Start the call" }).click();
+    const call = page.getByRole("region", { name: "Practice a conversation" });
+    const release = await holdServerActions(page);
+    await call.getByRole("button", { name: "Start the call" }).click();
 
-      await expect(call.getByRole("progressbar", { name: "Writing your call" })).toBeVisible();
+    await expect(call.getByRole("progressbar", { name: "Writing your call" })).toBeVisible();
 
-      await expect(
-        call
-          .getByRole("list", { name: "Writing your call" })
-          .getByText("Writing the call for your level"),
-      ).toBeVisible();
+    await expect(
+      call
+        .getByRole("list", { name: "Writing your call" })
+        .getByText("Writing the call for your level"),
+    ).toBeVisible();
 
-      release();
+    release();
 
-      await expect(call.getByText("This didn't start")).toBeVisible();
+    await expect(call.getByText("This didn't start")).toBeVisible();
 
-      await prisma.conversationScenario.create({
-        data: {
-          chapterId: renting.id,
-          content: RENTING_SCENARIO,
-          level: "B1",
-          model: "test",
-          promptVersion: "test",
-          runId: "test",
-        },
-      });
+    await writeB1Call(renting.id);
+    await call.getByRole("button", { name: "Try again" }).click();
 
-      await call.getByRole("button", { name: "Try again" }).click();
-
-      await expect(page).toHaveURL(/\/conversation\//u);
-      await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
-    });
-  });
-
-  test("the speaking mock written ahead opens at once", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "language" }, async ({ page, user }) => {
-      const waiting = await waitingMockFixture({ goalId: user.goalId, userId: user.id });
-
-      await page.goto("/progress");
-      await page.getByRole("button", { name: "Start the mock" }).click();
-
-      await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}$`, "u"));
-      await expect(page.getByRole("heading", { level: 1, name: "Emma" })).toBeVisible();
-      await expect(page.getByText("IELTS speaking mock").first()).toBeVisible();
-    });
+    await expect(page).toHaveURL(/\/conversation\//u);
+    await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
+    await page.context().close();
   });
 });

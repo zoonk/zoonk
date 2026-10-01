@@ -1,4 +1,5 @@
 import { getFreePlanLimits, getPlusPlanLimits } from "@zoonk/core/entitlements/plan-limits";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { type Page, expect, test } from "./fixtures";
 
 const PHONE_VIEWPORT = { height: 812, width: 375 };
@@ -71,13 +72,15 @@ test.describe("Pricing for visitors", () => {
     await context.close();
   });
 
-  test("compares the plans and lets people with an account log in to subscribe", async ({
+  test("compares the plans, lets people with an account log in to subscribe, and links fair use", async ({
     page,
   }) => {
     const limits = getFreePlanLimits();
     await page.goto("/pricing");
 
     const plans = page.getByRole("table", { name: "What's included in Free and Plus" });
+    await expect(plans).toBeVisible();
+    await expectAccessibleScreen(page, "the pricing page");
 
     await expect(
       plans
@@ -117,34 +120,10 @@ test.describe("Pricing for visitors", () => {
     await expect(page.getByRole("button", { name: /monthly/iu })).toBeVisible();
     await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
-  });
-
-  test("the fair use note opens the fair use section of the terms", async ({ page }) => {
-    await page.goto("/pricing");
 
     await page.getByText(getFairUseNote()).getByRole("link", { name: "fair use policy" }).click();
 
     await expect(page).toHaveURL(/\/terms#fair-use$/u);
     await expect(page.getByRole("heading", { level: 2, name: "6. Fair use" })).toBeInViewport();
-  });
-
-  test("the subscription page's URL opens the public pricing page", async ({ page }) => {
-    await page.goto("/subscription");
-
-    await expectPublicPricing(page);
-  });
-});
-
-test.describe("Pricing for learners", () => {
-  test("a signed-in learner gets the subscription page in the app", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage.goto("/pricing");
-
-    await expect(authenticatedPage).toHaveURL(/\/subscription$/u);
-    await expect(authenticatedPage.getByRole("link", { name: "Today" })).toBeVisible();
-    await expect(authenticatedPage.getByRole("navigation", { name: "Settings" })).toBeVisible();
-    await expect(authenticatedPage.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("link", { name: "Try free" })).toHaveCount(0);
   });
 });

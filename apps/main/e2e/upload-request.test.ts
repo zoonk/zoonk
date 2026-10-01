@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { expectAccessibleRoutes } from "@zoonk/e2e/fixtures/accessibility";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
 import { type Mode } from "./learn-personas";
@@ -12,17 +12,7 @@ import { createStudyDay, openAs } from "./study-day";
  * route answers with the learner's stored upload, and research takes the answer as it would.
  */
 
-type Reason = "classMaterial" | "noOfficialSource" | "unverified";
-
-/** Two screens, each at two widths in light and dark. */
-const ACCESSIBILITY_TIMEOUT_MS = 120_000;
-
-/** Scans wait for the ask, which streams in with the rest of the screen. */
-async function askIsShown(page: Page) {
-  await expect(
-    page.getByRole("region", { name: "We couldn't find the official notice" }),
-  ).toBeVisible();
-}
+type Reason = "noOfficialSource" | "unverified";
 
 async function studyDayWaitingFor(reason: Reason, mode: Mode = "focus") {
   const day = await createStudyDay({ mode });
@@ -83,6 +73,7 @@ test.describe("Asking for the notice research couldn't find", () => {
 
     const ask = page.getByRole("region", { name: "We couldn't find the official notice" });
     await expect(ask).toContainText("Upload it so your plan follows the real exam.");
+    await expectAccessibleScreen(page, "Today asking for the notice");
 
     await ask.getByRole("button", { name: "Upload the notice" }).click();
     await ask.getByRole("button", { name: "Paste text" }).click();
@@ -107,6 +98,7 @@ test.describe("Asking for the notice research couldn't find", () => {
 
     const ask = page.getByRole("region", { name: "We couldn't confirm the exam's details" });
     await expect(ask).toContainText("Upload the official notice");
+    await expectAccessibleScreen(page, "Plan asking for the notice");
 
     await ask.getByRole("button", { name: "Not now" }).click();
     await expect(ask).toBeHidden();
@@ -124,54 +116,28 @@ test.describe("Asking for the notice research couldn't find", () => {
     await page.context().close();
   });
 
-  test("the ask is accessible on Today and Plan, light and dark, in Focus", async ({ browser }) => {
-    test.setTimeout(ACCESSIBILITY_TIMEOUT_MS);
-
-    const { user } = await studyDayWaitingFor("noOfficialSource", "focus");
-    const page = await openAs(browser, user);
-
-    await expectAccessibleRoutes(page, [
-      { path: "/today", ready: askIsShown },
-      { path: "/plan", ready: askIsShown },
-    ]);
-
-    await page.context().close();
-  });
-
-  test("the ask is accessible on Today and Plan, light and dark, in Fun", async ({ browser }) => {
-    test.setTimeout(ACCESSIBILITY_TIMEOUT_MS);
-
-    const { user } = await studyDayWaitingFor("noOfficialSource", "fun");
-    const page = await openAs(browser, user);
-
-    await expectAccessibleRoutes(page, [
-      { path: "/today", ready: askIsShown },
-      { path: "/plan", ready: askIsShown },
-    ]);
-
-    await page.context().close();
-  });
-
-  test("a teacher's test asks for the class's material", async ({ browser }) => {
-    const { user } = await studyDayWaitingFor("classMaterial");
-    const page = await openAs(browser, user);
-
-    await page.goto("/today");
-
-    const ask = page.getByRole("region", { name: "Add your class material" });
-    await expect(ask).toContainText("Upload the slides, notes or list of topics");
-    await expect(ask.getByRole("button", { name: "Upload your material" })).toBeVisible();
-    await page.context().close();
-  });
-
-  test("Today asks for nothing when research needs nothing", async ({ browser }) => {
-    const { user } = await createStudyDay({ mode: "focus" });
+  test("Today asks for nothing until research needs something, like a teacher's test's material", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createStudyDay({ mode: "focus" });
     const page = await openAs(browser, user);
 
     await page.goto("/today");
 
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
     await expect(page.getByRole("region", { name: /official notice/u })).toBeHidden();
+
+    // A teacher's test asks for the class's material.
+    await prisma.goal.update({
+      data: { researchUploadReason: "classMaterial" },
+      where: { id: goal.id },
+    });
+
+    await page.reload();
+
+    const ask = page.getByRole("region", { name: "Add your class material" });
+    await expect(ask).toContainText("Upload the slides, notes or list of topics");
+    await expect(ask.getByRole("button", { name: "Upload your material" })).toBeVisible();
     await page.context().close();
   });
 });

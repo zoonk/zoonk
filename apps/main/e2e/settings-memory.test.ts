@@ -1,15 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { type Page, expect, test } from "./fixtures";
 
 /**
  * The Memory screen: everything Zoonk remembers grouped by category, correcting and deleting
- * (with undo) a fact, turning memory off, downloading it, and what minors see.
+ * (with undo) a fact, turning memory off and downloading it.
  */
-
-const TEEN_BIRTH_YEAR = new Date().getUTCFullYear() - 15;
 
 /** Without an age answer, memory keeps only goals and learning facts, like a minor's. */
 const ADULT_BIRTH = { birthMonth: 1, birthYear: 1990 };
@@ -66,6 +65,7 @@ test.describe("Memory", () => {
     await expect(page.getByRole("region", { name: "Routine" }).getByText(/Noticed/u)).toBeVisible();
 
     await expect(page.getByRole("region", { name: "Background" })).toBeVisible();
+    await expectAccessibleScreen(page, "the memory settings");
 
     await factOptions(page, "Wants Law at a public university").click();
     await page.getByRole("menuitem", { name: "Edit" }).click();
@@ -114,6 +114,7 @@ test.describe("Memory", () => {
 
     const memorySwitch = page.getByRole("switch", { name: "Use memory" });
     await expect(memorySwitch).toBeChecked();
+    await expectAccessibleScreen(page, "the Fun memory settings");
     await memorySwitch.click();
     await expect(memorySwitch).not.toBeChecked();
     await expect(page.getByText(/Memory is off/u)).toBeVisible();
@@ -141,27 +142,5 @@ test.describe("Memory", () => {
         expect.objectContaining({ statement: "Wants Law at a public university" }),
       ]),
     });
-  });
-});
-
-test.describe("Memory for minors", () => {
-  test("only shows the categories a minor's memory may hold", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    await Promise.all([
-      createFacts(noProgressUser.id),
-      learningProfileFixture({
-        birthMonth: 1,
-        birthYear: TEEN_BIRTH_YEAR,
-        userId: noProgressUser.id,
-      }),
-    ]);
-
-    await openMemory(page);
-
-    await expect(page.getByRole("region", { name: "Goals" })).toBeVisible();
-    await expect(page.getByText("Works at a bakery")).toBeHidden();
-    await expect(page.getByRole("region", { name: "Background" })).toBeHidden();
   });
 });

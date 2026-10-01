@@ -1,22 +1,31 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { asPersona } from "./learn-personas";
+import { setDeviceMode } from "./learn-personas";
 
 /**
- * Plays a challenge lesson (the A/B test case from `challengeCaseFixture`) as a copy of the huge
- * learn goal persona (Maya): the intro with the team kept with the plan, decisions picked with
- * number keys or taps and sent with Confirm, the meters and the week that passes, the ending and
- * the debrief, then the lesson's completion.
+ * Plays a challenge lesson (the A/B test case from `challengeCaseFixture`) from the learner's plan:
+ * the intro with the team kept with the plan, decisions picked with number keys or taps and sent
+ * with Confirm, the meters and the week that passes, the ending and the debrief, then the lesson's
+ * completion, with no buddy in Focus. A weak ending's debrief is the player's to test
+ * (`packages/player`).
  */
 
-async function openChallenge(page: Page, goalId: string) {
-  const [{ lesson }, plan] = await Promise.all([
+/**
+ * A Focus learner whose plan has the challenge lesson, which keeps its team once it first opens.
+ * The buddy they picked in Fun stays on their profile.
+ */
+async function openChallenge(page: Page, userId: string) {
+  const [{ lesson }, goal] = await Promise.all([
     playableLessonFixture({ lesson: { title: "Challenge: A/B tests" }, steps: ["challenge"] }),
-    prisma.plan.findUniqueOrThrow({ where: { goalId } }),
+    goalFixture({ userId }),
+    learningProfileFixture({ buddyKind: "zu", experienceMode: "focus", userId }),
+    setDeviceMode(page.context(), "focus"),
   ]);
 
+  const plan = await planFixture({ goalId: goal.id });
   await planItemFixture({ lessonId: lesson.id, planId: plan.id });
   await page.goto(`/learn/${lesson.id}`);
 
@@ -57,7 +66,7 @@ async function startCase(page: Page, planId: string) {
     });
   }).toPass({ timeout: 5000 });
 
-  return { data, product };
+  return { product };
 }
 
 async function playStrongPath(page: Page, product: string) {
@@ -90,61 +99,33 @@ async function playStrongPath(page: Page, product: string) {
 }
 
 test.describe("Challenge lesson", () => {
-  test("solves the case like at work and gets a debrief", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
-      const { planId } = await openChallenge(page, user.goalId);
-      const { product } = await startCase(page, planId);
+  test("solves the case like at work and gets a debrief", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { planId } = await openChallenge(page, noProgressUser.id);
+    const { product } = await startCase(page, planId);
 
-      await playStrongPath(page, product);
+    await playStrongPath(page, product);
 
-      await primary(page, /^See how it went/u).click();
-      await expect(page.getByRole("heading", { name: "Challenge complete" })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Nicely done" })).toBeVisible();
+    await primary(page, /^See how it went/u).click();
+    await expect(page.getByRole("heading", { name: "Challenge complete" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Nicely done" })).toBeVisible();
 
-      await expect(
-        page.getByText("You checked whether the gap could be chance before deciding."),
-      ).toBeVisible();
+    await expect(
+      page.getByText("You checked whether the gap could be chance before deciding."),
+    ).toBeVisible();
 
-      await expect(page.getByRole("heading", { name: "To improve" })).toHaveCount(0);
-      await expect(page.getByRole("heading", { name: "Skills practiced" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "To improve" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Skills practiced" })).toBeVisible();
 
-      await primary(page, /^Continue/u).click();
-      await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    await primary(page, /^Continue/u).click();
+    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-      // Opening it again keeps the same people.
-      await expect(readTeam(planId)).resolves.toHaveLength(4);
-    });
-  });
+    // Focus ends with its check mark, never the buddy's cheer.
+    await expect(page.getByText("Nice one!")).toHaveCount(0);
 
-  test("finishes a rushed case with one thing to improve and a practice", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page, user }) => {
-      const { planId } = await openChallenge(page, user.goalId);
-      const { data } = await startCase(page, planId);
-
-      await page.getByRole("radio", { name: "Go ahead and launch" }).click();
-      await primary(page, /^Confirm/u).click();
-
-      await expect(
-        page.getByRole("heading", { name: `${data} has doubts. What now?` }),
-      ).toBeVisible();
-
-      await page.getByRole("radio", { name: "Keep it live" }).click();
-      await primary(page, /^Confirm/u).click();
-      await expect(page.getByText(/the early gap was chance/u)).toBeVisible();
-
-      await page.keyboard.press("Enter");
-      await expect(page.getByRole("heading", { name: "To improve" })).toBeVisible();
-
-      await expect(
-        page.getByText("One day of data can't tell a real gain from chance."),
-      ).toBeVisible();
-
-      await expect(
-        page.getByRole("heading", { name: "Practice “Sample size” · 5 min" }),
-      ).toBeVisible();
-
-      await page.keyboard.press("Enter");
-      await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-    });
+    // Opening it again keeps the same people.
+    await expect(readTeam(planId)).resolves.toHaveLength(4);
   });
 });

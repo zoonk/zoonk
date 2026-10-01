@@ -148,7 +148,7 @@ test.describe("A lesson still being written", () => {
     await page.context().close();
   });
 
-  test("a run that fails says so, and writing it again follows the new run", async ({
+  test("a run that fails says so with a ready lesson instead, and writing it again follows the new run", async ({
     browser,
   }) => {
     const { unwritten, user, written } = await createWaitingLearner("fun");
@@ -171,8 +171,13 @@ test.describe("A lesson still being written", () => {
 
     await page.goto(`/learn/${unwritten.id}`);
 
+    // Never a dead end: it can be tried again, or swapped for the plan's next written lesson.
     await expect(page.getByText("This didn't finish")).toBeVisible();
-    await expect(page.getByRole("link", { name: written.title })).toBeVisible();
+
+    await expect(page.getByRole("link", { name: written.title })).toHaveAttribute(
+      "href",
+      new RegExp(`/learn/${written.id}$`, "u"),
+    );
 
     await page.getByRole("button", { name: "Try again" }).click();
 
@@ -206,61 +211,6 @@ test.describe("A lesson still being written", () => {
     await expect(page.getByText("Something ready to do instead:")).toBeVisible();
     await expect(page.getByRole("link", { name: written.title })).toBeVisible();
     await expect(page.getByRole("button", { name: "Try again" })).toBeHidden();
-    await page.context().close();
-  });
-
-  test("a lesson the learner's plan can't cover now says why, with the way to keep going", async ({
-    browser,
-  }) => {
-    const { unwritten, user, written } = await createWaitingLearner("fun");
-    const page = await openAs(browser, user);
-
-    await page.route("**/v1/library/lessons/*/generations", (route) =>
-      route.fulfill({
-        json: {
-          error: {
-            code: "USAGE_LIMIT_REACHED",
-            details: { limit: { limit: 20, period: "day", resource: "lessonStart", tier: "free" } },
-            message: "This plan's limit is reached",
-          },
-        },
-        status: 402,
-      }),
-    );
-
-    await page.goto(`/learn/${unwritten.id}`);
-
-    await expect(
-      page.getByText(
-        "That's all the new lessons for today. They open again tomorrow, or get Plus to keep going now.",
-      ),
-    ).toBeVisible();
-
-    await expect(page.getByRole("link", { name: "See Plus" })).toHaveAttribute(
-      "href",
-      /\/subscription$/u,
-    );
-
-    await expect(page.getByRole("link", { name: written.title })).toBeVisible();
-    await page.context().close();
-  });
-
-  test("never leaves a dead end: it can be tried again or swapped for a ready lesson", async ({
-    browser,
-  }) => {
-    const { unwritten, user, written } = await createWaitingLearner("focus");
-    const page = await openAs(browser, user);
-    await failLessonWriting(page);
-    await page.goto(`/learn/${unwritten.id}`);
-
-    await expect(page.getByRole("heading", { level: 1, name: unwritten.title })).toBeVisible();
-
-    // Asking the API for the lesson fails: the page says so,
-    // offers to try again and offers the plan's next written lesson instead.
-    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
-    await page.getByRole("link", { name: written.title }).click();
-
-    await expect(page).toHaveURL(new RegExp(`/learn/${written.id}$`, "u"));
     await page.context().close();
   });
 

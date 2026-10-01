@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { setLocale } from "@zoonk/e2e/fixtures/locale";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -38,26 +38,21 @@ test.describe("Course Detail Page", () => {
       "href",
       "/start",
     );
+
+    await expectAccessibleScreen(page, "a missing course");
   });
 
-  test("a language course leads with the flag of the variety it teaches", async ({ page }) => {
+  test("a language course whose outline isn't written yet leads with its flag and stays on its page", async ({
+    page,
+  }) => {
     const title = `E2E Language Course ${randomUUID().slice(0, 8)}`;
     const { path } = await publishedCourse({ language: "en", targetLanguage: "pt", title });
 
     await page.goto(path);
 
-    await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
-    await expect(page.getByRole("img", { name: "Brazilian Portuguese" })).toBeVisible();
-  });
-
-  test("a course whose outline isn't written yet stays on its page", async ({ page }) => {
-    const title = `E2E Unwritten Course ${randomUUID().slice(0, 8)}`;
-    const { path } = await publishedCourse({ language: "en", title });
-
-    await page.goto(path);
-
     await expect(page).toHaveURL(path);
     await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+    await expect(page.getByRole("img", { name: "Brazilian Portuguese" })).toBeVisible();
 
     await expect(
       page.getByText("The chapters and lessons are written when the first learner starts."),
@@ -74,17 +69,5 @@ test.describe("Course Detail Page", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
     await expect(page).toHaveTitle(`Aprenda ${title} | Zoonk`);
-  });
-
-  test("renders the page in the Portuguese locale", async ({ page }) => {
-    const title = `E2E Curso PT ${randomUUID().slice(0, 8)}`;
-    const { path } = await publishedCourse({ language: "pt", title });
-
-    await setLocale(page, "pt");
-    await page.goto(`/pt${path}`);
-
-    await expect(page).toHaveURL(`/pt${path}`);
-    await expect(page.locator("html")).toHaveAttribute("lang", "pt");
-    await expect(page.getByRole("button", { name: "Começar este curso" }).first()).toBeVisible();
   });
 });

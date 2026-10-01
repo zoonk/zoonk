@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -86,15 +87,20 @@ function searchBox(page: Page) {
 }
 
 test.describe("Content tab", () => {
-  test("groups the exam's skills by area, then chapter", async ({ browser }) => {
+  test("Focus groups the exam's skills by area, then chapter, with their states, search and filters", async ({
+    browser,
+  }) => {
     await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
       await page.goto("/content");
+
+      await expect(page.getByRole("heading", { level: 1, name: "Skills" })).toBeVisible();
 
       const math = page.getByRole("heading", { level: 2, name: "Matemática" });
       const sciences = page.getByRole("heading", { level: 2, name: "Ciências da Natureza" });
 
       await expect(math).toBeVisible();
       await expect(sciences).toBeVisible();
+      await expectAccessibleScreen(page, "Content");
 
       // Each area's chapters sit under it, Math's before Natural Sciences starts.
       const percentages = page.getByText("Porcentagem", { exact: true }).first();
@@ -108,16 +114,6 @@ test.describe("Content tab", () => {
 
       expect(mathBox?.y ?? 0).toBeLessThan(percentagesBox?.y ?? 0);
       expect(percentagesBox?.y ?? 0).toBeLessThan(sciencesBox?.y ?? 0);
-    });
-  });
-
-  test("Focus lists the skills with their states, search, filters and summaries", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
-      await page.goto("/content");
-
-      await expect(page.getByRole("heading", { level: 1, name: "Skills" })).toBeVisible();
 
       const filters = page.getByRole("group", { name: "Show" });
 
@@ -138,7 +134,7 @@ test.describe("Content tab", () => {
     });
   });
 
-  test("Fun shows Cards that flip, with today's capsules first", async ({ browser }) => {
+  test("Fun shows Cards that filter and flip, with today's capsules first", async ({ browser }) => {
     await asPersona(browser, { mode: "fun", persona: "fun" }, async ({ page }) => {
       await page.goto("/content");
 
@@ -146,11 +142,13 @@ test.describe("Content tab", () => {
       await expect(page.getByText(/capsules? opens? today/u)).toBeVisible();
       const openCapsules = page.getByRole("link", { exact: true, name: "Open" });
       await expect(openCapsules).toHaveAttribute("href", "/today");
+      await expectAccessibleScreen(page, "Cards");
 
-      await page
-        .getByRole("group", { name: "Show" })
-        .getByRole("button", { name: /Gold/u })
-        .click();
+      // The filters work from the keyboard.
+      const gold = page.getByRole("group", { name: "Show" }).getByRole("button", { name: /Gold/u });
+      await gold.focus();
+      await page.keyboard.press("Enter");
+      await expect(gold).toHaveAttribute("aria-pressed", "true");
 
       const card = page.getByRole("button", { pressed: false }).filter({ hasText: "gold" });
       await expect(card).toHaveCount(1);
@@ -163,49 +161,7 @@ test.describe("Content tab", () => {
     });
   });
 
-  test("cards filter and flip from the keyboard", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "fun" }, async ({ page }) => {
-      await page.goto("/content");
-
-      const gold = page.getByRole("group", { name: "Show" }).getByRole("button", { name: /Gold/u });
-      await gold.focus();
-      await page.keyboard.press("Enter");
-      await expect(gold).toHaveAttribute("aria-pressed", "true");
-
-      const card = page.getByRole("button", { pressed: false }).filter({ hasText: "gold" });
-      await card.focus();
-      await page.keyboard.press("Enter");
-
-      await expect(page.getByRole("button", { name: /back of the card$/u })).toHaveAttribute(
-        "aria-pressed",
-        "true",
-      );
-    });
-  });
-
-  test("Show all by keyboard moves focus to the first card it revealed", async ({ browser }) => {
-    const { context, page } = await createThousandCardLearner(browser, "fun");
-
-    try {
-      await page.goto("/content");
-
-      // Only the first chapter opens, with its first twelve cards.
-      const cards = page.getByRole("button", { name: /^Card \d+$/u });
-      await expect(cards).toHaveCount(FIRST_CARDS);
-
-      const showAll = page.getByRole("button", { name: `Show all ${CARD_COUNT / AREA_COUNT}` });
-      await showAll.focus();
-      await page.keyboard.press("Enter");
-
-      await expect(showAll).toBeHidden();
-      await expect(cards).toHaveCount(CARD_COUNT / AREA_COUNT);
-      await expect(cards.nth(FIRST_CARDS)).toBeFocused();
-    } finally {
-      await context.close();
-    }
-  });
-
-  test("a thousand cards stay quick to open, search and filter", async ({ browser }) => {
+  test("a thousand cards stay quick to open, show all, search and filter", async ({ browser }) => {
     const { context, page } = await createThousandCardLearner(browser, "fun");
 
     try {
@@ -220,6 +176,19 @@ test.describe("Content tab", () => {
       await expect(filters.getByRole("button", { name: /1,000\s*All/u })).toBeVisible();
 
       await expect(filters.getByRole("button", { name: /250\s*Gold/u })).toBeVisible();
+
+      // Only the first chapter opens, with its first twelve cards; Show all by keyboard moves
+      // focus to the first card it revealed.
+      const cards = page.getByRole("button", { name: /^Card \d+$/u });
+      await expect(cards).toHaveCount(FIRST_CARDS);
+
+      const showAll = page.getByRole("button", { name: `Show all ${CARD_COUNT / AREA_COUNT}` });
+      await showAll.focus();
+      await page.keyboard.press("Enter");
+
+      await expect(showAll).toBeHidden();
+      await expect(cards).toHaveCount(CARD_COUNT / AREA_COUNT);
+      await expect(cards.nth(FIRST_CARDS)).toBeFocused();
 
       const searchStart = Date.now();
       await searchBox(page).fill("Card 999");

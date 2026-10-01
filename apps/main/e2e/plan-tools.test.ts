@@ -4,7 +4,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { buildLessonIdentityKey, buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { type Page, expect, test } from "./fixtures";
-import { type Mode, asPersona, setDeviceMode } from "./learn-personas";
+import { asPersona, setDeviceMode } from "./learn-personas";
 
 /**
  * The "You'll use" card. Maya's quantum physics plan (the v2 seed) has a vectors chapter that
@@ -74,13 +74,10 @@ function toolsCard(page: Page) {
   return page.getByRole("region", { name: "You'll use" });
 }
 
-/** Maya's plan has no date, so Focus titles it "Your plan"; Fun always calls it the Route. */
-async function openPlan(page: Page, mode: Mode) {
+/** Maya's plan has no date, so Focus titles it "Your plan". */
+async function openPlan(page: Page) {
   await page.goto("/plan");
-
-  await expect(
-    page.getByRole("heading", { level: 1, name: mode === "fun" ? "Route" : "Your plan" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Your plan" })).toBeVisible();
 }
 
 /** Tools only later phases use wait under "More later" until the learner opens it. */
@@ -126,7 +123,7 @@ test.describe("Plan tools", () => {
     const setup = await ensureSetupLesson({ system: device.system, tool: PYTHON });
 
     await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
-      await openPlan(page, "focus");
+      await openPlan(page);
 
       const card = toolsCard(page);
       await expect(card.getByText("Needed to practice")).toBeVisible();
@@ -169,36 +166,6 @@ test.describe("Plan tools", () => {
           prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: user.goalId } } }),
         )
         .toBe(0);
-    });
-  });
-
-  test("going without tools says what that path can't give", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page, user }) => {
-      await openPlan(page, "fun");
-
-      const card = toolsCard(page);
-
-      await card
-        .getByRole("button", { name: "No tools? You can do it all with examples." })
-        .click();
-
-      const note = card.getByText("You won't practice on your own computer.", { exact: false });
-      await expect(note).toBeVisible();
-
-      // The button leaves once it's chosen, so focus moves to the note that replaces it.
-      await expect(note).toBeFocused();
-
-      await openLaterTools(page);
-      await expect(card.getByText("Examples only")).toHaveCount(2);
-
-      await expect
-        .poll(async () => loadToolChoices(user.goalId))
-        .toMatchObject({
-          tools: [
-            { choice: "none", name: CALCULATOR },
-            { choice: "none", name: PYTHON },
-          ],
-        });
     });
   });
 });

@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import {
   guardianLinkFixture,
   learningProfileFixture,
@@ -26,11 +27,12 @@ test.describe("Guardian settings", () => {
     await learningProfileFixture({
       birthMonth: 1,
       birthYear: TEEN_BIRTH_YEAR,
-      experienceMode: "focus",
+      experienceMode: "fun",
       userId: noProgressUser.id,
     });
 
     await openGuardian(page);
+    await expectAccessibleScreen(page, "a teen's Fun guardian settings");
     await page.getByRole("textbox", { name: "Your guardian's email" }).fill("mom@zoonk.test");
     await page.getByRole("button", { name: "Send invite" }).click();
 
@@ -77,6 +79,7 @@ test.describe("Guardian settings", () => {
     await expect(page.getByText("Only your guardian can end this link.")).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Invite another guardian" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Guardian" })).toBeVisible();
+    await expectAccessibleScreen(page, "a teen's guardian settings");
   });
 
   test("adults don't need a guardian", async ({ noProgressUser, userWithoutProgress: page }) => {

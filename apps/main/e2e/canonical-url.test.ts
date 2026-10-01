@@ -175,6 +175,8 @@ test.describe("catalog URLs with another language preference", () => {
     });
 
     expect(new URL(page.url()).pathname).toBe(`/pt${path}`);
+    await expect(page.locator("html")).toHaveAttribute("lang", "pt");
+    await expect(page.getByRole("button", { name: "Começar este curso" }).first()).toBeVisible();
 
     const cookies = await page.context().cookies();
     expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("pt");

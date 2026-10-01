@@ -59,6 +59,7 @@
     "@zoonk/i18n": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
+    "axe-core": "4.13.0",
     "jsdom": "catalog:",
     "playwright": "catalog:",
     "polyclip-ts": "0.16.8",

@@ -1,10 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { getDateInTimeZone, getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type Page, expect, test } from "./fixtures";
+import { tabTo } from "./keyboard-focus";
 import { type Mode, setDeviceMode } from "./learn-personas";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 
@@ -22,7 +24,7 @@ async function openOnboarding(page: Page, { goalId, mode }: { goalId: string; mo
 }
 
 test.describe("Placement and the plan", () => {
-  test("placement adapts to answers, welcomes 'I don't know yet' and ends with the plan", async ({
+  test("placement adapts to answers, survives a refresh, welcomes 'I don't know yet' and ends with the plan, by keyboard", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -33,12 +35,14 @@ test.describe("Placement and the plan", () => {
       page.getByRole("heading", { name: "Let's see what you already know" }),
     ).toBeVisible();
 
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await tabTo(page, page.getByRole("button", { exact: true, name: "Start" }));
+    await page.keyboard.press("Enter");
 
     await expect(page.getByRole("heading", { name: /^Question/u })).toBeVisible();
     // What it's about and how many so far: no total and no score.
     await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
     await expect(page.getByText("Algebra", { exact: true })).toBeVisible();
+    await expectAccessibleScreen(page, "a placement question");
     const first = await page.getByRole("heading", { name: /^Question/u }).textContent();
     await page.keyboard.press("1");
     await expect(page.getByRole("radio", { name: /Right answer/u })).toBeChecked();
@@ -46,10 +50,20 @@ test.describe("Placement and the plan", () => {
 
     await expect(page.getByRole("heading", { name: /^Question/u })).not.toHaveText(first ?? "");
     await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
+
+    // A refresh comes back to placement's next question instead of its start.
+    await page.reload();
+    await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { name: "Let's see what you already know" }),
+    ).toBeHidden();
+
     await page.getByRole("button", { name: "I don't know yet" }).click();
 
     await expect(page.getByRole("heading", { name: /^Question/u })).toBeVisible();
-    await page.getByRole("button", { name: "Stop here and see my plan" }).click();
+    await tabTo(page, page.getByRole("button", { name: "Stop here and see my plan" }));
+    await page.keyboard.press("Enter");
 
     await expect(page.getByText("Plan ready")).toBeVisible();
     await expect(page.getByRole("heading", { level: 1, name: goal.title })).toBeVisible();
@@ -58,8 +72,21 @@ test.describe("Placement and the plan", () => {
 
     await expect(page.getByText(/Phase 1:/u)).toBeVisible();
 
+    await expect(
+      page
+        .getByRole("list", { name: "Your plan in numbers" })
+        .getByRole("listitem")
+        .filter({ hasText: "minutes a day" }),
+    ).toHaveText("30minutes a day");
+
     // A phase's size is never "0 h", even before the planner timed its lessons.
     await expect(page.getByText(/~0 h/u)).toHaveCount(0);
+
+    // Lessons still being written show as such, never by a skill's raw name.
+    await expect(page.getByText("Lessons being written").first()).toBeVisible();
+    await expect(page.getByText("Lesson 1", { exact: true })).toHaveCount(0);
+
+    await expectAccessibleScreen(page, "the plan");
 
     const [attempts, saved] = await Promise.all([
       prisma.attempt.count({ where: { itemId: { not: null }, userId: noProgressUser.id } }),
@@ -69,38 +96,6 @@ test.describe("Placement and the plan", () => {
     expect(attempts).toBeGreaterThanOrEqual(2);
     expect(saved.details).toMatchObject({ answered: expect.arrayContaining(["placement"]) });
   });
-
-  test("starting from scratch skips placement and shows the plan", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const goal = await createMappedGoal(noProgressUser.id);
-    await openOnboarding(page, { goalId: goal.id, mode: "fun" });
-
-    await page.getByRole("button", { name: "I'd rather start from scratch" }).click();
-    await expect(page.getByRole("heading", { level: 1, name: goal.title })).toBeVisible();
-
-    await expect(
-      page
-        .getByRole("list", { name: "Your plan in numbers" })
-        .getByRole("listitem")
-        .filter({ hasText: "minutes a day" }),
-    ).toHaveText("30minutes a day");
-  });
-});
-
-test("the plan shows lessons still being written as such, never by a skill's raw name", async ({
-  noProgressUser,
-  userWithoutProgress: page,
-}) => {
-  const goal = await createMappedGoal(noProgressUser.id);
-  await openOnboarding(page, { goalId: goal.id, mode: "focus" });
-
-  await page.getByRole("button", { name: "I'd rather start from scratch" }).click();
-  await expect(page.getByRole("heading", { level: 1, name: goal.title })).toBeVisible();
-
-  await expect(page.getByText("Lessons being written").first()).toBeVisible();
-  await expect(page.getByText("Lesson 1", { exact: true })).toHaveCount(0);
 });
 
 test("an exam's placement starts with the areas it covers", async ({
@@ -327,9 +322,15 @@ test.describe("Typed placement answers", () => {
     );
 
     await openOnboarding(page, { goalId: goal.id, mode: "fun" });
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    const placement = "Let's see what you already know";
+    await expect(page.getByRole("heading", { name: placement })).toBeVisible();
+    await expectAccessibleScreen(page, placement);
+    await tabTo(page, page.getByRole("button", { exact: true, name: "Start" }));
+    await page.keyboard.press("Enter");
 
     await expect(page.getByRole("heading", { name: /^Question/u })).toBeVisible();
+    await expectAccessibleScreen(page, "a placement question");
     await page.keyboard.press("1");
     await page.keyboard.press("Enter");
 
@@ -337,5 +338,6 @@ test.describe("Typed placement answers", () => {
     await expect(page.getByText(/Your first sessions ask a few more/u)).toBeVisible();
     await page.getByRole("button", { name: "See my plan" }).click();
     await expect(page.getByText("Route ready")).toBeVisible();
+    await expectAccessibleScreen(page, "the plan");
   });
 });

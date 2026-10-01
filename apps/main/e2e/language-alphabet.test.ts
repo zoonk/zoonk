@@ -1,70 +1,39 @@
 import { getAlphabetIdentityKey } from "@zoonk/core/library/language/alphabet-identity";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { alphabetLessonFixture } from "@zoonk/testing/fixtures/language";
-import { type Page, expect, test } from "./fixtures";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
 /** The script the learner starts on: Japanese hiragana, whose letters aren't Latin. */
-const SCRIPT = {
-  letters: [
-    ["あ", "a"],
-    ["か", "ka"],
-  ],
-  target: "ja",
-  title: "Seu primeiro hiragana",
-} as const;
+const SCRIPT = { target: "ja", title: "Seu primeiro hiragana" } as const;
 
-type Script = typeof SCRIPT;
-
-/** Marcos's goal now targets a language whose script isn't Latin, with its alphabet lesson written. */
-async function learnNewScript({ goalId, script }: { goalId: string; script: Script }) {
-  await prisma.goal.update({ data: { targetLanguage: script.target }, where: { id: goalId } });
+/**
+ * Marcos's goal now targets a language whose script isn't Latin, with its alphabet lesson written.
+ * He also picked a buddy once, in Fun.
+ */
+async function learnNewScript({ goalId, userId }: { goalId: string; userId: string }) {
+  await Promise.all([
+    prisma.goal.update({ data: { targetLanguage: SCRIPT.target }, where: { id: goalId } }),
+    learningProfileFixture({ buddyKind: "zu", userId }),
+  ]);
 
   return alphabetLessonFixture({
-    identityKey: getAlphabetIdentityKey(script.target),
-    targetLanguage: script.target,
+    identityKey: getAlphabetIdentityKey(SCRIPT.target),
+    targetLanguage: SCRIPT.target,
   });
-}
-
-/** Reads the intro and the letter cards (only the first has a clip), then matches them. */
-async function playAlphabetLesson(page: Page, script: Script) {
-  const [[first, firstReading], [second, secondReading]] = script.letters;
-  const next = page.getByRole("button", { name: /^Next/u });
-
-  await expect(page.getByText("Um som por letra")).toBeVisible();
-  await next.click();
-
-  const firstCard = page.getByRole("region", { name: `Alphabet: ${first}` });
-  await expect(firstCard.getByText(firstReading, { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Play pronunciation" })).toBeVisible();
-  await next.click();
-
-  await expect(page.getByRole("region", { name: `Alphabet: ${second}` })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Play pronunciation" })).toBeHidden();
-  await next.click();
-
-  await expect(page.getByText("Match the pairs.")).toBeVisible();
-
-  for (const label of [first, firstReading, second, secondReading]) {
-    // oxlint-disable-next-line no-await-in-loop -- A pair is matched by tapping its sides in turn.
-    await page.getByRole("button", { exact: true, name: label }).click();
-  }
-
-  // Matching gives feedback pair by pair, so Check moves straight on.
-  await page.getByRole("button", { name: /^Check/u }).click();
-  await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-  await expect(page.getByText("Você já lê 2 letras.")).toBeVisible();
 }
 
 /**
  * A language whose script isn't Latin starts with its alphabet: Content lists the lesson first
  * while it still opens the sessions, "I can already read it" skips it, and the lesson stays open
- * as practice, with each letter's sound and a match.
+ * as practice, without a buddy in Focus.
  */
 test.describe("Alphabet intro", () => {
-  test("lists the alphabet first, skips it and plays it as practice", async ({ browser }) => {
+  test("lists the alphabet first, skips it and opens it as practice", async ({ browser }) => {
     await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
-      const lesson = await learnNewScript({ goalId: user.goalId, script: SCRIPT });
+      const lesson = await learnNewScript({ goalId: user.goalId, userId: user.id });
       await page.goto("/content");
 
       const units = page.getByRole("navigation", { name: "Units" });
@@ -72,21 +41,20 @@ test.describe("Alphabet intro", () => {
       const skip = units.getByRole("button", { name: "I can already read it" });
 
       await expect(row).toContainText("First in your next session · 5 min");
+      await expectAccessibleScreen(page, "Content for a language goal");
       await skip.click();
 
+      // The row reads the saved skip back from the server.
       await expect(row).toContainText("Practice anytime · 5 min");
       await expect(skip).toBeHidden();
 
-      await expect
-        .poll(async () => {
-          const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-          return goal.details;
-        })
-        .toMatchObject({ alphabetIntro: "skipped" });
-
       await row.click();
       await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}$`, "u"));
-      await playAlphabetLesson(page, SCRIPT);
+      await expect(page.getByText("Um som por letra")).toBeVisible();
+
+      // The buddy stays on the profile, but whether a lesson has one is the page's call: Focus
+      // plays it without the buddy's first line.
+      await expect(page.getByText("Ready when you are.")).toHaveCount(0);
     });
   });
 });

@@ -1,13 +1,17 @@
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { z } from "zod";
 import { type Page, expect, test } from "./fixtures";
 import { type Mode, asPersona } from "./learn-personas";
+import { SCREEN_TUTOR_ANSWER, askSuggestion, stubScreenTutor } from "./screen-tutor";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
- * The Plan tab (the Route in Fun) for Ana's ENEM goal: the plan at three zoom levels, the route,
- * plan changes with their reason and undo, proposals, steering, schedule edits and test-outs. For
- * Maya's huge goal, the estimate the screen computes agrees with the phases it shows.
+ * The Plan tab (the Route in Fun) for Ana's ENEM goal: the plan at three zoom levels, the route
+ * and its link, plan changes with their reason and undo, votes, steering, schedule edits and
+ * test-outs. For Maya's huge goal, the estimate the screen computes agrees with the phases it
+ * shows, going without tools says what that path can't give, and "Ask" answers about the plan and
+ * its course.
  */
 
 async function openPlan(page: Page, mode: Mode) {
@@ -38,8 +42,10 @@ async function loadPlanSettings(goalId: string) {
 }
 
 test.describe("Plan tab", () => {
-  test("Focus shows the plan at three zoom levels with test-outs", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
+  test("Focus shows the plan at three zoom levels with test-outs and votes, by keyboard too", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
       await openPlan(page, "focus");
 
       await expect(page.getByText(/min a day · \d days a week/u)).toBeVisible();
@@ -53,8 +59,42 @@ test.describe("Plan tab", () => {
 
       await expect(page.getByText("Phase 4: Final stretch")).toBeVisible();
       await expect(page.getByRole("link", { name: "Test out of Porcentagem" })).toBeVisible();
+      await expectAccessibleScreen(page, "the plan");
 
-      await page.getByRole("tab", { name: "Week" }).click();
+      // The plan takes a vote, and so does its latest change (changes are listed newest first).
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
+      const steering = page.getByRole("region", { name: "How is it going?" });
+      await steering.getByRole("button", { exact: true, name: "Helpful" }).click();
+
+      await expect
+        .poll(() =>
+          prisma.contentFeedback.findFirst({ where: { contentId: plan.id, userId: user.id } }),
+        )
+        .toMatchObject({ contentKind: "plan", vote: "up" });
+
+      const changes = page.getByRole("region", { name: "Changes to your plan" });
+      await changes.getByRole("button", { exact: true, name: "Not helpful" }).first().click();
+      await page.getByRole("button", { name: "Skip" }).click();
+
+      await expect
+        .poll(() =>
+          prisma.contentFeedback.findFirst({
+            where: { contentKind: "planChange", userId: user.id },
+          }),
+        )
+        .toMatchObject({ vote: "down" });
+
+      // The zoom levels are tabs: arrows move between them and Enter picks one.
+      await page.getByRole("tab", { name: "Until the goal" }).focus();
+      await page.keyboard.press("ArrowLeft");
+      await expect(page.getByRole("tab", { name: "Week" })).toBeFocused();
+      await page.keyboard.press("Enter");
+
+      await expect(page.getByRole("tab", { name: "Week" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+
       await expect(page.getByRole("heading", { name: "This week" })).toBeVisible();
 
       await expect(
@@ -80,8 +120,11 @@ test.describe("Plan tab", () => {
     await page.context().close();
   });
 
-  test("Fun draws the route with moons, markers and the pace", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page }) => {
+  test("Fun draws the route with moons, markers and the pace, and shares its link", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+      await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
       await openPlan(page, "fun");
 
       const route = page.getByRole("list", { name: "Phases of your route" });
@@ -91,15 +134,30 @@ test.describe("Plan tab", () => {
       await expect(route.getByText(/^Boss · /u)).toBeVisible();
       await expect(page.getByRole("region", { name: "You vs. plan" })).toBeVisible();
       await expect(page.getByRole("heading", { name: "This week" })).toBeVisible();
+      await expectAccessibleScreen(page, "the Route");
+
+      await page.getByRole("button", { name: "Share this plan" }).click();
+      await expect(page.getByText("Link copied")).toBeVisible();
+
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
+      const copied = await page.evaluate(() => navigator.clipboard.readText());
+
+      expect(copied).toMatch(new RegExp(`/plan-link/${plan.id}$`, "u"));
+
+      // The owner opening their own link lands on their plan, the Route in Fun.
+      await page.goto(`/plan-link/${plan.id}`);
+      await expect(page).toHaveURL(/\/plan$/u);
+      await expect(page.getByRole("heading", { level: 1, name: "Route" })).toBeVisible();
     });
   });
 
-  test("steering changes the plan with an undo", async ({ browser }) => {
+  test("steering changes the plan from the keyboard, with an undo", async ({ browser }) => {
     await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
       await openPlan(page, "focus");
 
       const morePractice = page.getByRole("button", { name: "More practice" });
-      await morePractice.click();
+      await morePractice.focus();
+      await page.keyboard.press("Space");
 
       await expect(morePractice).toHaveAttribute("aria-pressed", "true");
       // Saving doesn't drop focus to the page: the toggle keeps it while it waits and after.
@@ -120,32 +178,6 @@ test.describe("Plan tab", () => {
     });
   });
 
-  test("a proposal waits for the learner's answer", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
-      await openPlan(page, "fun");
-
-      const proposal = page.getByRole("listitem").filter({ hasText: "Waiting for your OK" });
-      await expect(proposal).toContainText("sábado");
-
-      await proposal.getByRole("button", { name: "Not now" }).click();
-      await expect(page.getByText("Waiting for your OK")).toBeHidden();
-
-      // The declined proposal leaves the list, so focus moves to the plan's changes.
-      await expect(page.getByRole("heading", { name: "Changes to your plan" })).toBeFocused();
-
-      await expect
-        .poll(async () => {
-          const plan = await prisma.plan.findUniqueOrThrow({
-            include: { changes: { where: { status: "declined" } } },
-            where: { goalId: user.goalId },
-          });
-
-          return plan.changes.length;
-        })
-        .toBe(1);
-    });
-  });
-
   test("the schedule changes from the edit panel", async ({ browser }) => {
     await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
       await openPlan(page, "focus");
@@ -161,45 +193,6 @@ test.describe("Plan tab", () => {
       const lightWeek = page.getByRole("button", { name: "Next week is light" });
       await expect(lightWeek).toBeDisabled();
       await expect(lightWeek).toBeFocused();
-    });
-  });
-
-  test("sharing the plan copies its link", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
-      await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-      await openPlan(page, "fun");
-
-      await page.getByRole("button", { name: "Share this plan" }).click();
-      await expect(page.getByText("Link copied")).toBeVisible();
-
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
-      const copied = await page.evaluate(() => navigator.clipboard.readText());
-
-      expect(copied).toMatch(new RegExp(`/plan-link/${plan.id}$`, "u"));
-    });
-  });
-
-  test("zoom levels and steering work from the keyboard", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
-      await openPlan(page, "focus");
-
-      await page.getByRole("tab", { name: "Until the goal" }).focus();
-      await page.keyboard.press("ArrowLeft");
-      await expect(page.getByRole("tab", { name: "Week" })).toBeFocused();
-      await page.keyboard.press("Enter");
-
-      await expect(page.getByRole("tab", { name: "Week" })).toHaveAttribute(
-        "aria-selected",
-        "true",
-      );
-
-      await expect(page.getByRole("heading", { name: "This week" })).toBeVisible();
-
-      const tooHard = page.getByRole("button", { name: "Too hard" });
-      await tooHard.focus();
-      await page.keyboard.press("Space");
-      await expect(tooHard).toHaveAttribute("aria-pressed", "true");
-      await expect(tooHard).toBeFocused();
     });
   });
 
@@ -228,27 +221,6 @@ test.describe("Plan tab", () => {
 
       await page.getByRole("link", { name: "Back to the plan" }).click();
       await expect(page.getByRole("heading", { level: 1, name: /^Until /u })).toBeVisible();
-    });
-  });
-
-  test("a test-out can be answered from the keyboard", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page }) => {
-      await page.goto("/plan");
-      await page.getByRole("link", { name: "Test out of Porcentagem" }).click();
-
-      await expect(page.getByText("Test out: Porcentagem")).toBeVisible();
-      await expect(page.getByRole("progressbar", { name: /^Question 1 of \d+$/u })).toBeVisible();
-
-      // Which question comes first depends on seeded ids, so this reads the first answer shown.
-      const firstAnswer = page.getByRole("main").getByRole("listitem").first().getByRole("button");
-
-      await page.keyboard.press("1");
-      await expect(firstAnswer).toHaveAttribute("aria-pressed", "true");
-      await expect(page.getByRole("button", { name: /^(?:Next|Finish)$/u })).toBeEnabled();
-
-      // Enter moves on with the picked answer, as Next does.
-      await page.keyboard.press("Enter");
-      await expect(page.getByRole("progressbar", { name: /^Question 2 of \d+$/u })).toBeVisible();
     });
   });
 });
@@ -301,12 +273,20 @@ test.describe("Plan tab for a huge learn goal", () => {
     });
   });
 
-  test("Fun closes the phase with its boss and points out this week's challenge", async ({
+  test("Fun closes the phase with its boss, points out this week's challenge, goes without tools and answers about the plan and its course", async ({
     browser,
   }) => {
     await asPersona(browser, { mode: "fun", persona: "hugeGoal" }, async ({ page, user }) => {
-      const { phases } = await loadStoredPlan(user.goalId);
+      const [{ phases }, asked] = await Promise.all([
+        loadStoredPlan(user.goalId),
+        stubScreenTutor(page),
+      ]);
+
       const [current] = phases;
+
+      // A phase ends with a phase checkpoint, so the week's challenge is the one this Sunday.
+      await page.goto("/today");
+      await expect(page.getByText("Sunday: Big Challenge", { exact: true })).toBeVisible();
 
       await page.goto("/plan");
       await expect(page.getByRole("heading", { level: 1, name: "Route" })).toBeVisible();
@@ -322,6 +302,55 @@ test.describe("Plan tab for a huge learn goal", () => {
       ).toBeVisible();
 
       await expect(route.getByText("Big Challenge · Sunday")).toBeVisible();
+
+      const tools = page.getByRole("region", { name: "You'll use" });
+
+      await tools
+        .getByRole("button", { name: "No tools? You can do it all with examples." })
+        .click();
+
+      const note = tools.getByText("You won't practice on your own computer.", { exact: false });
+      await expect(note).toBeVisible();
+
+      // The button leaves once it's chosen, so focus moves to the note that replaces it.
+      await expect(note).toBeFocused();
+
+      // Tools only later phases use wait under "More later" until the learner opens it.
+      await tools.getByText(/^More later: /u).click();
+      await expect(tools.getByText("Examples only")).toHaveCount(2);
+
+      // The plan's tutor also sees the course it's built from, so the plan has one "Ask".
+      await expect(page.getByRole("button", { name: /^Ask about/u })).toHaveCount(1);
+
+      const tutor = await askSuggestion({
+        ask: "Ask about your plan",
+        description: "Ask questions about your plan",
+        page,
+        suggestion: "Why am I studying this today?",
+      });
+
+      await expect(tutor.getByRole("button", { name: "What comes next?" })).toBeHidden();
+
+      const textbox = tutor.getByRole("textbox", { name: "Ask a question" });
+      await textbox.fill("How is this course organized, level by level?");
+      await tutor.getByRole("button", { name: "Send" }).click();
+      await expect(tutor.getByText(SCREEN_TUTOR_ANSWER)).toHaveCount(2);
+
+      expect(asked).toStrictEqual([
+        {
+          input: expect.objectContaining({ context: { kind: "plan" }, suggested: true }),
+          path: `/v1/goals/${user.goalId}/plan/questions`,
+        },
+        {
+          input: expect.objectContaining({
+            context: { kind: "plan" },
+            question: "How is this course organized, level by level?",
+          }),
+          path: `/v1/goals/${user.goalId}/plan/questions`,
+        },
+      ]);
+
+      expect(asked[1]?.input.suggested).toBeUndefined();
     });
   });
 });

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -14,8 +15,9 @@ import { type Mode, asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
 
 /**
- * Passing a chapter's test-out: Ana answers every question right, the chapter's lessons she still
- * had to take come off her plan, and the plan says so with an undo that puts them back.
+ * Passing a chapter's test-out: Ana answers every question right (the first from the keyboard), the
+ * chapter's lessons she still had to take come off her plan, and the plan says so with an undo
+ * that puts them back.
  */
 
 /** The right option of the bank question the test-out shows, found by its text. */
@@ -27,6 +29,24 @@ async function findRightOption(question: string): Promise<string> {
   return readOptions(item.content).find((option) => option.isCorrect)?.text ?? "";
 }
 
+/** The right option of the question shown, picked by its number key, then Enter moves on. */
+async function answerRightByKeyboard(page: Page, right: string) {
+  // Each option reads as its number key followed by its text.
+  const options = await page.getByRole("main").getByRole("listitem").allTextContents();
+  const key = options.findIndex((option, index) => option === `${index + 1}${right}`) + 1;
+
+  await page.keyboard.press(String(key));
+
+  await expect(page.getByRole("button", { exact: true, name: right })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+
+  await expect(page.getByRole("button", { name: /^(?:Next|Finish)$/u })).toBeEnabled();
+  await page.keyboard.press("Enter");
+}
+
+/** Answers the first question from the keyboard and the rest by tapping. */
 async function answerEveryQuestionRight(page: Page) {
   const progress = page.getByRole("progressbar", { name: /^Question 1 of \d+$/u });
   const label = await progress.getAttribute("aria-label");
@@ -40,12 +60,18 @@ async function answerEveryQuestionRight(page: Page) {
 
     // oxlint-disable-next-line no-await-in-loop -- Each answer depends on the question shown.
     const question = (await page.getByRole("heading", { level: 2 }).textContent()) ?? "";
-
     // oxlint-disable-next-line no-await-in-loop -- Each answer depends on the question shown.
-    await page.getByRole("button", { exact: true, name: await findRightOption(question) }).click();
+    const right = await findRightOption(question);
 
-    // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-    await page.getByRole("button", { name: number === total ? "Finish" : "Next" }).click();
+    if (number === 1) {
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await answerRightByKeyboard(page, right);
+    } else {
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { exact: true, name: right }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { name: number === total ? "Finish" : "Next" }).click();
+    }
   }
 }
 
@@ -54,13 +80,16 @@ function countTestedOut(goalId: string) {
 }
 
 test.describe("Passing a chapter test-out", () => {
-  test("takes the chapter's lessons off the plan, with an undo", async ({ browser }) => {
+  test("answered by keyboard and tap, takes the chapter's lessons off the plan, with an undo", async ({
+    browser,
+  }) => {
     await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
       const before = await countTestedOut(user.goalId);
 
       await page.goto("/plan");
       await page.getByRole("link", { name: "Test out of Porcentagem" }).click();
       await expect(page.getByText("Test out: Porcentagem")).toBeVisible();
+      await expectAccessibleScreen(page, "a chapter test-out");
 
       await answerEveryQuestionRight(page);
 
@@ -169,6 +198,7 @@ test.describe("A chapter test-out without questions yet", () => {
 
     // No refresh: the test opens once its questions exist.
     await expect(page.getByRole("progressbar", { name: `Question 1 of ${SKILLS}` })).toBeVisible();
+    await expectAccessibleScreen(page, "a chapter test-out");
 
     await page.context().close();
   });

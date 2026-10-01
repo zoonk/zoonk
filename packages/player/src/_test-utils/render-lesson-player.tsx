@@ -1,5 +1,8 @@
 import { render } from "@testing-library/react";
-import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/contract";
+import {
+  type PlayableLibraryLesson,
+  type PlayableTeachingStepOf,
+} from "@zoonk/core/lesson-player/contract";
 import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
 import { type ReactNode } from "react";
 import { vi } from "vitest";
@@ -17,7 +20,7 @@ import { type PlayerLinkComponent } from "../player-context";
 export type PlayerMode = "focus" | "fun";
 
 /** A link that stays on the page: following it would navigate away from the test's frame. */
-function TestLink({
+export function TestLink({
   "aria-keyshortcuts": keyShortcuts,
   children,
   className,
@@ -92,6 +95,36 @@ export function buildAdapters(
     ),
     ...overrides,
   };
+}
+
+/**
+ * The server settles an accepted written answer in code: right, with every key point met. Written
+ * answers are graded only on the server, so this stands in for its verdict.
+ */
+export function acceptedAnswerCheck(
+  step: PlayableTeachingStepOf<"typedAnswer">,
+): LessonPlayerAdapters["checkStep"] {
+  return vi.fn<LessonPlayerAdapters["checkStep"]>(({ answer }) => {
+    const accepted = step.content.acceptedAnswers ?? [];
+
+    if (answer.kind !== "typedAnswer" || !accepted.includes(answer.text)) {
+      return Promise.resolve({ status: "failed" as const });
+    }
+
+    return Promise.resolve({
+      result: {
+        correctAnswer: null,
+        feedback: null,
+        isCorrect: true,
+        keyPoints: step.content.keyPoints.map((text) => ({ met: true, text })),
+        nextReviewAt: null,
+        savedMistake: false,
+        score: 1,
+        spelling: null,
+      },
+      status: "checked" as const,
+    });
+  });
 }
 
 /** A lesson of the given screens, in the order given. */

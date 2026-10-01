@@ -11,7 +11,6 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { statement } from "./exam-fixtures";
 import { expect, test } from "./fixtures";
-import { type Mode } from "./learn-personas";
 import { openAs } from "./study-day";
 
 const PAIRS = [
@@ -21,10 +20,10 @@ const PAIRS = [
 ];
 
 /**
- * A learner whose day opens with two capsules: true-or-false statements scored net, as in
+ * A Focus learner whose day opens with two capsules: true-or-false statements scored net, as in
  * Cebraspe exams (a wrong answer cancels a right one), and one match-pairs question.
  */
-async function createCapsuleDay(mode: Mode) {
+async function createCapsuleDay() {
   const [user, skill, lesson] = await Promise.all([
     createE2EUser(getBaseURL()),
     skillFixture({ name: `Administrative law ${randomUUID()}` }),
@@ -49,12 +48,7 @@ async function createCapsuleDay(mode: Mode) {
     }),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, experienceMode: "focus", userId: user.id }),
   ]);
 
   await studySessionBlockFixture({
@@ -89,9 +83,11 @@ async function createCapsuleDay(mode: Mode) {
 }
 
 test.describe("Capsules", () => {
-  test("swipe with a net score, then match pairs", async ({ browser }) => {
-    const { user } = await createCapsuleDay("focus");
+  test("swipe with a net score, then match pairs, by click or key", async ({ browser }) => {
+    const { user } = await createCapsuleDay();
     const page = await openAs(browser, user);
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+
     await page.goto("/session");
     await page.getByRole("button", { name: /^Start/u }).click();
 
@@ -103,27 +99,19 @@ test.describe("Capsules", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: /^True/u }).click();
-
-    await expect(
-      page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!"),
-    ).toBeVisible();
-
+    await expect(feedback.getByText("Correct!")).toBeVisible();
     await expect(page.getByText("1 right")).toBeVisible();
     await page.keyboard.press("Enter");
 
-    // Left blank: it cancels nothing.
+    // Left blank with its number key (1 false, 2 leave blank, 3 true): it cancels nothing.
     await expect(page.getByText(/^Second statement/u)).toBeVisible();
-    await page.getByRole("button", { name: "Leave blank" }).click();
-
-    await expect(
-      page.getByRole("region", { name: "Answer feedback" }).getByText("Not quite"),
-    ).toBeVisible();
-
+    await page.keyboard.press("2");
+    await expect(feedback.getByText("Not quite")).toBeVisible();
     await expect(page.getByText("0 wrong")).toBeVisible();
     await expect(page.getByText("net 1")).toBeVisible();
     await page.keyboard.press("Enter");
 
-    // False on a true statement, from the keyboard: the net drops back to zero.
+    // False on a true statement, swiped from the keyboard: the net drops back to zero.
     await expect(page.getByText(/^Third statement/u)).toBeVisible();
     await page.keyboard.press("ArrowLeft");
     await expect(page.getByText("net 0")).toBeVisible();
@@ -131,75 +119,28 @@ test.describe("Capsules", () => {
 
     await expect(page.getByRole("heading", { name: "Match each percentage" })).toBeVisible();
 
-    await PAIRS.reduce(async (previous, pair) => {
-      await previous;
-      await page.getByRole("button", { exact: true, name: pair.left }).click();
-      await page.getByRole("button", { exact: true, name: pair.right }).click();
-    }, Promise.resolve());
-
-    await page.getByRole("button", { name: "Check" }).click();
-
-    await expect(
-      page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!"),
-    ).toBeVisible();
-
-    await page.keyboard.press("Enter");
-    await expect(page.getByText("Net score 1: 2 right, 1 wrong")).toBeVisible();
-    await page.context().close();
-  });
-
-  test("the same capsules by keyboard alone: number keys answer, Enter goes on", async ({
-    browser,
-  }) => {
-    const { user } = await createCapsuleDay("fun");
-    const page = await openAs(browser, user);
-    await page.setViewportSize({ height: 900, width: 1280 });
-    await page.goto("/session");
-
-    const feedback = page.getByRole("region", { name: "Answer feedback" });
-
-    // Enter's listener attaches as the page hydrates, so the first press retries.
-    await expect(async () => {
-      await page.keyboard.press("Enter");
-      await expect(page.getByText(/^First statement/u)).toBeVisible({ timeout: 1000 });
-    }).toPass({ timeout: 5000 });
-
-    // Numbers follow the buttons: 1 false, 2 leave blank, 3 true.
-    await page.keyboard.press("3");
-    await expect(feedback.getByText("Correct!")).toBeVisible();
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByText(/^Second statement/u)).toBeVisible();
-    await page.keyboard.press("2");
-    await expect(feedback.getByText("Not quite")).toBeVisible();
-    await expect(page.getByText("net 1")).toBeVisible();
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByText(/^Third statement/u)).toBeVisible();
-    await page.keyboard.press("3");
-    await expect(feedback.getByText("Correct!")).toBeVisible();
-    await expect(page.getByText("net 2")).toBeVisible();
-    await page.keyboard.press("Enter");
-
-    // Match pairs: a number picks on the left, then its match on the right; Enter checks.
-    await expect(page.getByRole("heading", { name: "Match each percentage" })).toBeVisible();
-
+    // A pair by click; the rest by number keys, one on the left, then its match on the right.
     const rights = await page
       .getByRole("list", { name: "With these" })
       .getByRole("button")
       .allTextContents();
 
-    for (const [index, pair] of PAIRS.entries()) {
+    const [clicked, ...typed] = PAIRS;
+    await page.getByRole("button", { exact: true, name: clicked?.left }).click();
+    await page.getByRole("button", { exact: true, name: clicked?.right }).click();
+
+    for (const pair of typed) {
       // oxlint-disable-next-line no-await-in-loop -- Each pair is picked in turn.
-      await page.keyboard.press(String(index + 1));
+      await page.keyboard.press(String(PAIRS.indexOf(pair) + 1));
       // oxlint-disable-next-line no-await-in-loop -- Each pair is picked in turn.
       await page.keyboard.press(String(rights.indexOf(pair.right) + 1));
     }
 
+    // Enter checks, then moves on.
     await page.keyboard.press("Enter");
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await page.keyboard.press("Enter");
-    await expect(page.getByText("Net score 3: 3 right, 0 wrong")).toBeVisible();
+    await expect(page.getByText("Net score 1: 2 right, 1 wrong")).toBeVisible();
     await page.context().close();
   });
 });

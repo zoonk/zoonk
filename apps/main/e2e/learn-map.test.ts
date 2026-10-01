@@ -1,5 +1,6 @@
 import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -77,6 +78,7 @@ test.describe("Map of the subject", () => {
       await expect(current).toHaveAttribute("aria-expanded", "true");
       await expect(later).toHaveAttribute("aria-expanded", "false");
       await expect(phases.getByText("You are here", { exact: true })).toBeVisible();
+      await expectAccessibleScreen(page, "the map of the subject");
 
       const chapterMap = page.getByRole("list", {
         name: "Skills in Exponents and scientific notation",

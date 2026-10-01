@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Page, expect } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -212,4 +213,13 @@ export async function playDuel(
     // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
     await answerDuelQuestion(page, { answer, keyboard, number });
   }
+}
+
+/** When the first boss's star glasses had their ceremony; null until it showed. */
+export async function starShownAt(userId: string) {
+  const milestone = await prisma.milestone.findFirstOrThrow({
+    where: { key: "star", kind: "glasses", userId },
+  });
+
+  return milestone.shownAt;
 }

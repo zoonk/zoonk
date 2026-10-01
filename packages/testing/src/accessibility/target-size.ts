@@ -1,5 +1,3 @@
-import { type Page } from "@playwright/test";
-
 /**
  * Zoonk's rule for anything people tap or click: 44 px each way, counting a hit area drawn by a
  * `::before` or `::after` (the `Button` primitive's). WCAG 2.2's 24 px (2.5.8) is the floor this
@@ -19,7 +17,8 @@ const TARGET_LIMITS = {
   sizeTolerance: 0.5,
 };
 
-const TARGET_SELECTOR = [
+/** Everything that can be pressed: native controls and elements with an interactive role. */
+export const TARGET_SELECTOR = [
   "a[href]",
   "button",
   "input:not([type=hidden])",
@@ -42,8 +41,8 @@ const TARGET_SELECTOR = [
   ].map((role) => `[role=${role}]`),
 ].join(",");
 
-/** What the browser measures of one target, judged here in Node. */
-type TargetSample = {
+/** What the browser measures of one target, judged by `findSmallTargets`. */
+export type TargetSample = {
   /** Disabled, inert or hidden from assistive tech: nothing to press. */
   inactive: boolean;
   /** Characters of text in the block the target's line sits in, and in the target itself. */
@@ -68,62 +67,59 @@ type TargetSample = {
   visibility: string;
 };
 
-/** Reads the candidate targets on screen; `page.evaluate` sends this to the browser. */
-function sampleTargets(page: Page): Promise<TargetSample[]> {
-  return page.evaluate(
-    (selector) =>
-      [...document.querySelectorAll<HTMLElement>(selector)].map((element) => {
-        const style = getComputedStyle(element);
-        const rect = element.getBoundingClientRect();
+/**
+ * Measures the candidate targets in the document. It runs in the browser and reads nothing outside
+ * itself, so Playwright can send it with `page.evaluate` and browser tests can call it directly.
+ */
+export function sampleTargets(selector: string): TargetSample[] {
+  return [...document.querySelectorAll<HTMLElement>(selector)].map((element) => {
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
 
-        const ancestors = document.evaluate(
-          "ancestor::*",
-          element,
-          null,
-          XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-          null,
-        );
+    const ancestors = document.evaluate(
+      "ancestor::*",
+      element,
+      null,
+      XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+      null,
+    );
 
-        // The block the element's line of text sits in: its nearest ancestor that isn't inline.
-        const block =
-          Array.from({ length: ancestors.snapshotLength }, (_, index) =>
-            ancestors.snapshotItem(index),
-          )
-            .toReversed()
-            .find(
-              (node): node is HTMLElement =>
-                node instanceof HTMLElement && getComputedStyle(node).display !== "inline",
-            ) ?? document.body;
+    // The block the element's line of text sits in: its nearest ancestor that isn't inline.
+    const block =
+      Array.from({ length: ancestors.snapshotLength }, (_, index) => ancestors.snapshotItem(index))
+        .toReversed()
+        .find(
+          (node): node is HTMLElement =>
+            node instanceof HTMLElement && getComputedStyle(node).display !== "inline",
+        ) ?? document.body;
 
-        const blockStyle = getComputedStyle(block);
+    const blockStyle = getComputedStyle(block);
 
-        return {
-          blockFontSize: blockStyle.fontSize,
-          blockLineHeight: blockStyle.lineHeight,
-          blockText: block.textContent.trim().length,
-          clipPath: style.clipPath,
-          display: style.display,
-          firstLineHeight: element.getClientRects()[0]?.height ?? rect.height,
-          height: rect.height,
-          inactive:
-            element.matches(":disabled, [aria-disabled='true']") ||
-            Boolean(element.closest("[inert], [aria-hidden='true']")),
-          name: element.getAttribute("aria-label") ?? element.textContent.trim(),
-          overflow: style.overflow,
-          ownText: element.textContent.trim().length,
-          pointerEvents: style.pointerEvents,
-          pseudos: ["::before", "::after"]
-            .map((pseudo) => getComputedStyle(element, pseudo))
-            .filter((pseudo) => pseudo.content !== "none" && pseudo.position === "absolute")
-            .map((pseudo) => ({ height: pseudo.height, width: pseudo.width })),
-          role: element.getAttribute("role") ?? element.tagName.toLowerCase(),
-          slot: element.dataset.slot,
-          visibility: style.visibility,
-          width: rect.width,
-        };
-      }),
-    TARGET_SELECTOR,
-  );
+    return {
+      blockFontSize: blockStyle.fontSize,
+      blockLineHeight: blockStyle.lineHeight,
+      blockText: block.textContent.trim().length,
+      clipPath: style.clipPath,
+      display: style.display,
+      firstLineHeight: element.getClientRects()[0]?.height ?? rect.height,
+      height: rect.height,
+      inactive:
+        element.matches(":disabled, [aria-disabled='true']") ||
+        Boolean(element.closest("[inert], [aria-hidden='true']")),
+      name: element.getAttribute("aria-label") ?? element.textContent.trim(),
+      overflow: style.overflow,
+      ownText: element.textContent.trim().length,
+      pointerEvents: style.pointerEvents,
+      pseudos: ["::before", "::after"]
+        .map((pseudo) => getComputedStyle(element, pseudo))
+        .filter((pseudo) => pseudo.content !== "none" && pseudo.position === "absolute")
+        .map((pseudo) => ({ height: pseudo.height, width: pseudo.width })),
+      role: element.getAttribute("role") ?? element.tagName.toLowerCase(),
+      slot: element.dataset.slot,
+      visibility: style.visibility,
+      width: rect.width,
+    };
+  });
 }
 
 function toPixels(value: string): number {
@@ -189,8 +185,7 @@ function describeTarget(sample: TargetSample, size: { height: number; width: num
  * Only what can be pressed counts, and a target inside running text is exempt (`isInText`); a
  * link or button that stands on its own must be 44 px.
  */
-export async function findSmallTargets(page: Page): Promise<string[]> {
-  const samples = await sampleTargets(page);
+export function findSmallTargets(samples: TargetSample[]): string[] {
   const smallest = TARGET_LIMITS.min - TARGET_LIMITS.sizeTolerance;
 
   return samples.flatMap((sample) => {

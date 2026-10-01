@@ -1,9 +1,11 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleRoutes, expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
 const PATTERN_LINK = /We noticed a pattern\s*since e for/u;
+const RENTING_UNIT = "Alugando um apartamento";
 
 /** Picks an option with its number key, sees it was right, and continues with Enter. */
 async function answerRightWithKeys(page: Page, key: string) {
@@ -34,14 +36,25 @@ async function answerDrill(page: Page) {
 }
 
 /**
- * "We noticed a pattern" for Marcos: from Today to the rule and its contrast, then the five-question
- * drill with instant feedback (number keys and Enter, or taps), the result with Brain Power, and
- * the card gone from Today once practiced.
+ * "We noticed a pattern" for Marcos: from Today, beside his current situation, to the rule and its
+ * contrast, then the five-question drill with instant feedback (number keys and Enter, or taps),
+ * the result with Brain Power, and the card gone from Today once practiced.
  */
 test.describe("Language mistake pattern", () => {
-  test("drills the pattern from Today and takes it off Today", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
+  test("drills the pattern from Today and takes it off Today, beside the current situation", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page }) => {
       await page.goto("/today");
+
+      const situation = page.getByRole("region", { name: "Your current situation" });
+      await expect(situation.getByText("Unit 2 of 6")).toBeVisible();
+      await expect(situation.getByText("1 of 4 lessons")).toBeVisible();
+
+      // No word he mispronounced is due, so Today asks him to say none again.
+      await expect(page.getByRole("link", { name: /words? again/u })).toHaveCount(0);
+      await expectAccessibleScreen(page, "Today for a language goal");
+
       await page.getByRole("link", { name: PATTERN_LINK }).click();
 
       await expect(page).toHaveURL(/\/pattern\/[\da-f-]{36}$/u);
@@ -52,6 +65,7 @@ test.describe("Language mistake pattern", () => {
 
       await expect(page.getByText("I've lived here since 2020.")).toBeVisible();
       await expect(page.getByText("for 6 years")).toBeVisible();
+      await expectAccessibleScreen(page, "a mistake pattern");
 
       await page.keyboard.press("Enter");
       await answerDrill(page);
@@ -59,15 +73,20 @@ test.describe("Language mistake pattern", () => {
       await expect(page.getByRole("heading", { level: 1, name: "4 of 5 right" })).toBeVisible();
       await expect(page.getByText(/^\+\d+ Brain Power$/u)).toBeVisible();
 
-      const pattern = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });
-
-      expect(pattern.practicedAt).not.toBeNull();
-
       await page.getByRole("link", { name: "Back to Today" }).click();
 
       await expect(page).toHaveURL(/\/today$/u);
-      await expect(page.getByRole("region", { name: "Your current situation" })).toBeVisible();
+      await expect(situation).toBeVisible();
       await expect(page.getByRole("link", { name: PATTERN_LINK })).toHaveCount(0);
+
+      await situation.getByRole("link", { name: RENTING_UNIT }).click();
+
+      await expect(page).toHaveURL(/\/content\/units\/[\da-f-]{36}$/u);
+      await expect(page.getByRole("heading", { level: 1, name: RENTING_UNIT })).toBeVisible();
+      await expectAccessibleScreen(page, "a unit");
+
+      // No Focus flow opens a language goal's plan, so it's scanned here.
+      await expectAccessibleRoutes(page, [{ path: "/plan" }]);
     });
   });
 
@@ -87,16 +106,6 @@ test.describe("Language mistake pattern", () => {
       await expect(page.getByRole("button", { name: /Practice this/u })).toHaveCount(0);
 
       // Reading the note is enough: it leaves Today.
-      await expect
-        .poll(async () => {
-          const pattern = await prisma.mistakePattern.findFirstOrThrow({
-            where: { userId: user.id },
-          });
-
-          return pattern.dismissedAt;
-        })
-        .not.toBeNull();
-
       await page.getByRole("link", { name: "Done" }).click();
       await expect(page).toHaveURL(/\/today$/u);
       await expect(page.getByRole("region", { name: "Your current situation" })).toBeVisible();

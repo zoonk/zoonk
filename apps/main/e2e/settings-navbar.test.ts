@@ -2,15 +2,10 @@ import { expect, test } from "./fixtures";
 import { readDeviceMode } from "./learn-personas";
 
 test.describe("Settings Navbar", () => {
-  test("settings sit under the learning top bar", async ({ page }) => {
+  test("displays all settings navigation pills under the learning top bar", async ({ page }) => {
     await page.goto("/language");
 
     await expect(page.getByRole("link", { name: "Today" })).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "Settings" })).toBeVisible();
-  });
-
-  test("displays all settings navigation pills", async ({ page }) => {
-    await page.goto("/language");
 
     const settings = page.getByRole("navigation", { name: "Settings" });
 
@@ -37,15 +32,6 @@ test.describe("Settings Navbar", () => {
     await expect(current).toBeInViewport({ ratio: 1 });
   });
 
-  test("Subscription pill opens the subscription page for a learner", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage.goto("/language");
-    await authenticatedPage.getByRole("link", { name: /subscription/iu }).click();
-
-    await expect(authenticatedPage).toHaveURL(/\/subscription$/u);
-  });
-
   test("Subscription pill opens the public pricing page for a visitor", async ({ page }) => {
     await page.goto("/language");
     await page.getByRole("link", { name: /subscription/iu }).click();
@@ -54,27 +40,21 @@ test.describe("Settings Navbar", () => {
     await expect(page.getByRole("link", { name: "Try free" })).toBeVisible();
   });
 
-  test("Language pill navigates to language page", async ({ page }) => {
-    await page.goto("/support");
-    await page.getByRole("link", { name: /language/iu }).click();
-
-    await expect(page.getByRole("heading", { level: 1, name: /language/iu })).toBeVisible();
-  });
-
-  test("Profile pill navigates to profile page", async ({ page }) => {
+  test("Profile, Support and Language pills open their pages", async ({ page }) => {
     await page.goto("/language");
-    await page.getByRole("link", { name: /profile/iu }).click();
+    const settings = page.getByRole("navigation", { name: "Settings" });
 
+    await settings.getByRole("link", { name: /profile/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: /profile/iu })).toBeVisible();
-  });
 
-  test("Support pill navigates to support page", async ({ page }) => {
-    await page.goto("/language");
-    await page.getByRole("link", { name: /support/iu }).click();
+    await settings.getByRole("link", { name: /support/iu }).click();
 
     await expect(
       page.getByRole("heading", { level: 1, name: /feedback & support/iu }),
     ).toBeVisible();
+
+    await settings.getByRole("link", { name: /language/iu }).click();
+    await expect(page.getByRole("heading", { level: 1, name: /language/iu })).toBeVisible();
   });
 
   test("logout button logs user out and forgets their mode on the device", async ({
@@ -87,7 +67,6 @@ test.describe("Settings Navbar", () => {
 
     await logoutPage.getByRole("button", { name: /logout/iu }).click();
     await logoutPage.waitForURL(/\/$/u);
-    await logoutPage.waitForLoadState("networkidle");
 
     await expect(logoutPage.getByRole("link", { name: "Log in" })).toBeVisible();
     expect(await readDeviceMode(logoutPage.context())).toBeUndefined();

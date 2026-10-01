@@ -1,9 +1,13 @@
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type Page, expect, test } from "./fixtures";
 
+/** English first: visiting a prefixed page saves its language, which "/" would reopen. */
 const LOCALES = ["en", "es", "pt", "fr", "de"] as const;
 
-function homePath(locale: (typeof LOCALES)[number]) {
+type Locale = (typeof LOCALES)[number];
+
+function homePath(locale: Locale) {
   return locale === "en" ? "/" : `/${locale}`;
 }
 
@@ -11,26 +15,29 @@ async function readHtmlLang(page: Page) {
   return page.evaluate(() => document.documentElement.lang);
 }
 
+/** Opens the home page in `locale`, checks it renders in it, and returns its h1. */
+async function readHomeHeading(page: Page, locale: Locale) {
+  await page.goto(homePath(locale));
+
+  const heading = page.getByRole("heading", { level: 1 });
+  await expect(heading).toBeVisible();
+  await expect(page.getByRole("textbox")).toHaveCount(2);
+  expect(await readHtmlLang(page)).toBe(locale);
+
+  return heading.textContent();
+}
+
 test.describe("Home page for visitors", () => {
-  for (const locale of LOCALES) {
-    test(`renders in ${locale}`, async ({ page }) => {
-      await page.goto(homePath(locale));
+  test("renders and translates the page in every language", async ({ page }) => {
+    const headings: Partial<Record<Locale, string | null>> = {};
 
-      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-      await expect(page.getByRole("textbox")).toHaveCount(2);
-      expect(await readHtmlLang(page)).toBe(locale);
-    });
-  }
+    for (const locale of LOCALES) {
+      // oxlint-disable-next-line no-await-in-loop -- One page opens each language in turn.
+      headings[locale] = await readHomeHeading(page, locale);
+    }
 
-  test("translates the page for each language", async ({ page }) => {
-    await page.goto("/");
-    const english = await page.getByRole("heading", { level: 1 }).textContent();
-
-    await page.goto("/pt");
-    const portuguese = await page.getByRole("heading", { level: 1 }).textContent();
-
-    expect(english).toContain("Get ready for");
-    expect(portuguese).not.toBe(english);
+    expect(headings.en).toContain("Get ready for");
+    expect(headings.pt).not.toBe(headings.en);
   });
 
   test("never suggests learning the language the page is written in", async ({ page }) => {
@@ -151,6 +158,7 @@ test.describe("Focus and Fun on the home page", () => {
     await expect(page.getByRole("tab", { name: "Focus" })).toHaveAttribute("aria-selected", "true");
     await expect(focusTitle).toBeVisible();
     await expect(route).toBeHidden();
+    await expectAccessibleScreen(page, "the home page");
 
     await page.getByRole("tab", { name: "Fun" }).click();
 
@@ -195,25 +203,24 @@ test.describe("The class example on the home page", () => {
 });
 
 test.describe("Home page for learners", () => {
-  test("sends learners with an account to Today before the page renders", async ({
-    authenticatedPage,
+  test("sends learners with an account to Today before the page renders, until they sign out", async ({
+    userWithoutProgress,
   }) => {
-    const response = await authenticatedPage.request.get("/", { maxRedirects: 0 });
+    const response = await userWithoutProgress.request.get("/", { maxRedirects: 0 });
 
     expect(response.status()).toBe(307);
     expect(response.headers().location).toMatch(/\/today$/u);
-  });
 
-  test("keeps the home page for guests", async ({ page }) => {
-    const guest = await page.request.post("/api/auth/sign-in/anonymous", {
-      data: {},
-      headers: { Origin: getBaseURL() },
-    });
+    // Signed out and started again as a guest, they keep the home page.
+    const options = { data: {}, headers: { Origin: getBaseURL() } };
+    const signedOut = await userWithoutProgress.request.post("/api/auth/sign-out", options);
+    expect(signedOut.ok(), await signedOut.text()).toBe(true);
 
+    const guest = await userWithoutProgress.request.post("/api/auth/sign-in/anonymous", options);
     expect(guest.ok(), await guest.text()).toBe(true);
 
-    const response = await page.request.get("/", { maxRedirects: 0 });
-    expect(response.status()).toBe(200);
+    const home = await userWithoutProgress.request.get("/", { maxRedirects: 0 });
+    expect(home.status()).toBe(200);
   });
 });
 

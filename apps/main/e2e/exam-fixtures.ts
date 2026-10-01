@@ -246,12 +246,15 @@ export function statement(label: string, isTrue: boolean) {
   };
 }
 
+/** Where the first statement of a statement practice day was copied from: a real past paper. */
+export const QUOTED_STATEMENT_CITATION = "Cebraspe 2024, TJ-AM, item 41";
+
 /**
  * A learner preparing for an exam with `structure` whose day is mixed practice on three statements
  * (true, false, true), scored net when the exam cancels a right answer with a wrong one, as the
- * session builder scores it.
+ * session builder scores it. The first is a past exam's statement, copied as printed and citing it.
  */
-export async function createStatementPracticeDay({
+async function createStatementPracticeDay({
   mode,
   netScored,
   structure,
@@ -279,10 +282,13 @@ export async function createStatementPracticeDay({
   const [statements, session] = await Promise.all([
     Promise.all(
       [
-        statement("First statement", true),
-        statement("Second statement", false),
-        statement("Third statement", true),
-      ].map((content) => itemFixture({ content, format: "trueFalse", skillId: skill.id })),
+        {
+          content: { ...statement("First statement", true), quoted: true },
+          sourceCitation: QUOTED_STATEMENT_CITATION,
+        },
+        { content: statement("Second statement", false) },
+        { content: statement("Third statement", true) },
+      ].map((item) => itemFixture({ ...item, format: "trueFalse", skillId: skill.id })),
     ),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),

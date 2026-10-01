@@ -1,17 +1,18 @@
-import { type PlayableTeachingStepOf } from "@zoonk/core/lesson-player/contract";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectVerdict, focusOn, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { tabTo } from "../_test-utils/keyboard";
 import { activityStep, explanationWithSimpler, teachingStep } from "../_test-utils/lesson-steps";
 import {
   type PlayerMode,
+  acceptedAnswerCheck,
   buildAdapters,
   buildLesson,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
-import { type LessonPlayerAdapters, type PlayableLibraryStep } from "../lesson/lesson-player-types";
+import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
 
 /**
  * The lesson player by keyboard alone, at desktop size: Enter runs the screen's main action from
@@ -23,39 +24,6 @@ const DESKTOP = { height: 900, width: 1280 };
 const PHONE = { height: 812, width: 375 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SIMPLER_TEXT = "Think of a blur instead of a dot.";
-
-/** More stops than any screen has before its main action; a longer walk means focus is lost. */
-const MAX_TABS = 40;
-
-/**
- * The server settles an accepted written answer in code: right, with every key point met. Written
- * answers are graded only on the server, so this stands in for its verdict.
- */
-function acceptedAnswerCheck(
-  step: PlayableTeachingStepOf<"typedAnswer">,
-): LessonPlayerAdapters["checkStep"] {
-  return vi.fn<LessonPlayerAdapters["checkStep"]>(({ answer }) => {
-    const accepted = step.content.acceptedAnswers ?? [];
-
-    if (answer.kind !== "typedAnswer" || !accepted.includes(answer.text)) {
-      return Promise.resolve({ status: "failed" as const });
-    }
-
-    return Promise.resolve({
-      result: {
-        correctAnswer: null,
-        feedback: null,
-        isCorrect: true,
-        keyPoints: step.content.keyPoints.map((text) => ({ met: true, text })),
-        nextReviewAt: null,
-        savedMistake: false,
-        score: 1,
-        spelling: null,
-      },
-      status: "checked" as const,
-    });
-  });
-}
 
 function openLesson({
   mode = "focus",
@@ -82,46 +50,6 @@ async function inside(locator: Locator, selector: string) {
   }
 
   return page.elementLocator(element);
-}
-
-function isFocused(target: Locator) {
-  const element = target.query();
-  return element !== null && element === document.activeElement;
-}
-
-/** Keyboard focus shows as an outline or a ring (a box shadow), never as nothing. */
-function expectVisibleFocus(target: Locator) {
-  const style = getComputedStyle(target.element());
-  const outline = style.outlineStyle !== "none" && style.outlineWidth !== "0px";
-
-  expect(outline || style.boxShadow !== "none", "the focused control shows where focus is").toBe(
-    true,
-  );
-}
-
-/**
- * Presses Tab, as a keyboard-only learner would, until the control has focus, then checks the focus
- * is visible. Fails when the control can't be reached within a screen's worth of stops.
- */
-async function tabTo(target: Locator) {
-  await expect.element(target).toBeVisible();
-
-  // A screen may focus its main field or action on arrival; that counts as reached.
-  if (isFocused(target)) {
-    return;
-  }
-
-  for (let stop = 0; stop < MAX_TABS; stop += 1) {
-    // oxlint-disable-next-line no-await-in-loop -- Each Tab moves focus one stop.
-    await press("Tab");
-
-    if (isFocused(target)) {
-      expectVisibleFocus(target);
-      return;
-    }
-  }
-
-  throw new Error(`Tab never reached ${target.selector}`);
 }
 
 describe("lesson by keyboard", () => {

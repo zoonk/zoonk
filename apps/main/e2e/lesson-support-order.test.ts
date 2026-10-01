@@ -7,22 +7,16 @@ import { type Page, expect, test } from "./fixtures";
 import { type Mode, setDeviceMode } from "./learn-personas";
 
 /**
- * Support per skill: a lesson on a skill the learner never answered opens with its explanation;
- * the same lesson, for a learner who already answered that skill, opens with a question.
+ * Support per skill: a lesson on a skill the learner already answered opens with a question. A
+ * never-answered skill keeps the lesson's own order (explanation first), which every other lesson
+ * flow plays; core's and the player's tests cover that choice.
  */
 
 const EXPLANATION_TITLE = "A cloud, not a little ball";
 const CHECK_QUESTION = 'What does the electron "cloud" show?';
 
-async function createLessonFor({
-  knowsSkill,
-  mode,
-  userId,
-}: {
-  knowsSkill: boolean;
-  mode: Mode;
-  userId: string;
-}) {
+/** A lesson on a skill the learner already answered twice. */
+async function createLessonFor({ mode, userId }: { mode: Mode; userId: string }) {
   const skill = await skillFixture();
 
   const [{ lesson }] = await Promise.all([
@@ -35,7 +29,7 @@ async function createLessonFor({
       ],
     }),
     learningProfileFixture({ experienceMode: mode, userId }),
-    knowsSkill && learnerSkillFixture({ reps: 2, skillId: skill.id, state: "learning", userId }),
+    learnerSkillFixture({ reps: 2, skillId: skill.id, state: "learning", userId }),
   ]);
 
   await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
@@ -53,31 +47,11 @@ async function passHook(page: Page, { lessonId, mode }: { lessonId: string; mode
 }
 
 test.describe("How a lesson opens", () => {
-  test("a new skill starts with its explanation", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const lesson = await createLessonFor({
-      knowsSkill: false,
-      mode: "focus",
-      userId: noProgressUser.id,
-    });
-
-    await passHook(page, { lessonId: lesson.id, mode: "focus" });
-
-    await expect(page.getByText(EXPLANATION_TITLE)).toBeVisible();
-    await expect(page.getByText(CHECK_QUESTION)).toBeHidden();
-  });
-
   test("a skill the learner already answered starts with a question, then the explanation", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    const lesson = await createLessonFor({
-      knowsSkill: true,
-      mode: "fun",
-      userId: noProgressUser.id,
-    });
+    const lesson = await createLessonFor({ mode: "fun", userId: noProgressUser.id });
 
     await passHook(page, { lessonId: lesson.id, mode: "fun" });
 

@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -95,6 +96,7 @@ test.describe("Plan-change insight bigger than a lesson", () => {
       const card = page.getByRole("complementary", { name: "From your recent answers" });
       await expect(card.getByText(MESSAGE)).toBeVisible();
       await expect(card.getByText(/^Adds 3 lessons\. Ends .+ instead of .+\.$/u)).toBeVisible();
+      await expectAccessibleScreen(page, "Today");
 
       // Nothing changes before the learner's OK.
       await expect.poll(() => loadGraphSkillIds(user.goalId)).not.toContain(skillIds[0]);
@@ -110,38 +112,39 @@ test.describe("Plan-change insight bigger than a lesson", () => {
     });
   });
 
-  test("waits on the Route with the same effect until the learner applies it", async ({
+  test("waits on the Route with the same effect until applied, as other proposals wait to be declined", async ({
     browser,
   }) => {
     await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
       const { change, skillIds } = await proposeGap({ goalId: user.goalId, userId: user.id });
       await page.goto("/plan");
 
-      const proposal = page.getByRole("listitem").filter({ hasText: MESSAGE });
-      await expect(proposal.getByText("Waiting for your OK")).toBeVisible();
-      await expect(proposal.getByText(/^Adds 3 lessons\. Ends .+ instead of .+\.$/u)).toBeVisible();
+      const waiting = page.getByRole("listitem").filter({ hasText: "Waiting for your OK" });
+      const gap = waiting.filter({ hasText: MESSAGE });
+      await expect(gap.getByText(/^Adds 3 lessons\. Ends .+ instead of .+\.$/u)).toBeVisible();
 
-      await proposal.getByRole("button", { name: "Apply" }).click();
+      await gap.getByRole("button", { name: "Apply" }).click();
+      await expect(waiting).toHaveCount(1);
 
       await expect.poll(() => loadChangeStatus(change.id)).toBe("applied");
 
       await expect
         .poll(() => loadGraphSkillIds(user.goalId))
         .toStrictEqual(expect.arrayContaining(skillIds));
-    });
-  });
 
-  test("leaves the plan as it was when the learner says no", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
-      const { change, skillIds } = await proposeGap({ goalId: user.goalId, userId: user.id });
-      await page.goto("/today");
+      // The plan's own proposal waits too, until "Not now" declines it.
+      await expect(waiting).toContainText("sábado");
+      await waiting.getByRole("button", { name: "Not now" }).click();
+      await expect(page.getByText("Waiting for your OK")).toBeHidden();
 
-      const card = page.getByRole("complementary", { name: "From your recent answers" });
-      await card.getByRole("button", { name: "No thanks" }).click();
-      await expect(card.getByRole("status")).toHaveText("Your plan stays as it was.");
+      // The declined proposal leaves the list, so focus moves to the plan's changes.
+      await expect(page.getByRole("heading", { name: "Changes to your plan" })).toBeFocused();
 
-      await expect.poll(() => loadChangeStatus(change.id)).toBe("declined");
-      await expect.poll(() => loadGraphSkillIds(user.goalId)).not.toContain(skillIds[0]);
+      await expect
+        .poll(() =>
+          prisma.planChange.count({ where: { plan: { goalId: user.goalId }, status: "declined" } }),
+        )
+        .toBe(1);
     });
   });
 });

@@ -125,5 +125,5 @@ export async function createClassTestDays(mode: Mode, { days = DAYS_TO_TEST } = 
     }),
   ]);
 
-  return { goal, plan, user };
+  return { user };
 }
