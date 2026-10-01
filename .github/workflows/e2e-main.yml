@@ -16,23 +16,12 @@ permissions:
 
 jobs:
   e2e:
-    # Named by number alone, as main's required checks list them.
-    name: e2e (${{ matrix.shard }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        # Playwright splits shards by test count in file order, and an accessibility test, which scans
-        # every screen at two widths in light and dark, takes as long as about ten flow tests. So the
-        # accessibility tests get shards of their own instead of all landing in the first one.
-        include:
-          - { shard: 1, filter: --grep-invert, part: 1/4 }
-          - { shard: 2, filter: --grep-invert, part: 2/4 }
-          - { shard: 3, filter: --grep-invert, part: 3/4 }
-          - { shard: 4, filter: --grep-invert, part: 4/4 }
-          - { shard: 5, filter: --grep, part: 1/2 }
-          - { shard: 6, filter: --grep, part: 2/2 }
+        shard: [1, 2, 3]
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
@@ -88,5 +77,4 @@ jobs:
         run: pnpm --filter @zoonk/db db:setup:e2e
 
       - name: Run E2E tests
-        # Playwright's grep also matches the test's file name.
-        run: pnpm e2e --filter main -- ${{ matrix.filter }} 'accessibility-[a-z]+[.]test[.]ts' --shard=${{ matrix.part }}
+        run: pnpm e2e --filter main -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
