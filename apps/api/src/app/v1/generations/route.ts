@@ -35,6 +35,10 @@ function reachedGenerationLimit(result: Awaited<ReturnType<typeof claimGeneratio
 async function createCourseGeneration(coursePromptId: string) {
   const access = await getCourseGenerationAccess(coursePromptId);
 
+  if (access.status === "paused") {
+    return errors.forbidden();
+  }
+
   if (access.status === "unauthorized") {
     return errors.unauthorized();
   }

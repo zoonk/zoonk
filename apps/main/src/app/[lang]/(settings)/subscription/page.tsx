@@ -1,3 +1,5 @@
+import { RelaunchNotice } from "@/components/waitlist/relaunch-notice";
+import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { Badge } from "@zoonk/ui/components/badge";
 import {
   Container,
@@ -7,6 +9,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { IS_RELAUNCH_WAITLIST_ENABLED } from "@zoonk/utils/relaunch";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -23,7 +26,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Subscription({ searchParams }: PageProps<"/[lang]/subscription">) {
+async function SubscriptionContent({ searchParams }: PageProps<"/[lang]/subscription">) {
+  if (IS_RELAUNCH_WAITLIST_ENABLED && !(await getActiveSubscription())) {
+    return <RelaunchNotice />;
+  }
+
   const t = await getExtracted();
 
   return (
@@ -54,5 +61,13 @@ export default async function Subscription({ searchParams }: PageProps<"/[lang]/
         </Suspense>
       </ContainerBody>
     </Container>
+  );
+}
+
+export default function Subscription(props: PageProps<"/[lang]/subscription">) {
+  return (
+    <Suspense fallback={<SubscriptionPlansSkeleton />}>
+      <SubscriptionContent {...props} />
+    </Suspense>
   );
 }
