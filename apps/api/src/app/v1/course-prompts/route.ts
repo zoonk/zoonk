@@ -4,6 +4,7 @@ import { parseBody } from "@/lib/body-parser";
 import { resolveCoursePromptRequestSchema } from "@/lib/openapi/schemas/course-prompts";
 import { resolveLanguageCourse } from "@zoonk/core/courses/language";
 import { resolveCoursePrompt } from "@zoonk/core/courses/resolve-prompt";
+import { IS_RELAUNCH_WAITLIST_ENABLED } from "@zoonk/utils/relaunch";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
@@ -39,6 +40,10 @@ async function createCoursePrompt(request: NextRequest) {
 
   if (!parsed.success) {
     return errors.validation(parsed.error);
+  }
+
+  if (IS_RELAUNCH_WAITLIST_ENABLED) {
+    return errors.forbidden();
   }
 
   if (parsed.data.kind === "topic") {

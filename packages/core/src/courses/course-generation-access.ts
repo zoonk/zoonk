@@ -1,3 +1,4 @@
+import { IS_RELAUNCH_WAITLIST_ENABLED } from "@zoonk/utils/relaunch";
 import { getSession } from "../users/get-session";
 import { getCoursePromptGenerationError } from "./course-prompt-generation";
 import { getCoursePromptById } from "./get-course-prompt";
@@ -17,6 +18,10 @@ function shouldClaimCourseGenerationQuota(generationStatus: string | null): bool
  * cannot include Prisma in its workflow bundle.
  */
 export async function getCourseGenerationAccess(coursePromptId: string) {
+  if (IS_RELAUNCH_WAITLIST_ENABLED) {
+    return { status: "paused" as const };
+  }
+
   const [coursePrompt, session] = await Promise.all([
     getCoursePromptById({ id: coursePromptId }),
     getSession(),

@@ -703,6 +703,7 @@ msgstr "Kurs starten"
 #: src/app/[lang]/(catalog)/start/exam/page.tsx
 #: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 #: src/app/[lang]/(catalog)/start/start-content.tsx
+#: src/components/waitlist/relaunch-notice.tsx
 msgctxt "e61Jf3"
 msgid "Coming soon"
 msgstr "Demnächst verfügbar"
@@ -715,6 +716,7 @@ msgstr "Personalisierte Kurse kommen bald."
 #: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 #: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
+#: src/components/waitlist/relaunch-notice.tsx
 msgctxt "hJZwTS"
 msgid "Email address"
 msgstr "E‑Mail‑Adresse"
@@ -748,6 +750,7 @@ msgstr "Sag uns, für welchen Test, welche Zertifizierung oder Schulprüfung du 
 
 #: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 #: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/components/waitlist/relaunch-notice.tsx
 msgctxt "6eV4UR"
 msgid "We couldn't add you to the waitlist. Please try again."
 msgstr "Wir konnten dich nicht zur Warteliste hinzufügen. Bitte versuche es erneut."
@@ -759,6 +762,7 @@ msgstr "Du stehst auf der Liste. Wir melden uns, sobald die Prüfungsvorbereitun
 
 #: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 #: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/components/waitlist/relaunch-notice.tsx
 msgctxt "ipGe-B"
 msgid "Notify me"
 msgstr "Benachrichtige mich"
@@ -809,6 +813,7 @@ msgid "Try another goal"
 msgstr "Probier ein anderes Ziel"
 
 #: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/components/waitlist/relaunch-notice.tsx
 msgctxt "hCixWc"
 msgid "You're on the list. We'll email you when it's available."
 msgstr "Du stehst auf der Liste. Wir schicken dir eine E‑Mail, sobald sie verfügbar ist."
@@ -2876,6 +2881,16 @@ msgstr "Mit Plus erhältst du unbegrenzten Zugriff auf Kurse und Lektionen zu al
 msgctxt "Y9LULP"
 msgid "Try free chapter"
 msgstr "Kostenloses Kapitel testen"
+
+#: src/components/waitlist/relaunch-notice.tsx
+msgctxt "0LnO0e"
+msgid "A new Zoonk is on the way"
+msgstr "Zoonk kommt bald in einer neuen Version"
+
+#: src/components/waitlist/relaunch-notice.tsx
+msgctxt "YYmS4Y"
+msgid "We're rethinking how Zoonk works. A new version will be available soon. Join the waitlist and we'll email you when it's ready."
+msgstr "Wir denken Zoonk neu. Bald gibt es eine neue Version. Trag dich in die Warteliste ein und wir melden uns per E-Mail, sobald sie fertig ist."
 
 #: src/lib/belt-colors.ts
 msgctxt "znY9eW"

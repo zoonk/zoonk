@@ -2,6 +2,8 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
 import { getAllowedHosts, getBaseUrl, getDevelopmentTrustedOrigins } from "@zoonk/utils/origin";
+import { IS_RELAUNCH_WAITLIST_ENABLED } from "@zoonk/utils/relaunch";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
@@ -52,7 +54,15 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
       create: { after: ensureUserProgressAfterAuthCreate, before: validateEmailBeforeUserCreate },
     },
   },
-  hooks: { before: validateEmailBeforeOTP },
+  hooks: {
+    before: createAuthMiddleware(async (context) => {
+      if (IS_RELAUNCH_WAITLIST_ENABLED && context.path === "/subscription/upgrade") {
+        throw new APIError("FORBIDDEN", { code: "SUBSCRIPTIONS_PAUSED" });
+      }
+
+      await validateEmailBeforeOTP(context);
+    }),
+  },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
