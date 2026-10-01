@@ -91,6 +91,9 @@ export function useLessonQuestions({
       openedScopes.current.add(scope);
 
       if (canAskQuestions && needsRefresh) {
+        // A press replayed at hydration can open the sheet before the preload effect runs; this
+        // load counts as the preload, so the effect doesn't fetch the thread a second time.
+        preloadedScopes.current.add(scope);
         void loadThread(context);
       }
     },
