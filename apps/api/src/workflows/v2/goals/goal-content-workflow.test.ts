@@ -35,6 +35,7 @@ import { getRun, start } from "workflow/api";
 import { z } from "zod";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
+import { getStartMock } from "../../_test-utils/start-mock";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
@@ -206,7 +207,7 @@ async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
 
 /** Runs the course outline a goal starts inline, as the runtime would in the background. */
 function runOutlinesInline() {
-  vi.mocked(start).mockImplementation(async (workflow, args) => {
+  getStartMock().mockImplementation(async (workflow, args) => {
     if (workflow === courseOutlineWorkflow) {
       await courseOutlineWorkflow(...(args as Parameters<typeof courseOutlineWorkflow>));
     }
@@ -636,7 +637,7 @@ describe(goalContentWorkflow, () => {
       // stand-ins for skills. Each start notes how many polls the run had waited by then.
       const pollsBeforeStart: number[] = [];
 
-      vi.mocked(start).mockImplementation(async (workflow) => {
+      getStartMock().mockImplementation(async (workflow) => {
         if (workflow === lessonContentWorkflow) {
           pollsBeforeStart.push(vi.mocked(sleep).mock.calls.length);
         }
@@ -699,8 +700,7 @@ describe(goalContentWorkflow, () => {
         (planPhase) => items.find((item) => item.phase === planPhase)?.lessonId,
       );
 
-      const priorityLessons = vi
-        .mocked(start)
+      const priorityLessons = getStartMock()
         .mock.calls.flatMap(([workflow, args]) =>
           workflow === lessonContentWorkflow
             ? (args as Parameters<typeof lessonContentWorkflow>)
@@ -765,9 +765,9 @@ describe(goalContentWorkflow, () => {
       status: "built",
     });
 
-    expect(
-      vi.mocked(start).mock.calls.some(([workflow]) => workflow === lessonContentWorkflow),
-    ).toBe(false);
+    expect(getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow)).toBe(
+      false,
+    );
 
     // A guest's outlines leave the courses' background work to a learner with an account.
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
@@ -781,12 +781,10 @@ describe(goalContentWorkflow, () => {
     ).resolves.toBeGreaterThan(0);
 
     expect(
-      vi
-        .mocked(start)
-        .mock.calls.some(
-          ([workflow]) =>
-            workflow === courseDetailsWorkflow || workflow === courseRemainingBandsWorkflow,
-        ),
+      getStartMock().mock.calls.some(
+        ([workflow]) =>
+          workflow === courseDetailsWorkflow || workflow === courseRemainingBandsWorkflow,
+      ),
     ).toBe(false);
   });
 
@@ -884,7 +882,7 @@ describe(goalContentWorkflow, () => {
     { timeout: TIMEOUT },
     async () => {
       const { goal } = await newGoal();
-      vi.mocked(start).mockImplementation(async () => ({ runId: "started-run" }) as never);
+      getStartMock().mockImplementation(async () => ({ runId: "started-run" }) as never);
 
       const [course, skills] = await Promise.all([
         courseFixture(),
@@ -959,7 +957,7 @@ describe(goalContentWorkflow, () => {
     { timeout: TIMEOUT },
     async () => {
       const { goal, user } = await newGoal();
-      vi.mocked(start).mockImplementation(async () => ({ runId: "started-run" }) as never);
+      getStartMock().mockImplementation(async () => ({ runId: "started-run" }) as never);
 
       const [course, skill] = await Promise.all([
         courseFixture(),
@@ -999,7 +997,7 @@ describe(goalContentWorkflow, () => {
       ]);
 
       expect(
-        vi.mocked(start).mock.calls.some(([workflow]) => workflow === lessonContentWorkflow),
+        getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow),
       ).toBe(false);
     },
   );
@@ -1014,7 +1012,7 @@ describe(goalContentWorkflow, () => {
         targetLanguage: "ja",
       });
 
-      vi.mocked(start).mockImplementation(async (workflow) => {
+      getStartMock().mockImplementation(async (workflow) => {
         if (workflow === levelTestBankWorkflow) {
           throw new Error("Queue unavailable");
         }
@@ -1241,7 +1239,7 @@ describe(goalContentWorkflow, () => {
         order.push("research ended");
 
         outlinesBefore.push(
-          vi.mocked(start).mock.calls.filter(([workflow]) => workflow === courseOutlineWorkflow)
+          getStartMock().mock.calls.filter(([workflow]) => workflow === courseOutlineWorkflow)
             .length,
         );
       });
@@ -1265,7 +1263,7 @@ describe(goalContentWorkflow, () => {
       expect(checkCoverage).not.toHaveBeenCalled();
 
       expect(
-        vi.mocked(start).mock.calls.filter(([workflow]) => workflow === courseOutlineWorkflow),
+        getStartMock().mock.calls.filter(([workflow]) => workflow === courseOutlineWorkflow),
       ).toHaveLength(outlinesBefore[0] ?? -1);
     },
   );
@@ -1799,7 +1797,7 @@ describe(goalContentWorkflow, () => {
       vi.mocked(generateSkillGraph).mockClear();
       vi.mocked(generateItems).mockClear();
       vi.mocked(generatePlacementItems).mockClear();
-      vi.mocked(start).mockClear();
+      getStartMock().mockClear();
 
       await expect(goalContentWorkflow({ goalId: goal.id, rebuild: true })).resolves.toStrictEqual({
         goalId: goal.id,
@@ -1818,7 +1816,7 @@ describe(goalContentWorkflow, () => {
       expect(generatePlacementItems).not.toHaveBeenCalled();
 
       expect(
-        vi.mocked(start).mock.calls.some(([workflow]) => workflow === lessonContentWorkflow),
+        getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow),
       ).toBe(false);
     },
   );

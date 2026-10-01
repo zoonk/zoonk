@@ -12,6 +12,7 @@ import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
+import { getStartMock } from "../../_test-utils/start-mock";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -104,8 +105,7 @@ describe(dailySweepsWorkflow, () => {
     expect(result.freshnessChecks).toBeGreaterThanOrEqual(1);
 
     // The shared test database holds other tests' lessons, so only this one's presence is checked.
-    const reviewed = vi
-      .mocked(start)
+    const reviewed = getStartMock()
       .mock.calls.filter(([workflow]) => workflow === laterReviewWorkflow)
       .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
 
