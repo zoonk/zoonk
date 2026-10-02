@@ -1,9 +1,8 @@
 "use client";
 
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { Switch } from "@zoonk/ui/components/switch";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
-import { LayersIcon, type LucideIcon, SmartphoneIcon, Volume2Icon } from "lucide-react";
+import { LayersIcon, type LucideIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useOptimistic } from "react";
 import { SectionLabel } from "../_components/section-label";
@@ -214,15 +213,6 @@ export function AppearanceScreen({
           {t("That didn't save. Try again.")}
         </p>
       )}
-
-      <p className="text-muted-foreground flex items-start gap-2 text-sm">
-        <LineMarker aria-hidden="true">
-          <SmartphoneIcon className="size-4" />
-        </LineMarker>
-        {t(
-          "Focus follows your device's light or dark theme, and Fun is always dark. Reduced motion follows your device settings.",
-        )}
-      </p>
     </div>
   );
 }

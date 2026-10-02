@@ -313,11 +313,6 @@ msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "That didn't save. Try again."
 
-#: src/appearance/appearance-screen.tsx
-msgctxt "R5tMtb"
-msgid "Focus follows your device's light or dark theme, and Fun is always dark. Reduced motion follows your device settings."
-msgstr "Focus follows your device's light or dark theme, and Fun is always dark. Reduced motion follows your device settings."
-
 #: src/appearance/buddy-settings.tsx
 #: src/buddies/buddy-glasses-shelf.tsx
 msgctxt "T9w4Km"
