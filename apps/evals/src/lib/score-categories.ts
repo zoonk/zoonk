@@ -31,6 +31,16 @@ function validateScoreCategories(categories: ScoreCategory[]): void {
   }
 }
 
+/**
+ * Declares a task's weighted judge rubric. Every new judge-scored task lists
+ * its categories this way, and a bad rubric (duplicate ids, weights that don't
+ * total 100) fails when the task loads instead of halfway through a paid run.
+ */
+export function defineScoreCategories(categories: ScoreCategory[]): ScoreCategory[] {
+  validateScoreCategories(categories);
+  return categories;
+}
+
 /** Formats task-level dimensions as an explicit, independently scored judge rubric. */
 export function formatScoreCategories(categories: ScoreCategory[]): string {
   validateScoreCategories(categories);

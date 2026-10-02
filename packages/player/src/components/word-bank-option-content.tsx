@@ -94,7 +94,7 @@ export function WordBankOptionButton({
       aria-describedby={hasDescription && !isSelected ? descriptionId : undefined}
       aria-label={option.word}
       className={cn(
-        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-center transition-all duration-150 outline-none",
+        "border-border flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-center transition-all duration-150 outline-none",
         getWordBankButtonStateClass({ disabled, isSelected }),
       )}
       disabled={isDisabled}

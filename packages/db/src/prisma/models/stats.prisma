@@ -1,0 +1,46 @@
+enum LearningEventKind {
+  lesson
+  review
+  questions
+  mock
+  checkpoint
+  session
+  explanation
+  conversation
+}
+
+/// Content-free ledger of learning activities: one row per finished lesson, review block, question
+/// block, mock, checkpoint or session. Stats and admin read it instead of content tables, so progress
+/// pages keep their numbers when content is regenerated or deleted. Content is referenced by plain ids
+/// in `contentIds` plus a title snapshot, never by foreign keys. `localDate`, `hour` and `weekday` are
+/// learner-local and describe when the activity ended (or started, while `endedAt` is null).
+model LearningEvent {
+  id               String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId           String            @map("user_id") @db.Uuid
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind             LearningEventKind
+  /// The lesson's kind as text (legacy kinds included), so it survives enum changes.
+  lessonKind       String?           @map("lesson_kind")
+  mode             ExperienceMode?
+  goalId           String?           @map("goal_id") @db.Uuid
+  startedAt        DateTime          @map("started_at")
+  /// Null while a started activity isn't finished (forever for legacy lessons that were started and
+  /// never finished), so completion rates count starts that never ended.
+  endedAt          DateTime?         @map("ended_at")
+  localDate        DateTime          @map("local_date") @db.Date
+  hour             Int               @db.SmallInt
+  weekday          Int               @db.SmallInt
+  correctAnswers   Int               @default(0) @map("correct_answers")
+  incorrectAnswers Int               @default(0) @map("incorrect_answers")
+  seconds          Int               @default(0)
+  brainPower       Int               @default(0) @map("brain_power")
+  energyDelta      Float             @default(0) @map("energy_delta")
+  contentIds       Json              @default("{}") @map("content_ids")
+  titleSnapshot    String?           @map("title_snapshot")
+  createdAt        DateTime          @default(now()) @map("created_at")
+
+  @@index([userId, localDate])
+  @@index([userId, hour])
+  @@index([localDate])
+  @@map("learning_events")
+}

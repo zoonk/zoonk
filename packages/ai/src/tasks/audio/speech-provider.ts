@@ -1,12 +1,10 @@
-import { createGoogle } from "@ai-sdk/google";
-import { openai } from "@ai-sdk/openai";
 import { type TTSVoice } from "@zoonk/utils/languages";
 import { type SpeechModel, generateSpeech } from "ai";
+import { directGoogle, directOpenAI } from "../../direct-providers";
 import { type SpeechModelName, speechModels } from "./speech-models";
 
 type SpeechProvider = { model: SpeechModel; voice: string };
 
-const google = createGoogle({ apiKey: process.env.GEMINI_API_KEY });
 const GEMINI_DEFAULT_INSTRUCTIONS = "Read the supplied transcript aloud. Return audio only.";
 
 /**
@@ -57,11 +55,11 @@ function getSpeechProvider({
   const modelId = getSpeechModelId(model);
 
   if (model === speechModels.google) {
-    return { model: google.speech(modelId), voice };
+    return { model: directGoogle.speech(modelId), voice };
   }
 
   if (model === speechModels.openai) {
-    return { model: openai.speech(modelId), voice: "marin" };
+    return { model: directOpenAI.speech(modelId), voice: "marin" };
   }
 
   throw new Error("Unsupported speech model");

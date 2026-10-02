@@ -25,7 +25,6 @@ describe(ArrangeWordsInteraction, () => {
         correctWords={["Hola", "mundo"]}
         onSelectAnswer={onSelectAnswer}
         selectedAnswer={undefined}
-        stepId="step-1"
         wordBankOptions={[
           buildWordBankOption({ word: "Hola" }),
           buildWordBankOption({ word: "mundo" }),

@@ -25,18 +25,35 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
     return <>{t("We couldn't send this question. Try again.")}</>;
   }
 
-  if (error?.kind === "limit") {
-    return (
-      <>
-        {t(
-          "{period, select, day {You've reached today's question limit. Try again tomorrow.} month {You've reached this month's question limit. Try again next month.} other {You've reached your question limit.}}",
-          { period: error.limit.period },
-        )}
-      </>
-    );
+  if (error?.kind === "slowDown") {
+    return <>{t("Take a short break, then ask again.")}</>;
+  }
+
+  if (error?.kind === "usageLimit") {
+    return <UsageLimitMessage period={error.period} tier={error.tier} />;
   }
 
   return <>{t("Something went wrong. Try again.")}</>;
+}
+
+function UsageLimitMessage({
+  period,
+  tier,
+}: Pick<Extract<LessonQuestionApiError, { kind: "usageLimit" }>, "period" | "tier">) {
+  const t = useExtracted();
+
+  if (tier === "guest") {
+    return <>{t("Create a free account to ask the tutor.")}</>;
+  }
+
+  return (
+    <>
+      {t(
+        "{period, select, day {You've asked all of today's questions. Ask again tomorrow.} month {You've asked all of this month's questions. Ask again next month.} other {You've asked all your questions.}}",
+        { period },
+      )}
+    </>
+  );
 }
 
 export function QuestionErrorAction({
@@ -52,12 +69,7 @@ export function QuestionErrorAction({
 }) {
   const t = useExtracted();
 
-  const {
-    linkComponent: Link,
-    loginHref,
-    subscriptionHref,
-    renderLimitAction,
-  } = useLessonQuestionNavigation();
+  const { linkComponent: Link, loginHref, subscriptionHref } = useLessonQuestionNavigation();
 
   if (error?.kind === "authentication") {
     return (
@@ -79,8 +91,28 @@ export function QuestionErrorAction({
     );
   }
 
-  if (error?.kind === "limit") {
-    return renderLimitAction({ className, loginHref, viewer: error.limit.viewer });
+  if (error?.kind === "usageLimit" && error.tier === "guest") {
+    return (
+      <Link
+        className={buttonVariants({ className, variant: "outline" })}
+        href={loginHref}
+        prefetch={false}
+      >
+        {t("Create account")}
+      </Link>
+    );
+  }
+
+  if (error?.kind === "usageLimit" && error.tier === "free") {
+    return (
+      <Link className={buttonVariants({ className, variant: "outline" })} href={subscriptionHref}>
+        {t("View plans")}
+      </Link>
+    );
+  }
+
+  if (error?.kind === "usageLimit") {
+    return null;
   }
 
   if (error?.kind === "unavailable") {

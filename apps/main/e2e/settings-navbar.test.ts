@@ -1,68 +1,78 @@
 import { expect, test } from "./fixtures";
+import { readDeviceMode } from "./learn-personas";
 
 test.describe("Settings Navbar", () => {
-  test("home link shows start goals on the home page", async ({ page }) => {
-    await page.goto("/subscription");
-    await page.getByRole("link", { name: /home page/iu }).click();
+  test("settings have their own navigation and a link home", async ({ page }) => {
+    await page.goto("/language");
 
+    await expect(page.getByRole("link", { exact: true, name: "Today" })).toHaveCount(0);
+
+    const settings = page.getByRole("navigation", { name: "Settings" });
+
+    await expect(settings.getByRole("link", { exact: true, name: "Home page" })).toBeVisible();
+    await expect(settings.getByRole("link", { name: /subscription/iu })).toBeVisible();
+    await expect(settings.getByRole("link", { name: /language/iu })).toBeVisible();
+    await expect(settings.getByRole("link", { name: /profile/iu })).toBeVisible();
+    await expect(settings.getByRole("link", { name: /appearance/iu })).toBeVisible();
+    await expect(settings.getByRole("link", { name: /support/iu })).toBeVisible();
+
+    // Memory needs an account, and guardian links are only for learners under 18.
+    await expect(settings.getByRole("link", { name: /memory/iu })).toHaveCount(0);
+    await expect(settings.getByRole("link", { name: /guardian/iu })).toHaveCount(0);
+
+    await settings.getByRole("link", { exact: true, name: "Home page" }).click();
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
   });
 
-  test("displays all settings navigation pills", async ({ page }) => {
-    await page.goto("/subscription");
+  test("a direct phone visit shows the current page's pill", async ({ page }) => {
+    await page.setViewportSize({ height: 812, width: 375 });
+    await page.goto("/support");
 
-    await expect(page.getByRole("link", { name: /subscription/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /language/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /profile/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /support/iu })).toBeVisible();
+    const current = page
+      .getByRole("navigation", { name: "Settings" })
+      .getByRole("link", { name: /support/iu });
+
+    await expect(current).toHaveAttribute("aria-current", "page");
+    await expect(current).toBeInViewport({ ratio: 1 });
   });
 
-  test("Subscription pill navigates to subscription page", async ({ page }) => {
+  test("Subscription pill opens the public pricing page for a visitor", async ({ page }) => {
     await page.goto("/language");
     await page.getByRole("link", { name: /subscription/iu }).click();
 
-    await expect(page).toHaveURL(/\/subscription$/u);
+    await expect(page).toHaveURL(/\/pricing$/u);
+    await expect(page.getByRole("link", { name: "Try free" })).toBeVisible();
   });
 
-  test("Language pill navigates to language page", async ({ page }) => {
-    await page.goto("/subscription");
-    await page.getByRole("link", { name: /language/iu }).click();
+  test("Profile, Support and Language pills open their pages", async ({ page }) => {
+    await page.goto("/language");
+    const settings = page.getByRole("navigation", { name: "Settings" });
 
-    await expect(page.getByRole("heading", { level: 1, name: /language/iu })).toBeVisible();
-  });
-
-  test("Profile pill navigates to profile page", async ({ page }) => {
-    await page.goto("/subscription");
-    await page.getByRole("link", { name: /profile/iu }).click();
-
+    await settings.getByRole("link", { name: /profile/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: /profile/iu })).toBeVisible();
-  });
 
-  test("Support pill navigates to support page", async ({ page }) => {
-    await page.goto("/subscription");
-    await page.getByRole("link", { name: /support/iu }).click();
+    await settings.getByRole("link", { name: /support/iu }).click();
 
     await expect(
       page.getByRole("heading", { level: 1, name: /feedback & support/iu }),
     ).toBeVisible();
+
+    await settings.getByRole("link", { name: /language/iu }).click();
+    await expect(page.getByRole("heading", { level: 1, name: /language/iu })).toBeVisible();
   });
 
-  test("logout button logs user out", async ({ logoutPage }) => {
+  test("logout button logs user out and forgets their mode on the device", async ({
+    logoutPage,
+  }) => {
     await logoutPage.goto("/subscription");
 
     await expect(logoutPage.getByRole("button", { name: /logout/iu })).toBeVisible();
+    await expect.poll(() => readDeviceMode(logoutPage.context())).toBe("focus");
 
     await logoutPage.getByRole("button", { name: /logout/iu }).click();
     await logoutPage.waitForURL(/\/$/u);
-    await logoutPage.waitForLoadState("networkidle");
 
-    // Scope to navigation to avoid strict mode violation
-    await logoutPage
-      .getByRole("navigation")
-      .getByRole("button", { name: /search/iu })
-      .click();
-
-    await expect(logoutPage.getByRole("dialog").getByText(/^login$/iu)).toBeVisible();
+    await expect(logoutPage.getByRole("link", { name: "Log in" })).toBeVisible();
+    expect(await readDeviceMode(logoutPage.context())).toBeUndefined();
   });
 });

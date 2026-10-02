@@ -1,8 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession, mockSessionFailure } from "../_test-utils/mock-session";
@@ -21,61 +18,30 @@ function mockScoreDate(now: Date = new Date(), timeZone = "UTC") {
   });
 }
 
-type AttemptGroup = {
-  answeredAt: Date;
-  correctAnswers: number;
-  hourOfDay: number;
-  incorrectAnswers: number;
-  stepId: string;
-  userId: string;
-};
-
 /**
- * Creates the smallest published-step dependency graph needed for persisted
- * answer attempts without relying on shared seed courses.
+ * Appends one finished activity to the ledger on a learner-local date and hour,
+ * the only fields time-of-day patterns read besides the answer counts.
  */
-async function createTestStep({ organizationId }: { organizationId: string }) {
-  const course = await courseFixture({ organizationId });
-  const chapter = await chapterFixture({ courseId: course.id, organizationId });
-  const lesson = await lessonFixture({ chapterId: chapter.id, organizationId });
-
-  return prisma.step.create({
-    data: {
-      content: { options: [{ feedback: "Yes", isCorrect: true, text: "A" }] },
-      kind: "multipleChoice",
-      lessonId: lesson.id,
-      position: 0,
-    },
-  });
-}
-
-/**
- * Expands one time-of-day aggregate into real attempts so the SQL grouping is
- * exercised with the same row shape written by lesson completion.
- */
-function getAttemptRows({
-  answeredAt,
+function ledgerRow({
   correctAnswers,
-  hourOfDay,
+  hour,
   incorrectAnswers,
-  stepId,
+  localDate,
   userId,
-}: AttemptGroup) {
-  const buildAttempt = (isCorrect: boolean) => ({
-    answer: { selectedOption: isCorrect ? 1 : 0 },
-    answeredAt,
-    dayOfWeek: answeredAt.getDay(),
-    durationSeconds: 15,
-    hourOfDay,
-    isCorrect,
-    stepId,
+}: {
+  correctAnswers: number;
+  hour: number;
+  incorrectAnswers: number;
+  localDate: string;
+  userId: string;
+}) {
+  return learningEventFixture({
+    correctAnswers,
+    hour,
+    incorrectAnswers,
+    localDate: new Date(`${localDate}T00:00:00.000Z`),
     userId,
   });
-
-  return [
-    ...Array.from({ length: correctAnswers }, () => buildAttempt(true)),
-    ...Array.from({ length: incorrectAnswers }, () => buildAttempt(false)),
-  ];
 }
 
 describe(getScorePatterns, () => {
@@ -95,81 +61,86 @@ describe(getScorePatterns, () => {
   });
 
   it("returns every observed group with counts and strongest score-volume rankings", async () => {
-    const [user, organization] = await Promise.all([userFixture(), organizationFixture()]);
-    const step = await createTestStep({ organizationId: organization.id });
+    const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
     mockSession(user.id);
     mockScoreDate(new Date("2026-01-31T23:59:59.999Z"));
 
-    const insideRange = new Date("2026-01-15T12:00:00.000Z");
-    const outsideRange = new Date("2026-02-15T12:00:00.000Z");
-
-    const attempts = [
-      ...getAttemptRows({
-        answeredAt: insideRange,
-        correctAnswers: 1,
-        hourOfDay: 3,
-        incorrectAnswers: 1,
-        stepId: step.id,
-        userId: user.id,
-      }),
-      ...getAttemptRows({
-        answeredAt: insideRange,
-        correctAnswers: 2,
-        hourOfDay: 9,
-        incorrectAnswers: 0,
-        stepId: step.id,
-        userId: user.id,
-      }),
-      ...getAttemptRows({
-        answeredAt: insideRange,
-        correctAnswers: 1,
-        hourOfDay: 15,
-        incorrectAnswers: 0,
-        stepId: step.id,
-        userId: user.id,
-      }),
-      ...getAttemptRows({
-        answeredAt: outsideRange,
-        correctAnswers: 10,
-        hourOfDay: 21,
-        incorrectAnswers: 0,
-        stepId: step.id,
-        userId: user.id,
-      }),
-    ];
+    const userId = user.id;
 
     await Promise.all([
-      prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 1,
-            date: new Date("2026-01-04T00:00:00.000Z"),
-            dayOfWeek: 0,
-            incorrectAnswers: 1,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 2,
-            date: new Date("2026-01-05T00:00:00.000Z"),
-            dayOfWeek: 1,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 1,
-            date: new Date("2026-01-06T00:00:00.000Z"),
-            dayOfWeek: 2,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 10,
-            date: new Date("2026-02-01T00:00:00.000Z"),
-            dayOfWeek: 3,
-            userId: user.id,
-          },
-        ],
+      ledgerRow({
+        correctAnswers: 1,
+        hour: 3,
+        incorrectAnswers: 1,
+        localDate: "2026-01-15",
+        userId,
       }),
-      prisma.stepAttempt.createMany({ data: attempts }),
+      ledgerRow({
+        correctAnswers: 2,
+        hour: 9,
+        incorrectAnswers: 0,
+        localDate: "2026-01-15",
+        userId,
+      }),
+      ledgerRow({
+        correctAnswers: 1,
+        hour: 15,
+        incorrectAnswers: 0,
+        localDate: "2026-01-15",
+        userId,
+      }),
+      ledgerRow({
+        correctAnswers: 0,
+        hour: 17,
+        incorrectAnswers: 1,
+        localDate: "2026-01-16",
+        userId,
+      }),
+      ledgerRow({
+        correctAnswers: 10,
+        hour: 21,
+        incorrectAnswers: 0,
+        localDate: "2026-02-15",
+        userId,
+      }),
+      ledgerRow({
+        correctAnswers: 10,
+        hour: 21,
+        incorrectAnswers: 0,
+        localDate: "2026-01-15",
+        userId: otherUser.id,
+      }),
     ]);
+
+    await prisma.dailyProgress.createMany({
+      data: [
+        {
+          correctAnswers: 1,
+          date: new Date("2026-01-04T00:00:00.000Z"),
+          dayOfWeek: 0,
+          incorrectAnswers: 1,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 2,
+          date: new Date("2026-01-05T00:00:00.000Z"),
+          dayOfWeek: 1,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 1,
+          date: new Date("2026-01-06T00:00:00.000Z"),
+          dayOfWeek: 2,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 10,
+          date: new Date("2026-02-01T00:00:00.000Z"),
+          dayOfWeek: 3,
+          userId: user.id,
+        },
+      ],
+    });
 
     const result = await getScorePatterns();
 
@@ -182,87 +153,81 @@ describe(getScorePatterns, () => {
     expect(result?.times).toStrictEqual([
       { correctAnswers: 1, incorrectAnswers: 1, period: 0, score: 50, totalAnswers: 2 },
       { correctAnswers: 2, incorrectAnswers: 0, period: 1, score: 100, totalAnswers: 2 },
-      { correctAnswers: 1, incorrectAnswers: 0, period: 2, score: 100, totalAnswers: 1 },
+      { correctAnswers: 1, incorrectAnswers: 1, period: 2, score: 50, totalAnswers: 2 },
     ]);
 
     expect(result?.strongestWeekday).toStrictEqual(result?.weekdays[1]);
     expect(result?.strongestTime).toStrictEqual(result?.times[1]);
   });
 
-  it("uses matching local-date and instant boundaries west of UTC", async () => {
+  it("uses the learner-local date range west of UTC", async () => {
     const now = new Date("2026-03-15T02:30:00.000Z");
     const timeZone = "America/Los_Angeles";
-    const [user, organization] = await Promise.all([userFixture(), organizationFixture()]);
-    const step = await createTestStep({ organizationId: organization.id });
+    const user = await userFixture();
     mockSession(user.id);
     mockScoreDate(now, timeZone);
 
-    const attempts = [
-      ...getAttemptRows({
-        answeredAt: new Date("2025-12-15T07:59:59.999Z"),
-        correctAnswers: 10,
-        hourOfDay: 12,
-        incorrectAnswers: 0,
-        stepId: step.id,
-        userId: user.id,
-      }),
-      ...getAttemptRows({
-        answeredAt: new Date("2025-12-15T08:00:00.000Z"),
-        correctAnswers: 1,
-        hourOfDay: 0,
-        incorrectAnswers: 1,
-        stepId: step.id,
-        userId: user.id,
-      }),
-      ...getAttemptRows({
-        answeredAt: now,
-        correctAnswers: 3,
-        hourOfDay: 18,
-        incorrectAnswers: 0,
-        stepId: step.id,
-        userId: user.id,
-      }),
-      ...getAttemptRows({
-        answeredAt: new Date("2026-03-15T03:30:00.000Z"),
-        correctAnswers: 0,
-        hourOfDay: 19,
-        incorrectAnswers: 10,
-        stepId: step.id,
-        userId: user.id,
-      }),
-    ];
+    const userId = user.id;
 
     await Promise.all([
-      prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 10,
-            date: new Date("2025-12-14T00:00:00.000Z"),
-            dayOfWeek: 0,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 2,
-            date: new Date("2025-12-15T00:00:00.000Z"),
-            dayOfWeek: 1,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 3,
-            date: new Date("2026-03-14T00:00:00.000Z"),
-            dayOfWeek: 6,
-            userId: user.id,
-          },
-          {
-            date: new Date("2026-03-15T00:00:00.000Z"),
-            dayOfWeek: 0,
-            incorrectAnswers: 10,
-            userId: user.id,
-          },
-        ],
+      ledgerRow({
+        correctAnswers: 10,
+        hour: 12,
+        incorrectAnswers: 0,
+        localDate: "2025-12-14",
+        userId,
       }),
-      prisma.stepAttempt.createMany({ data: attempts }),
+      ledgerRow({
+        correctAnswers: 1,
+        hour: 0,
+        incorrectAnswers: 1,
+        localDate: "2025-12-15",
+        userId,
+      }),
+      ledgerRow({
+        correctAnswers: 3,
+        hour: 18,
+        incorrectAnswers: 0,
+        localDate: "2026-03-14",
+        userId,
+      }),
+      ledgerRow({
+        correctAnswers: 0,
+        hour: 19,
+        incorrectAnswers: 10,
+        localDate: "2026-03-15",
+        userId,
+      }),
     ]);
+
+    await prisma.dailyProgress.createMany({
+      data: [
+        {
+          correctAnswers: 10,
+          date: new Date("2025-12-14T00:00:00.000Z"),
+          dayOfWeek: 0,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 2,
+          date: new Date("2025-12-15T00:00:00.000Z"),
+          dayOfWeek: 1,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 3,
+          date: new Date("2026-03-14T00:00:00.000Z"),
+          dayOfWeek: 6,
+          userId: user.id,
+        },
+        {
+          date: new Date("2026-03-15T00:00:00.000Z"),
+          dayOfWeek: 0,
+          incorrectAnswers: 10,
+          userId: user.id,
+        },
+      ],
+    });
 
     const result = await getScorePatterns();
 
@@ -278,5 +243,32 @@ describe(getScorePatterns, () => {
 
     expect(result?.strongestWeekday).toStrictEqual(result?.weekdays[1]);
     expect(result?.strongestTime).toStrictEqual(result?.times[1]);
+  });
+
+  it("counts a session's answers once, from its lessons and blocks", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    mockScoreDate(new Date("2026-01-31T23:59:59.999Z"));
+
+    const endedAt = new Date("2026-01-15T09:30:00.000Z");
+    const answers = { correctAnswers: 3, endedAt, incorrectAnswers: 1, userId: user.id };
+
+    // The session's row sums the answers its lesson and question block already recorded.
+    await Promise.all([
+      learningEventFixture({ ...answers, correctAnswers: 2, incorrectAnswers: 0, kind: "lesson" }),
+      learningEventFixture({
+        ...answers,
+        correctAnswers: 1,
+        incorrectAnswers: 1,
+        kind: "questions",
+      }),
+      learningEventFixture({ ...answers, kind: "session" }),
+    ]);
+
+    const result = await getScorePatterns();
+
+    expect(result?.times).toStrictEqual([
+      { correctAnswers: 3, incorrectAnswers: 1, period: 1, score: 75, totalAnswers: 4 },
+    ]);
   });
 });

@@ -145,6 +145,7 @@ private struct AdaptiveNavigationTitle: ViewModifier {
         session: session)
     )
     .environment(MyCoursesStore(api: MyCoursesAPI(clients: clients), session: session))
+    .environment(PlusAccessStore(api: PlusAccessAPI(clients: clients), session: session))
     .environment(ProgressStore(api: ProgressAPI(clients: clients), session: session))
     .environment(session)
     .environment(AppStoreSubscriptionStore.live())

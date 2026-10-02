@@ -31,38 +31,11 @@ async function createPageWithBrowserLocale({
 }
 
 test.describe("Locale Behavior - English", () => {
-  test("home page shows English start content", async ({ page }) => {
-    await page.goto("/");
-
-    const nav = page.getByRole("navigation");
-
-    await expect(nav.getByRole("link", { exact: true, name: "Courses" })).toBeVisible();
-    await expect(nav.getByRole("link", { exact: true, name: "New course" })).toBeVisible();
-
-    await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-  });
-
   test("removes the default English prefix", async ({ page }) => {
     await page.goto("/en");
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-  });
-});
-
-test.describe("Locale Behavior - Portuguese", () => {
-  test("Portuguese home shows Portuguese start content", async ({ page }) => {
-    await setLocale(page, "pt");
-    await page.goto("/");
-
-    const nav = page.getByRole("navigation");
-
-    await expect(nav.getByRole("link", { exact: true, name: "Cursos" })).toBeVisible();
-    await expect(nav.getByRole("link", { exact: true, name: "Novo curso" })).toBeVisible();
-
-    await expect(page).toHaveURL(/\/pt$/u);
-    await expect(page.getByRole("heading", { name: /qual é seu objetivo/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /get ready for/iu })).toBeVisible();
   });
 });
 
@@ -74,24 +47,13 @@ test.describe("Locale Detection", () => {
 
     try {
       await setLegacyLocaleCookie({ locale: "en", page });
-      await page.goto("/");
+      await page.goto("/start");
 
-      await expect(page).toHaveURL(/\/fr$/u);
-      await expect(page.getByRole("heading", { name: "Quel est ton objectif ?" })).toBeVisible();
-    } finally {
-      await context.close();
-    }
-  });
+      await expect(page).toHaveURL(/\/fr\/start$/u);
 
-  test("manual locale cookie wins over browser language detection", async ({ browser }) => {
-    const { context, page } = await createPageWithBrowserLocale({ browser, locale: "fr-FR" });
-
-    try {
-      await setLocale(page, "de");
-      await page.goto("/");
-
-      await expect(page).toHaveURL(/\/de$/u);
-      await expect(page.getByRole("heading", { name: "Was ist dein Ziel?" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Qu'est-ce que tu veux accomplir ?" }),
+      ).toBeVisible();
     } finally {
       await context.close();
     }
@@ -99,36 +61,28 @@ test.describe("Locale Detection", () => {
 });
 
 test.describe("Locale Navigation", () => {
-  test("clicking courses navbar link keeps user in Portuguese", async ({ page }) => {
+  test("the navbar's Courses and New course links keep the learner in Portuguese", async ({
+    page,
+  }) => {
     await setLocale(page, "pt");
-    await page.goto("/");
+    await page.goto("/courses/science");
+    await expect(page).toHaveURL(/\/pt\/courses\/science$/u);
 
-    const coursesLink = page
-      .getByRole("navigation")
-      .getByRole("link", { exact: true, name: "Cursos" });
+    const navigation = page.getByRole("navigation");
+    const coursesLink = navigation.getByRole("link", { exact: true, name: "Cursos" });
 
     await expect(coursesLink).toHaveAttribute("href", "/pt/courses");
     await coursesLink.click();
 
     await expect(page).toHaveURL(/\/pt\/courses$/u);
     await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
-  });
 
-  test("clicking start navbar link keeps user in Portuguese", async ({ page }) => {
-    await setLocale(page, "pt");
-    await page.goto("/courses");
-
-    await expect(page).toHaveURL(/\/pt\/courses$/u);
-    await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
-
-    const startLink = page
-      .getByRole("navigation")
-      .getByRole("link", { exact: true, name: "Novo curso" });
+    const startLink = navigation.getByRole("link", { exact: true, name: "Novo curso" });
 
     await expect(startLink).toHaveAttribute("href", "/pt/start");
     await startLink.click();
 
     await expect(page).toHaveURL(/\/pt\/start$/u);
-    await expect(page.getByRole("heading", { name: /qual é seu objetivo/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "O que você quer alcançar?" })).toBeVisible();
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { type DailyContentRow } from "@/data/stats/get-daily-content-created";
+import { type DailyContentRow } from "@/data/stats/_utils/content-created";
 import { Button } from "@zoonk/ui/components/button";
 import { buildChartData } from "@zoonk/utils/chart";
 import { useMemo, useState } from "react";
@@ -9,7 +9,7 @@ import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
 import { completeMetricTrend } from "../_utils/complete-metric-trend";
 import { type StatsPeriod } from "../_utils/stats-period";
 
-type ContentFilterValue = "all" | "courses" | "chapters" | "lessons" | "steps";
+type ContentFilterValue = "all" | "chapters" | "courses" | "lessons" | "steps";
 
 const FILTERS: { label: string; value: ContentFilterValue }[] = [
   { label: "All", value: "all" },

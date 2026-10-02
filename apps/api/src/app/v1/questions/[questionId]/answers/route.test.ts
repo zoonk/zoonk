@@ -1,10 +1,11 @@
-import { trackGenerationRateLimited } from "@/lib/server-track-events";
 import { streamLessonQuestionAnswer } from "@zoonk/ai/tasks/lessons/question";
 import {
   claimLessonQuestionAnswer,
   completeLessonQuestionAnswer,
   failLessonQuestionAnswer,
+  rememberLessonQuestionAnswer,
 } from "@zoonk/core/lesson-questions/answer-lifecycle";
+import { type MemoryChange } from "@zoonk/core/memory/contract";
 import { logError } from "@zoonk/utils/logger";
 import { simulateReadableStream, streamText } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
@@ -25,10 +26,10 @@ vi.mock("@zoonk/core/lesson-questions/answer-lifecycle", () => ({
   claimLessonQuestionAnswer: vi.fn(),
   completeLessonQuestionAnswer: vi.fn(),
   failLessonQuestionAnswer: vi.fn(),
+  rememberLessonQuestionAnswer: vi.fn(),
 }));
 
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
-vi.mock("@/lib/server-track-events", () => ({ trackGenerationRateLimited: vi.fn() }));
 
 vi.mock("next/server", async (importOriginal) => ({
   ...(await importOriginal<typeof NextServer>()),
@@ -64,14 +65,51 @@ const successfulProviderStream: MockLanguageModelV4["doStream"] = async () => ({
   }),
 });
 
+/** The run that answered: a fallback model, as AI Gateway's routing reports it. */
+const PROVENANCE = {
+  generatedAt: "2026-09-04T12:00:01.000Z",
+  latencyMs: 900,
+  model: "anthropic/claude-haiku-4.5",
+  promptVersion: "prompt-version-test",
+  provider: "anthropic",
+  requestedModel: "openai/gpt-6-luna",
+  runId: "run-answer-test",
+  usage: {},
+};
+
 function createTestGeneration(
   doStream: MockLanguageModelV4["doStream"] = successfulProviderStream,
 ) {
-  return streamText({
+  const generation = streamText({
     model: new MockLanguageModelV4({ doStream, modelId: "openai/gpt-6-luna", provider: "gateway" }),
     onError: vi.fn(),
     prompt: "Test lesson question",
   });
+
+  return { generation, provenance: Promise.resolve(PROVENANCE) };
+}
+
+/** Reads the streamed body until `text` has arrived, and returns what was read. */
+async function readUntil({
+  read = "",
+  reader,
+  text,
+}: {
+  read?: string;
+  reader: ReadableStreamDefaultReader<string>;
+  text: string;
+}): Promise<string> {
+  if (read.includes(text)) {
+    return read;
+  }
+
+  const { done, value } = await reader.read();
+
+  if (done) {
+    throw new Error(`The stream ended before ${text}`);
+  }
+
+  return readUntil({ read: read + value, reader, text });
 }
 
 async function createAnswerResponse() {
@@ -92,17 +130,21 @@ describe("lesson question answer route", () => {
     vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
       claim: {
         contextSnapshot: {},
+        learnerMemory: [],
         priorTurns: [],
         question: "Can you explain this?",
         questionId: QUESTION_ID,
         revision: 1,
+        shareAnswer: false,
       },
       status: "ready",
     } as never);
 
     // The route uses a real AI SDK stream with only the external model boundary replaced.
     vi.mocked(streamLessonQuestionAnswer).mockImplementation(() => createTestGeneration());
+
     vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status: "updated" });
+    vi.mocked(rememberLessonQuestionAnswer).mockResolvedValue([]);
   });
 
   it("streams UI message events and persists the completed answer", async () => {
@@ -124,13 +166,121 @@ describe("lesson question answer route", () => {
     expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
       answer: ANSWER,
       finishReason: "stop",
+      generatedAt: PROVENANCE.generatedAt,
       inputTokens: 80,
-      model: "openai/gpt-6-luna",
+      model: PROVENANCE.model,
       outputTokens: 12,
-      provider: "openai",
+      promptVersion: PROVENANCE.promptVersion,
+      provider: PROVENANCE.provider,
       questionId: QUESTION_ID,
       revision: 1,
+      runId: PROVENANCE.runId,
+      shareAnswer: false,
       totalTokens: 92,
+    });
+  });
+
+  it("writes a shared answer without the learner's memory and saves it for everyone", async () => {
+    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
+      claim: {
+        contextSnapshot: {},
+        learnerMemory: [],
+        priorTurns: [],
+        question: "Explain this more simply",
+        questionId: QUESTION_ID,
+        revision: 1,
+        shareAnswer: true,
+      },
+      status: "ready",
+    } as never);
+
+    const response = await createAnswerResponse();
+    await response.text();
+    await Promise.all(afterTasks);
+
+    expect(streamLessonQuestionAnswer).toHaveBeenCalledWith(
+      expect.objectContaining({ analytics: { contentScope: "shared" }, learnerMemory: [] }),
+    );
+
+    expect(completeLessonQuestionAnswer).toHaveBeenCalledWith(
+      expect.objectContaining({ questionId: QUESTION_ID, shareAnswer: true }),
+    );
+
+    expect(rememberLessonQuestionAnswer).not.toHaveBeenCalled();
+  });
+
+  it("finishes the answer once it's saved, then sends what it changed in memory", async () => {
+    const fact = {
+      category: "goals" as const,
+      confidence: 0.9,
+      createdAt: new Date("2026-09-04T12:00:00.000Z"),
+      expiresAt: null,
+      id: "019c9bd7-bf11-73cb-9cc8-fe371298190c",
+      origin: "said" as const,
+      sensitive: false,
+      source: { id: QUESTION_ID, kind: "chat" as const },
+      statement: "Preparing for a nursing exam",
+      updatedAt: new Date("2026-09-04T12:00:00.000Z"),
+    };
+
+    const saving = Promise.withResolvers<null>();
+    const memory = Promise.withResolvers<MemoryChange[]>();
+    const order: string[] = [];
+
+    vi.mocked(completeLessonQuestionAnswer).mockImplementation(async () => {
+      await saving.promise;
+      order.push("saved");
+      return { status: "updated" };
+    });
+
+    vi.mocked(rememberLessonQuestionAnswer).mockReturnValue(memory.promise);
+
+    const response = await createAnswerResponse();
+    const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
+
+    if (!reader) {
+      throw new Error("Expected a streamed answer body");
+    }
+
+    const reading = readUntil({ reader, text: '"type":"finish"' }).then((read) => {
+      order.push("finish");
+      return read;
+    });
+
+    await vi.waitFor(() => expect(completeLessonQuestionAnswer).toHaveBeenCalledOnce());
+    saving.resolve(null);
+
+    // The answer is done once it's saved: `finish` follows the save, while memory still learns.
+    await expect(reading).resolves.toContain(`"delta":"${ANSWER}"`);
+    expect(order).toStrictEqual(["saved", "finish"]);
+
+    expect(rememberLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
+      questionId: QUESTION_ID,
+    });
+
+    memory.resolve([{ action: "added", fact, previous: null }]);
+
+    const afterFinish = await readUntil({ reader, text: "[DONE]" });
+    await Promise.all(afterTasks);
+
+    expect(afterFinish).toContain('"type":"data-memory"');
+    expect(afterFinish).toContain('"statement":"Preparing for a nursing exam"');
+  });
+
+  it("keeps a saved answer done when memory can't learn from it", async () => {
+    vi.mocked(rememberLessonQuestionAnswer).mockRejectedValue(new Error("Session store down"));
+
+    const response = await createAnswerResponse();
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    expect(body).toContain('"type":"finish"');
+    expect(body).toContain("data: [DONE]");
+    expect(body).not.toContain('"type":"data-memory"');
+    expect(failLessonQuestionAnswer).not.toHaveBeenCalled();
+
+    expect(logError).toHaveBeenCalledExactlyOnceWith("[Lesson Question Memory Error]", {
+      questionId: QUESTION_ID,
     });
   });
 
@@ -223,42 +373,6 @@ describe("lesson question answer route", () => {
     expect(failLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith({
       questionId: QUESTION_ID,
       revision: 1,
-    });
-  });
-
-  it("returns the stable generation limit response without starting the provider", async () => {
-    const actor = { distinctId: "learner-id", username: "learner" };
-
-    const limit = {
-      period: "day" as const,
-      resource: "lessonQuestion" as const,
-      viewer: "authenticated" as const,
-    };
-
-    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
-      actor,
-      limit,
-      status: "limitReached",
-    });
-
-    const response = await createAnswerResponse();
-
-    expect(response.status).toBe(429);
-
-    await expect(response.json()).resolves.toStrictEqual({
-      error: {
-        code: "GENERATION_LIMIT_REACHED",
-        details: limit,
-        message: "Generation limit reached",
-      },
-    });
-
-    expect(streamLessonQuestionAnswer).not.toHaveBeenCalled();
-
-    expect(trackGenerationRateLimited).toHaveBeenCalledExactlyOnceWith({
-      actor,
-      limit,
-      target: { questionId: QUESTION_ID },
     });
   });
 

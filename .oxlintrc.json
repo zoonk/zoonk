@@ -286,6 +286,12 @@
     {
       "files": ["**/setup-tests.ts", "**/browser-setup.ts"],
       "rules": { "jest/require-top-level-describe": "off" }
+    },
+    {
+      "files": ["**/*.browser.test.tsx"],
+      "rules": {
+        "vitest/expect-expect": ["error", { "assertFunctionNames": ["expect", "expect*"] }]
+      }
     }
   ],
   "ignorePatterns": [

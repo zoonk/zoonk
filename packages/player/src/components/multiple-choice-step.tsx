@@ -1,8 +1,8 @@
 "use client";
 
+import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
-import { type SelectedAnswer } from "../player-reducer";
+import { type SelectedAnswer } from "../step-answer";
 import { ChoiceStepLayout } from "./choice-step-layout";
 
 function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
@@ -18,7 +18,7 @@ export function MultipleChoiceStep({
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
@@ -27,11 +27,11 @@ export function MultipleChoiceStep({
 
   const handleSelect = (optionId: string) => {
     if (selectedOptionId === optionId) {
-      onSelectAnswer(step.id, null);
+      onSelectAnswer(null);
       return;
     }
 
-    onSelectAnswer(step.id, { kind: "multipleChoice", selectedOptionId: optionId });
+    onSelectAnswer({ kind: "multipleChoice", selectedOptionId: optionId });
   };
 
   return (

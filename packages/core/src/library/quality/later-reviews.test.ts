@@ -1,0 +1,105 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it } from "vitest";
+import { temperatureSpec } from "./_test-utils/written-lessons";
+import {
+  failsLaterReview,
+  listLessonsForLaterReview,
+  prepareLaterReview,
+  pullLessonForFix,
+} from "./later-reviews";
+
+/** Lesson ids are sampled by their last hex digits; these land in and out of the one-in-five sample. */
+function sampledId(): string {
+  return `${randomUUID().slice(0, -8)}0000000a`;
+}
+
+function skippedId(): string {
+  return `${randomUUID().slice(0, -8)}00000001`;
+}
+
+describe(listLessonsForLaterReview, () => {
+  it("samples lessons published today that nobody has answered yet, leaving advanced ones out", async () => {
+    const user = await userFixture();
+
+    const [sampled, notSampled, advanced, answered] = await Promise.all([
+      libraryLessonFixture({ contentStatus: "completed", id: sampledId() }),
+      libraryLessonFixture({ contentStatus: "completed", id: skippedId() }),
+      libraryLessonFixture({ contentStatus: "completed", id: sampledId(), level: "advanced" }),
+      libraryLessonFixture({ contentStatus: "completed", id: sampledId() }),
+    ]);
+
+    const step = await libraryStepFixture({ lessonId: answered.id, position: 0 });
+    await attemptFixture({ stepId: step.id, userId: user.id });
+
+    const listed = await listLessonsForLaterReview({ limit: 1000 });
+
+    expect(listed).toContain(sampled.id);
+    expect(listed).not.toContain(notSampled.id);
+    expect(listed).not.toContain(advanced.id);
+    expect(listed).not.toContain(answered.id);
+  });
+});
+
+describe(prepareLaterReview, () => {
+  it("reads the lesson as stored against its own plan, naming the model that wrote it", async () => {
+    const spec = temperatureSpec();
+
+    const lesson = await libraryLessonFixture({
+      contentStatus: "completed",
+      spec,
+      summary: { ideas: [{ text: "A rise moves up the thermometer." }] },
+    });
+
+    const step = await libraryStepFixture({
+      lessonId: lesson.id,
+      model: "openai/gpt-6-sol",
+      position: 0,
+    });
+
+    await expect(prepareLaterReview(lesson.id)).resolves.toMatchObject({
+      lesson: {
+        screens: [{ content: step.content, kind: step.kind }],
+        summary: ["A rise moves up the thermometer."],
+      },
+      spec: { title: spec.title },
+      writerModel: "openai/gpt-6-sol",
+    });
+  });
+
+  it("skips a lesson without a readable spec", async () => {
+    const lesson = await libraryLessonFixture({ contentStatus: "completed" });
+    await expect(prepareLaterReview(lesson.id)).resolves.toBeNull();
+  });
+});
+
+describe(pullLessonForFix, () => {
+  it("takes a published lesson out of play once, and leaves a lesson being rewritten alone", async () => {
+    const [published, rewriting] = await Promise.all([
+      libraryLessonFixture({ contentStatus: "completed" }),
+      libraryLessonFixture({ contentRunId: randomUUID(), contentStatus: "running" }),
+    ]);
+
+    await expect(pullLessonForFix(published.id)).resolves.toBe(true);
+    await expect(pullLessonForFix(published.id)).resolves.toBe(false);
+    await expect(pullLessonForFix(rewriting.id)).resolves.toBe(false);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: published.id } }),
+    ).resolves.toMatchObject({ contentStatus: "failed" });
+  });
+});
+
+describe(failsLaterReview, () => {
+  it("pulls a published lesson only for something wrong, never for style or repetition", () => {
+    expect(failsLaterReview([{ kind: "incorrect", severity: "blocking" }])).toBe(true);
+    expect(failsLaterReview([{ kind: "incorrect", severity: "minor" }])).toBe(false);
+    expect(failsLaterReview([{ kind: "scope", severity: "blocking" }])).toBe(false);
+    expect(failsLaterReview([{ kind: "weakCheck", severity: "blocking" }])).toBe(false);
+    expect(failsLaterReview(null)).toBe(false);
+  });
+});

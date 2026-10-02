@@ -17,15 +17,17 @@ type ThreadWithQuestions = LessonQuestionThreadGetPayload<{
 }>;
 
 function getContextSummary(question: LessonQuestionResourceSource): LessonQuestionContextSummary {
-  if (question.contextKind === "lesson") {
-    return { kind: "lesson" };
+  const kind = question.contextKind;
+
+  if (kind !== "step" && kind !== "answer") {
+    return { kind };
   }
 
   if (!question.stepNumber) {
     throw new Error("Step-scoped lesson question is missing its immutable step number");
   }
 
-  return { kind: question.contextKind, stepId: question.stepId, stepNumber: question.stepNumber };
+  return { kind, stepId: question.libraryStepId, stepNumber: question.stepNumber };
 }
 
 export function toLessonQuestionResource(
@@ -54,7 +56,7 @@ export function toLessonQuestionThreadResource({
   return {
     hasMore,
     id: thread.id,
-    lessonId: thread.lessonId,
+    lessonId: thread.libraryLessonId,
     nextCursor,
     questions: thread.questions.map((question) => toLessonQuestionResource(question)),
   };

@@ -1,0 +1,40 @@
+enum UsageKind {
+  lessonStart  @map("lesson_start")
+  explanation
+  goal
+  tutorMessage @map("tutor_message")
+  upload
+  conversation
+  /// A small AI call: understanding a goal, a simpler or deeper version, an answer's explanation,
+  /// grading a typed or spoken answer, an example line or a plan edit.
+  assist
+}
+
+/// One metered action behind the allowance and fair use. A lesson counts the first time a learner
+/// starts it, whether it was reused or generated; `generated` marks a start that needed new content.
+/// `targetId` is a plain id, so usage survives content changes. `costMicros` is the estimated AI spend
+/// in millionths of a dollar, summed for the daily spend budget.
+model UsageRecord {
+  id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind       UsageKind
+  targetId   String    @map("target_id") @db.Uuid
+  generated  Boolean   @default(false)
+  costMicros Int       @default(0) @map("cost_micros")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@unique([userId, kind, targetId], name: "userUsageTarget")
+  @@index([userId, createdAt])
+  @@map("usage_records")
+}
+
+/// Estimated AI spend (millionths of a dollar) that guests and accounts younger than a day started
+/// on one UTC day, summed across all of them, so newcomers share one daily ceiling however many
+/// there are.
+model NewcomerSpendDay {
+  day         DateTime @id @db.Date
+  spentMicros Int      @default(0) @map("spent_micros")
+
+  @@map("newcomer_spend_days")
+}

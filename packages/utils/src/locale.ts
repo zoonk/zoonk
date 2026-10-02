@@ -13,8 +13,7 @@ export function isValidLocale(value: string): value is SupportedLocale {
   return SUPPORTED_LOCALES.some((locale) => locale === value);
 }
 
-/** Canonical language identity must also support languages outside the UI catalog. */
-export function getLanguageSubtag(language: string): string | null {
+function getLanguageSubtag(language: string): string | null {
   try {
     return new Intl.Locale(language).language ?? null;
   } catch {

@@ -1,0 +1,257 @@
+/*
+ * Fun mode ("Orbit") tokens and utilities.
+ *
+ * Everything is scoped to [data-mode="fun"], so Focus keeps the tokens in globals.css.
+ * Fun is dark only; Focus follows the device. Fun's canvas is always deep space, whatever the
+ * device's theme, and reading happens on a light paper panel. The `dark:` variant and the dark
+ * tokens in globals.css apply inside Fun too, so everything renders as on a dark device.
+ *
+ * Apps opt in by importing this file after @zoonk/ui/globals.css and by exposing Unbounded and
+ * Figtree as --font-unbounded and --font-figtree (for example with next/font). Without them the
+ * system stack is used.
+ *
+ * WCAG AA contrast of every token pair is checked by fun-contrast.test.ts, which reads the palette
+ * blocks below. Canvas text tokens are checked on the canvas and on glass, paper tokens on the
+ * paper. The nebula's brightest stop at the top edge is checked only for primary and secondary
+ * text, so keep faint text and accents below the header there.
+ */
+
+@import "./fun-utilities.css";
+
+@theme inline {
+  --color-fun-fg: var(--fun-fg);
+  --color-fun-fg2: var(--fun-fg2);
+  --color-fun-fg3: var(--fun-fg3);
+  --color-fun-line: var(--fun-line);
+  --color-fun-soft: var(--fun-soft);
+  --color-fun-track: var(--fun-track);
+  --color-fun-dash: var(--fun-dash);
+  --color-fun-lime: var(--fun-lime);
+  --color-fun-lime-foreground: var(--fun-lime-foreground);
+  --color-fun-energy: var(--fun-energy);
+  --color-fun-gold: var(--fun-gold);
+  --color-fun-accent-lime: var(--fun-accent-lime);
+  --color-fun-accent-cyan: var(--fun-accent-cyan);
+  --color-fun-accent-pink: var(--fun-accent-pink);
+  --color-fun-accent-orange: var(--fun-accent-orange);
+  --color-fun-accent-amber: var(--fun-accent-amber);
+  --color-fun-accent-violet: var(--fun-accent-violet);
+  --font-fun-display: var(--fun-font-display);
+  --font-fun-body: var(--fun-font-body);
+  --shadow-fun-lime: var(--fun-lime-shadow);
+  --shadow-fun-gold: var(--fun-gold-shadow);
+  --shadow-fun-holo: var(--fun-holo-shadow);
+}
+
+/* Values shared by the canvas and the paper. */
+[data-mode="fun"] {
+  --fun-font-body: var(--font-figtree, "Figtree"), ui-sans-serif, system-ui, sans-serif;
+  --fun-font-display:
+    var(--font-unbounded, "Unbounded"), var(--font-figtree, "Figtree"), ui-sans-serif, system-ui,
+    sans-serif;
+  --fun-lime: #c8ff4d;
+  --fun-lime-foreground: #120f2e;
+  --fun-paper: #ffffff;
+  --fun-energy: #ff8a3d;
+  --fun-gold: #ffd36e;
+  --fun-gold-shadow:
+    0 0 0 2px #ffd36e, 0 0 26px -4px rgb(255 211 110 / 0.75), 0 16px 34px -18px rgb(0 0 0 / 0.55);
+  --fun-holo-shadow: 0 0 36px -8px rgb(124 245 255 / 0.55);
+  --fun-holo-border: linear-gradient(135deg, #7cf5ff, #a78bfa, #ff7ac6, #ffd36e);
+  --fun-planet: radial-gradient(
+    circle at 32% 28%,
+    #ffe7a8 0%,
+    #ffb44d 28%,
+    #ff6b8b 62%,
+    #6b2fb3 100%
+  );
+
+  /* Card tones (subject colors). White text passes 4.5:1 on both stops of every tone. */
+  --fun-tone-indigo: #5552d8;
+  --fun-tone-indigo-deep: #3b1f9e;
+  --fun-tone-violet: #6d28d9;
+  --fun-tone-violet-deep: #5b21b6;
+  --fun-tone-blue: #0369a1;
+  --fun-tone-blue-deep: #1e40af;
+  --fun-tone-cyan: #0e7490;
+  --fun-tone-cyan-deep: #155e75;
+  --fun-tone-teal: #0f766e;
+  --fun-tone-teal-deep: #0f5f6b;
+  --fun-tone-emerald: #047857;
+  --fun-tone-emerald-deep: #0b6b4f;
+  --fun-tone-amber: #a84d08;
+  --fun-tone-amber-deep: #92400e;
+  --fun-tone-orange: #b93d0b;
+  --fun-tone-orange-deep: #be185d;
+  --fun-tone-pink: #be185d;
+  --fun-tone-pink-deep: #9d174d;
+  --fun-tone-magenta: #be185d;
+  --fun-tone-magenta-deep: #6d28d9;
+}
+
+/*
+ * palette: deep space
+ * Fun's canvas on every device. The document joins it as soon as it holds a Fun mode root (a
+ * `display: contents` box), so the page behind, overscroll included, is deep space from the first
+ * paint. `:where` keeps that selector as specific as `[data-mode="fun"]`, so the contrast overrides
+ * below still win.
+ */
+[data-mode="fun"],
+:root:where(:has([data-slot="mode-root"][data-mode="fun"])) {
+  color-scheme: dark;
+  --fun-canvas: #0c0a22;
+  --fun-nebula: #3b2c95;
+  --fun-surface: #1c1a36;
+  --fun-fg: #f4f2ff;
+  --fun-fg2: rgb(244 242 255 / 0.8);
+  --fun-fg3: rgb(244 242 255 / 0.64);
+  --fun-line: rgb(255 255 255 / 0.14);
+  --fun-line-strong: rgb(255 255 255 / 0.24);
+  --fun-soft: rgb(255 255 255 / 0.08);
+  --fun-track: rgb(255 255 255 / 0.12);
+  --fun-dash: rgb(255 255 255 / 0.35);
+  --fun-inv-bg: #ffffff;
+  --fun-inv-fg: #16123a;
+  --fun-glass-bg: rgb(255 255 255 / 0.07);
+  --fun-glass-border: rgb(255 255 255 / 0.12);
+  --fun-ring: #c8ff4d;
+  --fun-accent-lime: #c8ff4d;
+  --fun-accent-cyan: #7cf5ff;
+  --fun-accent-pink: #ff9ad5;
+  --fun-accent-orange: #ffb067;
+  --fun-accent-amber: #ffd36e;
+  --fun-accent-violet: #c3a6ff;
+  --fun-glass-shadow: none;
+  --fun-paper-shadow: none;
+  --fun-lime-shadow: 0 0 0 1px rgb(200 255 77 / 0.4), 0 10px 30px -8px rgb(200 255 77 / 0.55);
+  --fun-card-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.25);
+  --fun-planet-shadow: 0 0 60px rgb(255 140 90 / 0.45), inset -14px -18px 30px rgb(40 10 80 / 0.55);
+  --fun-holo-text: linear-gradient(90deg, #7cf5ff, #c3a6ff, #ff9ad5);
+  --fun-space:
+    radial-gradient(1.2px 1.2px at 12% 18%, rgb(255 255 255 / 0.9), transparent 60%),
+    radial-gradient(1px 1px at 78% 12%, rgb(255 255 255 / 0.7), transparent 60%),
+    radial-gradient(1.4px 1.4px at 64% 34%, rgb(255 255 255 / 0.8), transparent 60%),
+    radial-gradient(1px 1px at 28% 52%, rgb(255 255 255 / 0.6), transparent 60%),
+    radial-gradient(1.2px 1.2px at 88% 58%, rgb(255 255 255 / 0.7), transparent 60%),
+    radial-gradient(1px 1px at 8% 74%, rgb(255 255 255 / 0.5), transparent 60%),
+    radial-gradient(1.3px 1.3px at 46% 86%, rgb(255 255 255 / 0.6), transparent 60%),
+    radial-gradient(1px 1px at 92% 90%, rgb(255 255 255 / 0.5), transparent 60%),
+    radial-gradient(1px 1px at 36% 8%, rgb(255 255 255 / 0.6), transparent 60%),
+    radial-gradient(1px 1px at 56% 64%, rgb(255 255 255 / 0.4), transparent 60%),
+    radial-gradient(120% 60% at 50% -8%, #3b2c95 0%, #1d1650 42%, rgb(12 10 34 / 0) 78%),
+    radial-gradient(70% 40% at 100% 70%, rgb(255 122 198 / 0.18), rgb(12 10 34 / 0) 70%);
+}
+
+/*
+ * palette: paper
+ * The calm light reading surface inside Fun's deep space. Screens that turn paper on only in Fun
+ * (`in-data-[mode=fun]:fun-paper`) are matched by class too, since the variant's class name isn't
+ * `.fun-paper`.
+ */
+[data-mode="fun"] .fun-paper,
+[data-mode="fun"] [class~="in-data-[mode=fun]:fun-paper"] {
+  color-scheme: light;
+  --fun-surface: #ffffff;
+  --fun-fg: #16123a;
+  --fun-fg2: rgb(22 18 58 / 0.74);
+  --fun-fg3: rgb(22 18 58 / 0.62);
+  --fun-line: rgb(22 18 58 / 0.1);
+  --fun-line-strong: rgb(22 18 58 / 0.18);
+  --fun-soft: rgb(22 18 58 / 0.05);
+  --fun-track: rgb(22 18 58 / 0.08);
+  --fun-dash: rgb(22 18 58 / 0.28);
+  --fun-inv-bg: #16123a;
+  --fun-inv-fg: #ffffff;
+  --fun-glass-bg: rgb(255 255 255 / 0.72);
+  --fun-glass-border: rgb(22 18 58 / 0.08);
+  --fun-ring: #6d28d9;
+  --fun-accent-lime: #3f6212;
+  --fun-accent-cyan: #0e7490;
+  --fun-accent-pink: #be185d;
+  --fun-accent-orange: #c2410c;
+  --fun-accent-amber: #854d0e;
+  --fun-accent-violet: #6d28d9;
+  --fun-glass-shadow: 0 1px 2px rgb(22 18 58 / 0.04), 0 10px 28px -14px rgb(76 52 170 / 0.28);
+  --fun-paper-shadow: 0 1px 2px rgb(22 18 58 / 0.05), 0 18px 40px -18px rgb(76 52 170 / 0.35);
+  --fun-lime-shadow: 0 0 0 1px rgb(77 124 15 / 0.28), 0 10px 24px -10px rgb(101 163 13 / 0.6);
+  --fun-card-shadow: 0 16px 34px -18px rgb(60 40 140 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.3);
+  --fun-planet-shadow: 0 0 50px rgb(255 140 90 / 0.35), inset -14px -18px 30px rgb(40 10 80 / 0.35);
+  --fun-holo-text: linear-gradient(90deg, #0e7490, #6d28d9, #be185d);
+}
+
+/* palette: card text. Gradient cards keep white text on the canvas and on paper. */
+[data-mode="fun"] .fun-card {
+  --fun-fg: #ffffff;
+  --fun-fg2: rgb(255 255 255 / 0.9);
+  --fun-fg3: rgb(255 255 255 / 0.9);
+  --fun-line: rgb(255 255 255 / 0.22);
+  --fun-soft: rgb(255 255 255 / 0.12);
+  --fun-track: rgb(255 255 255 / 0.2);
+}
+
+@media (prefers-contrast: more) {
+  [data-mode="fun"],
+  [data-mode="fun"] .fun-paper,
+  [data-mode="fun"] [class~="in-data-[mode=fun]:fun-paper"],
+  [data-mode="fun"] .fun-card {
+    --fun-fg2: var(--fun-fg);
+    --fun-fg3: var(--fun-fg);
+    --fun-line: var(--fun-line-strong);
+  }
+}
+
+/*
+ * Existing @zoonk/ui components follow Fun through the shared semantic tokens. Every element that
+ * switches palette re-declares them so they resolve against its own palette. The inverse pill is
+ * the primary surface; lime stays reserved for the main action (the `lime` button variant).
+ */
+[data-mode="fun"],
+:root:where(:has([data-slot="mode-root"][data-mode="fun"])),
+[data-mode="fun"] .fun-paper,
+[data-mode="fun"] [class~="in-data-[mode=fun]:fun-paper"],
+[data-mode="fun"] .fun-card {
+  --background: var(--fun-canvas);
+  --foreground: var(--fun-fg);
+  --card: var(--fun-surface);
+  --card-foreground: var(--fun-fg);
+  --popover: var(--fun-surface);
+  --popover-foreground: var(--fun-fg);
+  --primary: var(--fun-inv-bg);
+  --primary-foreground: var(--fun-inv-fg);
+  --secondary: var(--fun-soft);
+  --secondary-foreground: var(--fun-fg);
+  --muted: var(--fun-soft);
+  --muted-foreground: var(--fun-fg2);
+  --accent: var(--fun-soft);
+  --accent-foreground: var(--fun-fg);
+  --destructive: var(--fun-accent-pink);
+  --info: var(--fun-accent-cyan);
+  --warning: var(--fun-accent-amber);
+  --success: var(--fun-accent-lime);
+  --energy: var(--fun-accent-orange);
+  --border: var(--fun-line);
+  --input: var(--fun-line-strong);
+  --ring: var(--fun-ring);
+  /* Soft fills stay light enough that each accent keeps AA as text on its own fill on paper. */
+  --viz-accent: var(--fun-accent-violet);
+  --viz-accent-soft: color-mix(in oklab, var(--fun-accent-violet) 8%, transparent);
+  --viz-highlight: var(--fun-accent-orange);
+  --viz-highlight-soft: color-mix(in oklab, var(--fun-accent-orange) 8%, transparent);
+  --viz-secondary: var(--fun-accent-cyan);
+  --viz-secondary-soft: color-mix(in oklab, var(--fun-accent-cyan) 8%, transparent);
+}
+
+[data-mode="fun"] .fun-paper,
+[data-mode="fun"] [class~="in-data-[mode=fun]:fun-paper"] {
+  --background: var(--fun-paper);
+  --card: var(--fun-paper);
+}
+
+[data-mode="fun"],
+[data-mode="fun"] body {
+  font-family: var(--fun-font-body);
+}
+
+[data-mode="fun"] {
+  color: var(--foreground);
+}

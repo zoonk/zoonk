@@ -1,0 +1,224 @@
+/*
+ * Fun mode surfaces and motion. The tokens they read live in fun.css, scoped to [data-mode="fun"].
+ * Every animation swaps to a calm version under prefers-reduced-motion.
+ */
+
+/* Deep space: Fun's canvas on every device. */
+@utility fun-space {
+  background-color: var(--fun-canvas);
+  background-image: var(--fun-space);
+  color: var(--fun-fg);
+}
+
+@utility fun-glass {
+  border: 1px solid var(--fun-glass-border);
+  background-color: var(--fun-glass-bg);
+  box-shadow: var(--fun-glass-shadow);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/*
+ * The floating dock: glass that keeps most of the canvas behind its labels, so they stay readable
+ * over whatever scrolls under it (a lime button shows through plain glass in deep space).
+ */
+@utility fun-dock {
+  border: 1px solid var(--fun-glass-border);
+  background-color: color-mix(in oklab, var(--fun-canvas) 88%, transparent);
+  box-shadow: var(--fun-glass-shadow);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/* The light reading surface inside Fun's deep space, with its own paper palette (see fun.css). */
+@utility fun-paper {
+  background-color: var(--fun-paper);
+  box-shadow: var(--fun-paper-shadow);
+  color: var(--fun-fg);
+}
+
+/* The active dock item and other inverse chips. */
+@utility fun-inv {
+  background-color: var(--fun-inv-bg);
+  color: var(--fun-inv-fg);
+}
+
+/* Gradient tile or study card. Pick a tone with fun-card-{tone}; text stays white. */
+@utility fun-card {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: 22px;
+  background-image: linear-gradient(
+    160deg,
+    var(--fun-card-from, var(--fun-tone-indigo)),
+    var(--fun-card-to, var(--fun-tone-indigo-deep))
+  );
+  box-shadow: var(--fun-card-shadow);
+  color: var(--fun-fg);
+}
+
+@utility fun-card-indigo {
+  --fun-card-from: var(--fun-tone-indigo);
+  --fun-card-to: var(--fun-tone-indigo-deep);
+}
+
+@utility fun-card-violet {
+  --fun-card-from: var(--fun-tone-violet);
+  --fun-card-to: var(--fun-tone-violet-deep);
+}
+
+@utility fun-card-blue {
+  --fun-card-from: var(--fun-tone-blue);
+  --fun-card-to: var(--fun-tone-blue-deep);
+}
+
+@utility fun-card-cyan {
+  --fun-card-from: var(--fun-tone-cyan);
+  --fun-card-to: var(--fun-tone-cyan-deep);
+}
+
+@utility fun-card-teal {
+  --fun-card-from: var(--fun-tone-teal);
+  --fun-card-to: var(--fun-tone-teal-deep);
+}
+
+@utility fun-card-emerald {
+  --fun-card-from: var(--fun-tone-emerald);
+  --fun-card-to: var(--fun-tone-emerald-deep);
+}
+
+@utility fun-card-amber {
+  --fun-card-from: var(--fun-tone-amber);
+  --fun-card-to: var(--fun-tone-amber-deep);
+}
+
+@utility fun-card-orange {
+  --fun-card-from: var(--fun-tone-orange);
+  --fun-card-to: var(--fun-tone-orange-deep);
+}
+
+@utility fun-card-pink {
+  --fun-card-from: var(--fun-tone-pink);
+  --fun-card-to: var(--fun-tone-pink-deep);
+}
+
+@utility fun-card-magenta {
+  --fun-card-from: var(--fun-tone-magenta);
+  --fun-card-to: var(--fun-tone-magenta-deep);
+}
+
+@utility fun-planet {
+  border-radius: calc(infinity * 1px);
+  background-image: var(--fun-planet);
+  box-shadow: var(--fun-planet-shadow);
+}
+
+/* Holographic edge for the next stop and other highlighted tiles. */
+@utility fun-holo-border {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    padding: 1.5px;
+    border-radius: inherit;
+    background: var(--fun-holo-border);
+    pointer-events: none;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+@utility fun-holo-text {
+  background-image: var(--fun-holo-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/*
+ * Motion tokens use a regular @theme block (not inline) so utilities read the variables and the
+ * reduced-motion override below swaps every variant at once.
+ */
+@theme {
+  --animate-fun-flip: fun-flip 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fun-flip-calm: fun-flip-calm 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fun-glow: fun-glow 2.4s ease-in-out infinite;
+  --animate-fun-ceremony: fun-ceremony 700ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  /* The paper turns to show its back: the result and the why. */
+  @keyframes fun-flip {
+    from {
+      transform: perspective(1200px) rotateY(-90deg);
+    }
+
+    to {
+      transform: perspective(1200px) rotateY(0deg);
+    }
+  }
+
+  /* A wrong answer flips gently, without drama. */
+  @keyframes fun-flip-calm {
+    from {
+      opacity: 0;
+      transform: perspective(1200px) rotateX(10deg);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes fun-glow {
+    0%,
+    100% {
+      opacity: 0.75;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.12);
+    }
+  }
+
+  @keyframes fun-ceremony {
+    0% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+
+    60% {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+@keyframes fun-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animate-fun-flip: fun-fade-in 200ms ease-out both;
+    --animate-fun-flip-calm: fun-fade-in 200ms ease-out both;
+    --animate-fun-glow: none;
+    --animate-fun-ceremony: fun-fade-in 300ms ease-out both;
+  }
+}

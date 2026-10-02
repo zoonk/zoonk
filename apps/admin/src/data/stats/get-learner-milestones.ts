@@ -1,6 +1,9 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filter";
+import {
+  completedLessonActivitySql,
+  trackedAnalyticsUserSql,
+} from "@/data/stats/_utils/analytics-user-filter";
 import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
 import { type Sql, prisma, sql } from "@zoonk/db";
 
@@ -9,7 +12,7 @@ type LearnerMilestoneUserRow = {
   createdAt: Date;
   email: string;
   id: string;
-  lastCompletedAt: Date;
+  lastLearningDate: Date;
   learningDays: bigint;
   name: string;
   totalBrainPower: bigint;
@@ -18,12 +21,15 @@ type LearnerMilestoneUserRow = {
 
 type LearnerMilestoneQueryParts = { havingFilter: Sql; primaryOrder: Sql };
 
+const completedLessonsSql = sql`SUM(daily_progress.lessons_completed)`;
+const learningDaysSql = sql`COUNT(*)`;
+
 export type LearnerMilestoneUser = {
   completedLessons: number;
   createdAt: Date;
   email: string;
   id: string;
-  lastCompletedAt: Date;
+  lastLearningDate: Date;
   learningDays: number;
   name: string;
   totalBrainPower: number;
@@ -78,7 +84,9 @@ export const listLearnerMilestoneUsers = cacheAdminData(
 /**
  * Raw SQL cannot parameterize aggregate expressions or order columns, so the
  * supported milestone rules are explicitly whitelisted before being composed
- * into the shared learner-progress query.
+ * into the shared learner-progress query. Both read the daily totals the
+ * learner's Activity page shows: first lesson completions, and learner-local
+ * days with a finished lesson.
  */
 function getLearnerMilestoneQueryParts({
   kind,
@@ -89,13 +97,13 @@ function getLearnerMilestoneQueryParts({
 }): LearnerMilestoneQueryParts {
   if (kind === "learningDays") {
     return {
-      havingFilter: sql`COUNT(DISTINCT completed_at::date) >= ${threshold}`,
+      havingFilter: sql`${learningDaysSql} >= ${threshold}`,
       primaryOrder: sql`learner_progress.learning_days DESC, learner_progress.completed_lessons DESC`,
     };
   }
 
   return {
-    havingFilter: sql`COUNT(*) >= ${threshold}`,
+    havingFilter: sql`${completedLessonsSql} >= ${threshold}`,
     primaryOrder: sql`learner_progress.completed_lessons DESC, learner_progress.learning_days DESC`,
   };
 }
@@ -113,9 +121,9 @@ async function countUsersByLearnerMilestone({
     SELECT COUNT(*) AS count
     FROM (
       SELECT user_id
-      FROM lesson_progress
-      JOIN users ON users.id = lesson_progress.user_id
-      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
+      FROM daily_progress
+      JOIN users ON users.id = daily_progress.user_id
+      WHERE ${trackedAnalyticsUserSql} AND ${completedLessonActivitySql}
       GROUP BY user_id
       HAVING ${queryParts.havingFilter}
     ) qualifying_users
@@ -148,16 +156,16 @@ async function listUsersByLearnerMilestone({
       COALESCE(user_progress.total_brain_power, 0)::bigint AS "totalBrainPower",
       learner_progress.completed_lessons AS "completedLessons",
       learner_progress.learning_days AS "learningDays",
-      learner_progress.last_completed_at AS "lastCompletedAt"
+      learner_progress.last_learning_date AS "lastLearningDate"
     FROM (
       SELECT
         user_id,
-        COUNT(*) AS completed_lessons,
-        COUNT(DISTINCT completed_at::date) AS learning_days,
-        MAX(completed_at) AS last_completed_at
-      FROM lesson_progress
-      JOIN users ON users.id = lesson_progress.user_id
-      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
+        ${completedLessonsSql} AS completed_lessons,
+        ${learningDaysSql} AS learning_days,
+        MAX(daily_progress.date) AS last_learning_date
+      FROM daily_progress
+      JOIN users ON users.id = daily_progress.user_id
+      WHERE ${trackedAnalyticsUserSql} AND ${completedLessonActivitySql}
       GROUP BY user_id
       HAVING ${queryParts.havingFilter}
     ) learner_progress
@@ -165,7 +173,7 @@ async function listUsersByLearnerMilestone({
     LEFT JOIN user_progress ON user_progress.user_id = users.id
     ORDER BY
       ${queryParts.primaryOrder},
-      learner_progress.last_completed_at DESC,
+      learner_progress.last_learning_date DESC,
       users.created_at DESC
     LIMIT ${limit}
     OFFSET ${offset}
@@ -186,7 +194,7 @@ function serializeLearnerMilestoneUser({
     createdAt: row.createdAt,
     email: row.email,
     id: row.id,
-    lastCompletedAt: row.lastCompletedAt,
+    lastLearningDate: row.lastLearningDate,
     learningDays: Number(row.learningDays),
     name: row.name,
     totalBrainPower: Number(row.totalBrainPower),

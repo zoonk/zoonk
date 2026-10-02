@@ -4,6 +4,7 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -57,7 +58,7 @@ function SheetContent({
         data-slot="sheet-content"
         {...props}
       >
-        {children}
+        <PopupShortcutLayer value>{children}</PopupShortcutLayer>
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"

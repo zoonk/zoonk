@@ -1,0 +1,3665 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "verdict": "pass" },
+        "id": "en-temperature-clean-1",
+        "userInput": {
+          "chapterTitle": "Negative numbers",
+          "courseTitle": "Everyday math",
+          "language": "en",
+          "level": "beginner",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+                "options": [
+                  { "text": "2 °C", "isCorrect": true },
+                  { "text": "8 °C", "isCorrect": false },
+                  { "text": "−8 °C", "isCorrect": false }
+                ],
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "Up is up, even below zero",
+                "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+                "exampleLineIdea": "A cold morning where the learner lives.",
+                "image": {
+                  "prompt": "A thermometer from −5 °C to 5 °C with an arrow going up past zero.",
+                  "alt": "A thermometer with an arrow going up past zero."
+                }
+              },
+              {
+                "kind": "workedExample",
+                "title": "From −3 °C, up 5 degrees",
+                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
+                "steps": [
+                  { "text": "First climb to zero: that takes 3 degrees.", "math": "-3 + 3 = 0" },
+                  {
+                    "text": "Two degrees of the rise are left, so keep going up.",
+                    "math": "0 + 2 = 2"
+                  }
+                ],
+                "result": "It's 2 °C: two degrees above zero.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": null,
+                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "start",
+                      "value": -4,
+                      "min": -10,
+                      "max": -1,
+                      "step": 1,
+                      "unit": "°C"
+                    },
+                    { "name": "rise", "value": 7, "min": 2, "max": 15, "step": 1, "unit": "°C" }
+                  ],
+                  "solution": "start + rise",
+                  "answer": 3,
+                  "unit": "°C",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Move {rise} degrees up from {start} °C: {result} °C.",
+                      "expression": "start + rise"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "rise - start",
+                      "misconception": "Subtracts the negative start",
+                      "reason": "You took the start away instead of adding the rise to it."
+                    },
+                    {
+                      "expression": "start - rise",
+                      "misconception": "Moves down instead of up",
+                      "reason": "A rise moves up the thermometer, not down."
+                    }
+                  ]
+                },
+                "correctReason": "You start at {start} °C and move {rise} degrees up."
+              },
+              {
+                "kind": "explanation",
+                "title": "Zero is a stop, not a wall",
+                "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
+                "exampleLineIdea": null,
+                "image": null
+              },
+              {
+                "kind": "activity",
+                "template": "numberLine",
+                "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}"
+              },
+              {
+                "kind": "typedAnswer",
+                "context": null,
+                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+                "keyPoints": [
+                  "Going up 3 degrees reaches zero",
+                  "The last 2 degrees go above zero"
+                ],
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "acceptedAnswers": []
+              },
+              {
+                "kind": "check",
+                "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
+                "question": "What will the thermometer show?",
+                "options": [
+                  {
+                    "text": "3 °C",
+                    "isCorrect": true,
+                    "reason": "Six degrees reach zero and three more go above it."
+                  },
+                  {
+                    "text": "−15 °C",
+                    "isCorrect": false,
+                    "reason": "That's what you get by moving down 9 degrees instead of up."
+                  },
+                  {
+                    "text": "15 °C",
+                    "isCorrect": false,
+                    "reason": "You added the numbers without their signs: the start is below zero."
+                  }
+                ],
+                "image": null
+              }
+            ],
+            "summary": [
+              "A rise moves up the thermometer, even below zero.",
+              "Count up to zero first, then the degrees above it."
+            ]
+          },
+          "spec": {
+            "canDo": "Work out a temperature after it rises across zero",
+            "description": "Add a rise to a temperature below zero, the way thermometers do.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "numberLine",
+                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explain in your own words why −3 + 5 is 2.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A rise adds to the temperature, even when it starts below zero.",
+                "example": "−3 °C plus a 5 degree rise is 2 °C.",
+                "hard": true,
+                "name": "Add a rise to a temperature below zero",
+                "topic": "Temperature changes",
+                "useCase": "Reading a weather forecast."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Temperature changes across zero"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "verdict": "pass" },
+        "id": "pt-regra-clean-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
+                "options": [
+                  { "text": "Aumenta", "isCorrect": false },
+                  { "text": "Diminui", "isCorrect": false },
+                  { "text": "Fica igual", "isCorrect": false },
+                  { "text": "Depende de quanto cada coisa mudou", "isCorrect": true }
+                ],
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "image": null
+              },
+              {
+                "kind": "check",
+                "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "options": [
+                  {
+                    "text": "Cai pela metade; depois dobra.",
+                    "isCorrect": true,
+                    "reason": "Com o pedido fixo, o dobro de gente divide o tempo pela metade. Com a equipe fixa, o dobro de trabalho exige o dobro de tempo."
+                  },
+                  {
+                    "text": "Dobra nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "É tentador pensar que qualquer aumento aumenta o prazo. Mas uma equipe maior termina o mesmo pedido mais rápido."
+                  },
+                  {
+                    "text": "Cai pela metade nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe."
+                  },
+                  {
+                    "text": "Dobra; depois cai pela metade.",
+                    "isCorrect": false,
+                    "reason": "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo."
+                  }
+                ],
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "O que fica fixo?",
+                "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+                "exampleLineIdea": "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
+                "image": {
+                  "prompt": "Duas cenas de uma gráfica. Mesmo pedido: 2 trabalhadores levam mais tempo que 4. Mesma equipe: 1 pilha de etiquetas leva menos tempo que 2. Rótulos: 'pedido fixo', 'equipe fixa', 'menos tempo', 'mais tempo'.",
+                  "alt": "Com o pedido fixo, uma equipe maior leva menos tempo; com a equipe fixa, um pedido maior leva mais tempo."
+                }
+              },
+              {
+                "kind": "explanation",
+                "title": "Uma mudança por vez",
+                "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
+                "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Mais gente, menos dias",
+                "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
+                "steps": [
+                  { "text": "Mantenha a obra fixa: é o mesmo muro.", "math": null },
+                  {
+                    "text": "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes.",
+                    "math": "\\frac{4}{8}"
+                  },
+                  {
+                    "text": "Multiplique o prazo inicial por essa razão.",
+                    "math": "6\\times\\frac{4}{8}=3"
+                  }
+                ],
+                "result": "Oito trabalhadores terminam o muro em 3 dias.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
+                "question": "Mantendo as mesmas impressoras, quanto tempo elas levam para fazer {meta} etiquetas?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "impressoras",
+                      "value": 2,
+                      "min": 2,
+                      "max": 5,
+                      "step": 1,
+                      "unit": null
+                    },
+                    {
+                      "name": "etiquetas",
+                      "value": 80,
+                      "min": 40,
+                      "max": 160,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    },
+                    { "name": "horas", "value": 2, "min": 1, "max": 5, "step": 1, "unit": "horas" },
+                    {
+                      "name": "meta",
+                      "value": 200,
+                      "min": 200,
+                      "max": 400,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    }
+                  ],
+                  "solution": "horas*meta/etiquetas",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "As {impressoras} impressoras continuam trabalhando. Só a quantidade de etiquetas muda.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Como mais etiquetas exigem mais tempo, multiplique {horas} pela razão entre {meta} e {etiquetas}.",
+                      "expression": "horas*meta/etiquetas"
+                    },
+                    {
+                      "text": "O novo prazo é {result} horas.",
+                      "expression": "horas*meta/etiquetas"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*etiquetas/meta",
+                      "misconception": "Razão invertida",
+                      "reason": "Você inverteu a razão das etiquetas. Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos."
+                    },
+                    {
+                      "expression": "(meta-etiquetas)/(etiquetas/horas)",
+                      "misconception": "Só o tempo extra",
+                      "reason": "Você calculou apenas o tempo das etiquetas adicionais e esqueceu o tempo gasto com a quantidade inicial."
+                    }
+                  ]
+                },
+                "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas."
+              },
+              {
+                "kind": "explanation",
+                "title": "Duas mudanças juntas",
+                "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "exampleLineIdea": "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Pedido maior, mais impressoras",
+                "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
+                "steps": [
+                  { "text": "Comece pelo prazo conhecido.", "math": "4\\text{ horas}" },
+                  {
+                    "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo.",
+                    "math": "\\frac{600}{240}"
+                  },
+                  {
+                    "text": "O número de impressoras também aumenta. Para o tempo, use a razão inversa.",
+                    "math": "\\frac{3}{5}"
+                  },
+                  {
+                    "text": "Junte os dois efeitos.",
+                    "math": "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6"
+                  }
+                ],
+                "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "maquinasAntigas",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasAntigas",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "peças"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "maquinasNovas",
+                      "value": 4,
+                      "min": 4,
+                      "max": 8,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasNovas",
+                      "value": 320,
+                      "min": 240,
+                      "max": 480,
+                      "step": 40,
+                      "unit": "peças"
+                    }
+                  ],
+                  "solution": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                  "answer": 4,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Parta de {horas} horas para {pecasAntigas} peças.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Ajuste pela quantidade de peças, que altera o tempo no mesmo sentido.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)"
+                    },
+                    {
+                      "text": "Ajuste pelo número de máquinas, que altera o tempo no sentido contrário.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    },
+                    {
+                      "text": "O prazo calculado é {result} horas.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasNovas/maquinasAntigas)",
+                      "misconception": "Máquinas como relação direta",
+                      "reason": "Você tratou mais máquinas como se elas aumentassem o prazo. Para a mesma quantidade de peças, mais máquinas reduzem o tempo."
+                    },
+                    {
+                      "expression": "horas*(pecasAntigas/pecasNovas)*(maquinasAntigas/maquinasNovas)",
+                      "misconception": "Razão das peças invertida",
+                      "reason": "Você tratou mais peças como se elas reduzissem o prazo. Mantendo as máquinas fixas, mais peças exigem mais tempo."
+                    }
+                  ]
+                },
+                "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas."
+              },
+              {
+                "kind": "mathCheck",
+                "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "fornosAntigos",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesAntigos",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "pães"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "fornosNovos",
+                      "value": 3,
+                      "min": 3,
+                      "max": 6,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesNovos",
+                      "value": 300,
+                      "min": 240,
+                      "max": 480,
+                      "step": 20,
+                      "unit": "pães"
+                    }
+                  ],
+                  "solution": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Mais pães aumentam o tempo. Ajuste o prazo pela razão entre as quantidades.",
+                      "expression": "horas*(paesNovos/paesAntigos)"
+                    },
+                    {
+                      "text": "Mais fornos reduzem o tempo. Ajuste pela razão inversa entre os fornos.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    },
+                    {
+                      "text": "O prazo para a nova fornada é {result} horas.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "misconception": "Esquecer os fornos",
+                      "reason": "Você ajustou o prazo pelo pedido maior, mas não considerou que mais fornos assam os pães mais rápido."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosNovos/fornosAntigos)",
+                      "misconception": "Razão dos fornos invertida",
+                      "reason": "Você tratou mais fornos como se aumentassem o tempo. Com a quantidade de pães fixa, mais fornos reduzem o prazo."
+                    }
+                  ]
+                },
+                "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas."
+              }
+            ],
+            "summary": [
+              "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+              "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+              "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
+            ]
+          },
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 3, incorrect] The calculation adds 6 degrees instead of 5: \"The rest of the rise, 3 degrees, takes you above zero.\" and gives the wrong result \"It's 3 °C: three degrees above zero.\"",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 3, incorrect] The calculation adds 6 degrees instead of 5: \"The rest of the rise, 3 degrees, takes you above zero.\" and gives the wrong result \"It's 3 °C: three degrees above zero.\"",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 3, incorrect] The calculation adds 6 degrees instead of 5: \"The rest of the rise, 3 degrees, takes you above zero.\" and gives the wrong result \"It's 3 °C: three degrees above zero.\"",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["incorrect"], "screen": 3, "verdict": "fail" },
+        "id": "en-temperature-wrong-math-1",
+        "userInput": {
+          "chapterTitle": "Negative numbers",
+          "courseTitle": "Everyday math",
+          "language": "en",
+          "level": "beginner",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+                "options": [
+                  { "text": "2 °C", "isCorrect": true },
+                  { "text": "8 °C", "isCorrect": false },
+                  { "text": "−8 °C", "isCorrect": false }
+                ],
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "Up is up, even below zero",
+                "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+                "exampleLineIdea": "A cold morning where the learner lives.",
+                "image": {
+                  "prompt": "A thermometer from −5 °C to 5 °C with an arrow going up past zero.",
+                  "alt": "A thermometer with an arrow going up past zero."
+                }
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
+                "result": "It's 3 °C: three degrees above zero.",
+                "steps": [
+                  { "math": null, "text": "First climb to zero: that takes 3 degrees." },
+                  { "math": null, "text": "The rest of the rise, 3 degrees, takes you above zero." }
+                ],
+                "title": "From −3 °C, up 5 degrees"
+              },
+              {
+                "kind": "mathCheck",
+                "context": null,
+                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "start",
+                      "value": -4,
+                      "min": -10,
+                      "max": -1,
+                      "step": 1,
+                      "unit": "°C"
+                    },
+                    { "name": "rise", "value": 7, "min": 2, "max": 15, "step": 1, "unit": "°C" }
+                  ],
+                  "solution": "start + rise",
+                  "answer": 3,
+                  "unit": "°C",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Move {rise} degrees up from {start} °C: {result} °C.",
+                      "expression": "start + rise"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "rise - start",
+                      "misconception": "Subtracts the negative start",
+                      "reason": "You took the start away instead of adding the rise to it."
+                    },
+                    {
+                      "expression": "start - rise",
+                      "misconception": "Moves down instead of up",
+                      "reason": "A rise moves up the thermometer, not down."
+                    }
+                  ]
+                },
+                "correctReason": "You start at {start} °C and move {rise} degrees up."
+              },
+              {
+                "kind": "explanation",
+                "title": "Zero is a stop, not a wall",
+                "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
+                "exampleLineIdea": null,
+                "image": null
+              },
+              {
+                "kind": "activity",
+                "template": "numberLine",
+                "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}"
+              },
+              {
+                "kind": "typedAnswer",
+                "context": null,
+                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+                "keyPoints": [
+                  "Going up 3 degrees reaches zero",
+                  "The last 2 degrees go above zero"
+                ],
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "acceptedAnswers": []
+              },
+              {
+                "kind": "check",
+                "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
+                "question": "What will the thermometer show?",
+                "options": [
+                  {
+                    "text": "3 °C",
+                    "isCorrect": true,
+                    "reason": "Six degrees reach zero and three more go above it."
+                  },
+                  {
+                    "text": "−15 °C",
+                    "isCorrect": false,
+                    "reason": "That's what you get by moving down 9 degrees instead of up."
+                  },
+                  {
+                    "text": "15 °C",
+                    "isCorrect": false,
+                    "reason": "You added the numbers without their signs: the start is below zero."
+                  }
+                ],
+                "image": null
+              }
+            ],
+            "summary": [
+              "A rise moves up the thermometer, even below zero.",
+              "Count up to zero first, then the degrees above it."
+            ]
+          },
+          "spec": {
+            "canDo": "Work out a temperature after it rises across zero",
+            "description": "Add a rise to a temperature below zero, the way thermometers do.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "numberLine",
+                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explain in your own words why −3 + 5 is 2.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A rise adds to the temperature, even when it starts below zero.",
+                "example": "−3 °C plus a 5 degree rise is 2 °C.",
+                "hard": true,
+                "name": "Add a rise to a temperature below zero",
+                "topic": "Temperature changes",
+                "useCase": "Reading a weather forecast."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Temperature changes across zero"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 5, filler] Screen 5 discusses the history of thermometers (\"Thermometers have a long history. Galileo built an early one around 1593...\") rather than teaching the math concept from the lesson plan.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 5, filler] Screen 5 discusses the history of thermometers (\"Thermometers have a long history. Galileo built an early one around 1593...\") rather than teaching the math concept from the lesson plan.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 5, filler] Screen 5 discusses the history of thermometers (\"Thermometers have a long history. Galileo built an early one around 1593...\") rather than teaching the math concept from the lesson plan.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["filler", "scope"], "screen": 5, "verdict": "fail" },
+        "id": "en-temperature-filler-1",
+        "userInput": {
+          "chapterTitle": "Negative numbers",
+          "courseTitle": "Everyday math",
+          "language": "en",
+          "level": "beginner",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+                "options": [
+                  { "text": "2 °C", "isCorrect": true },
+                  { "text": "8 °C", "isCorrect": false },
+                  { "text": "−8 °C", "isCorrect": false }
+                ],
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "Up is up, even below zero",
+                "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+                "exampleLineIdea": "A cold morning where the learner lives.",
+                "image": {
+                  "prompt": "A thermometer from −5 °C to 5 °C with an arrow going up past zero.",
+                  "alt": "A thermometer with an arrow going up past zero."
+                }
+              },
+              {
+                "kind": "workedExample",
+                "title": "From −3 °C, up 5 degrees",
+                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
+                "steps": [
+                  { "text": "First climb to zero: that takes 3 degrees.", "math": "-3 + 3 = 0" },
+                  {
+                    "text": "Two degrees of the rise are left, so keep going up.",
+                    "math": "0 + 2 = 2"
+                  }
+                ],
+                "result": "It's 2 °C: two degrees above zero.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": null,
+                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "start",
+                      "value": -4,
+                      "min": -10,
+                      "max": -1,
+                      "step": 1,
+                      "unit": "°C"
+                    },
+                    { "name": "rise", "value": 7, "min": 2, "max": 15, "step": 1, "unit": "°C" }
+                  ],
+                  "solution": "start + rise",
+                  "answer": 3,
+                  "unit": "°C",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Move {rise} degrees up from {start} °C: {result} °C.",
+                      "expression": "start + rise"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "rise - start",
+                      "misconception": "Subtracts the negative start",
+                      "reason": "You took the start away instead of adding the rise to it."
+                    },
+                    {
+                      "expression": "start - rise",
+                      "misconception": "Moves down instead of up",
+                      "reason": "A rise moves up the thermometer, not down."
+                    }
+                  ]
+                },
+                "correctReason": "You start at {start} °C and move {rise} degrees up."
+              },
+              {
+                "exampleLineIdea": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Thermometers have a long history. Galileo built an early one around 1593, and Daniel Fahrenheit made the mercury thermometer popular in 1714. Today they're everywhere, from kitchens to hospitals.",
+                "title": "A short history of thermometers"
+              },
+              {
+                "kind": "activity",
+                "template": "numberLine",
+                "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}"
+              },
+              {
+                "kind": "typedAnswer",
+                "context": null,
+                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+                "keyPoints": [
+                  "Going up 3 degrees reaches zero",
+                  "The last 2 degrees go above zero"
+                ],
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "acceptedAnswers": []
+              },
+              {
+                "kind": "check",
+                "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
+                "question": "What will the thermometer show?",
+                "options": [
+                  {
+                    "text": "3 °C",
+                    "isCorrect": true,
+                    "reason": "Six degrees reach zero and three more go above it."
+                  },
+                  {
+                    "text": "−15 °C",
+                    "isCorrect": false,
+                    "reason": "That's what you get by moving down 9 degrees instead of up."
+                  },
+                  {
+                    "text": "15 °C",
+                    "isCorrect": false,
+                    "reason": "You added the numbers without their signs: the start is below zero."
+                  }
+                ],
+                "image": null
+              }
+            ],
+            "summary": [
+              "A rise moves up the thermometer, even below zero.",
+              "Count up to zero first, then the degrees above it."
+            ]
+          },
+          "spec": {
+            "canDo": "Work out a temperature after it rises across zero",
+            "description": "Add a rise to a temperature below zero, the way thermometers do.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "numberLine",
+                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explain in your own words why −3 + 5 is 2.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A rise adds to the temperature, even when it starts below zero.",
+                "example": "−3 °C plus a 5 degree rise is 2 °C.",
+                "hard": true,
+                "name": "Add a rise to a temperature below zero",
+                "topic": "Temperature changes",
+                "useCase": "Reading a weather forecast."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Temperature changes across zero"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 6, decorativeActivity] The activity is framed as an empty toy with the prompt \"Move the dot for fun and watch it jump.\" and label \"Fun line\", and asks \"Where did the dot stop?\" without temperature context, decorating instead of teaching how rises cross zero.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 6, decorativeActivity] The activity is framed as an empty toy with the prompt \"Move the dot for fun and watch it jump.\" and label \"Fun line\", and asks \"Where did the dot stop?\" without temperature context, decorating instead of teaching how rises cross zero.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 6, decorativeActivity] The activity is framed as an empty toy with the prompt \"Move the dot for fun and watch it jump.\" and label \"Fun line\", and asks \"Where did the dot stop?\" without temperature context, decorating instead of teaching how rises cross zero.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "kinds": ["decorativeActivity", "weakCheck", "unclear"],
+          "screen": 6,
+          "verdict": "fail"
+        },
+        "id": "en-temperature-decorative-activity-1",
+        "userInput": {
+          "chapterTitle": "Negative numbers",
+          "courseTitle": "Everyday math",
+          "language": "en",
+          "level": "beginner",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+                "options": [
+                  { "text": "2 °C", "isCorrect": true },
+                  { "text": "8 °C", "isCorrect": false },
+                  { "text": "−8 °C", "isCorrect": false }
+                ],
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "Up is up, even below zero",
+                "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+                "exampleLineIdea": "A cold morning where the learner lives.",
+                "image": {
+                  "prompt": "A thermometer from −5 °C to 5 °C with an arrow going up past zero.",
+                  "alt": "A thermometer with an arrow going up past zero."
+                }
+              },
+              {
+                "kind": "workedExample",
+                "title": "From −3 °C, up 5 degrees",
+                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
+                "steps": [
+                  { "text": "First climb to zero: that takes 3 degrees.", "math": "-3 + 3 = 0" },
+                  {
+                    "text": "Two degrees of the rise are left, so keep going up.",
+                    "math": "0 + 2 = 2"
+                  }
+                ],
+                "result": "It's 2 °C: two degrees above zero.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": null,
+                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "start",
+                      "value": -4,
+                      "min": -10,
+                      "max": -1,
+                      "step": 1,
+                      "unit": "°C"
+                    },
+                    { "name": "rise", "value": 7, "min": 2, "max": 15, "step": 1, "unit": "°C" }
+                  ],
+                  "solution": "start + rise",
+                  "answer": 3,
+                  "unit": "°C",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Move {rise} degrees up from {start} °C: {result} °C.",
+                      "expression": "start + rise"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "rise - start",
+                      "misconception": "Subtracts the negative start",
+                      "reason": "You took the start away instead of adding the rise to it."
+                    },
+                    {
+                      "expression": "start - rise",
+                      "misconception": "Moves down instead of up",
+                      "reason": "A rise moves up the thermometer, not down."
+                    }
+                  ]
+                },
+                "correctReason": "You start at {start} °C and move {rise} degrees up."
+              },
+              {
+                "kind": "explanation",
+                "title": "Zero is a stop, not a wall",
+                "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
+                "exampleLineIdea": null,
+                "image": null
+              },
+              {
+                "content": "{\"check\":{\"answer\":5,\"explanation\":\"The dot stopped at 5.\",\"kind\":\"numeric\",\"question\":\"Where did the dot stop?\",\"tolerance\":{\"kind\":\"absolute\",\"value\":0.01}},\"fields\":{\"label\":\"Fun line\",\"max\":7,\"min\":-5,\"moves\":[{\"by\":3},{\"by\":5}],\"start\":-3,\"step\":1},\"prompt\":\"Move the dot for fun and watch it jump.\"}",
+                "kind": "activity",
+                "template": "numberLine"
+              },
+              {
+                "kind": "typedAnswer",
+                "context": null,
+                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+                "keyPoints": [
+                  "Going up 3 degrees reaches zero",
+                  "The last 2 degrees go above zero"
+                ],
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "acceptedAnswers": []
+              },
+              {
+                "kind": "check",
+                "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
+                "question": "What will the thermometer show?",
+                "options": [
+                  {
+                    "text": "3 °C",
+                    "isCorrect": true,
+                    "reason": "Six degrees reach zero and three more go above it."
+                  },
+                  {
+                    "text": "−15 °C",
+                    "isCorrect": false,
+                    "reason": "That's what you get by moving down 9 degrees instead of up."
+                  },
+                  {
+                    "text": "15 °C",
+                    "isCorrect": false,
+                    "reason": "You added the numbers without their signs: the start is below zero."
+                  }
+                ],
+                "image": null
+              }
+            ],
+            "summary": [
+              "A rise moves up the thermometer, even below zero.",
+              "Count up to zero first, then the degrees above it."
+            ]
+          },
+          "spec": {
+            "canDo": "Work out a temperature after it rises across zero",
+            "description": "Add a rise to a temperature below zero, the way thermometers do.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "numberLine",
+                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explain in your own words why −3 + 5 is 2.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A rise adds to the temperature, even when it starts below zero.",
+                "example": "−3 °C plus a 5 degree rise is 2 °C.",
+                "hard": true,
+                "name": "Add a rise to a temperature below zero",
+                "topic": "Temperature changes",
+                "useCase": "Reading a weather forecast."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Temperature changes across zero"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 3, jargon] Screen 3 introduces abstract formalisms and unexplained technical jargon ('relação funcional', 'invariante', 'constante de proporcionalidade') all at once instead of explaining direct and inverse proportionality in terms of the quantities compared in the previous screen.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 3, jargon] Screen 3 introduces abstract formalisms and unexplained technical jargon ('relação funcional', 'invariante', 'constante de proporcionalidade') all at once instead of explaining direct and inverse proportionality in terms of the quantities compared in the previous screen.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 3, jargon] Screen 3 introduces abstract formalisms and unexplained technical jargon ('relação funcional', 'invariante', 'constante de proporcionalidade') all at once instead of explaining direct and inverse proportionality in terms of the quantities compared in the previous screen.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["jargon", "unclear", "level"], "screen": 3, "verdict": "fail" },
+        "id": "pt-regra-jargon-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
+                "options": [
+                  { "text": "Aumenta", "isCorrect": false },
+                  { "text": "Diminui", "isCorrect": false },
+                  { "text": "Fica igual", "isCorrect": false },
+                  { "text": "Depende de quanto cada coisa mudou", "isCorrect": true }
+                ],
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "image": null
+              },
+              {
+                "kind": "check",
+                "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "options": [
+                  {
+                    "text": "Cai pela metade; depois dobra.",
+                    "isCorrect": true,
+                    "reason": "Com o pedido fixo, o dobro de gente divide o tempo pela metade. Com a equipe fixa, o dobro de trabalho exige o dobro de tempo."
+                  },
+                  {
+                    "text": "Dobra nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "É tentador pensar que qualquer aumento aumenta o prazo. Mas uma equipe maior termina o mesmo pedido mais rápido."
+                  },
+                  {
+                    "text": "Cai pela metade nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe."
+                  },
+                  {
+                    "text": "Dobra; depois cai pela metade.",
+                    "isCorrect": false,
+                    "reason": "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo."
+                  }
+                ],
+                "image": null
+              },
+              {
+                "exampleLineIdea": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Grandezas inversamente proporcionais têm produto constante: $x \\cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante. Identifique a relação funcional antes de montar a proporção.",
+                "title": "Proporcionalidade"
+              },
+              {
+                "kind": "explanation",
+                "title": "Uma mudança por vez",
+                "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
+                "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Mais gente, menos dias",
+                "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
+                "steps": [
+                  { "text": "Mantenha a obra fixa: é o mesmo muro.", "math": null },
+                  {
+                    "text": "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes.",
+                    "math": "\\frac{4}{8}"
+                  },
+                  {
+                    "text": "Multiplique o prazo inicial por essa razão.",
+                    "math": "6\\times\\frac{4}{8}=3"
+                  }
+                ],
+                "result": "Oito trabalhadores terminam o muro em 3 dias.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
+                "question": "Mantendo as mesmas impressoras, quanto tempo elas levam para fazer {meta} etiquetas?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "impressoras",
+                      "value": 2,
+                      "min": 2,
+                      "max": 5,
+                      "step": 1,
+                      "unit": null
+                    },
+                    {
+                      "name": "etiquetas",
+                      "value": 80,
+                      "min": 40,
+                      "max": 160,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    },
+                    { "name": "horas", "value": 2, "min": 1, "max": 5, "step": 1, "unit": "horas" },
+                    {
+                      "name": "meta",
+                      "value": 200,
+                      "min": 200,
+                      "max": 400,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    }
+                  ],
+                  "solution": "horas*meta/etiquetas",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "As {impressoras} impressoras continuam trabalhando. Só a quantidade de etiquetas muda.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Como mais etiquetas exigem mais tempo, multiplique {horas} pela razão entre {meta} e {etiquetas}.",
+                      "expression": "horas*meta/etiquetas"
+                    },
+                    {
+                      "text": "O novo prazo é {result} horas.",
+                      "expression": "horas*meta/etiquetas"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*etiquetas/meta",
+                      "misconception": "Razão invertida",
+                      "reason": "Você inverteu a razão das etiquetas. Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos."
+                    },
+                    {
+                      "expression": "(meta-etiquetas)/(etiquetas/horas)",
+                      "misconception": "Só o tempo extra",
+                      "reason": "Você calculou apenas o tempo das etiquetas adicionais e esqueceu o tempo gasto com a quantidade inicial."
+                    }
+                  ]
+                },
+                "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas."
+              },
+              {
+                "kind": "explanation",
+                "title": "Duas mudanças juntas",
+                "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "exampleLineIdea": "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Pedido maior, mais impressoras",
+                "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
+                "steps": [
+                  { "text": "Comece pelo prazo conhecido.", "math": "4\\text{ horas}" },
+                  {
+                    "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo.",
+                    "math": "\\frac{600}{240}"
+                  },
+                  {
+                    "text": "O número de impressoras também aumenta. Para o tempo, use a razão inversa.",
+                    "math": "\\frac{3}{5}"
+                  },
+                  {
+                    "text": "Junte os dois efeitos.",
+                    "math": "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6"
+                  }
+                ],
+                "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "maquinasAntigas",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasAntigas",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "peças"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "maquinasNovas",
+                      "value": 4,
+                      "min": 4,
+                      "max": 8,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasNovas",
+                      "value": 320,
+                      "min": 240,
+                      "max": 480,
+                      "step": 40,
+                      "unit": "peças"
+                    }
+                  ],
+                  "solution": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                  "answer": 4,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Parta de {horas} horas para {pecasAntigas} peças.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Ajuste pela quantidade de peças, que altera o tempo no mesmo sentido.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)"
+                    },
+                    {
+                      "text": "Ajuste pelo número de máquinas, que altera o tempo no sentido contrário.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    },
+                    {
+                      "text": "O prazo calculado é {result} horas.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasNovas/maquinasAntigas)",
+                      "misconception": "Máquinas como relação direta",
+                      "reason": "Você tratou mais máquinas como se elas aumentassem o prazo. Para a mesma quantidade de peças, mais máquinas reduzem o tempo."
+                    },
+                    {
+                      "expression": "horas*(pecasAntigas/pecasNovas)*(maquinasAntigas/maquinasNovas)",
+                      "misconception": "Razão das peças invertida",
+                      "reason": "Você tratou mais peças como se elas reduzissem o prazo. Mantendo as máquinas fixas, mais peças exigem mais tempo."
+                    }
+                  ]
+                },
+                "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas."
+              },
+              {
+                "kind": "mathCheck",
+                "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "fornosAntigos",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesAntigos",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "pães"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "fornosNovos",
+                      "value": 3,
+                      "min": 3,
+                      "max": 6,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesNovos",
+                      "value": 300,
+                      "min": 240,
+                      "max": 480,
+                      "step": 20,
+                      "unit": "pães"
+                    }
+                  ],
+                  "solution": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Mais pães aumentam o tempo. Ajuste o prazo pela razão entre as quantidades.",
+                      "expression": "horas*(paesNovos/paesAntigos)"
+                    },
+                    {
+                      "text": "Mais fornos reduzem o tempo. Ajuste pela razão inversa entre os fornos.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    },
+                    {
+                      "text": "O prazo para a nova fornada é {result} horas.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "misconception": "Esquecer os fornos",
+                      "reason": "Você ajustou o prazo pelo pedido maior, mas não considerou que mais fornos assam os pães mais rápido."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosNovos/fornosAntigos)",
+                      "misconception": "Razão dos fornos invertida",
+                      "reason": "Você tratou mais fornos como se aumentassem o tempo. Com a quantidade de pães fixa, mais fornos reduzem o prazo."
+                    }
+                  ]
+                },
+                "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas."
+              }
+            ],
+            "summary": [
+              "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+              "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+              "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
+            ]
+          },
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 2, incorrect] Option \"b\" (\"Dobra nos dois casos.\") is marked as correct with the reason \"Qualquer aumento, de equipe ou de pedido, aumenta o prazo na mesma proporção.\", which is mathematically false. Doubling the team halves the deadline (inverse relation), whereas doubling the order doubles the deadline (direct relation).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 2, incorrect] Option \"b\" (\"Dobra nos dois casos.\") is marked as correct with the reason \"Qualquer aumento, de equipe ou de pedido, aumenta o prazo na mesma proporção.\", which is mathematically false. Doubling the team halves the deadline (inverse relation), whereas doubling the order doubles the deadline (direct relation).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 2, incorrect] Option \"b\" (\"Dobra nos dois casos.\") is marked as correct with the reason \"Qualquer aumento, de equipe ou de pedido, aumenta o prazo na mesma proporção.\", which is mathematically false. Doubling the team halves the deadline (inverse relation), whereas doubling the order doubles the deadline (direct relation).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["incorrect"], "screen": 2, "verdict": "fail" },
+        "id": "pt-regra-wrong-answer-key-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
+                "options": [
+                  { "text": "Aumenta", "isCorrect": false },
+                  { "text": "Diminui", "isCorrect": false },
+                  { "text": "Fica igual", "isCorrect": false },
+                  { "text": "Depende de quanto cada coisa mudou", "isCorrect": true }
+                ],
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "image": null
+              },
+              {
+                "kind": "check",
+                "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "reason": "É tentador pensar que a equipe maior acelera, mas o prazo depende só do tamanho do pedido.",
+                    "text": "Cai pela metade; depois dobra."
+                  },
+                  {
+                    "isCorrect": true,
+                    "reason": "Qualquer aumento, de equipe ou de pedido, aumenta o prazo na mesma proporção.",
+                    "text": "Dobra nos dois casos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "reason": "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe.",
+                    "text": "Cai pela metade nos dois casos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "reason": "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo.",
+                    "text": "Dobra; depois cai pela metade."
+                  }
+                ],
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "O que fica fixo?",
+                "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+                "exampleLineIdea": "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
+                "image": {
+                  "prompt": "Duas cenas de uma gráfica. Mesmo pedido: 2 trabalhadores levam mais tempo que 4. Mesma equipe: 1 pilha de etiquetas leva menos tempo que 2. Rótulos: 'pedido fixo', 'equipe fixa', 'menos tempo', 'mais tempo'.",
+                  "alt": "Com o pedido fixo, uma equipe maior leva menos tempo; com a equipe fixa, um pedido maior leva mais tempo."
+                }
+              },
+              {
+                "kind": "explanation",
+                "title": "Uma mudança por vez",
+                "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
+                "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Mais gente, menos dias",
+                "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
+                "steps": [
+                  { "text": "Mantenha a obra fixa: é o mesmo muro.", "math": null },
+                  {
+                    "text": "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes.",
+                    "math": "\\frac{4}{8}"
+                  },
+                  {
+                    "text": "Multiplique o prazo inicial por essa razão.",
+                    "math": "6\\times\\frac{4}{8}=3"
+                  }
+                ],
+                "result": "Oito trabalhadores terminam o muro em 3 dias.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
+                "question": "Mantendo as mesmas impressoras, quanto tempo elas levam para fazer {meta} etiquetas?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "impressoras",
+                      "value": 2,
+                      "min": 2,
+                      "max": 5,
+                      "step": 1,
+                      "unit": null
+                    },
+                    {
+                      "name": "etiquetas",
+                      "value": 80,
+                      "min": 40,
+                      "max": 160,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    },
+                    { "name": "horas", "value": 2, "min": 1, "max": 5, "step": 1, "unit": "horas" },
+                    {
+                      "name": "meta",
+                      "value": 200,
+                      "min": 200,
+                      "max": 400,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    }
+                  ],
+                  "solution": "horas*meta/etiquetas",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "As {impressoras} impressoras continuam trabalhando. Só a quantidade de etiquetas muda.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Como mais etiquetas exigem mais tempo, multiplique {horas} pela razão entre {meta} e {etiquetas}.",
+                      "expression": "horas*meta/etiquetas"
+                    },
+                    {
+                      "text": "O novo prazo é {result} horas.",
+                      "expression": "horas*meta/etiquetas"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*etiquetas/meta",
+                      "misconception": "Razão invertida",
+                      "reason": "Você inverteu a razão das etiquetas. Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos."
+                    },
+                    {
+                      "expression": "(meta-etiquetas)/(etiquetas/horas)",
+                      "misconception": "Só o tempo extra",
+                      "reason": "Você calculou apenas o tempo das etiquetas adicionais e esqueceu o tempo gasto com a quantidade inicial."
+                    }
+                  ]
+                },
+                "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas."
+              },
+              {
+                "kind": "explanation",
+                "title": "Duas mudanças juntas",
+                "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "exampleLineIdea": "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Pedido maior, mais impressoras",
+                "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
+                "steps": [
+                  { "text": "Comece pelo prazo conhecido.", "math": "4\\text{ horas}" },
+                  {
+                    "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo.",
+                    "math": "\\frac{600}{240}"
+                  },
+                  {
+                    "text": "O número de impressoras também aumenta. Para o tempo, use a razão inversa.",
+                    "math": "\\frac{3}{5}"
+                  },
+                  {
+                    "text": "Junte os dois efeitos.",
+                    "math": "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6"
+                  }
+                ],
+                "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "maquinasAntigas",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasAntigas",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "peças"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "maquinasNovas",
+                      "value": 4,
+                      "min": 4,
+                      "max": 8,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasNovas",
+                      "value": 320,
+                      "min": 240,
+                      "max": 480,
+                      "step": 40,
+                      "unit": "peças"
+                    }
+                  ],
+                  "solution": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                  "answer": 4,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Parta de {horas} horas para {pecasAntigas} peças.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Ajuste pela quantidade de peças, que altera o tempo no mesmo sentido.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)"
+                    },
+                    {
+                      "text": "Ajuste pelo número de máquinas, que altera o tempo no sentido contrário.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    },
+                    {
+                      "text": "O prazo calculado é {result} horas.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasNovas/maquinasAntigas)",
+                      "misconception": "Máquinas como relação direta",
+                      "reason": "Você tratou mais máquinas como se elas aumentassem o prazo. Para a mesma quantidade de peças, mais máquinas reduzem o tempo."
+                    },
+                    {
+                      "expression": "horas*(pecasAntigas/pecasNovas)*(maquinasAntigas/maquinasNovas)",
+                      "misconception": "Razão das peças invertida",
+                      "reason": "Você tratou mais peças como se elas reduzissem o prazo. Mantendo as máquinas fixas, mais peças exigem mais tempo."
+                    }
+                  ]
+                },
+                "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas."
+              },
+              {
+                "kind": "mathCheck",
+                "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "fornosAntigos",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesAntigos",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "pães"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "fornosNovos",
+                      "value": 3,
+                      "min": 3,
+                      "max": 6,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesNovos",
+                      "value": 300,
+                      "min": 240,
+                      "max": 480,
+                      "step": 20,
+                      "unit": "pães"
+                    }
+                  ],
+                  "solution": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Mais pães aumentam o tempo. Ajuste o prazo pela razão entre as quantidades.",
+                      "expression": "horas*(paesNovos/paesAntigos)"
+                    },
+                    {
+                      "text": "Mais fornos reduzem o tempo. Ajuste pela razão inversa entre os fornos.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    },
+                    {
+                      "text": "O prazo para a nova fornada é {result} horas.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "misconception": "Esquecer os fornos",
+                      "reason": "Você ajustou o prazo pelo pedido maior, mas não considerou que mais fornos assam os pães mais rápido."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosNovos/fornosAntigos)",
+                      "misconception": "Razão dos fornos invertida",
+                      "reason": "Você tratou mais fornos como se aumentassem o tempo. Com a quantidade de pães fixa, mais fornos reduzem o prazo."
+                    }
+                  ]
+                },
+                "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas."
+              }
+            ],
+            "summary": [
+              "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+              "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+              "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
+            ]
+          },
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 5, level] Screen 5 uses advanced mathematical formulas and calculus: \"$E = \\frac{\\hbar^2}{2 m r^2} - \\frac{e^2}{4 \\pi \\varepsilon_0 r}$\", \"Derivando em $r$ e igualando a zero\", which violates the 'overview' level guidelines banning formulas, equations, and notation.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 5, level] Screen 5 uses advanced mathematical formulas and calculus: \"$E = \\frac{\\hbar^2}{2 m r^2} - \\frac{e^2}{4 \\pi \\varepsilon_0 r}$\", \"Derivando em $r$ e igualando a zero\", which violates the 'overview' level guidelines banning formulas, equations, and notation.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 5, level] Screen 5 uses advanced mathematical formulas and calculus: \"$E = \\frac{\\hbar^2}{2 m r^2} - \\frac{e^2}{4 \\pi \\varepsilon_0 r}$\", \"Derivando em $r$ e igualando a zero\", which violates the 'overview' level guidelines banning formulas, equations, and notation.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["level", "jargon"], "screen": 5, "verdict": "fail" },
+        "id": "pt-eletron-formula-in-overview-1",
+        "userInput": {
+          "chapterTitle": "O átomo por dentro",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "O núcleo atrai o elétron. Sem valer ponto: por que ele não termina espremido no núcleo?",
+                "options": [
+                  { "text": "Porque gira rápido como um planeta.", "isCorrect": false },
+                  { "text": "Porque concentrá-lo tanto exige energia.", "isCorrect": true },
+                  { "text": "Porque o núcleo o empurra para longe.", "isCorrect": false }
+                ],
+                "reveal": "O núcleo atrai o elétron, mas espremê-lo num espaço minúsculo exige energia. A atração não decide tudo sozinha.",
+                "image": {
+                  "prompt": "Ilustração didática simples: núcleo no centro, região difusa ao redor indicando onde o elétron pode ser encontrado e seta apontando para o núcleo com o rótulo «atração». Sem desenhar uma órbita.",
+                  "alt": "Uma seta aponta para o núcleo, cercado pela região onde o elétron pode ser encontrado."
+                }
+              },
+              {
+                "kind": "explanation",
+                "title": "Não é uma órbita",
+                "text": "Imagine procurar o elétron ao redor do núcleo. Em vez de uma bolinha seguindo uma trilha, você encontra uma região onde ele pode aparecer. Essa região se chama **nuvem eletrônica**. Ela não é uma trilha nem uma nuvem de matéria comum.",
+                "exampleLineIdea": "a imagem de um elétron desenhado como bolinha em uma aula ou vídeo",
+                "image": {
+                  "prompt": "Comparação lado a lado: à esquerda, bolinha em órbita desenhada como trilha ao redor de um núcleo, com um X sobre a trilha; à direita, região difusa ao redor do núcleo com o rótulo «nuvem eletrônica».",
+                  "alt": "Uma órbita de bolinha aparece riscada ao lado de uma região difusa chamada nuvem eletrônica."
+                }
+              },
+              {
+                "kind": "explanation",
+                "title": "Apertar exige energia",
+                "text": "O núcleo atrai o elétron para perto. Mas concentrar sua nuvem num espaço minúsculo exige mais energia. Pense em tentar confinar algo que resiste a ficar espremido: apertar tem um custo. Isso é só uma comparação; não existe uma mola dentro do átomo.",
+                "exampleLineIdea": null,
+                "image": {
+                  "prompt": "Duas versões do mesmo átomo: à esquerda, nuvem eletrônica espalhada ao redor do núcleo; à direita, nuvem muito comprimida junto ao núcleo, com seta e rótulo «comprimir exige energia». Sem mola.",
+                  "alt": "A nuvem espalhada é comparada a uma nuvem comprimida, cuja compressão exige energia."
+                }
+              },
+              {
+                "kind": "check",
+                "context": "O núcleo atrai o elétron para perto.",
+                "question": "Por que essa atração não basta para deixá-lo espremido no núcleo?",
+                "options": [
+                  {
+                    "text": "Porque ele gira rápido como um planeta.",
+                    "isCorrect": false,
+                    "reason": "Essa imagem parece explicar por que ele não cai, mas trata o elétron como uma bolinha em órbita. Ela não descreve sua nuvem."
+                  },
+                  {
+                    "text": "Porque concentrar sua nuvem demais exige energia.",
+                    "isCorrect": true,
+                    "reason": "Você precisa considerar tanto a atração pelo núcleo quanto a energia necessária para confinar o elétron."
+                  },
+                  {
+                    "text": "Porque o núcleo deixa de atraí-lo quando chega perto.",
+                    "isCorrect": false,
+                    "reason": "Pode parecer que a atração precisa parar, mas ela continua. O custo de concentrar o elétron é que impede essa explicação simples."
+                  }
+                ],
+                "image": null
+              },
+              {
+                "exampleLineIdea": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "O arranjo mais estável minimiza a energia total $E = \\frac{\\hbar^2}{2 m r^2} - \\frac{e^2}{4 \\pi \\varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \\approx 0{,}53$ Å.",
+                "title": "O arranjo mais estável"
+              },
+              {
+                "kind": "check",
+                "context": "Alguém diz: «O elétron não cai porque o núcleo o empurra para longe».",
+                "question": "Qual é o erro nessa frase?",
+                "options": [
+                  {
+                    "text": "O núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
+                    "isCorrect": true,
+                    "reason": "Você corrige o sentido da atração e considera o custo de confinar o elétron."
+                  },
+                  {
+                    "text": "O núcleo atrai o elétron, que escapa por girar como um planeta.",
+                    "isCorrect": false,
+                    "reason": "Você acerta que há atração, mas volta à imagem de uma bolinha em órbita. O elétron ocupa uma nuvem, não uma trilha."
+                  },
+                  {
+                    "text": "O núcleo não atrai nem empurra o elétron.",
+                    "isCorrect": false,
+                    "reason": "A frase erra ao dizer que o núcleo empurra. Isso não significa que não exista atração."
+                  }
+                ],
+                "image": null
+              },
+              {
+                "kind": "typedAnswer",
+                "context": "Um celular é feito de átomos que não desabam sobre seus núcleos. Uma pessoa imagina os elétrons como bolinhas prestes a cair.",
+                "question": "Como você explicaria a essa pessoa por que os elétrons não ficam espremidos nos núcleos?",
+                "keyPoints": [
+                  "O núcleo atrai o elétron.",
+                  "O elétron ocupa uma nuvem, não uma órbita de bolinha.",
+                  "Concentrar o elétron num espaço minúsculo exige energia.",
+                  "No arranjo mais estável, a nuvem ocupa uma região ao redor do núcleo."
+                ],
+                "sampleAnswer": "O núcleo atrai o elétron, mas ele não é uma bolinha em órbita: ocupa uma nuvem. Espremer essa nuvem no núcleo exige energia. Por isso, no arranjo mais estável, ela ocupa uma região ao redor dele.",
+                "acceptedAnswers": []
+              }
+            ],
+            "summary": [
+              "O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica.",
+              "O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia.",
+              "Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele."
+            ]
+          },
+          "spec": {
+            "canDo": "Explicar por que o elétron não cai no núcleo",
+            "description": "Mostra por que a atração pelo núcleo não concentra o elétron ali e como isso permite que os átomos permaneçam estáveis.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "O núcleo atrai o elétron. Peça um palpite, sem valer ponto: por que o elétron não termina espremido no núcleo?",
+                "skills": [],
+                "visual": "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
+                "skills": [0],
+                "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
+                "skills": [0],
+                "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
+                "skills": [0],
+                "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "O elétron é atraído pelo núcleo, mas concentrá-lo demais exige energia; por isso, seu arranjo mais estável ocupa uma região ao redor do núcleo.",
+                "example": "Mesmo no estado de menor energia de um átomo, o elétron não fica espremido num ponto no núcleo.",
+                "hard": false,
+                "name": "Explicar por que o elétron não cai no núcleo",
+                "topic": "Estabilidade do átomo",
+                "useCase": "Entender por que os átomos que formam objetos cotidianos, como um celular, permanecem estáveis."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Por que o elétron não cai no núcleo"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 5, incorrect] The calculation treats inversely proportional quantities as directly proportional: '6\\times\\frac{8}{4}=12' and 'Oito trabalhadores terminam o muro em 12 dias.' More workers should take less time (3 days, not 12).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 5, incorrect] The calculation treats inversely proportional quantities as directly proportional: '6\\times\\frac{8}{4}=12' and 'Oito trabalhadores terminam o muro em 12 dias.' More workers should take less time (3 days, not 12).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 5, incorrect] The calculation treats inversely proportional quantities as directly proportional: '6\\times\\frac{8}{4}=12' and 'Oito trabalhadores terminam o muro em 12 dias.' More workers should take less time (3 days, not 12).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["incorrect"], "screen": 5, "verdict": "fail" },
+        "id": "pt-regra-worked-example-trap-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
+                "options": [
+                  { "text": "Aumenta", "isCorrect": false },
+                  { "text": "Diminui", "isCorrect": false },
+                  { "text": "Fica igual", "isCorrect": false },
+                  { "text": "Depende de quanto cada coisa mudou", "isCorrect": true }
+                ],
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "image": null
+              },
+              {
+                "kind": "check",
+                "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "options": [
+                  {
+                    "text": "Cai pela metade; depois dobra.",
+                    "isCorrect": true,
+                    "reason": "Com o pedido fixo, o dobro de gente divide o tempo pela metade. Com a equipe fixa, o dobro de trabalho exige o dobro de tempo."
+                  },
+                  {
+                    "text": "Dobra nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "É tentador pensar que qualquer aumento aumenta o prazo. Mas uma equipe maior termina o mesmo pedido mais rápido."
+                  },
+                  {
+                    "text": "Cai pela metade nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe."
+                  },
+                  {
+                    "text": "Dobra; depois cai pela metade.",
+                    "isCorrect": false,
+                    "reason": "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo."
+                  }
+                ],
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "O que fica fixo?",
+                "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+                "exampleLineIdea": "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
+                "image": {
+                  "prompt": "Duas cenas de uma gráfica. Mesmo pedido: 2 trabalhadores levam mais tempo que 4. Mesma equipe: 1 pilha de etiquetas leva menos tempo que 2. Rótulos: 'pedido fixo', 'equipe fixa', 'menos tempo', 'mais tempo'.",
+                  "alt": "Com o pedido fixo, uma equipe maior leva menos tempo; com a equipe fixa, um pedido maior leva mais tempo."
+                }
+              },
+              {
+                "kind": "explanation",
+                "title": "Uma mudança por vez",
+                "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
+                "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+                "image": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
+                "result": "Oito trabalhadores terminam o muro em 12 dias.",
+                "steps": [
+                  { "math": null, "text": "Mantenha a obra fixa: é o mesmo muro." },
+                  {
+                    "math": "\\frac{8}{4}",
+                    "text": "A equipe dobrou, então use a razão entre as equipes."
+                  },
+                  {
+                    "math": "6\\times\\frac{8}{4}=12",
+                    "text": "Multiplique o prazo inicial por essa razão."
+                  }
+                ],
+                "title": "Mais gente, menos dias"
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
+                "question": "Mantendo as mesmas impressoras, quanto tempo elas levam para fazer {meta} etiquetas?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "impressoras",
+                      "value": 2,
+                      "min": 2,
+                      "max": 5,
+                      "step": 1,
+                      "unit": null
+                    },
+                    {
+                      "name": "etiquetas",
+                      "value": 80,
+                      "min": 40,
+                      "max": 160,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    },
+                    { "name": "horas", "value": 2, "min": 1, "max": 5, "step": 1, "unit": "horas" },
+                    {
+                      "name": "meta",
+                      "value": 200,
+                      "min": 200,
+                      "max": 400,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    }
+                  ],
+                  "solution": "horas*meta/etiquetas",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "As {impressoras} impressoras continuam trabalhando. Só a quantidade de etiquetas muda.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Como mais etiquetas exigem mais tempo, multiplique {horas} pela razão entre {meta} e {etiquetas}.",
+                      "expression": "horas*meta/etiquetas"
+                    },
+                    {
+                      "text": "O novo prazo é {result} horas.",
+                      "expression": "horas*meta/etiquetas"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*etiquetas/meta",
+                      "misconception": "Razão invertida",
+                      "reason": "Você inverteu a razão das etiquetas. Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos."
+                    },
+                    {
+                      "expression": "(meta-etiquetas)/(etiquetas/horas)",
+                      "misconception": "Só o tempo extra",
+                      "reason": "Você calculou apenas o tempo das etiquetas adicionais e esqueceu o tempo gasto com a quantidade inicial."
+                    }
+                  ]
+                },
+                "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas."
+              },
+              {
+                "kind": "explanation",
+                "title": "Duas mudanças juntas",
+                "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "exampleLineIdea": "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Pedido maior, mais impressoras",
+                "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
+                "steps": [
+                  { "text": "Comece pelo prazo conhecido.", "math": "4\\text{ horas}" },
+                  {
+                    "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo.",
+                    "math": "\\frac{600}{240}"
+                  },
+                  {
+                    "text": "O número de impressoras também aumenta. Para o tempo, use a razão inversa.",
+                    "math": "\\frac{3}{5}"
+                  },
+                  {
+                    "text": "Junte os dois efeitos.",
+                    "math": "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6"
+                  }
+                ],
+                "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "maquinasAntigas",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasAntigas",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "peças"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "maquinasNovas",
+                      "value": 4,
+                      "min": 4,
+                      "max": 8,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasNovas",
+                      "value": 320,
+                      "min": 240,
+                      "max": 480,
+                      "step": 40,
+                      "unit": "peças"
+                    }
+                  ],
+                  "solution": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                  "answer": 4,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Parta de {horas} horas para {pecasAntigas} peças.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Ajuste pela quantidade de peças, que altera o tempo no mesmo sentido.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)"
+                    },
+                    {
+                      "text": "Ajuste pelo número de máquinas, que altera o tempo no sentido contrário.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    },
+                    {
+                      "text": "O prazo calculado é {result} horas.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasNovas/maquinasAntigas)",
+                      "misconception": "Máquinas como relação direta",
+                      "reason": "Você tratou mais máquinas como se elas aumentassem o prazo. Para a mesma quantidade de peças, mais máquinas reduzem o tempo."
+                    },
+                    {
+                      "expression": "horas*(pecasAntigas/pecasNovas)*(maquinasAntigas/maquinasNovas)",
+                      "misconception": "Razão das peças invertida",
+                      "reason": "Você tratou mais peças como se elas reduzissem o prazo. Mantendo as máquinas fixas, mais peças exigem mais tempo."
+                    }
+                  ]
+                },
+                "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas."
+              },
+              {
+                "kind": "mathCheck",
+                "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "fornosAntigos",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesAntigos",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "pães"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "fornosNovos",
+                      "value": 3,
+                      "min": 3,
+                      "max": 6,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesNovos",
+                      "value": 300,
+                      "min": 240,
+                      "max": 480,
+                      "step": 20,
+                      "unit": "pães"
+                    }
+                  ],
+                  "solution": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Mais pães aumentam o tempo. Ajuste o prazo pela razão entre as quantidades.",
+                      "expression": "horas*(paesNovos/paesAntigos)"
+                    },
+                    {
+                      "text": "Mais fornos reduzem o tempo. Ajuste pela razão inversa entre os fornos.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    },
+                    {
+                      "text": "O prazo para a nova fornada é {result} horas.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "misconception": "Esquecer os fornos",
+                      "reason": "Você ajustou o prazo pelo pedido maior, mas não considerou que mais fornos assam os pães mais rápido."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosNovos/fornosAntigos)",
+                      "misconception": "Razão dos fornos invertida",
+                      "reason": "Você tratou mais fornos como se aumentassem o tempo. Com a quantidade de pães fixa, mais fornos reduzem o prazo."
+                    }
+                  ]
+                },
+                "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas."
+              }
+            ],
+            "summary": [
+              "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+              "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+              "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
+            ]
+          },
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 6 }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["incorrect"], "screen": 8, "verdict": "fail" },
+        "id": "en-temperature-mismatched-reason-1",
+        "userInput": {
+          "chapterTitle": "Negative numbers",
+          "courseTitle": "Everyday math",
+          "language": "en",
+          "level": "beginner",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+                "options": [
+                  { "text": "2 °C", "isCorrect": true },
+                  { "text": "8 °C", "isCorrect": false },
+                  { "text": "−8 °C", "isCorrect": false }
+                ],
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "Up is up, even below zero",
+                "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+                "exampleLineIdea": "A cold morning where the learner lives.",
+                "image": {
+                  "prompt": "A thermometer from −5 °C to 5 °C with an arrow going up past zero.",
+                  "alt": "A thermometer with an arrow going up past zero."
+                }
+              },
+              {
+                "kind": "workedExample",
+                "title": "From −3 °C, up 5 degrees",
+                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
+                "steps": [
+                  { "text": "First climb to zero: that takes 3 degrees.", "math": "-3 + 3 = 0" },
+                  {
+                    "text": "Two degrees of the rise are left, so keep going up.",
+                    "math": "0 + 2 = 2"
+                  }
+                ],
+                "result": "It's 2 °C: two degrees above zero.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": null,
+                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "start",
+                      "value": -4,
+                      "min": -10,
+                      "max": -1,
+                      "step": 1,
+                      "unit": "°C"
+                    },
+                    { "name": "rise", "value": 7, "min": 2, "max": 15, "step": 1, "unit": "°C" }
+                  ],
+                  "solution": "start + rise",
+                  "answer": 3,
+                  "unit": "°C",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Move {rise} degrees up from {start} °C: {result} °C.",
+                      "expression": "start + rise"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "rise - start",
+                      "misconception": "Subtracts the negative start",
+                      "reason": "You took the start away instead of adding the rise to it."
+                    },
+                    {
+                      "expression": "start - rise",
+                      "misconception": "Moves down instead of up",
+                      "reason": "A rise moves up the thermometer, not down."
+                    }
+                  ]
+                },
+                "correctReason": "You start at {start} °C and move {rise} degrees up."
+              },
+              {
+                "kind": "explanation",
+                "title": "Zero is a stop, not a wall",
+                "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
+                "exampleLineIdea": null,
+                "image": null
+              },
+              {
+                "kind": "activity",
+                "template": "numberLine",
+                "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}"
+              },
+              {
+                "kind": "typedAnswer",
+                "context": null,
+                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+                "keyPoints": [
+                  "Going up 3 degrees reaches zero",
+                  "The last 2 degrees go above zero"
+                ],
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "acceptedAnswers": []
+              },
+              {
+                "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "reason": "Six degrees reach zero and three more go above it.",
+                    "text": "3 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "reason": "That's what you get by moving down 9 degrees instead of up.",
+                    "text": "−3 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "reason": "You added the numbers without their signs: the start is below zero.",
+                    "text": "15 °C"
+                  }
+                ],
+                "question": "What will the thermometer show?"
+              }
+            ],
+            "summary": [
+              "A rise moves up the thermometer, even below zero.",
+              "Count up to zero first, then the degrees above it."
+            ]
+          },
+          "spec": {
+            "canDo": "Work out a temperature after it rises across zero",
+            "description": "Add a rise to a temperature below zero, the way thermometers do.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "numberLine",
+                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explain in your own words why −3 + 5 is 2.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A rise adds to the temperature, even when it starts below zero.",
+                "example": "−3 °C plus a 5 degree rise is 2 °C.",
+                "hard": true,
+                "name": "Add a rise to a temperature below zero",
+                "topic": "Temperature changes",
+                "useCase": "Reading a weather forecast."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Temperature changes across zero"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen -, incorrect] The third summary bullet states \"Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma.\" This is mathematically false and directly contradicts screens 7, 8, 9, and 10, which explain that inversely proportional quantities must have their ratios inverted.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen -, incorrect] The third summary bullet states \"Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma.\" This is mathematically false and directly contradicts screens 7, 8, 9, and 10, which explain that inversely proportional quantities must have their ratios inverted.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen -, incorrect] The third summary bullet states \"Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma.\" This is mathematically false and directly contradicts screens 7, 8, 9, and 10, which explain that inversely proportional quantities must have their ratios inverted.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["incorrect"], "screen": null, "verdict": "fail" },
+        "id": "pt-regra-wrong-summary-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "lesson": {
+            "screens": [
+              {
+                "kind": "hookGuess",
+                "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
+                "options": [
+                  { "text": "Aumenta", "isCorrect": false },
+                  { "text": "Diminui", "isCorrect": false },
+                  { "text": "Fica igual", "isCorrect": false },
+                  { "text": "Depende de quanto cada coisa mudou", "isCorrect": true }
+                ],
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "image": null
+              },
+              {
+                "kind": "check",
+                "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "options": [
+                  {
+                    "text": "Cai pela metade; depois dobra.",
+                    "isCorrect": true,
+                    "reason": "Com o pedido fixo, o dobro de gente divide o tempo pela metade. Com a equipe fixa, o dobro de trabalho exige o dobro de tempo."
+                  },
+                  {
+                    "text": "Dobra nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "É tentador pensar que qualquer aumento aumenta o prazo. Mas uma equipe maior termina o mesmo pedido mais rápido."
+                  },
+                  {
+                    "text": "Cai pela metade nos dois casos.",
+                    "isCorrect": false,
+                    "reason": "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe."
+                  },
+                  {
+                    "text": "Dobra; depois cai pela metade.",
+                    "isCorrect": false,
+                    "reason": "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo."
+                  }
+                ],
+                "image": null
+              },
+              {
+                "kind": "explanation",
+                "title": "O que fica fixo?",
+                "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+                "exampleLineIdea": "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
+                "image": {
+                  "prompt": "Duas cenas de uma gráfica. Mesmo pedido: 2 trabalhadores levam mais tempo que 4. Mesma equipe: 1 pilha de etiquetas leva menos tempo que 2. Rótulos: 'pedido fixo', 'equipe fixa', 'menos tempo', 'mais tempo'.",
+                  "alt": "Com o pedido fixo, uma equipe maior leva menos tempo; com a equipe fixa, um pedido maior leva mais tempo."
+                }
+              },
+              {
+                "kind": "explanation",
+                "title": "Uma mudança por vez",
+                "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
+                "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Mais gente, menos dias",
+                "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
+                "steps": [
+                  { "text": "Mantenha a obra fixa: é o mesmo muro.", "math": null },
+                  {
+                    "text": "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes.",
+                    "math": "\\frac{4}{8}"
+                  },
+                  {
+                    "text": "Multiplique o prazo inicial por essa razão.",
+                    "math": "6\\times\\frac{4}{8}=3"
+                  }
+                ],
+                "result": "Oito trabalhadores terminam o muro em 3 dias.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
+                "question": "Mantendo as mesmas impressoras, quanto tempo elas levam para fazer {meta} etiquetas?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "impressoras",
+                      "value": 2,
+                      "min": 2,
+                      "max": 5,
+                      "step": 1,
+                      "unit": null
+                    },
+                    {
+                      "name": "etiquetas",
+                      "value": 80,
+                      "min": 40,
+                      "max": 160,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    },
+                    { "name": "horas", "value": 2, "min": 1, "max": 5, "step": 1, "unit": "horas" },
+                    {
+                      "name": "meta",
+                      "value": 200,
+                      "min": 200,
+                      "max": 400,
+                      "step": 40,
+                      "unit": "etiquetas"
+                    }
+                  ],
+                  "solution": "horas*meta/etiquetas",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "As {impressoras} impressoras continuam trabalhando. Só a quantidade de etiquetas muda.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Como mais etiquetas exigem mais tempo, multiplique {horas} pela razão entre {meta} e {etiquetas}.",
+                      "expression": "horas*meta/etiquetas"
+                    },
+                    {
+                      "text": "O novo prazo é {result} horas.",
+                      "expression": "horas*meta/etiquetas"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*etiquetas/meta",
+                      "misconception": "Razão invertida",
+                      "reason": "Você inverteu a razão das etiquetas. Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos."
+                    },
+                    {
+                      "expression": "(meta-etiquetas)/(etiquetas/horas)",
+                      "misconception": "Só o tempo extra",
+                      "reason": "Você calculou apenas o tempo das etiquetas adicionais e esqueceu o tempo gasto com a quantidade inicial."
+                    }
+                  ]
+                },
+                "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas."
+              },
+              {
+                "kind": "explanation",
+                "title": "Duas mudanças juntas",
+                "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "exampleLineIdea": "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+                "image": null
+              },
+              {
+                "kind": "workedExample",
+                "title": "Pedido maior, mais impressoras",
+                "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
+                "steps": [
+                  { "text": "Comece pelo prazo conhecido.", "math": "4\\text{ horas}" },
+                  {
+                    "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo.",
+                    "math": "\\frac{600}{240}"
+                  },
+                  {
+                    "text": "O número de impressoras também aumenta. Para o tempo, use a razão inversa.",
+                    "math": "\\frac{3}{5}"
+                  },
+                  {
+                    "text": "Junte os dois efeitos.",
+                    "math": "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6"
+                  }
+                ],
+                "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
+                "image": null
+              },
+              {
+                "kind": "mathCheck",
+                "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "maquinasAntigas",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasAntigas",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "peças"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "maquinasNovas",
+                      "value": 4,
+                      "min": 4,
+                      "max": 8,
+                      "step": 1,
+                      "unit": "máquinas"
+                    },
+                    {
+                      "name": "pecasNovas",
+                      "value": 320,
+                      "min": 240,
+                      "max": 480,
+                      "step": 40,
+                      "unit": "peças"
+                    }
+                  ],
+                  "solution": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                  "answer": 4,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Parta de {horas} horas para {pecasAntigas} peças.",
+                      "expression": null
+                    },
+                    {
+                      "text": "Ajuste pela quantidade de peças, que altera o tempo no mesmo sentido.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)"
+                    },
+                    {
+                      "text": "Ajuste pelo número de máquinas, que altera o tempo no sentido contrário.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    },
+                    {
+                      "text": "O prazo calculado é {result} horas.",
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasNovas/maquinasAntigas)",
+                      "misconception": "Máquinas como relação direta",
+                      "reason": "Você tratou mais máquinas como se elas aumentassem o prazo. Para a mesma quantidade de peças, mais máquinas reduzem o tempo."
+                    },
+                    {
+                      "expression": "horas*(pecasAntigas/pecasNovas)*(maquinasAntigas/maquinasNovas)",
+                      "misconception": "Razão das peças invertida",
+                      "reason": "Você tratou mais peças como se elas reduzissem o prazo. Mantendo as máquinas fixas, mais peças exigem mais tempo."
+                    }
+                  ]
+                },
+                "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas."
+              },
+              {
+                "kind": "mathCheck",
+                "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
+                "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?",
+                "math": {
+                  "variables": [
+                    {
+                      "name": "fornosAntigos",
+                      "value": 2,
+                      "min": 2,
+                      "max": 4,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesAntigos",
+                      "value": 120,
+                      "min": 80,
+                      "max": 200,
+                      "step": 40,
+                      "unit": "pães"
+                    },
+                    { "name": "horas", "value": 3, "min": 2, "max": 6, "step": 1, "unit": "horas" },
+                    {
+                      "name": "fornosNovos",
+                      "value": 3,
+                      "min": 3,
+                      "max": 6,
+                      "step": 1,
+                      "unit": "fornos"
+                    },
+                    {
+                      "name": "paesNovos",
+                      "value": 300,
+                      "min": 240,
+                      "max": 480,
+                      "step": 20,
+                      "unit": "pães"
+                    }
+                  ],
+                  "solution": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                  "answer": 5,
+                  "unit": "horas",
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "steps": [
+                    {
+                      "text": "Mais pães aumentam o tempo. Ajuste o prazo pela razão entre as quantidades.",
+                      "expression": "horas*(paesNovos/paesAntigos)"
+                    },
+                    {
+                      "text": "Mais fornos reduzem o tempo. Ajuste pela razão inversa entre os fornos.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    },
+                    {
+                      "text": "O prazo para a nova fornada é {result} horas.",
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)"
+                    }
+                  ],
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "misconception": "Esquecer os fornos",
+                      "reason": "Você ajustou o prazo pelo pedido maior, mas não considerou que mais fornos assam os pães mais rápido."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosNovos/fornosAntigos)",
+                      "misconception": "Razão dos fornos invertida",
+                      "reason": "Você tratou mais fornos como se aumentassem o tempo. Com a quantidade de pães fixa, mais fornos reduzem o prazo."
+                    }
+                  ]
+                },
+                "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas."
+              }
+            ],
+            "summary": [
+              "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+              "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+              "Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma."
+            ]
+          },
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "kind": "hook",
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "explanation",
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "workedExample",
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "check",
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "kind": "application",
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-quality-check"
+}

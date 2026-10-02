@@ -10,10 +10,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
+import { LanguageFlag, hasLanguageFlag } from "@zoonk/ui/components/language-flag";
 import {
   ListGroup,
   ListItem,
-  ListItemActions,
   ListItemContent,
   ListItemDescription,
   ListItemIcon,
@@ -21,10 +21,52 @@ import {
   ListItemTitle,
   ListSkeleton,
 } from "@zoonk/ui/components/list";
+import { getLanguageFlagLabel } from "@zoonk/utils/language-flags";
 import { NotebookPenIcon } from "lucide-react";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import Image from "next/image";
-import { RemoveCourseMenu } from "./remove-course-menu";
+
+type UserCourse = Awaited<ReturnType<typeof listCurrentUserCourses>>[number];
+
+/** A brand course has a public page; a course made only for the learner lives in their plan. */
+function getUserCourseHref(course: UserCourse) {
+  return course.organization
+    ? getCourseHref({ brandSlug: course.organization.slug, courseSlug: course.slug })
+    : "/plan";
+}
+
+/** A language course shows the flag of the variety it teaches; other courses their picture. */
+async function UserCourseMedia({ course }: { course: UserCourse }) {
+  if (hasLanguageFlag(course.targetLanguage)) {
+    const locale = await getLocale();
+
+    return (
+      <ListItemIcon>
+        <LanguageFlag
+          alt={
+            getLanguageFlagLabel({ language: course.targetLanguage, userLanguage: locale }) ?? ""
+          }
+          className="w-12"
+          language={course.targetLanguage}
+        />
+      </ListItemIcon>
+    );
+  }
+
+  if (course.imageUrl) {
+    return (
+      <ListItemImage>
+        <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
+      </ListItemImage>
+    );
+  }
+
+  return (
+    <ListItemIcon>
+      <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-6" />
+    </ListItemIcon>
+  );
+}
 
 export async function UserCourseList() {
   const t = await getExtracted();
@@ -53,35 +95,13 @@ export async function UserCourseList() {
   return (
     <ListGroup>
       {courses.map((course) => (
-        <ListItem className="gap-0 p-0" key={course.id}>
-          <Link
-            className="focus-visible:ring-ring/50 hover:bg-muted flex min-w-0 flex-1 items-center gap-3.5 rounded-2xl px-4 py-2.5 transition-colors outline-none focus-visible:ring-[3px]"
-            href={
-              course.organization
-                ? getCourseHref({ brandSlug: course.organization.slug, courseSlug: course.slug })
-                : `/p/${course.id}`
-            }
-            prefetch
-          >
-            {course.imageUrl ? (
-              <ListItemImage>
-                <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
-              </ListItemImage>
-            ) : (
-              <ListItemIcon>
-                <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-6" />
-              </ListItemIcon>
-            )}
+        <ListItem key={course.id} render={<Link href={getUserCourseHref(course)} prefetch />}>
+          <UserCourseMedia course={course} />
 
-            <ListItemContent>
-              <ListItemTitle>{course.title}</ListItemTitle>
-              <ListItemDescription>{course.description}</ListItemDescription>
-            </ListItemContent>
-          </Link>
-
-          <ListItemActions className="pr-3">
-            <RemoveCourseMenu courseId={course.id} courseTitle={course.title} />
-          </ListItemActions>
+          <ListItemContent>
+            <ListItemTitle>{course.title}</ListItemTitle>
+            <ListItemDescription>{course.description}</ListItemDescription>
+          </ListItemContent>
         </ListItem>
       ))}
     </ListGroup>

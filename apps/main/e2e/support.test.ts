@@ -1,5 +1,7 @@
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { mockFeedbackSubmission } from "./feedback";
 import { expect, test } from "./fixtures";
+import { expectMode, showInMode } from "./learn-personas";
 
 test.describe("Support page", () => {
   test.beforeEach(async ({ page }) => {
@@ -8,21 +10,17 @@ test.describe("Support page", () => {
     await expect(page.getByRole("heading", { name: /feedback & support/iu })).toBeVisible();
   });
 
-  test("shows the contact form directly on the page", async ({ page }) => {
-    await expect(page.getByRole("link", { name: /github discussions/iu })).toHaveCount(0);
-    await expect(page.getByRole("textbox", { name: /email address/iu })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /^message$/iu })).toBeVisible();
-    await expect(page.getByRole("button", { name: /send message/iu })).toBeVisible();
-  });
-
-  test("submit with valid data shows success message", async ({ page }) => {
-    const feedbackSubmission = await mockFeedbackSubmission(page);
-
+  test("sends a valid message from the contact form on the page", async ({ page }) => {
     const emailInput = page.getByRole("textbox", { name: /email address/iu });
     const messageInput = page.getByRole("textbox", { name: /^message$/iu });
 
+    await expect(page.getByRole("link", { name: /github discussions/iu })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /send message/iu })).toBeVisible();
     await expect(emailInput).toBeEnabled();
     await expect(messageInput).toBeEnabled();
+    await expectAccessibleScreen(page, "the support page");
+
+    const feedbackSubmission = await mockFeedbackSubmission(page);
 
     await emailInput.click();
     await emailInput.fill("test@example.com");
@@ -33,12 +31,15 @@ test.describe("Support page", () => {
     await expect(page.getByText(/message sent successfully/iu)).toBeVisible();
 
     await expect(feedbackSubmission.requestBody).resolves.toStrictEqual({
+      context: { platform: "web", screen: "support", url: "/support" },
       email: "test@example.com",
       message: "Test message",
     });
   });
 
-  test("submit with invalid email shows validation error", async ({ page }) => {
+  test("keeps an invalid email focused, then shows an error when the message can't be sent", async ({
+    page,
+  }) => {
     const emailInput = page.getByRole("textbox", { name: /email address/iu });
     const messageInput = page.getByRole("textbox", { name: /^message$/iu });
 
@@ -52,16 +53,7 @@ test.describe("Support page", () => {
     await page.getByRole("button", { name: /send message/iu }).click();
 
     await expect(emailInput).toBeFocused();
-  });
 
-  test("submit failure shows error message", async ({ page }) => {
-    const emailInput = page.getByRole("textbox", { name: /email address/iu });
-    const messageInput = page.getByRole("textbox", { name: /^message$/iu });
-
-    await expect(emailInput).toBeEnabled();
-    await expect(messageInput).toBeEnabled();
-
-    await emailInput.click();
     await emailInput.fill("test@example.com");
 
     // Whitespace passes HTML5 "required" but fails server-side when trimmed
@@ -69,22 +61,25 @@ test.describe("Support page", () => {
     await messageInput.fill("   ");
     await page.getByRole("button", { name: /send message/iu }).click();
 
-    await expect(page.getByText(/failed to send message/iu)).toBeVisible();
+    await expect(page.getByText(/couldn't send your message/iu)).toBeVisible();
   });
 });
 
 test.describe("Support page - Authenticated", () => {
-  test("email field shows authenticated user's email", async ({
-    authenticatedPage,
-    withProgressUser,
+  test("email field shows a Fun learner's email", async ({
+    noProgressUser,
+    userWithoutProgress: page,
   }) => {
-    await authenticatedPage.goto("/support");
+    await showInMode(page.context(), { mode: "fun", userId: noProgressUser.id });
+    await page.goto("/support");
+    await expectMode(page, "fun");
 
-    const emailInput = authenticatedPage.getByRole("textbox", { name: /email address/iu });
+    const emailInput = page.getByRole("textbox", { name: /email address/iu });
 
     await expect(emailInput).toBeEnabled();
 
     // Should be pre-filled with user's email
-    await expect(emailInput).toHaveValue(withProgressUser.email);
+    await expect(emailInput).toHaveValue(noProgressUser.email);
+    await expectAccessibleScreen(page, "the Fun support page");
   });
 });

@@ -110,8 +110,8 @@ async function getCurrentUserScoreHistoryResource(): Promise<CurrentUserScoreHis
     timeZone: dateContext.timeZone,
   });
 
-  const rows = await findScoreHistoryRows({ ...dateRange.dailyProgress, userId: session.user.id });
-  const score = buildScoreHistory({ ...dateRange.dailyProgress, rows });
+  const rows = await findScoreHistoryRows({ ...dateRange, userId: session.user.id });
+  const score = buildScoreHistory({ ...dateRange, rows });
 
   return { isAuthenticated: true, score };
 }

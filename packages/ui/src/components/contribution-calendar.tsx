@@ -159,9 +159,9 @@ export function ContributionCalendarDescription({
 
 /**
  * Starts overflowing calendars at their newest edge while remaining a normal
- * left-aligned viewport when the complete grid fits. Coarse-pointer viewports
- * round down to a whole number of default week columns, preventing clipped
- * squares and period labels without covering interactive content.
+ * left-aligned viewport when the complete grid fits. The viewport rounds down
+ * to a whole number of week columns, preventing clipped squares and period
+ * labels without covering interactive content.
  */
 export function ContributionCalendarViewport({
   children,
@@ -171,7 +171,7 @@ export function ContributionCalendarViewport({
   return (
     <div
       className={cn(
-        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+0.125rem,1.625rem)-0.125rem)]",
+        "ml-auto w-[calc(round(down,100%+0.125rem,2.875rem)-0.125rem)] min-w-0 overflow-x-auto pb-1",
         className,
       )}
       data-slot="contribution-calendar-viewport"
@@ -232,10 +232,7 @@ export function ContributionCalendarGrid({ children, className, ...props }: Comp
 export function ContributionCalendarWeek({ children, className, ...props }: ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "relative grid w-2.5 shrink-0 grid-rows-7 gap-0.5 pt-5 pointer-coarse:w-6",
-        className,
-      )}
+      className={cn("relative grid w-11 shrink-0 grid-rows-7 gap-0.5 pt-5", className)}
       data-slot="contribution-calendar-week"
       {...props}
     >
@@ -256,7 +253,7 @@ export function ContributionCalendarPeriod({
   return (
     <span
       className={cn(
-        "text-muted-foreground absolute top-0 left-0 text-[10px] whitespace-nowrap",
+        "text-muted-foreground absolute top-0 left-0 text-xs whitespace-nowrap",
         className,
       )}
       data-slot="contribution-calendar-period"
@@ -300,7 +297,8 @@ function useContributionCalendarDay(): ContributionCalendarDayContextValue {
 }
 
 /**
- * Renders an interactive contribution square. Base UI owns hover, focus,
+ * Renders an interactive contribution square, 44 px like every target people press, with its mark
+ * drawn inside. Base UI owns hover, focus,
  * outside-press, and escape behavior; the merged click toggles the same detail
  * for touch and pointer users without coupling the component to domain data.
  */
@@ -317,7 +315,7 @@ export function ContributionCalendarDayTrigger({
   return (
     <TooltipPrimitive.Trigger
       className={cn(
-        "focus-visible:ring-ring/50 flex size-2.5 cursor-pointer appearance-none items-center justify-center rounded-[2px] border-0 bg-transparent p-0 outline-none focus-visible:ring-[3px] focus-visible:ring-inset pointer-coarse:size-6",
+        "focus-visible:ring-ring/50 flex size-11 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-transparent p-0 outline-none focus-visible:ring-[3px] focus-visible:ring-inset",
         className,
       )}
       closeOnClick={false}
@@ -335,15 +333,12 @@ export function ContributionCalendarDayTrigger({
   );
 }
 
-/**
- * Draws the metric square inside its interactive day trigger, allowing
- * coarse-pointer layouts to enlarge the hit target while keeping the mark inset.
- */
+/** Draws the metric square inset inside its larger interactive day trigger. */
 export function ContributionCalendarDayIndicator({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2.5 shrink-0 rounded-[2px] pointer-coarse:size-5", className)}
+      className={cn("size-9 shrink-0 rounded-md", className)}
       data-slot="contribution-calendar-day-indicator"
       {...props}
     />
@@ -416,7 +411,7 @@ export function ContributionCalendarLegendSwatch({ className, ...props }: Compon
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2.5 rounded-[2px] pointer-coarse:size-5", className)}
+      className={cn("size-4 rounded-sm", className)}
       data-slot="contribution-calendar-legend-swatch"
       {...props}
     />
@@ -433,7 +428,7 @@ export function ContributionCalendarGridSkeleton({
 }: ComponentProps<typeof Skeleton>) {
   return (
     <Skeleton
-      className={cn("h-25.5 w-full rounded-lg pointer-coarse:h-50", className)}
+      className={cn("h-85 w-full rounded-lg", className)}
       data-slot="contribution-calendar-grid-skeleton"
       {...props}
     />

@@ -6,55 +6,60 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Message-Key: msgctxt\n"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
-msgctxt "xmcVZ0"
-msgid "Search"
-msgstr "Search"
-
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
-msgctxt "PSiLeL"
-msgid "Search courses, chapters, or pages..."
-msgstr "Search courses, chapters, or pages..."
-
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
 msgctxt "I-38K2"
 msgid "My courses"
 msgstr "My courses"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "Oj9Phc"
 msgid "Manage subscription"
 msgstr "Manage subscription"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(settings)/_components/locale-switcher.tsx
 #: src/app/[lang]/(settings)/language/page.tsx
 msgctxt "OhXwmw"
 msgid "Update language"
 msgstr "Update language"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "O7ozeo"
 msgid "Update profile"
 msgstr "Update profile"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/settings/appearance/page.tsx
+msgctxt "2GURQY"
+msgid "Appearance"
+msgstr "Appearance"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/settings/memory/page.tsx
+msgctxt "dVx3yz"
+msgid "Memory"
+msgstr "Memory"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/[lang]/(settings)/_components/settings-navbar.tsx
 msgctxt "C81_uG"
 msgid "Logout"
 msgstr "Logout"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/[lang]/(progress)/_components/progress-empty-state.tsx
+#: src/app/[lang]/(learn)/(stats)/_components/progress-empty-state.tsx
 #: src/app/[lang]/(settings)/_components/protected-section.tsx
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Login"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(settings)/_components/locale-switcher.tsx
 #: src/app/[lang]/(settings)/_components/settings-pills.tsx
 #: src/app/[lang]/(settings)/language/page.tsx
@@ -62,61 +67,48 @@ msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Language"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/navbar-links.tsx
-#: src/app/[lang]/(progress)/_components/progress-navbar.tsx
 #: src/app/[lang]/(settings)/_components/settings-navbar.tsx
 msgctxt "U3l-Q9"
 msgid "Home page"
 msgstr "Home page"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/navbar-links.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/components/public/public-footer.tsx
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Courses"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "jboh4c"
 msgid "Start a new course"
 msgstr "Start a new course"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "rS0suY"
-msgid "Speak a language"
-msgstr "Speak a language"
-
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "L6kaJv"
-msgid "Learn something"
-msgstr "Learn something"
-
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
-#: src/app/[lang]/(catalog)/start/exam/page.tsx
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "3wvH7G"
-msgid "Pass an exam"
-msgstr "Pass an exam"
-
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "CxfKLC"
 msgid "Pages"
 msgstr "Pages"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "dXSivY"
 msgid "My account"
 msgstr "My account"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
 msgctxt "tv5FG3"
 msgid "Blog"
 msgstr "Blog"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "G5YSJR"
+msgid "Send feedback"
+msgstr "Send feedback"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(settings)/_components/settings-pills.tsx
 #: src/app/[lang]/(settings)/support/page.tsx
@@ -125,15 +117,103 @@ msgctxt "fFZ0Wd"
 msgid "Feedback & Support"
 msgstr "Feedback & Support"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/components/public/public-footer.tsx
 msgctxt "SENRqu"
 msgid "Help"
 msgstr "Help"
 
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "Do1Pfd"
 msgid "Chapters"
 msgstr "Chapters"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+#: src/app/[lang]/(learn)/today/page.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "Today"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(learn)/(stats)/_components/progress-navbar.tsx
+#: src/app/[lang]/(learn)/progress/page.tsx
+msgctxt "sIMS7i"
+msgid "Progress"
+msgstr "Progress"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "0fR-fE"
+msgid "Route"
+msgstr "Route"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "d9iNyj"
+msgid "Cards"
+msgstr "Cards"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(learn)/buddy/page.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "Your buddy"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/logbook/page.tsx
+msgctxt "_qTRbZ"
+msgid "Logbook"
+msgstr "Logbook"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(learn)/plan/page.tsx
+msgctxt "fz0z4c"
+msgid "Plan"
+msgstr "Plan"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(learn)/content/page.tsx
+msgctxt "Jq3FDz"
+msgid "Content"
+msgstr "Content"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "Ie60UL"
+msgid "Switch to {goal}"
+msgstr "Switch to {goal}"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+#: src/app/[lang]/(learn)/mistakes/page.tsx
+msgctxt "g3GlDw"
+msgid "Mistakes notebook"
+msgstr "Mistakes notebook"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(catalog)/courses/page.tsx
+msgctxt "s-Ncqj"
+msgid "Explore courses"
+msgstr "Explore courses"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "GlTq-A"
+msgid "Add a goal"
+msgstr "Add a goal"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "XHLYdJ"
+msgid "Goals"
+msgstr "Goals"
+
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+msgctxt "xmcVZ0"
+msgid "Search"
+msgstr "Search"
+
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+msgctxt "CtnQbS"
+msgid "Search courses, chapters, or pages…"
+msgstr "Search courses, chapters, or pages…"
 
 #: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "hX5PAb"
@@ -144,11 +224,6 @@ msgstr "No results found"
 msgctxt "OXAZiT"
 msgid "Create a course about {term}"
 msgstr "Create a course about {term}"
-
-#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
-msgctxt "onRJrc"
-msgid "Course page"
-msgstr "Course page"
 
 #: src/app/[lang]/(catalog)/_components/navbar-links.tsx
 msgctxt "m826WB"
@@ -173,387 +248,8 @@ msgctxt "R_6nsx"
 msgid "Subscription"
 msgstr "Subscription"
 
-#: src/app/[lang]/(catalog)/(home)/best-day.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "Best day"
-
-#: src/app/[lang]/(catalog)/(home)/best-day.tsx
-msgctxt "auPwZG"
-msgid "{day} with {percentage}"
-msgstr "{day} with {percentage}"
-
-#: src/app/[lang]/(catalog)/(home)/best-day.tsx
-#: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(catalog)/(home)/score.tsx
-msgctxt "zml1_y"
-msgid "Past 3 months"
-msgstr "Past 3 months"
-
-#: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
-msgctxt "00_IyC"
-msgid "Night"
-msgstr "Night"
-
-#: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
-msgctxt "_kzk_m"
-msgid "Morning"
-msgstr "Morning"
-
-#: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
-msgctxt "mF-J9o"
-msgid "Afternoon"
-msgstr "Afternoon"
-
-#: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
-msgctxt "mPEpnN"
-msgid "Evening"
-msgstr "Evening"
-
-#: src/app/[lang]/(catalog)/(home)/best-time.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "Best time"
-
-#: src/app/[lang]/(catalog)/(home)/best-time.tsx
-msgctxt "r0R6ZG"
-msgid "{period} with {percentage}"
-msgstr "{period} with {percentage}"
-
-#: src/app/[lang]/(catalog)/(home)/completed-lessons.tsx
-msgctxt "s-lPP3"
-msgid "All time"
-msgstr "All time"
-
-#: src/app/[lang]/(catalog)/(home)/continue-learning-card.tsx
-msgctxt "NubPSk"
-msgid "Next: {lesson}"
-msgstr "Next: {lesson}"
-
-#: src/app/[lang]/(catalog)/(home)/continue-learning-card.tsx
-#: src/components/catalog/continue-lesson-link.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continue"
-
-#: src/app/[lang]/(catalog)/(home)/continue-learning.tsx
-msgctxt "0X-xfW"
-msgid "Continue learning"
-msgstr "Continue learning"
-
-#: src/app/[lang]/(catalog)/(home)/energy.tsx
-msgctxt "0Bz4ZD"
-msgid "Reach Max Energy"
-msgstr "Reach Max Energy"
-
-#: src/app/[lang]/(catalog)/(home)/energy.tsx
-msgctxt "MlOidD"
-msgid "Stay at Max Energy"
-msgstr "Stay at Max Energy"
-
-#: src/app/[lang]/(catalog)/(home)/energy.tsx
-#: src/app/[lang]/(progress)/_components/metric-pills.tsx
-#: src/app/[lang]/(progress)/energy/page.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energy"
-
-#: src/app/[lang]/(catalog)/(home)/learning-days.tsx
-msgctxt "QbNcMh"
-msgid "At least one completed lesson"
-msgstr "At least one completed lesson"
-
-#: src/app/[lang]/(catalog)/(home)/learning-time.tsx
-msgctxt "F6B8A3"
-msgid "Time spent in lessons"
-msgstr "Time spent in lessons"
-
-#: src/app/[lang]/(catalog)/(home)/level.tsx
-#: src/app/[lang]/(progress)/level/level-stats.tsx
-msgctxt "pgt3eW"
-msgid "Max level reached"
-msgstr "Max level reached"
-
-#: src/app/[lang]/(catalog)/(home)/level.tsx
-#: src/app/[lang]/(progress)/level/level-stats.tsx
-msgctxt "8N9BRu"
-msgid "{value} BP to next level"
-msgstr "{value} BP to next level"
-
-#: src/app/[lang]/(catalog)/(home)/level.tsx
-#: src/app/[lang]/(progress)/_components/metric-pills.tsx
-#: src/app/[lang]/(progress)/level/page.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Level"
-
-#: src/app/[lang]/(catalog)/(home)/level.tsx
-msgctxt "s0KB2i"
-msgid "{belt} - Level {level}"
-msgstr "{belt} - Level {level}"
-
-#: src/app/[lang]/(catalog)/(home)/page.tsx
-msgctxt "a50ZRn"
-msgid "Zoonk is an AI learning platform and study app to create courses about any topic using AI. Study for your exams or learn new skills."
-msgstr "Zoonk is an AI learning platform and study app to create courses about any topic using AI. Study for your exams or learn new skills."
-
-#: src/app/[lang]/(catalog)/(home)/page.tsx
-msgctxt "leBFvu"
-msgid "Zoonk: Study App with AI"
-msgstr "Zoonk: Study App with AI"
-
-#: src/app/[lang]/(catalog)/(home)/progress.tsx
-#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "sIMS7i"
-msgid "Progress"
-msgstr "Progress"
-
-#: src/app/[lang]/(catalog)/(home)/score.tsx
-#: src/app/[lang]/(progress)/_components/metric-pills.tsx
-#: src/app/[lang]/(progress)/score/page.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Score"
-
-#: src/app/[lang]/(catalog)/(home)/score.tsx
-msgctxt "_lCW0j"
-msgid "{percentage} correct answers"
-msgstr "{percentage} correct answers"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgctxt "QhvU1f"
-msgid "Create this chapter"
-msgstr "Create this chapter"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgctxt "YQGe0H"
-msgid "This chapter is part of the course, but it hasn't been created yet. Create it to see all of its lessons."
-msgstr "This chapter is part of the course, but it hasn't been created yet. Create it to see all of its lessons."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgctxt "3IOFp2"
-msgid "Create chapter"
-msgstr "Create chapter"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-#: src/app/[lang]/generate/ch/[id]/generate-chapter-content.tsx
-#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-msgctxt "qrEiLa"
-msgid "Back to course"
-msgstr "Back to course"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "Ap-oRa"
-msgid "Could not apply lesson filters. Please try again."
-msgstr "Could not apply lesson filters. Please try again."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "d6tcJn"
-msgid "Filter lesson types"
-msgstr "Filter lesson types"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "kxP9GJ"
-msgid "Types"
-msgstr "Types"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "wi5osl"
-msgid "Show lesson types"
-msgstr "Show lesson types"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgctxt "OhgOkH"
-msgid "Clear filter"
-msgstr "Clear filter"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-msgctxt "orGV_i"
-msgid "Current lesson"
-msgstr "Current lesson"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-msgctxt "ssvp3R"
-msgid "Search lessons..."
-msgstr "Search lessons..."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-msgctxt "FuT9vz"
-msgid "No lessons found"
-msgstr "No lessons found"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "95stPq"
-msgid "Completed"
-msgstr "Completed"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "xTTP0x"
-msgid "Not started"
-msgstr "Not started"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "QB2G_Y"
-msgid "Chapter about {chapter} in the {course} course. {description}"
-msgstr "Chapter about {chapter} in the {course} course. {description}"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "DcXGUl"
-msgid "{chapter}: {course} course"
-msgstr "{chapter}: {course} course"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "iRubpl"
-msgid "Current chapter"
-msgstr "Current chapter"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "3SOcGR"
-msgid "Search chapters..."
-msgstr "Search chapters..."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "8udPa-"
-msgid "No chapters found"
-msgstr "No chapters found"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "vcaAXp"
-msgid "{completed, number}/{total, number} done"
-msgstr "{completed, number}/{total, number} done"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
-msgctxt "y0ef9b"
-msgid "App language"
-msgstr "App language"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
-msgctxt "Bjt5wo"
-msgid "Zoonk is also available in {language}."
-msgstr "Zoonk is also available in {language}."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
-msgctxt "V9gbvB"
-msgid "Use Zoonk in {language}"
-msgstr "Use Zoonk in {language}"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-app-language-notice.tsx
-msgctxt "BjO5K8"
-msgid "Dismiss language suggestion"
-msgstr "Dismiss language suggestion"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-curriculum-pending-notice.tsx
-msgctxt "Pf4uqS"
-msgid "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
-msgstr "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
-msgctxt "qzAEFi"
-msgid "Finding your course…"
-msgstr "Finding your course…"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
-#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
-#: src/components/generation/workflow-generation-error.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Try again"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "o3ujZ5"
-msgid "Learn in {language}"
-msgstr "Learn in {language}"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
-msgctxt "DLssby"
-msgid "This course isn't available in {language} yet."
-msgstr "This course isn't available in {language} yet."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-form.tsx
-msgctxt "fpKX8o"
-msgid "We couldn't prepare your course. Please try again."
-msgstr "We couldn't prepare your course. Please try again."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "IPMgvJ"
-msgid "View progress"
-msgstr "View progress"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "1eG4JB"
-msgid "This course teaches {language}, with explanations in {sourceLanguage}."
-msgstr "This course teaches {language}, with explanations in {sourceLanguage}."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "0G8GRg"
-msgid "This course is taught in {sourceLanguage}. It isn't available in {language} yet."
-msgstr "This course is taught in {sourceLanguage}. It isn't available in {language} yet."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "KgG3PI"
-msgid "Your {language} course is being prepared. You can follow its progress."
-msgstr "Your {language} course is being prepared. You can follow its progress."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "rUYK7J"
-msgid "We couldn't finish preparing this course in {language}. You can try again."
-msgstr "We couldn't finish preparing this course in {language}. You can try again."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "_LY-RG"
-msgid "Switching languages opens a separate course. Your progress stays here."
-msgstr "Switching languages opens a separate course. Your progress stays here."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "KYeXR4"
-msgid "Course language"
-msgstr "Course language"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-edition-notice.tsx
-msgctxt "c5dUwC"
-msgid "This course is in {language}"
-msgstr "This course is in {language}"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "KjYOfT"
-msgid "You found a course that hasn't been written yet"
-msgstr "You found a course that hasn't been written yet"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "0DbJhZ"
-msgid "Tell us what you want to learn. We'll turn it into a clear, step-by-step course made for you."
-msgstr "Tell us what you want to learn. We'll turn it into a clear, step-by-step course made for you."
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "1SogB9"
-msgid "Create this course"
-msgstr "Create this course"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "eN72ct"
-msgid "An open book becoming a learning path"
-msgstr "An open book becoming a learning path"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "_allXG"
-msgid "Learn {course} online with practical examples and everyday language. {description}"
-msgstr "Learn {course} online with practical examples and everyday language. {description}"
-
-#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "gyGolN"
-msgid "Learn {course}"
-msgstr "Learn {course}"
-
 #: src/app/[lang]/(catalog)/courses/category-pills.tsx
+#: src/app/[lang]/(home)/_components/home-explore-links.tsx
 msgctxt "tuZsq-"
 msgid "Course categories"
 msgstr "Course categories"
@@ -584,10 +280,17 @@ msgid "Loading more courses…"
 msgstr "Loading more courses…"
 
 #: src/app/[lang]/(catalog)/courses/course-list-client.tsx
-#: src/components/generation/workflow-generation-error.tsx
 msgctxt "W_5hwr"
 msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
+
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/errors/page-error-message.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Try again"
 
 #: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "WgPMAP"
@@ -598,12 +301,6 @@ msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive l
 msgctxt "P5jxUC"
 msgid "Online Courses using AI"
 msgstr "Online Courses using AI"
-
-#: src/app/[lang]/(catalog)/courses/page.tsx
-#: src/components/generation/generation-authentication-cta.tsx
-msgctxt "s-Ncqj"
-msgid "Explore courses"
-msgstr "Explore courses"
 
 #: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "hUF3bo"
@@ -631,57 +328,20 @@ msgid "Keep your courses and progress in one place by logging in to your account
 msgstr "Keep your courses and progress in one place by logging in to your account."
 
 #: src/app/[lang]/(catalog)/my/page.tsx
-#: src/components/generation/generation-authentication-cta.tsx
-#: src/components/generation/generation-limit-cta.tsx
+#: src/app/[lang]/(home)/_components/home-header.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/start/_components/start-chrome.tsx
+#: src/components/public/public-header.tsx
+#: src/components/public/start-lesson-button.tsx
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Log in"
 
 #: src/app/[lang]/(catalog)/my/page.tsx
+#: src/app/[lang]/(home)/_components/home-resume.tsx
 msgctxt "Dr13kE"
 msgid "Continue where you left off"
 msgstr "Continue where you left off"
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-msgctxt "zfUTRh"
-msgid "More options for {courseTitle}"
-msgstr "More options for {courseTitle}"
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-msgctxt "M9_kBE"
-msgid "Remove from My Courses"
-msgstr "Remove from My Courses"
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-msgctxt "SZ0Rgi"
-msgid "Remove {courseTitle}?"
-msgstr "Remove {courseTitle}?"
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-msgctxt "RGYckE"
-msgid "The course will disappear from My Courses. Your progress will be kept."
-msgstr "The course will disappear from My Courses. Your progress will be kept."
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-msgctxt "xjTT7H"
-msgid "We couldn't remove this course. Please try again."
-msgstr "We couldn't remove this course. Please try again."
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Cancel"
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-msgctxt "RC2XA4"
-msgid "Removing..."
-msgstr "Removing..."
-
-#: src/app/[lang]/(catalog)/my/remove-course-menu.tsx
-msgctxt "D4eTra"
-msgid "Remove course"
-msgstr "Remove course"
 
 #: src/app/[lang]/(catalog)/my/user-course-list.tsx
 msgctxt "BDHWkf"
@@ -694,711 +354,1360 @@ msgid "Start learning something new today."
 msgstr "Start learning something new today."
 
 #: src/app/[lang]/(catalog)/my/user-course-list.tsx
-#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
+#: src/app/[lang]/start/course/[courseId]/page.tsx
 msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "Start a course"
 
-#: src/app/[lang]/(catalog)/p/[courseId]/page.tsx
-#: src/app/[lang]/(catalog)/start/exam/page.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-#: src/components/waitlist/relaunch-notice.tsx
-msgctxt "e61Jf3"
-msgid "Coming soon"
-msgstr "Coming soon"
-
-#: src/app/[lang]/(catalog)/p/[courseId]/page.tsx
-msgctxt "dtRj3N"
-msgid "Personalized courses are coming soon."
-msgstr "Personalized courses are coming soon."
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
-#: src/components/feedback/contact-form.tsx
-#: src/components/waitlist/relaunch-notice.tsx
-msgctxt "hJZwTS"
-msgid "Email address"
-msgstr "Email address"
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
-#: src/components/feedback/contact-form.tsx
-msgctxt "OiSL94"
-msgid "myemail@gmail.com"
-msgstr "myemail@gmail.com"
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-msgctxt "45yKj9"
-msgid "We'll use this email to notify you when exam prep is ready."
-msgstr "We'll use this email to notify you when exam prep is ready."
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-msgctxt "Xy7a7A"
-msgid "Exam"
-msgstr "Exam"
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-msgctxt "cDZwI_"
-msgid "TOEFL, SAT, CFA, CPA..."
-msgstr "TOEFL, SAT, CFA, CPA..."
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-msgctxt "E_0Y4u"
-msgid "Tell us the test, certification, or school exam you care about."
-msgstr "Tell us the test, certification, or school exam you care about."
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
-#: src/components/waitlist/relaunch-notice.tsx
-msgctxt "6eV4UR"
-msgid "We couldn't add you to the waitlist. Please try again."
-msgstr "We couldn't add you to the waitlist. Please try again."
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-msgctxt "W78DIe"
-msgid "You're on the list. We'll let you know when exam prep is ready."
-msgstr "You're on the list. We'll let you know when exam prep is ready."
-
-#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
-#: src/components/waitlist/relaunch-notice.tsx
-msgctxt "ipGe-B"
-msgid "Notify me"
-msgstr "Notify me"
-
-#: src/app/[lang]/(catalog)/start/exam/page.tsx
-msgctxt "gs2Dwu"
-msgid "Online AI exam prep for certifications and tests. Hands-on explanation and practice questions to help you pass your exam."
-msgstr "Online AI exam prep for certifications and tests. Hands-on explanation and practice questions to help you pass your exam."
-
-#: src/app/[lang]/(catalog)/start/exam/page.tsx
-msgctxt "z8OyvL"
-msgid "Online AI Exam Prep"
-msgstr "Online AI Exam Prep"
-
-#: src/app/[lang]/(catalog)/start/exam/page.tsx
-msgctxt "CzV5fE"
-msgid "Exam prep is not available yet. Tell us what you're preparing for and we'll notify you when it launches."
-msgstr "Exam prep is not available yet. Tell us what you're preparing for and we'll notify you when it launches."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "8Zy06C"
-msgid "This option isn't available yet"
-msgstr "This option isn't available yet"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "TV5hlz"
-msgid "Join the waitlist and we'll let you know when you can learn <strong>{title}</strong> with Zoonk."
-msgstr "Join the waitlist and we'll let you know when you can learn <strong>{title}</strong> with Zoonk."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "cPhKTw"
-msgid "Not available"
-msgstr "Not available"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "5DZYgN"
-msgid "We can't create this course"
-msgstr "We can't create this course"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "m6ju4Q"
-msgid "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a different subject instead."
-msgstr "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a different subject instead."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-msgctxt "PDFZz6"
-msgid "Try another goal"
-msgstr "Try another goal"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
-#: src/components/waitlist/relaunch-notice.tsx
-msgctxt "hCixWc"
-msgid "You're on the list. We'll email you when it's available."
-msgstr "You're on the list. We'll email you when it's available."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
-msgctxt "UdDpuW"
-msgid "Finding the best way to help"
-msgstr "Finding the best way to help"
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
-msgctxt "1A36NM"
-msgid "We're checking your learning goal. This may take a few seconds."
-msgstr "We're checking your learning goal. This may take a few seconds."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/page.tsx
-msgctxt "CaU_nf"
-msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons tailored to you."
-msgstr "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons tailored to you."
-
-#: src/app/[lang]/(catalog)/start/learn/[prompt]/page.tsx
-msgctxt "X2b6pH"
-msgid "Learn {prompt} with AI"
-msgstr "Learn {prompt} with AI"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "l450Bl"
-msgid "Computer Science"
-msgstr "Computer Science"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "ElyVN0"
-msgid "Psychology"
-msgstr "Psychology"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-#: src/lib/categories/category.ts
-msgctxt "KOuDOE"
-msgid "Economics"
-msgstr "Economics"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "cHCwbF"
-msgid "Photography"
-msgstr "Photography"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "zE1J_t"
-msgid "Philosophy"
-msgstr "Philosophy"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "y68y7h"
-msgid "Data Science"
-msgstr "Data Science"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "1qsU2j"
-msgid "Creative Writing"
-msgstr "Creative Writing"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "RGkBg_"
-msgid "Biology"
-msgstr "Biology"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "oiUZCZ"
-msgid "Graphic Design"
-msgstr "Graphic Design"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-#: src/lib/categories/category.ts
-msgctxt "djJp6c"
-msgid "History"
-msgstr "History"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "O9mDkA"
-msgid "Marketing"
-msgstr "Marketing"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "zfDq-e"
-msgid "Quantum physics"
-msgstr "Quantum physics"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "oqfOwA"
-msgid "Ancient philosophy"
-msgstr "Ancient philosophy"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "Osb4bp"
-msgid "Machine learning"
-msgstr "Machine learning"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "OdZ_n1"
-msgid "Creative writing"
-msgstr "Creative writing"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "N9FWiz"
-msgid "Molecular biology"
-msgstr "Molecular biology"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "XFPrU4"
-msgid "Behavioral economics"
-msgstr "Behavioral economics"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "-0gz_i"
-msgid "Organic chemistry"
-msgstr "Organic chemistry"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "1axOcX"
-msgid "UFOs"
-msgstr "UFOs"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "e7q85h"
-msgid "Dinosaur extinction"
-msgstr "Dinosaur extinction"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "ZzbdHP"
-msgid "World history"
-msgstr "World history"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "XfC6Cs"
-msgid "Cognitive psychology"
-msgstr "Cognitive psychology"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "X5XXVF"
-msgid "Linear algebra"
-msgstr "Linear algebra"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "5gOFKJ"
-msgid "Black holes"
-msgstr "Black holes"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "QOSGzc"
-msgid "Roman Empire"
-msgstr "Roman Empire"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "gyEihl"
-msgid "Deep sea creatures"
-msgstr "Deep sea creatures"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "0MqSJ1"
-msgid "Solar system"
-msgstr "Solar system"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "5qPAxv"
-msgid "Artificial intelligence"
-msgstr "Artificial intelligence"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "3WiAG4"
-msgid "Harry Potter"
-msgstr "Harry Potter"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "9zLpJ_"
-msgid "What do you want to learn?"
-msgstr "What do you want to learn?"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "NvSCuG"
-msgid "Suggested subjects"
-msgstr "Suggested subjects"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
-msgctxt "uCb1nG"
-msgid "Enter a subject"
-msgstr "Enter a subject"
-
-#: src/app/[lang]/(catalog)/start/learn/page.tsx
-msgctxt "JlJVf1"
-msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons."
-msgstr "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons."
-
-#: src/app/[lang]/(catalog)/start/learn/page.tsx
-msgctxt "Zs1QEq"
-msgid "Learn Anything with AI"
-msgstr "Learn Anything with AI"
-
-#: src/app/[lang]/(catalog)/start/page.tsx
-msgctxt "UFOGo9"
-msgid "Start online courses to learn languages and more on Zoonk. Practice language learning, learn English or Spanish, and create AI-powered courses for any subject."
-msgstr "Start online courses to learn languages and more on Zoonk. Practice language learning, learn English or Spanish, and create AI-powered courses for any subject."
-
-#: src/app/[lang]/(catalog)/start/page.tsx
-msgctxt "rqpQgj"
-msgid "Online Courses to Learn Languages and More"
-msgstr "Online Courses to Learn Languages and More"
-
-#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "d2xrsv"
-msgid "Preparing your course"
-msgstr "Preparing your course"
-
-#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "uw23V-"
-msgid "Checking whether this course already exists..."
-msgstr "Checking whether this course already exists..."
-
-#: src/app/[lang]/(catalog)/start/speak/language-list-content.tsx
-msgctxt "ptPPVk"
-msgid "No languages found"
-msgstr "No languages found"
-
-#: src/app/[lang]/(catalog)/start/speak/language-list-content.tsx
-msgctxt "L820yz"
-msgid "Search languages"
-msgstr "Search languages"
-
-#: src/app/[lang]/(catalog)/start/speak/page.tsx
-msgctxt "K4jMHW"
-msgid "Online language courses with AI. Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
-msgstr "Online language courses with AI. Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
-
-#: src/app/[lang]/(catalog)/start/speak/page.tsx
-msgctxt "Ht6aMH"
-msgid "Learn a language online with AI"
-msgstr "Learn a language online with AI"
-
-#: src/app/[lang]/(catalog)/start/speak/page.tsx
-msgctxt "lSAK6U"
-msgid "What language do you want to learn?"
-msgstr "What language do you want to learn?"
-
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "ah2CR6"
-msgid "Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
-msgstr "Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
-
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "_E8OKF"
-msgid "Turn any subject into a clear course you can follow step by step, with practical examples and no fluff."
-msgstr "Turn any subject into a clear course you can follow step by step, with practical examples and no fluff."
-
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "IF6NT-"
-msgid "We'll prepare a study path to help you pass an entrance exam, certification, or school test."
-msgstr "We'll prepare a study path to help you pass an entrance exam, certification, or school test."
-
-#: src/app/[lang]/(catalog)/start/start-content.tsx
-msgctxt "AaFZIp"
-msgid "What's your goal?"
-msgstr "What's your goal?"
-
-#: src/app/[lang]/(progress)/_components/metric-pills.tsx
-#: src/app/[lang]/(progress)/activity/page.tsx
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "39QuMP"
+msgid "Write it the way you'd say it. Your plan and first lesson come next."
+msgstr "Write it the way you'd say it. Your plan and first lesson come next."
+
+#: src/app/[lang]/(home)/_components/final-call.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "tHkQJi"
+msgid "Free to start. No account needed for your first lesson."
+msgstr "Free to start. No account needed for your first lesson."
+
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "ccq-U5"
+msgid "What do you want to get ready for?"
+msgstr "What do you want to get ready for?"
+
+#: src/app/[lang]/(home)/_components/goal-box.tsx
+msgctxt "M22SAX"
+msgid "{move, select, london {speak English for my move to London} other {speak Spanish for my move to Madrid}}"
+msgstr "{move, select, london {speak English for my move to London} other {speak Spanish for my move to Madrid}}"
+
+#: src/app/[lang]/(home)/_components/goal-box.tsx
+msgctxt "4o1lUO"
+msgid "pass the SAT in March"
+msgstr "pass the SAT in March"
+
+#: src/app/[lang]/(home)/_components/goal-box.tsx
+msgctxt "gJRhBV"
+msgid "get promoted to data analyst"
+msgstr "get promoted to data analyst"
+
+#: src/app/[lang]/(home)/_components/goal-box.tsx
+msgctxt "SThX7a"
+msgid "keep up in calculus"
+msgstr "keep up in calculus"
+
+#: src/app/[lang]/(home)/_components/goal-box.tsx
+msgctxt "0ZSjZu"
+msgid "sell 12 cakes a week"
+msgstr "sell 12 cakes a week"
+
+#: src/app/[lang]/(home)/_components/goal-form.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "d82w2J"
+msgid "Create a free account"
+msgstr "Create a free account"
+
+#: src/app/[lang]/(home)/_components/goal-form.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "I want to"
+
+#: src/app/[lang]/(home)/_components/goal-form.tsx
+#: src/app/[lang]/(home)/page.tsx
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Start"
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+msgctxt "uURDL-"
+msgid "The hard part isn't finding content."
+msgstr "The hard part isn't finding content."
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+msgctxt "BGZAbM"
+msgid "It's knowing what to study, keeping what you learn and knowing where you stand. Zoonk takes care of all three."
+msgstr "It's knowing what to study, keeping what you learn and knowing where you stand. Zoonk takes care of all three."
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
+msgctxt "JNxj8r"
+msgid "Open the app and today's session is ready. It fits the minutes you have and skips what you already know."
+msgstr "Open the app and today's session is ready. It fits the minutes you have and skips what you already know."
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+msgctxt "0Fdf2h"
+msgid "Not sure what to study today?"
+msgstr "Not sure what to study today?"
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
+msgctxt "hMnifD"
+msgid "Reviews come back right before you'd forget. Every mistake goes to a notebook and returns as practice."
+msgstr "Reviews come back right before you'd forget. Every mistake goes to a notebook and returns as practice."
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+msgctxt "c-WGV0"
+msgid "Studied it, then forgot it?"
+msgstr "Studied it, then forgot it?"
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+msgctxt "gvuVyg"
+msgid "See what's still missing for your goal. The plan adapts, adding a lesson when you need one and moving time to weak spots."
+msgstr "See what's still missing for your goal. The plan adapts, adding a lesson when you need one and moving time to weak spots."
+
+#: src/app/[lang]/(home)/_components/hard-part-section.tsx
+msgctxt "tOLMHL"
+msgid "Not sure where you stand?"
+msgstr "Not sure where you stand?"
+
+#: src/app/[lang]/(home)/_components/home-explore-links.tsx
+msgctxt "3snD6d"
+msgid "Popular courses"
+msgstr "Popular courses"
+
+#: src/app/[lang]/(home)/_components/home-header.tsx
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "JJUUsz"
+msgid "Try free"
+msgstr "Try free"
+
+#: src/app/[lang]/(home)/_components/home-header.tsx
+msgctxt "qYvgO6"
+msgid "Home page sections"
+msgstr "Home page sections"
+
+#: src/app/[lang]/(home)/_components/home-header.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
+msgctxt "HK3ph8"
+msgid "How it works"
+msgstr "How it works"
+
+#: src/app/[lang]/(home)/_components/home-header.tsx
+msgctxt "6NuwZ2"
+msgid "Focus and Fun"
+msgstr "Focus and Fun"
+
+#: src/app/[lang]/(home)/_components/home-header.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "5Wwopw"
+msgid "Pricing"
+msgstr "Pricing"
+
+#. Home page headline, line 1 of 4. The four lines read as one sentence: 'Get ready for / the exam, / the new job, / the move.' Each line is translated on its own, so make the four fit together.
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "wArM11"
+msgid "Get ready for"
+msgstr "Get ready for"
+
+#. Home page headline, line 2 of 4 ('Get ready for / the exam, / the new job, / the move.'): an exam the reader is preparing for. Use the same kind of article for all three items, and end the line with the punctuation it takes in your sentence.
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "Rti-oQ"
+msgid "the exam,"
+msgstr "the exam,"
+
+#. Home page headline, line 3 of 4 ('Get ready for / the exam, / the new job, / the move.'): a new job the reader is starting. Use the same kind of article for all three items. End with a comma only if your sentence has one here: none when the next line starts with a word like 'or'.
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "OEiIDV"
+msgid "the new job,"
+msgstr "the new job,"
+
+#. Home page headline, line 4 of 4 ('Get ready for / the exam, / the new job, / the move.'): a move to another city or country. Use the same kind of article for all three items. If your language needs a word like 'or' before the last item of a list, start this line with it. End with a period.
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "FnBQq0"
+msgid "the move."
+msgstr "the move."
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "jhSF6u"
+msgid "Tell us your goal. Zoonk teaches you with lessons, practice and reviews, planned for every day until your date."
+msgstr "Tell us your goal. Zoonk teaches you with lessons, practice and reviews, planned for every day until your date."
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "55wzu6"
+msgid "Free to start. No account needed."
+msgstr "Free to start. No account needed."
+
+#: src/app/[lang]/(home)/_components/home-resume.tsx
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+#: src/app/[lang]/session/page.tsx
+msgctxt "hnntJl"
+msgid "Today's session"
+msgstr "Today's session"
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "bEnNSN"
+msgid "Calm or playful. Same plan."
+msgstr "Calm or playful. Same plan."
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "-rDjS_"
+msgid "Pick the look that keeps you going. Your lessons, plan and progress are the same in both, and you can switch any time."
+msgstr "Pick the look that keeps you going. Your lessons, plan and progress are the same in both, and you can switch any time."
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "hsJlm7"
+msgid "Focus"
+msgstr "Focus"
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "uhCfm8"
+msgid "Fun"
+msgstr "Fun"
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "B1qdQI"
+msgid "Just the lesson and your progress on a quiet screen, so nothing pulls your attention away."
+msgstr "Just the lesson and your progress on a quiet screen, so nothing pulls your attention away."
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "d54rpo"
+msgid "Calm and simple"
+msgstr "Calm and simple"
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "HPy249"
+msgid "Your plan becomes a space voyage to your goal. A buddy comes along, daily missions keep you going, and you earn rewards as you learn."
+msgstr "Your plan becomes a space voyage to your goal. A buddy comes along, daily missions keep you going, and you earn rewards as you learn."
+
+#: src/app/[lang]/(home)/_components/modes-section.tsx
+msgctxt "9dx1wK"
+msgid "Learning that feels like a game"
+msgstr "Learning that feels like a game"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "M4HoSk"
+msgid "An example plan"
+msgstr "An example plan"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+#: src/app/[lang]/start/[goalId]/page.tsx
+msgctxt "ChuNUI"
+msgid "Your plan"
+msgstr "Your plan"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "CNEmne"
+msgid "{move, select, london {Speak English for my move to London} other {Speak Spanish for my move to Madrid}}"
+msgstr "{move, select, london {Speak English for my move to London} other {Speak Spanish for my move to Madrid}}"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "QXS2lR"
+msgid "Moving {date}"
+msgstr "Moving {date}"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "slbnQq"
+msgid "20 min a day"
+msgstr "20 min a day"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "zNCyo3"
+msgid "2 units skipped"
+msgstr "2 units skipped"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "RlnWPa"
+msgid "Greetings, numbers, simple questions"
+msgstr "Greetings, numbers, simple questions"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "wouTdw"
+msgid "The basics"
+msgstr "The basics"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "Yx9PZo"
+msgid "Skipped after placement"
+msgstr "Skipped after placement"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "gkBhm8"
+msgid "Airport, metro, finding an apartment"
+msgstr "Airport, metro, finding an apartment"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "-rrrsr"
+msgid "Arriving <muted>· now</muted>"
+msgstr "Arriving <muted>· now</muted>"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "txl9kr"
+msgid "Today · 20 min ready"
+msgstr "Today · 20 min ready"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "3z-urx"
+msgid "Meetings, email, small talk"
+msgstr "Meetings, email, small talk"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "YfVzE-"
+msgid "At work"
+msgstr "At work"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "7HK3eq"
+msgid "Bank, doctor, neighbors"
+msgstr "Bank, doctor, neighbors"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "laR93q"
+msgid "Daily life"
+msgstr "Daily life"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+msgctxt "x-cZg1"
+msgid "Moving day"
+msgstr "Moving day"
+
+#: src/app/[lang]/(home)/_components/plan-preview.tsx
+msgctxt "YP0z6W"
+msgid "{move, select, london {London} other {Madrid}}"
+msgstr "{move, select, london {London} other {Madrid}}"
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "bIHSkq"
+msgid "Practice shaped by your goal"
+msgstr "Practice shaped by your goal"
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "aEpsFz"
+msgid "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day."
+msgstr "An exam gets questions in its format. A new job gets problems from real work. A move gets the conversations you'll have day to day."
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "uqb48T"
+msgid "A plan to exam day, questions in the real format and mock exams in real conditions."
+msgstr "A plan to exam day, questions in the real format and mock exams in real conditions."
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "fMUT-U"
+msgid "Prepare for your exam"
+msgstr "Prepare for your exam"
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "cnycrL"
+msgid "Practice the skills the role asks for, on problems from real work."
+msgstr "Practice the skills the role asks for, on problems from real work."
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "q3-yKs"
+msgid "Get ready for a better job"
+msgstr "Get ready for a better job"
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "Yuuoi2"
+msgid "Practice the conversations you'll really have, with tips on how you sound."
+msgstr "Practice the conversations you'll really have, with tips on how you sound."
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "uSJ7p9"
+msgid "Speak before you move"
+msgstr "Speak before you move"
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "HpO7kn"
+msgid "Stuck on a topic? Tap Simpler. Curious? Go deeper. On any screen."
+msgstr "Stuck on a topic? Tap Simpler. Curious? Go deeper. On any screen."
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "D7lcBr"
+msgid "Keep up in class"
+msgstr "Keep up in class"
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "HTRi-N"
+msgid "Short lessons made for your goal, with numbers you can play with."
+msgstr "Short lessons made for your goal, with numbers you can play with."
+
+#: src/app/[lang]/(home)/_components/practice-section.tsx
+msgctxt "OZfvFN"
+msgid "Grow your business"
+msgstr "Grow your business"
+
+#: src/app/[lang]/(home)/_components/previews/business-preview.tsx
+msgctxt "I97-in"
+msgid "Price per cake"
+msgstr "Price per cake"
+
+#: src/app/[lang]/(home)/_components/previews/business-preview.tsx
+msgctxt "fBG_Ge"
+msgid "Cost"
+msgstr "Cost"
+
+#: src/app/[lang]/(home)/_components/previews/business-preview.tsx
+msgctxt "cfXBlH"
+msgid "You keep"
+msgstr "You keep"
+
+#: src/app/[lang]/(home)/_components/previews/business-preview.tsx
+msgctxt "QJeUk5"
+msgid "{amount} a cake"
+msgstr "{amount} a cake"
+
+#: src/app/[lang]/(home)/_components/previews/business-preview.tsx
+msgctxt "ixBS6r"
+msgid "{cakes} cakes a week: <b>{amount}</b> for you"
+msgstr "{cakes} cakes a week: <b>{amount}</b> for you"
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "_ZDXg3"
+msgid "It's the <b>slope</b> of the line that just touches the curve at that point."
+msgstr "It's the <b>slope</b> of the line that just touches the curve at that point."
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "Os2U8v"
+msgid "A derivative is <b>how fast</b> something changes at one moment."
+msgstr "A derivative is <b>how fast</b> something changes at one moment."
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "JzIwuN"
+msgid "Think of a speedometer: it shows <b>how fast</b> you're going right now."
+msgstr "Think of a speedometer: it shows <b>how fast</b> you're going right now."
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "_m48x4"
+msgid "right now"
+msgstr "right now"
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+#: src/app/[lang]/(home)/_components/previews/depth-chips.tsx
+msgctxt "6vRhWR"
+msgid "Simpler"
+msgstr "Simpler"
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+#: src/app/[lang]/(home)/_components/previews/depth-chips.tsx
+msgctxt "pfRO-j"
+msgid "Go deeper"
+msgstr "Go deeper"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "5vUSgc"
+msgid "SAT style · Math"
+msgstr "SAT style · Math"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "3zjIdG"
+msgid "A price goes up <b>20%</b>, then down <b>20%</b>. What percent of the original price is it now?"
+msgstr "A price goes up <b>20%</b>, then down <b>20%</b>. What percent of the original price is it now?"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "5yIQRq"
+msgid "80%"
+msgstr "80%"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "IY6g4Z"
+msgid "96%"
+msgstr "96%"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "8ZVfG8"
+msgid "100%"
+msgstr "100%"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "8gI0Ns"
+msgid "<b>Not quite. The 20% off comes from the higher price:</b> 1.2 × 0.8 = 0.96."
+msgstr "<b>Not quite. The 20% off comes from the higher price:</b> 1.2 × 0.8 = 0.96."
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "mJR06P"
+msgid "Sunday"
+msgstr "Sunday"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "OsH_hN"
+msgid "Mock exam, timed like the real one"
+msgstr "Mock exam, timed like the real one"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "onvyDn"
+msgid "Full length"
+msgstr "Full length"
+
+#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
+msgctxt "Synugh"
+msgid "Back as practice Friday"
+msgstr "Back as practice Friday"
+
+#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
+msgctxt "9lorEO"
+msgid "Percentages and discounts"
+msgstr "Percentages and discounts"
+
+#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
+msgctxt "sq8t1s"
+msgid "before"
+msgstr "before"
+
+#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "rwlYwj"
+msgid "−25%"
+msgstr "−25%"
+
+#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
+msgctxt "T3BalS"
+msgid "you pay"
+msgstr "you pay"
+
+#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "KWQbwh"
+msgid "A discount is part of the price"
+msgstr "A discount is part of the price"
+
+#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "ceO8ai"
+msgid "A T-shirt costs <b>{before}</b> and is 25% off. You don't pay 25%. You pay the rest: <b>75%</b>."
+msgstr "A T-shirt costs <b>{before}</b> and is 25% off. You don't pay 25%. You pay the rest: <b>75%</b>."
+
+#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
+msgctxt "BLplp_"
+msgid "75% of 80 = 0.75 × 80 = <b>{after}</b>."
+msgstr "75% of 80 = 0.75 × 80 = <b>{after}</b>."
+
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "4r25rd"
+msgid "was <old>{before}</old>, now"
+msgstr "was <old>{before}</old>, now"
+
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "YgbapR"
+msgid "you pay 75%"
+msgstr "you pay 75%"
+
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "wwspdF"
+msgid "x3"
+msgstr "x3"
+
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "Fv88mR"
+msgid "Look how clever this is:"
+msgstr "Look how clever this is:"
+
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "5a_385"
+msgid "0.75 × 80"
+msgstr "0.75 × 80"
+
+#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
+msgctxt "i0NKi_"
+msgid "= {after}"
+msgstr "= {after}"
+
+#: src/app/[lang]/(home)/_components/previews/job-preview.tsx
+msgctxt "gX3gLf"
+msgid "North"
+msgstr "North"
+
+#: src/app/[lang]/(home)/_components/previews/job-preview.tsx
+msgctxt "GQoFr3"
+msgid "South"
+msgstr "South"
+
+#: src/app/[lang]/(home)/_components/previews/job-preview.tsx
+msgctxt "IcTDzP"
+msgid "West"
+msgstr "West"
+
+#: src/app/[lang]/(home)/_components/previews/job-preview.tsx
+msgctxt "xY0kqD"
+msgid "Which region sold the most?"
+msgstr "Which region sold the most?"
+
+#: src/app/[lang]/(home)/_components/previews/job-preview.tsx
+msgctxt "w8BVIs"
+msgid "It works. 3 rows"
+msgstr "It works. 3 rows"
+
+#: src/app/[lang]/(home)/_components/previews/language-preview.tsx
+msgctxt "9Da2rt"
+msgid "Say it out loud"
+msgstr "Say it out loud"
+
+#: src/app/[lang]/(home)/_components/previews/language-preview.tsx
+msgctxt "-ImamJ"
+msgid "Can I see the apartment on Saturday?"
+msgstr "Can I see the apartment on Saturday?"
+
+#: src/app/[lang]/(home)/_components/previews/language-preview.tsx
+msgctxt "wXawda"
+msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
+msgstr "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
+
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+msgctxt "-_aAz-"
+msgid "What you remember"
+msgstr "What you remember"
+
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Review"
+
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+msgctxt "XGOJGX"
+msgid "With reviews"
+msgstr "With reviews"
+
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+msgctxt "xRkUEP"
+msgid "Without"
+msgstr "Without"
+
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+msgctxt "xxdQSn"
+msgid "5 turn into practice on Friday"
+msgstr "5 turn into practice on Friday"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "nP86cx"
+msgid "Small talk at work"
+msgstr "Small talk at work"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "kIErlM"
+msgid "Needs practice"
+msgstr "Needs practice"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "Jp5b0b"
+msgid "Phone calls"
+msgstr "Phone calls"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "BkpBqH"
+msgid "Learning"
+msgstr "Learning"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "U19pXB"
+msgid "Bank and paperwork"
+msgstr "Bank and paperwork"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "bW7B87"
+msgid "New"
+msgstr "New"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "9BUg6j"
+msgid "{move, select, london {London preparation} other {Madrid preparation}}"
+msgstr "{move, select, london {London preparation} other {Madrid preparation}}"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "YrlijT"
+msgid "34%"
+msgstr "34%"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "KjIGuD"
+msgid "36%"
+msgstr "36%"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "1tiJiI"
+msgid "Still needed"
+msgstr "Still needed"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "cTvbeT"
+msgid "Plan updated"
+msgstr "Plan updated"
+
+#: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
+msgctxt "cBZN5B"
+msgid "Added the past tense. Phone calls need it."
+msgstr "Added the past tense. Phone calls need it."
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "cuJRR6"
+msgid "4 of 20 min"
+msgstr "4 of 20 min"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "dsTPvH"
+msgid "8 cards"
+msgstr "8 cards"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "3Zf60d"
+msgid "4 min"
+msgstr "4 min"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "fqtVVy"
+msgid "Quick review"
+msgstr "Quick review"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "XfDXBj"
+msgid "Lesson + 6 questions"
+msgstr "Lesson + 6 questions"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "mYuqsz"
+msgid "7 min"
+msgstr "7 min"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "PrA5f8"
+msgid "Calling about an apartment"
+msgstr "Calling about an apartment"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "JNotbo"
+msgid "Pronunciation tips"
+msgstr "Pronunciation tips"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "TVHUbn"
+msgid "5 min"
+msgstr "5 min"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "cWODHp"
+msgid "Speaking: leave a voicemail"
+msgstr "Speaking: leave a voicemail"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "l2uAYh"
+msgid "3 to practice"
+msgstr "3 to practice"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "M5364P"
+msgid "Tuesday's mistakes"
+msgstr "Tuesday's mistakes"
+
+#: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continue"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "B0mHh3"
+msgid "A buddy you feed by learning"
+msgstr "A buddy you feed by learning"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "F01nWn"
+msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
+msgstr "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "Today's missions"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "nrn81I"
+msgid "2 of 3"
+msgstr "2 of 3"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "egXToe"
+msgid "Something new"
+msgstr "Something new"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "MJ_uxr"
+msgid "Fix a mistake"
+msgstr "Fix a mistake"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "PTRDSP"
+msgid "Pick {zu}, {noodle}, {beep} or {otto}"
+msgstr "Pick {zu}, {noodle}, {beep} or {otto}"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "WsAzWR"
+msgid "Beep"
+msgstr "Beep"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "RBRr_i"
+msgid "Noodle"
+msgstr "Noodle"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "KUIiR8"
+msgid "Otto"
+msgstr "Otto"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
+msgctxt "vPjK_E"
+msgid "Zu"
+msgstr "Zu"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "NjYD5A"
+msgid "Face the Trickster"
+msgstr "Face the Trickster"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "N_voEl"
+msgid "10 mixed questions, no hints, like exam day. Lose, and you get a rematch tomorrow."
+msgstr "10 mixed questions, no hints, like exam day. Lose, and you get a rematch tomorrow."
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "v-rSek"
+msgid "His shield"
+msgstr "His shield"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "4qr4X4"
+msgid "<b>4 right</b> · 3 to go"
+msgstr "<b>4 right</b> · 3 to go"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "KM0AhC"
+msgid "{move, select, london {English} other {Spanish}}"
+msgstr "{move, select, london {English} other {Spanish}}"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "ZnAuWi"
+msgid "Capsule"
+msgstr "Capsule"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "uId7v1"
+msgid "gold"
+msgstr "gold"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "9daE0t"
+msgid "Fading"
+msgstr "Fading"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "ntRjjB"
+msgid "Remembered"
+msgstr "Remembered"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "8iIDLx"
+msgid "Cards that turn gold"
+msgstr "Cards that turn gold"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
+msgctxt "a86o7U"
+msgid "A time capsule brings a card back before it fades. Remember it on 3 different days and it turns gold."
+msgstr "A time capsule brings a card back before it fades. Remember it on 3 different days and it turns gold."
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "djZCU5"
+msgid "Skipped"
+msgstr "Skipped"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "mElWfu"
+msgid "You are here"
+msgstr "You are here"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "urVD1a"
+msgid "Arriving"
+msgstr "Arriving"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "Dt17jZ"
+msgid "{move, select, london {The route to London} other {The route to Madrid}}"
+msgstr "{move, select, london {The route to London} other {The route to Madrid}}"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "3My--Z"
+msgid "Each phase is a moon, and a boss waits at the end of it."
+msgstr "Each phase is a moon, and a boss waits at the end of it."
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "snox3X"
+msgid "{move, select, london {London · {date}} other {Madrid · {date}}}"
+msgstr "{move, select, london {London · {date}} other {Madrid · {date}}}"
+
+#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
+msgctxt "EPzxuV"
+msgid "Boss · {date}"
+msgstr "Boss · {date}"
+
+#: src/app/[lang]/(home)/page.tsx
+msgctxt "bzsKpM"
+msgid "Write your goal in your own words. Zoonk plans every day until your date, with lessons, reviews and practice shaped by your goal. Free to start."
+msgstr "Write your goal in your own words. Zoonk plans every day until your date, with lessons, reviews and practice shaped by your goal. Free to start."
+
+#: src/app/[lang]/(home)/page.tsx
+msgctxt "w9VlUG"
+msgid "Zoonk: Get ready for your exam, new job or move"
+msgstr "Zoonk: Get ready for your exam, new job or move"
+
+#: src/app/[lang]/(learn)/_components/learn-no-goal.tsx
+msgctxt "l5SUmq"
+msgid "Start with a goal"
+msgstr "Start with a goal"
+
+#: src/app/[lang]/(learn)/_components/learn-no-goal.tsx
+msgctxt "FqgLH3"
+msgid "Tell us what you want to learn, and we'll plan every day until you get there."
+msgstr "Tell us what you want to learn, and we'll plan every day until you get there."
+
+#: src/app/[lang]/(learn)/_components/learn-no-goal.tsx
+msgctxt "hJ3NNi"
+msgid "Set a goal"
+msgstr "Set a goal"
+
+#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/page.tsx
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Activity"
 
-#: src/app/[lang]/(progress)/_components/metric-pills.tsx
-#: src/app/[lang]/(progress)/patterns/page.tsx
+#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
+#: src/app/[lang]/(learn)/(stats)/score/page.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Score"
+
+#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/page.tsx
 msgctxt "BCauSf"
 msgid "Patterns"
 msgstr "Patterns"
 
-#: src/app/[lang]/(progress)/_components/progress-empty-state.tsx
+#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
+#: src/app/[lang]/(learn)/(stats)/level/page.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Level"
+
+#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/page.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energy"
+
+#: src/app/[lang]/(learn)/(stats)/_components/progress-empty-state.tsx
 msgctxt "FVh2Tr"
 msgid "Start learning to track your progress"
 msgstr "Start learning to track your progress"
 
-#: src/app/[lang]/(progress)/_components/progress-empty-state.tsx
+#: src/app/[lang]/(learn)/(stats)/_components/progress-empty-state.tsx
 msgctxt "Y1zzQt"
 msgid "Log in to track your progress"
 msgstr "Log in to track your progress"
 
-#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/_components/progress-navbar.tsx
+msgctxt "QbGIBZ"
+msgid "Your stats"
+msgstr "Your stats"
+
+#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
 msgctxt "yK5WcZ"
 msgid "{count, plural, =0 {# lesson completions on {date}} one {# lesson completion on {date}} other {# lesson completions on {date}}}"
 msgstr "{count, plural, =0 {# lesson completions on {date}} one {# lesson completion on {date}} other {# lesson completions on {date}}}"
 
-#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
 msgctxt "AfqNLd"
 msgid "Learning activity"
 msgstr "Learning activity"
 
-#: src/app/[lang]/(progress)/activity/activity-chart.tsx
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "o0vS8L"
 msgid "Past 12 months"
 msgstr "Past 12 months"
 
-#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
 msgctxt "mU3mx4"
 msgid "Lesson activity intensity from less to more"
 msgstr "Lesson activity intensity from less to more"
 
-#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
 msgctxt "mFYgAX"
 msgid "Less"
 msgstr "Less"
 
-#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "More"
 
-#: src/app/[lang]/(progress)/activity/activity-stats.tsx
-#: src/components/progress/completed-lessons-card.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/activity-stats.tsx
 msgctxt "JhwQKn"
 msgid "Lessons completed"
 msgstr "Lessons completed"
 
-#: src/app/[lang]/(progress)/activity/page.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/page.tsx
 msgctxt "ONB1Ju"
 msgid "Track your completed lessons, learning days, and learning time."
 msgstr "Track your completed lessons, learning days, and learning time."
 
-#: src/app/[lang]/(progress)/activity/page.tsx
+#: src/app/[lang]/(learn)/(stats)/activity/page.tsx
 msgctxt "mjwoLD"
 msgid "See your learning activity over time"
 msgstr "See your learning activity over time"
 
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "1cw6GI"
 msgid "No Energy recorded on {date}"
 msgstr "No Energy recorded on {date}"
 
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "FpslmD"
 msgid "Max Energy on {date}"
 msgstr "Max Energy on {date}"
 
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "GThwd0"
 msgid "{percentage} Energy on {date}"
 msgstr "{percentage} Energy on {date}"
 
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "TfctoK"
 msgid "Energy history"
 msgstr "Energy history"
 
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "jPmToJ"
 msgid "Energy intensity from low to high"
 msgstr "Energy intensity from low to high"
 
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "477I0g"
 msgid "Low"
 msgstr "Low"
 
-#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
 msgctxt "AxMhQr"
 msgid "High"
 msgstr "High"
 
-#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
 msgctxt "b6XNAX"
 msgid "How do I increase my Energy?"
 msgstr "How do I increase my Energy?"
 
-#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
 msgctxt "65k5kc"
 msgid "Complete lessons and answer questions correctly to increase your Energy."
 msgstr "Complete lessons and answer questions correctly to increase your Energy."
 
-#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
 msgctxt "IDCKRi"
 msgid "Missed a day?"
 msgstr "Missed a day?"
 
-#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
 msgctxt "tKCMUI"
 msgid "Your Energy drops a little. Complete lessons to fill it back up."
 msgstr "Your Energy drops a little. Complete lessons to fill it back up."
 
-#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
 msgctxt "-8Qx8X"
 msgid "Why is Energy important?"
 msgstr "Why is Energy important?"
 
-#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
 msgctxt "0-k3_3"
 msgid "Energy rewards consistency. Learning regularly helps reinforce what you learn."
 msgstr "Energy rewards consistency. Learning regularly helps reinforce what you learn."
 
-#: src/app/[lang]/(progress)/energy/energy-insights.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-insights.tsx
 msgctxt "-1YhhW"
 msgid "Days at Max Energy"
 msgstr "Days at Max Energy"
 
-#: src/app/[lang]/(progress)/energy/energy-insights.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-insights.tsx
 msgctxt "F9mA1x"
 msgid "Average Energy"
 msgstr "Average Energy"
 
-#: src/app/[lang]/(progress)/energy/energy-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/energy-stats.tsx
 msgctxt "jZpK89"
 msgid "Your Energy"
 msgstr "Your Energy"
 
-#: src/app/[lang]/(progress)/energy/page.tsx
+#: src/app/[lang]/(learn)/(stats)/energy/page.tsx
 msgctxt "ajjT8S"
 msgid "Stay at Max Energy by studying every day."
 msgstr "Stay at Max Energy by studying every day."
 
-#: src/app/[lang]/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/level/level-explanation.tsx
 msgctxt "gaXaWV"
 msgid "How levels work"
 msgstr "How levels work"
 
-#: src/app/[lang]/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/level/level-explanation.tsx
 msgctxt "Ekt8hM"
 msgid "Complete lessons to earn {brainPower} BP. Brain Power never goes down, so every lesson moves you closer to the next level."
 msgstr "Complete lessons to earn {brainPower} BP. Brain Power never goes down, so every lesson moves you closer to the next level."
 
-#: src/app/[lang]/(progress)/level/level-progression.tsx
-msgctxt "n_mgOm"
-msgid "Belt Progression"
-msgstr "Belt Progression"
+#: src/app/[lang]/(learn)/(stats)/level/level-progression.tsx
+msgctxt "3DtX17"
+msgid "Belt progression"
+msgstr "Belt progression"
 
-#: src/app/[lang]/(progress)/level/level-stats.tsx
-msgctxt "TeeyjQ"
-msgid "{belt} · Level {level}"
-msgstr "{belt} · Level {level}"
+#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
+msgctxt "Ugl3yi"
+msgid "{belt} · level {level}"
+msgstr "{belt} · level {level}"
 
-#: src/app/[lang]/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
+msgctxt "pgt3eW"
+msgid "Max level reached"
+msgstr "Max level reached"
+
+#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
+msgctxt "8N9BRu"
+msgid "{value} BP to next level"
+msgstr "{value} BP to next level"
+
+#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
 msgctxt "U78NhE"
 msgid "Complete"
 msgstr "Complete"
 
-#: src/app/[lang]/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
 msgctxt "fRknQ6"
 msgid "{current} of {total} BP"
 msgstr "{current} of {total} BP"
 
-#: src/app/[lang]/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
 msgctxt "v5yNm3"
 msgid "Total Brain Power"
 msgstr "Total Brain Power"
 
-#: src/app/[lang]/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
 msgctxt "XdkaHc"
 msgid "{value} BP"
 msgstr "{value} BP"
 
-#: src/app/[lang]/(progress)/level/page.tsx
+#: src/app/[lang]/(learn)/(stats)/level/page.tsx
 msgctxt "uZploX"
 msgid "See your current level and what comes next."
 msgstr "See your current level and what comes next."
 
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
-#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
+msgctxt "00_IyC"
+msgid "Night"
+msgstr "Night"
+
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
+msgctxt "_kzk_m"
+msgid "Morning"
+msgstr "Morning"
+
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
+msgctxt "mF-J9o"
+msgid "Afternoon"
+msgstr "Afternoon"
+
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
+msgctxt "mPEpnN"
+msgid "Evening"
+msgstr "Evening"
+
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
 msgctxt "q9WSEF"
 msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, one {# answer} other {# answers}}"
 
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
 msgctxt "pafDXI"
 msgid "No answers"
 msgstr "No answers"
 
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
 msgctxt "g0f6D5"
 msgid "Throughout the day"
 msgstr "Throughout the day"
 
-#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
 msgctxt "T2RcYA"
 msgid "Accuracy by time of day over the past 90 days"
 msgstr "Accuracy by time of day over the past 90 days"
 
-#: src/app/[lang]/(progress)/patterns/page.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
 msgid "See when you perform best over the past 90 days."
 msgstr "See when you perform best over the past 90 days."
 
-#: src/app/[lang]/(progress)/patterns/page.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/page.tsx
 msgctxt "RKvjug"
 msgid "See when you perform best"
 msgstr "See when you perform best"
 
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
 msgctxt "CQLx_3"
 msgid "{day}: {score} across {count, plural, one {# answer} other {# answers}}"
 msgstr "{day}: {score} across {count, plural, one {# answer} other {# answers}}"
 
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
 msgctxt "YSFJk-"
 msgid "{day}: No answers"
 msgstr "{day}: No answers"
 
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
 msgctxt "u8s7op"
 msgid "You do better {weekday, select, sunday {on Sundays} monday {on Mondays} tuesday {on Tuesdays} wednesday {on Wednesdays} thursday {on Thursdays} friday {on Fridays} saturday {on Saturdays} other {on your best weekday}}"
 msgstr "You do better {weekday, select, sunday {on Sundays} monday {on Mondays} tuesday {on Tuesdays} wednesday {on Wednesdays} thursday {on Thursdays} friday {on Fridays} saturday {on Saturdays} other {on your best weekday}}"
 
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
 msgctxt "CW-JJR"
 msgid "{day} performance"
 msgstr "{day} performance"
 
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
-#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
 msgctxt "i2_Jga"
 msgid "{score} across {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} across {count, plural, one {# answer} other {# answers}}"
 
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
 msgctxt "9SzqD3"
 msgid "Weekly rhythm"
 msgstr "Weekly rhythm"
 
-#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
 msgctxt "gTx9DY"
 msgid "Accuracy by weekday over the past 90 days"
 msgstr "Accuracy by weekday over the past 90 days"
 
-#: src/app/[lang]/(progress)/score/page.tsx
+#: src/app/[lang]/(learn)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "See your answer accuracy and weekly trend over the past 90 days."
 
-#: src/app/[lang]/(progress)/score/page.tsx
+#: src/app/[lang]/(learn)/(stats)/score/page.tsx
 msgctxt "jmWl8S"
 msgid "See how accurately you answer questions"
 msgstr "See how accurately you answer questions"
 
-#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
 msgstr "Weekly score trend"
 
-#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
 msgctxt "22eTjk"
 msgid "Weekly score"
 msgstr "Weekly score"
 
-#: src/app/[lang]/(progress)/score/score-chart-client.tsx
-#: src/app/[lang]/(progress)/score/score-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-stats.tsx
 msgctxt "ZOWtIg"
 msgid "Past 90 days"
 msgstr "Past 90 days"
 
-#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
 msgctxt "l-oCrn"
 msgid "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
 msgstr "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
 
-#: src/app/[lang]/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-explanation.tsx
 msgctxt "bIZaXJ"
 msgid "What is Score?"
 msgstr "What is Score?"
 
-#: src/app/[lang]/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-explanation.tsx
 msgctxt "TiNLLD"
 msgid "Score is the percentage of questions you answered correctly over the past 90 days. Every answer counts equally, so harder lessons can lower your Score for a while. That’s part of learning."
 msgstr "Score is the percentage of questions you answered correctly over the past 90 days. Every answer counts equally, so harder lessons can lower your Score for a while. That’s part of learning."
 
-#: src/app/[lang]/(progress)/score/score-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-stats.tsx
 msgctxt "b-bOob"
 msgid "Score summary"
 msgstr "Score summary"
 
-#: src/app/[lang]/(progress)/score/score-stats.tsx
+#: src/app/[lang]/(learn)/(stats)/score/score-stats.tsx
 msgctxt "WCq9Lo"
 msgid "{correct} of {total, plural, one {# answer} other {# answers}} correct"
 msgstr "{correct} of {total, plural, one {# answer} other {# answers}} correct"
+
+#: src/app/[lang]/(learn)/content/chapters/[chapterId]/page.tsx
+msgctxt "dOgCSN"
+msgid "Chapter"
+msgstr "Chapter"
+
+#: src/app/[lang]/(learn)/content/map/page.tsx
+msgctxt "xPZR26"
+msgid "Map of your subject"
+msgstr "Map of your subject"
+
+#: src/app/[lang]/(learn)/content/units/[chapterId]/page.tsx
+msgctxt "xkB-8Z"
+msgid "Unit"
+msgstr "Unit"
+
+#: src/app/[lang]/(learn)/exam/page.tsx
+msgctxt "9HjIgh"
+msgid "Your exam"
+msgstr "Your exam"
+
+#: src/app/[lang]/(learn)/mistakes/practice/page.tsx
+msgctxt "HGnX5e"
+msgid "Practice mistakes"
+msgstr "Practice mistakes"
+
+#: src/app/[lang]/(learn)/plan/test-out/[chapterId]/page.tsx
+msgctxt "5-s6we"
+msgid "Test out of a chapter"
+msgstr "Test out of a chapter"
+
+#: src/app/[lang]/(learn)/plan/test-out/[chapterId]/page.tsx
+msgctxt "KGN7UU"
+msgid "This chapter"
+msgstr "This chapter"
+
+#: src/app/[lang]/(learn)/today/page.tsx
+msgctxt "-OmCxv"
+msgid "This goal is on pause"
+msgstr "This goal is on pause"
+
+#: src/app/[lang]/(learn)/today/page.tsx
+msgctxt "X6UPs-"
+msgid "Nothing is planned for it today. Pick another goal above, or start a new one."
+msgstr "Nothing is planned for it today. Pick another goal above, or start a new one."
+
+#: src/app/[lang]/(learn)/today/page.tsx
+msgctxt "QTg-WT"
+msgid "Start a new goal"
+msgstr "Start a new goal"
+
+#: src/app/[lang]/(learn)/today/page.tsx
+msgctxt "UKxoV8"
+msgid "Welcome back"
+msgstr "Welcome back"
 
 #: src/app/[lang]/(settings)/_components/protected-section.tsx
 msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "You need to be logged in to access this page."
+
+#: src/app/[lang]/(settings)/_components/settings-navbar.tsx
+msgctxt "D3idYv"
+msgid "Settings"
+msgstr "Settings"
+
+#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+#: src/app/[lang]/(settings)/settings/guardian/page.tsx
+msgctxt "poUf8i"
+msgid "Guardian"
+msgstr "Guardian"
 
 #: src/app/[lang]/(settings)/language/page.tsx
 msgctxt "2WHx14"
@@ -1410,10 +1719,80 @@ msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
 msgstr "Choose the app language you prefer for this device."
 
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "Bq4K5C"
+msgid "For your safety, sign in again, then delete your account."
+msgstr "For your safety, sign in again, then delete your account."
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "scfgdM"
+msgid "Sign in again"
+msgstr "Sign in again"
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "OR6zpA"
+msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
+msgstr "We couldn't delete your account. Try again or email hello@zoonk.com."
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "wyxJrL"
+msgid "Delete account"
+msgstr "Delete account"
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "1hzzRD"
+msgid "Deletes your account and everything in it for good: goals, plans, progress, memory, feedback and uploads. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
+msgstr "Deletes your account and everything in it for good: goals, plans, progress, memory, feedback and uploads. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "TcCxtt"
+msgid "Delete your account?"
+msgstr "Delete your account?"
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "hL_UdI"
+msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
+msgstr "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "Delete my account"
+
+#: src/app/[lang]/(settings)/profile/export-data-button.tsx
+msgctxt "cQNx6-"
+msgid "Preparing your data…"
+msgstr "Preparing your data…"
+
+#: src/app/[lang]/(settings)/profile/export-data-button.tsx
+msgctxt "RcXC-q"
+msgid "Download my data"
+msgstr "Download my data"
+
+#: src/app/[lang]/(settings)/profile/export-data-button.tsx
+msgctxt "owirfw"
+msgid "We couldn't prepare the download. Try again."
+msgstr "We couldn't prepare the download. Try again."
+
 #: src/app/[lang]/(settings)/profile/page.tsx
 msgctxt "dSVD13"
 msgid "Update your name and username on Zoonk."
 msgstr "Update your name and username on Zoonk."
+
+#: src/app/[lang]/(settings)/profile/page.tsx
+msgctxt "ZTyMjO"
+msgid "Your data"
+msgstr "Your data"
+
+#: src/app/[lang]/(settings)/profile/page.tsx
+msgctxt "W5Vre9"
+msgid "Download everything Zoonk keeps about you: your profile, goals and plans, progress, answers, memory and feedback."
+msgstr "Download everything Zoonk keeps about you: your profile, goals and plans, progress, answers, memory and feedback."
 
 #: src/app/[lang]/(settings)/profile/page.tsx
 msgctxt "wjIStY"
@@ -1421,9 +1800,9 @@ msgid "Your name and username as they appear to others."
 msgstr "Your name and username as they appear to others."
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
-msgctxt "1SvspN"
-msgid "Checking..."
-msgstr "Checking..."
+msgctxt "PfxzLv"
+msgid "Checking…"
+msgstr "Checking…"
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "9N4_rz"
@@ -1470,25 +1849,186 @@ msgctxt "X0ha1a"
 msgid "Save changes"
 msgstr "Save changes"
 
-#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
-msgctxt "1qALXt"
-msgid "{amount} billed yearly"
-msgstr "{amount} billed yearly"
+#: src/app/[lang]/(settings)/settings/appearance/page.tsx
+msgctxt "jFuLnX"
+msgid "Choose Focus or Fun, your buddy, sounds, how deep lessons go and a daily time limit."
+msgstr "Choose Focus or Fun, your buddy, sounds, how deep lessons go and a daily time limit."
 
-#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
-msgctxt "g_N8_Z"
-msgid "From <original>{originalAmount}</original> to <discounted>{discountedAmount}</discounted> per year"
-msgstr "From <original>{originalAmount}</original> to <discounted>{discountedAmount}</discounted> per year"
+#: src/app/[lang]/(settings)/settings/appearance/page.tsx
+msgctxt "gNVz4b"
+msgid "The same plan and lessons in the look you like."
+msgstr "The same plan and lessons in the look you like."
 
-#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
-msgctxt "Rw82_V"
-msgid "per month"
-msgstr "per month"
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "rdZ1RR"
+msgid "Enter your guardian's email address, not yours."
+msgstr "Enter your guardian's email address, not yours."
 
-#: src/app/[lang]/(settings)/subscription/billing-price-summary.tsx
-msgctxt "Lxn0Fm"
-msgid "Price shown at checkout"
-msgstr "Price shown at checkout"
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "_1kNlx"
+msgid "You've sent a few invites today. Try again tomorrow."
+msgstr "You've sent a few invites today. Try again tomorrow."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "P2CfYa"
+msgid "We couldn't send the invite. Try again."
+msgstr "We couldn't send the invite. Try again."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "7AjVf6"
+msgid "Invite another guardian"
+msgstr "Invite another guardian"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "ApmdzQ"
+msgid "Your guardian's email"
+msgstr "Your guardian's email"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "9hMKDz"
+msgid "parent@example.com"
+msgstr "parent@example.com"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "pAt8ra"
+msgid "Invite sent. It works for 7 days."
+msgstr "Invite sent. It works for 7 days."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "c6fa4a"
+msgid "They get an email to accept. You can cancel the invite until then."
+msgstr "They get an email to accept. You can cancel the invite until then."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
+msgctxt "oBB4L4"
+msgid "Send invite"
+msgstr "Send invite"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "fgnw9j"
+msgid "No daily time limit"
+msgstr "No daily time limit"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "Xvc3GB"
+msgid "Daily limit: {minutes} min"
+msgstr "Daily limit: {minutes} min"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "cYLBm9"
+msgid "Plus approved"
+msgstr "Plus approved"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "Lz_jJl"
+msgid "Only your guardian can end this link."
+msgstr "Only your guardian can end this link."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "PLh2YP"
+msgid "Waiting for them to accept. The invite works until {date}."
+msgstr "Waiting for them to accept. The invite works until {date}."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "m0ccCu"
+msgid "Waiting for them to accept."
+msgstr "Waiting for them to accept."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "sCc3aL"
+msgid "Cancel invite"
+msgstr "Cancel invite"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "eKZ1rH"
+msgid "We couldn't cancel the invite. Try again."
+msgstr "We couldn't cancel the invite. Try again."
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "e5WSCR"
+msgid "Invite sent"
+msgstr "Invite sent"
+
+#: src/app/[lang]/(settings)/settings/guardian/page.tsx
+msgctxt "06YYVy"
+msgid "Invite a parent or guardian to see your week, set a daily limit and approve Plus."
+msgstr "Invite a parent or guardian to see your week, set a daily limit and approve Plus."
+
+#: src/app/[lang]/(settings)/settings/guardian/page.tsx
+msgctxt "-1JR11"
+msgid "Create an account to invite a guardian."
+msgstr "Create an account to invite a guardian."
+
+#: src/app/[lang]/(settings)/settings/guardian/page.tsx
+msgctxt "0vL5u1"
+msgid "Create an account"
+msgstr "Create an account"
+
+#: src/app/[lang]/(settings)/settings/guardian/page.tsx
+msgctxt "Pw2Cov"
+msgid "Guardian links are for learners under 18."
+msgstr "Guardian links are for learners under 18."
+
+#: src/app/[lang]/(settings)/settings/guardian/page.tsx
+msgctxt "qnuX3o"
+msgid "A parent or guardian can see your weekly activity, set a daily time limit and approve Plus."
+msgstr "A parent or guardian can see your weekly activity, set a daily time limit and approve Plus."
+
+#: src/app/[lang]/(settings)/settings/memory/page.tsx
+msgctxt "LCU3Qs"
+msgid "See, correct or delete what Zoonk remembers about you."
+msgstr "See, correct or delete what Zoonk remembers about you."
+
+#: src/app/[lang]/(settings)/settings/memory/page.tsx
+msgctxt "KTQxC5"
+msgid "What Zoonk remembers to give you examples and plans that fit your life."
+msgstr "What Zoonk remembers to give you examples and plans that fit your life."
+
+#: src/app/[lang]/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "Cancel subscription"
+
+#: src/app/[lang]/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "kjXmSN"
+msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
+msgstr "Unable to manage your subscription. Contact us at hello@zoonk.com"
+
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+msgctxt "9o8O4m"
+msgid "Your subscription will end on {date}."
+msgstr "Your subscription will end on {date}."
+
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+msgctxt "AIHGyF"
+msgid "Renews on {date}."
+msgstr "Renews on {date}."
+
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+msgctxt "vaN1qz"
+msgid "Current billing period ends on {date}."
+msgstr "Current billing period ends on {date}."
+
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
+
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+msgctxt "CrGYez"
+msgid "Subscription ending"
+msgstr "Subscription ending"
+
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+msgctxt "3a5wL8"
+msgid "Active"
+msgstr "Active"
+
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+msgctxt "oESc06"
+msgid "What's included"
+msgstr "What's included"
 
 #: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1516,253 +2056,39 @@ msgid "This subscription is managed by Zoonk. Contact support if you need help c
 msgstr "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
 
 #: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
-#: src/components/generation/generation-limit-cta.tsx
 msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "Contact support"
 
-#: src/app/[lang]/(settings)/subscription/page.tsx
-msgctxt "vhHDTm"
-msgid "Learn anything with AI. Create as many courses and take as many lessons as you want with Zoonk Plus."
-msgstr "Learn anything with AI. Create as many courses and take as many lessons as you want with Zoonk Plus."
+#: src/app/[lang]/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "bF03Os"
+msgid "Confirming your subscription"
+msgstr "Confirming your subscription"
 
-#: src/app/[lang]/(settings)/subscription/page.tsx
-msgctxt "zSNNck"
-msgid "Zoonk Plus: Unlimited courses and lessons"
-msgstr "Zoonk Plus: Unlimited courses and lessons"
+#: src/app/[lang]/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "weaUjp"
+msgid "Still confirming your subscription"
+msgstr "Still confirming your subscription"
 
-#: src/app/[lang]/(settings)/subscription/page.tsx
-msgctxt "hIdQeQ"
-msgid "Zoonk Plus"
-msgstr "Zoonk Plus"
+#: src/app/[lang]/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "7lERBM"
+msgid "Stripe is confirming your payment. It usually takes a few seconds."
+msgstr "Stripe is confirming your payment. It usually takes a few seconds."
 
-#: src/app/[lang]/(settings)/subscription/page.tsx
-msgctxt "H0FbIJ"
-msgid "Learn anything. It’s all included."
-msgstr "Learn anything. It’s all included."
+#: src/app/[lang]/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "gDgnVG"
+msgid "This is taking longer than usual. If your payment went through, Plus shows up here as soon as Stripe confirms it."
+msgstr "This is taking longer than usual. If your payment went through, Plus shows up here as soon as Stripe confirms it."
 
-#: src/app/[lang]/(settings)/subscription/page.tsx
-msgctxt "r3ly6I"
-msgid "Pass the test. Get a better job. Speak a language. Whatever you want to achieve, Plus gives you unlimited courses and lessons to help you get there."
-msgstr "Pass the test. Get a better job. Speak a language. Whatever you want to achieve, Plus gives you unlimited courses and lessons to help you get there."
+#: src/app/[lang]/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "QI17io"
+msgid "Checking with Stripe…"
+msgstr "Checking with Stripe…"
 
-#: src/app/[lang]/(settings)/subscription/page.tsx
-msgctxt "LUhQqS"
-msgid "Any subject · Unlimited courses and lessons"
-msgstr "Any subject · Unlimited courses and lessons"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "7mu984"
-msgid "a pizza"
-msgstr "a pizza"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "7zwF6P"
-msgid "a couple of beers"
-msgstr "a couple of beers"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "laL9nz"
-msgid "a toy"
-msgstr "a toy"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "-YDRpS"
-msgid "a movie ticket"
-msgstr "a movie ticket"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "7OCABC"
-msgid "a fancy coffee"
-msgstr "a fancy coffee"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "W_mEgT"
-msgid "a sad airport sandwich"
-msgstr "a sad airport sandwich"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "U4mRWb"
-msgid "a takeaway lunch"
-msgstr "a takeaway lunch"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "oFYJsq"
-msgid "a paperback"
-msgstr "a paperback"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "RrMczR"
-msgid "a houseplant"
-msgstr "a houseplant"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "VavHK6"
-msgid "a phone case"
-msgstr "a phone case"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "zou80J"
-msgid "a video game skin"
-msgstr "a video game skin"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "VPo2Kz"
-msgid "a candle you don't need"
-msgstr "a candle you don't need"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "ByGaLp"
-msgid "a forgotten subscription"
-msgstr "a forgotten subscription"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "0nJSUm"
-msgid "socks with tiny avocados"
-msgstr "socks with tiny avocados"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "hys3oO"
-msgid "a planner you'll definitely use"
-msgstr "a planner you'll definitely use"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "h9kFux"
-msgid "Save {amount} every year"
-msgstr "Save {amount} every year"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "gl_57d"
-msgid "Everything included"
-msgstr "Everything included"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "u2XWYU"
-msgid "Billing period"
-msgstr "Billing period"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "wYsv4Z"
-msgid "Monthly"
-msgstr "Monthly"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "dqD39h"
-msgid "Yearly"
-msgstr "Yearly"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "DWdUaF"
-msgid "Investing in your future is cheaper than"
-msgstr "Investing in your future is cheaper than"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "NYTy1D"
-msgid "Log in to subscribe"
-msgstr "Log in to subscribe"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-#: src/components/generation/generation-limit-cta.tsx
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "gczcC5"
-msgid "Subscribe"
-msgstr "Subscribe"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "pTtXdP"
-msgid "No per-course fees. Cancel anytime."
-msgstr "No per-course fees. Cancel anytime."
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "qQDa8p"
-msgid "Unable to start checkout. Contact us at hello@zoonk.com"
-msgstr "Unable to start checkout. Contact us at hello@zoonk.com"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "3a5wL8"
-msgid "Active"
-msgstr "Active"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "CrGYez"
-msgid "Subscription ending"
-msgstr "Subscription ending"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "gHje-q"
-msgid "Plus is active"
-msgstr "Plus is active"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "mpXxXt"
-msgid "Your access is still active"
-msgstr "Your access is still active"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "RpDCa-"
-msgid "Keep moving toward your goals with unlimited courses and lessons."
-msgstr "Keep moving toward your goals with unlimited courses and lessons."
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "UWVETE"
-msgid "Cancel subscription"
-msgstr "Cancel subscription"
-
-#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
-msgctxt "kjXmSN"
-msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
-msgstr "Unable to manage your subscription. Contact us at hello@zoonk.com"
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "9o8O4m"
-msgid "Your subscription will end on {date}."
-msgstr "Your subscription will end on {date}."
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "J9LvW5"
-msgid "Zoonk Plus benefits and pricing"
-msgstr "Zoonk Plus benefits and pricing"
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "77EecF"
-msgid "Know what to learn next"
-msgstr "Know what to learn next"
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "i8pqha"
-msgid "Tell Zoonk your goal. AI builds a clear, step-by-step course around what you need to learn."
-msgstr "Tell Zoonk your goal. AI builds a clear, step-by-step course around what you need to learn."
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "TF2txT"
-msgid "Keep learning until you get there"
-msgstr "Keep learning until you get there"
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "_IEZtT"
-msgid "Take as many courses and lessons as you need. Everything is included in one subscription."
-msgstr "Take as many courses and lessons as you need. Everything is included in one subscription."
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "m7oPjz"
-msgid "Speak a new language"
-msgstr "Speak a new language"
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "TTl6JE"
-msgid "Choose from {count, plural, one {# language} other {# languages}} and build the vocabulary, listening, grammar, and pronunciation to use it with confidence."
-msgstr "Choose from {count, plural, one {# language} other {# languages}} and build the vocabulary, listening, grammar, and pronunciation to use it with confidence."
-
-#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
-msgctxt "vaN1qz"
-msgid "Current billing period ends on {date}."
-msgstr "Current billing period ends on {date}."
+#: src/app/[lang]/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "1A8Z_l"
+msgid "Check again"
+msgstr "Check again"
 
 #: src/app/[lang]/(settings)/support/page.tsx
 #: src/app/[lang]/(settings)/support/support-content.tsx
@@ -1775,863 +2101,318 @@ msgctxt "l1XTI5"
 msgid "Follow us"
 msgstr "Follow us"
 
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgctxt "AtnLyn"
-msgid "This lesson is part of the course, but it hasn't been created yet. Create it to start learning."
-msgstr "This lesson is part of the course, but it hasn't been created yet. Create it to start learning."
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgctxt "ZzznjM"
-msgid "Create lesson"
-msgstr "Create lesson"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-#: src/app/[lang]/generate/l/[id]/generate-lesson-content.tsx
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "_N8rYN"
-msgid "Back to chapter"
-msgstr "Back to chapter"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgctxt "qmXr1f"
-msgid "This lesson is included with Plus."
-msgstr "This lesson is included with Plus."
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgctxt "4w9Y_P"
-msgid "Review unlocks after the earlier lessons in this chapter have been created."
-msgstr "Review unlocks after the earlier lessons in this chapter have been created."
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgctxt "9AOq2-"
-msgid "There are no practice questions to review yet."
-msgstr "There are no practice questions to review yet."
-
-#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-msgctxt "txNTbP"
-msgid "Creating the {title} chapter"
-msgstr "Creating the {title} chapter"
-
-#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-msgctxt "kiZUDf"
-msgid "This usually takes about a minute"
-msgstr "This usually takes about a minute"
-
-#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-msgctxt "5c2xtK"
-msgid "Taking you to your chapter..."
-msgstr "Taking you to your chapter..."
-
-#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
-msgctxt "45uo73"
-msgid "Your lessons are ready"
-msgstr "Your lessons are ready"
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "gnxL73"
-msgid "Choosing lesson types"
-msgstr "Choosing lesson types"
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "EKtClK"
-msgid "Getting started"
-msgstr "Getting started"
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "SF9AtA"
-msgid "Preparing lessons"
-msgstr "Preparing lessons"
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "L7nQzn"
-msgid "Saving your lessons"
-msgstr "Saving your lessons"
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "Sbsm52"
-msgid "Checking how each lesson should be taught..."
-msgstr "Checking how each lesson should be taught..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "0xCLwv"
-msgid "Choosing type for lesson {number}..."
-msgstr "Choosing type for lesson {number}..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "Vbn5Wz"
-msgid "Reviewing the lesson mix..."
-msgstr "Reviewing the lesson mix..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "5342HA"
-msgid "Getting started..."
-msgstr "Getting started..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "nwGJ65"
-msgid "Exploring your topic..."
-msgstr "Exploring your topic..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "VKFa_t"
-msgid "Mapping out the learning path..."
-msgstr "Mapping out the learning path..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "zQWv1_"
-msgid "Writing lesson {number}..."
-msgstr "Writing lesson {number}..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-msgctxt "HWSnYS"
-msgid "Reviewing the flow so far..."
-msgstr "Reviewing the flow so far..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "txvxwS"
-msgid "Saving your progress..."
-msgstr "Saving your progress..."
-
-#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "JUr8Er"
-msgid "Finishing up..."
-msgstr "Finishing up..."
-
-#: src/app/[lang]/generate/course/[id]/generate-course-prompt-content.tsx
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "rPgekg"
-msgid "Back home"
-msgstr "Back home"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "0o41MR"
-msgid "Taking you to your course..."
-msgstr "Taking you to your course..."
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "RMDr0s"
-msgid "Taking you to your first lesson…"
-msgstr "Taking you to your first lesson…"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "15FsdE"
-msgid "Your course is ready"
-msgstr "Your course is ready"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "4Wktrz"
-msgid "Your lesson is ready"
-msgstr "Your lesson is ready"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "u6ROZF"
-msgid "Creating the {title} course"
-msgstr "Creating the {title} course"
-
-#: src/app/[lang]/generate/course/[id]/generation-client.tsx
-msgctxt "GJKrUK"
-msgid "This usually takes about 2 minutes"
-msgstr "This usually takes about 2 minutes"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "i3JgLB"
-msgid "Categorizing your course"
-msgstr "Categorizing your course"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "WOe-OA"
-msgid "Checking for duplicates"
-msgstr "Checking for duplicates"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Gjutu-"
-msgid "Creating the cover image"
-msgstr "Creating the cover image"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "SQFyKH"
-msgid "Finding similar courses"
-msgstr "Finding similar courses"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "WZpB8D"
-msgid "Writing chapters"
-msgstr "Writing chapters"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "vEOpTk"
-msgid "Planning the introduction"
-msgstr "Planning the introduction"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "CFWOGF"
-msgid "Saving your course"
-msgstr "Saving your course"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "XPla-v"
-msgid "Preparing the introduction"
-msgstr "Preparing the introduction"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "HbhIvm"
-msgid "Writing your course description"
-msgstr "Writing your course description"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Y4F0xn"
-msgid "Writing the first lesson"
-msgstr "Writing the first lesson"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "e1myvm"
-msgid "Writing your course page"
-msgstr "Writing your course page"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "aev_pt"
-msgid "Figuring out the right categories..."
-msgstr "Figuring out the right categories..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "EKAN6s"
-msgid "Tagging your course..."
-msgstr "Tagging your course..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "JJrUOR"
-msgid "Comparing nearby courses..."
-msgstr "Comparing nearby courses..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "qFmZfG"
-msgid "Avoiding duplicate courses..."
-msgstr "Avoiding duplicate courses..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "lxBtcx"
-msgid "Designing the cover..."
-msgstr "Designing the cover..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "W8n2i3"
-msgid "Picking the right look..."
-msgstr "Picking the right look..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "At4rk1"
-msgid "Adding finishing touches..."
-msgstr "Adding finishing touches..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "NgONb4"
-msgid "Searching for matching topics..."
-msgstr "Searching for matching topics..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Auz1tl"
-msgid "Looking for alternate names..."
-msgstr "Looking for alternate names..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "Gt_VNO"
-msgid "Expanding the course search..."
-msgstr "Expanding the course search..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "AEG3Ol"
-msgid "Planning the course structure..."
-msgstr "Planning the course structure..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "OW9vMd"
-msgid "Writing chapter {number}..."
-msgstr "Writing chapter {number}..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "tXkuD8"
-msgid "Reviewing the overall flow..."
-msgstr "Reviewing the overall flow..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "8-bhNP"
-msgid "Finding the best first hook..."
-msgstr "Finding the best first hook..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "xrFhkn"
-msgid "Writing a friendly guide to the field..."
-msgstr "Writing a friendly guide to the field..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "c_e4hk"
-msgid "Keeping the first chapter easy to start..."
-msgstr "Keeping the first chapter easy to start..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "4LsE_n"
-msgid "Creating the course shell..."
-msgstr "Creating the course shell..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "3hEaI4"
-msgid "Preparing the workspace..."
-msgstr "Preparing the workspace..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "7Pw3r5"
-msgid "Saving the intro chapter..."
-msgstr "Saving the intro chapter..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "cc6_Yn"
-msgid "Preparing the first lessons..."
-msgstr "Preparing the first lessons..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "a7FJJd"
-msgid "Summarizing what you'll learn..."
-msgstr "Summarizing what you'll learn..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "9r_4zz"
-msgid "Writing the overview..."
-msgstr "Writing the overview..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "QqKzYM"
-msgid "Writing the first lesson..."
-msgstr "Writing the first lesson..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "XxRMuO"
-msgid "Adding examples and visuals..."
-msgstr "Adding examples and visuals..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "kmuvIN"
-msgid "Getting the first lesson ready..."
-msgstr "Getting the first lesson ready..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "chqN-J"
-msgid "Framing why this course is useful..."
-msgstr "Framing why this course is useful..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "twf4n2"
-msgid "Writing the course page..."
-msgstr "Writing the course page..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "k15wFf"
-msgid "Shaping the starting point..."
-msgstr "Shaping the starting point..."
-
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "WihX6L"
-msgid "Creating the {title} lesson"
-msgstr "Creating the {title} lesson"
-
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "3vY0Zu"
-msgid "This usually takes 1-2 minutes"
-msgstr "This usually takes 1-2 minutes"
-
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "T2TGxR"
-msgid "Taking you to your lesson..."
-msgstr "Taking you to your lesson..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "cVoRCh"
-msgid "Preparing options..."
-msgstr "Preparing options..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "BBwnPG"
-msgid "Adding more options..."
-msgstr "Adding more options..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "4wkMNX"
-msgid "Getting answer options ready..."
-msgstr "Getting answer options ready..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "WsjFV2"
-msgid "Preparing the word bank..."
-msgstr "Preparing the word bank..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "6xEJTk"
-msgid "Designing practice exercises..."
-msgstr "Designing practice exercises..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "6hjA6_"
-msgid "Creating examples to try..."
-msgstr "Creating examples to try..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "KddvJw"
-msgid "Writing fill-in-the-blanks..."
-msgstr "Writing fill-in-the-blanks..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "C05-tM"
-msgid "Building interactive tasks..."
-msgstr "Building interactive tasks..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "JGNN92"
-msgid "Drawing an illustration..."
-msgstr "Drawing an illustration..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "a08k7g"
-msgid "Generating the images..."
-msgstr "Generating the images..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "bJVUNz"
-msgid "Adding some color..."
-msgstr "Adding some color..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "Yoev2R"
-msgid "Refining the details..."
-msgstr "Refining the details..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "xBaVAH"
-msgid "Finishing the artwork..."
-msgstr "Finishing the artwork..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "W2b0tx"
-msgid "Designing the lesson thumbnail..."
-msgstr "Designing the lesson thumbnail..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "fRAHqN"
-msgid "Creating the lesson thumbnail..."
-msgstr "Creating the lesson thumbnail..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "elwtxf"
-msgid "Refining the lesson thumbnail..."
-msgstr "Refining the lesson thumbnail..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "uDzgwu"
-msgid "Writing example sentences..."
-msgstr "Writing example sentences..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "SHIHyL"
-msgid "Creating reading passages..."
-msgstr "Creating reading passages..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "0Zum4g"
-msgid "Putting words in context..."
-msgstr "Putting words in context..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "jixTNM"
-msgid "Building natural sentences..."
-msgstr "Building natural sentences..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "txIcop"
-msgid "Loading lesson data..."
-msgstr "Loading lesson data..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "l486Kx"
-msgid "Checking what we need..."
-msgstr "Checking what we need..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "EAqAX_"
-msgid "Thinking about what to illustrate..."
-msgstr "Thinking about what to illustrate..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "2Tovpk"
-msgid "Planning each image..."
-msgstr "Planning each image..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "sQsQbH"
-msgid "Choosing the right scenes..."
-msgstr "Choosing the right scenes..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "iUUJom"
-msgid "Planning the illustrations..."
-msgstr "Planning the illustrations..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "BszFlm"
-msgid "Saving your lesson..."
-msgstr "Saving your lesson..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "bC9979"
-msgid "Almost done..."
-msgstr "Almost done..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "5Jyenk"
-msgid "Getting ready for the next step..."
-msgstr "Getting ready for the next step..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "r8xznK"
-msgid "Researching the topic..."
-msgstr "Researching the topic..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "K_JznZ"
-msgid "Writing the explanation..."
-msgstr "Writing the explanation..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "19fPwV"
-msgid "Making it clear..."
-msgstr "Making it clear..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "65JXIy"
-msgid "Putting together the lesson..."
-msgstr "Putting together the lesson..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "nwi1Ym"
-msgid "Crafting the content..."
-msgstr "Crafting the content..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "-QrqeN"
-msgid "Writing the explanation first..."
-msgstr "Writing the explanation first..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "epxxAx"
-msgid "Building the foundation..."
-msgstr "Building the foundation..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "GyThaR"
-msgid "Preparing background context..."
-msgstr "Preparing background context..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
-msgctxt "0AWsLH"
-msgid "Explaining the topic..."
-msgstr "Explaining the topic..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "KL34l5"
-msgid "Adding romanization for grammar..."
-msgstr "Adding romanization for grammar..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "GILb0l"
-msgid "Converting grammar text to Latin script..."
-msgstr "Converting grammar text to Latin script..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "OFH7dE"
-msgid "Making grammar content easier to read..."
-msgstr "Making grammar content easier to read..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "VADOBa"
-msgid "Looking up how each word sounds..."
-msgstr "Looking up how each word sounds..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "WnqJeL"
-msgid "Mapping out the pronunciation..."
-msgstr "Mapping out the pronunciation..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "HDNFHk"
-msgid "Checking how to say each word..."
-msgstr "Checking how to say each word..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "_Fl7bm"
-msgid "Finding the right sounds..."
-msgstr "Finding the right sounds..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "DLZ9fl"
-msgid "Converting to Latin script..."
-msgstr "Converting to Latin script..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "boocfl"
-msgid "Adding reading aids..."
-msgstr "Adding reading aids..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "AQMVYX"
-msgid "Making it easier to read..."
-msgstr "Making it easier to read..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "ud2yWh"
-msgid "Writing out the sounds..."
-msgstr "Writing out the sounds..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "kxBeWt"
-msgid "Adding romanization for vocabulary..."
-msgstr "Adding romanization for vocabulary..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "Ch9BcP"
-msgid "Converting vocabulary to Latin script..."
-msgstr "Converting vocabulary to Latin script..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "1aPaHZ"
-msgid "Making vocabulary easier to read..."
-msgstr "Making vocabulary easier to read..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "zYx0UG"
-msgid "Adding pronunciation for each word..."
-msgstr "Adding pronunciation for each word..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "VQ3-C2"
-msgid "Noting how each word sounds..."
-msgstr "Noting how each word sounds..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "YWB-K_"
-msgid "Detailing the word sounds..."
-msgstr "Detailing the word sounds..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "L6f1Zq"
-msgid "Recording pronunciation info..."
-msgstr "Recording pronunciation info..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "i-rNdh"
-msgid "Picking the key vocabulary..."
-msgstr "Picking the key vocabulary..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "IdWf9_"
-msgid "Choosing words to practice..."
-msgstr "Choosing words to practice..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "UFDKHM"
-msgid "Finding the most useful words..."
-msgstr "Finding the most useful words..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "YgG70c"
-msgid "Selecting important terms..."
-msgstr "Selecting important terms..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "6BQo6o"
-msgid "Translating individual words..."
-msgstr "Translating individual words..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "k0Q_Ph"
-msgid "Looking up each term..."
-msgstr "Looking up each term..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "hZLCkp"
-msgid "Finding word meanings..."
-msgstr "Finding word meanings..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "SC0o7J"
-msgid "Building the vocabulary guide..."
-msgstr "Building the vocabulary guide..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "5InW8H"
-msgid "Recording the audio..."
-msgstr "Recording the audio..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "4xvh9e"
-msgid "Getting the pronunciation right..."
-msgstr "Getting the pronunciation right..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "oB01Wc"
-msgid "Preparing the voice..."
-msgstr "Preparing the voice..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "ScA7Xm"
-msgid "Making it sound natural..."
-msgstr "Making it sound natural..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "1vO-bV"
-msgid "Recording vocabulary audio..."
-msgstr "Recording vocabulary audio..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "jV2zI1"
-msgid "Getting the sound for each word..."
-msgstr "Getting the sound for each word..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "FahI7K"
-msgid "Preparing vocabulary audio..."
-msgstr "Preparing vocabulary audio..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "JfNFGM"
-msgid "Making words listenable..."
-msgstr "Making words listenable..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "muXaEm"
-msgid "Recording pronunciation for each word..."
-msgstr "Recording pronunciation for each word..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "QDv0wS"
-msgid "Getting the audio for each term..."
-msgstr "Getting the audio for each term..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "OJkDgV"
-msgid "Preparing word-by-word audio..."
-msgstr "Preparing word-by-word audio..."
-
-#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
-msgctxt "C2ELVi"
-msgid "Making each word listenable..."
-msgstr "Making each word listenable..."
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "58heST"
-msgid "Adding grammar romanization"
-msgstr "Adding grammar romanization"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "TlrPFF"
-msgid "Adding pronunciation"
-msgstr "Adding pronunciation"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "V0mPLK"
-msgid "Adding romanization"
-msgstr "Adding romanization"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "HXMA75"
-msgid "Adding vocabulary romanization"
-msgstr "Adding vocabulary romanization"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "4OjRPB"
-msgid "Adding word pronunciation"
-msgstr "Adding word pronunciation"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "RXfSEl"
-msgid "Building word list"
-msgstr "Building word list"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "viluaR"
-msgid "Preparing options"
-msgstr "Preparing options"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "c7xJGQ"
-msgid "Creating exercises"
-msgstr "Creating exercises"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "aKNA_b"
-msgid "Creating images"
-msgstr "Creating images"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "WI2yui"
-msgid "Creating lesson thumbnail"
-msgstr "Creating lesson thumbnail"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "mIpv67"
-msgid "Creating sentences"
-msgstr "Creating sentences"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "0zeST_"
-msgid "Looking up words"
-msgstr "Looking up words"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "v7HGj3"
-msgid "Planning the images"
-msgstr "Planning the images"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "T00GEW"
-msgid "Recording audio"
-msgstr "Recording audio"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "v2DAdY"
-msgid "Recording vocabulary audio"
-msgstr "Recording vocabulary audio"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "j-pO55"
-msgid "Recording word audio"
-msgstr "Recording word audio"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "2ZPUqg"
-msgid "Saving your lesson"
-msgstr "Saving your lesson"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "v4iFHN"
-msgid "Writing the content"
-msgstr "Writing the content"
-
-#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
-msgctxt "ZA0_P-"
-msgid "Writing the explanation"
-msgstr "Writing the explanation"
-
-#: src/app/[lang]/generate/layout.tsx
-msgctxt "_tq5fR"
-msgid "Creating content"
-msgstr "Creating content"
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons-card.tsx
+msgctxt "iqLF8D"
+msgid "Lessons"
+msgstr "Lessons"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons-card.tsx
+msgctxt "BGwIJy"
+msgid "Chapter {number} of {total}"
+msgstr "Chapter {number} of {total}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons-card.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-levels-card.tsx
+msgctxt "t_2u2K"
+msgid "{count, plural, one {# short lesson} other {# short lessons}}"
+msgstr "{count, plural, one {# short lesson} other {# short lessons}}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-lesson-preview.tsx
+msgctxt "xpsuUj"
+msgid "Guess first. It doesn't count."
+msgstr "Guess first. It doesn't count."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-lesson-preview.tsx
+msgctxt "ShLQAa"
+msgid "Quick question"
+msgstr "Quick question"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
+msgctxt "J-30Af"
+msgid "Your answer starts the {minutes}-minute lesson. No sign-up needed."
+msgstr "Your answer starts the {minutes}-minute lesson. No sign-up needed."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/library-lesson-page.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Start the lesson"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
+msgctxt "fO2QC0"
+msgid "{minutes, plural, one {# minute} other {# minutes}}. No sign-up needed."
+msgstr "{minutes, plural, one {# minute} other {# minutes}}. No sign-up needed."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "x5DbVQ"
+msgid "Start this lesson"
+msgstr "Start this lesson"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "h4RNnR"
+msgid "{count, plural, one {# idea} other {# ideas}}"
+msgstr "{count, plural, one {# idea} other {# ideas}}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "kvjzxh"
+msgid "What you'll learn"
+msgstr "What you'll learn"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "nxKjXi"
+msgid "{count, plural, one {# lesson} other {# lessons}} · {duration}"
+msgstr "{count, plural, one {# lesson} other {# lessons}} · {duration}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "qCHG2P"
+msgid "Chapter {number}: {chapter}"
+msgstr "Chapter {number}: {chapter}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "AvS60l"
+msgid "Go to the chapter"
+msgstr "Go to the chapter"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "Chapter options"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "jHiH1W"
+msgid "Its lessons are written when the first learner starts."
+msgstr "Its lessons are written when the first learner starts."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "LNqbov"
+msgid "Start the chapter"
+msgstr "Start the chapter"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "VJA_YD"
+msgid "Start this course"
+msgstr "Start this course"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "DcXGUl"
+msgid "{chapter}: {course} course"
+msgstr "{chapter}: {course} course"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
+msgctxt "Xi9OD0"
+msgid "A plan in the minutes you have"
+msgstr "A plan in the minutes you have"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
+msgctxt "CzBBQM"
+msgid "Short lessons, one idea at a time"
+msgstr "Short lessons, one idea at a time"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
+msgctxt "UGlOBY"
+msgid "Each lesson takes a few minutes, with questions as you go. Stuck? Tap Simpler. Curious? Tap Go deeper."
+msgstr "Each lesson takes a few minutes, with questions as you go. Stuck? Tap Simpler. Curious? Tap Go deeper."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
+msgctxt "Ffq0W2"
+msgid "Reviews before you forget"
+msgstr "Reviews before you forget"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-levels-card.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, one {# chapter} other {# chapters}}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-levels-card.tsx
+msgctxt "n7xPkB"
+msgid "{count, plural, one {# lesson} other {# lessons}}"
+msgstr "{count, plural, one {# lesson} other {# lessons}}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-levels-card.tsx
+msgctxt "rEPdIs"
+msgid "Course outline"
+msgstr "Course outline"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-levels-card.tsx
+msgctxt "MTn5xp"
+msgid "Your plan skips what you already know."
+msgstr "Your plan skips what you already know."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-outcomes.tsx
+msgctxt "kRwSyb"
+msgid "What you'll be able to do"
+msgstr "What you'll be able to do"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-outcomes.tsx
+msgctxt "fIvfRs"
+msgid "Who it's for"
+msgstr "Who it's for"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "8Dn3GJ"
+msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"
+msgstr "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "L7XB2b"
+msgid "See all chapters and lessons"
+msgstr "See all chapters and lessons"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "wYrVM1"
+msgid "The chapters and lessons are written when the first learner starts."
+msgstr "The chapters and lessons are written when the first learner starts."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "FwtWUq"
+msgid "This course is also available in your language."
+msgstr "This course is also available in your language."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "Sm_2tk"
+msgid "Course options"
+msgstr "Course options"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "_uf3wr"
+msgid "Your plan starts at your level and builds from there. Your first lesson comes next."
+msgstr "Your plan starts at your level and builds from there. Your first lesson comes next."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "sfBJ3B"
+msgid "Learn skills you can use, one lesson at a time"
+msgstr "Learn skills you can use, one lesson at a time"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "KjYOfT"
+msgid "You found a course that hasn't been written yet"
+msgstr "You found a course that hasn't been written yet"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "0DbJhZ"
+msgid "Tell us what you want to learn. We'll turn it into a clear, step-by-step course made for you."
+msgstr "Tell us what you want to learn. We'll turn it into a clear, step-by-step course made for you."
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "1SogB9"
+msgid "Create this course"
+msgstr "Create this course"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "eN72ct"
+msgid "An open book becoming a learning path"
+msgstr "An open book becoming a learning path"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "_allXG"
+msgid "Learn {course} online with practical examples and everyday language. {description}"
+msgstr "Learn {course} online with practical examples and everyday language. {description}"
+
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "gyGolN"
+msgid "Learn {course}"
+msgstr "Learn {course}"
+
+#: src/app/[lang]/checkpoint/[blockId]/page.tsx
+msgctxt "h6XDMT"
+msgid "Checkpoint"
+msgstr "Checkpoint"
+
+#: src/app/[lang]/conversation/[conversationId]/page.tsx
+msgctxt "gegfoA"
+msgid "Conversation"
+msgstr "Conversation"
+
+#: src/app/[lang]/error.tsx
+#: src/components/errors/global-error-content.tsx
+#: src/components/public/not-found-message.tsx
+msgctxt "mShMz9"
+msgid "Go to the home page"
+msgstr "Go to the home page"
+
+#: src/app/[lang]/essay/[blockId]/page.tsx
+msgctxt "Jo0iJd"
+msgid "Writing practice"
+msgstr "Writing practice"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "4H9z4m"
+msgid "Build a {course} plan"
+msgstr "Build a {course} plan"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "CJ4yhP"
+msgid "Build a plan for the whole subject"
+msgstr "Build a plan for the whole subject"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "bF1RJo"
+msgid "Learn in depth: {topic}"
+msgstr "Learn in depth: {topic}"
+
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+msgctxt "UTU-oM"
+msgid "Build my plan"
+msgstr "Build my plan"
+
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+#: src/components/public/start-course-button.tsx
+msgctxt "1bImNc"
+msgid "Starting your plan…"
+msgstr "Starting your plan…"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "K6x1SC"
+msgid "We couldn't open the lesson. Try again, or log in to keep going."
+msgstr "We couldn't open the lesson. Try again, or log in to keep going."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "ZGpU-B"
+msgid "Opening your lesson"
+msgstr "Opening your lesson"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "9Qz9-d"
+msgid "Something ready to do instead:"
+msgstr "Something ready to do instead:"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "F_1_sW"
+msgid "Something ready while you wait:"
+msgstr "Something ready while you wait:"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, one {Review # idea} other {Review # ideas}}"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "X6rSIT"
+msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
+msgstr "It usually takes a minute or two. The lesson opens here as soon as it's ready."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "Back"
+
+#: src/app/[lang]/mock/[blockId]/page.tsx
+msgctxt "6ppMud"
+msgid "Mock exam"
+msgstr "Mock exam"
 
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "XqDTOi"
@@ -2643,6 +2424,82 @@ msgctxt "WUBzvQ"
 msgid "get an interactive course created for you."
 msgstr "get an interactive course created for you."
 
+#: src/app/[lang]/pattern/[patternId]/page.tsx
+msgctxt "KS_o38"
+msgid "Mistake pattern"
+msgstr "Mistake pattern"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "A-ZnsR"
+msgid "A plan for {subject}"
+msgstr "A plan for {subject}"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "ILuHAq"
+msgid "A study plan"
+msgstr "A study plan"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "sOBT5M"
+msgid "~{minutes, number} min"
+msgstr "~{minutes, number} min"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "BQ40Ne"
+msgid "~{hours, number} h"
+msgstr "~{hours, number} h"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "ql_IXy"
+msgid "A study plan someone shared with you"
+msgstr "A study plan someone shared with you"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "JzVq84"
+msgid "~{minutes, number} min of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
+msgstr "~{minutes, number} min of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "GFvjUd"
+msgid "~{hours, number} h of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
+msgstr "~{hours, number} h of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "RBKgNO"
+msgid "Make it yours"
+msgstr "Make it yours"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "4zm4MM"
+msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
+msgstr "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "8jQqTq"
+msgid "Start from this plan"
+msgstr "Start from this plan"
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "3aNmDX"
+msgid "How much time a day?"
+msgstr "How much time a day?"
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "8jbBlb"
+msgid "{minutes, number} min"
+msgstr "{minutes, number} min"
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "dLMg_G"
+msgid "You can't add another goal right now. Finish or pause one first."
+msgstr "You can't add another goal right now. Finish or pause one first."
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "That didn't work. Try again in a moment."
+
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
 msgid "Read Zoonk's privacy policy to understand how we use and protect your personal information."
@@ -2652,6 +2509,46 @@ msgstr "Read Zoonk's privacy policy to understand how we use and protect your pe
 msgctxt "vx0nkZ"
 msgid "Privacy Policy"
 msgstr "Privacy Policy"
+
+#: src/app/[lang]/pronunciation/page.tsx
+msgctxt "mSmk6Q"
+msgid "Say it again"
+msgstr "Say it again"
+
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "IUKnu0"
+msgid "Its chapters and lessons are written when you start."
+msgstr "Its chapters and lessons are written when you start."
+
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "Cr5XrH"
+msgid "{count, plural, one {and # more chapter} other {and # more chapters}}"
+msgstr "{count, plural, one {and # more chapter} other {and # more chapters}}"
+
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "IyoCIG"
+msgid "Your plan starts at this chapter and follows the course from there, in the time you have each day."
+msgstr "Your plan starts at this chapter and follows the course from there, in the time you have each day."
+
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "C1D9a4"
+msgid "Your plan follows this course, in the time you have each day."
+msgstr "Your plan follows this course, in the time you have each day."
+
+#: src/app/[lang]/start/course/[courseId]/page.tsx
+msgctxt "6e3fLf"
+msgid "Start {course}"
+msgstr "Start {course}"
+
+#: src/app/[lang]/start/page.tsx
+msgctxt "8kiH7W"
+msgid "Write what you want to achieve in your own words. Zoonk asks only what's missing and builds a plan for your time. Free to start, no account needed."
+msgstr "Write what you want to achieve in your own words. Zoonk asks only what's missing and builds a plan for your time. Free to start, no account needed."
+
+#: src/app/[lang]/start/page.tsx
+msgctxt "G4ZsrK"
+msgid "Start with your goal"
+msgstr "Start with your goal"
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"
@@ -2663,164 +2560,242 @@ msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Terms of Use"
 
-#: src/components/catalog/ai-warning.tsx
-msgctxt "FYZlTZ"
-msgid "Created with AI"
-msgstr "Created with AI"
+#: src/app/global-not-found.tsx
+msgctxt "QRccCM"
+msgid "Page not found"
+msgstr "Page not found"
 
-#: src/components/catalog/catalog-actions.tsx
-msgctxt "F0tnKc"
-msgid "Thanks for your feedback"
-msgstr "Thanks for your feedback"
-
-#: src/components/catalog/catalog-actions.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "More options"
-
-#: src/components/catalog/catalog-actions.tsx
-#: src/components/feedback/content-feedback.tsx
-msgctxt "rTFrsw"
-msgid "I liked it"
-msgstr "I liked it"
-
-#: src/components/catalog/catalog-actions.tsx
-#: src/components/feedback/content-feedback.tsx
-msgctxt "Hqn5Uo"
-msgid "I didn't like it"
-msgstr "I didn't like it"
-
-#: src/components/catalog/catalog-actions.tsx
-#: src/components/feedback/content-feedback.tsx
-msgctxt "G5YSJR"
-msgid "Send feedback"
-msgstr "Send feedback"
-
-#: src/components/catalog/catalog-active-shortcut-link.tsx
-msgctxt "PAKDzS"
-msgid "Go to current chapter"
-msgstr "Go to current chapter"
-
-#: src/components/catalog/catalog-active-shortcut-link.tsx
-msgctxt "Js2dT3"
-msgid "Go to current lesson"
-msgstr "Go to current lesson"
-
-#: src/components/catalog/catalog-grid-back-to-top.tsx
-msgctxt "izuy1D"
-msgid "Current item"
-msgstr "Current item"
+#: src/app/global-not-found.tsx
+#: src/components/public/public-top-bar.tsx
+msgctxt "wBSumo"
+msgid "Zoonk home page"
+msgstr "Zoonk home page"
 
 #: src/components/catalog/catalog-grid-back-to-top.tsx
 msgctxt "Gs9Kfp"
 msgid "Back to top"
 msgstr "Back to top"
 
-#: src/components/catalog/continue-lesson-link.tsx
-msgctxt "AvySqa"
-msgid "{percent}% complete"
-msgstr "{percent}% complete"
+#: src/components/errors/page-error-message.tsx
+msgctxt "9nolIL"
+msgid "This page didn't load"
+msgstr "This page didn't load"
 
-#: src/components/catalog/continue-lesson-link.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Start"
+#: src/components/errors/page-error-message.tsx
+msgctxt "oPXFzM"
+msgid "Something went wrong on our side. Trying again usually fixes it."
+msgstr "Something went wrong on our side. Trying again usually fixes it."
 
-#: src/components/catalog/continue-lesson-link.tsx
-#: src/lib/lessons.ts
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Review"
+#: src/components/pricing/billing-price-summary.tsx
+msgctxt "1qALXt"
+msgid "{amount} billed yearly"
+msgstr "{amount} billed yearly"
 
-#: src/components/feedback/contact-form.tsx
-msgctxt "WzCvaN"
-msgid "We'll use this email to contact you."
-msgstr "We'll use this email to contact you."
+#: src/components/pricing/billing-price-summary.tsx
+msgctxt "g_N8_Z"
+msgid "From <original>{originalAmount}</original> to <discounted>{discountedAmount}</discounted> per year"
+msgstr "From <original>{originalAmount}</original> to <discounted>{discountedAmount}</discounted> per year"
 
-#: src/components/feedback/contact-form.tsx
-msgctxt "T7Ry38"
-msgid "Message"
-msgstr "Message"
+#: src/components/pricing/billing-price-summary.tsx
+msgctxt "Rw82_V"
+msgid "per month"
+msgstr "per month"
 
-#: src/components/feedback/contact-form.tsx
-msgctxt "M6PcEI"
-msgid "How can we help you?"
-msgstr "How can we help you?"
+#: src/components/pricing/billing-price-summary.tsx
+msgctxt "Lxn0Fm"
+msgid "Price shown at checkout"
+msgstr "Price shown at checkout"
 
-#: src/components/feedback/contact-form.tsx
-msgctxt "vD72E5"
-msgid "Message sent successfully! We'll get back to you soon."
-msgstr "Message sent successfully! We'll get back to you soon."
+#: src/components/pricing/guardian-approval-request.tsx
+msgctxt "O2N_hH"
+msgid "Invite a parent or guardian first. Once they accept, you can ask them here."
+msgstr "Invite a parent or guardian first. Once they accept, you can ask them here."
 
-#: src/components/feedback/contact-form.tsx
-msgctxt "-5vOOu"
-msgid "Please provide as much detail as possible."
-msgstr "Please provide as much detail as possible."
+#: src/components/pricing/guardian-approval-request.tsx
+msgctxt "TpuJqb"
+msgid "Invite a guardian"
+msgstr "Invite a guardian"
 
-#: src/components/feedback/contact-form.tsx
-msgctxt "1WHPmV"
-msgid "Failed to send message. Please try again or email us directly at hello@zoonk.com"
-msgstr "Failed to send message. Please try again or email us directly at hello@zoonk.com"
+#: src/components/pricing/guardian-approval-request.tsx
+msgctxt "oO-R1j"
+msgid "We emailed your guardian. Once they approve, come back here to subscribe."
+msgstr "We emailed your guardian. Once they approve, come back here to subscribe."
 
-#: src/components/feedback/contact-form.tsx
-msgctxt "Xx0WZV"
-msgid "Send message"
-msgstr "Send message"
+#: src/components/pricing/guardian-approval-request.tsx
+msgctxt "17Kgny"
+msgid "You're under 18, so a guardian approves Plus before you subscribe."
+msgstr "You're under 18, so a guardian approves Plus before you subscribe."
 
-#: src/components/feedback/content-feedback.tsx
-msgctxt "BlI1_9"
-msgid "Did you like this content?"
-msgstr "Did you like this content?"
+#: src/components/pricing/guardian-approval-request.tsx
+msgctxt "5LliRf"
+msgid "Ask my guardian"
+msgstr "Ask my guardian"
 
-#: src/components/feedback/feedback-dialog.tsx
-msgctxt "Ejhdi4"
-msgid "Feedback"
-msgstr "Feedback"
+#: src/components/pricing/guardian-approval-request.tsx
+msgctxt "PkW36-"
+msgid "We couldn't send that. Try again in a moment."
+msgstr "We couldn't send that. Try again in a moment."
 
-#: src/components/feedback/feedback-dialog.tsx
-msgctxt "eUzs3M"
-msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
-msgstr "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "3dBFur"
+msgid "Unlimited lessons and goals"
+msgstr "Unlimited lessons and goals"
 
-#: src/components/generation/generation-authentication-cta.tsx
-msgctxt "kGkxlG"
-msgid "Log in to create with AI"
-msgstr "Log in to create with AI"
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "mYDLUu"
+msgid "Full exam prep, with mock exams"
+msgstr "Full exam prep, with mock exams"
 
-#: src/components/generation/generation-authentication-cta.tsx
-msgctxt "Jjw_0c"
-msgid "You need to log in to create new courses and lessons with AI. You can explore existing courses without logging in."
-msgstr "You need to log in to create new courses and lessons with AI. You can explore existing courses without logging in."
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "kBEnAH"
+msgid "AI tutor whenever you're stuck"
+msgstr "AI tutor whenever you're stuck"
 
-#: src/components/generation/generation-limit-cta.tsx
-msgctxt "7AF4uB"
-msgid "{period, select, day {Daily} month {Monthly} other {Generation}} {resource, select, course {course} chapter {chapter} lesson {lesson} lessonQuestion {question} other {generation}} limit reached"
-msgstr "{period, select, day {Daily} month {Monthly} other {Generation}} {resource, select, course {course} chapter {chapter} lesson {lesson} lessonQuestion {question} other {generation}} limit reached"
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "mQ0rFD"
+msgid "Speaking practice every day"
+msgstr "Speaking practice every day"
 
-#: src/components/generation/generation-limit-cta.tsx
-msgctxt "vvv0PA"
-msgid "{resource, select, lessonQuestion {{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached your question limit.}} Saved answers are still available.} other {{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated.}}"
-msgstr "{resource, select, lessonQuestion {{period, select, day {You've reached today's question limit.} month {You've reached this month's question limit.} other {You've reached your question limit.}} Saved answers are still available.} other {{period, select, day {You've reached today's limit} month {You've reached this month's limit} other {You've reached the limit}} for generating {resource, select, course {courses} chapter {chapters} lesson {lessons} other {content}}. You can keep learning from anything already generated.}}"
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "ANweop"
+msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and the AI tutor. Try it free."
+msgstr "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and the AI tutor. Try it free."
 
-#: src/components/generation/workflow-generation-error.tsx
-msgctxt "ctqXbT"
-msgid "We lost the progress connection. Your content may still be generating."
-msgstr "We lost the progress connection. Your content may still be generating."
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "DfjjXa"
+msgid "Zoonk Plus: plans and pricing"
+msgstr "Zoonk Plus: plans and pricing"
 
-#: src/components/generation/workflow-generation-error.tsx
-msgctxt "1A8Z_l"
-msgid "Check again"
-msgstr "Check again"
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "tvsXXs"
+msgid "Your goal: {goal}"
+msgstr "Your goal: {goal}"
 
-#: src/components/generation/workflow-generation-error.tsx
-msgctxt "yHqv96"
-msgid "Connection interrupted"
-msgstr "Connection interrupted"
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "-xdmmE"
+msgid "Keep going with Plus."
+msgstr "Keep going with Plus."
 
-#: src/components/generation/workflow-generation-error.tsx
-msgctxt "JqiqNj"
-msgid "Something went wrong"
-msgstr "Something went wrong"
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "I9zhni"
+msgid "Get ready for your exam, new job or move."
+msgstr "Get ready for your exam, new job or move."
+
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "vxvdpN"
+msgid "Plus gives you everything Zoonk has, with no limits."
+msgstr "Plus gives you everything Zoonk has, with no limits."
+
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "h9kFux"
+msgid "Save {amount} every year"
+msgstr "Save {amount} every year"
+
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "u2XWYU"
+msgid "Billing period"
+msgstr "Billing period"
+
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "wYsv4Z"
+msgid "Monthly"
+msgstr "Monthly"
+
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "dqD39h"
+msgid "Yearly"
+msgstr "Yearly"
+
+#: src/components/pricing/plus-purchase.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "0I_Rwu"
+msgid "Get Plus"
+msgstr "Get Plus"
+
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Subscribe"
+
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "dyhF_4"
+msgid "Cancel anytime."
+msgstr "Cancel anytime."
+
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "qQDa8p"
+msgid "Unable to start checkout. Contact us at hello@zoonk.com"
+msgstr "Unable to start checkout. Contact us at hello@zoonk.com"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "spED5Z"
+msgid "Try {count, plural, one {# lesson} other {# lessons}} without an account. With a free account, you get:"
+msgstr "Try {count, plural, one {# lesson} other {# lessons}} without an account. With a free account, you get:"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "PKf2T8"
+msgid "With the free plan, you get:"
+msgstr "With the free plan, you get:"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "Uoc-Co"
+msgid "{count, plural, one {# goal} other {# goals}} at a time"
+msgstr "{count, plural, one {# goal} other {# goals}} at a time"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "faaCkn"
+msgid "{day, plural, one {# lesson} other {# lessons}} a day, up to {month, number} a month"
+msgstr "{day, plural, one {# lesson} other {# lessons}} a day, up to {month, number} a month"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "PVvHeY"
+msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
+msgstr "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "ez22QW"
+msgid "{tutor, plural, one {# tutor message} other {# tutor messages}}, {conversations, plural, one {# speaking conversation} other {# speaking conversations}} and {uploads, plural, one {# upload} other {# uploads}} a day"
+msgstr "{tutor, plural, one {# tutor message} other {# tutor messages}}, {conversations, plural, one {# speaking conversation} other {# speaking conversations}} and {uploads, plural, one {# upload} other {# uploads}} a day"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "uUjwhB"
+msgid "Common questions"
+msgstr "Common questions"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "jVRlNg"
+msgid "What's in the free plan?"
+msgstr "What's in the free plan?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "zAc0Zf"
+msgid "Is Plus really unlimited?"
+msgstr "Is Plus really unlimited?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "-QCGXn"
+msgid "Yes. Learn as much as you want. Our limits are only there to stop bots and automated tools, not people learning. <link>Read our fair use policy</link>."
+msgstr "Yes. Learn as much as you want. Our limits are only there to stop bots and automated tools, not people learning. <link>Read our fair use policy</link>."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "jNjtlE"
+msgid "What happens if I cancel?"
+msgstr "What happens if I cancel?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "z1FMPn"
+msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
+msgstr "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "94whIk"
+msgid "Can I get a refund?"
+msgstr "Can I get a refund?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "LHV1sa"
+msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
+msgstr "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
 
 #: src/components/progress/learning-days-card.tsx
 msgctxt "8F6teD"
@@ -2843,6 +2818,7 @@ msgid "{seconds, plural, one {# sec} other {# sec}}"
 msgstr "{seconds, plural, one {# sec} other {# sec}}"
 
 #: src/components/progress/progress-learning-time-label.ts
+#: src/lib/public/public-labels.ts
 msgctxt "a-oHjQ"
 msgid "{minutes, plural, one {# min} other {# min}}"
 msgstr "{minutes, plural, one {# min} other {# min}}"
@@ -2867,35 +2843,45 @@ msgctxt "-V74AY"
 msgid "Learning time"
 msgstr "Learning time"
 
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "NU-lfu"
-msgid "Keep learning with Plus"
-msgstr "Keep learning with Plus"
+#: src/components/public/course-start-failure.tsx
+msgctxt "6qTSET"
+msgid "We couldn't start this course."
+msgstr "We couldn't start this course."
 
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "X4sblx"
-msgid "Plus gives you unlimited courses and lessons for whatever you want to learn."
-msgstr "Plus gives you unlimited courses and lessons for whatever you want to learn."
+#: src/components/public/not-found-message.tsx
+msgctxt "Rx6qZ-"
+msgid "We couldn't find this page"
+msgstr "We couldn't find this page"
 
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "Y9LULP"
-msgid "Try free chapter"
-msgstr "Try free chapter"
+#: src/components/public/not-found-message.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "The link may be old or mistyped."
 
-#: src/components/waitlist/relaunch-notice.tsx
-msgctxt "0LnO0e"
-msgid "A new Zoonk is on the way"
-msgstr "A new Zoonk is on the way"
+#: src/components/public/public-footer.tsx
+msgctxt "Vge-RX"
+msgid "Footer"
+msgstr "Footer"
 
-#: src/components/waitlist/relaunch-notice.tsx
-msgctxt "YYmS4Y"
-msgid "We're rethinking how Zoonk works. A new version will be available soon. Join the waitlist and we'll email you when it's ready."
-msgstr "We're rethinking how Zoonk works. A new version will be available soon. Join the waitlist and we'll email you when it's ready."
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Privacy"
+
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "Terms"
+
+#: src/components/public/public-footer.tsx
+msgctxt "k7JNE3"
+msgid "© {year} Zoonk"
+msgstr "© {year} Zoonk"
 
 #: src/lib/belt-colors.ts
-msgctxt "znY9eW"
-msgid "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}"
-msgstr "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}"
+msgctxt "_6Vlf7"
+msgid "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}"
+msgstr "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}"
 
 #: src/lib/categories/category.ts
 msgctxt "fFt3il"
@@ -2918,6 +2904,11 @@ msgid "Culture"
 msgstr "Culture"
 
 #: src/lib/categories/category.ts
+msgctxt "KOuDOE"
+msgid "Economics"
+msgstr "Economics"
+
+#: src/lib/categories/category.ts
 msgctxt "hwL7a0"
 msgid "Engineering"
 msgstr "Engineering"
@@ -2931,6 +2922,11 @@ msgstr "Geography"
 msgctxt "hlmkcL"
 msgid "Health"
 msgstr "Health"
+
+#: src/lib/categories/category.ts
+msgctxt "djJp6c"
+msgid "History"
+msgstr "History"
 
 #: src/lib/categories/category.ts
 msgctxt "GsBRWL"
@@ -2982,197 +2978,27 @@ msgctxt "Rz9oL-"
 msgid "{category} courses"
 msgstr "{category} courses"
 
-#: src/lib/lessons.ts
-msgctxt "w0J_gv"
-msgid "Alphabet"
-msgstr "Alphabet"
+#: src/lib/public/public-labels.ts
+msgctxt "5OHC1T"
+msgid "about {hours, plural, one {# hr} other {# hr}}"
+msgstr "about {hours, plural, one {# hr} other {# hr}}"
 
-#: src/lib/lessons.ts
-msgctxt "4TTYDR"
-msgid "Custom lesson"
-msgstr "Custom lesson"
+#: src/lib/public/public-labels.ts
+msgctxt "3Rx6Qo"
+msgid "Advanced"
+msgstr "Advanced"
 
-#: src/lib/lessons.ts
-msgctxt "E1bF_X"
-msgid "Explanation"
-msgstr "Explanation"
+#: src/lib/public/public-labels.ts
+msgctxt "0H9Fkb"
+msgid "Beginner"
+msgstr "Beginner"
 
-#: src/lib/lessons.ts
-msgctxt "QzTY8x"
-msgid "Grammar"
-msgstr "Grammar"
+#: src/lib/public/public-labels.ts
+msgctxt "o5_DJA"
+msgid "Intermediate"
+msgstr "Intermediate"
 
-#: src/lib/lessons.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Listening"
-
-#: src/lib/lessons.ts
-msgctxt "KV-O0y"
-msgid "Practice"
-msgstr "Practice"
-
-#: src/lib/lessons.ts
-msgctxt "OuR_Ij"
-msgid "Quiz"
-msgstr "Quiz"
-
-#: src/lib/lessons.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "Reading"
-
-#: src/lib/lessons.ts
-msgctxt "_vCXIP"
-msgid "Translation"
-msgstr "Translation"
-
-#: src/lib/lessons.ts
-msgctxt "Ox-Z-K"
-msgid "Tutorial"
-msgstr "Tutorial"
-
-#: src/lib/lessons.ts
-msgctxt "lqtP-R"
-msgid "Vocabulary"
-msgstr "Vocabulary"
-
-#: src/lib/lessons.ts
-msgctxt "22k1CY"
-msgid "Learn how letters and sounds work in this writing system."
-msgstr "Learn how letters and sounds work in this writing system."
-
-#: src/lib/lessons.ts
-msgctxt "LZC7R9"
-msgid "Work through a lesson created for your goal."
-msgstr "Work through a lesson created for your goal."
-
-#: src/lib/lessons.ts
-msgctxt "fOfLbt"
-msgid "Understand the key ideas using everyday language and practical examples."
-msgstr "Understand the key ideas using everyday language and practical examples."
-
-#: src/lib/lessons.ts
-msgctxt "dHmgw1"
-msgid "Practice grammar patterns with examples and exercises."
-msgstr "Practice grammar patterns with examples and exercises."
-
-#: src/lib/lessons.ts
-msgctxt "AetsPy"
-msgid "Listen to sentences using words you recently learned."
-msgstr "Listen to sentences using words you recently learned."
-
-#: src/lib/lessons.ts
-msgctxt "6oNgY9"
-msgid "Use what you learned in the previous lesson to solve real-world problems."
-msgstr "Use what you learned in the previous lesson to solve real-world problems."
-
-#: src/lib/lessons.ts
-msgctxt "vO6aLm"
-msgid "Check what you understood with a short quiz."
-msgstr "Check what you understood with a short quiz."
-
-#: src/lib/lessons.ts
-msgctxt "OIim7M"
-msgid "Read sentences using words you recently learned."
-msgstr "Read sentences using words you recently learned."
-
-#: src/lib/lessons.ts
-msgctxt "pwrprO"
-msgid "Review this chapter with practice based on your mistakes."
-msgstr "Review this chapter with practice based on your mistakes."
-
-#: src/lib/lessons.ts
-msgctxt "IQOJhk"
-msgid "Translate words from your previous vocabulary lesson."
-msgstr "Translate words from your previous vocabulary lesson."
-
-#: src/lib/lessons.ts
-msgctxt "9XByXq"
-msgid "Follow a guided step-by-step tutorial."
-msgstr "Follow a guided step-by-step tutorial."
-
-#: src/lib/lessons.ts
-msgctxt "IHSVS5"
-msgid "Learn new words and practice using them."
-msgstr "Learn new words and practice using them."
-
-#: src/lib/lessons.ts
-msgctxt "OjyuQ-"
-msgid "Learn the writing system for {topic} with focused practice."
-msgstr "Learn the writing system for {topic} with focused practice."
-
-#: src/lib/lessons.ts
-msgctxt "pSQZ7W"
-msgid "Learn about {topic} through an interactive lesson."
-msgstr "Learn about {topic} through an interactive lesson."
-
-#: src/lib/lessons.ts
-msgctxt "THPcKi"
-msgid "Understand what {topic} is — core concepts and definitions explained with clear metaphors and analogies."
-msgstr "Understand what {topic} is — core concepts and definitions explained with clear metaphors and analogies."
-
-#: src/lib/lessons.ts
-msgctxt "tlgfSZ"
-msgid "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
-msgstr "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
-
-#: src/lib/lessons.ts
-msgctxt "xCvEE1"
-msgid "Practice listening in {topic} by translating audio sentences."
-msgstr "Practice listening in {topic} by translating audio sentences."
-
-#: src/lib/lessons.ts
-msgctxt "wHBT6R"
-msgid "Apply {topic} through a visual real-world problem with short decisions."
-msgstr "Apply {topic} through a visual real-world problem with short decisions."
-
-#: src/lib/lessons.ts
-msgctxt "h2acN8"
-msgid "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
-msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
-
-#: src/lib/lessons.ts
-msgctxt "XzxpBZ"
-msgid "Improve your {topic} reading comprehension by translating sentences and passages."
-msgstr "Improve your {topic} reading comprehension by translating sentences and passages."
-
-#: src/lib/lessons.ts
-msgctxt "bzFQEy"
-msgid "Review everything you learned about {topic} with a comprehensive quiz."
-msgstr "Review everything you learned about {topic} with a comprehensive quiz."
-
-#: src/lib/lessons.ts
-msgctxt "X8Gqiq"
-msgid "Practice vocabulary in {topic} by translating words you've learned."
-msgstr "Practice vocabulary in {topic} by translating words you've learned."
-
-#: src/lib/lessons.ts
-msgctxt "3bJDQa"
-msgid "Learn {topic} with a guided step-by-step tutorial."
-msgstr "Learn {topic} with a guided step-by-step tutorial."
-
-#: src/lib/lessons.ts
-msgctxt "77SLH5"
-msgid "Learn new words in {topic} with flashcards — see each word, its translation, and pronunciation."
-msgstr "Learn new words in {topic} with flashcards — see each word, its translation, and pronunciation."
-
-#: src/lib/lessons.ts
-msgctxt "PhpBBE"
-msgid "{chapter}: {kind, select, alphabet {Alphabet} custom {Custom lesson} explanation {Explanation} grammar {Grammar} listening {Listening} practice {Practice} quiz {Quiz} reading {Reading} review {Review} translation {Translation} tutorial {Tutorial} vocabulary {Vocabulary} other {Lesson}} {position}"
-msgstr "{chapter}: {kind, select, alphabet {Alphabet} custom {Custom lesson} explanation {Explanation} grammar {Grammar} listening {Listening} practice {Practice} quiz {Quiz} reading {Reading} review {Review} translation {Translation} tutorial {Tutorial} vocabulary {Vocabulary} other {Lesson}} {position}"
-
-#: src/lib/lessons.ts
-msgctxt "teYphW"
-msgid "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}}: {course} course"
-msgstr "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}}: {course} course"
-
-#: src/lib/lessons.ts
-msgctxt "GeDl17"
-msgid "{lesson}: {course} course"
-msgstr "{lesson}: {course} course"
-
-#: src/lib/lessons.ts
-msgctxt "aACHYf"
-msgid "Lesson about {lesson} in the {course} course. {description}"
-msgstr "Lesson about {lesson} in the {course} course. {description}"
+#: src/lib/public/public-labels.ts
+msgctxt "9uOFF3"
+msgid "Overview"
+msgstr "Overview"

@@ -17,8 +17,6 @@ permissions:
 
 jobs:
   code-quality:
-    # Temporarily paused during the learning redesign.
-    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
@@ -57,14 +55,15 @@ jobs:
           runtime: node@24
           cache: true
 
+      # The OpenAPI schemas import Prisma enums, so the client must exist first.
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
       - name: Check generated OpenAPI artifact
         run: pnpm openapi:check
 
       - name: Run database migrations
         run: pnpm --filter @zoonk/db db:deploy
-
-      - name: Generate Prisma client
-        run: pnpm db:generate
 
       - name: Check for i18n errors
         run: pnpm i18n:lint
@@ -81,5 +80,53 @@ jobs:
       - name: Run knip
         run: pnpm knip && pnpm knip --production
 
+  # Unit and integration tests run beside the checks above, split in two because core's database
+  # tests alone take minutes.
+  unit-tests:
+    name: unit-tests (${{ matrix.shard }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
+      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    services:
+      db:
+        image: postgres:18-alpine
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: zoonk_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v6
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-unit-tests-${{ matrix.shard }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-unit-tests-${{ matrix.shard }}-
+
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v3
+        with:
+          runtime: node@24
+          cache: true
+
+      # Every package's tests are split, and a package with fewer test files than shards has none in
+      # the last one.
       - name: Run tests
-        run: pnpm test
+        run: pnpm test -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} --passWithNoTests

@@ -1,317 +1,244 @@
-import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
-import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
-import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
-import { expect, test } from "./fixtures";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { type Page, expect, test } from "./fixtures";
 
-test.describe("Home Page - Unauthenticated", () => {
-  test("shows start goals without redirecting", async ({ page }) => {
+/** English first: visiting a prefixed page saves its language, which "/" would reopen. */
+const LOCALES = ["en", "es", "pt", "fr", "de"] as const;
+
+type Locale = (typeof LOCALES)[number];
+
+function homePath(locale: Locale) {
+  return locale === "en" ? "/" : `/${locale}`;
+}
+
+async function readHtmlLang(page: Page) {
+  return page.evaluate(() => document.documentElement.lang);
+}
+
+/** Opens the home page in `locale`, checks it renders in it, and returns its h1. */
+async function readHomeHeading(page: Page, locale: Locale) {
+  await page.goto(homePath(locale));
+
+  const heading = page.getByRole("heading", { level: 1 });
+  await expect(heading).toBeVisible();
+  await expect(page.getByRole("textbox")).toHaveCount(2);
+  expect(await readHtmlLang(page)).toBe(locale);
+
+  return heading.textContent();
+}
+
+test.describe("Home page for visitors", () => {
+  test("renders and translates the page in every language", async ({ page }) => {
+    const headings: Partial<Record<Locale, string | null>> = {};
+
+    for (const locale of LOCALES) {
+      // oxlint-disable-next-line no-await-in-loop -- One page opens each language in turn.
+      headings[locale] = await readHomeHeading(page, locale);
+    }
+
+    expect(headings.en).toContain("Get ready for");
+    expect(headings.pt).not.toBe(headings.en);
+  });
+
+  test("never suggests learning the language the page is written in", async ({ page }) => {
+    await page.goto("/es");
+    await expect(page.locator("main [lang='en']")).toHaveCount(1);
+    await expect(page.locator("main [lang='es']")).toHaveCount(0);
+
+    // Visiting /es saves Spanish, which "/" would reopen; the English page is for a new visitor.
+    await page.context().clearCookies();
     await page.goto("/");
+    await expect(page.locator("main [lang='es']")).toHaveCount(1);
+  });
 
+  test("keeps a start button at the bottom of a phone once the goal box scrolls away", async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ viewport: { height: 844, width: 390 } });
+    const page = await context.newPage();
+
+    try {
+      await page.goto("/");
+
+      const startLink = page.getByRole("link", { exact: true, name: "Start" });
+      await expect(startLink).toBeHidden();
+
+      await page
+        .getByRole("heading", { name: "Practice shaped by your goal" })
+        .scrollIntoViewIfNeeded();
+
+      await expect(startLink).toBeVisible();
+      await expect(startLink).toHaveAttribute("href", "/start");
+
+      await page
+        .getByRole("heading", { name: "What do you want to get ready for?" })
+        .scrollIntoViewIfNeeded();
+
+      await expect(startLink).toBeHidden();
+    } finally {
+      await context.close();
+    }
+  });
+});
+
+const MOVE = "speak Spanish for my move to Madrid";
+const EXAM = "pass the SAT in March";
+
+/**
+ * Opens the home page and, once React runs the goal box, holds time still: from then on the
+ * examples change only when the test moves the clock.
+ */
+async function openHome(page: Page) {
+  await page.clock.install();
+  await page.goto("/");
+
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const box = document.querySelector("#goal");
+        return Boolean(box && Object.keys(box).some((key) => key.startsWith("__reactProps")));
+      }),
+    )
+    .toBe(true);
+
+  await page.clock.pauseAt(new Date(Date.now() + 500));
+
+  return page.getByRole("region", { name: /Get ready for/u }).locator("form");
+}
+
+test.describe("The home goal box", () => {
+  test("shows example goals one at a time until the visitor starts on their own", async ({
+    page,
+  }) => {
+    const box = await openHome(page);
+    const move = box.getByText(MOVE, { exact: true });
+    const exam = box.getByText(EXAM, { exact: true });
+
+    await expect(move).toBeVisible();
+    await expect(exam).toBeHidden();
+
+    await page.clock.fastForward(4000);
+    await expect(exam).toBeVisible();
+    await expect(move).toBeHidden();
+
+    // Start with nothing written puts the cursor in the box instead of sending the example.
+    await box.getByRole("button", { exact: true, name: "Start" }).click();
+    await expect(box.getByRole("textbox", { name: "I want to" })).toBeFocused();
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-    await expect(page.getByRole("link", { name: /speak a language/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /learn something/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /pass an exam/iu })).toBeVisible();
+
+    // Once the visitor is in the box, the example stays put, and their words replace it.
+    await page.clock.fastForward(10_000);
+    await expect(exam).toBeVisible();
+
+    await box.getByRole("textbox", { name: "I want to" }).fill("learn to cook");
+    await expect(exam).toBeHidden();
+  });
+
+  test("with reduced motion, the box keeps its first example", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const box = await openHome(page);
+
+    await page.clock.fastForward(10_000);
+
+    await expect(box.getByText(MOVE, { exact: true })).toBeVisible();
+    await expect(box.getByText(EXAM, { exact: true })).toBeHidden();
   });
 });
 
-test.describe("Home Page - Authenticated", () => {
-  test("continue learning lesson description navigates to the player", async ({
-    baseURL,
-    browser,
+test.describe("Focus and Fun on the home page", () => {
+  test("shows Focus first, and the Fun tab brings Fun's pitch, lesson and voyage", async ({
+    page,
   }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const [org, user] = await Promise.all([getAiOrganization(), createE2EUser(baseURL!)]);
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-description-course-${uniqueId}`,
-      title: `E2E Description Course ${uniqueId}`,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-description-chapter-${uniqueId}`,
-      title: `E2E Description Chapter ${uniqueId}`,
-    });
-
-    const lessonDescription = `E2E Description target ${uniqueId}`;
-
-    const [completedLesson, nextLesson] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "completed",
-        isPublished: true,
-        organizationId: org.id,
-        position: 0,
-        slug: `e2e-description-completed-${uniqueId}`,
-        title: `E2E Description Completed ${uniqueId}`,
-      }),
-      lessonFixture({
-        chapterId: chapter.id,
-        description: lessonDescription,
-        generationStatus: "completed",
-        isPublished: true,
-        organizationId: org.id,
-        position: 1,
-        slug: `e2e-description-next-${uniqueId}`,
-        title: `E2E Description Next ${uniqueId}`,
-      }),
-    ]);
-
-    await Promise.all([
-      lessonProgressFixture({
-        completedAt: new Date(),
-        durationSeconds: 60,
-        lessonId: completedLesson.id,
-        userId: user.id,
-      }),
-      userProgressFixture({ totalBrainPower: 100n, userId: user.id }),
-      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
-    ]);
-
-    const ctx = await browser.newContext({ storageState: user.storageState });
-    const page = await ctx.newPage();
-
-    try {
-      await page.goto("/");
-
-      const descriptionLink = page.getByRole("link", { name: lessonDescription });
-
-      await expect(descriptionLink).toBeVisible();
-      await descriptionLink.click();
-
-      await expect(page).toHaveURL(
-        new RegExp(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${nextLesson.slug}$`, "u"),
-      );
-    } finally {
-      await ctx.close();
-    }
-  });
-
-  test("user with progress sees continue learning instead of start goals", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage.goto("/");
-
-    // Use .first() to handle potential duplicates during streaming/hydration
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /continue learning/iu }).first(),
-    ).toBeVisible();
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: "What's your goal?" }),
-    ).not.toBeVisible();
-  });
-
-  test("user without progress sees start goals", async ({ userWithoutProgress }) => {
-    await userWithoutProgress.goto("/");
-
-    await expect(userWithoutProgress.getByText(/continue learning/iu)).not.toBeVisible();
-
-    await expect(
-      userWithoutProgress.getByRole("heading", { name: "What's your goal?" }),
-    ).toBeVisible();
-
-    await expect(
-      userWithoutProgress.getByRole("link", { name: /learn something/iu }),
-    ).toBeVisible();
-  });
-
-  test("shows pending course when next lesson has no generated lessons", async ({
-    baseURL,
-    browser,
-  }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const org = await getAiOrganization();
-    const user = await createE2EUser(baseURL!);
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-pending-course-${uniqueId}`,
-      title: `E2E Pending Course ${uniqueId}`,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-      title: `E2E Pending Chapter ${uniqueId}`,
-    });
-
-    const lesson1 = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-    });
-
-    await lessonFixture({
-      chapterId: chapter.id,
-      description: `E2E Pending Lesson Description ${uniqueId}`,
-      generationStatus: "pending",
-      isPublished: true,
-      organizationId: org.id,
-      position: 1,
-      title: `E2E Pending Lesson ${uniqueId}`,
-    });
-
-    const lesson = await lessonFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      lessonId: lesson1.id,
-      organizationId: org.id,
-      position: 0,
-    });
-
-    await Promise.all([
-      lessonProgressFixture({
-        completedAt: new Date(),
-        durationSeconds: 60,
-        lessonId: lesson.id,
-        userId: user.id,
-      }),
-      userProgressFixture({ totalBrainPower: 100n, userId: user.id }),
-      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
-    ]);
-
-    const ctx = await browser.newContext({ storageState: user.storageState });
-    const page = await ctx.newPage();
-
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: /continue learning/iu }).first()).toBeVisible();
+    const focusTitle = page.getByRole("heading", { name: "Calm and simple" });
+    const fun = page.getByRole("tabpanel", { name: "Fun" });
+    const route = fun.getByRole("heading", { name: "The route to Madrid" });
 
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).not.toBeVisible();
+    await expect(page.getByRole("tab", { name: "Focus" })).toHaveAttribute("aria-selected", "true");
+    await expect(focusTitle).toBeVisible();
+    await expect(route).toBeHidden();
+    await expectAccessibleScreen(page, "the home page");
+
+    await page.getByRole("tab", { name: "Fun" }).click();
 
     await expect(
-      page.getByRole("link", { name: new RegExp(`Next:.*E2E Pending Lesson ${uniqueId}`, "u") }),
+      fun.getByRole("heading", { name: "Learning that feels like a game" }),
     ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: `E2E Pending Chapter ${uniqueId}` })).toBeVisible();
-    await expect(page.getByRole("link", { name: `E2E Pending Course ${uniqueId}` })).toBeVisible();
-    await expect(page.getByText(`E2E Pending Lesson Description ${uniqueId}`)).toBeVisible();
-
-    await ctx.close();
+    await expect(fun.getByText(/^Your plan becomes a space voyage/u)).toBeVisible();
+    await expect(route).toBeVisible();
+    await expect(fun.getByRole("heading", { name: "A buddy you feed by learning" })).toBeVisible();
+    await expect(focusTitle).toBeHidden();
   });
 });
 
-test.describe("Home Page - Progress Section", () => {
-  test("authenticated user with progress sees energy level", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-
-    // Wait for Suspense content to load - Progress section only renders when data is available
-    await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
-
-    const energyCard = authenticatedPage.getByRole("article", { name: /^energy$/iu });
-
-    await expect(energyCard).toContainText("75%");
-  });
-
-  test("authenticated user with progress sees belt level", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-
-    await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
-
-    // Use regex to match belt level pattern (e.g., "Orange Belt - Level 8")
-    await expect(authenticatedPage.getByText(/belt - level \d+/iu)).toBeVisible();
-
-    // Use regex to match BP to next level pattern
-    await expect(authenticatedPage.getByText(/\d+ bp to next level/iu)).toBeVisible();
-  });
-
-  test("authenticated user with progress sees activity totals after level", async ({
-    baseURL,
-    browser,
+test.describe("The class example on the home page", () => {
+  test("Simpler and Go deeper swap the explanation, and a second tap brings it back", async ({
+    page,
   }) => {
-    const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
-    const ctx = await browser.newContext({ storageState: user.storageState });
-    const page = await ctx.newPage();
+    await page.goto("/");
 
-    try {
-      await page.goto("/");
+    const example = page
+      .getByRole("listitem")
+      .filter({ has: page.getByRole("heading", { name: "Keep up in class" }) });
 
-      const progressSection = page.getByRole("region", { name: /^progress$/iu });
+    const original = example.getByText(/^A derivative is how fast/u);
+    const simpler = example.getByRole("button", { name: "Simpler" });
 
-      await expect(progressSection).toBeVisible();
+    await expect(original).toBeVisible();
 
-      const progressCards = progressSection.getByRole("article");
-      await expect(progressCards.nth(1)).toContainText(/belt - level \d+/iu);
+    await simpler.click();
+    await expect(simpler).toHaveAttribute("aria-pressed", "true");
+    await expect(example.getByText(/^Think of a speedometer/u)).toBeVisible();
+    await expect(original).toBeHidden();
 
-      const completedLessonsCard = progressSection.getByRole("article", {
-        name: /lessons completed/iu,
-      });
+    await example.getByRole("button", { name: "Go deeper" }).click();
+    await expect(example.getByText(/^It's the slope of the line/u)).toBeVisible();
+    await expect(simpler).toHaveAttribute("aria-pressed", "false");
 
-      await expect(completedLessonsCard).toContainText("1 lesson");
-      await expect(completedLessonsCard).toContainText("All time");
-
-      const learningDaysCard = progressSection.getByRole("article", { name: /learning days/iu });
-
-      await expect(learningDaysCard).toContainText("1 day");
-
-      await expect(learningDaysCard).toContainText("At least one completed lesson");
-
-      const learningTimeCard = progressSection.getByRole("article", { name: /learning time/iu });
-
-      await expect(learningTimeCard).toContainText("2 min");
-      await expect(learningTimeCard).toContainText("Time spent in lessons");
-    } finally {
-      await ctx.close();
-    }
+    await example.getByRole("button", { name: "Go deeper" }).click();
+    await expect(original).toBeVisible();
   });
+});
 
-  test("authenticated user with progress sees score", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
+test.describe("Home page for learners", () => {
+  test("sends learners with an account to Today before the page renders, until they sign out", async ({
+    userWithoutProgress,
+  }) => {
+    const response = await userWithoutProgress.request.get("/", { maxRedirects: 0 });
 
-    await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
+    expect(response.status()).toBe(307);
+    expect(response.headers().location).toMatch(/\/today$/u);
 
-    // Use regex to match any percentage of correct answers (e.g., "75%" or "75.2%")
-    await expect(authenticatedPage.getByText(/\d+(?:\.\d+)?% correct answers/iu)).toBeVisible();
+    // Signed out and started again as a guest, they keep the home page.
+    const options = { data: {}, headers: { Origin: getBaseURL() } };
+    const signedOut = await userWithoutProgress.request.post("/api/auth/sign-out", options);
+    expect(signedOut.ok(), await signedOut.text()).toBe(true);
+
+    const guest = await userWithoutProgress.request.post("/api/auth/sign-in/anonymous", options);
+    expect(guest.ok(), await guest.text()).toBe(true);
+
+    const home = await userWithoutProgress.request.get("/", { maxRedirects: 0 });
+    expect(home.status()).toBe(200);
   });
+});
 
-  test("authenticated user with progress sees best day", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
+test.describe("Pages that don't exist", () => {
+  test("show the app's 404 with a way home, in the visitor's language", async ({ page }) => {
+    const response = await page.goto("/this-page-does-not-exist");
 
-    const progressSection = authenticatedPage.getByRole("region", { name: /^progress$/iu });
-    const bestDayLink = progressSection.getByRole("link", { name: /best day/iu });
+    expect(response?.status()).toBe(404);
+    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+    await page.getByRole("link", { name: "Go to the home page" }).click();
+    await expect(page).toHaveURL(/\/$/u);
 
-    await expect(bestDayLink).toHaveAttribute("href", "/patterns");
+    await page.goto("/de/diese-seite-gibt-es-nicht");
 
-    // Use regex to match any day of week with percentage (e.g., "Sunday with 76.1%")
     await expect(
-      bestDayLink.getByText(
-        /(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday) with \d+(?:\.\d+)?%/iu,
-      ),
+      page.getByRole("heading", { name: "Diese Seite wurde nicht gefunden" }),
     ).toBeVisible();
-  });
 
-  test("authenticated user with progress sees best time", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-
-    const progressSection = authenticatedPage.getByRole("region", { name: /^progress$/iu });
-    const bestTimeLink = progressSection.getByRole("link", { name: /best time/iu });
-
-    await expect(bestTimeLink).toHaveAttribute("href", "/patterns");
-
-    // Use regex to match time period with percentage (e.g., "Morning with 90%" or "Morning with 90.5%")
-    await expect(
-      bestTimeLink.getByText(/(?:morning|afternoon|evening|night) with \d+(?:\.\d+)?%/iu),
-    ).toBeVisible();
-  });
-
-  test("user without progress does not see progress section", async ({ userWithoutProgress }) => {
-    await userWithoutProgress.goto("/");
-
-    await expect(userWithoutProgress.getByText(/^progress$/iu)).not.toBeVisible();
+    await expect(page.getByRole("main")).toHaveAttribute("lang", "de");
   });
 });

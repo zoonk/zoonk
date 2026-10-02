@@ -1,2 +1,13 @@
 @import "@zoonk/ui/globals.css";
+@import "@zoonk/ui/fun.css";
 @import "@zoonk/player/questions/styles.css";
+
+/*
+ * `@zoonk/ui/globals.css` scans every workspace. Main's stylesheet loads on every page, so it skips
+ * the other apps' sources and keeps only the classes main and its packages use.
+ */
+@source not "../../../admin";
+@source not "../../../api";
+@source not "../../../blog";
+@source not "../../../evals";
+@source not "../../../mailbox";

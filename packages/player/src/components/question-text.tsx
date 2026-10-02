@@ -8,9 +8,10 @@ export function ContextText({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** The line the learner answers, in the same type as a lesson's other questions. */
 export function QuestionText({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-muted-foreground text-lg font-semibold tracking-tight sm:text-xl">
+    <h2 className="text-foreground text-xl leading-snug font-semibold tracking-tight text-balance sm:text-2xl">
       {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </h2>
   );

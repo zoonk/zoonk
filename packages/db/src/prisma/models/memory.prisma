@@ -1,0 +1,115 @@
+enum MemoryCategory {
+  goals
+  background
+  routine
+  preferences
+  learning
+  context
+}
+
+enum MemoryOrigin {
+  said
+  noticed
+}
+
+enum MemoryFactStatus {
+  active
+  superseded
+  deleted
+}
+
+enum MemoryInsightKind {
+  tip
+  planChange   @map("plan_change")
+  scheduleIdea @map("schedule_idea")
+}
+
+enum MemoryInsightStatus {
+  pending
+  accepted
+  dismissed
+}
+
+enum MilestoneKind {
+  badge
+  belt
+  glasses
+  buddyStage @map("buddy_stage")
+}
+
+/// One short fact the learner shared (`said`) or Zoonk noticed from activity (`noticed`), read by
+/// category so tasks load only what they need. A replaced fact points at the fact that replaced it.
+/// Sensitive facts are stored only when the learner explicitly asks, and deleted facts are purged 30
+/// days after `deletedAt`. Provenance is set when a model extracted the fact.
+model MemoryFact {
+  id             String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String           @map("user_id") @db.Uuid
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category       MemoryCategory
+  statement      String
+  origin         MemoryOrigin
+  status         MemoryFactStatus @default(active)
+  supersededById String?          @map("superseded_by_id") @db.Uuid
+  supersededBy   MemoryFact?      @relation("MemoryFactSupersession", fields: [supersededById], references: [id], onDelete: SetNull)
+  supersedes     MemoryFact[]     @relation("MemoryFactSupersession")
+  confidence     Float?
+  sensitive      Boolean          @default(false)
+  /// Where the fact came from (onboarding, a chat, answers or activity) with a reference.
+  sourceRef      Json?            @map("source_ref")
+  expiresAt      DateTime?        @map("expires_at")
+  lastUsedAt     DateTime?        @map("last_used_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  model          String?
+  promptVersion  String?          @map("prompt_version")
+  runId          String?          @map("run_id")
+  generatedAt    DateTime?        @map("generated_at")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId, category, status])
+  @@index([supersededById])
+  @@index([deletedAt])
+  @@map("memory_facts")
+}
+
+/// The daily check after a session that turns recent answers, mistakes, study times and memory into at
+/// most one insight a day: a tip, a plan change or a schedule idea. `kind` and `message` are null when
+/// the check found nothing worth saying, and `inputHash` lets the next check skip when nothing changed.
+/// `payload` holds what accepting needs, such as the suggested study time or the plan change.
+model MemoryInsight {
+  id            String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId        String              @map("user_id") @db.Uuid
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId        String?             @map("goal_id") @db.Uuid
+  goal          Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  localDate     DateTime            @map("local_date") @db.Date
+  kind          MemoryInsightKind?
+  message       String?
+  payload       Json                @default("{}")
+  status        MemoryInsightStatus @default(pending)
+  inputHash     String              @map("input_hash")
+  respondedAt   DateTime?           @map("responded_at")
+  model         String?
+  promptVersion String?             @map("prompt_version")
+  runId         String?             @map("run_id")
+  generatedAt   DateTime?           @map("generated_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+
+  @@unique([userId, localDate], name: "userLocalDate")
+  @@index([goalId])
+  @@map("memory_insights")
+}
+
+/// Glasses, badges, belts and buddy stages a learner earned, each celebrated once (`shownAt`).
+model Milestone {
+  id       String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId   String        @map("user_id") @db.Uuid
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind     MilestoneKind
+  key      String
+  earnedAt DateTime      @default(now()) @map("earned_at")
+  shownAt  DateTime?     @map("shown_at")
+
+  @@unique([userId, kind, key], name: "userMilestone")
+  @@map("milestones")
+}

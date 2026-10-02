@@ -39,7 +39,7 @@ type TypedNavigationRouter = Omit<NavigationRouter, "prefetch" | "push" | "repla
 export const Link = navigation.Link as <const Href extends string>(
   props: LinkProps<Href>,
 ) => ReactNode;
-export const { getPathname, redirect, usePathname } = navigation;
+export const { getPathname, permanentRedirect, redirect, usePathname } = navigation;
 
 /**
  * Keep next-intl's locale-aware router behavior while validating its

@@ -1,0 +1,1996 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The activity correctly follows Needles → Bundles → Pine for the planned two-needle case. Its branches match the explanation, and both scored checks have one defensible answer under this simplified key with matching reasons. No factual error requiring an accuracy cap is evident in the intended key context.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The language is generally short and accessible, but screen 2 introduces five terms at once rather than respecting the one-new-term limit. Everyday comparisons are not consistently supplied, and the broad-to-fine organizing principle is deferred until after the activity. These multiple clarity weaknesses warrant 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The decision tree requires classification using the pictured features and includes feedback addressing the mistake of stopping at needles. The next check includes the planned pointed-lobes-first trap, and the application requires following the same key to oak. Wrong-answer reasons explain the relevant branch errors rather than merely declaring answers wrong.",
+          "score": 9,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses beginner-friendly US English, opens with the planned park guess, preserves the screen sequence, and provides a concrete application in Seattle's Discovery Park. Images occur only where planned; the activity image requests visible paired needles, and its alt does not name the tree. The summary uses one sentence per idea. However, failing to explain broadest-first ordering before the activity is a plan-following slip, so the category is capped at 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5176,
+          "inputTokens": 5179,
+          "outputTokens": 1004,
+          "reasoningTokens": 391
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required broadest-feature-first explanation is missing before the learner walks the key. Screen 2 gives the sequence but does not explain that the key starts with a broad distinction and then narrows to finer details. That principle first appears in screen 4's feedback, after the activity.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Screen 2 introduces five terms together: tree key, needles, broad leaves, bundles, and lobes. This violates the clarity requirement against multiple new terms on one screen and makes the main explanation dense for beginners. Bundles also lacks the requested everyday comparison.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the explanation image carry more of the teaching: clearly distinguish the first, broad split from the later detail checks, and show paired needles and rounded versus pointed leaf projections beside their labels.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The key's order is explained (broadest feature first) before the learner walks it\n      - The decision tree's case is the leaf the plan describes (long needles in bundles of two) and walking its answers reaches pine; the questions follow the explanation's key\n      - The activity asks for a picture of the case in its `image`, whose `alt` describes what the learner must look at (needles, bundles) without naming the tree\n      - Screens without a planned Visual have no image\n      - The check uses the planned trap (asking about lobes first), and the application stays on the same key\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tree-key-beginner-1",
+        "userInput": {
+          "chapterTitle": "Trees and plants",
+          "courseTitle": "Nature around you",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Name a common tree from one of its leaves with a simple key",
+            "description": "Tell needles from broad leaves, then use a key one question at a time to name pines, spruces, oaks and maples.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In a park, two trees look alike from far away, but one keeps its leaves all winter. Ask the learner to guess, without scoring, which part of a tree gives it away fastest.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A tree key asks one question at a time about what you can see. First: needles or broad leaves? Needles in bundles mean a pine; single needles on the twig mean a spruce or fir. Broad leaves with rounded lobes mean an oak; pointed lobes mean a maple.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes."
+              },
+              {
+                "activityTemplate": "decisionTree",
+                "brief": "The learner walks a key to name the tree from a leaf they can see: long needles growing in bundles of two. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": "A pine twig with long needles growing in bundles of two, close up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which question a key should ask first about a maple leaf. Tempting wrong answer: whether its lobes are pointed. Right: whether it has needles or broad leaves, because a key narrows from the broadest feature down.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "On a walk, a friend finds a broad leaf with rounded lobes. Ask which tree the key leads to and why. Right: an oak, because broad leaves with rounded lobes lead there.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Use a branching key one question at a time, from the broadest feature to the finest, to name a common tree from a leaf.",
+                "example": "Needles in bundles of two lead to a pine; single needles lead to a spruce.",
+                "hard": false,
+                "name": "Name a tree with a leaf key",
+                "topic": "Identifying trees",
+                "useCase": "Naming trees on a walk or in a park from one leaf."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Name a tree from one leaf"
+          },
+          "activityTemplates": [
+            {
+              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome. Check kinds this template supports: interaction.",
+              "id": "decisionTree",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"case\":{\"type\":\"object\",\"properties\":{\"answers\":{\"minItems\":1,\"maxItems\":15,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"branch\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"nodeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"branch\",\"nodeId\"],\"additionalProperties\":false}},\"description\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"outcomeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"answers\",\"description\",\"outcomeId\"],\"additionalProperties\":false},\"nodes\":{\"minItems\":3,\"maxItems\":15,\"type\":\"array\",\"items\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"branches\":{\"minItems\":2,\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"next\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"label\",\"next\"],\"additionalProperties\":false}},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"question\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"branches\",\"id\",\"kind\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"outcome\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"id\",\"kind\",\"label\"],\"additionalProperties\":false}]}},\"rootId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"case\",\"nodes\",\"rootId\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"decisionTree\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The range examples, subtraction, answer keys, and countdown are correct. The starter prints 1 through 4; the solution changes only the editable loop line and prints exactly the expected output, including newlines. Both likely-mistake outputs match their feedback. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The boundary rule is explained in short, plain sentences with a useful number line before scored use. However, a learner with no loop experience must interpret the unexplained loop structure, the role of `n`, and the indented print statement. These are several skipped instructional steps, triggering the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The scored questions require prediction, include the tempting stop-inclusive answers, and provide accurate option-specific reasons. The runner requires an actual repair and diagnoses both required mistakes. The countdown transfers the rule with less help. The main weakness is that the unscored hook's distractors are implausible rather than genuine misconceptions.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses US English, opens directly with the missing-number problem, follows the planned sequence, and supplies a concrete workout-timer application. The summary covers the intended ideas, but combines the stop-value choice and count rule in one sentence rather than one sentence per idea. This is one slip, so the cap of 8 applies.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4864,
+          "inputTokens": 4867,
+          "outputTokens": 980,
+          "reasoningTokens": 358
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson assumes loop knowledge that the learner explicitly does not have. The first scored check introduces `for n in ...: print(n)` without explaining that the loop takes each number in turn, calls it `n`, and prints it. The runner then also assumes the learner understands the indented line. These skipped steps undermine beginner accessibility despite the clear explanation of range boundaries.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The hook's alternatives about skipping odd numbers or being unable to print 5 are not plausible boundary misconceptions. Also, the second summary sentence combines two distinct ideas—choosing a stop value and calculating the count—instead of giving each idea its own sentence.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the explanation's page-numbering example concrete, such as printing page labels 1 through 5, rather than leaving it as a standalone phrase. This would connect the number-line explanation to a recognizable task.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners who have written a line of Python but no loops yet\n      - range(start, stop) is explained as stopping before stop, with the count being stop minus start, before the learner is asked to use it\n      - The code runner's starter loop really stops one number early, the solution changes only the loop line, and the expected output is exactly what the solution prints (1 to 5, one per line)\n      - The runner's mistakes give feedback on what each likely wrong output means (0 to 4, or stopping at 4)\n      - Checks use the classic trap of counting the stop value, and the countdown application keeps the same rule\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-python-range-beginner-1",
+        "userInput": {
+          "chapterTitle": "Loops",
+          "courseTitle": "Python programming",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Make a Python loop run exactly the numbers you want",
+            "description": "Read range(start, stop) as counting up to but not including stop, and fix loops that stop one number early.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "A loop meant to print the numbers 1 to 5 prints only 1 to 4. Ask the learner to guess, without scoring, why the last number goes missing.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "range(start, stop) starts at start and stops before stop: range(1, 5) gives 1, 2, 3, 4. To reach 5, the stop is 6. The count of numbers is stop minus start.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask what for n in range(2, 6): print(n) prints. Tempting wrong answer: 2, 3, 4, 5, 6. Right: 2, 3, 4, 5, because the stop isn't included.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "codeRunner",
+                "brief": "The learner fixes a Python loop that should print the numbers 1 to 5, one per line, but uses range(1, 5). Only the loop line is editable. Likely mistakes: range(0, 5), which prints 0 to 4, and range(1, 5) left as it is.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A countdown uses for n in range(10, 0, -1). Ask what the last number printed is. Tempting wrong answer: 0. Right: 1, because the stop is still left out when counting down.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Choose start and stop values for range() so a loop covers exactly the numbers needed, remembering the stop is left out.",
+                "example": "for n in range(1, 6): print(n) prints 1, 2, 3, 4 and 5.",
+                "hard": false,
+                "name": "Choose range() bounds for a loop",
+                "topic": "Loops",
+                "useCase": "Looping over pages, days or items without skipping the last one."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Count with range() in Python"
+          },
+          "activityTemplates": [
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake. Check kinds this template supports: interaction.",
+              "id": "codeRunner",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"editableLines\":{\"minItems\":1,\"maxItems\":10,\"type\":\"array\",\"items\":{\"type\":\"integer\",\"exclusiveMinimum\":0,\"maximum\":9007199254740991}},\"expectedOutput\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":500},\"fileName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"language\":{\"type\":\"string\",\"enum\":[\"javascript\",\"python\"]},\"mistakes\":{\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"feedback\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"output\":{\"type\":\"string\",\"maxLength\":500}},\"required\":[\"feedback\",\"output\"],\"additionalProperties\":false}},\"solution\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":2000},\"starterCode\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":2000}},\"required\":[\"editableLines\",\"expectedOutput\",\"language\",\"mistakes\",\"solution\",\"starterCode\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"codeRunner\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The anatomical locations, chamber roles, pumping destinations and front-view reversal are correct at the requested level. The activity uses the checked human-heart diagram and correct part IDs. Both scored multiple-choice checks have exactly one defensible answer. The septal-hole scenario explicitly supplies left-to-right pressure-driven flow rather than claiming that every septal defect always behaves identically.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The Portuguese is accessible, but screen 2 introduces four technical terms and several concepts together. Although chambers and the septum receive plain-language explanations, atria and ventricles are not introduced through everyday comparisons. These multiple terminology and sequencing weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The labeling interaction tests spatial identification and explains the likely left-right reversal. The application tests the consequence of a broken partition, and its options have useful, matching feedback. However, the chamber question primarily asks learners to recall the stated destination rather than apply it, triggering the single recall-only-check cap of 8. It does include the required right-ventricle trap and thicker-wall explanation.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, opens directly with the heart, follows the planned learning sequence and provides a relevant SUS consultation scenario. The application follows from the septum's separating role and supplies the additional pressure premise. The summary nevertheless combines septum function and diagram orientation in one sentence rather than giving each idea its own sentence, warranting the one-slip cap of 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5850,
+          "inputTokens": 5853,
+          "outputTokens": 934,
+          "reasoningTokens": 294
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Screen 2 introduces four technical terms—câmara, átrio, ventrículo and septo—while also teaching pumping destinations and front-view orientation. This violates the limit on new terms and concentrates several ideas into one beginner screen. The functions are stated correctly, but atria and ventricles lack the required everyday comparisons.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The chamber check mainly recalls the previously stated pumping destination; its thicker-wall context does not require additional reasoning. The third summary sentence combines two separate ideas: septum separation and front-view orientation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a simple receiving-room versus pump comparison to make the chamber roles easier to distinguish within the planned explanation screen. Make the chamber check require combining location and pumping destination, while retaining the right-ventricle trap. Give septum separation and viewing orientation separate summary sentences.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners\n      - Atria receive and ventricles pump; the right side sends blood to the lungs and the left side to the whole body; the septum keeps the two sides apart\n      - The labeled diagram uses the checked heart diagram and its part ids, with labels in Portuguese, and its feedback explains the left-right mix-up of a heart seen from the front\n      - The check about which chamber pumps to the body uses the right-ventricle trap and explains the thicker wall of the left ventricle\n      - The application about a hole in the septum follows from what the lesson taught\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-camaras-do-coracao-beginner-1",
+        "userInput": {
+          "chapterTitle": "Sistema circulatório",
+          "courseTitle": "Biologia",
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Localizar as quatro câmaras do coração e dizer para onde cada lado bombeia o sangue",
+            "description": "Conheça átrios e ventrículos, o septo que separa os dois lados e o caminho do sangue para os pulmões e para o corpo.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "O coração bate cerca de 100 mil vezes por dia sem misturar o sangue que vai para os pulmões com o que vai para o corpo. Peça um palpite, sem avaliar, de como ele consegue isso.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio."
+              },
+              {
+                "activityTemplate": "labeledDiagram",
+                "brief": "O aprendiz arrasta os nomes átrio direito, átrio esquerdo, ventrículo direito, ventrículo esquerdo e septo para o desenho do coração visto de frente. Confusão provável: trocar direito e esquerdo, já que o lado direito do coração fica à esquerda de quem olha.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte qual câmara bombeia o sangue para o corpo todo. Resposta tentadora: o ventrículo direito. Certa: o ventrículo esquerdo, que tem a parede mais grossa porque empurra o sangue mais longe.",
+                "kind": "check",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Num exame, o médico ouve um sopro causado por um furo no septo. Pergunte o que acontece com o sangue. Resposta certa: sangue do lado esquerdo passa para o direito, e o sangue que vai para o corpo e para os pulmões se mistura.",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Nomear e localizar átrios, ventrículos e septo num desenho do coração visto de frente.",
+                "example": "No desenho de frente, o ventrículo esquerdo fica embaixo, à direita de quem olha.",
+                "hard": false,
+                "name": "Localizar as câmaras do coração",
+                "topic": "Anatomia do coração",
+                "useCase": "Ler desenhos e exames do coração na escola e em provas."
+              },
+              {
+                "description": "Dizer para onde cada lado do coração bombeia o sangue: o direito para os pulmões, o esquerdo para o corpo.",
+                "example": "O ventrículo direito manda sangue para os pulmões pela artéria pulmonar.",
+                "hard": true,
+                "name": "Seguir o caminho do sangue no coração",
+                "topic": "Circulação",
+                "useCase": "Entender por que um defeito num lado do coração afeta os pulmões ou o corpo."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "As quatro câmaras do coração"
+          },
+          "activityTemplates": [
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater Check kinds this template supports: interaction.",
+              "id": "labeledDiagram",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"diagramId\":{\"type\":\"string\",\"maxLength\":60,\"pattern\":\"^[\\\\da-z]+(?:-[\\\\da-z]+)*$\"},\"distractors\":{\"maxItems\":3,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"mixUps\":{\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"feedback\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"labels\":{\"minItems\":2,\"maxItems\":2,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}}},\"required\":[\"feedback\",\"labels\"],\"additionalProperties\":false}},\"parts\":{\"minItems\":2,\"maxItems\":8,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"partId\":{\"type\":\"string\",\"maxLength\":60,\"pattern\":\"^[\\\\da-z]+(?:-[\\\\da-z]+)*$\"}},\"required\":[\"label\",\"partId\"],\"additionalProperties\":false}}},\"required\":[\"diagramId\",\"distractors\",\"mixUps\",\"parts\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"labeledDiagram\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The required quantities and ATP calculation are correct: 2 ATP spent, 4 ATP and 2 NADH produced, and a net of 2 ATP per glucose. The mathCheck has a correct solution and matching misconception feedback, and glycolysis is correctly located in the cytoplasm. However, defining cytoplasm as the cell-filling liquid is a small anatomical imprecision: cytosol is the fluid component of the cytoplasm. This triggers the cap of 8 for a small imprecision.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The writing is generally short and accessible, and the ATP currency and investment-loan comparisons are helpful. Nevertheless, both explanation screens introduce multiple technical terms at once, and several lack an everyday comparison before use. CMC introduces additional anatomical labels without explanation, while NADH and the respiratory chain receive compressed descriptions rather than concrete analogies. These repeated terminology and scaffolding weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The ATP check requires subtraction and includes the required tempting answer of 4, with sound reasons for the generated answers. The location check includes the mitochondria trap and reasons for every option, but its nominal drawing context still amounts to direct recall because no drawing or other evidence must be interpreted. The hook has no option-specific reasons, and the mitochondria feedback does not explain why that misconception is tempting. Multiple check and feedback weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, opens directly with the central idea, follows the five planned screens in order, and ends with concise summary statements. It preserves the required numbers, loan comparison and CMC memory aid, and introduces no pictures or advanced material as test requirements. The concrete application, however, shifts from the learner's school test to a vestibular review on a bus in Curitiba, making it less faithful to the supplied learning situation. This is one fit slip, so the score is capped at 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3999,
+          "inputTokens": 4002,
+          "outputTokens": 1087,
+          "reasoningTokens": 294
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanations overload a beginner with several new technical terms per screen, contrary to the one-new-term requirement. Screen 2 introduces glucose, glycolysis, cytoplasm, CMC, ATP and the investment phase together; screen 3 adds the yield phase, NADH, electrons and the respiratory chain without consistently using everyday comparisons. The hook also supplies no option-specific reasons, despite the requirement for a reason on every option.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Calling the cytoplasm the liquid that fills the cell conflates cytoplasm with cytosol; this simplification is repeated in the location feedback. The location check largely asks learners to recall a stated fact rather than interpret a drawing or diagnose an error. Its vestibular context also departs from the requested school test based on the teacher's slides.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the mitochrondria distractor feedback explain why it is tempting: other stages of respiration occur there, but glycolysis does not. Use the school-test setting instead of the arbitrary bus-and-vestibular setting, and give NADH a simple carrier comparison while keeping additional terminology to a minimum.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner studying for a school test from their teacher's slides (MATERIAL)\n      - Teaches what the slides say, with their terms, numbers and memory aids: 2 ATP spent in the investment phase (the \"empréstimo\" comparison), 4 ATP and 2 NADH produced, a net of 2 ATP per glucose, glycolysis in the cytoplasm\n      - Nothing contradicts the slides, and nothing beyond them is presented as needed for the test\n      - The checks use the slides' exam traps (answering 4 instead of 2; placing glycolysis in the mitochondria), with a reason on every option\n      - No pictures (every image is null): the slides have their own\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-glicolise-from-slides-1",
+        "userInput": {
+          "chapterTitle": "Glicólise",
+          "courseTitle": "Prova de biologia: respiração celular",
+          "language": "pt",
+          "level": "beginner",
+          "material": "<page ref=\"S1:2\" of=\"Aula 5 - Glicolise, slide 2\">\nPor que as células respiram?\nObjetivo: transformar a energia da glicose em ATP\nATP = a 'moeda de energia' da célula\nRespiração aeróbia: C6H12O6 + 6 O2 → 6 CO2 + 6 H2O + energia\n</page>\n<page ref=\"S1:3\" of=\"Aula 5 - Glicolise, slide 3\">\nAs três etapas\n1. Glicólise – no citoplasma\n2. Ciclo de Krebs – na matriz mitocondrial\n3. Cadeia respiratória – nas cristas mitocondriais\nMacete da aula: 'Cito-Matriz-Cristas' (CMC)\n</page>\n<page ref=\"S1:5\" of=\"Aula 5 - Glicolise, slide 5\">\nGlicólise: fase de investimento\nGasta 2 ATP para 'ativar' a glicose\nPense num empréstimo: investe 2 para ganhar mais depois\n</page>\n<page ref=\"S1:6\" of=\"Aula 5 - Glicolise, slide 6\">\nGlicólise: fase de rendimento\nProduz 4 ATP (fosforilação no nível do substrato)\nProduz 2 NADH (carrega elétrons para a cadeia respiratória)\nSaldo: 4 − 2 = 2 ATP por glicose\n</page>\n<page ref=\"S1:10\" of=\"Aula 5 - Glicolise, slide 10\">\nPegadinhas de prova\nGlicólise NÃO acontece na mitocôndria\nO saldo da glicólise é 2 ATP, não 4\n</page>",
+          "spec": {
+            "canDo": "Calcular o saldo de ATP da glicólise",
+            "description": "Mostra quanto ATP a glicólise gasta e produz, e por que o saldo é 2 por glicose.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Palpite sem valer ponto: a glicólise produz 4 ATP. Quanto sobra por glicose?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A glicólise gasta 2 ATP, produz 4 e termina com saldo de 2 ATP por glicose.",
+                "example": "4 produzidos − 2 gastos = 2 ATP",
+                "hard": false,
+                "name": "Calcular o saldo energético da glicólise",
+                "topic": "Glicólise",
+                "useCase": "Questões de prova que pedem o saldo de ATP de cada etapa"
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Saldo de ATP da glicólise"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The supplied calculations and answers are correct: 25% for the ticket, 15% for salary, −25% for the jacket, −20% for the game, $75 after the sneaker changes, 25% for the stock recovery, and approximately 11.1% for restoring the cut pay. At the supplied values, each generated check has one defensible correct answer. The activity explicitly labels its data as an example, and the other scenarios are clearly illustrative.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Most sentences and worked steps are beginner-friendly, and the visuals reinforce the relevant quantities. However, screen 3 skips the concrete division explanation before presenting the formula, introduces two terms together, and defines “original price” after its first use. The activity adds unexplained “percentage points.” These multiple terminology and sequencing weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks require calculation, follow the worked examples with less help, and include both planned new-value divisor traps. The estimate activity elicits a prediction tied to recovery. However, several wrong-answer reasons only identify the operation and correction, without explaining why the mistaken approach is tempting. This repeated feedback weakness triggers the cap of 7.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses US English, familiar dollar examples, the planned screen sequence, and a concrete Chicago diner application. Its summary gives one sentence per idea. Nevertheless, the hook explicitly reveals the answer too soon, and the formula precedes the required concrete change-divided-by-starting-dollars explanation. These multiple departures from the planned beginner experience trigger the cap of 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 7698,
+          "inputTokens": 7701,
+          "outputTokens": 1062,
+          "reasoningTokens": 389
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The hook reveals “Less than $100” immediately, despite the plan explicitly requiring the answer to remain hidden until later. Screen 3 also introduces the formula before concretely showing that the $5 change is divided by the starting $20; the required dollar-based explanation arrives only in the next screen.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Screen 3 introduces both “percent change” and “original price,” defining the latter only after using it. The activity uses “percentage points” without explaining it. Several distractor reasons identify the mistaken operation but do not explain its appeal, especially why dividing by the new salary or price might seem reasonable.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The final application could check the intermediate pay amounts and $30 shortfall, rather than checking only the recovery percentage. This would make it easier to distinguish understanding of successive changes from simply selecting the final answer.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for a beginner\n      - The hook uses the planned surprise (a price that drops 50% and doesn't come back with a 50% rise) as a guess, with no introduction\n      - Percent change is explained as change divided by the starting value, concretely with dollars, before any formula; the formula, if any, is explained piece by piece\n      - Worked examples show every step with correct arithmetic, and the check after each one is a similar problem with less help\n      - Checks include the classic trap of dividing by the new value, and every option's reason explains why it's tempting and why it's wrong\n      - The estimate-then-reveal activity makes the learner commit to a guess before the math, tied to the screen's idea\n      - The application is a realistic case (rent, salary, a sale) in a place the learner recognizes\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-beginner-1",
+        "userInput": {
+          "chapterTitle": "Fractions and percentages",
+          "courseTitle": "Mathematics",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Calculate how much a price changed in percent",
+            "description": "Learn to work out how much a price or salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Pose a quick guess that doesn't count: a $100 sneaker drops 50% in a sale, then its price rises 50%. Is it back to $100? Options: yes, more than $100, less than $100. Don't reveal the answer yet; say we'll find out.",
+                "kind": "hook",
+                "skills": [],
+                "visual": "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Start concrete: a movie ticket went from $20 to $25. The change is new minus old: $25 - $20 = $5. Explain that $5 alone doesn't tell us if that's a big jump, because $5 on a $20 ticket feels bigger than $5 on a $500 TV.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Introduce percent change: compare the change to the ORIGINAL price, like asking 'how many cents of change per dollar we started with?' Show the recipe piece by piece: change ÷ original × 100. Stress that 'original' means the starting value, before the change.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Work the ticket example step by step: change = 25 - 20 = 5; divide by original 20: 5 ÷ 20 = 0.25; times 100 = 25%. So the price went up 25%.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Learner calculates: a salary rose from $2,000 to $2,300 a month. What's the percent increase? Correct: 15%. Include the tempting wrong answer 13% (dividing $300 by the new salary $2,300).",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Show a decrease: a jacket goes from $80 to $60. Change = 60 - 80 = -20; -20 ÷ 80 = -0.25; × 100 = -25%. A minus sign means the price went down 25%. Point out we still divide by the starting price, $80.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Learner calculates: a video game drops from $50 to $40. What's the percent change? Correct: a 20% decrease. Include the tempting wrong answer 25% (dividing $10 by the new price $40).",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Return to the hook: $100 drops 50% to $50. A 50% rise from $50 is only $25, giving $75, not $100. To get back, the price must rise $50 on a base of $50: 50 ÷ 50 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50)."
+              },
+              {
+                "activityTemplate": "estimateReveal",
+                "brief": "A stock falls 20%, from $100 to $80. Learner commits to an estimate of the percent rise needed to get back to $100, then sees the real answer: $20 ÷ $80 = 25%. Many will guess 20%; show how far off they were and why.",
+                "kind": "activity",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Your monthly pay of $3,000 is cut 10% during a slow season, then raised 10% later. Learner calculates each step ($3,000 → $2,700 → $2,970), finds they're still $30 short, and works out the percent rise actually needed from $2,700 to get back to $3,000 (about 11.1%).",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Find how much a value went up or down compared to where it started, as a percent.",
+                "example": "A ticket going from $20 to $25 is a (25 − 20) ÷ 20 × 100 = 25% increase.",
+                "hard": true,
+                "name": "Calculate a percent change",
+                "topic": "Percent change",
+                "useCase": "Checking how much your rent, salary or grocery prices really went up or down."
+              },
+              {
+                "description": "A drop and the rise needed to undo it are different percents, because the rise is measured from the smaller, lower value.",
+                "example": "After $100 drops 50% to $50, it needs a 100% rise to get back to $100.",
+                "hard": false,
+                "name": "Explain why drops and recoveries differ",
+                "topic": "Reversing a percent change",
+                "useCase": "Understanding why a stock or pay cut takes a bigger percent rise to recover."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Percent change"
+          },
+          "activityTemplates": [
+            {
+              "description": "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway. Check kinds this template supports: numeric.",
+              "id": "estimateReveal",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"comparison\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"scale\":{\"type\":\"string\",\"enum\":[\"linear\",\"log\"]},\"takeaway\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16},\"workings\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"expression\",\"label\"],\"additionalProperties\":false}}},\"required\":[\"comparison\",\"expression\",\"max\",\"min\",\"scale\",\"takeaway\",\"unit\",\"workings\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"estimateReveal\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The attraction, confinement cost, and spatially extended lowest-energy arrangement are physically sound, and each scored multiple-choice question has one defensible answer. However, the explicitly required radiation-and-spiraling explanation is absent. The cloud description also leaves probability implicit rather than explaining what the cloud represents. No incorrect answer is marked correct, so the factual-error cap of 6 is not triggered.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The Portuguese is accessible, sentences are short, and the cushion comparison helps explain confinement. However, the opening introduces three technical concepts together rather than pacing them as required. Later, saying that the most stable arrangement 'combines the two effects' skips the explanatory step connecting attraction and squeezing to a lowest-energy size. These multiple pacing and explanation weaknesses warrant the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The error-spotting check and typed cellphone explanation test useful understanding, and the typed answer has assessable key points. However, the first scored check mostly asks learners to repeat that compression requires energy. The hook gives no option-specific reasons, and the orbit distractor feedback does not explain the decisive physical failure of that model. These multiple check and feedback weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses Brazilian Portuguese and contains no formulas or mathematical notation. It opens directly with the puzzle, follows the seven planned screen purposes in order, and ends with one sentence per summary idea. The cellphone application is concrete and asks the learner to explain stable atoms using the intended concepts. The level and application have no meaningful weakness.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "7 of 8 parts passed. Screen 1: Uses \"átomo\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term. Screen 1: Uses \"núcleo\" before screen 3 explains it. Explain it in everyday words before this screen uses it, or say it here without the term. Screen 1: Uses \"elétron\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.875,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4355,
+          "inputTokens": 4358,
+          "outputTokens": 982,
+          "reasoningTokens": 312
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson omits a required part of the physical explanation: an electron circling like a classical charged particle would radiate energy and spiral toward the nucleus. Crossing out the orbit picture and saying it does not explain confinement is not a substitute for explaining why that picture fails.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The hook introduces atom, nucleus, and electron together despite the one-new-term-per-screen expectation. The first scored check largely repeats the preceding explanation, and the hook provides no reasons for its individual options. The cloud is described as where the electron can be found without explicitly explaining that it represents likelihood.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the first check ask learners to predict what happens to the energy cost when the cloud is squeezed further. Explain the cloud as a map of more and less likely locations, and make the stable arrangement more intuitive by describing why neither excessive squeezing nor moving far from the attracting nucleus minimizes energy.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a curious adult (overview)\n      - No formulas, equations or notation anywhere; the idea is told as a story with everyday comparisons (a cloud, a blurred fan)\n      - Physically correct: the old orbit picture is wrong because a circling charge would radiate and spiral in; the electron is described by a cloud of where it's likely to be, and confinement costs energy\n      - Checks are light and fun but still make the learner use the idea, with reasons for every option\n      - The application ties the idea to something real (atoms and matter being stable, the learner's own body existing)\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-nucleo-overview-1",
+        "userInput": {
+          "chapterTitle": "O átomo por dentro",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "spec": {
+            "canDo": "Explicar por que o elétron não cai no núcleo",
+            "description": "Mostra por que a atração pelo núcleo não concentra o elétron ali e como isso permite que os átomos permaneçam estáveis.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "O núcleo atrai o elétron. Peça um palpite, sem valer ponto: por que o elétron não termina espremido no núcleo?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "O elétron é atraído pelo núcleo, mas concentrá-lo demais exige energia; por isso, seu arranjo mais estável ocupa uma região ao redor do núcleo.",
+                "example": "Mesmo no estado de menor energia de um átomo, o elétron não fica espremido num ponto no núcleo.",
+                "hard": false,
+                "name": "Explicar por que o elétron não cai no núcleo",
+                "topic": "Estabilidade do átomo",
+                "useCase": "Entender por que os átomos que formam objetos cotidianos, como um celular, permanecem estáveis."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Por que o elétron não cai no núcleo"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The installation, PATH explanation, troubleshooting suggestion, and Python commands are accurate. The troubleshooting answer appropriately says PATH may have been missed rather than asserting it is the only possible cause. Both later checks have one defensible correct answer and accurate reasons. Python 3.13.1 is a real version used in a hypothetical scenario.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The wording is short and accessible, and PATH is explained in everyday language on its introduction screen. However, the command sequence skips the instruction to press Enter after each line. This matters for a beginner who has never used Terminal, triggering the cap of 8 for a skipped step.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The later checks test troubleshooting and interpretation, include both planned tempting wrong answers, and explain every option. The hook is also a prediction check, but its options have no individual feedback explaining why the incorrect guesses are wrong. This is one check with incomplete feedback, so the score is capped at 8.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson stays focused on beginner Windows setup in US English. The hook includes the required month-and-year sentence and warning about later screen changes. The six screens follow the planned instructional sequence, the application places the learner in Windows Terminal before the next chapter, and the summary uses one sentence per idea. It does not expand into a lesson on Python programming.",
+          "score": 10,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "6 of 7 parts passed. Screen 1: Uses \"Python\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.714285714285714,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3769,
+          "inputTokens": 3772,
+          "outputTokens": 1060,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The hook's options lack individual reasons; its reveal explains only the correct outcome. The worked example also omits telling a first-time terminal user to press Enter after each command, including before typing the next line.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show a concrete example version number rather than only Python 3.x, labeling it as an example. In the terminal illustration, show the >>> prompt before the print line and include exit() so learners can recognize each stage.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for a beginner setting up Python on Windows before a chapter that uses it\n      - The hook says in one sentence when these steps were written, as a month and year (the day the lesson was written, 2026 or later), and that screens may look a little different later; no other screen needs the date\n      - The steps are right for Windows: the free installer from python.org, ticking \"Add python.exe to PATH\", opening Terminal from the Start menu, python --version, then a print line and exit()\n      - PATH is explained in everyday words when it first appears\n      - Checks ask what went wrong or what a result means, with the planned tempting wrong answers and a reason on every option\n      - It stays on the setup: no lessons on writing Python itself\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-set-up-python-windows-1",
+        "userInput": {
+          "chapterTitle": "Set up Python on Windows",
+          "courseTitle": "Set up Python on Windows",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Run a line of Python in the Windows terminal",
+            "description": "Install Python on Windows from python.org, let the terminal find it, and check that it runs.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "On a fresh Windows laptop, typing python in the terminal often opens the Microsoft Store instead of running Python. Ask the learner to guess what happens before they install anything.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Get the free Python 3 installer for Windows from python.org (Downloads, then the Windows button), never from another site.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "The python.org downloads page with the Windows download button highlighted."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Run the installer and tick 'Add python.exe to PATH' before Install Now. PATH is the list of places the terminal looks for programs.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "The installer's first screen with the 'Add python.exe to PATH' box ticked and Install Now highlighted."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The installer finished, but python still opens the Microsoft Store. Ask what went wrong. Tempting wrong answer: the download was broken. Right: the PATH box wasn't ticked, so run the installer again and choose Modify.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Check it works in three moves: open Terminal from the Start menu, type python --version and read 'Python 3.x', then type python and print('Hello') and see Hello, and leave with exit().",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": "A Windows Terminal window showing python --version and a print line."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The next chapter asks the learner to run a script. They type python --version and see 'Python 3.13.1'. Ask what that tells them. Tempting wrong answer: Python still isn't installed.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Install Python 3 on Windows from its official site with PATH set, and check that it runs in the terminal.",
+                "example": "Typing python --version in Windows Terminal prints Python 3.13.1.",
+                "hard": true,
+                "name": "Set up Python on Windows",
+                "topic": "Python setup",
+                "useCase": "Getting ready to run the scripts later chapters use on your own computer."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Set up Python on Windows"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All stated deadlines agree with the source. Shortened dates remain unambiguous in their 2026 context. Each multiple-choice question has one defensible correct answer, and the feedback matches its option. The named people are clearly illustrative scenarios.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The lesson uses short, everyday sentences and explains federal tax return and filing extension without overwhelming a beginner. However, the explanations omit the everyday comparisons expressly requested for technical terms.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The October 15 payment trap is present, and its feedback identifies the confusion between filing and paying. The Denver application meaningfully distinguishes complete plans. However, the Liam question simply asks for the payment date just taught, triggering the cap of 8 for one recall-only check.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The opening immediately poses the planned question. The language, names, and Denver setting fit a US beginner lesson. The five screens follow the planned teaching sequence, followed by two one-sentence summary ideas. The application asks what Priya should do and when without identifying the correct plan in advance; requiring learners to construct that plan would make the application stronger.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3343,
+          "inputTokens": 3346,
+          "outputTokens": 1017,
+          "reasoningTokens": 498
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The Liam check largely repeats the payment-deadline statement from the preceding screen, testing recall rather than a new decision. The two technical terms receive understandable definitions, but neither includes the everyday comparison requested by the clarity rubric.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the Liam check ask learners to spot the mistake in a proposed payment plan. Add a brief comparison between a paperwork deadline and a bill's payment deadline. For stronger independent application, let learners produce Priya's plan before seeing choices, with grading points covering the extension request, payment, and filing deadlines.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for a beginner, with a US setting (dollars, US cities, US names)\n      - Every deadline matches SOURCES exactly: the 2025 return is due April 15, 2026; Form 4868 by April 15 extends filing to October 15, 2026; an extension never delays paying, which stays April 15, 2026\n      - The check uses the planned trap (paying on October 15) and each reason says why it's tempting and wrong\n      - The lesson teaches in its own words and order, not by copying the IRS page\n      - The application with the Denver freelancer asks what to do and by when, without handing over the answer\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tax-deadlines-sourced-1",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Federal tax deadlines and extensions"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The share allocations are correct: buying 25 takes 10 at $24 and 15 at $25; selling 12 takes 8 at $17 and 4 at $16. The checks have defensible intended answers and matching substantive feedback. However, describing demand for 8 shares as '8 buyers' introduces an unsupported buyer count, and identifying a stock account as an app is imprecise. These small imprecisions trigger the cap of 8.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The lesson uses short sentences, everyday language, and a helpful store-shelf comparison. It explains offers and buy orders as they appear and walks through both price levels without skipping the central mechanism. The account/app wording could be clearer, but the overall explanation is easy to follow.",
+          "score": 9,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The comparison between 5-share and 25-share orders tests a useful distinction, and the graded options include the planned misconceptions with explanatory reasons. However, the sell check largely asks learners to repeat the preceding explanation, while the application repeats the exact worked allocation and explanation. These several recall-heavy checks trigger the cap of 7. The ungraded hook also lacks option-specific reasons.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result stays in US English at overview level, uses no formulas, opens directly with the idea, and consistently replaces the original prices. It preserves the planned sequence and gives one sentence per summary idea without reteaching earlier lessons. The application remains a generic stock-account scenario rather than naming a concrete investing app, an explicit application requirement; this triggers the one-slip cap of 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "6 of 8 parts passed. Screen 1: Uses \"share\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term. Screen 7: The application reuses the numbers 24, 25 from screen 1. Give it a new situation with its own numbers that takes one step further than the checks.",
+          "score": 7.75,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4821,
+          "inputTokens": 4824,
+          "outputTokens": 937,
+          "reasoningTokens": 269
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The application does not name an investing app, despite the explicit requirement. It also repeats the worked buy example with identical quantities and prices. Together with the sell check's near-verbatim recall of its preceding explanation, this limits evidence that learners can transfer the idea to a new situation.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The result occasionally confuses share quantities with numbers of buyers: the sell-check feedback says '8 buyers,' although the scenario specifies demand for 8 shares. It also defines a stock account as an app, rather than an account accessed through an app. The hook provides no option-specific reasons.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Name a real investing app and label its displayed offers as a hypothetical example. Give the application a fresh order size and less scaffolding, so learners must work out the split themselves. Keep references to buyers distinct from the number of shares they want.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, overview level: plain words and stories, no formulas\n      - The plan's $20, $21 and $19 prices are the ones the earlier lesson \"Why stock prices change\" used, so the lesson uses new prices instead (share counts may stay), consistently on every screen, and still teaches the same idea (an order uses up the shares at one price, then reaches the next price)\n      - What sets a trade price, liquidity and the spread get at most a short reminder in everyday words, never a full explanation again\n      - Checks ask something new each time, with a reason on every option, and the application is a realistic situation in a named investing app\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-price-impact-chapter-siblings-1",
+        "userInput": {
+          "chapterLessons": [
+            {
+              "canDo": "Explain why a stock's next trade may have a different price",
+              "examples": [
+                "One share trades for $20; later, a buyer offers $21 and a seller accepts, so the next trade is at $21.",
+                "A stock traded for $20 a minute ago, then for $21. Ask learners to guess what might have changed; the guess does not count.",
+                "The last trade was $20. Buyers now want to pay only $19, and a seller accepts. Ask for the next trade price; include $20 as the tempting answer because it was the last price."
+              ],
+              "ideas": [
+                "Explain that a stock's next trade price can change when buyers and sellers change the prices they are willing to agree on."
+              ],
+              "order": "before",
+              "title": "Why stock prices change"
+            },
+            {
+              "canDo": "Recognize when a stock may be hard to trade",
+              "examples": [
+                "Stock A has several people ready to buy and sell today, while Stock B has one ready seller and no ready buyer.",
+                "You want to sell a stock today, but no one is ready to buy it. Ask learners to guess what might happen to their sale."
+              ],
+              "ideas": [
+                "Market liquidity is how easy it is to trade a stock when willing buyers and sellers are available."
+              ],
+              "order": "before",
+              "title": "Market liquidity"
+            },
+            {
+              "canDo": "Spot a trading cost in the buy-sell price gap",
+              "examples": [
+                "A share costs $20.10 to buy but sells for $20.00, leaving a 10-cent spread.",
+                "Show two stocks: one costs $30.05 to buy and sells for $30.00; the other costs $30.20 to buy and sells for $30.00. Ask which has the wider spread."
+              ],
+              "ideas": [
+                "Identify the gap between the available buying and selling prices and recognize it as a cost of trading immediately."
+              ],
+              "order": "before",
+              "title": "Buying and selling price spreads"
+            },
+            {
+              "canDo": "Imagine how this chapter's ideas play out",
+              "order": "after",
+              "title": "What if? Prices and trading costs"
+            }
+          ],
+          "chapterTitle": "Prices and trading costs",
+          "courseTitle": "How the stock market works",
+          "language": "en",
+          "level": "overview",
+          "spec": {
+            "canDo": "Explain why a large order may trade at several prices",
+            "description": "See how a large buy or sell order can use up shares at one price and reach a less favorable price.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "You want to buy 25 shares, and 10 are offered at $20 each. Guess: will all 25 cost $20 per share? The guess does not count.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Show that the $20 offer covers only 10 shares, like a store shelf with just 10 items at that price. Buying more shares requires another offer.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A shelf-like row of 10 shares labeled $20 each, followed by a separate row of 20 shares labeled $21 each."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A buy order for 25 shares takes the 10 available at $20, then 15 of the shares offered at $21. The order reaches a higher price because it uses up the shares at $20.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "The 25-share order filling the $20 row first, then part of the $21 row."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which order reaches the $21 offer: a buy order for 5 shares or one for 25 shares. Include the tempting wrong answer that both orders pay $20 for every share.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The direction reverses for a large sale: if buyers want 8 shares at $19 and 20 more at $18, selling 12 shares reaches the lower price. The seller gets $19 for the first 8 and $18 for the next 4.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Two rows of buyers, labeled 8 shares at $19 and 20 shares at $18, with a 12-share sale reaching both rows."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask why selling 12 shares does not get $19 for every share. Include the tempting wrong answer that the first buyer's price applies to the entire order.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "In a stock account, you see 10 shares offered at $20 and 20 at $21, then place a buy order for 25. Ask which shares would trade at each price and why the later shares cost more.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Explain how an order can use up shares available at one price and trade the rest at a less favorable price.",
+                "example": "A buy order for 25 shares takes 10 at $20 each and 15 at $21 each.",
+                "hard": false,
+                "name": "Explain the price impact of an order",
+                "topic": "Price impact",
+                "useCase": "When placing a stock order, understand why not every share may trade at the first price shown."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Large orders and price impact"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The stated calculations are correct: 3 days for the wall, 5 hours for the direct printing case, 6 hours for the compound example, 4 hours for the machines, and 5 hours for the bakery. The specified tempting errors produce 0.8 and 16 hours as intended, and their explanations correctly identify the misconceptions. No factual or numerical error triggers an accuracy cap.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The language is short, concrete Brazilian Portuguese, and direct versus inverse relationships are explained through familiar comparisons before calculation. However, 'razão' and its inverse form become procedural instructions without an explicit explanation of division and numerator order. This unexplained technical concept triggers the cap of 8.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The first check genuinely asks learners to predict before the explanation, and later checks require calculation with less scaffolding. Distractors represent meaningful misconceptions, including treating extra machines as increasing the time, and feedback explains their errors. Practice coverage is incomplete, however: the inverse worked example is not followed by a similar inverse check, and the direct-only check lacks a preceding direct worked example.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses appropriate intermediate-level Brazilian Portuguese and realistic gráfica, obra, and padaria contexts. It preserves the ten-screen sequence and gives one sentence per summary idea. There are nevertheless multiple expectation slips: the hook grades a prediction that should remain ungraded, and the requested direct/inverse worked-example-and-similar-check pairing is incomplete. These trigger the cap of 7 for several slips.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 6485,
+          "inputTokens": 6488,
+          "outputTokens": 1026,
+          "reasoningTokens": 387
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The hook evaluates the learner's guess through correctness flags and a reveal, contrary to the explicit request for an ungraded prediction. The required worked-example/practice pairing is also incomplete: the inverse wall example is followed by a direct-proportion question, and there is no direct-only worked example followed by similar practice.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The worked examples introduce 'razão' and 'razão inversa' without first explaining that these are divisions comparing quantities or clearly explaining why the old and new values occupy different positions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show the intermediate effects in the compound example: increasing the order alone changes 4 hours to 10 hours, then increasing the printers changes 10 hours to 6 hours. This would make the combined adjustment easier to inspect.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for intermediate learners who partly know the idea (question first)\n      - The first check after the hook is something learners can try before the explanation, and the next explanation builds on it\n      - Telling direct from inverse proportion comes before setting up the rule of three, with an everyday comparison (more workers, fewer days)\n      - Worked examples of a direct and an inverse case, each followed by a similar check; numbers must be right\n      - Checks name the classic trap of treating an inverse proportion as direct\n      - Everyday Brazilian contexts (obra, receita, combustível, reais), not textbook abstractions\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-de-tres-intermediate-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "kind": "workedExample",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "kind": "check",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "kind": "explanation",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "kind": "workedExample",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "kind": "check",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "kind": "application",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The well equation, wall conditions, sine solution, allowed k values, energy formula, node counts, width scaling, and numerical photon example are correct. However, the activity calls n “Wave number,” teaching an incorrect identification: n is the state index, whereas k_n = nπ/L is the wavenumber. This triggers the cap of 6 for an error that teaches something wrong.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The wording is generally concise and approachable, but the required standing-string intuition follows rather than precedes notation. There are multiple explanatory gaps: boundary conditions are not explicitly defined, the probability-density meaning of |ψ|² is left implicit, and normalization jumps from the integral condition directly to A. Several screens also introduce multiple technical concepts. These trigger the cap of 7 for several unexplained terms or skipped steps.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "Most checks require useful reasoning: applying the left-wall condition, rejecting n = 0, calculating inverse-square scaling, and connecting photon energy to wavelength. Their distractors reflect misconceptions and their reasons are sound. The activity is weaker: its actual formula supports an energy graph, not changing wave patterns, while its illustration already supplies the three-node answer. Thus part of the observation check is disconnected from the interaction. This is one meaningful activity/check weakness.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English, opens directly with quantum dots, includes all eleven planned screen positions and a summary, and provides the core advanced derivation and realistic spectral calculation. However, it misses multiple task-specific instructional requirements: string intuition before notation, one move per worked derivation step, and dynamically changing wave and probability patterns in the activity. The summary also combines distinct ideas in individual sentences. These constitute several slips, limiting this category to 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 8694,
+          "inputTokens": 8697,
+          "outputTokens": 1282,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The string analogy comes after x, L, V, and ψ notation, violating the required intuition-first ordering. The slider calculates only n²; the requested wavefunction and probability-density redraws are replaced by a static ψ₄ illustration, so its node-count question does not assess the planned interactive observation. Its label “Wave number n” also confuses the state index n with the wavenumber k_n = nπ/L.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several derivation steps combine moves rather than revealing one at a time: one both removes A and selects sine zeros, and another excludes indices while isolating k_n. The normalization result is asserted without evaluating the integral. “Boundary conditions” appears in the summary without being explicitly explained as a term, and the wavefunction explanation never clearly establishes that |ψ|² is probability density.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the quantum-dot application more precise by explicitly distinguishing the confinement contribution from the full semiconductor emission energy; the factor of four applies to the modeled contribution, not necessarily the entire photon energy. Separate the summary's combined statements about allowed states, energies, and node patterns into one sentence per idea.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for advanced learners\n      - The derivation is complete and correct: the time-independent equation inside the box, boundary conditions ψ(0) = ψ(L) = 0, sine solutions, kL = nπ, and E_n = n²π²ħ²/(2mL²)\n      - Standing waves on a string come before the notation, and each new term (wave function, boundary condition, quantized) is explained when it first appears\n      - Notation is consistent across screens (ħ, m, L, n), and the worked derivation reveals one move per step\n      - The slider graph shows how energy depends on n or L, with a check about what the learner saw\n      - Checks need real understanding (why n = 0 isn't allowed, how E scales with L), with reasons for every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-particle-in-a-box-advanced-1",
+        "userInput": {
+          "chapterTitle": "The Schrödinger equation",
+          "courseTitle": "Quantum mechanics",
+          "language": "en",
+          "level": "advanced",
+          "spec": {
+            "canDo": "Derive and use the quantized energy levels of a particle in a box",
+            "description": "Solve the time-independent Schrödinger equation for an infinite 1D well, show how the boundary conditions force discrete energies E_n = n²h²/(8mL²), and use them to predict real spectra.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Show vials of CdSe quantum dots made of the same material but different sizes: the 2 nm dots glow blue and the 6 nm dots glow red. Ask the learner to guess, without scoring, why size alone would set the color of emitted light.",
+                "kind": "hook",
+                "skills": [],
+                "visual": "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Set up the model: V(x) = 0 for 0 < x < L and V = ∞ outside, so ψ = 0 outside the box. Continuity of ψ then gives the boundary conditions ψ(0) = 0 and ψ(L) = 0, just like a guitar string pinned at both ends.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Inside the box the equation becomes −(ħ²/2m)ψ'' = Eψ, which is ψ'' = −k²ψ with k = √(2mE)/ħ. Its general solution is ψ(x) = A sin kx + B cos kx, the same oscillation as a vibrating string.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The learner applies ψ(0) = 0 to ψ = A sin kx + B cos kx and chooses which term survives. Include the tempting wrong answer 'the cos term survives because cos is maximal at 0', and give feedback that cos 0 = 1 forces B = 0.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Work through ψ(L) = 0: A sin kL = 0, and A ≠ 0 (otherwise there is no particle), so kL = nπ. Exclude n = 0 because ψ would vanish, and exclude negative n because they give the same state up to a sign. Substitute k_n = nπ/L into E = ħ²k²/2m to get E_n = n²π²ħ²/(2mL²) = n²h²/(8mL²).",
+                "kind": "workedExample",
+                "skills": [0, 1],
+                "visual": "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask why the lowest state is n = 1 rather than n = 0. Include the tempting wrong answer 'n = 0 is the ground state with zero energy', and explain that n = 0 gives ψ ≡ 0, so the particle can never be at rest and has a zero-point energy E_1 > 0.",
+                "kind": "check",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Normalizing ∫|ψ|²dx = 1 over the box gives A = √(2/L), so ψ_n(x) = √(2/L) sin(nπx/L). These are standing waves: ψ_n fits n half-wavelengths into L and has n − 1 interior nodes, and the level spacing grows as E_n ∝ n².",
+                "kind": "explanation",
+                "skills": [2],
+                "visual": "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked."
+              },
+              {
+                "activityTemplate": "sliderGraph",
+                "brief": "The learner moves a slider for n from 1 to 6 and watches ψ_n(x) and |ψ_n|² redraw, with E_n/E_1 displayed. Then ask how many nodes ψ_4 has (3) and what E_3/E_1 is (9, not 3).",
+                "kind": "activity",
+                "skills": [1, 2],
+                "visual": "Graph of ψ_n(x) and |ψ_n(x)|² on 0 to L with an n slider and a live readout of E_n/E_1."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Treat an electron in a box with L = 1.0 nm: E_1 = h²/(8m_eL²) ≈ 6.0 × 10⁻²⁰ J ≈ 0.38 eV, and E_2 = 4E_1 ≈ 1.50 eV. The 2 → 1 photon has ΔE = 3E_1 ≈ 1.13 eV, so λ = hc/ΔE ≈ 1100 nm, in the near infrared.",
+                "kind": "workedExample",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The learner calculates E_1 for the same electron in a box half as wide, with L = 0.5 nm, and picks the answer ≈ 1.5 eV. Include the tempting wrong answer ≈ 0.75 eV, which assumes E ∝ 1/L instead of 1/L².",
+                "kind": "check",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Return to the quantum dots and model the confinement energy as a particle in a box, E ∝ 1/L². The learner predicts by what factor the confinement contribution grows from a 6 nm dot to a 3 nm dot (a factor of 4) and explains why smaller dots emit bluer light.",
+                "kind": "application",
+                "skills": [0, 1, 2],
+                "visual": "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue."
+              }
+            ],
+            "skills": [
+              {
+                "description": "Impose the conditions ψ(0) = ψ(L) = 0 on the general solution inside an infinite well to show that only discrete wavenumbers k_n = nπ/L are allowed.",
+                "example": "From ψ = A sin kx + B cos kx, ψ(0) = 0 gives B = 0, and ψ(L) = 0 gives kL = nπ with n = 1, 2, 3, …",
+                "hard": true,
+                "name": "Apply boundary conditions to an infinite well",
+                "topic": "Infinite square well",
+                "useCase": "Setting up any confined quantum system, from electrons in nanowires to modes in optical cavities."
+              },
+              {
+                "description": "Combine the quantized wavenumbers with E = ħ²k²/2m to get E_n = n²h²/(8mL²) and use it to compute level energies and transition photons.",
+                "example": "An electron in a 1.0 nm box has E_1 ≈ 0.38 eV, and its 2 → 1 transition emits a photon near 1100 nm.",
+                "hard": true,
+                "name": "Calculate particle-in-a-box energy levels",
+                "topic": "Energy quantization",
+                "useCase": "Estimating absorption and emission wavelengths of quantum dots, dyes and nanostructures."
+              },
+              {
+                "description": "The stationary states ψ_n = √(2/L) sin(nπx/L) are normalized standing waves with n − 1 interior nodes, and the lowest energy is never zero.",
+                "example": "ψ_3 fits three half-wavelengths in the box, has 2 nodes, and has energy 9E_1.",
+                "hard": false,
+                "name": "Describe the stationary states of a box",
+                "topic": "Stationary states",
+                "useCase": "Reading probability densities and node patterns in molecular orbitals and semiconductor devices."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Particle in a box"
+          },
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question. Check kinds this template supports: choice, numeric. It shows data: set `data` to `{ \"source\": { ... } }` for real data or `{ \"isExample\": true }` for an example.",
+              "id": "sliderGraph",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"compareAt\":{\"type\":\"number\"},\"formula\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"output\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\"],\"additionalProperties\":false},\"variable\":{\"type\":\"object\",\"properties\":{\"initial\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"initial\",\"label\",\"max\",\"min\",\"name\",\"step\"],\"additionalProperties\":false}},\"required\":[\"formula\",\"output\",\"variable\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"sliderGraph\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The central rule correctly requires three years of effective service plus approval in the special evaluation by a commission. The three loss-of-post routes are accurate, including the finality of the judicial decision and the complementary-law condition for periodic evaluation. Neither the lesson nor the summary expressly claims these are the only possible routes in every circumstance. Both checks have exactly one defensible answer. However, the required defense protection is not explicitly connected to the judicial route; this is an omission rather than a false legal rule.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The opening explains stability as protection for keeping the post, and administrative proceedings are explained when introduced. However, several other terms are insufficiently unpacked, including the special performance evaluation, commission, and complementary law. Effective service receives a circular definition. The loss-of-post screen introduces several new legal concepts at once, without the required everyday comparisons. These trigger the cap of 7 for several unexplained terms or skipped explanatory steps.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "Pedro's case makes the learner apply both conditions and directly tests the planned misconception that time alone is sufficient. The Recife scenario tests whether stability permits immediate dismissal by a supervisor. Both have one correct answer, plausible misconceptions, and a specific explanatory reason for every option. The ungraded opening also follows the planned time-estimation hook.",
+          "score": 9,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, Brazilian names, and a realistic Prefeitura do Recife application. It opens directly with the idea, follows the five planned instructional functions in order, and ends with one sentence per summary idea. However, the explanation screens lack concrete worked examples, the terminology sometimes exceeds the beginner level, and the explicitly requested money localization is absent. These constitute several slips, triggering the cap of 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3536,
+          "inputTokens": 3539,
+          "outputTokens": 1181,
+          "reasoningTokens": 467
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The loss-of-post explanation expressly guarantees a defense for administrative proceedings and periodic evaluations, but not for the judicial route, contrary to the requirement to make that protection clear for all three. Beginner accessibility is also weakened by introducing several technical terms together: the special evaluation and commission are named rather than explained, and 'lei complementar' is left unexplained.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The explanation screens provide generic example descriptions rather than concrete worked examples. 'Tempo de trabalho que conta para essa exigência' is a circular explanation of effective service. Brazilian names and Recife provide appropriate localization, but there is no money example in reais, as explicitly requested.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use Ana's actual work timeline to demonstrate the two requirements, and describe the commission as a group appointed to assess her work. Make the right to defend oneself explicit across all three loss-of-post routes. Replace the generic example descriptions with short, concrete situations rather than adding more legal terminology.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner, with Brazilian names, places and money (reais, a prefeitura in a Brazilian city)\n      - The stability rule matches SOURCES (Constituição, art. 41): three years of effective service AND approval in the special performance evaluation by a commission; never 24 months or 2 years, even though an old statute says so\n      - For misconduct or poor performance, the ways a stable servant loses the post are the three the article lists, each with the right to a defense; the lesson never claims these are the only ways in all cases (the Constitution also allows cuts when personnel spending exceeds its limit)\n      - \"Estabilidade\" and \"processo administrativo\" are explained in everyday words when they first appear\n      - The check uses the planned trap (thinking time alone is enough) with a reason on every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-estabilidade-sourced-1",
+        "userInput": {
+          "chapterTitle": "Agentes públicos",
+          "courseTitle": "Direito Administrativo",
+          "language": "pt",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"Constituição da República Federativa do Brasil de 1988, Art. 41\">\nArt. 41. São estáveis após três anos de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.\n§ 1º O servidor público estável só perderá o cargo:\nI - em virtude de sentença judicial transitada em julgado;\nII - mediante processo administrativo em que lhe seja assegurada ampla defesa;\nIII - mediante procedimento de avaliação periódica de desempenho, na forma de lei complementar, assegurada ampla defesa.\n§ 4º Como condição para a aquisição da estabilidade, é obrigatória a avaliação especial de desempenho por comissão instituída para essa finalidade.\n</page>",
+          "spec": {
+            "canDo": "Dizer quando um servidor fica estável e como pode perder o cargo",
+            "description": "Quando o servidor concursado adquire estabilidade e em que casos o servidor estável perde o cargo.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Palpite sem valer ponto: Ana passou num concurso e tomou posse. Depois de quanto tempo de exercício ela pode ficar estável? 2, 3 ou 5 anos.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O servidor nomeado por concurso para cargo efetivo fica estável após três anos de efetivo exercício, e só se for aprovado na avaliação especial de desempenho feita por uma comissão.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pedro completou três anos no cargo, mas a comissão ainda não fez a avaliação especial: ele já é estável? Pegadinha: achar que o tempo basta.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Estável não quer dizer que nunca perde o cargo: por falta ou mau desempenho, perde por sentença judicial transitada em julgado, processo administrativo com ampla defesa ou avaliação periódica de desempenho.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma servidora estável da prefeitura de Recife é acusada de uma falta grave: o chefe pode demiti-la no mesmo dia, sem processo? Pegadinha: achar que o chefe decide sozinho.",
+                "kind": "application",
+                "skills": [1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "O servidor concursado fica estável após três anos de efetivo exercício e aprovação na avaliação especial de desempenho.",
+                "example": "Quem tomou posse em 2023 pode ficar estável em 2026, se for aprovado na avaliação.",
+                "hard": false,
+                "name": "Identificar quando o servidor adquire estabilidade",
+                "topic": "Estabilidade do servidor",
+                "useCase": "Entender os primeiros anos de quem passa num concurso."
+              },
+              {
+                "description": "Por falta ou mau desempenho, o servidor estável perde o cargo por sentença judicial, processo administrativo ou avaliação periódica, sempre com ampla defesa.",
+                "example": "Uma falta grave leva a um processo administrativo com direito a defesa.",
+                "hard": false,
+                "name": "Reconhecer como o servidor estável pode perder o cargo",
+                "topic": "Perda do cargo",
+                "useCase": "Questões de concurso sobre direitos do servidor."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Estabilidade do servidor público"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The biological facts and arithmetic are correct: glycolysis occurs in the cytoplasm, spends 2 ATP, produces 4 ATP and 2 NADH, and yields a net 2 ATP per glucose. NADH is not counted as ATP. Each check has one defensible correct answer, and the supplied reasons match their options. No accuracy cap applies.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The sentences are short, and ATP and investment receive useful money comparisons. However, glucose is not explained, activation is named rather than explained, and electrons and the respiratory chain lack beginner-friendly explanations. NADH is introduced before its carrier role is explained and receives no everyday comparison. Multiple new terms appear on the explanation screens. These several gaps trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The ATP calculation tests the intended skill and includes meaningful misconceptions, especially confusing gross production with net yield. Its mathematical feedback is correct. However, the location question only asks learners to recall the location already stated; the transit scenario does not change that demand. All three hook options lack individual reasons, and the reveal does not explain why the alternatives are wrong. The repeated feedback omissions, together with the recall-only check, warrant the cap of 7.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses Brazilian Portuguese, opens directly with the intended guess, and follows all five planned screens in order with appropriate screen types. It retains the CMC memory aid, investment analogy, required numbers, and both exam traps. The São Paulo revision scenario is realistic for the stated test-preparation use case. The summary uses one sentence per main idea, and no pictures are requested. No category-specific cap is triggered.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Screen 1: Uses \"ATP\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3980,
+          "inputTokens": 3983,
+          "outputTokens": 953,
+          "reasoningTokens": 305
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Several technical terms lack beginner-level explanations or everyday comparisons, especially electrons and the respiratory chain. The investment and yield screens also introduce multiple new terms. The location check merely recalls the stated location, despite its scenario. The hook options have no individual reasons, and its reveal states the answer without explaining the calculation.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Explain activation as preparing glucose for the next steps, and introduce NADH with a simple carrier comparison before describing its role. Recast the location check as correcting a student's mistaken claim about mitochondria. Give each hook option explanatory feedback after the guess, including why producing 4 ATP does not mean retaining 4 ATP.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner studying for a school test from their teacher's slides (MATERIAL)\n      - HELD_BACK_DRAFTS lists why earlier drafts were held back, and this draft has none of those problems: the net of glycolysis is 2 ATP per glucose (4 produced minus 2 spent), NADH is never counted as ATP, and glycolysis happens in the cytoplasm, never in the mitochondria\n      - It's a whole new lesson from the plan, not a patch: every planned screen is there and teaches what its brief says, with the slides' terms, numbers and memory aids\n      - The checks still use the slides' exam traps (answering 4 instead of 2; placing glycolysis in the mitochondria), with a reason on every option\n      - No pictures (every image is null): the slides have their own\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-glicolise-redraft-after-hold-1",
+        "userInput": {
+          "chapterTitle": "Glicólise",
+          "courseTitle": "Prova de biologia: respiração celular",
+          "heldBackProblems": [
+            {
+              "problem": "The explanation counts the 2 NADH as ATP and gives a net of 4 ATP per glucose; the slides give 4 − 2 = 2 ATP, and NADH carries electrons to the respiratory chain. Fix: Give the net as 2 ATP and say what NADH does.",
+              "screen": 2
+            },
+            {
+              "problem": "The check marks 'na mitocôndria' as where glycolysis happens; the slides say the cytoplasm, and the mitochondria only come in the Krebs cycle. Fix: Mark the cytoplasm as correct.",
+              "screen": 4
+            }
+          ],
+          "language": "pt",
+          "level": "beginner",
+          "material": "<page ref=\"S1:2\" of=\"Aula 5 - Glicolise, slide 2\">\nPor que as células respiram?\nObjetivo: transformar a energia da glicose em ATP\nATP = a 'moeda de energia' da célula\nRespiração aeróbia: C6H12O6 + 6 O2 → 6 CO2 + 6 H2O + energia\n</page>\n<page ref=\"S1:3\" of=\"Aula 5 - Glicolise, slide 3\">\nAs três etapas\n1. Glicólise – no citoplasma\n2. Ciclo de Krebs – na matriz mitocondrial\n3. Cadeia respiratória – nas cristas mitocondriais\nMacete da aula: 'Cito-Matriz-Cristas' (CMC)\n</page>\n<page ref=\"S1:5\" of=\"Aula 5 - Glicolise, slide 5\">\nGlicólise: fase de investimento\nGasta 2 ATP para 'ativar' a glicose\nPense num empréstimo: investe 2 para ganhar mais depois\n</page>\n<page ref=\"S1:6\" of=\"Aula 5 - Glicolise, slide 6\">\nGlicólise: fase de rendimento\nProduz 4 ATP (fosforilação no nível do substrato)\nProduz 2 NADH (carrega elétrons para a cadeia respiratória)\nSaldo: 4 − 2 = 2 ATP por glicose\n</page>\n<page ref=\"S1:10\" of=\"Aula 5 - Glicolise, slide 10\">\nPegadinhas de prova\nGlicólise NÃO acontece na mitocôndria\nO saldo da glicólise é 2 ATP, não 4\n</page>",
+          "spec": {
+            "canDo": "Calcular o saldo de ATP da glicólise",
+            "description": "Mostra quanto ATP a glicólise gasta e produz, e por que o saldo é 2 por glicose.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Palpite sem valer ponto: a glicólise produz 4 ATP. Quanto sobra por glicose?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A glicólise gasta 2 ATP, produz 4 e termina com saldo de 2 ATP por glicose.",
+                "example": "4 produzidos − 2 gastos = 2 ATP",
+                "hard": false,
+                "name": "Calcular o saldo energético da glicólise",
+                "topic": "Glicólise",
+                "useCase": "Questões de prova que pedem o saldo de ATP de cada etapa"
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Saldo de ATP da glicólise"
+          },
+          "activityTemplates": []
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-writer"
+}

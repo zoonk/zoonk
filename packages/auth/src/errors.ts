@@ -1,5 +1,14 @@
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 import { isAPIError } from "better-auth/api";
+import { ACCESS_ERROR_CODES } from "./access-contract";
+
+/** Better Auth's captcha plugin rejects a request BotID flags with this code. */
+const BOT_CHECK_FAILED_CODE = "VERIFICATION_FAILED";
+
+/** Our product code for Better Auth's, where they differ. */
+function toProductCode(code: string | null): string | null {
+  return code === BOT_CHECK_FAILED_CODE ? ACCESS_ERROR_CODES.botDetected : code;
+}
 
 export class NativeAuthResponseError extends Error {
   readonly body: unknown;
@@ -37,7 +46,7 @@ export function getAuthError(error: unknown): AuthErrorDetails | null {
   }
 
   const body = isJsonObject(error.body) ? error.body : null;
-  const code = getString(body, "code");
+  const code = toProductCode(getString(body, "code"));
   const retryAfter = getNumber(error, "retryAfter");
   const statusCode = getNumber(error, "statusCode");
 

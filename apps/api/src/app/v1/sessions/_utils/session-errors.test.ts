@@ -32,6 +32,21 @@ describe("native session errors", () => {
   );
 
   it.each(sessionErrorMappers)(
+    "maps a request that didn't pass BotID to BOT_DETECTED",
+    async (mapError) => {
+      const response = mapError(
+        new NativeAuthResponseError({
+          body: { code: "VERIFICATION_FAILED", message: "Captcha verification failed" },
+          statusCode: 403,
+        }),
+      );
+
+      expect(response?.status).toBe(403);
+      await expect(response?.json()).resolves.toMatchObject({ error: { code: "BOT_DETECTED" } });
+    },
+  );
+
+  it.each(sessionErrorMappers)(
     "maps auth rate limits to the stable product error",
     async (mapError) => {
       const response = mapError(

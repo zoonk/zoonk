@@ -20,14 +20,23 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
   },
 });
 
-export type ContainerProps = React.ComponentProps<"main"> & VariantProps<typeof containerVariants>;
+export type ContainerProps = useRender.ComponentProps<"main"> &
+  VariantProps<typeof containerVariants>;
 
-export function Container({ children, className, variant }: ContainerProps) {
-  return (
-    <main className={cn(containerVariants({ variant }), className)} data-slot="container">
-      {children}
-    </main>
-  );
+/**
+ * A page's main landmark. Pages inside a shell that already owns `<main>` render it as another
+ * element (`render={<div />}`), so a page never has two main landmarks.
+ */
+export function Container({ children, className, render, variant }: ContainerProps) {
+  return useRender({
+    defaultTagName: "main",
+    props: mergeProps<"main">(
+      { className: cn(containerVariants({ variant }), className) },
+      { children },
+    ),
+    render,
+    state: { slot: "container" },
+  });
 }
 
 const containerHeaderVariants = cva("flex items-center justify-between gap-2 px-4", {

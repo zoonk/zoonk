@@ -24,12 +24,3 @@ export async function getCurrentUserAnalyticsState() {
     username: user.username,
   };
 }
-
-/**
- * Preserves the existing boolean helper for call sites that only need to know
- * whether the current user should be excluded from analytics.
- */
-export async function getCurrentUserAnalyticsDisabled() {
-  const { analyticsDisabled } = await getCurrentUserAnalyticsState();
-  return analyticsDisabled;
-}

@@ -1,7 +1,7 @@
 "use client";
 
+import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene, PlayerReadSceneStack } from "./player-read-scene";
 

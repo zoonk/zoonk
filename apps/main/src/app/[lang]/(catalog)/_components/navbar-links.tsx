@@ -5,13 +5,8 @@ import { getMenu } from "@/lib/menu";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowLeftIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { CommandPalette } from "./command-palette";
-import {
-  type MobileChapterNavTarget,
-  getMobileChapterNavTarget,
-} from "./mobile-chapter-nav-target";
 
 function getVariant(href: string, pathname: string): "outline" | "secondary" | "default" {
   if (href === pathname) {
@@ -32,46 +27,6 @@ function getVariant(href: string, pathname: string): "outline" | "secondary" | "
 const homeMenu = getMenu("home");
 const coursesMenu = getMenu("courses");
 const startMenu = getMenu("start");
-const MOBILE_CHAPTER_NAV_CLASS = "sm:hidden";
-const DESKTOP_CHAPTER_NAV_CLASS = "hidden sm:inline-flex";
-
-/**
- * Chapter pages need mobile chrome that points to the parent course instead of
- * the broader catalog sections. Keeping this as links preserves normal Next.js
- * prefetching and accessibility while removing the extra catalog actions on
- * small screens.
- */
-function MobileChapterNavbarLinks({ courseHref }: MobileChapterNavTarget) {
-  const t = useExtracted();
-
-  return (
-    <>
-      <Link
-        className={cn(
-          buttonVariants({ size: "icon", variant: "outline" }),
-          MOBILE_CHAPTER_NAV_CLASS,
-        )}
-        href={courseHref}
-        prefetch
-      >
-        <ArrowLeftIcon aria-hidden="true" />
-        <span className="sr-only">{t("Course page")}</span>
-      </Link>
-
-      <Link
-        className={cn(
-          buttonVariants({ size: "icon", variant: "outline" }),
-          MOBILE_CHAPTER_NAV_CLASS,
-        )}
-        href="/"
-        prefetch
-      >
-        <XIcon aria-hidden="true" />
-        <span className="sr-only">{t("Home page")}</span>
-      </Link>
-    </>
-  );
-}
 
 export function NavbarLinksSkeleton() {
   return (
@@ -87,8 +42,6 @@ export function NavbarLinksSkeleton() {
 export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
   const pathname = usePathname();
   const t = useExtracted();
-  const mobileChapterNavTarget = getMobileChapterNavTarget(pathname);
-  const desktopClassName = mobileChapterNavTarget ? DESKTOP_CHAPTER_NAV_CLASS : undefined;
 
   const homeVariant = getVariant(homeMenu.url, pathname);
   const coursesVariant = getVariant(coursesMenu.url, pathname);
@@ -96,13 +49,9 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   return (
     <>
-      {mobileChapterNavTarget && (
-        <MobileChapterNavbarLinks courseHref={mobileChapterNavTarget.courseHref} />
-      )}
-
       <Link
         aria-current={homeVariant === "default" ? "page" : undefined}
-        className={cn(buttonVariants({ size: "icon", variant: homeVariant }), desktopClassName)}
+        className={buttonVariants({ size: "icon", variant: homeVariant })}
         href={homeMenu.url}
         prefetch
       >
@@ -112,10 +61,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       <Link
         aria-current={coursesVariant === "default" ? "page" : undefined}
-        className={cn(
-          buttonVariants({ size: "adaptive", variant: coursesVariant }),
-          desktopClassName,
-        )}
+        className={buttonVariants({ size: "adaptive", variant: coursesVariant })}
         href={coursesMenu.url}
         prefetch
       >
@@ -123,15 +69,11 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
         <span className="sr-only sm:not-sr-only">{t("Courses")}</span>
       </Link>
 
-      <CommandPalette className={desktopClassName} isLoggedIn={isLoggedIn} />
+      <CommandPalette isLoggedIn={isLoggedIn} />
 
       <Link
         aria-current={startVariant === "default" ? "page" : undefined}
-        className={cn(
-          buttonVariants({ size: "adaptive", variant: startVariant }),
-          "ml-auto",
-          desktopClassName,
-        )}
+        className={cn(buttonVariants({ size: "adaptive", variant: startVariant }), "ml-auto")}
         href={startMenu.url}
         prefetch
       >

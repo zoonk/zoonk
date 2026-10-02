@@ -1,5 +1,8 @@
 const POSTHOG_DEFAULTS = "2026-05-30" as const;
 
+/** The one PostHog id for work no learner started; its events never create a person profile. */
+export const POSTHOG_SYSTEM_DISTINCT_ID = "zoonk-system";
+
 type PostHogConfig = { defaults: typeof POSTHOG_DEFAULTS; host: string; projectToken: string };
 
 /**

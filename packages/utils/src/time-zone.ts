@@ -35,6 +35,18 @@ export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: st
 }
 
 /**
+ * Returns the 0-23 hour an instant falls in for one IANA timezone, so learner-local time-of-day
+ * stats never depend on the server's timezone. `hourCycle: "h23"` keeps midnight at 0, not 24.
+ */
+export function getHourInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): number {
+  const hour = new Intl.DateTimeFormat("en", { hour: "numeric", hourCycle: "h23", timeZone })
+    .formatToParts(date)
+    .find((part) => part.type === "hour")?.value;
+
+  return Number(hour);
+}
+
+/**
  * Intl uses the runtime's timezone database as the source of truth. Constructing
  * a formatter is a small, deterministic way to reject forged or unsupported
  * timezone names before they reach calendar calculations.

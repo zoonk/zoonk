@@ -1,3 +1,5 @@
+import { readQueryParam } from "@/lib/query-param";
+
 const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
 const MIN_PAGE = 1;
@@ -14,7 +16,7 @@ export function parseSearchParams(params: Partial<Record<string, string | string
   const page = parsePageNumber(params.page);
   const limit = parsePageSize(params.limit);
   const offset = (page - 1) * limit;
-  const search = getFirstSearchParam(params.search);
+  const search = readQueryParam(params.search);
 
   return { limit, offset, page, search };
 }
@@ -53,7 +55,7 @@ function parsePageSize(value: SearchParamValue): number {
  * which default or bounds make sense for that field.
  */
 function parseIntegerParam(value: SearchParamValue): number | null {
-  const firstValue = getFirstSearchParam(value);
+  const firstValue = readQueryParam(value);
   const trimmedValue = firstValue?.trim();
 
   if (!trimmedValue) {
@@ -67,12 +69,4 @@ function parseIntegerParam(value: SearchParamValue): number | null {
   }
 
   return Math.trunc(parsedValue);
-}
-
-/**
- * Next.js represents repeated query params as arrays. Admin list filters only
- * support one value per key, so the first value is the canonical input.
- */
-function getFirstSearchParam(value: SearchParamValue): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
 }

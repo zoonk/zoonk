@@ -61,6 +61,7 @@ yarn-error.log*
 .idea/
 *.pem
 .playwright-mcp
+.vitest
 .vitest-attachments
 __screenshots__
 

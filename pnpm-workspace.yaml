@@ -17,6 +17,8 @@ allowBuilds:
   prisma: true
   protobufjs: false
   sharp: false
+  # officeparser's OCR dependency; its postinstall only prints a funding message.
+  tesseract.js: false
 
 catalog:
   "@apple/app-store-server-library": 3.1.0
@@ -40,7 +42,7 @@ catalog:
   "@types/react": ^19.3.0
   "@vercel/analytics": 2.0.1
   "@vitejs/plugin-react": 6.1.1
-  ai: 7.0.116
+  ai: 7.0.118
   botid: 1.5.11
   jsdom: 30.1.1
   katex: 0.18.9

@@ -7,19 +7,15 @@ import { getExtracted } from "next-intl/server";
 const APPLE_SUBSCRIPTION_MANAGEMENT_URL = "https://apps.apple.com/account/subscriptions";
 const GOOGLE_SUBSCRIPTION_MANAGEMENT_URL = "https://play.google.com/store/account/subscriptions";
 
-type ManagedSubscriptionProps = {
-  cancelMessage: string | null;
-  periodMessage: string | null;
-  planTitle: string;
-  provider: Exclude<SubscriptionProvider, "stripe">;
-};
-
+/**
+ * Managing a subscription bought in the App Store or Google Play, or set up by Zoonk: web plan
+ * controls can't change it, so this says where to go instead.
+ */
 export async function ManagedSubscription({
-  cancelMessage,
-  periodMessage,
-  planTitle,
   provider,
-}: ManagedSubscriptionProps) {
+}: {
+  provider: Exclude<SubscriptionProvider, "stripe">;
+}) {
   const t = await getExtracted();
   const action = getManagedSubscriptionAction({ provider });
   const supportVariant = isStoreSubscriptionProvider(provider) ? "outline" : "secondary";
@@ -44,14 +40,8 @@ export async function ManagedSubscription({
   });
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-5">
-      <div className="flex flex-col gap-1">
-        <p className="text-sm font-medium">{planTitle}</p>
-        <p className="text-muted-foreground text-sm">{description}</p>
-      </div>
-
-      {periodMessage && <p className="text-muted-foreground text-sm">{periodMessage}</p>}
-      {cancelMessage && <p className="text-destructive text-sm">{cancelMessage}</p>}
+    <div className="flex flex-col gap-4">
+      <p className="text-muted-foreground text-sm">{description}</p>
 
       <div className="flex flex-wrap gap-3">
         {action && (

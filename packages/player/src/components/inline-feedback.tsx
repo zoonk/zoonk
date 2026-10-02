@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { type StepResult } from "../player-reducer";
+import { type StepResult } from "../step-answer";
 import { PlayerRichText } from "./player-rich-text";
 import { VerdictLabel } from "./verdict-label";
 
@@ -22,6 +22,7 @@ export function InlineFeedback({
       aria-label={t("Answer feedback")}
       aria-live="polite"
       className="flex flex-col gap-3"
+      data-slot="inline-feedback"
       role="region"
     >
       <VerdictLabel verdict={isCorrect ? "correct" : "incorrect"} />

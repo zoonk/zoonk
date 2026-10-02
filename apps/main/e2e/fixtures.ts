@@ -1,11 +1,13 @@
 import { type Page, test as base } from "@playwright/test";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { resetNewcomerSpend } from "@zoonk/testing/fixtures/usage";
 
 // Each test needs its own user: lesson completions and subscriptions persist beyond browser contexts.
 export const test = base.extend<{
   authenticatedPage: Page;
   logoutPage: Page;
+  newcomerBudget: null;
   noProgressUser: E2EUser;
   subscriberPage: Page;
   subscriberUser: E2EUser;
@@ -31,6 +33,20 @@ export const test = base.extend<{
     await use(page);
     await ctx.close();
   },
+
+  /**
+   * Every E2E account is a newcomer, so a run's new goals (each weighs about $1.80 in core's
+   * limits) would use up the day's AI budget all newcomers share and refuse later tests' goals:
+   * each test starts with that budget untouched. Core's own tests cover the budget itself.
+   */
+  newcomerBudget: [
+    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+    async ({}, use) => {
+      await resetNewcomerSpend();
+      await use(null);
+    },
+    { auto: true },
+  ],
 
   // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
   noProgressUser: async ({}, use) => {

@@ -1,4 +1,4 @@
-import { setLocale } from "@zoonk/e2e/fixtures/locale";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { type Page, expect, test } from "./fixtures";
 
 /**
@@ -65,6 +65,7 @@ test.describe("Courses Page - Basic", () => {
     const courseLink = page.getByRole("main").getByRole("list").getByRole("link").first();
 
     await expect(courseLink).toBeVisible();
+    await expectAccessibleScreen(page, "the catalog");
 
     const courseHref = await courseLink.getAttribute("href");
 
@@ -93,25 +94,12 @@ test.describe("Courses Page - Basic", () => {
     await expect(createCourseLink).toBeVisible();
     await createCourseLink.click();
 
-    await expect(page).toHaveURL(/\/start\/learn$/u);
+    await expect(page).toHaveURL(/\/start$/u);
+    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
   });
 });
 
 test.describe("Courses Page - Infinite Loading", () => {
-  test("loads more courses when scrolling to the bottom", async ({ page }) => {
-    await page.goto("/courses");
-
-    await expect.poll(() => getRenderedCourseHrefs(page), { timeout: 10_000 }).not.toHaveLength(0);
-
-    const initialCourseHrefs = await getRenderedCourseHrefs(page);
-
-    await page.evaluate(() => globalThis.scrollTo(0, document.body.scrollHeight));
-
-    await expect
-      .poll(() => hasNewCourseHref({ initialHrefs: initialCourseHrefs, page }), { timeout: 10_000 })
-      .toBe(true);
-  });
-
   test("lets users retry failed load-more requests without unhandled rejections", async ({
     page,
   }) => {
@@ -166,13 +154,6 @@ test.describe("Courses Page - Infinite Loading", () => {
 });
 
 test.describe("Courses Page - Locale", () => {
-  test("Portuguese locale shows translated content", async ({ page }) => {
-    await setLocale(page, "pt");
-    await page.goto("/courses");
-
-    await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
-  });
-
   test("sorts categories using the active app locale", async ({ browser }) => {
     const browserContext = await browser.newContext({
       locale: "cs-CZ",

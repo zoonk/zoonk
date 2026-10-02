@@ -1,0 +1,86 @@
+enum StudyBlockKind {
+  review
+  learn
+  practice
+  produce
+  checkpoint
+}
+
+enum StudySessionStatus {
+  planned
+  active
+  completed
+}
+
+enum StudyBlockStatus {
+  pending
+  active
+  completed
+  skipped
+}
+
+/// Why a day starts fresh: back after a break, a new week or a new phase. The session opens light.
+enum StudyFreshStart {
+  welcomeBack @map("welcome_back")
+  newWeek     @map("new_week")
+  newPhase    @map("new_phase")
+}
+
+/// Today's study session for a goal: its blocks and planned minutes, on the learner's local date.
+/// One per goal and day, so building it twice returns the same session. (Better Auth already owns
+/// the name `Session`.)
+model StudySession {
+  id             String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String              @map("user_id") @db.Uuid
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId         String?             @map("goal_id") @db.Uuid
+  goal           Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  localDate      DateTime            @map("local_date") @db.Date
+  status         StudySessionStatus  @default(planned)
+  plannedMinutes Int                 @map("planned_minutes") @db.SmallInt
+  freshStart     StudyFreshStart?    @map("fresh_start")
+  /// Energy, Brain Power, preparation and skill states when the first block started, so the end of
+  /// the session can say what changed.
+  startSnapshot  Json?               @map("start_snapshot")
+  /// When the day's three missions made a full meal (+50 Brain Power, once per learner-local day).
+  fullMealAt     DateTime?           @map("full_meal_at")
+  startedAt      DateTime?           @map("started_at")
+  endedAt        DateTime?           @map("ended_at")
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
+  blocks         StudySessionBlock[]
+  attempts       Attempt[]
+
+  @@unique([userId, goalId, localDate], name: "userGoalDate")
+  @@index([userId, localDate])
+  @@index([goalId])
+  @@map("study_sessions")
+}
+
+/// One stop of a session (review, learn, practice, produce or checkpoint) with its can-do line and
+/// estimated minutes. `payload` holds what the block needs (items, capsule skills) as plain ids.
+model StudySessionBlock {
+  id               String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  sessionId        String                @map("session_id") @db.Uuid
+  session          StudySession          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  position         Int                   @db.SmallInt
+  kind             StudyBlockKind
+  status           StudyBlockStatus      @default(pending)
+  lessonId         String?               @map("lesson_id") @db.Uuid
+  lesson           Lesson?               @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  payload          Json                  @default("{}")
+  canDo            String?               @map("can_do")
+  estimatedMinutes Int?                  @map("estimated_minutes") @db.SmallInt
+  /// Brain Power the block earned, so session totals never read content or the ledger's JSON.
+  brainPower       Int                   @default(0) @map("brain_power")
+  startedAt        DateTime?             @map("started_at")
+  completedAt      DateTime?             @map("completed_at")
+  createdAt        DateTime              @default(now()) @map("created_at")
+  updatedAt        DateTime              @default(now()) @updatedAt @map("updated_at")
+  mockExam         MockExam?
+  conversation     LanguageConversation?
+
+  @@unique([sessionId, position], name: "sessionPosition")
+  @@index([lessonId])
+  @@map("study_session_blocks")
+}

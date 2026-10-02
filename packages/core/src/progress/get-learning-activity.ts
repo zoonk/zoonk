@@ -24,51 +24,31 @@ type LearningActivityDateQuery = ContributionCalendarDateRange & { userId: strin
 type LessonCompletionsByDate = Record<string, number>;
 
 /**
- * LessonProgress stores one durable learner-local completion date per lesson,
- * so reviews never create extra calendar activity. The query remains bounded
- * to the visible calendar instead of loading the learner's lifetime rows.
+ * Daily totals count each lesson's first completion on the learner-local date
+ * it happened, so reviews never create extra calendar activity and the
+ * calendar survives lessons being deleted. The query stays bounded to the
+ * visible calendar instead of loading the learner's lifetime rows.
  */
 function listLearningActivityRows({ endDate, startDate, userId }: LearningActivityDateQuery) {
-  return prisma.lessonProgress.findMany({
-    orderBy: { completedDate: "asc" },
-    where: { completedDate: { gte: startDate, lte: endDate }, userId },
+  return prisma.dailyProgress.findMany({
+    orderBy: { date: "asc" },
+    where: { date: { gte: startDate, lte: endDate }, lessonsCompleted: { gt: 0 }, userId },
   });
 }
 
 /**
- * The database filter excludes incomplete rows, but the early return preserves
- * that invariant if the query shape changes without silently inventing a date.
- */
-function countLessonCompletionByDate({
-  completionCounts,
-  row,
-}: {
-  completionCounts: LessonCompletionsByDate;
-  row: LearningActivityRow;
-}): LessonCompletionsByDate {
-  if (!row.completedDate) {
-    return completionCounts;
-  }
-
-  const dateKey = getContributionCalendarDateKey(row.completedDate);
-
-  return { ...completionCounts, [dateKey]: (completionCounts[dateKey] ?? 0) + 1 };
-}
-
-/**
- * Immutable date counts let the complete calendar fill absent dates with zero
- * while preserving one event per durable LessonProgress row.
+ * One daily row per date lets the calendar look up each square's count by its
+ * date key.
  */
 function buildLessonCompletionsByDate(rows: LearningActivityRow[]): LessonCompletionsByDate {
-  return rows.reduce(
-    (completionCounts, row) => countLessonCompletionByDate({ completionCounts, row }),
-    {},
+  return Object.fromEntries(
+    rows.map((row) => [getContributionCalendarDateKey(row.date), row.lessonsCompleted]),
   );
 }
 
 /**
- * Each calendar square needs a concrete date even when no LessonProgress row
- * exists, so the UI can render a stable 53-week grid for new learners too.
+ * Each calendar square needs a concrete date even when no daily row exists, so
+ * the UI can render a stable 53-week grid for new learners too.
  */
 function buildLearningActivityDay({
   date,

@@ -1,7 +1,6 @@
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, it } from "vitest";
-import { type PlayerQuestionContext } from "../player-context";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import {
   INITIAL_LESSON_QUESTION_SESSIONS,
   getLessonQuestionSession,
@@ -22,47 +21,18 @@ function questionResource(overrides?: Partial<LessonQuestionResource>): LessonQu
   };
 }
 
-const LESSON_CONTEXT = { kind: "lesson" } satisfies PlayerQuestionContext;
+const LESSON_CONTEXT = { kind: "lesson" } satisfies LessonQuestionContext;
 
-function stepContext(id: string): PlayerQuestionContext {
-  const step = {
-    content: { text: "Visible lesson material", title: "A concept", variant: "text" },
-    fillBlankOptions: [],
-    id,
-    kind: "static",
-    matchColumnsRightItems: [],
-    position: 0,
-    sentence: null,
-    sentenceWordOptions: [],
-    sortOrderItems: [],
-    translationOptions: [],
-    vocabularyOptions: [],
-    word: null,
-    wordBankOptions: [],
-  } satisfies SerializedStep;
-
-  return { kind: "step", step, stepIndex: 0 };
+function stepContext(id: string): LessonQuestionContext {
+  return { kind: "step", step: { id }, stepIndex: 0 };
 }
 
-function answerContext(selectedOptionId: string): PlayerQuestionContext {
-  const context = stepContext("0198ca70-9c50-7000-8000-000000000010");
-
-  if (context.kind !== "step") {
-    throw new Error("Expected a step context");
-  }
-
-  const selectedAnswer = { kind: "multipleChoice" as const, selectedOptionId };
-
+function answerContext(selectedOptionId: string): LessonQuestionContext {
   return {
     kind: "answer",
-    result: {
-      answer: selectedAnswer,
-      result: { correctAnswer: "Answer A", feedback: "Try again", isCorrect: false },
-      stepId: context.step.id,
-    },
-    selectedAnswer,
-    step: context.step,
-    stepIndex: context.stepIndex,
+    selectedAnswer: { kind: "multipleChoice", selectedOptionId },
+    step: { id: "0198ca70-9c50-7000-8000-000000000010" },
+    stepIndex: 0,
   };
 }
 

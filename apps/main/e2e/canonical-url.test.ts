@@ -1,9 +1,14 @@
-import { randomUUID } from "node:crypto";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { SITE_URL } from "@zoonk/utils/url";
 import { type Page, expect, test } from "./fixtures";
@@ -51,44 +56,37 @@ async function expectIndexable({ page, path }: { page: Page; path: string }) {
     .toBe("index, follow");
 }
 
+/** A published course whose outline has one chapter with one lesson, all in the course language. */
+async function createLibraryCourse({ language }: { language: string }) {
+  const organization = await getAiOrganization();
+
+  const course = await courseFixture({
+    isPublished: true,
+    language,
+    organizationId: organization.id,
+  });
+
+  const chapter = await libraryChapterFixture({ homeCourseId: course.id, language });
+  const lesson = await libraryLessonFixture({ homeChapterId: chapter.id, language });
+
+  await Promise.all([
+    courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+  ]);
+
+  const coursePath = `/b/${organization.slug}/c/${course.slug}`;
+  const chapterPath = `${coursePath}/ch/${chapter.slug}`;
+
+  return { chapterPath, course, coursePath, lessonPath: `${chapterPath}/l/${lesson.slug}` };
+}
+
 test("marks course discovery pages as indexable", async ({ page }) => {
   await expectIndexable({ page, path: "/courses" });
   await expectIndexable({ page, path: "/pt/courses/science" });
 });
 
 test("indexes course, chapter, and lesson pages only in the course language", async ({ page }) => {
-  const uniqueId = randomUUID().slice(0, 8);
-  const organization = await getAiOrganization();
-
-  const course = await courseFixture({
-    isPublished: true,
-    language: "pt-BR",
-    organizationId: organization.id,
-    slug: `e2e-canonical-course-${uniqueId}`,
-    title: `E2E Canonical Course ${uniqueId}`,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    language: "pt-BR",
-    organizationId: organization.id,
-    slug: `e2e-canonical-chapter-${uniqueId}`,
-    title: `E2E Canonical Chapter ${uniqueId}`,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    isPublished: true,
-    language: "pt-BR",
-    organizationId: organization.id,
-    slug: `e2e-canonical-lesson-${uniqueId}`,
-    title: `E2E Canonical Lesson ${uniqueId}`,
-  });
-
-  const coursePath = `/b/${organization.slug}/c/${course.slug}`;
-  const chapterPath = `${coursePath}/ch/${chapter.slug}`;
-  const lessonPath = `${chapterPath}/l/${lesson.slug}`;
+  const { chapterPath, coursePath, lessonPath } = await createLibraryCourse({ language: "pt-BR" });
 
   await expectCatalogMetadata({
     canonicalPath: `/pt${coursePath}`,
@@ -134,29 +132,7 @@ test("indexes course, chapter, and lesson pages only in the course language", as
 });
 
 test("keeps unsupported instructional languages out of the English index", async ({ page }) => {
-  const organization = await getAiOrganization();
-
-  const course = await courseFixture({
-    isPublished: true,
-    language: "ja-JP",
-    organizationId: organization.id,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: organization.id,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    isPublished: true,
-    organizationId: organization.id,
-  });
-
-  const coursePath = `/b/${organization.slug}/c/${course.slug}`;
-  const chapterPath = `${coursePath}/ch/${chapter.slug}`;
-  const lessonPath = `${chapterPath}/l/${lesson.slug}`;
+  const { chapterPath, coursePath, lessonPath } = await createLibraryCourse({ language: "ja-JP" });
 
   await expectCatalogMetadata({
     canonicalPath: coursePath,
@@ -184,22 +160,7 @@ test.describe("catalog URLs with another language preference", () => {
   test.use({ locale: "pt-BR" });
 
   test("uses the preferred UI language while keeping the course canonical", async ({ page }) => {
-    const organization = await getAiOrganization();
-
-    const course = await courseFixture({
-      isPublished: true,
-      language: "en",
-      organizationId: organization.id,
-    });
-
-    await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      language: course.language,
-      organizationId: organization.id,
-    });
-
-    const path = `/b/${organization.slug}/c/${course.slug}`;
+    const { course, coursePath: path } = await createLibraryCourse({ language: "en" });
 
     await setLocale(page, "de");
     await expectCatalogMetadata({ canonicalPath: path, page, path, robots: "noindex, follow" });
@@ -214,6 +175,8 @@ test.describe("catalog URLs with another language preference", () => {
     });
 
     expect(new URL(page.url()).pathname).toBe(`/pt${path}`);
+    await expect(page.locator("html")).toHaveAttribute("lang", "pt");
+    await expect(page.getByRole("button", { name: "Começar este curso" }).first()).toBeVisible();
 
     const cookies = await page.context().cookies();
     expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("pt");

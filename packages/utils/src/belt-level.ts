@@ -91,3 +91,8 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
     progressInLevel,
   };
 }
+
+/** The Brain Power where a belt color starts: level 1 of that color. */
+export function getBeltStartBrainPower(color: BeltColor): number {
+  return BELT_CONFIGS.find((belt) => belt.color === color)?.startBp ?? 0;
+}

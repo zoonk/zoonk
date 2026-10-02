@@ -1,0 +1,511 @@
+{
+  "modelId": "anthropic/claude-opus-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All named prerequisite subjects and quantum pillars are explicitly represented: algebra, trigonometry, complex numbers, probability, calculus, differential equations, linear algebra, mechanics, oscillations, waves, electromagnetism, wavefunctions, Schrödinger equations, observables, uncertainty, hydrogen, angular momentum, spin, approximation methods, and entanglement. Exam weights are correctly null. No missing-pillar cap applies.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The overall phase sequence is sensible, with calculus and linear algebra before quantum formalism, canonical course subjects, and capability-based milestones. However, hydrogen lacks a direct Schrödinger-equation prerequisite, and fine structure/Zeeman calculations lack direct special-relativity and magnetism prerequisites. Polarization before qubits and thermal statistics before density matrices are unnecessary restrictions. Several clear prerequisite errors trigger the cap of 7.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills are reusable chapter-like units rather than trivia, but 149 hours is not an honest deep-learning budget for the listed scope. It falls below approximately 250 hours and is more than half below the suggested 300-hour lower bound, triggering the cap of 7. The combined algorithms/error-correction skill is also oversized relative to neighboring skills.",
+          "score": 7,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach relevant mathematical and physical capabilities rather than motivation, generic introductions, or recaps. Early quantum experiments provide physical grounding rather than history for its own sake. The two harmonic-oscillator skills teach distinct differential-equation and operator approaches, not obvious duplicates. No filler cap applies.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The path starts with appropriate refreshers for someone who has forgotten high school math and progresses toward substantive quantum problem solving rather than an overview. Names, descriptions, and milestones use US English. The content matches a deep learning goal; the inadequate time budget is evaluated under granularity.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph explicitly teaches estimation, dimensional and limiting-case checks, verification of computer-algebra and AI output, and numerical validation against exact solutions. Interpretation, modeling, and approximation accompany calculation throughout. Routine procedures support understanding rather than dominating the goal, so no cap applies.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 13317,
+          "inputTokens": 13320,
+          "outputTokens": 1235,
+          "reasoningTokens": 337
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The 149-hour estimate is materially unrealistic for rebuilding forgotten math and developing deep competence across this many courses; it is below the explicit approximately 250-hour threshold and less than half the suggested 300-hour lower bound. The Hermitian/unitary skill incorrectly attributes real eigenvalues to both classes: Hermitian matrices have real eigenvalues, whereas unitary matrices have eigenvalues of unit modulus. Several important direct prerequisite edges are also missing, including the Schrödinger equation for solving hydrogen and magnetism and special relativity for calculating Zeeman splitting and fine structure.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some dependencies unnecessarily restrict the path: polarization is not required to learn abstract qubits and gates, and the Boltzmann distribution is not required to introduce density matrices and partial traces. The quantum-algorithms skill compresses teleportation, Grover's algorithm, Shor's algorithm, and error correction into one skill, making its scope noticeably broader than neighboring chapters.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Rebudget the phases around substantial problem solving and review, then translate the revised total into a realistic calendar at 45 minutes per day. Separate the core quantum-mechanics sequence from optional advanced extensions, and split quantum algorithms and error correction into more manageable chapter-sized skills.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Huge goal: the graph must span several canonical courses, such as mathematics (algebra, trigonometry, calculus, differential equations, complex numbers, probability), linear algebra, classical mechanics, waves and oscillations, electromagnetism, and quantum mechanics\n      - Quantum mechanics must reach the core: the wave function, the Schrödinger equation, operators and observables, uncertainty, the hydrogen atom, angular momentum and spin, perturbation theory or approximation methods, and entanglement or quantum information\n      - Starting from forgotten high school math, the path begins with the math physics uses; calculus and linear algebra come before the quantum formalism\n      - The honest size is hundreds of hours (roughly 300 to 600); phases like \"math\", \"calculus and linear algebra\", \"classical physics\", \"quantum mechanics\", \"advanced topics\" are sensible\n      - Chapter-sized skills are expected, not hundreds of lesson-sized trivia skills\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-quantum-physics-from-zero-1",
+        "userInput": {
+          "context": "I finished high school years ago and forgot most of the math. I can study about 45 minutes a day.",
+          "goal": "Master quantum physics from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four areas, their blueprint subjects, foreign-language alternatives, and the essay are represented. The five essay competencies are substantively covered through formal writing, prompt interpretation and structure, argument organization, cohesion, and a human-rights-respecting intervention. Statistics, charts, percentages, ecology, Brazilian history, citizenship, and interpretation generally receive higher weights than less frequent topics. No coverage cap is triggered; an explicit C1–C5 crosswalk would improve auditability.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The overall foundation-to-application sequence is sensible, but several dependencies are missing or overrestrictive. Stoichiometry lacks mapped balancing and mole foundations; circuits omit algebra; full simulations omit timed essay production. Conversely, proportions unnecessarily gate counting, and logarithms unnecessarily gate financial mathematics. The final milestone also promises a scoring outcome. Several prerequisite errors trigger the cap of 7.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills are recognizable chapter-level units, but their total allocation is not honest for full ENEM preparation from a basic level. Broad units such as human physiology and contemporary history receive very small lesson budgets within a 71.9-hour total. The 3.2-hour final phase cannot even contain one full exam sitting. The total is more than half below the hundreds-of-hours scale required by the expectations, triggering the cap of 7.",
+          "score": 7,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills serve ENEM content or legitimate exam performance. TRI-aware question selection, elimination, time management, and simulations are explicitly permitted exam strategy, not generic study-tip filler. Historical material is syllabus-relevant, and the foreign-language descriptions correctly distinguish the two alternatives. No filler cap applies.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map targets ENEM rather than nursing-specific training or a shortened last-minute syllabus. Its mathematical foundations suit the learner's basic level and stated difficulty, and learner-facing content is in Brazilian Portuguese. It appropriately retains the whole exam despite the limited time available. No separate goal or level mismatch triggers a cap.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes interpretation, explanation, comparison, argumentation, evaluation, and analysis of errors alongside the manual calculations ENEM actually tests. Manual exam skills are appropriate here, and an AI-tool skill is not required for this exam goal. No rote-dominance cap applies.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 12948,
+          "inputTokens": 12951,
+          "outputTokens": 1445,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The 71.9-hour estimate is substantially too small for a full ENEM map starting at a basic level; the expectations call for hundreds of hours, leaving prioritization to the planner. Phase 4 is particularly untenable: 3.2 hours cannot accommodate even one complete exam day, much less full simulations, essay writing, and error review. Several prerequisite relationships also need correction: stoichiometry assumes balancing equations and understanding molar quantities without mapping those foundations, circuit calculations omit the existing algebra prerequisite, and full exam simulations do not depend on timed essay production.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The final milestone promises a 'nota coerente na TRI', which is an assessment outcome rather than a capability the phase can guarantee. Some prerequisite gates are unnecessarily restrictive: counting does not require solving proportion problems, and financial mathematics should not require mastery of logarithms before simple and compound interest can be studied.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly map the essay skills to C1–C5 for easier planner auditing. Specify separate simulation capabilities for the 5h30 first day and five-hour second day, with additional time for correction, and express the final milestone through observable behaviors such as completing the answer sheet, allocating essay time, and reviewing errors.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Exam goal with a blueprint: all four areas (Linguagens, Humanas, Natureza, Matemática) and the essay must be covered, including the five essay competencies (C1 to C5)\n      - Exam weights must follow the blueprint's frequency: statistics and chart reading, percentages and proportions, ecology, Brazilian history and citizenship, and text interpretation should weigh more than rarely tested topics\n      - Exam strategy the exam scores belongs here, such as keeping answers consistent under item response theory (easy questions first) and managing time\n      - Topics outside the ENEM syllabus don't belong\n      - The graph maps the whole exam even though the learner has little time; prioritization is the planner's job, but weights must make it possible\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-2026-1",
+        "userInput": {
+          "context": "Tenho 17 anos, quero Enfermagem numa federal. Estudo à noite e faltam uns 46 dias pra prova. Sou melhor em humanas, tenho dificuldade em matemática.",
+          "examBlueprint": "\nENEM (Exame Nacional do Ensino Médio), two Sundays.\nDay 1: Linguagens, Códigos e suas Tecnologias (45 questions: Portuguese, literature, arts, physical education, communication technologies, and English or Spanish) + Ciências Humanas e suas Tecnologias (45 questions: history, geography, philosophy, sociology) + the essay (redação).\nDay 2: Ciências da Natureza e suas Tecnologias (45 questions: biology, chemistry, physics) + Matemática e suas Tecnologias (45 questions).\nScoring: item response theory (TRI). Getting hard questions right while missing easy ones counts as inconsistent and lowers the score. 5 options per question, no penalty for wrong answers. 5h30 on day 1, 5h on day 2.\nEssay: dissertative-argumentative text on a social issue, graded 0 to 1000 in five competencies of 200 points each: C1 formal written Portuguese; C2 understanding the prompt and building a dissertative-argumentative text with knowledge from several areas; C3 selecting and organizing arguments; C4 cohesion; C5 an intervention proposal that respects human rights.\nHow often topics appear in recent editions (approximate):\n- Matemática: statistics and reading charts and tables (very often), percentages and proportions (very often), plane and solid geometry (often), functions (often), probability and counting (often), financial math (sometimes).\n- Natureza: ecology and environment (very often), human physiology and health (often), genetics (often), electricity and energy (often), mechanics (sometimes), organic chemistry (often), stoichiometry and solutions (often), electrochemistry (sometimes).\n- Humanas: Brazil colony, empire and republic (very often), citizenship, social movements and rights (very often), environment and geography of Brazil (often), ancient and medieval history (sometimes), philosophy and sociology classics (often), urbanization and agrarian issues (often).\n- Linguagens: text interpretation and genres (very often), language functions and linguistic variation (often), literature movements (sometimes), arts (sometimes), foreign language reading (5 questions).\n",
+          "goal": "Passar no ENEM 2026",
+          "goalKind": "exam",
+          "language": "pt",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every required pillar is explicitly represented: SQL joins, aggregation and windows; spreadsheets and cleaning; descriptive statistics; conversion, average order value and cohort retention; charts and dashboards; hypotheses, sample size, significance and peeking; stakeholder communication; and AI drafting and verification. Exam weights are correctly null. No coverage cap applies.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The phases are coherent, milestones describe capabilities, and courses are recognizable subjects. Most prerequisite chains are sound. However, ab-power omits ab-metrics as a direct prerequisite: the primary outcome must be selected before its sample size and duration can be calculated. This central prerequisite omission triggers the cap of 8.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Skills are consistently action-oriented and mostly sized at two to seven lessons without unrelated bundles. The weakness is the study-time allowance: 200 short lessons leave just 10 hours of practice and review within the 20-hour total. The four-hour experimentation phase is particularly undersized for its design-through-decision milestone, including sample-size planning, validity checks, statistical analysis, and pitfalls. This triggers the cap of 8 for a clearly mis-sized area; there is insufficient basis to assert that the total is off by more than half.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "All skills support the analyst's actual work. There are no introduction-only, motivational, career-advice, or recap skills. Query validation, AI-output verification, and AI statistical interpretation have distinct applications rather than substantially duplicating one another.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The path directly addresses a junior e-commerce analyst's SQL and Google Sheets reporting, business metrics, A/B testing, and explanations to managers. It starts at basic working knowledge rather than arithmetic, uses US English, and avoids deep machine learning and unrelated career advice.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph explicitly teaches task specification for ChatGPT, privacy, testing generated queries against known cases, identifying statistical errors, and resisting overclaims. Independent validation, metric definition, uncertainty, and business judgment are emphasized throughout; rote syntax does not dominate. Integrating the query-related AI skills earlier would strengthen repeated application, but no AI-specific cap is triggered.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 6994,
+          "inputTokens": 6997,
+          "outputTokens": 1289,
+          "reasoningTokens": 485
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The 20-hour estimate is compressed for the capabilities promised. Its 200 three-minute lessons consume 10 hours, leaving only 10 hours for practice and review across SQL, spreadsheets, statistics, experimentation, dashboards, and AI verification. In particular, four hours for designing, analyzing, and deciding on A/B tests provides little room for applied practice. Also, sample-size planning lacks a direct prerequisite on choosing the primary experiment metric, even though that choice determines the calculation.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Introduce AI privacy, query drafting, and query verification alongside the SQL and spreadsheet work, while retaining AI statistical interpretation after experimentation. This would let the learner practice safe AI-assisted analysis throughout the path rather than only in its final phase.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Work goal: target the learner's real tasks: SQL (joins, aggregation, window functions), spreadsheets, cleaning data, descriptive statistics, defining business metrics (conversion, retention, average order value), charts and dashboards, A/B testing (hypotheses, sample size, significance, common pitfalls such as peeking), and explaining results to non-technical people\n      - Must include using AI tools well for analysis: writing and checking queries with AI, spotting wrong AI analyses, not trusting unverified numbers\n      - Should not drift into deep machine learning theory or general career advice the learner didn't ask for\n      - Starts from basic knowledge, not from zero arithmetic\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-data-analyst-work-1",
+        "userInput": {
+          "context": "I'm a junior data analyst at an e-commerce company. I build weekly sales reports in Google Sheets and SQL, and my manager wants me to run A/B tests and explain the results. We use ChatGPT at work.",
+          "goal": "Get better at data analysis for my job",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "basic",
+          "purpose": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "The graph explicitly covers research and interviews, synthesis, information architecture, flows, wireframes, Figma prototyping, usability testing, visual design and typography, interaction, accessibility, design systems, collaboration, and measurement. AI synthesis includes checking source data, and AI screen generation includes critique. However, the required AI-assisted generation and critique of prototypes is not explicit; reviewing generated screens does not establish checking interactive behavior. This missing component limits coverage to 8.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The phases generally progress sensibly, prerequisites point backward, milestones describe capabilities, and course titles are canonical subjects. Several dependency problems nevertheless trigger the cap of 7: interviews omit the recruitment prerequisite; interpreting whether A/B differences are reliable lacks preparation in statistical uncertainty; and defining a problem is unnecessarily gated on completing all three of personas, journey mapping, and Jobs to Be Done.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 27.7-hour estimate is far below an honest hundreds-of-hours path for entering a new profession from zero, triggering the cap of 7 for an estimate off by more than half. The severity warrants 6: phase 5 allocates just 6.7 hours to testing, metrics, A/B interpretation, handoff, teamwork, an entire project, case studies, and a portfolio. Most skills contain only three to eight short lessons, while the end-to-end project is much broader than neighboring skills and has no credible practice allowance.",
+          "score": 6,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most skills directly support UX work, and the project, case study, and portfolio are appropriate for this career-change goal. The standalone 'Explicar o processo de design centrado no usuário' skill merely describes stages and why design starts with users, making it an overview skill under the rubric. That one filler skill triggers the cap of 8.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The content starts with beginner foundations and targets practical junior UX responsibilities rather than an unrelated academic or job-search curriculum. Learner-facing titles, descriptions, names, and milestones use Brazilian Portuguese, with conventional industry terminology. The portfolio is relevant to the requested career change. The unrealistic duration is assessed under granularity rather than used to erase this substantive fit.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes problem framing, evidence-based synthesis, prioritization, critique, and outcome measurement rather than rote tool operation. Its AI skills explicitly include directing generation, comparing research conclusions against raw data, and reviewing usability, accessibility, and consistency. The remaining weakness is that AI-assisted work stops at research and screens rather than explicitly generating and validating interactive prototypes. No absent-AI or predominantly-rote cap is triggered.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 7971,
+          "inputTokens": 7974,
+          "outputTokens": 1459,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The 27.7-hour total is not credible for a career change into UX from zero. Research, interface design, testing, collaboration, and a portfolio project require substantial practice over hundreds of hours, not a short introductory course. The prerequisite graph also omits preparation for judging statistical reliability in A/B tests and does not connect participant recruitment to conducting interviews.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "AI-assisted research and screen generation are explicit, but generating and critiquing interactive prototypes with AI is not. The graph unnecessarily requires personas, journey maps, and Jobs to Be Done before defining a research-based problem. The standalone skill describing the UX process is an overview rather than an applied capability.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Allocate realistic practice time to each phase, especially recruitment, interviews, prototype iteration, and the end-to-end project. Make the project accumulate evidence and deliverables throughout the path. Extend AI practice to generating interactive prototypes and checking their behavior against user tasks, rather than reviewing screens alone.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Career change into UX design from zero: user research and interviews, synthesizing findings, information architecture, user flows, wireframes, prototyping in a design tool such as Figma, usability testing, visual design and typography basics, interaction design, accessibility, design systems, working with product managers and developers, measuring outcomes\n      - Must include using AI tools well in design work (research synthesis, generating and critiquing ideas and prototypes, checking AI output)\n      - Producing a portfolio case study is allowed because the learner asked to change careers; generic job-search advice or a \"history of design\" is filler\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-career-change-ux-1",
+        "userInput": {
+          "context": "Sou professora do ensino fundamental há 8 anos e quero mudar de carreira para trabalhar com UX design. Nunca trabalhei com design.",
+          "goal": "Mudar de carreira para UX design",
+          "goalKind": "learn",
+          "language": "pt",
+          "ownLevel": "none",
+          "purpose": "careerChange"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Check-in, check-out, complaints, telephone reservations, directions, recommendations, guest small talk and short emails are explicitly covered. Shift coordination and meetings address colleague interaction, but neither explicitly teaches understanding and following workplace instructions. A related coordination skill does not replace that named requirement; the missing pillar triggers the cap of 8. Exam weights are correctly null.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The course is canonically titled Inglés, prerequisites point to earlier skills, and the broad progression is sensible. However, several dependencies are unnecessary: complaints depend on small talk, complex calls on banking and administrative errands, and directions on public-transport use. These artificially gate central capabilities and trigger the cap of 7 for several prerequisite errors. The final milestone also promises vague 'soltura' rather than a testable capability.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills have a consistent, usable size of five to ten lessons. However, 322 three-minute lessons account for 16.1 hours, leaving only another 16.1 hours for all practice and review. That is substantially less than half a credible budget for the broad basic-to-intermediate speaking and listening outcomes claimed here, triggering the cap of 7. Some skills also combine distinct activities, notably transfers with luggage storage.",
+          "score": 7,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "At least four skills are not needed for the stated reception-language goal: shopping in supermarkets, finding and renting a personal room, opening a bank account and obtaining a SIM, and debating current affairs. These may help with relocation or general English but are not hotel-reception requirements. Four or more filler skills trigger the cap of 6.",
+          "score": 6,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result uses natural Spain Spanish, practical can-dos and situational language rather than standalone grammar. It does not dwell on the alphabet, and spelling guest details is relevant. However, the repeated expansion into personal errands, housing and general social debate is a pattern of mismatches with the specific work goal, triggering the cap of 7. Beginner and intermediate labels provide broad progression but do not clearly distinguish the requested CEFR stages.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The path appropriately prioritises live communication, clarification, tact and judgment rather than rote grammar. Nevertheless, this work-focused graph contains no AI-tool skill for specifying a guest-message task, checking generated English, or catching incorrect reservation details and policy claims. The explicit no-AI-tool cap of 8 applies.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 7533,
+          "inputTokens": 7536,
+          "outputTokens": 1585,
+          "reasoningTokens": 687
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The 32.2-hour estimate substantially understates the progression from basic English to handling complex complaints, negotiations, fast group conversations and British humour. The path also diverts substantial time into personal relocation and general-interest skills rather than reception work. Understanding workplace instructions is not explicitly covered, and there is no skill for using and checking AI assistance in hotel communications.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several prerequisites impose unnecessary barriers: handling complaints requires guest small talk, complex telephone calls require personal administrative errands, and giving directions requires using public transport. Some skills bundle separable tasks, such as arranging transfers and storing luggage. Many names are hotel-specific rather than generically reusable action names.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make phase milestones observable through specific reception scenarios, distinguish A1/A2 from B1/B2 outcomes more clearly, and allocate substantially more speaking, listening and review time. Retain British-accent comprehension for London while explicitly identifying US English as the learner's production target.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish): names and descriptions in European Spanish vocabulary and forms\n      - Language goal: skills are real situations with can-dos for working at a hotel in London, such as checking guests in and out, handling complaints, taking phone reservations, giving directions and recommendations, small talk with guests, writing short emails to guests, and understanding colleagues and instructions at work\n      - Ordered by CEFR level from A1/A2 (beginner) to B1/B2 (intermediate); the learner has a basic level, so the path should not dwell on the alphabet\n      - Grammar lives inside situations, not as standalone grammar skills\n      - The course is English itself, titled in Spanish (for example \"Inglés\")\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "es-language-english-hotel-1",
+        "userInput": {
+          "context": "Me voy a Londres en marzo para trabajar en la recepción de un hotel. Entiendo un poco de inglés pero me cuesta hablar.",
+          "goal": "Aprender inglés para trabajar en un hotel en Londres",
+          "goalKind": "language",
+          "language": "es",
+          "ownLevel": "basic",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All named test areas appear, including each of the three specified transport mechanisms, organelles, nucleus, mitosis, and meiosis. However, the explicitly required foundation of what a cell is is absent; classifying cell types does not explicitly supply that foundation, triggering the cap of 8. Vacuoles and smooth ER functions are also not explicit. Weights otherwise reasonably prioritize transport and division without claiming an official blueprint.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The listed prerequisites are available earlier, and the substantive sequence is coherent: membrane structure before transport, nuclear structures and chromosome concepts before division, and division before DNA graphs. The phases have attainable capability-based milestones, and Biologia is a canonical subject. No clear ordering or prerequisite cap is triggered.",
+          "score": 10,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The map has 22 action-named skills across two phases, with one to four short lessons per skill. Its 48 lessons account for 2.4 hours of lesson time, leaving another 2.4 hours for practice and review within the 4.8-hour estimate. This is an honest, usable scale for the small school test.",
+          "score": 10,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Two skills are unnecessary as standalone nodes: transport-bloco expands beyond the specified test material, and questoes-citologia is a generic recap/test-practice node with timing and trick-question advice. These trigger the cap of 7 for two filler skills. The other application skills have identifiable substantive capabilities rather than merely offering review.",
+          "score": 7,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The language is Brazilian Portuguese and the overall level suits a first-year secondary-school learner. Nevertheless, the dedicated vesicular-transport topic and generic test-strategy content depart from the tightly bounded material, triggering the cap of 7 for a pattern of mismatches. Crossing-over and chromosome terminology are relevant to understanding meiosis and are not, by themselves, inappropriate genetics expansion.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes explaining mechanisms, predicting osmotic effects, comparing divisions, and interpreting diagrams and DNA graphs. Recognition tasks are appropriate for this school exam, and the exam goal does not require an AI-tool skill. No rote-dominance cap is triggered.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5169,
+          "inputTokens": 5172,
+          "outputTokens": 1564,
+          "reasoningTokens": 716
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The plan adds a dedicated endocytosis/exocytosis skill even though the permitted transport topics are diffusion, osmosis, and active transport. This unnecessary expansion also becomes a prerequisite for other skills. The lysosome/peroxisome skill title misleadingly attributes intracellular digestion to both organelles; peroxisomal oxidative metabolism should be distinguished from lysosomal digestion.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The required foundation of what a cell is is not explicitly covered. Organelle coverage does not explicitly address vacuoles or the smooth endoplasmic reticulum's functions. The final generic test-question skill duplicates practice that belongs within the substantive skills and adds timing and 'trick question' advice not identified as assessed content.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make cytokinesis explicit in the division skills, and distinguish the rough ER's role in protein secretion from the smooth ER's functions. Preserve the useful prediction, comparison, and diagram-reading activities while embedding cumulative practice within the relevant topic skills.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)\n      - Lesson-sized skills, about 8 to 25 skills, one or two phases, a total of a few hours\n      - Exam weights come from the listed material's emphasis, since there is no official blueprint\n      - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-school-exam-cytology-1",
+        "userInput": {
+          "context": "Sou do 1º ano do ensino médio. A prova de sexta é sobre membrana plasmática e transportes (difusão, osmose, transporte ativo), organelas, núcleo e divisão celular (mitose e meiose).",
+          "goal": "Prova de biologia na sexta sobre citologia",
+          "goalKind": "exam",
+          "language": "pt",
+          "ownLevel": "basic"
+        }
+      }
+    }
+  ],
+  "taskId": "skill-graph"
+}

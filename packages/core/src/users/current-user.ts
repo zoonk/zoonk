@@ -2,8 +2,9 @@ import "server-only";
 import { auth } from "@zoonk/auth";
 import { normalizeUsername } from "@zoonk/auth/username-rules";
 import { type User, prisma } from "@zoonk/db";
-import { cacheTag, revalidateTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { headers } from "next/headers";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSessionCacheTag } from "../cache/tags";
 import { getSession } from "./get-session";
 
@@ -126,7 +127,7 @@ export async function updateCurrentUser({ input }: { input: CurrentUserUpdate })
     return null;
   }
 
-  revalidateTag(getUserSessionCacheTag(user.id), { expire: 0 });
+  revalidateCacheTags([getUserSessionCacheTag(user.id)]);
 
   return user;
 }

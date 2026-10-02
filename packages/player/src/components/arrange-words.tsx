@@ -7,7 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
 import { InteractiveStepLayout } from "./step-layouts";
@@ -123,17 +123,15 @@ export function ArrangeWordsInteraction({
   onSelectAnswer,
   result,
   selectedAnswer,
-  stepId,
   wordBankOptions,
 }: {
   acceptedWordLengths: number[];
   answerKind: "reading" | "listening";
   children: React.ReactNode;
   correctWords: string[];
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
-  stepId: string;
   wordBankOptions: WordBankOption[];
 }) {
   const { trigger } = useWebHaptics();
@@ -165,15 +163,15 @@ export function ArrangeWordsInteraction({
       const arrangedWords = next.map((placedWord) => placedWord.word);
 
       if (acceptedWordLengths.includes(next.length)) {
-        onSelectAnswer(stepId, { arrangedWords, kind: answerKind });
+        onSelectAnswer({ arrangedWords, kind: answerKind });
         return;
       }
 
       if (selectedAnswer) {
-        onSelectAnswer(stepId, null);
+        onSelectAnswer(null);
       }
     },
-    [acceptedWordLengths, answerKind, onSelectAnswer, selectedAnswer, stepId],
+    [acceptedWordLengths, answerKind, onSelectAnswer, selectedAnswer],
   );
 
   const handlePlace = useCallback(

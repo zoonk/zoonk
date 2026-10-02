@@ -1,0 +1,332 @@
+enum CourseLevel {
+  overview
+  beginner
+  intermediate
+  advanced
+}
+
+/// Private content is built for one learner's too-specific goal. It is never indexed, listed or reused.
+enum LibraryVisibility {
+  public
+  private
+}
+
+/// Mapped to `LibraryStepKind`, the database type's name since the legacy `StepKind` type existed.
+enum StepKind {
+  hook
+  explanation
+  workedExample  @map("worked_example")
+  check
+  typedAnswer    @map("typed_answer")
+  spokenAnswer   @map("spoken_answer")
+  activity
+  multipleChoice @map("multiple_choice")
+  fillBlank      @map("fill_blank")
+  matchColumns   @map("match_columns")
+  vocabulary
+  reading
+  listening
+  translation
+  alphabet
+  summary
+  challenge
+
+  @@map("LibraryStepKind")
+}
+
+enum StepVariantKind {
+  simpler
+  deeper
+  field
+  tool
+}
+
+enum MediaKind {
+  image
+  audio
+}
+
+/// A group of lessons with objectives, shared by every course that needs it. Identity search finds it
+/// through `identityKey` (unique per language) so concurrent requests never create two copies. It can sit
+/// in several courses through `CourseChapter` and keeps one home course for its canonical URL.
+model Chapter {
+  id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language              String                 @db.VarChar(10)
+  targetLanguage        String?                @map("target_language") @db.VarChar(10)
+  /// Normalized identity (scope, level and target language) claimed by one generation workflow at a time.
+  identityKey           String                 @map("identity_key")
+  slug                  String
+  title                 String
+  normalizedTitle       String                 @map("normalized_title")
+  description           String
+  objectives            String[]               @default([])
+  level                 CourseLevel
+  homeCourseId          String?                @map("home_course_id") @db.Uuid
+  homeCourse            Course?                @relation(fields: [homeCourseId], references: [id], onDelete: SetNull)
+  visibility            LibraryVisibility      @default(public)
+  /// Owner of private content. Private content is deleted with its owner.
+  ownerId               String?                @map("owner_id") @db.Uuid
+  owner                 User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  /// Whether the titles and one-line descriptions of this chapter's lessons are written.
+  outlineStatus         GenerationStatus       @default(pending) @map("outline_status")
+  outlineRunId          String?                @map("outline_run_id")
+  /// Tools the chapter's lessons use: `[{ name, essential }]`, for the plan's "You'll use" card.
+  tools                 Json                   @default("[]")
+  model                 String
+  promptVersion         String                 @map("prompt_version")
+  runId                 String                 @map("run_id")
+  generatedAt           DateTime               @default(now()) @map("generated_at")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @default(now()) @updatedAt @map("updated_at")
+  courses               CourseChapter[]
+  lessons               ChapterLesson[]
+  homeLessons           Lesson[]
+  planItems             PlanItem[]
+  goalSkills            ChapterSkill[]
+  conversations         LanguageConversation[]
+  conversationScenarios ConversationScenario[]
+  questionThreads       LessonQuestionThread[]
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@unique([homeCourseId, slug], name: "homeCourseSlug")
+  @@index([language, level, normalizedTitle])
+  @@index([ownerId])
+  @@map("library_chapters")
+}
+
+/// Places a shared chapter in a course's outline, inside one level band.
+model CourseChapter {
+  courseId  String      @map("course_id") @db.Uuid
+  course    Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapterId String      @map("chapter_id") @db.Uuid
+  chapter   Chapter     @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  level     CourseLevel
+  position  Int
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@id([courseId, chapterId])
+  @@unique([courseId, level, position], name: "courseLevelPosition")
+  @@index([chapterId])
+  @@map("course_chapters")
+}
+
+/// A skill from a goal's skill graph that a chapter teaches, as the course outline tagged it. Plans turn
+/// such a skill into the chapter's lessons, so a later goal that needs the same skill finds the chapters
+/// that already teach it.
+model ChapterSkill {
+  chapterId String   @map("chapter_id") @db.Uuid
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  skillId   String   @map("skill_id") @db.Uuid
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([chapterId, skillId])
+  @@index([skillId])
+  @@map("chapter_skills")
+}
+
+/// A 2 to 5 minute lesson teaching 1 to 3 skills, shared by every chapter that needs them. Its outline
+/// (title and one-line description) exists up front; its spec and content are generated on demand. One
+/// home chapter gives it a canonical URL.
+model Lesson {
+  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language         String                 @db.VarChar(10)
+  targetLanguage   String?                @map("target_language") @db.VarChar(10)
+  /// Normalized identity (skills, level and target language) claimed by one generation workflow at a time.
+  identityKey      String                 @map("identity_key")
+  slug             String
+  title            String
+  normalizedTitle  String                 @map("normalized_title")
+  /// One line on why the lesson matters.
+  description      String
+  /// What the learner will be able to do afterwards, shown on session tiles. Written with the spec.
+  canDo            String?                @map("can_do")
+  level            CourseLevel
+  estimatedMinutes Int                    @map("estimated_minutes") @db.SmallInt
+  homeChapterId    String?                @map("home_chapter_id") @db.Uuid
+  homeChapter      Chapter?               @relation(fields: [homeChapterId], references: [id], onDelete: SetNull)
+  visibility       LibraryVisibility      @default(public)
+  /// Owner of private content. Private content is deleted with its owner.
+  ownerId          String?                @map("owner_id") @db.Uuid
+  owner            User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  /// Lesson spec: skills, screen plan, activity and visual flags, and support mode.
+  spec             Json?
+  specStatus       GenerationStatus       @default(pending) @map("spec_status")
+  specRunId        String?                @map("spec_run_id")
+  contentStatus    GenerationStatus       @default(pending) @map("content_status")
+  /// Claim held by the running content generation, so one workflow writes the steps.
+  contentRunId     String?                @map("content_run_id")
+  /// Drafts the quality gate held back since the lesson was last published, oldest first: the writer model, the
+  /// problems and the run of each. The next draft is told what held them back; publishing clears them.
+  heldBackDrafts   Json                   @default("[]") @map("held_back_drafts")
+  /// Set when the lesson's last allowed draft was held back: nothing writes it again and plans move on without it.
+  setAsideAt       DateTime?              @map("set_aside_at")
+  /// The summary card: each idea in one sentence. Public on SEO pages.
+  summary          Json?
+  model            String
+  promptVersion    String                 @map("prompt_version")
+  runId            String                 @map("run_id")
+  generatedAt      DateTime               @default(now()) @map("generated_at")
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
+  chapters         ChapterLesson[]
+  steps            Step[]
+  skills           LessonSkill[]
+  planItems        PlanItem[]
+  studyBlocks      StudySessionBlock[]
+  words            LessonWord[]
+  sentences        LessonSentence[]
+  questionThreads  LessonQuestionThread[]
+  reviewFlags      ContentReviewFlag[]
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@unique([homeChapterId, slug], name: "homeChapterSlug")
+  @@index([language, level, normalizedTitle])
+  @@index([ownerId])
+  @@map("library_lessons")
+}
+
+/// Places a shared lesson in a chapter.
+model ChapterLesson {
+  chapterId String   @map("chapter_id") @db.Uuid
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  lessonId  String   @map("lesson_id") @db.Uuid
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  position  Int
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([chapterId, lessonId])
+  @@unique([chapterId, position], name: "chapterPosition")
+  @@index([lessonId])
+  @@map("chapter_lessons")
+}
+
+/// One lesson screen, including interactive activities. `content` follows the versioned step contract in
+/// core (`contractVersion`). Learner rows point at steps with SetNull, so regenerating a lesson never
+/// deletes anyone's progress.
+model Step {
+  id                 String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  lessonId           String              @map("lesson_id") @db.Uuid
+  lesson             Lesson              @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  position           Int
+  kind               StepKind
+  contractVersion    Int                 @default(1) @map("contract_version") @db.SmallInt
+  content            Json
+  skillId            String?             @map("skill_id") @db.Uuid
+  skill              Skill?              @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  itemId             String?             @map("item_id") @db.Uuid
+  item               Item?               @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  wordId             String?             @map("word_id") @db.Uuid
+  word               Word?               @relation(fields: [wordId], references: [id], onDelete: SetNull)
+  sentenceId         String?             @map("sentence_id") @db.Uuid
+  sentence           Sentence?           @relation(fields: [sentenceId], references: [id], onDelete: SetNull)
+  mediaAssetId       String?             @map("media_asset_id") @db.Uuid
+  mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
+  /// Where this screen comes from: the learner's material for lessons built from their own files, or
+  /// the public document its facts come from (a law, an exam notice), shown with the date it was checked.
+  sourceId           String?             @map("source_id") @db.Uuid
+  source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  /// The page or slide of `source` the screen cites, starting at 1.
+  sourcePage         Int?                @map("source_page") @db.SmallInt
+  model              String
+  promptVersion      String              @map("prompt_version")
+  runId              String              @map("run_id")
+  generatedAt        DateTime            @default(now()) @map("generated_at")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
+  variants           StepVariant[]
+  exampleLines       StepExampleLine[]
+  answerExplanations AnswerExplanation[]
+  attempts           Attempt[]
+  mistakes           Mistake[]
+  questions          LessonQuestion[]
+  sharedTutorAnswers TutorSharedAnswer[]
+
+  @@unique([lessonId, position], name: "lessonPosition")
+  @@index([skillId])
+  @@index([itemId])
+  @@index([wordId])
+  @@index([sentenceId])
+  @@index([mediaAssetId])
+  @@index([sourceId])
+  @@map("library_steps")
+}
+
+/// A "Simpler", "Go deeper", field or tool version of a step, made the first time someone asks and then
+/// shared. `key` names the field or tool ("nursing", "excel") and is empty for depth variants.
+model StepVariant {
+  id              String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  stepId          String          @map("step_id") @db.Uuid
+  step            Step            @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  kind            StepVariantKind
+  key             String          @default("")
+  contractVersion Int             @default(1) @map("contract_version") @db.SmallInt
+  content         Json
+  model           String
+  promptVersion   String          @map("prompt_version")
+  runId           String          @map("run_id")
+  generatedAt     DateTime        @default(now()) @map("generated_at")
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  @@unique([stepId, kind, key], name: "stepVariantKey")
+  @@map("step_variants")
+}
+
+/// The example line one learner sees on one explanation screen: a sentence tying its idea to their life,
+/// written from their memory facts and goal. `contextKey` hashes what it was written from, so a change in
+/// those facts writes it again. `text` is null when nothing the learner shared fits, so the model isn't
+/// asked again for the same facts.
+model StepExampleLine {
+  id            String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepId        String   @map("step_id") @db.Uuid
+  step          Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  text          String?
+  contextKey    String   @map("context_key")
+  model         String
+  promptVersion String   @map("prompt_version")
+  runId         String   @map("run_id")
+  generatedAt   DateTime @default(now()) @map("generated_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, stepId], name: "userStep")
+  @@index([stepId])
+  @@map("step_example_lines")
+}
+
+/// An image or audio file with the prompt and style version that made it, instead of URLs inside step
+/// JSON. `reuseKey` identifies the same picture or sound (audio keys include the language) so it is made
+/// once and reused. Images keep the structured scene they were drawn from and the subject palette; an
+/// image with labels has the labels' `language`, and one without text serves every language.
+model MediaAsset {
+  id            String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  kind          MediaKind
+  url           String
+  mimeType      String?           @map("mime_type")
+  reuseKey      String            @unique @map("reuse_key")
+  language      String?           @db.VarChar(10)
+  prompt        String?
+  /// The structured scene an image was drawn from: focal object, supporting objects, relation, motion and labels.
+  scene         Json?
+  /// The subject palette key the image was drawn with.
+  palette       String?
+  styleVersion  Int?              @map("style_version")
+  width         Int?
+  height        Int?
+  durationMs    Int?              @map("duration_ms")
+  visibility    LibraryVisibility @default(public)
+  /// Owner of a private course's image. Private assets are deleted with their owner.
+  ownerId       String?           @map("owner_id") @db.Uuid
+  owner         User?             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  model         String
+  promptVersion String            @map("prompt_version")
+  runId         String            @map("run_id")
+  generatedAt   DateTime          @default(now()) @map("generated_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  steps         Step[]
+
+  @@index([ownerId])
+  @@map("media_assets")
+}

@@ -1,6 +1,6 @@
 ---
 name: zoonk-testing
-description: Design, add, or debug Zoonk E2E, database integration, and pure-function tests.
+description: Design, add, or debug Zoonk E2E, lesson player browser, database integration, and pure-function tests.
 license: MIT
 metadata:
   author: zoonk
@@ -15,12 +15,13 @@ For behavior changes, prefer a failing regression test before implementation whe
 
 ## Choose coverage
 
-| Behavior                                                          | Boundary                               | Guidance to load                                                                      |
-| ----------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------- |
-| User flow, browser interaction, or public HTTP endpoint           | Playwright against real product routes | [E2E](references/e2e.md)                                                              |
-| Persistence, permissions, transactions, or business orchestration | Vitest with the real test database     | [Database integration](references/integration.md)                                     |
-| Non-trivial pure transformation or domain rule                    | Vitest beside the owning code          | Exercise the exported behavior with meaningful inputs; no additional reference needed |
-| Native behavior                                                   | The app's native test tools            | Read the owning app's AGENTS.md                                                       |
+| Behavior                                                          | Boundary                                 | Guidance to load                                                                                                                                                                                                        |
+| ----------------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| User flow, browser interaction, or public HTTP endpoint           | Playwright against real product routes   | [E2E](references/e2e.md)                                                                                                                                                                                                |
+| Lesson player behavior: a lesson's screens, answers and feedback  | Vitest browser mode in `packages/player` | Play whole lessons with `renderLessonPlayer` in `packages/player/src/_browser-tests/`, faking only the adapters' server calls. Every app reuses the player, so its behavior is tested there once, not in each app's E2E |
+| Persistence, permissions, transactions, or business orchestration | Vitest with the real test database       | [Database integration](references/integration.md)                                                                                                                                                                       |
+| Non-trivial pure transformation or domain rule                    | Vitest beside the owning code            | Exercise the exported behavior with meaningful inputs; no additional reference needed                                                                                                                                   |
+| Native behavior                                                   | The app's native test tools              | Read the owning app's AGENTS.md                                                                                                                                                                                         |
 
 Do not write React component unit tests or add tests for `admin`, `evals`, or `blog`. Do not test static configuration against itself, CSS, copy, prompt wording, Zod internals, or framework behavior. Do not export implementation details solely to test them.
 

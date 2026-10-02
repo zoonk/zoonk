@@ -1,73 +1,32 @@
-import { RelaunchNotice } from "@/components/waitlist/relaunch-notice";
-import { getActiveSubscription } from "@zoonk/core/auth/subscription";
-import { Badge } from "@zoonk/ui/components/badge";
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
-import { IS_RELAUNCH_WAITLIST_ENABLED } from "@zoonk/utils/relaunch";
+import { PlusPricingSkeleton, getPlusPricingMetadata } from "@/components/pricing/plus-pricing";
+import { Container, ContainerHeaderSkeleton } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
-import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { SubscriptionPlans, SubscriptionPlansSkeleton } from "./subscription-plans";
+import { SubscriptionPlans } from "./subscription-plans";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getExtracted();
-
-  return {
-    description: t(
-      "Learn anything with AI. Create as many courses and take as many lessons as you want with Zoonk Plus.",
-    ),
-    title: t("Zoonk Plus: Unlimited courses and lessons"),
-  };
+  return getPlusPricingMetadata();
 }
 
-async function SubscriptionContent({ searchParams }: PageProps<"/[lang]/subscription">) {
-  if (IS_RELAUNCH_WAITLIST_ENABLED && !(await getActiveSubscription())) {
-    return <RelaunchNotice />;
-  }
-
-  const t = await getExtracted();
-
+/** Subscribers and everyone else see different pages, so the wait shows neither's headline. */
+function SubscriptionSkeleton() {
   return (
-    <Container className="mx-auto gap-8 py-4 sm:max-w-5xl sm:py-8 lg:gap-10 lg:py-10">
-      <ContainerHeader className="items-start">
-        <ContainerHeaderGroup className="max-w-3xl gap-4">
-          <Badge variant="outline">{t("Zoonk Plus")}</Badge>
-
-          <ContainerTitle className="text-4xl leading-[0.95] font-semibold tracking-[-0.04em] sm:text-5xl lg:text-6xl">
-            {t("Learn anything. It’s all included.")}
-          </ContainerTitle>
-
-          <ContainerDescription className="max-w-2xl text-base leading-relaxed sm:text-lg">
-            {t(
-              "Pass the test. Get a better job. Speak a language. Whatever you want to achieve, Plus gives you unlimited courses and lessons to help you get there.",
-            )}
-          </ContainerDescription>
-
-          <p className="text-muted-foreground pt-2 font-mono text-xs tracking-wide text-pretty uppercase">
-            {t("Any subject · Unlimited courses and lessons")}
-          </p>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="sm:px-4">
-        <Suspense fallback={<SubscriptionPlansSkeleton />}>
-          <SubscriptionPlans searchParams={searchParams} />
-        </Suspense>
-      </ContainerBody>
+    <Container className="gap-8 py-4 sm:max-w-150 sm:py-8 lg:gap-10 lg:py-10">
+      <ContainerHeaderSkeleton />
+      <PlusPricingSkeleton />
     </Container>
   );
 }
 
-export default function Subscription(props: PageProps<"/[lang]/subscription">) {
+/**
+ * Plus inside the app, for anyone with a session: subscribers see their plan and how to manage
+ * it, signed-in learners can subscribe, and guests log in first. Visitors get the public pricing
+ * page instead; the proxy sends them there before this renders.
+ */
+export default function Subscription({ searchParams }: PageProps<"/[lang]/subscription">) {
   return (
-    <Suspense fallback={<SubscriptionPlansSkeleton />}>
-      <SubscriptionContent {...props} />
+    <Suspense fallback={<SubscriptionSkeleton />}>
+      <SubscriptionPlans searchParams={searchParams} />
     </Suspense>
   );
 }

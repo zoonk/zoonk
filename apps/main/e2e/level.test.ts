@@ -1,7 +1,9 @@
 import { type Browser } from "@playwright/test";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
+import { type Mode, expectMode, showInMode } from "./learn-personas";
 
 /**
  * Creates an isolated learner at an exact Brain Power total so Level assertions
@@ -11,11 +13,13 @@ async function createLevelTestPage({
   baseURL,
   browser,
   browserLocale,
+  mode = "focus",
   totalBrainPower,
 }: {
   baseURL: string;
   browser: Browser;
   browserLocale?: string;
+  mode?: Mode;
   totalBrainPower: bigint;
 }) {
   const user = await createE2EUser(baseURL, { orgRole: "member" });
@@ -26,113 +30,84 @@ async function createLevelTestPage({
     storageState: user.storageState,
   });
 
+  await showInMode(browserContext, { mode, userId: user.id });
   const page = await browserContext.newPage();
 
   return { browserContext, page };
 }
 
 test.describe("Level Page", () => {
-  test.describe("Unauthenticated Users", () => {
-    test("shows login prompt with link to login page", async ({ page }) => {
-      await page.goto("/level");
-
-      await expect(page.getByText(/log in to track your progress/iu)).toBeVisible();
-      await expect(page.getByRole("link", { name: /login/iu })).toHaveAttribute("href", "/login");
-    });
-  });
-
-  test.describe("Authenticated Users", () => {
-    test("shows the current level and the progress that moves learning forward", async ({
-      baseURL,
+  test("shows the current level and the progress that moves learning forward in Fun, in the app's locale", async ({
+    baseURL,
+    browser,
+  }) => {
+    const { browserContext, page } = await createLevelTestPage({
+      baseURL: baseURL!,
       browser,
-    }) => {
-      const { browserContext, page } = await createLevelTestPage({
-        baseURL: baseURL!,
-        browser,
-        totalBrainPower: 15_000n,
-      });
-
-      try {
-        await page.goto("/level");
-
-        await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeVisible();
-        await expect(page.getByText(/^orange belt · level 8$/iu)).toBeVisible();
-        await expect(page.getByText(/^500 bp to next level$/iu)).toBeVisible();
-        await expect(page.getByText(/^15,000 bp$/iu)).toBeVisible();
-
-        const levelProgress = page.getByRole("progressbar", { name: /500 bp to next level/iu });
-
-        await expect(levelProgress).toBeVisible();
-        await expect(levelProgress).toHaveAttribute("aria-valuenow", "50");
-        await expect(levelProgress).toContainText("500 of 1,000 BP");
-
-        await expect(page.getByRole("heading", { name: /belt progression/iu })).toBeVisible();
-        await expect(page.getByRole("heading", { name: /how levels work/iu })).toBeVisible();
-        await expect(page.getByText(/brain power never goes down/iu)).toBeVisible();
-
-        await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
-        await expect(page.getByRole("figure", { name: /brain power chart/iu })).toHaveCount(0);
-        await expect(page.getByRole("article", { name: /highest bp/iu })).toHaveCount(0);
-      } finally {
-        await browserContext.close();
-      }
+      browserLocale: "en-US",
+      mode: "fun",
+      totalBrainPower: 15_000n,
     });
 
-    test("formats level progress using the app locale", async ({ baseURL, browser }) => {
-      const { browserContext, page } = await createLevelTestPage({
-        baseURL: baseURL!,
-        browser,
-        browserLocale: "en-US",
-        totalBrainPower: 15_000n,
-      });
+    try {
+      await page.goto("/level");
+      await expectMode(page, "fun");
 
-      try {
-        await page.goto("/de/level");
+      await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeVisible();
+      await expect(page.getByText(/^orange belt · level 8$/iu)).toBeVisible();
+      await expect(page.getByText(/^500 bp to next level$/iu)).toBeVisible();
+      await expect(page.getByText(/^15,000 bp$/iu)).toBeVisible();
 
-        const levelProgress = page.getByRole("progressbar", {
-          name: /500 bp bis zum nächsten level/iu,
-        });
+      const levelProgress = page.getByRole("progressbar", { name: /500 bp to next level/iu });
 
-        await expect(levelProgress).toHaveAttribute(
-          "aria-valuetext",
-          new Intl.NumberFormat("de", { style: "percent" }).format(0.5),
-        );
-      } finally {
-        await browserContext.close();
-      }
-    });
+      await expect(levelProgress).toBeVisible();
+      await expect(levelProgress).toHaveAttribute("aria-valuenow", "50");
+      await expect(levelProgress).toContainText("500 of 1,000 BP");
 
-    test("shows a completed milestone at the maximum level", async ({ baseURL, browser }) => {
-      const { browserContext, page } = await createLevelTestPage({
-        baseURL: baseURL!,
-        browser,
-        totalBrainPower: 3_067_500n,
-      });
+      await expect(page.getByRole("heading", { name: /belt progression/iu })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /how levels work/iu })).toBeVisible();
+      await expect(page.getByText(/brain power never goes down/iu)).toBeVisible();
 
-      try {
-        await page.goto("/level");
+      await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
+      await expect(page.getByRole("figure", { name: /brain power chart/iu })).toHaveCount(0);
+      await expect(page.getByRole("article", { name: /highest bp/iu })).toHaveCount(0);
+      await expectAccessibleScreen(page, "Level");
 
-        await expect(page.getByText(/^black belt · level 10$/iu)).toBeVisible();
-        await expect(page.getByText(/^max level reached$/iu)).toBeVisible();
-
-        const levelProgress = page.getByRole("progressbar", { name: /max level reached/iu });
-
-        await expect(levelProgress).toHaveAttribute("aria-valuenow", "100");
-        await expect(levelProgress).toContainText("Complete");
-        await expect(levelProgress).not.toContainText("0 of 100,000 BP");
-      } finally {
-        await browserContext.close();
-      }
-    });
-  });
-
-  test.describe("Users Without Progress", () => {
-    test("sees prompt to start learning", async ({ userWithoutProgress }) => {
-      await userWithoutProgress.goto("/level");
+      // The app's locale formats the progress, not the browser's.
+      await page.goto("/de/level");
 
       await expect(
-        userWithoutProgress.getByText(/start learning to track your progress/iu),
-      ).toBeVisible();
+        page.getByRole("progressbar", { name: /500 bp bis zum nächsten level/iu }),
+      ).toHaveAttribute(
+        "aria-valuetext",
+        new Intl.NumberFormat("de", { style: "percent" }).format(0.5),
+      );
+    } finally {
+      await browserContext.close();
+    }
+  });
+
+  test("shows a completed milestone at the maximum level", async ({ baseURL, browser }) => {
+    const { browserContext, page } = await createLevelTestPage({
+      baseURL: baseURL!,
+      browser,
+      totalBrainPower: 3_067_500n,
     });
+
+    try {
+      await page.goto("/level");
+
+      await expect(page.getByText(/^black belt · level 10$/iu)).toBeVisible();
+      await expect(page.getByText(/^max level reached$/iu)).toBeVisible();
+
+      const levelProgress = page.getByRole("progressbar", { name: /max level reached/iu });
+
+      await expect(levelProgress).toHaveAttribute("aria-valuenow", "100");
+      await expect(levelProgress).toContainText("Complete");
+      await expect(levelProgress).not.toContainText("0 of 100,000 BP");
+      await expectAccessibleScreen(page, "Level");
+    } finally {
+      await browserContext.close();
+    }
   });
 });

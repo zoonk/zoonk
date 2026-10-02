@@ -2,11 +2,11 @@
 
 import {
   type CreateLessonQuestionInput,
-  type LessonQuestionResource,
+  type TutorTarget,
 } from "@zoonk/core/lesson-questions/contract";
 import { type Dispatch, useCallback, useRef, useState } from "react";
-import { type PlayerQuestionContext } from "../player-context";
 import { type LessonQuestionConnection, createLessonQuestionRequest } from "./lesson-question-api";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionContextInput } from "./lesson-question-request";
 import { getLessonQuestionScope } from "./lesson-question-scope";
 import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
@@ -24,16 +24,16 @@ function shouldGenerateAnswer(status: "pending" | "running" | "completed" | "fai
 
 function getQuestionCreateRequest({
   context,
-  lessonSteps,
+  lessonStepIds,
   pendingRequest,
   question,
-  requestId,
+  suggested,
 }: {
-  context: PlayerQuestionContext;
-  lessonSteps: readonly { id: string }[];
+  context: LessonQuestionContext;
+  lessonStepIds: readonly string[];
   pendingRequest: PendingQuestionCreateRequest | null;
   question: string;
-  requestId?: string;
+  suggested: boolean;
 }): PendingQuestionCreateRequest {
   if (pendingRequest) {
     return pendingRequest;
@@ -41,13 +41,11 @@ function getQuestionCreateRequest({
 
   return {
     input: {
-      context: getLessonQuestionContextInput({
-        context,
-        lessonStepIds: lessonSteps.map((step) => step.id),
-      }),
+      context: getLessonQuestionContextInput({ context, lessonStepIds: [...lessonStepIds] }),
       question,
+      ...(suggested && { suggested: true as const }),
     },
-    requestId: requestId ?? crypto.randomUUID(),
+    requestId: crypto.randomUUID(),
   };
 }
 
@@ -56,8 +54,8 @@ export function useSendLessonQuestion({
   canAskQuestions,
   dispatchToContext,
   getState,
-  lessonId,
-  lessonSteps,
+  target,
+  lessonStepIds,
   reconcileThread,
   state,
   streamAnswer,
@@ -65,12 +63,12 @@ export function useSendLessonQuestion({
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatchToContext: Dispatch<LessonQuestionSessionAction>;
-  getState: (context: PlayerQuestionContext) => LessonQuestionState;
-  lessonId: string;
-  lessonSteps: readonly { id: string }[];
-  reconcileThread: (context: PlayerQuestionContext) => Promise<boolean>;
+  getState: (context: LessonQuestionContext) => LessonQuestionState;
+  target: TutorTarget;
+  lessonStepIds: readonly string[];
+  reconcileThread: (context: LessonQuestionContext) => Promise<boolean>;
   state: LessonQuestionState;
-  streamAnswer: (input: { context: PlayerQuestionContext; questionId: string }) => Promise<void>;
+  streamAnswer: (input: { context: LessonQuestionContext; questionId: string }) => Promise<void>;
 }) {
   const createRequestsInFlight = useRef(new Set<string>());
   const pendingCreateRequests = useRef(new Map<string, PendingQuestionCreateRequest>());
@@ -81,17 +79,14 @@ export function useSendLessonQuestion({
 
   const submitQuestion = useCallback(
     async ({
-      authoritativeQuestions,
       context,
       question,
-      requestId,
-      retryUnresolved,
+      suggested,
     }: {
-      authoritativeQuestions?: LessonQuestionResource[];
-      context: PlayerQuestionContext;
+      context: LessonQuestionContext;
       question: string;
-      requestId?: string;
-      retryUnresolved: boolean;
+      /** The learner sent a suggested question unchanged. */
+      suggested: boolean;
     }) => {
       const scope = getLessonQuestionScope(context);
       const currentState = getState(context);
@@ -100,17 +95,11 @@ export function useSendLessonQuestion({
         dispatchToContext({ action, context });
 
       const pendingRequest = pendingCreateRequests.current.get(scope) ?? null;
-      const unresolvedRequest = retryUnresolved ? pendingRequest : null;
-
-      const blocksNewQuestion =
-        authoritativeQuestions?.some((candidate) =>
-          doesLessonQuestionBlockNewQuestion(candidate),
-        ) ?? currentState.questions.some(doesLessonQuestionBlockNewQuestion);
+      const blocksNewQuestion = currentState.questions.some(doesLessonQuestionBlockNewQuestion);
 
       if (
         !canAskQuestions ||
-        (!question && !unresolvedRequest) ||
-        (!retryUnresolved && pendingRequest) ||
+        (!question && !pendingRequest) ||
         currentState.activeQuestionId ||
         createRequestsInFlight.current.has(scope) ||
         currentState.isCreating ||
@@ -124,16 +113,16 @@ export function useSendLessonQuestion({
 
       const request = getQuestionCreateRequest({
         context,
-        lessonSteps,
-        pendingRequest: unresolvedRequest,
+        lessonStepIds,
+        pendingRequest,
         question,
-        requestId,
+        suggested,
       });
 
       const input = { ...request.input, requestId: request.requestId };
       pendingCreateRequests.current.set(scope, request);
       setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
-      const result = await createLessonQuestionRequest({ connection, input, lessonId });
+      const result = await createLessonQuestionRequest({ connection, input, target });
       createRequestsInFlight.current.delete(scope);
 
       if (result.status === "error") {
@@ -163,48 +152,26 @@ export function useSendLessonQuestion({
       canAskQuestions,
       dispatchToContext,
       getState,
-      lessonId,
-      lessonSteps,
+      target,
+      lessonStepIds,
       reconcileThread,
       streamAnswer,
     ],
   );
 
-  const send = useCallback(
-    async () =>
-      submitQuestion({
-        context: state.context,
-        question: state.draft.trim(),
-        retryUnresolved: true,
-      }),
-    [state.context, state.draft, submitQuestion],
-  );
+  const send = useCallback(async () => {
+    const question = state.draft.trim();
 
-  const sendPrepared = useCallback(
-    async ({
-      context,
+    await submitQuestion({
+      context: state.context,
       question,
-      questions,
-      requestId,
-    }: {
-      context: PlayerQuestionContext;
-      question: string;
-      questions: LessonQuestionResource[];
-      requestId: string;
-    }) =>
-      submitQuestion({
-        authoritativeQuestions: questions,
-        context,
-        question: question.trim(),
-        requestId,
-        retryUnresolved: false,
-      }),
-    [submitQuestion],
-  );
+      suggested: question === state.suggestion,
+    });
+  }, [state.context, state.draft, state.suggestion, submitQuestion]);
 
   const unresolvedQuestion = state.isCreating
     ? null
     : (pendingRequestSnapshot.get(getLessonQuestionScope(state.context))?.input.question ?? null);
 
-  return { send, sendPrepared, unresolvedQuestion };
+  return { send, unresolvedQuestion };
 }

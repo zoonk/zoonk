@@ -1,0 +1,7 @@
+/*
+ * The player's styles as an app loads them: one stylesheet, so Fun's utilities (deep space, the
+ * paper, the flip) and the tutor's sources build with the shared tokens, as in the apps' globals.
+ */
+@import "@zoonk/ui/globals.css";
+@import "@zoonk/ui/fun.css";
+@import "../questions/styles.css";

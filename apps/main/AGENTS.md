@@ -1,5 +1,6 @@
 - Every reusable product capability exposed by Main must also be reachable through the public API so native apps, CLI tools, and agents can provide the same behavior. Audit new Main pages against the OpenAPI document; exclude only delivery-specific concerns such as URLs, redirects, metadata, prefetch presentation, and SEO.
 - Do not add direct Prisma access to an app for a capability that belongs in another app, the public API, mobile, CLI, or an agent. Web-only indexing and SEO queries such as sitemaps may remain in a web app.
+- A learning feature ships in both Focus and Fun in the same change. The modes share core view models and actions and differ only in presentation, so each flow is tested once, in one mode, and the suite as a whole is split between Focus and Fun. Test a feature that exists in only one mode in that mode. Each screen gets one accessibility scan per mode, inside a flow that already shows it (the lesson player's screens are scanned in `packages/player`'s browser tests). Every analytics event carries `mode`.
 
 Use the shared [web UI and localization guidance](../../.agents/guides/web.md) for React composition, typed links, and translated copy. Reusable business behavior belongs in core capabilities governed by [packages/core/AGENTS.md](../../packages/core/AGENTS.md).
 

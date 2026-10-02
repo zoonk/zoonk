@@ -1,0 +1,180 @@
+enum SourceKind {
+  official
+  secondary
+  upload
+}
+
+/// A dated document from the web or an upload, fetched once and reused by every learner who needs it.
+/// `identityKey` is the canonical URL, or the content hash for uploads (prefixed with the owner id for
+/// private uploads), so a document is stored once. `validUntil` drives freshness: when it passes, the
+/// source is fetched again and a model runs only if `contentHash` changed. Private uploads stay with
+/// their owner and are deleted with them.
+model Source {
+  id             String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language       String               @db.VarChar(10)
+  identityKey    String               @map("identity_key")
+  kind           SourceKind
+  visibility     LibraryVisibility    @default(public)
+  ownerId        String?              @map("owner_id") @db.Uuid
+  owner          User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  url            String?
+  title          String
+  publisher      String?
+  mimeType       String?              @map("mime_type")
+  blobUrl        String?              @map("blob_url")
+  contentHash    String               @map("content_hash")
+  fetchedAt      DateTime             @map("fetched_at")
+  validUntil     DateTime?            @map("valid_until")
+  nextCheckAt    DateTime?            @map("next_check_at")
+  extractedText  String?              @map("extracted_text")
+  structure      Json?
+  /// Whether past questions may be quoted, with the terms that say so.
+  reusePolicy    Json?                @map("reuse_policy")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @default(now()) @updatedAt @map("updated_at")
+  examBlueprints ExamBlueprint[]
+  items          Item[]
+  learnerSources LearnerSource[]
+  changeNotices  SourceChangeNotice[]
+  steps          Step[]
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@index([contentHash])
+  @@index([nextCheckAt])
+  @@index([ownerId])
+  @@map("sources")
+}
+
+/// One canonical structure per exam (identity keys like "enem" or "banco-do-brasil-escriturario"):
+/// subjects, weights, question formats, rules and the conditions a mock exam copies. The current edition
+/// (year, notice, dates, number of questions) is metadata, so lessons and items carry over between
+/// editions and only what changed is updated. A blueprint read from a learner's private uploads (such as
+/// a teacher's slides for a school exam) is private to that learner, keyed in their own key space, and
+/// deleted with them.
+model ExamBlueprint {
+  id                 String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language           String               @db.VarChar(10)
+  identityKey        String               @map("identity_key")
+  name               String
+  country            String               @db.VarChar(2)
+  board              String?
+  role               String?
+  visibility         LibraryVisibility    @default(public)
+  ownerId            String?              @map("owner_id") @db.Uuid
+  owner              User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  /// Subjects, weights, question formats, rules and mock conditions (questions, sections, order, time
+  /// limits and scoring).
+  structure          Json
+  /// Year, notice URL, dates and number of questions of the current edition.
+  edition            Json?
+  /// How often the board asks each topic, from past papers.
+  topicFrequency     Json?                @map("topic_frequency")
+  sourceId           String?              @map("source_id") @db.Uuid
+  source             Source?              @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  validUntil         DateTime?            @map("valid_until")
+  nextCheckAt        DateTime?            @map("next_check_at")
+  registrationEndsAt DateTime?            @map("registration_ends_at")
+  examDate           DateTime?            @map("exam_date")
+  model              String
+  promptVersion      String               @map("prompt_version")
+  runId              String               @map("run_id")
+  generatedAt        DateTime             @default(now()) @map("generated_at")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  items              Item[]
+  goals              Goal[]
+  changeNotices      SourceChangeNotice[]
+  mockExams          MockExam[]
+  examResults        ExamResult[]
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@index([nextCheckAt])
+  @@index([ownerId])
+  @@index([sourceId])
+  @@map("exam_blueprints")
+}
+
+enum LearnerSourceOrigin {
+  upload
+  research
+}
+
+/// A source one learner brought or relies on: a file or text they uploaded, or what research found for
+/// their goal. Public uploads are stored once and shared, so this row is how a learner keeps their own
+/// material after deduplication, and how uploads are counted per day. It is a link, not progress, so it
+/// goes away with the source it points at.
+model LearnerSource {
+  id        String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String              @map("user_id") @db.Uuid
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceId  String              @map("source_id") @db.Uuid
+  source    Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  goalId    String?             @map("goal_id") @db.Uuid
+  goal      Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  origin    LearnerSourceOrigin
+  createdAt DateTime            @default(now()) @map("created_at")
+
+  @@unique([userId, sourceId], name: "learnerSource")
+  @@index([userId, createdAt])
+  @@index([sourceId])
+  @@index([goalId])
+  @@map("learner_sources")
+}
+
+/// One line shown to the learners of an exam or source after a new fetch changed what they study, such
+/// as "The exam notice changed: the test now has 60 questions". It is stored once per change, not per
+/// learner: Today reads the notices of the learner's goal. `fields` lists the blueprint paths that
+/// changed, and provenance records the model that wrote the line.
+model SourceChangeNotice {
+  id              String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  sourceId        String              @map("source_id") @db.Uuid
+  source          Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  examBlueprintId String?             @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint?      @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  language        String              @db.VarChar(10)
+  message         String
+  fields          String[]
+  previousHash    String              @map("previous_hash")
+  contentHash     String              @map("content_hash")
+  model           String
+  promptVersion   String              @map("prompt_version")
+  runId           String              @map("run_id")
+  generatedAt     DateTime            @default(now()) @map("generated_at")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  reviewFlags     ContentReviewFlag[]
+
+  @@index([examBlueprintId, createdAt])
+  @@index([sourceId, createdAt])
+  @@map("source_change_notices")
+}
+
+enum ContentReviewStatus {
+  open
+  rewritten
+  dismissed
+}
+
+/// A lesson or question built on a source that changed after it was written, flagged by the change's
+/// notice. Admin lists the open flags; the daily sweep rewrites the lesson or question against the
+/// changed source and marks the flag `rewritten`, or an admin dismisses it. Exactly one of
+/// `lessonId` and `itemId` is set.
+model ContentReviewFlag {
+  id         String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  noticeId   String              @map("notice_id") @db.Uuid
+  notice     SourceChangeNotice  @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  lessonId   String?             @map("lesson_id") @db.Uuid
+  lesson     Lesson?             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  itemId     String?             @map("item_id") @db.Uuid
+  item       Item?               @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  status     ContentReviewStatus @default(open)
+  resolvedAt DateTime?           @map("resolved_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([noticeId, lessonId], name: "noticeLesson")
+  @@unique([noticeId, itemId], name: "noticeItem")
+  @@index([status, createdAt])
+  @@index([lessonId, status])
+  @@index([itemId, status])
+  @@map("content_review_flags")
+}

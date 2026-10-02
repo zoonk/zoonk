@@ -8,20 +8,19 @@ struct CatalogDetailSearchPresentation: ViewModifier {
 
   func body(content: Content) -> some View {
     Group {
-      if isPresented {
+      if horizontalSizeClass == .regular {
+        // iPadOS keeps toolbar search as its own Search button that expands into the field, so the
+        // search stays attached instead of appearing only after a separate button.
         content
           .searchable(
             text: $text,
             isPresented: $isPresented,
-            placement: horizontalSizeClass == .regular
-              ? .toolbar : .navigationBarDrawer(displayMode: .always),
+            placement: .toolbar,
             prompt: prompt
           )
-          .searchPresentationToolbarBehavior(
-            horizontalSizeClass == .regular ? .avoidHidingContent : .automatic
-          )
+          .searchPresentationToolbarBehavior(.avoidHidingContent)
           .toolbar {
-            if horizontalSizeClass == .regular {
+            if isPresented {
               ToolbarItem(placement: .cancellationAction) {
                 Button(role: .cancel) {
                   isPresented = false
@@ -34,6 +33,14 @@ struct CatalogDetailSearchPresentation: ViewModifier {
               }
             }
           }
+      } else if isPresented {
+        content
+          .searchable(
+            text: $text,
+            isPresented: $isPresented,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: prompt
+          )
       } else {
         content
           .toolbar {

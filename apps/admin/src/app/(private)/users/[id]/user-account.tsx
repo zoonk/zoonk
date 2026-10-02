@@ -1,8 +1,8 @@
+import { DetailField } from "@/components/detail-field";
 import { getUser } from "@/data/users/get-user";
 import { Button } from "@zoonk/ui/components/button";
 import { Separator } from "@zoonk/ui/components/separator";
 import { updateUserAnalyticsDisabledAction } from "./_actions/update-user-analytics-disabled";
-import { DetailField } from "./detail-field";
 
 export async function UserAccount({ userId }: { userId: string }) {
   "use cache: private";

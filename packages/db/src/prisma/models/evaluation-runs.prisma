@@ -1,0 +1,34 @@
+/// One run of an evaluation model (Jev, or its fallback when Jev failed): the task, the verdict of
+/// each question with its probabilities, the model that answered and what it cost. `input` holds the
+/// fields the model read only for tasks whose text is stored elsewhere anyway (a goal's prompt, a
+/// tutor question, Library titles); tasks that read text nobody keeps, like memory candidates, store
+/// only `inputHash`. Rows are kept 30 days for audits, threshold tuning and eval sampling, and go
+/// away with their learner or goal.
+model EvaluationRun {
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  task           String
+  model          String
+  requestedModel String   @map("requested_model")
+  promptVersion  String   @map("prompt_version")
+  userId         String?  @map("user_id") @db.Uuid
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId         String?  @map("goal_id") @db.Uuid
+  goal           Goal?    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  /// Shared Library content or content made for one learner, as the task's analytics say.
+  contentScope   String   @map("content_scope") @db.VarChar(10)
+  traceId        String?  @map("trace_id")
+  input          Json?
+  inputHash      String   @map("input_hash")
+  answers        Json
+  latencyMs      Int      @map("latency_ms")
+  inputTokens    Int      @map("input_tokens")
+  outputTokens   Int      @map("output_tokens")
+  costUsd        Float?   @map("cost_usd")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([task, createdAt])
+  @@index([createdAt])
+  @@index([userId])
+  @@index([goalId])
+  @@map("evaluation_runs")
+}

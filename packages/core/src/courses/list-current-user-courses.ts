@@ -1,55 +1,131 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getPublishedCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
+import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
-import { COURSE_LIST_CACHE_TAG, getUserProgressCacheTag } from "../cache/tags";
+import { getGoalsCacheTag, getUserProgressCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
+import { getOwnPrivateCourseWhere } from "./_utils/own-private-course";
 
-/**
- * Loads the CourseUser-backed library for one trusted session-derived learner,
- * preserving the current most-recently-started ordering and visibility rules.
- */
-async function findCurrentUserCourses({
-  offset,
-  query,
-  take,
-  userId,
-}: {
-  offset?: number;
-  query?: string;
-  take?: number;
-  userId: string;
-}) {
-  const rows = await prisma.courseUser.findMany({
-    include: { course: { include: { organization: true } } },
-    orderBy: [{ startedAt: "desc" }, { courseId: "desc" }],
-    ...(take !== undefined && { take }),
-    ...(offset !== undefined && { skip: Math.max(Math.trunc(offset), 0) }),
-    where: {
-      course: {
-        OR: [{ organization: { kind: "brand" } }, { organizationId: null }],
-        ...(query && {
-          AND: [
-            {
-              OR: [
-                { title: { contains: query, mode: "insensitive" as const } },
-                { description: { contains: query, mode: "insensitive" as const } },
-              ],
-            },
-          ],
-        }),
-      },
-      userId,
-    },
+type CourseActivity = { courseId: string; lastActivityAt: Date };
+type StartedChapter = { chapterId: string; lastActivityAt: Date };
+
+/** The courses the learner's goals are built on, active or not, as of the goal's last change. */
+async function listGoalCourses(userId: string): Promise<CourseActivity[]> {
+  const goals = await prisma.goal.findMany({
+    select: { primaryCourseId: true, updatedAt: true },
+    where: { primaryCourseId: { not: null }, userId },
   });
 
-  return rows.map((row) => row.course);
+  return goals.flatMap(({ primaryCourseId, updatedAt }) =>
+    primaryCourseId ? [{ courseId: primaryCourseId, lastActivityAt: updatedAt }] : [],
+  );
+}
+
+function toCourseActivity({
+  homeCourseIds,
+  started,
+}: {
+  homeCourseIds: Map<string, string | null>;
+  started: StartedChapter;
+}): CourseActivity[] {
+  const courseId = homeCourseIds.get(started.chapterId);
+  return courseId ? [{ courseId, lastActivityAt: started.lastActivityAt }] : [];
 }
 
 /**
- * Returns the authenticated learner's course library without accepting an
- * acting user ID. Main keeps its existing empty guest result while repeated
- * callers in one request share the same private-cache execution.
+ * The courses the learner started lessons in. Each lesson run names the lesson's home chapter,
+ * which lives in its home course. The ledger is read on its own and the chapters looked up
+ * afterwards, so learner rows are never joined with content.
+ */
+async function listStartedCourses(userId: string): Promise<CourseActivity[]> {
+  const rows = await prisma.$queryRaw<StartedChapter[]>`
+    SELECT content_ids->>'chapterId' AS "chapterId", max(started_at) AS "lastActivityAt"
+    FROM learning_events
+    WHERE user_id = ${userId}::uuid AND kind = 'lesson' AND content_ids->>'chapterId' IS NOT NULL
+    GROUP BY 1`;
+
+  const started = rows.filter((row) => isUuid(row.chapterId));
+
+  if (started.length === 0) {
+    return [];
+  }
+
+  const chapters = await prisma.chapter.findMany({
+    select: { homeCourseId: true, id: true },
+    where: { id: { in: started.map((row) => row.chapterId) } },
+  });
+
+  const homeCourseIds = new Map(chapters.map((chapter) => [chapter.id, chapter.homeCourseId]));
+  return started.flatMap((row) => toCourseActivity({ homeCourseIds, started: row }));
+}
+
+function byLatestActivity(first: CourseActivity, second: CourseActivity) {
+  return (
+    second.lastActivityAt.getTime() - first.lastActivityAt.getTime() ||
+    second.courseId.localeCompare(first.courseId)
+  );
+}
+
+/** Course ids from most to least recent activity, each once. */
+async function listRecentCourseIds(userId: string): Promise<string[]> {
+  const [goalCourses, startedCourses] = await Promise.all([
+    listGoalCourses(userId),
+    listStartedCourses(userId),
+  ]);
+
+  const activities = [...goalCourses, ...startedCourses].toSorted(byLatestActivity);
+  return [...new Set(activities.map((activity) => activity.courseId))];
+}
+
+function getQueryWhere(query?: string) {
+  if (!query) {
+    return {};
+  }
+
+  return {
+    AND: [
+      {
+        OR: [
+          { title: { contains: query, mode: "insensitive" as const } },
+          { description: { contains: query, mode: "insensitive" as const } },
+        ],
+      },
+    ],
+  };
+}
+
+/**
+ * The learner's courses: the ones their goals are built on and the ones they started lessons in,
+ * most recent activity first. Only published brand courses and the learner's own private courses
+ * are listed.
+ */
+async function findCurrentUserCourses({ query, userId }: { query?: string; userId: string }) {
+  const courseIds = await listRecentCourseIds(userId);
+
+  if (courseIds.length === 0) {
+    return [];
+  }
+
+  const courses = await prisma.course.findMany({
+    include: { organization: true },
+    where: {
+      OR: [
+        getPublishedCourseWhere({ organization: { kind: "brand" } }),
+        getOwnPrivateCourseWhere(userId),
+      ],
+      id: { in: courseIds },
+      ...getQueryWhere(query),
+    },
+  });
+
+  const coursesById = new Map(courses.map((course) => [course.id, course]));
+  return courseIds.flatMap((courseId) => coursesById.get(courseId) ?? []);
+}
+
+/**
+ * Returns the authenticated learner's courses without accepting an acting user ID. Guests without
+ * a session get an empty list, and repeated callers in one request share the private cache.
  */
 export async function listCurrentUserCourses() {
   "use cache: private";
@@ -60,15 +136,14 @@ export async function listCurrentUserCourses() {
     return [];
   }
 
-  cacheTag(COURSE_LIST_CACHE_TAG, getUserProgressCacheTag(session.user.id));
+  cacheTag(getGoalsCacheTag(session.user.id), getUserProgressCacheTag(session.user.id));
   return findCurrentUserCourses({ userId: session.user.id });
 }
 
 /**
- * Returns one authenticated learner-owned course page and an explicit
- * continuation signal. A null result represents an unauthenticated request,
- * allowing the API adapter to emit 401 without moving authorization outside
- * Core.
+ * Returns one page of the authenticated learner's courses, optionally filtered by title or
+ * description, with an explicit continuation signal. A null result represents an unauthenticated
+ * request, allowing the API adapter to emit 401 without moving authorization outside Core.
  */
 export async function listCurrentUserCoursesPage({
   limit,
@@ -86,13 +161,9 @@ export async function listCurrentUserCoursesPage({
   }
 
   const pageSize = clampQueryItems(limit);
+  const start = Math.max(Math.trunc(offset), 0);
+  const courses = await findCurrentUserCourses({ query: query?.trim(), userId: session.user.id });
+  const page = courses.slice(start, start + pageSize + 1);
 
-  const courses = await findCurrentUserCourses({
-    offset,
-    query: query?.trim(),
-    take: pageSize + 1,
-    userId: session.user.id,
-  });
-
-  return { courses: courses.slice(0, pageSize), hasMore: courses.length > pageSize };
+  return { courses: page.slice(0, pageSize), hasMore: page.length > pageSize };
 }

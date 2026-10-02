@@ -50,7 +50,7 @@ export async function EngagementStats() {
       />
 
       <Stats
-        help="Correct step answers divided by all step attempts"
+        help="Correct answers divided by all answers"
         href="/stats/engagement"
         icon={<TargetIcon />}
         title="Accuracy Rate"

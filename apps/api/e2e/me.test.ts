@@ -3,7 +3,8 @@ import { type APIResponse, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { appleAccountFixture } from "@zoonk/testing/fixtures/accounts";
-import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getString } from "@zoonk/utils/json";
@@ -237,9 +238,9 @@ test.describe("Current User API", () => {
       }),
     ]);
 
-    await Promise.all([
-      courseUserFixture({ courseId: sharedCourse.id, userId }),
-      courseUserFixture({ courseId: sharedCourse.id, userId: otherUser.id }),
+    const [ownGoal, otherGoal] = await Promise.all([
+      goalFixture({ primaryCourseId: sharedCourse.id, userId }),
+      goalFixture({ primaryCourseId: sharedCourse.id, userId: otherUser.id }),
     ]);
 
     await appleAccountFixture({ userId });
@@ -271,8 +272,8 @@ test.describe("Current User API", () => {
       verificationCount,
       deletedCourse,
       preservedSharedCourse,
-      deletedSharedMembership,
-      preservedSharedMembership,
+      deletedGoal,
+      preservedGoal,
     ] = await Promise.all([
       prisma.user.findUnique({ where: { id: userId } }),
       prisma.account.count({ where: { userId } }),
@@ -282,12 +283,8 @@ test.describe("Current User API", () => {
       prisma.verification.count({ where: { identifier: otpIdentifier } }),
       prisma.course.findUnique({ where: { id: personalizedCourse.id } }),
       prisma.course.findUnique({ where: { id: sharedCourse.id } }),
-      prisma.courseUser.findUnique({
-        where: { courseUser: { courseId: sharedCourse.id, userId } },
-      }),
-      prisma.courseUser.findUnique({
-        where: { courseUser: { courseId: sharedCourse.id, userId: otherUser.id } },
-      }),
+      prisma.goal.findUnique({ where: { id: ownGoal.id } }),
+      prisma.goal.findUnique({ where: { id: otherGoal.id } }),
     ]);
 
     expect(user).toBeNull();
@@ -297,9 +294,9 @@ test.describe("Current User API", () => {
     expect(subscriptionCount).toBe(0);
     expect(verificationCount).toBe(0);
     expect(deletedCourse).toBeNull();
-    expect(preservedSharedCourse?.userCount).toBe(1);
-    expect(deletedSharedMembership).toBeNull();
-    expect(preservedSharedMembership).not.toBeNull();
+    expect(preservedSharedCourse).not.toBeNull();
+    expect(deletedGoal).toBeNull();
+    expect(preservedGoal).not.toBeNull();
 
     const accountResponse = await apiContext.get("/v1/me");
 

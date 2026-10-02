@@ -1,0 +1,89 @@
+enum MockExamStatus {
+  active
+  finished
+}
+
+/// One sitting of a mock exam in real conditions: an exam goal's weekly Big Challenge, played
+/// section by section in the blueprint's order, time and scoring. `conditions` fixes each section's
+/// questions and minutes when the mock starts (an adaptive exam picks a later module when the one
+/// before it is submitted). Answers stay drafts until the mock finishes, when they're graded and
+/// recorded as attempts. `result` keeps the analysis as numbers and title snapshots, so it survives
+/// content changes.
+model MockExam {
+  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId           String                 @map("user_id") @db.Uuid
+  user             User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId           String?                @map("goal_id") @db.Uuid
+  goal             Goal?                  @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  blockId          String?                @unique @map("block_id") @db.Uuid
+  block            StudySessionBlock?     @relation(fields: [blockId], references: [id], onDelete: SetNull)
+  examBlueprintId  String?                @map("exam_blueprint_id") @db.Uuid
+  examBlueprint    ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  status           MockExamStatus         @default(active)
+  conditions       Json
+  sectionIndex     Int                    @default(0) @map("section_index") @db.SmallInt
+  sectionStartedAt DateTime               @map("section_started_at")
+  startedAt        DateTime               @default(now()) @map("started_at")
+  finishedAt       DateTime?              @map("finished_at")
+  result           Json?
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
+  answers          MockExamAnswer[]
+  attempts         Attempt[]
+  questionThreads  LessonQuestionThread[]
+
+  @@index([userId, goalId, finishedAt])
+  @@index([goalId])
+  @@index([examBlueprintId])
+  @@map("mock_exams")
+}
+
+/// A mock answer while the mock runs: the pick (null when the question was left blank), whether it
+/// was flagged to come back to, which also marks the answers the learner wasn't sure of, and the
+/// time spent on it. `itemId` is a plain id: the graded answer becomes an `Attempt` at the end.
+model MockExamAnswer {
+  id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  mockExamId String   @map("mock_exam_id") @db.Uuid
+  mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+  itemId     String   @map("item_id") @db.Uuid
+  answer     Json?
+  flagged    Boolean  @default(false)
+  durationMs Int      @default(0) @map("duration_ms")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([mockExamId, itemId], name: "mockItem")
+  @@map("mock_exam_answers")
+}
+
+/// The official result a learner reports after the exam ("How did it go?"), next to the estimate
+/// they saw before it, so future estimates for the exam can be calibrated and outcomes measured.
+/// One per goal; the exam's name is a snapshot so the row stays readable without its blueprint.
+model ExamResult {
+  id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String         @map("user_id") @db.Uuid
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId          String?        @unique @map("goal_id") @db.Uuid
+  goal            Goal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  examBlueprintId String?        @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint? @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  examName        String         @map("exam_name")
+  examDate        DateTime?      @map("exam_date") @db.Date
+  /// The official score on the exam's own scale, or null when the learner only says pass or fail.
+  score           Float?
+  /// "irt" for item response theory scales like ENEM's, "percent" or "points" (with `maxScore`).
+  scale           String?
+  maxScore        Float?         @map("max_score")
+  passed          Boolean?
+  /// The estimated range shown before the exam, on the same scale, when there was one.
+  estimateLow     Float?         @map("estimate_low")
+  estimateHigh    Float?         @map("estimate_high")
+  mocksTaken      Int            @default(0) @map("mocks_taken") @db.SmallInt
+  reportedAt      DateTime       @default(now()) @map("reported_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([examBlueprintId, reportedAt])
+  @@map("exam_results")
+}

@@ -1,18 +1,20 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, it } from "vitest";
-import { describePlayerStep, getPlayerStepImage } from "./player-step";
+import { getPlayerStepAudioUrl } from "./player-step";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
-    content: { text: "Hello", title: "Intro", variant: "text" as const },
+    content: {
+      options: [{ feedback: "Correct", id: "A", isCorrect: true, text: "A" }],
+      question: "Choose",
+    },
     fillBlankOptions: [],
     id: "step-1",
-    kind: "static",
+    kind: "multipleChoice",
     matchColumnsRightItems: [],
     position: 0,
     sentence: null,
     sentenceWordOptions: [],
-    sortOrderItems: [],
     translationOptions: [],
     vocabularyOptions: [],
     word: null,
@@ -21,33 +23,21 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   };
 }
 
-describe(describePlayerStep, () => {
-  it("keeps regular static text as the canonical staticText kind", () => {
-    const descriptor = describePlayerStep(buildStep());
+describe(getPlayerStepAudioUrl, () => {
+  it("returns the prompt audio of letters, words and sentences to hear", () => {
+    const alphabet = buildStep({
+      content: {
+        audioText: "a",
+        audioUrl: "https://example.com/a.mp3",
+        forms: [],
+        pronunciation: "ah",
+        readingAid: "a",
+        symbol: "a",
+      },
+      kind: "alphabet",
+    });
 
-    expect(descriptor?.kind).toBe("staticText");
-  });
-
-  it("returns the primary image from image-backed descriptors", () => {
-    const image = { prompt: "A useful diagram", url: "data:image/svg+xml,diagram" };
-
-    const staticDescriptor = describePlayerStep(
-      buildStep({ content: { image, text: "Hello", title: "Intro", variant: "text" as const } }),
-    );
-
-    const choiceDescriptor = describePlayerStep(
-      buildStep({
-        content: {
-          image,
-          options: [{ feedback: "Correct", id: "A", isCorrect: true, text: "A" }],
-          question: "Choose",
-        },
-        kind: "multipleChoice",
-      }),
-    );
-
-    expect(getPlayerStepImage(staticDescriptor)).toStrictEqual(image);
-    expect(getPlayerStepImage(choiceDescriptor)).toStrictEqual(image);
-    expect(getPlayerStepImage(null)).toBeNull();
+    expect(getPlayerStepAudioUrl(alphabet)).toBe("https://example.com/a.mp3");
+    expect(getPlayerStepAudioUrl(buildStep())).toBeNull();
   });
 });

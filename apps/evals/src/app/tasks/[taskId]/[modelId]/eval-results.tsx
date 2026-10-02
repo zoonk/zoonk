@@ -1,31 +1,23 @@
+import { loadGatewayPrices } from "@/lib/gateway-prices";
 import { calculateAverageScore } from "@/lib/leaderboard";
-import { getModelById } from "@/lib/models";
 import { getStatsFromResults } from "@/lib/stats";
 import { type TaskEvalResults } from "@/lib/types";
 import { Accordion } from "@zoonk/ui/components/accordion";
 import { ContainerTitle } from "@zoonk/ui/components/container";
+import { ClassificationSummaryCard } from "./classification-summary-card";
 import { IssuesSummary } from "./issues-summary";
 import { SummaryCard } from "./summary-card";
 import { TestCase } from "./test-case";
 
-export function EvalResults({ results }: { results: TaskEvalResults }) {
-  const model = getModelById(results.modelId);
-  const stats = getStatsFromResults(results);
-  const averageScore = calculateAverageScore(results);
-
-  if (!model) {
-    return null;
-  }
+export async function EvalResults({ results }: { results: TaskEvalResults }) {
+  const prices = await loadGatewayPrices();
+  const stats = getStatsFromResults({ evalResults: results, prices });
 
   return (
     <div className="flex flex-col gap-8">
-      <SummaryCard
-        averageDuration={stats.averageDuration}
-        averageInputTokens={stats.averageInputTokens}
-        averageOutputTokens={stats.averageOutputTokens}
-        averageScore={averageScore}
-        totalCost={stats.totalCost}
-      />
+      <SummaryCard averageScore={calculateAverageScore(results)} stats={stats} />
+
+      {stats.classification && <ClassificationSummaryCard summary={stats.classification} />}
 
       <IssuesSummary results={results.results} />
 

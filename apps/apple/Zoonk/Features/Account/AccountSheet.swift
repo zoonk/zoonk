@@ -45,7 +45,7 @@ struct AccountSheet: View {
                 .id(account.user.id)
             }
           case .subscription(let appAccountToken):
-            SubscriptionView(appAccountToken: appAccountToken)
+            PlusAccessView(appAccountToken: appAccountToken)
           }
         }
         .onChange(of: session.state) { _, state in
@@ -409,7 +409,11 @@ private struct AccountRowLabel: View {
 }
 
 #Preview {
+  let session = SessionStore.preview()
+  let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+
   AccountSheet {}
-    .environment(SessionStore.preview())
+    .environment(session)
+    .environment(PlusAccessStore(api: PlusAccessAPI(clients: clients), session: session))
     .environment(AppStoreSubscriptionStore.live())
 }

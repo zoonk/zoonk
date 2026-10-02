@@ -135,6 +135,11 @@ export function useSharedPlayerAudio(audioUrl: string) {
   return { isPlaying: context.isPlaying, toggle: () => context.toggleAudio(audioUrl) };
 }
 
+/** The active step's prompt audio (a word, a letter, a sentence), or null without one. */
+export function usePromptAudioUrl(): string | null {
+  return useContext(PlayerAudioContext)?.audioUrl ?? null;
+}
+
 /**
  * Connects the prompt-audio keyboard shortcut to the provider-owned audio
  * controller. Keeping this as a hook inside PlayerAudioProvider makes the
@@ -156,6 +161,6 @@ function usePlayerAudioKeyboardShortcut({
 
       onToggleAudio(audioUrl);
     },
-    { ignoreEditable: true, mode: "none" },
+    { mode: "none", screen: true },
   );
 }

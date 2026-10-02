@@ -4,13 +4,13 @@ The [repository guidance](../../AGENTS.md) applies. This file adds Android-speci
 
 ## Scope and architecture
 
-- This Kotlin/Jetpack Compose app targets phones, tablets, foldables, ChromeOS, and resizable Android windows. Main and Apple define product intent; port requested behavior using Android conventions. Additional platforms such as Wear OS or TV require their own product scope.
+- This Kotlin/Jetpack Compose app targets phones, tablets, foldables, ChromeOS, and resizable Android windows. Main and Apple define product intent, and Main defines the look; build it with native Android components and behavior. Additional platforms such as Wear OS or TV require their own product scope.
 - Keep a single-activity app with feature-owned packages and one `:app` runtime module. `:lint-checks` is build-time tooling and stays out of the APK. Extract Gradle modules when ownership, reuse, or build boundaries justify them.
 - As features need state and data, use immutable UI state and events, screen-level ViewModels, repositories, and lifecycle-scoped coroutines/Flow. Keep public API transport behind repositories and avoid feature-to-feature implementation dependencies. Add domain layers or dependency injection frameworks only for concrete complexity; constructor injection and app-level wiring are the default.
 
 ## Native UI
 
-- For UI, navigation, or interaction work, use the [Android Material guidelines skill](../../.agents/skills/android-material-guidelines/SKILL.md) and current official documentation relevant to the change. Prefer Material 3/AndroidX components, semantic theme colors, dynamic color, Material Symbols, and platform behavior.
+- For UI, navigation, or interaction work, use [Zoonk design](../../.agents/skills/zoonk-design/SKILL.md) for the look and experience, the [Android Material guidelines skill](../../.agents/skills/android-material-guidelines/SKILL.md) for native components and behavior, and current official documentation relevant to the change. Prefer Material 3/AndroidX components, Material Symbols, and platform behavior, themed with Zoonk's design tokens from Main rather than dynamic color.
 - Keep `NavigationSuiteScaffold` for adaptive top-level navigation. The destination enum and saveable state serve the current shell; introduce Navigation 3 with typed routes and independent top-level back stacks when nested navigation or deep links require it.
 - Adapt to the current window size and available space. Preserve state across resizing, folding, rotation, and recreation; keep orientation and resizing unrestricted. Use canonical multi-pane layouts when content benefits from them.
 - Preserve edge-to-edge and accessible system bars, consume scaffold padding once, and account for cutouts and the keyboard. Retain Android back behavior, 48dp touch targets, font scaling, TalkBack semantics, RTL, and keyboard/pointer access as relevant controls change.

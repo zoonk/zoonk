@@ -12,7 +12,9 @@ const providerOrderByModelPrefix = {
 
 type SupportedModelPrefix = keyof typeof providerOrderByModelPrefix;
 
-type ProviderOptionsResult = { gateway: Pick<GatewayProviderOptions, "models" | "order"> };
+type ProviderOptionsResult = {
+  gateway: Pick<GatewayProviderOptions, "models" | "order" | "serviceTier">;
+};
 
 type ImageProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models">;
@@ -80,18 +82,32 @@ export function buildImageProviderOptions({
 }
 
 /**
+ * The gateway's service tiers. `priority` is for calls a learner is waiting on, such as a new
+ * goal's first lesson: the same model answers about twice as fast (Sol: 130 to 177 tokens a second
+ * instead of 66 to 99, 27 Sep 2026) at twice the price. `flex` is for background work nobody waits
+ * on: best effort at about half the price on OpenAI and Google models, billed at the tier that
+ * actually served it; Anthropic has no flex tier and answers at the standard one. No tier is the
+ * standard one.
+ */
+export type ServiceTier = NonNullable<GatewayProviderOptions["serviceTier"]>;
+
+/**
  * Builds the shared provider options object for text-generation tasks.
- * This exists so fallback models and gateway routing stay consistent across
+ * This exists so fallback models, gateway routing and the service tier stay consistent across
  * every task in this package.
  */
 export function buildProviderOptions({
   model,
+  serviceTier,
   useFallback,
   fallbackModels,
 }: {
   model: string;
+  serviceTier?: ServiceTier;
   useFallback: boolean;
   fallbackModels: readonly string[];
 }): ProviderOptionsResult {
-  return { gateway: buildGatewayProviderOptions({ fallbackModels, model, useFallback }) };
+  const gateway = buildGatewayProviderOptions({ fallbackModels, model, useFallback });
+
+  return { gateway: serviceTier ? { ...gateway, serviceTier } : gateway };
 }

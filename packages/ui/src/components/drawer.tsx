@@ -2,6 +2,7 @@
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
 function Drawer({ ...props }: DrawerPrimitive.Root.Props) {
@@ -78,7 +79,7 @@ function DrawerPopup({ className, children, ...props }: DrawerPrimitive.Popup.Pr
           {...props}
         >
           <div className="bg-muted mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
-          {children}
+          <PopupShortcutLayer value>{children}</PopupShortcutLayer>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
     </DrawerPortal>

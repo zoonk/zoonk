@@ -142,10 +142,19 @@ function createAudioElement(onEnded: () => void): HTMLAudioElement {
  * Reassigning the source on every tap avoids Safari's ended-element replay
  * bug while still keeping only one media element alive.
  */
-function startAudioFromSource(audio: HTMLAudioElement, sourceUrl: string): void {
+function startAudioFromSource({
+  audio,
+  rate,
+  sourceUrl,
+}: {
+  audio: HTMLAudioElement;
+  rate: number;
+  sourceUrl: string;
+}): void {
   audio.pause();
   audio.src = sourceUrl;
   audio.currentTime = 0;
+  audio.playbackRate = rate;
 }
 
 /**
@@ -170,7 +179,8 @@ async function getAudioPlaybackStatus(audio: HTMLAudioElement): Promise<AudioPla
  */
 export function useWordAudio(options?: UseWordAudioOptions): {
   pause: () => void;
-  play: (url: string | null) => Promise<AudioPlaybackStatus>;
+  /** `rate` below 1 plays a slower version at the same pitch, for hearing each sound. */
+  play: (url: string | null, playback?: { rate?: number }) => Promise<AudioPlaybackStatus>;
 } {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioBlobCacheRef = useRef<AudioBlobCache>(new Map());
@@ -219,7 +229,7 @@ export function useWordAudio(options?: UseWordAudioOptions): {
   }, [handleEnded]);
 
   const play = useCallback(
-    async (url: string | null) => {
+    async (url: string | null, playback?: { rate?: number }) => {
       if (!url) {
         return "failed";
       }
@@ -231,7 +241,7 @@ export function useWordAudio(options?: UseWordAudioOptions): {
         sourceUrl: url,
       });
 
-      startAudioFromSource(audio, sourceUrl);
+      startAudioFromSource({ audio, rate: playback?.rate ?? 1, sourceUrl });
       return getAudioPlaybackStatus(audio);
     },
     [getAudio],

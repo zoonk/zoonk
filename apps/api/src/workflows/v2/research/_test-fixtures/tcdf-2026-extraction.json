@@ -1,0 +1,447 @@
+{
+  "dates": [
+    {
+      "document": 1,
+      "passage": "Período de solicitação de inscrição 26/8 a 17/9/2026",
+      "date": "2026-08-26",
+      "kind": "registrationStart",
+      "label": "Período de solicitação de inscrição"
+    },
+    {
+      "document": 1,
+      "passage": "Período de solicitação de inscrição 26/8 a 17/9/2026",
+      "date": "2026-09-17",
+      "kind": "registrationEnd",
+      "label": "Período de solicitação de inscrição"
+    },
+    {
+      "document": 1,
+      "passage": "Aplicação das provas objetivas e da prova discursiva 22/11/2026",
+      "date": "2026-11-22",
+      "kind": "exam",
+      "label": "Aplicação das provas objetivas e da prova discursiva"
+    },
+    {
+      "document": 1,
+      "passage": "Divulgação do edital de resultado provisório nas provas objetivas 23/12/2026",
+      "date": "2026-12-23",
+      "kind": "results",
+      "label": "Divulgação do edital de resultado provisório nas provas objetivas"
+    },
+    {
+      "document": 1,
+      "passage": "Divulgação do edital de resultado final nas provas objetivas e de resultado provisório na prova discursiva 13/1/2027",
+      "date": "2027-01-13",
+      "kind": "results",
+      "label": "Divulgação do edital de resultado final nas provas objetivas e de resultado provisório na prova discursiva"
+    },
+    {
+      "document": 1,
+      "passage": "Divulgação do edital de resultado final na prova discursiva e de convocação para a avaliação biopsicossocial e para o procedimento de heteroidentificação 5/2/2027",
+      "date": "2027-02-05",
+      "kind": "results",
+      "label": "Divulgação do edital de resultado final na prova discursiva e de convocação para a avaliação biopsicossocial e para o procedimento de heteroidentificação"
+    },
+    {
+      "document": 1,
+      "passage": "Divulgação do edital de resultado final na avaliação biopsicossocial e no procedimento de heteroidentificação e de resultado final no procedimento no concurso público 24/3/2027",
+      "date": "2027-03-24",
+      "kind": "results",
+      "label": "Divulgação do edital de resultado final na avaliação biopsicossocial e no procedimento de heteroidentificação e de resultado final no procedimento no concurso público"
+    }
+  ],
+  "edition": {
+    "passages": [{ "document": 1, "passage": "EDITAL Nº 1 – TCDF/ANACE, DE 8 DE JULHO DE 2026" }],
+    "questionCount": null,
+    "year": 2026
+  },
+  "formats": [
+    {
+      "document": 1,
+      "passage": "O julgamento de cada item será CERTO ou ERRADO, de acordo com o(s) comando(s) a que se refere o item. Haverá, na folha de respostas, para cada item, dois campos de marcação: o campo designado com o código C, que deverá ser preenchido pelo candidato caso julgue o item CERTO, e o campo designado com o código E",
+      "description": "Itens para julgamento em Certo ou Errado com folha de respostas contendo campos C e E.",
+      "kind": "trueFalse",
+      "options": null
+    },
+    {
+      "document": 1,
+      "passage": "A prova discursiva (P4) valerá 50,00 pontos e consistirá de: a) uma questão discursiva, a ser respondida em até 20 linhas cada, no valor de 15,00 pontos, a respeito de tema relacionado aos conhecimentos especializados, e b) uma peça de natureza técnica (Informação), de até 50 linhas",
+      "description": "Uma questão discursiva de até 20 linhas e uma peça de natureza técnica de até 50 linhas sobre conhecimentos especializados.",
+      "kind": "essay",
+      "options": null
+    }
+  ],
+  "mock": {
+    "adaptive": false,
+    "passages": [
+      { "document": 1, "passage": "(P1) Objetiva Conhecimentos básicos 35" },
+      { "document": 1, "passage": "(P2) Objetiva Conhecimentos específicos 45" },
+      { "document": 1, "passage": "(P3) Objetiva Conhecimentos especializados 70" },
+      {
+        "document": 1,
+        "passage": "As provas objetivas terão a duração de 4 horas e serão aplicadas na data provável estabelecida no cronograma constante no Anexo I deste edital, no turno da manhã."
+      },
+      {
+        "document": 1,
+        "passage": "A prova discursiva terá a duração de 4 horas e será aplicada na data provável estabelecida no cronograma constante no Anexo I deste edital, no turno da tarde."
+      },
+      {
+        "document": 1,
+        "passage": "A nota em cada item das provas objetivas, feita com base nas marcações da folha de respostas, será igual a: 1,00 ponto, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo das provas; 1,00 ponto negativo, caso a resposta do candidato esteja em discordância"
+      }
+    ],
+    "order": null,
+    "scoring": {
+      "description": "Cada acerto confere 1,00 ponto, cada erro desconta 1,00 ponto e itens sem marcação ou marcação dupla recebem 0,00 ponto.",
+      "method": "wrongCancelsRight"
+    },
+    "sections": [
+      { "day": 1, "minutes": null, "name": "(P1) Objetiva Conhecimentos básicos", "questions": 35 },
+      {
+        "day": 1,
+        "minutes": null,
+        "name": "(P2) Objetiva Conhecimentos específicos",
+        "questions": 45
+      },
+      {
+        "day": 1,
+        "minutes": null,
+        "name": "(P3) Objetiva Conhecimentos especializados",
+        "questions": 70
+      },
+      { "day": 1, "minutes": 240, "name": "(P4) Discursiva", "questions": null }
+    ],
+    "timeLimitMinutes": null,
+    "totalQuestions": null
+  },
+  "reusePolicy": { "document": null, "passage": null, "pastQuestions": "unknown" },
+  "rules": [
+    {
+      "document": 1,
+      "passage": "A nota em cada item das provas objetivas, feita com base nas marcações da folha de respostas, será igual a: 1,00 ponto, caso a resposta do candidato esteja em concordância com o gabarito oficial definitivo das provas; 1,00 ponto negativo, caso a resposta do candidato esteja em discordância",
+      "text": "Cada item certo pontua 1,00 ponto, enquanto cada item errado desconta 1,00 ponto."
+    },
+    {
+      "document": 1,
+      "passage": "Será reprovado nas provas objetivas e eliminado do concurso público o candidato que se enquadrar em pelo menos um dos itens a seguir: a) obtiver nota na prova objetiva de conhecimentos básicos (P1) inferior a 7,00 pontos; b) obtiver nota na prova objetiva de conhecimentos específicos (P2) inferior a 13,00",
+      "text": "É eliminado o candidato com nota inferior a 7,00 em P1, 13,00 em P2, 21,00 em P3 ou NFPO inferior a 45,00 pontos."
+    },
+    {
+      "document": 1,
+      "passage": "Será reprovado na prova discursiva e eliminado do concurso público o candidato que obtiver nota na prova discursiva (NPD) inferior a 30,00 pontos.",
+      "text": "O candidato que obtiver nota na prova discursiva inferior a 30,00 pontos será eliminado."
+    },
+    {
+      "document": 1,
+      "passage": "Serão considerados aprovados nas provas objetivas os candidatos não eliminados na forma do subitem 9.11.5 deste edital e mais bem classificados, de acordo com a nota final nas provas objetivas (NFPO) e conforme os seguintes quantitativos, respeitados os empates na última posição: a) ampla concorrência: os 120",
+      "text": "Apenas os candidatos mais bem classificados na prova objetiva até os limites fixados têm a discursiva corrigida."
+    },
+    {
+      "document": 1,
+      "passage": "Para a realização das provas, o candidato deverá estar munido somente de caneta esferográfica de tinta preta fabricada em material transparente, do comprovante de inscrição ou do comprovante de pagamento da taxa de inscrição e do documento de identidade original.",
+      "text": "É permitido portar apenas caneta esferográfica de tinta preta em material transparente, comprovante e documento de identidade original."
+    },
+    {
+      "document": 1,
+      "passage": "Não será permitido o uso de lápis, lapiseira/grafite, marca-texto e(ou) borracha durante a realização das provas.",
+      "text": "É proibido o uso de lápis, lapiseira/grafite, marca-texto e borracha durante as provas."
+    },
+    {
+      "document": 1,
+      "passage": "O candidato deverá permanecer obrigatoriamente no local de realização das provas por, no mínimo, uma hora após o início das provas.",
+      "text": "A permanência mínima obrigatória no local de prova é de uma hora após o início."
+    },
+    {
+      "document": 1,
+      "passage": "O candidato somente poderá retirar-se da sala de provas levando o caderno de provas no decurso dos últimos 15 minutos anteriores ao horário determinado para o término das provas.",
+      "text": "O caderno de provas só pode ser levado nos últimos 15 minutos antes do término das provas."
+    }
+  ],
+  "subjects": [
+    {
+      "name": "Língua Portuguesa",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "LÍNGUA PORTUGUESA: 1 Compreensão e interpretação de textos de gêneros variados. 2 Reconhecimento de tipos e gêneros textuais. 3 Domínio da ortografia oficial. 4 Domínio dos mecanismos de coesão textual."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Compreensão e interpretação de textos de gêneros variados",
+        "Reconhecimento de tipos e gêneros textuais",
+        "Domínio da ortografia oficial",
+        "Domínio dos mecanismos de coesão textual",
+        "Domínio da estrutura morfossintática do período",
+        "Reescrita de frases e parágrafos do texto"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Lei Orgânica do Distrito Federal",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "LEI ORGÂNICA DO DISTRITO FEDERAL: 1 Fundamentos da organização dos poderes e do Distrito Federal. 2 Organização do Distrito Federal. 3 Organização dos poderes. 4 Tributação e orçamento do Distrito Federal. 5 Ordem econômica do Distrito Federal."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Fundamentos da organização dos poderes e do Distrito Federal",
+        "Organização do Distrito Federal",
+        "Organização dos poderes",
+        "Tributação e orçamento do Distrito Federal",
+        "Ordem econômica do Distrito Federal"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Conhecimentos do Distrito Federal e Política para Mulheres",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "CONHECIMENTOS DO DISTRITO FEDERAL E POLÍTICA PARA MULHERES: 1 Domínio de tópicos atuais e relevantes acerca da realidade étnica, social, histórica, geográfica, cultural, política e econômica do Distrito Federal e da Região Integrada de Desenvolvimento do Distrito Federal e Entorno (RIDE)"
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Domínio de tópicos atuais e relevantes acerca da realidade étnica, social, histórica, geográfica, cultural, política e econômica do Distrito Federal e da Região Integrada de Desenvolvimento do Distrito Federal e Entorno (RIDE)",
+        "Plano Distrital de Política para Mulheres (2020–2023)",
+        "Lei Federal nº 11.340/2006 – Lei Maria Penha"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Noções de Primeiros Socorros",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "NOÇÕES DE PRIMEIROS SOCORROS: 1 Cuidados iniciais com a vítima, reconhecimento de situações de urgência e emergência, acionamento do socorro especializado e condutas básicas em casos de engasgo, sangramento, fratura, queimadura, desmaio, convulsão e intoxicação."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Cuidados iniciais com a vítima, reconhecimento de situações de urgência e emergência, acionamento do socorro especializado e condutas básicas em casos de engasgo, sangramento, fratura, queimadura, desmaio, convulsão e intoxicação"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Raciocínio Lógico e Matemática Financeira",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "RACIOCÍNIO LÓGICO E MATEMÁTICA FINANCEIRA: 1 Estruturas lógicas. 2 Lógica de argumentação. 2.1 Analogias, inferências, deduções e conclusões. 3 Lógica sentencial (ou proposicional)."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Estruturas lógicas",
+        "Lógica de argumentação",
+        "Lógica sentencial (ou proposicional)",
+        "Lógica de primeira ordem",
+        "Princípios de contagem e probabilidade",
+        "Operações com conjuntos",
+        "Matemática financeira"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Lei Orgânica do TCDF e Regimento Interno",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "LEI ORGÂNICA DO TCDF E REGIMENTO INTERNO: 1 Lei Orgânica do TCDF. 1.1 Natureza, competência e jurisdição. 1.2 Composição. 1.3 Plenário e câmaras. 1.4 Presidente, vice-presidente, conselheiros, auditores e Ministério Público. 1.5 Serviços auxiliares do TCDF. 2 Regimento Interno do TCDF."
+        }
+      ],
+      "questions": null,
+      "topics": ["Lei Orgânica do TCDF", "Regimento Interno do TCDF"],
+      "weight": null
+    },
+    {
+      "name": "Direito Constitucional",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "DIREITO CONSTITUCIONAL: 1 Constituição da República Federativa do Brasil de 1988. 1.1 Princípios fundamentais. 2 Aplicabilidade das normas constitucionais."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Constituição da República Federativa do Brasil de 1988",
+        "Aplicabilidade das normas constitucionais",
+        "Direitos e garantias fundamentais",
+        "Organização político-administrativa do Estado",
+        "Administração pública",
+        "Poder Executivo",
+        "Poder Legislativo",
+        "Poder Judiciário",
+        "Funções essenciais à justiça"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Direito Previdenciário",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "DIREITO PREVIDENCIÁRIO: 1 Seguridade social. 1.1 Origem e evolução legislativa no Brasil. 1.2 Conceito, organização e princípios constitucionais. 2 Regime geral da previdência social – RGPS"
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Seguridade social",
+        "Regime geral da previdência social – RGPS",
+        "Regime próprio de previdência social dos servidores públicos – RPPS",
+        "Regime Próprio de Previdência Social do Distrito Federal – RPPS/DF",
+        "Previdência complementar"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Noções de Direito Civil",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "NOÇÕES DE DIREITO CIVIL: 1 Lei de Introdução às Normas do Direito Brasileiro. 2 Pessoas. 2.1 Pessoas naturais. 2.2 Pessoas jurídicas. 2.3 Domicílio. 3 Bens. 4 Fatos jurídicos. 4.1 Negócio jurídico. 5 Atos jurídicos lícitos e ilícitos. 6 Prescrição e decadência."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Lei de Introdução às Normas do Direito Brasileiro",
+        "Pessoas",
+        "Bens",
+        "Fatos jurídicos",
+        "Atos jurídicos lícitos e ilícitos",
+        "Prescrição e decadência"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Noções de Direito Tributário",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "NOÇÕES DE DIREITO TRIBUTÁRIO: 1 Direito tributário. 1.1 Conceito. 1.2 Fontes do direito tributário. 2 Sistema Tributário Nacional. 2.1 Princípios do direito tributário."
+        }
+      ],
+      "questions": null,
+      "topics": ["Direito tributário", "Sistema Tributário Nacional", "Tributo"],
+      "weight": null
+    },
+    {
+      "name": "Análise de Dados, Noções de Estatística e Inteligência Artificial",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "ANÁLISE DE DADOS, NOÇÕES DE ESTATÍSTICA E INTELIGÊNCIA ARTIFICIAL: 1 Fundamentos de análise de dados. 1.1 Tipos de dados (estruturados e não estruturados; quantitativos e qualitativos)."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Fundamentos de análise de dados",
+        "Estatística descritiva e análise exploratória de dados",
+        "Introdução à visualização de dados e storytelling",
+        "Inteligência artificial generativa",
+        "Utilização de Excel (Microsoft 365) para análise de dados"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Direito Administrativo",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "DIREITO ADMINISTRATIVO: 1 Estado, governo e administração pública. 1.1 Conceitos. 1.2 Elementos. 2 Direito administrativo. 2.1 Conceito. 2.2 Objeto. 2.3 Fontes. 3 Ato administrativo."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Estado, governo e administração pública",
+        "Direito administrativo",
+        "Ato administrativo",
+        "Agentes públicos",
+        "Poderes da administração pública",
+        "Regime jurídico-administrativo",
+        "Responsabilidade civil do Estado",
+        "Serviços públicos",
+        "Organização administrativa",
+        "Controle da administração pública",
+        "Licitações e contratos administrativos",
+        "Lei de Acesso à Informação e LGPD"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Administração Financeira e Orçamentária",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA: 1 Orçamento público. 1.1 Conceito. 1.2 Técnicas orçamentárias. 1.3 Princípios orçamentários. 1.4 Ciclo orçamentário. 1.5 Processo orçamentário."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Orçamento público",
+        "Orçamento público no Brasil",
+        "Programação e execução orçamentária e financeira",
+        "Receita pública",
+        "Despesa pública",
+        "Lei Complementar nº 101/2000 e suas alterações (Lei de Responsabilidade Fiscal)",
+        "Lei nº 4.320/1964 e suas alterações",
+        "Transferências voluntárias",
+        "Decreto distrital nº 32.598/2010"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Administração Geral e Pública",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "ADMINISTRAÇÃO GERAL E PÚBLICA: 1 Evolução da administração. 1.1 Perspectiva clássica. 1.1.1 Administração científica. 1.1.2 Organizações burocráticas. 1.2 Perspectiva humanista."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Evolução da administração",
+        "Evolução da administração do setor público brasileiro",
+        "Administração pública patrimonialista",
+        "Governança",
+        "Funções administrativas",
+        "Ferramentas da administração",
+        "Modelagem de processos",
+        "Gestão de pessoas por competências",
+        "Gestão de projetos e portfólios"
+      ],
+      "weight": null
+    },
+    {
+      "name": "Regime Jurídico dos Servidores Públicos Civis do Distrito Federal",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "REGIME JURÍDICO DOS SERVIDORES PÚBLICOS CIVIS DO DISTRITO FEDERAL: 1 Lei Complementar nº 840/2011 (regime jurídico dos servidores públicos civis do Distrito Federal, das autarquias e das fundações públicas distritais)."
+        }
+      ],
+      "questions": null,
+      "topics": ["Lei Complementar nº 840/2011"],
+      "weight": null
+    },
+    {
+      "name": "Gestão de Contratos",
+      "passages": [
+        {
+          "document": 1,
+          "passage": "GESTÃO DE CONTRATOS: 1 Legislação aplicável à contratação de bens e serviços. 1.1 Lei nº 14.133/2021. 1.2 Instrução Normativa nº 5/2017 da Secretaria de Gestão do Ministério do Planejamento, Desenvolvimento e Gestão. 1.3 Decreto distrital nº 44.330/2023. 2 Elaboração e fiscalização de contratos."
+        }
+      ],
+      "questions": null,
+      "topics": [
+        "Legislação aplicável à contratação de bens e serviços",
+        "Elaboração e fiscalização de contratos"
+      ],
+      "weight": null
+    }
+  ],
+  "topicFrequency": []
+}

@@ -1,0 +1,166 @@
+{
+  "modelId": "google/gemini-3.1-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an everyday apartment-rental call directly within the unit. Sarah is a plausible US landlord, the place name is short, and the dollar rent and viewing times are realistic.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies Sarah, and invites the learner to speak without completing an objective. The hints are short, complete, usable A2 sentences and cover all listed objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are ordered naturally, observable in speech, and achievable in a short call. Their labels meet the verb-first and length requirements. However, asking what rent includes is not an objective despite being a central unit skill, and suggesting a viewing time does not necessarily complete a booking.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A2 guidance, concrete rent and utility facts, viewing slots, a simple twist, and a closing instruction. The listed objectives have sufficient factual support, so the missing-objective-facts cap is not triggered. However, the requested address confirmation lacks a complete address, and the instruction to reject the first suggested time and offer 'the other one' is underspecified when the learner proposes a different slot.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese. The place, opening, labels, and hints are English, and the brief is English. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1926,
+          "inputTokens": 1929,
+          "outputTokens": 1102,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The objectives omit asking what is included in the rent, a central unit skill, although a hint supports it. The brief instructs Sarah to confirm the address without supplying a complete address. Its scheduling twist also assumes the learner will first suggest one of the two listed slots, making 'offer the other one' unclear for other suggestions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the booking objective require agreeing on a day and time, rather than only suggesting one, so successful completion clearly represents a booked viewing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
+          "unitTitle": "Alugando um apartamento"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The title and situation clearly present an IELTS practice mock, not an official test. Sarah is a plausible neutral examiner, and the personal questions, visited-place topic, and tourism discussion fit the unit.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The greeting and first question are conventional and accessible at B1. The hints are complete, generally level-appropriate sentences covering the three parts, but most supply particular answers instead of the requested reusable language for keeping talking.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are exactly three objectives in the required exam order, with appropriate part labels and speech-checkable descriptions. Their scope fits a short mock, and the cue-card objective explicitly requests about one minute of speech.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief establishes a neutral examiner, B1 speech, and no feedback. It includes a complete cue-card topic with four prompts and links Part 3 to travel. However, actual Part 1 and Part 3 questions are missing, triggering the maximum score of 5 for missing required objective content. Five-minute pacing and a closing instruction are also absent.",
+          "score": 5,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "Fields use the required languages, and there are no emojis or em dashes. However, 'Test centre' uses British rather than US spelling; 'summer holidays' also leans British rather than the more natural US 'summer vacation.' These are variant issues, not wrong-language fields.",
+          "score": 8,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2142,
+          "inputTokens": 2145,
+          "outputTokens": 806,
+          "reasoningTokens": 214
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The examiner brief supplies topic areas rather than actual Part 1 and Part 3 questions. This fails the required examiner-script format and leaves essential question content unspecified.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Most hints are sample answers rather than phrases for keeping the conversation going. The place name also uses British spelling ('Test centre') instead of the requested US English ('Test center').",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add an explicit five-minute pacing plan, including about one minute for the cue-card response, and a short closing instruction. Replace several topic-specific hints with reusable phrases for adding details, explaining reasons, or giving examples.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "IELTS Speaking practice mock for a Brazilian candidate at B1. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are the three parts in order with labels like \"Part 1: About you\", \"Part 2: Cue card\", \"Part 3: Discussion\", and the brief has the Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and Part 3 questions linked to the cue card topic, run in about 5 minutes. The opening line is the examiner's greeting and first question. Title and situation call it a practice mock in Brazilian Portuguese, never an official test. Hints are phrases to keep talking.",
+        "id": "pt-en-b1-ielts-speaking-1",
+        "userInput": {
+          "canDo": [
+            "Responder perguntas sobre você, sua rotina e seus interesses",
+            "Falar por cerca de um minuto sobre o tema de um cartão",
+            "Discutir ideias mais gerais ligadas ao tema do cartão"
+          ],
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "targetLanguage": "en",
+          "unitDescription": "Um simulado curto das três partes do exame em cerca de 5 minutos: Parte 1 com perguntas sobre você, Parte 2 com um cartão para falar por cerca de um minuto e Parte 3 com uma discussão sobre o tema.",
+          "unitTitle": "IELTS Speaking test"
+        }
+      }
+    }
+  ],
+  "taskId": "conversation-scenario"
+}

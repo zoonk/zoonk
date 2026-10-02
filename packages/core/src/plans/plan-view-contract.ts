@@ -1,0 +1,197 @@
+import { type PlanChangeStatus, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
+import { type LanguageActivityType } from "../language/activities/language-activities";
+import { type OwnLevel } from "../learner/placement/placement-steps";
+import { type PlanStatus } from "../preparation/plan-status";
+import { type PlanOperation } from "./plan-contract";
+import { type PlanCourseView } from "./plan-course-contract";
+import { type ToolChoice, type ToolSystem } from "./plan-tools-contract";
+import { type PlanEffect } from "./planner/plan-effect";
+import {
+  type DifficultyBias,
+  type LightWeek,
+  type PaceSource,
+  type PlanPhaseKind,
+  type PracticeBias,
+} from "./planner/plan-state";
+
+/** A change to the plan, announced in one plain sentence with an undo. */
+export type PlanChangeView = {
+  /** Only the latest applied edit and test-outs can be undone; past work never is. */
+  canUndo: boolean;
+  createdAt: string;
+  /** Study days missed, for `missedDays`. */
+  days: number | null;
+  effect: PlanEffect | null;
+  id: string;
+  kind: string;
+  /** Lessons a test-out skipped. */
+  lessonsSkipped: number;
+  operations: PlanOperation[];
+  /**
+   * The sentence to show as written, in the learner's language, when an AI or a proposal wrote it.
+   * Null when the app says it from `kind`, `operations` and `effect`.
+   */
+  reason: string | null;
+  source: string;
+  status: PlanChangeStatus;
+};
+
+export type PlanItemView = {
+  chapterId: string | null;
+  id: string;
+  kind: PlanItemKind;
+  lessonId: string | null;
+  minutes: number | null;
+  /** Free exam plans cover the diagnostic, the plan and its first week; mocks and the rest need Plus. */
+  requiresPlus: boolean;
+  scheduledFor: string | null;
+  skillId: string | null;
+  status: PlanItemStatus;
+  /** The lesson's title; for a skill whose lessons are still being written, its course's. */
+  title: string;
+  /**
+   * A skill whose lessons the Library is still writing, planned as one stand-in. Its `title` is
+   * the course it's taught in (empty when unknown), never the skill's raw name.
+   */
+  writing: boolean;
+};
+
+/**
+ * A chapter of the current phase: "Functions and graphs, 3 of 8 lessons". Skills whose lessons are
+ * still being written group under their course's title as one `writing` row until their chapters
+ * exist; their lesson counts are stand-ins, so apps say "being written" instead. Skills placement
+ * tested out before their lessons were written are one finished row under the same title.
+ */
+export type PlanChapterView = {
+  chapterId: string | null;
+  lessonsDone: number;
+  lessonsTotal: number;
+  /**
+   * The skills a row of stand-ins placement settled before their lessons were written, by name in
+   * plan order: apps name the row by them, not by its course's `title`, since the learner knows
+   * these skills, not the course. Empty for every other row.
+   */
+  skills: string[];
+  state: "current" | "done" | "upcoming";
+  /**
+   * Every lesson in it was tested out (placement or a test-out), so it's done without being
+   * studied: apps say "You already know this", so a course-titled row never reads as the course.
+   */
+  testedOut: boolean;
+  title: string;
+  writing: boolean;
+};
+
+/**
+ * What a day of a short plan (a test days away) is for: the exam map and the learner's gaps,
+ * practice, the class test's short mock with a review of what it finds, or a public exam's light
+ * review.
+ */
+export const SHORT_EXAM_FOCUSES = [
+  "mapAndGaps",
+  "practice",
+  "mockAndReview",
+  "lightReview",
+] as const;
+
+export type ShortExamFocus = (typeof SHORT_EXAM_FOCUSES)[number];
+
+/**
+ * The study days a phase of a short plan covers ("Days 1 to 4") and what they're for: the exam
+ * map and gaps, practice, or the last day (the short mock and its review, or a light review).
+ */
+export type ShortPhaseView = { firstDay: number; focus: ShortExamFocus; lastDay: number };
+
+export type PlanPhaseView = {
+  chapterCount: number;
+  /** Only the current phase lists its chapters: later phases are one line each. */
+  chapters: PlanChapterView[] | null;
+  endDate: string | null;
+  hours: number;
+  index: number;
+  kind: PlanPhaseKind;
+  lessonsDone: number;
+  lessonsTotal: number;
+  milestone: string | null;
+  /** Empty for exam phases, which the apps name by kind. */
+  name: string;
+  /** Its days in a short plan (a test days away); null in any other plan. */
+  short: ShortPhaseView | null;
+  startDate: string | null;
+  state: "current" | "done" | "upcoming";
+};
+
+export type PlanDayView = {
+  date: string;
+  items: PlanItemView[];
+  minutes: number;
+  state: "done" | "missed" | "rest" | "today" | "upcoming";
+};
+
+/** A tool on the "You'll use" card: one the plan's chapters use, with what the learner chose. */
+export type PlanToolView = {
+  /** Null until the learner says they have it, they'll set it up, or they'll go without. */
+  choice: ToolChoice | null;
+  /** True when any of the plan's chapters needs it to practice; false when it only helps. */
+  essential: boolean;
+  /** Only later phases use it, so the card lists it under "More later" instead of asking now. */
+  later: boolean;
+  name: string;
+  /** The device the setup lesson is for, when they'll set it up. */
+  system: ToolSystem | null;
+};
+
+/** The plan at three zoom levels (until the goal, this week, and the changes), for both modes. */
+export type PlanView = {
+  access: { freeUntil: string | null; mocksRequirePlus: boolean };
+  areas: { focused: boolean; name: string; skillCount: number; skipped: boolean }[];
+  changes: PlanChangeView[];
+  /** The Library course the plan is built from, with its levels; null without one. */
+  course: PlanCourseView | null;
+  currentPhase: number | null;
+  estimate: {
+    endDate: string | null;
+    pace: { factor: number; source: PaceSource } | null;
+    remainingHours: number;
+    totalHours: number;
+  };
+  feasibility: {
+    alternative: { dailyMinutes: number; endDate: string | null } | null;
+    coveredShare: number;
+    deadline: string | null;
+    fits: boolean;
+    recommendedMinutes: number | null;
+  } | null;
+  /** Every lesson and chapter is behind the learner: time for what to study next. */
+  finished: boolean;
+  goalId: string;
+  /** The level the learner gave (nothing yet to advanced), which they can change from the plan. */
+  ownLevel: OwnLevel | null;
+  phases: PlanPhaseView[];
+  planId: string;
+  /** False while the planner is still building the plan. */
+  ready: boolean;
+  /**
+   * A test at most a week away, planned day by day: its study days and the day of its short mock
+   * (a class test rehearses the day before). Null for any other plan.
+   */
+  shortPlan: { days: number; mockDate: string | null } | null;
+  schedule: {
+    dailyMinutes: number;
+    lightWeeks: LightWeek[];
+    studyDays: number;
+    targetDate: string | null;
+    /** Minutes per weekday, Sunday first; 0 for rest days. */
+    weekdayMinutes: number[];
+  };
+  status: PlanStatus | null;
+  steering: {
+    difficultyBias: DifficultyBias;
+    practiceBias: PracticeBias;
+    /** Language practice the learner left out ("I don't need writing"); empty for other goals. */
+    skippedActivities: LanguageActivityType[];
+  };
+  /** "You'll use": the tools the plan's chapters use, essential first. Empty when none do. */
+  tools: PlanToolView[];
+  week: { days: PlanDayView[]; endDate: string; startDate: string };
+};

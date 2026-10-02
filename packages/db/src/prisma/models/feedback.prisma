@@ -1,0 +1,78 @@
+enum VoteValue {
+  up
+  down
+}
+
+enum FeedbackContentKind {
+  course
+  chapter
+  lesson
+  step
+  stepVariant       @map("step_variant")
+  item
+  mediaAsset        @map("media_asset")
+  answerExplanation @map("answer_explanation")
+  lessonQuestion    @map("lesson_question")
+  plan
+  planChange        @map("plan_change")
+}
+
+enum ContentFeedbackReason {
+  hardToFollow    @map("hard_to_follow")
+  wrongOrOutdated @map("wrong_or_outdated")
+  tooEasy         @map("too_easy")
+  tooHard         @map("too_hard")
+  notWhatINeeded  @map("not_what_i_needed")
+  somethingElse   @map("something_else")
+}
+
+enum FeedbackStatus {
+  new
+  read
+  replied
+}
+
+/// A learner's vote on one piece of AI content, with the reasons, comment and a snapshot of the
+/// content's provenance at voting time, so downvote rates can be read per model and prompt version.
+/// The content is a plain id without a foreign key so votes survive regeneration. One vote per learner
+/// per item; voting again changes it.
+model ContentFeedback {
+  id            String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId        String                  @map("user_id") @db.Uuid
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentKind   FeedbackContentKind     @map("content_kind")
+  contentId     String                  @map("content_id") @db.Uuid
+  vote          VoteValue?
+  reasons       ContentFeedbackReason[] @default([])
+  comment       String?
+  language      String?                 @db.VarChar(10)
+  mode          ExperienceMode?
+  model         String?
+  promptVersion String?                 @map("prompt_version")
+  runId         String?                 @map("run_id")
+  createdAt     DateTime                @default(now()) @map("created_at")
+  updatedAt     DateTime                @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, contentKind, contentId], name: "userContent")
+  @@index([contentKind, contentId])
+  @@index([model, promptVersion])
+  @@map("content_feedback")
+}
+
+/// A message from the feedback form with its context (page, content, app version and platform) and a
+/// triage status. It is still emailed to the team. The user link is cleared when the account is deleted.
+model Feedback {
+  id        String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String?        @map("user_id") @db.Uuid
+  user      User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String?
+  message   String
+  context   Json           @default("{}")
+  status    FeedbackStatus @default(new)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@index([status, createdAt])
+  @@index([userId])
+  @@map("feedback")
+}

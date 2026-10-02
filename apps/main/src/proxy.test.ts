@@ -1,3 +1,4 @@
+import { ACCOUNT_MARKER_COOKIE } from "@zoonk/auth/cookies";
 import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 import { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
@@ -71,28 +72,140 @@ describe("catalog locale routing", () => {
   });
 });
 
-describe("proxy matcher", () => {
+describe("home page for learners and guests", () => {
+  const SESSION = "better-auth.session_token=token.signature";
+  const ACCOUNT = `${SESSION}; ${ACCOUNT_MARKER_COOKIE}=1`;
+
   it.each([
-    "/",
-    "/courses",
-    "/en/courses",
-    "/pt/courses",
-    "/start/learn/Python%203.12",
-    "/pt/start/learn/Python%203.12",
-  ])("matches localized page path %s", (url) => {
-    expect(unstable_doesMiddlewareMatch({ config, url })).toBe(true);
+    ["/", "https://www.zoonk.com/today"],
+    ["/pt", "https://www.zoonk.com/pt/today"],
+    ["/de/", "https://www.zoonk.com/de/today"],
+  ])("sends an account's session from %s to Today", (path, location) => {
+    const response = proxy(
+      new NextRequest(`https://www.zoonk.com${path}`, { headers: { cookie: ACCOUNT } }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(location);
+  });
+
+  it("recognizes the secure session cookie", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/", {
+        headers: {
+          cookie: `__Secure-better-auth.session_token=token.signature; ${ACCOUNT_MARKER_COOKIE}=1`,
+        },
+      }),
+    );
+
+    expect(response.headers.get("location")).toBe("https://www.zoonk.com/today");
+  });
+
+  it("keeps a guest on the home page, where they can continue where they left off", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/pt", {
+        headers: { "accept-language": "pt-BR", cookie: SESSION },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
+  });
+
+  it("renders the visitor home page without a session, even with a stale account marker", () => {
+    const visitor = proxy(
+      new NextRequest("https://www.zoonk.com/", { headers: { "accept-language": "en-US" } }),
+    );
+
+    const staleMarker = proxy(
+      new NextRequest("https://www.zoonk.com/", {
+        headers: { "accept-language": "en-US", cookie: `${ACCOUNT_MARKER_COOKIE}=1` },
+      }),
+    );
+
+    expect(visitor.status).toBe(200);
+    expect(visitor.headers.get("location")).toBeNull();
+    expect(staleMarker.status).toBe(200);
+    expect(staleMarker.headers.get("location")).toBeNull();
+  });
+
+  it("leaves other pages alone for learners", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/courses", {
+        headers: { "accept-language": "en-US", cookie: ACCOUNT },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
+  });
+});
+
+describe("pricing for visitors and learners", () => {
+  const SESSION_COOKIE = "better-auth.session_token=token.signature";
+
+  it.each([
+    ["/pricing", "https://www.zoonk.com/subscription"],
+    ["/pt/pricing", "https://www.zoonk.com/pt/subscription"],
+    ["/pricing/?ref=home", "https://www.zoonk.com/subscription?ref=home"],
+  ])("sends a request with a session from %s to the subscription page", (path, location) => {
+    const response = proxy(
+      new NextRequest(`https://www.zoonk.com${path}`, { headers: { cookie: SESSION_COOKIE } }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(location);
   });
 
   it.each([
+    ["/subscription", "https://www.zoonk.com/pricing"],
+    ["/de/subscription", "https://www.zoonk.com/de/pricing"],
+    ["/subscription?ref=email", "https://www.zoonk.com/pricing?ref=email"],
+  ])("sends a visitor from %s to the public pricing page", (path, location) => {
+    const response = proxy(
+      new NextRequest(`https://www.zoonk.com${path}`, { headers: { "accept-language": "en-US" } }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(location);
+  });
+
+  it("renders the public pricing page for a visitor", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/pricing", { headers: { "accept-language": "en-US" } }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
+  });
+
+  it("renders the subscription page for a learner", () => {
+    const response = proxy(
+      new NextRequest("https://www.zoonk.com/subscription", {
+        headers: { "accept-language": "en-US", cookie: SESSION_COOKIE },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
+  });
+});
+
+describe("proxy matcher", () => {
+  it.each(["/", "/courses", "/en/courses", "/pt/courses"])(
+    "matches localized page path %s",
+    (url) => {
+      expect(unstable_doesMiddlewareMatch({ config, url })).toBe(true);
+    },
+  );
+
+  it.each([
     "/api/auth/session",
-    "/api/start/learn/file.json",
     "/auth/callback",
     "/_next/static/chunks/app.js",
-    "/_next/start/learn/chunk.js",
     "/_next/image",
     "/_vercel/insights/view",
     "/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/session",
-    "/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/start/learn/session.json",
     "/.well-known/workflow/v1/flow",
     "/favicon.ico",
     "/images/course.webp",

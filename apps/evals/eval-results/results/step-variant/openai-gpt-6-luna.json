@@ -1,0 +1,569 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "Shorter sentences and removal of the competing 20% calculation reduce the reading burden. However, the example is unchanged and the learner still needs to connect one-fourth with 25%. This is only a little simpler overall, triggering the cap of 8.",
+          "score": 8,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The explanation preserves the original idea and explicitly compares the change with the starting amount. All numbers are correct: $100 minus $80 is $20, and $20 is one-fourth, or 25%, of $80. The explanation screen retains a populated title and text without introducing another lesson's ideas.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The screen is concise, uses US English and short sentences, and contains no introduction, filler, or promises. The remaining writing weakness is the absence of the requested direct address using \"you.\" No explicit writing cap is triggered.",
+          "score": 8,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1369,
+          "inputTokens": 1372,
+          "outputTokens": 678,
+          "reasoningTokens": 235
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation is shorter and its sentences are simpler, but it keeps the original $80-to-$100 ticket example rather than providing a more everyday example. It also does not address the learner as \"you,\" as requested by the writing criteria.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a small everyday purchase, such as a snack you bought for $4 that now costs $5. Explain that the $1 increase is one-quarter of the starting $4, so the increase is 25%. This would make the numbers easier and address the learner directly.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A clearly simpler version of the percent change explanation: easier words, a more everyday example, no formula or a formula explained word by word\n      - Still says that the change is compared with the starting value, not the new one\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-simpler-1",
+        "userInput": {
+          "key": "",
+          "language": "en",
+          "lessonTitle": "Percent change",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "Percent change compares a change with the **starting value**. A ticket going from $80 to $100 changed by $20, and $20 is 25% of $80. So the price rose 25%, even though $20 is only 20% of the new $100.",
+              "title": "Compare with the start"
+            },
+            "kind": "explanation"
+          },
+          "variant": "simpler"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The relative-change terminology and undefined zero-baseline case provide genuine additional depth. However, the main steps remain mostly procedural, especially the unexplained choice of the starting price as the reference. This is only a little deeper, so the score is capped at 8.",
+          "score": 8,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The same ticket problem and worked-example fields are preserved. All calculations are correct: the increase is $20, 20 divided by 80 is 0.25, and the increase is 25%. The zero-baseline statement is accurate and remains within percent change.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The response uses US English, direct instructions, and no introductory filler. However, it is nearly twice the original's word count rather than about the same length, triggering the cap of 7 for a much longer screen. The separate technical edge-case step is the clearest opportunity to compress it.",
+          "score": 7,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1589,
+          "inputTokens": 1592,
+          "outputTokens": 704,
+          "reasoningTokens": 263
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation adds only modest depth to the actual calculation: it names relative change but does not explain why $80 is the reference. The screen is also nearly twice the original's length, largely because of the separate zero-baseline step.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Explain that you are measuring the $20 increase against what the ticket originally cost. Briefly connect new minus old to a negative change when the price falls. Keep the useful zero-baseline limit, but shorten it and trim repeated wording.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A deeper version of the worked example: the same problem with the reasoning behind each step, such as why the starting value is the reference and how a decrease is written as a negative change\n      - Every number stays correct: from $80 to $100 is +$20, and 20 ÷ 80 = 0.25 = 25%\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-worked-deeper-1",
+        "userInput": {
+          "key": "",
+          "language": "en",
+          "lessonTitle": "Percent change",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "problem": "A concert ticket went from $80 to $100. By what percent did the price change?",
+              "result": "The price rose 25%.",
+              "steps": [
+                { "math": "100 - 80 = 20", "text": "Find the change: new price minus old price." },
+                {
+                  "math": "\\frac{20}{80} = 0.25",
+                  "text": "Divide the change by the starting price."
+                },
+                { "math": "0.25 = 25\\%", "text": "Write it as a percent." }
+              ],
+              "title": "From $80 to $100"
+            },
+            "kind": "workedExample"
+          },
+          "variant": "deeper"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "Removing the retrospective opening and replacing 'fica fixo' with 'não muda' makes the screen somewhat easier. However, most of the explanation and the example remain essentially unchanged. This is only a little simpler, triggering the cap of 8.",
+          "score": 8,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "Both relationships are preserved correctly: for the same order, more workers mean less time; with the same team, more labels mean more time. The reminder to state what remains unchanged preserves the original lesson without adding unrelated ideas.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The text is concise, natural Brazilian Portuguese and shorter than the original. It addresses the learner through 'diga', contains no introductory framing or filler, and fits a single explanation screen.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1385,
+          "inputTokens": 1388,
+          "outputTokens": 916,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The simplification is modest: the opening is removed and the title is easier, but the central sentences and workplace example are nearly unchanged. Also, exampleLineIdea and image are null, so the requirement that every field be filled is not fully met.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use more everyday wording, such as 'mais pessoas' instead of 'mais trabalhadores', and shorter sentences. Make the connection explicit: what you keep unchanged determines whether the relationship is direct or inverse.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A clearly simpler version: more everyday words and example, no new terms like \"grandeza\" left unexplained\n      - Still says what stays fixed decides whether the relation is direct or inverse: same order, more people, less time; same team, bigger order, more time\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-simpler-1",
+        "userInput": {
+          "key": "",
+          "language": "pt",
+          "lessonTitle": "Regra de três simples e composta",
+          "level": "intermediate",
+          "screen": {
+            "content": {
+              "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+              "title": "O que fica fixo?"
+            },
+            "kind": "explanation"
+          },
+          "variant": "simpler"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "This is genuinely deeper: it connects confinement to uncertainty, kinetic energy, and the minimum-energy balance with electrical attraction. It names the principle without heavy formulas. However, the explanation of the motion spread remains abstract, and the final sentence repeats the general relationship rather than supplying a distinct limiting case or technical example.",
+          "score": 8,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The explanation preserves the original idea and accurately describes the kinetic-energy cost of localization at overview level. The minimum-energy discussion remains on topic. It introduces neither a literal spring nor an outward force, and both original content fields are filled.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The result is in Brazilian Portuguese and remains a single short screen, modestly longer than the original, without an introduction or heavy notation. No length or language cap applies. Its main weaknesses are impersonal phrasing rather than direct reader address and a relatively dense opening sentence.",
+          "score": 8,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1459,
+          "inputTokens": 1462,
+          "outputTokens": 640,
+          "reasoningTokens": 213
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The writing is somewhat abstract and impersonal: it never addresses the reader directly, and 'incerteza de seu movimento' leaves the physical meaning of the uncertainty slightly vague.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the mechanism more tangible by explaining that tighter confinement requires a wider spread of possible momenta. A brief limiting case—trying to confine the cloud to the nucleus makes the kinetic-energy cost very large—would add depth without formulas or another topic.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A deeper version for a curious adult of why squeezing the electron costs energy: the more precisely its position is confined, the more its motion spreads (the uncertainty principle), so its kinetic energy rises\n      - It may name the idea precisely, but no heavy formulas: the lesson is an overview, so one step deeper still reads as a story\n      - Must not claim there is a literal spring or force pushing the electron out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-deeper-1",
+        "userInput": {
+          "key": "",
+          "language": "pt",
+          "lessonTitle": "Por que o elétron não cai no núcleo",
+          "level": "overview",
+          "screen": {
+            "content": {
+              "text": "O núcleo atrai o elétron para perto. Mas concentrar sua nuvem num espaço minúsculo exige mais energia. Pense em tentar confinar algo que resiste a ficar espremido: apertar tem um custo. Isso é só uma comparação; não existe uma mola dentro do átomo.",
+              "title": "Apertar exige energia"
+            },
+            "kind": "explanation"
+          },
+          "variant": "deeper"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The tool adaptation is concrete and usable: it specifies the cells, gives =AVERAGE(A1:A5), and correctly states that the output is 85. This works in both Google Sheets and Excel without platform-specific features. However, it lacks the expected check about what the tool shows. No wrong-syntax, wrong-output, or barely-shown-tool cap applies.",
+          "score": 8,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The same five scores, correct result, and original topic are preserved, with no factual error or unrelated material. However, the original's central explanation—adding the values and dividing by their count—is lost despite being explicitly required. This is an omission rather than a false calculation or claim.",
+          "score": 8,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The result is a short, beginner-friendly screen in US English. Its direct instructions address the learner naturally, and it contains no introduction, filler, lengthy digression, or promises. No writing cap applies.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1970,
+          "inputTokens": 1973,
+          "outputTokens": 713,
+          "reasoningTokens": 271
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation omits the explicitly required meaning of the mean: add the five scores and divide by how many scores there are. It should retain that these scores total 425 and that 425 ÷ 5 = 85, alongside the spreadsheet method.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "There is no check asking what the spreadsheet shows. Also, exampleLineIdea and image are null rather than filled, so the result does not literally meet the requirement that every field be filled.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tool-spreadsheet-mean-1",
+        "userInput": {
+          "key": "Spreadsheet (Google Sheets or Excel)",
+          "language": "en",
+          "lessonTitle": "The mean",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "The **mean** is the typical value: add all the values and divide by how many there are. Quiz scores of 80, 90, 75, 95 and 85 add up to 425, and 425 ÷ 5 = 85.",
+              "title": "Add, then divide"
+            },
+            "kind": "explanation"
+          },
+          "variant": "tool"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "This is genuinely a Python worked example: the assignments and arithmetic are valid Python, and print(percentual) correctly prints 25.0. It preserves the example and uses six steps. However, the original calculation fields are unfilled, the steps fragment instructions from execution, and the required tool-output check is absent. The wrong-syntax/output cap does not apply.",
+          "score": 7,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The ticket still increases from R$ 80 to R$ 100. The difference is 20, dividing by the initial price and multiplying by 100 gives 25.0, and the conclusion correctly states a 25% increase. There is no factual error or conceptual drift.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The language is natural Brazilian Portuguese, with short, direct instructions and no introductory framing or promises. It remains a short screen, but splitting three calculations across six instruction-and-execution entries creates avoidable repetition. No explicit writing cap is triggered.",
+          "score": 8,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2189,
+          "inputTokens": 2192,
+          "outputTokens": 801,
+          "reasoningTokens": 324
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The requirement to fill every field is not met: all six steps have an empty math field (null), unlike the original worked-example screen. Putting the calculations in text preserves the explanation but leaves required content fields unfilled.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "There is no check asking what Python shows. The six steps also alternate between instructions and their execution, making the sequence repetitive rather than giving each step one complete move.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Combine each instruction with its corresponding Python calculation, populate the calculation fields, and add a brief check about the output of print(percentual). A contiguous code example would also make the execution order easier for beginners to follow.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same worked example (a price going from R$ 80 to R$ 100) done in Python: the change divided by the starting value, such as `(100 - 80) / 80 * 100`, with what Python prints (25.0)\n      - Keeps 2 to 8 short steps, each one move, and the result is still a 25% increase\n      - Real Python syntax that runs as written\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-tool-python-percent-change-1",
+        "userInput": {
+          "key": "Python",
+          "language": "pt",
+          "lessonTitle": "Variação percentual",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "problem": "Um ingresso foi de R$ 80 para R$ 100. Qual foi a variação percentual?",
+              "result": "O preço subiu 25%.",
+              "steps": [
+                {
+                  "math": "100 - 80 = 20",
+                  "text": "Calcule a variação: preço novo menos o antigo."
+                },
+                {
+                  "math": "\\frac{20}{80} = 0{,}25",
+                  "text": "Divida a variação pelo preço inicial."
+                },
+                { "math": "0{,}25 = 25\\%", "text": "Escreva como porcentagem." }
+              ],
+              "title": "De R$ 80 para R$ 100"
+            },
+            "kind": "workedExample"
+          },
+          "variant": "tool"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The command is framed as an example rather than an instruction to act on the learner's device. It gives the exact command and a valid, exact example output, explains the version number, and never suggests the learner is missing out. The interpretation could state more directly that this output also confirms Python is installed.",
+          "score": 9,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The explanation retains the original idea of checking Python's version. The command, example output, and interpretation are accurate, with no unrelated lesson content. The original title and text fields are both filled.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The result is a short explanation comparable to the original's length, written in US English with short sentences and direct use of “you.” It contains no prefatory announcement, filler, or promises.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1936,
+          "inputTokens": 1939,
+          "outputTokens": 630,
+          "reasoningTokens": 272
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the interpretation more direct: “This output means Python is installed, and its version is 3.13.1.” This explicitly states both things the example output tells you.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-no-install-terminal-version-1",
+        "userInput": {
+          "key": "no-install",
+          "language": "en",
+          "lessonTitle": "Check your Python version",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "Open your terminal and type `python3 --version`, then press Enter. If Python is installed, you'll see its version, like `Python 3.13.1`. Try it now before moving on.",
+              "title": "Ask Python its version"
+            },
+            "kind": "explanation"
+          },
+          "variant": "tool"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The no-install conversion succeeds: it presents the cell values and formula as an example and asks what A4 displays, without asking the learner to open Excel or type anything. The check format is preserved. The remaining task-fit issue is the literal field-completeness requirement: context and image are null. No category score cap is triggered.",
+          "score": 8,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The original idea is preserved and the calculation is correct. SOMA(A1:A3) adds 10, 20 and 30 to produce 60. Exactly one option is correct, every option has a reason, and both distractors represent the requested plausible slips. No factual error or topic drift triggers a cap.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The text uses natural Brazilian Portuguese, short sentences and a compact single-screen presentation. There is no unnecessary introduction, device instruction or promise of results. Feedback could be tightened slightly, but there is no meaningful writing weakness or triggered cap.",
+          "score": 9,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2170,
+          "inputTokens": 2173,
+          "outputTokens": 725,
+          "reasoningTokens": 309
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The added context and image fields are null, so the result does not literally satisfy the requirement that every field be filled. The question and all answer explanations are complete.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The incorrect-answer explanations could be slightly shorter while retaining the useful distinction between adding only two cells and displaying the formula as text.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-no-install-excel-check-1",
+        "userInput": {
+          "key": "no-install",
+          "language": "pt",
+          "lessonTitle": "Somar uma coluna na planilha",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "options": [
+                {
+                  "id": "sixty",
+                  "isCorrect": true,
+                  "reason": "SOMA junta 10 + 20 + 30 = 60.",
+                  "text": "60"
+                },
+                { "id": "thirty", "isCorrect": false, "reason": "Somou só A1 e A2.", "text": "30" },
+                {
+                  "id": "formula",
+                  "isCorrect": false,
+                  "reason": "Com o sinal de igual, a planilha calcula.",
+                  "text": "=SOMA(A1:A3)"
+                }
+              ],
+              "question": "Abra o Excel, digite 10, 20 e 30 em A1, A2 e A3 e, em A4, digite =SOMA(A1:A3). O que aparece em A4?"
+            },
+            "kind": "check"
+          },
+          "variant": "tool"
+        }
+      }
+    }
+  ],
+  "taskId": "step-variant"
+}

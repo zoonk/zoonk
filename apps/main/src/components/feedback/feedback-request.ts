@@ -1,22 +1,12 @@
-import { safeAsync } from "@zoonk/utils/error";
-import { API_URL } from "@zoonk/utils/url";
-
-export type FeedbackPayload = { email: string; message: string };
-
-const FEEDBACK_URL = new URL("/v1/feedback", API_URL).toString();
+import { postFromBrowser } from "@/lib/api/browser-api";
+import { type FeedbackMessageInput } from "@zoonk/core/feedback/contract";
 
 /**
  * Sends feedback through the public API endpoint so every UI surface gets the
- * same validation, quota protection, and email delivery behavior.
+ * same validation, quota protection, storage, and email delivery behavior. A
+ * signed-in learner's bearer token links the message to their account.
  */
-export async function sendFeedbackRequest(payload: FeedbackPayload): Promise<boolean> {
-  const { data: response, error } = await safeAsync(() =>
-    fetch(FEEDBACK_URL, {
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-    }),
-  );
-
-  return Boolean(response?.ok && !error);
+export async function sendFeedbackRequest(payload: FeedbackMessageInput): Promise<boolean> {
+  const response = await postFromBrowser({ body: payload, path: "/v1/feedback" });
+  return Boolean(response?.ok);
 }

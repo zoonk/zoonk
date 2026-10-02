@@ -20,13 +20,37 @@ import {
   GridItemMedia,
   GridItemTitle,
 } from "@zoonk/ui/components/grid";
+import { LanguageFlag, hasLanguageFlag } from "@zoonk/ui/components/language-flag";
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { type CourseCategory } from "@zoonk/utils/categories";
+import { getLanguageFlagLabel } from "@zoonk/utils/language-flags";
+import { getFirstSentence } from "@zoonk/utils/string";
 import { Loader2Icon, NotebookPenIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { loadMoreCourses } from "./actions";
 
 type CourseListCategory = { key: CourseCategory; label: string };
+
+/** A language course shows the flag of the variety it teaches; other courses their picture. */
+function CourseTileMedia({ course }: { course: CourseWithOrg }) {
+  const locale = useLocale();
+
+  if (hasLanguageFlag(course.targetLanguage)) {
+    return (
+      <LanguageFlag
+        alt={getLanguageFlagLabel({ language: course.targetLanguage, userLanguage: locale }) ?? ""}
+        className="w-20 sm:w-24"
+        language={course.targetLanguage}
+      />
+    );
+  }
+
+  if (course.imageUrl) {
+    return <CatalogGridImage alt={course.title} size="compact" src={course.imageUrl} />;
+  }
+
+  return <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-8" />;
+}
 
 /**
  * Course discovery should use the same playful tile language as curriculum
@@ -37,20 +61,19 @@ function CourseTile({ course }: { course: CourseWithOrg }) {
     <CatalogGridItem
       className="min-h-56"
       href={`/b/${course.organization?.slug}/c/${course.slug}`}
-      id={course.id}
       prefetch
     >
       <GridItemMedia className="size-24 sm:size-28">
-        {course.imageUrl ? (
-          <CatalogGridImage alt={course.title} size="compact" src={course.imageUrl} />
-        ) : (
-          <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-8" />
-        )}
+        <CourseTileMedia course={course} />
       </GridItemMedia>
 
       <GridItemContent>
         <GridItemTitle>{course.title}</GridItemTitle>
-        <GridItemDescription>{course.description}</GridItemDescription>
+        {course.description && (
+          <GridItemDescription>
+            {getFirstSentence(course.description, course.language)}
+          </GridItemDescription>
+        )}
       </GridItemContent>
     </CatalogGridItem>
   );
@@ -102,7 +125,7 @@ export function CourseListClient({
                   "h-auto min-h-9 max-w-full whitespace-normal py-2 text-center leading-snug",
                 variant: "outline",
               })}
-              href="/start/learn"
+              href="/start"
               prefetch
             >
               <PlusIcon aria-hidden="true" />

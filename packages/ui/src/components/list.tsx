@@ -1,6 +1,5 @@
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
   ItemGroup,
@@ -76,10 +75,15 @@ export function ListGroup({ className, layout = "list", ...props }: ItemGroupPro
 
 /**
  * Rows are often links, but keeping the render target composable lets each app
- * provide its own router component.
+ * provide its own router component. Each row sits in a list item, so screen
+ * readers hear the group as a list with its count even when the row is a link.
  */
 export function ListItem({ className, ...props }: ItemProps) {
-  return <Item className={cn("group/list-item py-2.5", className)} {...props} />;
+  return (
+    <div role="listitem">
+      <Item className={cn("group/list-item py-2.5", className)} {...props} />
+    </div>
+  );
 }
 
 /**
@@ -104,14 +108,6 @@ export function ListItemIcon({ className, ...props }: ItemMediaProps) {
  */
 export function ListItemContent({ className, ...props }: React.ComponentProps<"div">) {
   return <ItemContent className={cn("gap-1", className)} {...props} />;
-}
-
-/**
- * Row-level controls stay separate from the primary link so list items remain
- * valid, accessible compositions when they expose secondary actions.
- */
-export function ListItemActions({ className, ...props }: React.ComponentProps<"div">) {
-  return <ItemActions className={className} {...props} />;
 }
 
 /**

@@ -2,12 +2,9 @@ import {
   ProgressMetricCard,
   ProgressMetricCardIcon,
   ProgressMetricCardLabel,
-  ProgressMetricCardLabelSkeleton,
   ProgressMetricCardSubtitle,
-  ProgressMetricCardSubtitleSkeleton,
   ProgressMetricCardTrailing,
   ProgressMetricCardValue,
-  ProgressMetricCardValueSkeleton,
 } from "@/components/progress/progress-metric-card";
 import { CalendarDaysIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
@@ -41,20 +38,6 @@ export async function LearningDaysCard({
       {trailing && <ProgressMetricCardTrailing>{trailing}</ProgressMetricCardTrailing>}
       <ProgressMetricCardValue>{countLabel}</ProgressMetricCardValue>
       {subtitle && <ProgressMetricCardSubtitle>{subtitle}</ProgressMetricCardSubtitle>}
-    </ProgressMetricCard>
-  );
-}
-
-/**
- * Progress surfaces reserve the same footprint for Learning days while its
- * lifetime total loads, which prevents the surrounding cards from shifting.
- */
-export function LearningDaysCardSkeleton() {
-  return (
-    <ProgressMetricCard aria-hidden="true" className="w-full">
-      <ProgressMetricCardLabelSkeleton className="w-28" />
-      <ProgressMetricCardValueSkeleton className="max-w-24" />
-      <ProgressMetricCardSubtitleSkeleton className="max-w-48" />
     </ProgressMetricCard>
   );
 }

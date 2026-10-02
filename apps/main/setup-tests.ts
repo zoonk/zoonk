@@ -29,11 +29,6 @@ vi.mock("next/cache", () => ({
   updateTag: vi.fn(),
 }));
 
-vi.mock("@zoonk/ai/tasks/courses/canonical-title", { spy: true });
-vi.mock("@zoonk/ai/tasks/courses/format", { spy: true });
-vi.mock("@zoonk/ai/tasks/courses/intent", { spy: true });
-vi.mock("@zoonk/ai/tasks/courses/personalization", { spy: true });
-
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(headers).mockResolvedValue(new Headers());
