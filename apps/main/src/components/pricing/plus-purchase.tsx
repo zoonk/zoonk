@@ -5,12 +5,13 @@ import { authClient } from "@zoonk/auth/client";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Card } from "@zoonk/ui/components/card";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
 import { logError } from "@zoonk/utils/logger";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { type BillingPeriod, BillingPriceSummary } from "./billing-price-summary";
 import { getYearlyPriceComparison } from "./billing-prices";
 import { GuardianApprovalRequest } from "./guardian-approval-request";
@@ -37,17 +38,28 @@ const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | un
 };
 
 /**
- * The purchase rail beside the comparison: a transparent billing choice without bringing back
- * the plan-selection grid. The CTA changes only at the authentication boundary: visitors try it
- * free (or get Plus by signing in first), guests sign in first, while signed-in free users start
- * checkout. Signing in creates the account, so "Get Plus" works for anyone without one.
- * Subscribers never see it: the subscription page shows their plan instead.
+ * The billing period switch is a segmented control, like the card filters: a muted track (glass
+ * in Fun) with the chosen period raised on the page background, so it reads on the card in light
+ * mode too, where the card and the page share one color.
+ */
+function getPeriodOptionClass(isSelected: boolean) {
+  return isSelected ? "shadow-sm in-data-[mode=fun]:fun-inv" : "text-muted-foreground";
+}
+
+/**
+ * The one Plus offer: its price with a transparent billing choice, what it gives (`benefits`,
+ * rendered on the server), and the next step. The CTA changes only at the authentication
+ * boundary: visitors try it free (or get Plus by signing in first), guests sign in first, while
+ * signed-in free users start checkout. Signing in creates the account, so "Get Plus" works for
+ * anyone without one. Subscribers never see it: the subscription page shows their plan instead.
  */
 export function PlusPurchase({
+  benefits,
   monthlyPrice,
   viewerState,
   yearlyPrice,
 }: {
+  benefits: ReactNode;
   monthlyPrice: PriceInfo | null;
   viewerState: PlusViewerState;
   yearlyPrice: PriceInfo | null;
@@ -94,47 +106,54 @@ export function PlusPurchase({
   };
 
   return (
-    <aside className="bg-muted/40 order-first flex flex-col gap-5 border-b px-5 py-6 sm:px-8 sm:py-8 lg:order-last lg:border-b-0 lg:border-l">
-      <h2 className="text-lg font-semibold tracking-tight">{t("Plus")}</h2>
+    <Card className="gap-5 px-5 sm:px-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-lg font-semibold tracking-tight">{t("Plus")}</h2>
 
-      <div
-        aria-label={t("Billing period")}
-        className="bg-background flex rounded-4xl p-1"
-        role="group"
-      >
-        <Button
-          aria-pressed={period === "monthly"}
-          className="flex-1"
-          onClick={() => setPeriod("monthly")}
-          size="sm"
-          type="button"
-          variant={period === "monthly" ? "secondary" : "ghost"}
+        <div
+          aria-label={t("Billing period")}
+          className="bg-muted in-data-[mode=fun]:fun-glass flex rounded-4xl p-1"
+          role="group"
         >
-          {t("Monthly")}
-        </Button>
+          <Button
+            aria-pressed={period === "monthly"}
+            className={cn("flex-1 sm:flex-initial", getPeriodOptionClass(period === "monthly"))}
+            onClick={() => setPeriod("monthly")}
+            size="sm"
+            type="button"
+            variant={period === "monthly" ? "outline" : "ghost"}
+          >
+            {t("Monthly")}
+          </Button>
 
-        <Button
-          aria-pressed={period === "yearly"}
-          className="flex-1 gap-2"
-          disabled={!yearlyPrice}
-          onClick={() => setPeriod("yearly")}
-          size="sm"
-          type="button"
-          variant={period === "yearly" ? "secondary" : "ghost"}
-        >
-          {t("Yearly")}
-          {yearlySavingsAmount && (
-            <>
-              <Badge aria-hidden="true" className="text-foreground font-mono" variant="success">
-                −{yearlySavingsAmount}
-              </Badge>
-              <span className="sr-only">{savingsLabel}</span>
-            </>
-          )}
-        </Button>
+          <Button
+            aria-pressed={period === "yearly"}
+            className={cn(
+              "flex-1 gap-2 sm:flex-initial",
+              getPeriodOptionClass(period === "yearly"),
+            )}
+            disabled={!yearlyPrice}
+            onClick={() => setPeriod("yearly")}
+            size="sm"
+            type="button"
+            variant={period === "yearly" ? "outline" : "ghost"}
+          >
+            {t("Yearly")}
+            {yearlySavingsAmount && (
+              <>
+                <Badge aria-hidden="true" className="text-foreground font-mono" variant="success">
+                  −{yearlySavingsAmount}
+                </Badge>
+                <span className="sr-only">{savingsLabel}</span>
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       <BillingPriceSummary monthlyPrice={monthlyPrice} period={period} yearlyPrice={yearlyPrice} />
+
+      {benefits}
 
       <div className="flex flex-col gap-3">
         {viewerState.status === "visitor" && (
@@ -185,7 +204,7 @@ export function PlusPurchase({
           {t("Unable to start checkout. Contact us at hello@zoonk.com")}
         </p>
       )}
-    </aside>
+    </Card>
   );
 }
 

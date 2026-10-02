@@ -62,7 +62,7 @@ export function BillingPriceSummary({
       : null;
 
   return (
-    <div className="flex min-h-24 flex-col justify-center gap-1">
+    <div className="flex flex-col gap-1">
       {priceLabel ? (
         <p className="flex items-baseline gap-2">
           <span className="text-4xl font-semibold tracking-tight tabular-nums">{priceLabel}</span>

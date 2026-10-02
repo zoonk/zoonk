@@ -38,7 +38,7 @@ test.describe("Pricing for visitors", () => {
     await expectPublicPricing(page);
   });
 
-  test("on a phone, Pricing in the footer opens it with each feature above Free and Plus", async ({
+  test("on a phone, Pricing in the footer opens it with the offer's next step on the first screen", async ({
     browser,
   }) => {
     const context = await browser.newContext({ viewport: PHONE_VIEWPORT });
@@ -52,15 +52,7 @@ test.describe("Pricing for visitors", () => {
       .click();
 
     await expectPublicPricing(page);
-
-    const tutor = page
-      .getByRole("table", { name: "What's included in Free and Plus" })
-      .getByRole("row", { name: /AI tutor/u });
-
-    const feature = await tutor.getByRole("rowheader").boundingBox();
-    const free = await tutor.getByRole("cell").first().boundingBox();
-
-    expect(free?.y).toBeGreaterThanOrEqual((feature?.y ?? 0) + (feature?.height ?? 0));
+    await expect(page.getByRole("link", { name: "Try free" })).toBeInViewport();
 
     const horizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -71,43 +63,14 @@ test.describe("Pricing for visitors", () => {
     await context.close();
   });
 
-  test("compares the plans, lets visitors sign in to get Plus, and answers common questions", async ({
+  test("offers Plus, lets visitors sign in to get it, and answers common questions", async ({
     page,
   }) => {
     const limits = getFreePlanLimits();
     await page.goto("/pricing");
 
-    const plans = page.getByRole("table", { name: "What's included in Free and Plus" });
-    await expect(plans).toBeVisible();
+    await expect(page.getByRole("heading", { exact: true, level: 2, name: "Plus" })).toBeVisible();
     await expectAccessibleScreen(page, "the pricing page");
-
-    await expect(plans.getByRole("row", { name: /new lessons/iu }).getByRole("cell")).toHaveText([
-      `${limits.lessonsPerDay} a day, ${limits.lessonsPerMonth} a month`,
-      "Unlimited",
-    ]);
-
-    await expect(plans.getByRole("row", { name: /goals at once/iu }).getByRole("cell")).toHaveText([
-      `${limits.activeGoals} goal`,
-      "Unlimited",
-    ]);
-
-    await expect(plans.getByRole("row", { name: /AI tutor/u }).getByRole("cell")).toHaveText([
-      `${limits.tutorMessagesPerDay} messages a day`,
-      "Unlimited",
-    ]);
-
-    await expect(
-      plans.getByRole("row", { name: /speaking practice/iu }).getByRole("cell"),
-    ).toHaveText([`${limits.conversationsPerDay} conversations a day`, "Unlimited"]);
-
-    await expect(
-      plans.getByRole("row", { name: /your notes and files/iu }).getByRole("cell"),
-    ).toHaveText([`${limits.uploadsPerDay} uploads a day`, "Unlimited"]);
-
-    await expect(plans.getByRole("row", { name: /exam prep/iu }).getByRole("cell")).toHaveText([
-      "Limited",
-      "Full prep",
-    ]);
 
     await expect(page.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
       "href",
@@ -120,13 +83,19 @@ test.describe("Pricing for visitors", () => {
 
     const questions = page.getByRole("region", { name: "Common questions" });
 
-    await questions.getByText("Can I try Zoonk before paying?").click();
+    // The free plan's limits come from the rules the allowance enforces.
+    await questions.getByText("What's in the free plan?").click();
 
     await expect(
-      questions.getByText(
-        `You don't even need an account for your first ${limits.guestLessons} lessons.`,
-      ),
+      questions.getByText(`Try ${limits.guestLessons} lessons without an account.`),
     ).toBeVisible();
+
+    await expect(questions.getByRole("listitem")).toHaveText([
+      `${limits.activeGoals} goal at a time`,
+      `${limits.lessonsPerDay} lessons a day, up to ${limits.lessonsPerMonth} a month`,
+      "The first week of exam prep",
+      `${limits.tutorMessagesPerDay} tutor messages, ${limits.conversationsPerDay} speaking conversations and ${limits.uploadsPerDay} uploads a day`,
+    ]);
 
     await questions.getByText("Can I get a refund?").click();
 

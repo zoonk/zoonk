@@ -13,13 +13,9 @@ import { type PriceInfo } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
-import { PlanComparison } from "./plan-comparison";
+import { PlusBenefits } from "./plus-benefits";
 import { PlusPurchase, type PlusViewerState } from "./plus-purchase";
 import { PlusQuestions } from "./plus-questions";
-
-/** Tracks start at zero width, so a long translation wraps instead of widening the page. */
-const PRICING_GRID_CLASS =
-  "grid w-full grid-cols-[minmax(0,1fr)] border-y lg:grid-cols-[minmax(0,3fr)_minmax(18rem,2fr)]";
 
 /** The public pricing page and the subscription page describe the same offer. */
 export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "description" | "title">> {
@@ -27,16 +23,16 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 
   return {
     description: t(
-      "Compare Free and Plus. Get ready for your exam, new job or move with as many lessons and goals as you need, mock exams and the AI tutor.",
+      "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and the AI tutor. Try it free.",
     ),
     title: t("Zoonk Plus: plans and pricing"),
   };
 }
 
 /**
- * The offer's headline above the plans, in the words people use for what they're getting ready
- * for. Visitors read it on the public pricing page and learners in the app's subscription page.
- * A learner with a goal reads that goal instead, so the offer is about keeping it going.
+ * The offer's headline, in the words people use for what they're getting ready for, over one
+ * column. Visitors read it on the public pricing page and learners in the app's subscription
+ * page. A learner with a goal reads that goal instead, so the offer is about keeping it going.
  */
 export async function PlusPricingPage({
   children,
@@ -54,23 +50,21 @@ export async function PlusPricingPage({
   return (
     <Container className={cn("gap-8 py-4 sm:py-8 lg:gap-10 lg:py-10", className)} render={render}>
       <ContainerHeader className="items-start">
-        <ContainerHeaderGroup className="max-w-3xl gap-4">
+        <ContainerHeaderGroup className="gap-4">
           {goalTitle && (
             <p className="text-muted-foreground text-sm font-medium text-pretty sm:text-base">
               {t("Your goal: {goal}", { goal: goalTitle })}
             </p>
           )}
 
-          <ContainerTitle className="text-4xl leading-[0.95] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+          <ContainerTitle className="text-4xl leading-[0.95] font-semibold tracking-[-0.04em] text-balance sm:text-5xl">
             {goalTitle
               ? t("Keep going with Plus.")
               : t("Get ready for your exam, new job or move.")}
           </ContainerTitle>
 
-          <ContainerDescription className="max-w-2xl text-base leading-relaxed sm:text-lg">
-            {t(
-              "With Plus, you get as many lessons and goals as you need, mock exams in real conditions and the AI tutor whenever you're stuck.",
-            )}
+          <ContainerDescription className="text-base leading-relaxed sm:text-lg">
+            {t("Plus gives you everything Zoonk has, with no limits.")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
@@ -80,8 +74,8 @@ export async function PlusPricingPage({
   );
 }
 
-/** Free and Plus compared, beside the Plus offer for whoever is looking, then what people ask. */
-export async function PlusPricing({
+/** The Plus offer for whoever is looking, then what people ask before paying. */
+export function PlusPricing({
   monthlyPrice,
   viewerState,
   yearlyPrice,
@@ -90,19 +84,16 @@ export async function PlusPricing({
   viewerState: PlusViewerState;
   yearlyPrice: PriceInfo | null;
 }) {
-  const t = await getExtracted();
   const hasNoAccount = viewerState.status === "guest" || viewerState.status === "visitor";
 
   return (
     <>
-      <section aria-label={t("Zoonk Plus benefits and pricing")} className={PRICING_GRID_CLASS}>
-        <PlanComparison />
-        <PlusPurchase
-          monthlyPrice={monthlyPrice}
-          viewerState={viewerState}
-          yearlyPrice={yearlyPrice}
-        />
-      </section>
+      <PlusPurchase
+        benefits={<PlusBenefits />}
+        monthlyPrice={monthlyPrice}
+        viewerState={viewerState}
+        yearlyPrice={yearlyPrice}
+      />
 
       <PlusQuestions hasNoAccount={hasNoAccount} />
     </>
@@ -111,31 +102,22 @@ export async function PlusPricing({
 
 export function PlusPricingSkeleton() {
   return (
-    <div aria-hidden="true" className={PRICING_GRID_CLASS}>
-      <div className="divide-y">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div
-            className="grid gap-3 px-1 py-6 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-8 sm:px-4 sm:py-8"
-            key={index}
-          >
-            <Skeleton className="h-5 w-40" />
-            <div className="flex flex-col gap-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-          </div>
-        ))}
+    <div
+      aria-hidden="true"
+      className="ring-foreground/10 flex flex-col gap-5 rounded-2xl p-5 ring-1 sm:p-6"
+    >
+      <div className="flex justify-between">
+        <Skeleton className="h-6 w-14" />
+        <Skeleton className="h-8 w-44 rounded-4xl" />
       </div>
-
-      <div className="bg-muted/40 order-first flex min-h-72 flex-col gap-6 border-b px-5 py-6 sm:px-8 sm:py-8 lg:order-last lg:border-b-0 lg:border-l">
-        <div className="flex justify-between">
-          <Skeleton className="h-5 w-14" />
-          <Skeleton className="h-5 w-28" />
-        </div>
-        <Skeleton className="h-9 w-full rounded-4xl" />
-        <Skeleton className="h-10 w-36" />
-        <Skeleton className="mt-auto h-10 w-full rounded-4xl" />
+      <Skeleton className="h-10 w-28" />
+      <div className="flex flex-col gap-3">
+        <Skeleton className="h-4 w-3/5" />
+        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-4 w-3/5" />
       </div>
+      <Skeleton className="h-10 w-full rounded-4xl" />
     </div>
   );
 }

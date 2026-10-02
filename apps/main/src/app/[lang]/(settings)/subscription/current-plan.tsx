@@ -1,4 +1,4 @@
-import { PlusIncluded } from "@/components/pricing/plan-comparison";
+import { PlusBenefits } from "@/components/pricing/plus-benefits";
 import { type Subscription } from "@zoonk/db";
 import { Badge } from "@zoonk/ui/components/badge";
 import {
@@ -67,7 +67,7 @@ export async function CurrentPlan({ subscription }: { subscription: Subscription
           <h2 className="text-base font-semibold" id={INCLUDED_ID}>
             {t("What's included")}
           </h2>
-          <PlusIncluded />
+          <PlusBenefits />
         </section>
 
         {isWebManagedSubscriptionProvider(subscription.provider) ? (

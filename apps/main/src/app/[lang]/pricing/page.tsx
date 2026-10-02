@@ -37,7 +37,7 @@ async function VisitorPlusPricing() {
 export default function PricingPage() {
   return (
     <PublicPage>
-      <PlusPricingPage className="mx-auto max-w-6xl sm:px-4" render={<div />}>
+      <PlusPricingPage className="mx-auto max-w-150" render={<div />}>
         <Suspense fallback={<PlusPricingSkeleton />}>
           <VisitorPlusPricing />
         </Suspense>

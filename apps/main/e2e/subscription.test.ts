@@ -176,12 +176,10 @@ test.describe("Subscription Page - Guest", () => {
       page.getByRole("heading", { level: 1, name: "Keep going with Plus." }),
     ).toBeVisible();
 
-    // Without an account, trying first is still one of their questions.
-    await expect(
-      page
-        .getByRole("region", { name: "Common questions" })
-        .getByText("Can I try Zoonk before paying?"),
-    ).toBeVisible();
+    // Without an account, the free plan's answer starts with trying lessons first.
+    const questions = page.getByRole("region", { name: "Common questions" });
+    await questions.getByText("What's in the free plan?").click();
+    await expect(questions.getByText(/lessons without an account/u)).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
       "href",
@@ -221,8 +219,9 @@ test.describe("Subscription Page - No Subscription", () => {
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();
     const questions = page.getByRole("region", { name: "Common questions" });
-    await expect(questions.getByText("What happens if I cancel?")).toBeVisible();
-    await expect(questions.getByText("Can I try Zoonk before paying?")).toHaveCount(0);
+    await questions.getByText("What's in the free plan?").click();
+    await expect(questions.getByText("With the free plan, you get:")).toBeVisible();
+    await expect(questions.getByText(/without an account/u)).toHaveCount(0);
 
     await expect(page.getByRole("button", { name: /monthly/iu })).toHaveAttribute(
       "aria-pressed",
@@ -337,9 +336,7 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     await expect(page.getByText(/subscription will end on/iu)).not.toBeVisible();
 
     const included = page.getByRole("region", { name: "What's included" });
-    await expect(included.getByText("Exam prep")).toBeVisible();
-    await expect(included.getByText("Full prep")).toBeVisible();
-    await expect(included.getByText("Unlimited", { exact: true })).toHaveCount(5);
+    await expect(included.getByText("Full exam prep, with mock exams")).toBeVisible();
 
     await expect(page.getByRole("heading", { name: /get ready for your exam/iu })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
