@@ -1,4 +1,3 @@
-import { Badge } from "@zoonk/ui/components/badge";
 import {
   Container,
   ContainerBody,
@@ -16,6 +15,7 @@ import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { PlanComparison } from "./plan-comparison";
 import { PlusPurchase, type PlusViewerState } from "./plus-purchase";
+import { PlusQuestions } from "./plus-questions";
 
 /** Tracks start at zero width, so a long translation wraps instead of widening the page. */
 const PRICING_GRID_CLASS =
@@ -27,23 +27,26 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 
   return {
     description: t(
-      "Compare Free and Plus: as many lessons and goals as you need and more time with the AI tutor, whatever you want to learn.",
+      "Compare Free and Plus. Get ready for your exam, new job or move with as many lessons and goals as you need, mock exams and the AI tutor.",
     ),
     title: t("Zoonk Plus: plans and pricing"),
   };
 }
 
 /**
- * The offer's headline above the plans. Visitors read it on the public pricing page and learners
- * in the app's subscription page, so both say the same thing in the same place.
+ * The offer's headline above the plans, in the words people use for what they're getting ready
+ * for. Visitors read it on the public pricing page and learners in the app's subscription page.
+ * A learner with a goal reads that goal instead, so the offer is about keeping it going.
  */
 export async function PlusPricingPage({
   children,
   className,
+  goalTitle,
   render,
 }: {
   children: ReactNode;
   className?: string;
+  goalTitle?: string;
   render?: ContainerProps["render"];
 }) {
   const t = await getExtracted();
@@ -52,21 +55,23 @@ export async function PlusPricingPage({
     <Container className={cn("gap-8 py-4 sm:py-8 lg:gap-10 lg:py-10", className)} render={render}>
       <ContainerHeader className="items-start">
         <ContainerHeaderGroup className="max-w-3xl gap-4">
-          <Badge variant="outline">{t("Zoonk Plus")}</Badge>
+          {goalTitle && (
+            <p className="text-muted-foreground text-sm font-medium text-pretty sm:text-base">
+              {t("Your goal: {goal}", { goal: goalTitle })}
+            </p>
+          )}
 
-          <ContainerTitle className="text-4xl leading-[0.95] font-semibold tracking-[-0.04em] sm:text-5xl lg:text-6xl">
-            {t("Learn anything. It’s all included.")}
+          <ContainerTitle className="text-4xl leading-[0.95] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+            {goalTitle
+              ? t("Keep going with Plus.")
+              : t("Get ready for your exam, new job or move.")}
           </ContainerTitle>
 
           <ContainerDescription className="max-w-2xl text-base leading-relaxed sm:text-lg">
             {t(
-              "Whatever you want to learn, Plus gives you as many lessons and goals as you need and more time with the AI tutor.",
+              "With Plus, you get as many lessons and goals as you need, mock exams in real conditions and the AI tutor whenever you're stuck.",
             )}
           </ContainerDescription>
-
-          <p className="text-muted-foreground pt-2 font-mono text-xs tracking-wide text-pretty uppercase">
-            {t("Any subject · Every goal · One price")}
-          </p>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
@@ -75,7 +80,7 @@ export async function PlusPricingPage({
   );
 }
 
-/** Free and Plus compared, beside the Plus offer for whoever is looking. */
+/** Free and Plus compared, beside the Plus offer for whoever is looking, then what people ask. */
 export async function PlusPricing({
   monthlyPrice,
   viewerState,
@@ -89,14 +94,18 @@ export async function PlusPricing({
   const hasNoAccount = viewerState.status === "guest" || viewerState.status === "visitor";
 
   return (
-    <section aria-label={t("Zoonk Plus benefits and pricing")} className={PRICING_GRID_CLASS}>
-      <PlanComparison isVisitor={hasNoAccount} />
-      <PlusPurchase
-        monthlyPrice={monthlyPrice}
-        viewerState={viewerState}
-        yearlyPrice={yearlyPrice}
-      />
-    </section>
+    <>
+      <section aria-label={t("Zoonk Plus benefits and pricing")} className={PRICING_GRID_CLASS}>
+        <PlanComparison />
+        <PlusPurchase
+          monthlyPrice={monthlyPrice}
+          viewerState={viewerState}
+          yearlyPrice={yearlyPrice}
+        />
+      </section>
+
+      <PlusQuestions hasNoAccount={hasNoAccount} />
+    </>
   );
 }
 

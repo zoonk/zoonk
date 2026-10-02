@@ -39,7 +39,7 @@ export async function LessonMore({
   }));
 
   return (
-    <div className="mt-16 border-t sm:mt-20">
+    <div className="mt-16 sm:mt-20">
       {ideas.length > 0 && (
         <PublicDisclosure
           aside={t("{count, plural, one {# idea} other {# ideas}}", { count: ideas.length })}

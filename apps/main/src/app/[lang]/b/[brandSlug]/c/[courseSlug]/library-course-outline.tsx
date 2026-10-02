@@ -198,7 +198,7 @@ export async function LibraryCourseOutline({
             ))}
           </ol>
 
-          <div className="mt-6 max-w-[760px] border-t sm:mt-8">
+          <div className="mt-6 max-w-[760px] sm:mt-8">
             <PublicDisclosure
               aside={t(
                 "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}",

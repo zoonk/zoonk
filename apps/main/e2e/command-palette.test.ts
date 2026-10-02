@@ -282,7 +282,9 @@ test.describe("Command Palette - Authenticated", () => {
     await dialog.getByText(/manage subscription/iu).click();
 
     // Verify user sees subscription page
-    await expect(page.getByRole("heading", { level: 1, name: /learn anything/iu })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Get ready for your exam, new job or move." }),
+    ).toBeVisible();
   });
 
   // Logout test uses dedicated logoutPage fixture to avoid session interference

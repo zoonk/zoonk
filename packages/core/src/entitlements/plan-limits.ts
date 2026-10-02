@@ -19,8 +19,3 @@ export function getFreePlanLimits() {
     uploadsPerDay: getUsageRule({ kind: "upload", tier: "free" }).day ?? null,
   };
 }
-
-/** Plus's one hard cap, new goals a day; everything else it includes only has fair use. */
-export function getPlusPlanLimits() {
-  return { newGoalsPerDay: getUsageRule({ kind: "goal", tier: "plus" }).day ?? null };
-}

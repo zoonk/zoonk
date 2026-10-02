@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { type Browser, type Page } from "@playwright/test";
-import { getFreePlanLimits, getPlusPlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
   guardianLinkFixture,
   learningProfileFixture,
@@ -158,25 +158,32 @@ async function openAsGuest(browser: Browser) {
   const context = await browser.newContext({ storageState: user.storageState });
   await context.clearCookies({ name: /session_data/u });
 
-  return { context, page: await context.newPage() };
+  return { context, page: await context.newPage(), user };
 }
 
 test.describe("Subscription Page - Guest", () => {
-  test("shows the Plus offer and asks the guest to log in before subscribing", async ({
+  test("offers Plus for the guest's goal and asks them to sign in before subscribing", async ({
     browser,
   }) => {
-    const limits = getFreePlanLimits();
-    const { context, page } = await openAsGuest(browser);
+    const { context, page, user } = await openAsGuest(browser);
+    await goalFixture({ title: "Speak English in Toronto", userId: user.id });
     await page.goto("/subscription");
 
     await expect(page).toHaveURL(/\/subscription$/u);
-    await expect(page.getByRole("heading", { level: 1, name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByText("Your goal: Speak English in Toronto")).toBeVisible();
 
     await expect(
-      page.getByText(`No account yet? You can try ${limits.guestLessons} lessons first.`),
+      page.getByRole("heading", { level: 1, name: "Keep going with Plus." }),
     ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /log in to subscribe/iu })).toHaveAttribute(
+    // Without an account, trying first is still one of their questions.
+    await expect(
+      page
+        .getByRole("region", { name: "Common questions" })
+        .getByText("Can I try Zoonk before paying?"),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
       "href",
       "/login?next=%2Fsubscription",
     );
@@ -195,7 +202,13 @@ test.describe("Subscription Page - No Subscription", () => {
     await page.goto("/pricing");
 
     await expect(page).toHaveURL(/\/subscription$/u);
-    await expect(page.getByRole("heading", { level: 1, name: /learn anything/iu })).toBeVisible();
+
+    // Without a goal yet, the offer says what Zoonk gets people ready for.
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Get ready for your exam, new job or move." }),
+    ).toBeVisible();
+
+    await expect(page.getByText(/your goal:/iu)).toHaveCount(0);
     await expect(page.getByRole("link", { exact: true, name: "Today" })).toHaveCount(0);
 
     await expect(
@@ -207,7 +220,9 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(page.getByRole("link", { name: "Try free" })).toHaveCount(0);
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();
-    await expect(page.getByText(/no account yet/iu)).toHaveCount(0);
+    const questions = page.getByRole("region", { name: "Common questions" });
+    await expect(questions.getByText("What happens if I cancel?")).toBeVisible();
+    await expect(questions.getByText("Can I try Zoonk before paying?")).toHaveCount(0);
 
     await expect(page.getByRole("button", { name: /monthly/iu })).toHaveAttribute(
       "aria-pressed",
@@ -323,16 +338,10 @@ test.describe("Subscription Page - With Plus Subscription", () => {
 
     const included = page.getByRole("region", { name: "What's included" });
     await expect(included.getByText("Exam prep")).toBeVisible();
-    await expect(included.getByText("Everything, including mock exams")).toBeVisible();
-    await expect(included.getByText("Unlimited*")).toHaveCount(3);
+    await expect(included.getByText("Full prep")).toBeVisible();
+    await expect(included.getByText("Unlimited", { exact: true })).toHaveCount(5);
 
-    await expect(
-      included.getByText(
-        `With Plus, you can start up to ${getPlusPlanLimits().newGoalsPerDay} new goals a day.`,
-      ),
-    ).toBeVisible();
-
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /get ready for your exam/iu })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
     await expectAccessibleScreen(page, "a Fun Plus plan");
 
@@ -442,7 +451,7 @@ test.describe("Subscription Page - Provider Managed", () => {
     await expect(page.getByText(/current billing period ends on/iu)).toBeVisible();
     await expect(page.getByText(/managed through the app store/iu)).toBeVisible();
     await expect(page.getByRole("link", { name: /manage in app store/iu })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /get ready for your exam/iu })).toHaveCount(0);
 
     await expect(page.getByRole("link", { name: /manage in app store/iu })).toHaveAttribute(
       "href",

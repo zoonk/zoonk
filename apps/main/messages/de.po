@@ -2638,29 +2638,9 @@ msgid "We couldn't send that. Try again in a moment."
 msgstr "Wir konnten die Anfrage nicht senden. Versuch es gleich noch einmal."
 
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "mN394y"
-msgid "Unlimited for personal use, under our <link>fair use policy</link>."
-msgstr "Unbegrenzt für die persönliche Nutzung, gemäß unserer <link>Fair-Use-Richtlinie</link>."
-
-#: src/components/pricing/plan-comparison.tsx
-msgctxt "FQ2bnB"
-msgid "With Plus, you can start up to {count, plural, one {# new goal} other {# new goals}} a day."
-msgstr "Mit Plus kannst du bis zu {count, plural, one {# neues Ziel} other {# neue Ziele}} pro Tag starten."
-
-#: src/components/pricing/plan-comparison.tsx
 msgctxt "ekXood"
 msgid "Unlimited"
 msgstr "Unbegrenzt"
-
-#: src/components/pricing/plan-comparison.tsx
-msgctxt "NAKlvM"
-msgid "Active goals"
-msgstr "Aktive Ziele"
-
-#: src/components/pricing/plan-comparison.tsx
-msgctxt "xSBYc8"
-msgid "{count, plural, one {# goal} other {# goals}}"
-msgstr "{count, plural, one {# Ziel} other {# Ziele}}"
 
 #: src/components/pricing/plan-comparison.tsx
 msgctxt "a7xAS4"
@@ -2673,39 +2653,61 @@ msgid "{day, number} a day, {month, number} a month"
 msgstr "{day, number} pro Tag, {month, number} pro Monat"
 
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "dkitYQ"
-msgid "Reviews, mistakes and quick explanations"
-msgstr "Wiederholungen, Fehler und kurze Erklärungen"
+msgctxt "P6Ufj7"
+msgid "Goals at once"
+msgstr "Ziele gleichzeitig"
 
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "ULRaOP"
-msgid "Included"
-msgstr "Enthalten"
+msgctxt "xSBYc8"
+msgid "{count, plural, one {# goal} other {# goals}}"
+msgstr "{count, plural, one {# Ziel} other {# Ziele}}"
 
 #: src/components/pricing/plan-comparison.tsx
 msgctxt "7ZmhIH"
 msgid "Exam prep"
 msgstr "Prüfungsvorbereitung"
 
+#. Free plan's exam prep in the plan comparison: only its start (the diagnostic, the plan and the first week), never mock exams. Agree with the word for 'Exam prep'.
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "zZVfCj"
-msgid "Diagnostic, plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}}"
-msgstr "Diagnose, Plan und {days, plural, =7 {die erste Woche} one {der erste Tag} other {die ersten # Tage}}"
+msgctxt "hVIj7Y"
+msgid "Limited"
+msgstr "Begrenzt"
+
+#. Plus's exam prep in the plan comparison: the whole plan to exam day, including mock exams.
+#: src/components/pricing/plan-comparison.tsx
+msgctxt "X3nAKA"
+msgid "Full prep"
+msgstr "Vollständige Vorbereitung"
 
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "a6UICz"
-msgid "Everything, including mock exams"
-msgstr "Alles, auch Probeprüfungen"
+msgctxt "aI04qe"
+msgid "AI tutor"
+msgstr "KI-Tutor"
 
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "lAbQR2"
-msgid "AI tutor, uploads and conversations"
-msgstr "KI-Tutor, Uploads und Unterhaltungen"
+msgctxt "NAzR3r"
+msgid "{count, plural, one {# message} other {# messages}} a day"
+msgstr "{count, plural, one {# Nachricht} other {# Nachrichten}} pro Tag"
 
 #: src/components/pricing/plan-comparison.tsx
-msgctxt "J6fdfC"
-msgid "{tutor, plural, one {# tutor message} other {# tutor messages}}, {uploads, plural, one {# upload} other {# uploads}} and {conversations, plural, one {# conversation} other {# conversations}} a day"
-msgstr "{tutor, plural, one {# Nachricht an den Tutor} other {# Nachrichten an den Tutor}}, {uploads, plural, one {# Upload} other {# Uploads}} und {conversations, plural, one {# Unterhaltung} other {# Unterhaltungen}} pro Tag"
+msgctxt "LdUCtG"
+msgid "Speaking practice"
+msgstr "Sprechübungen"
+
+#: src/components/pricing/plan-comparison.tsx
+msgctxt "vvmrzG"
+msgid "{count, plural, one {# conversation} other {# conversations}} a day"
+msgstr "{count, plural, one {# Gespräch} other {# Gespräche}} pro Tag"
+
+#: src/components/pricing/plan-comparison.tsx
+msgctxt "LVfc4R"
+msgid "Your notes and files"
+msgstr "Deine Notizen und Dateien"
+
+#: src/components/pricing/plan-comparison.tsx
+msgctxt "r5O_qj"
+msgid "{count, plural, one {# upload} other {# uploads}} a day"
+msgstr "{count, plural, one {# Upload} other {# Uploads}} pro Tag"
 
 #: src/components/pricing/plan-comparison.tsx
 msgctxt "qSpjet"
@@ -2722,15 +2724,10 @@ msgctxt "tf1lIh"
 msgid "Free"
 msgstr "Free"
 
-#: src/components/pricing/plan-comparison.tsx
-msgctxt "uRK9FU"
-msgid "No account yet? You can try {count, plural, one {# lesson} other {# lessons}} first."
-msgstr "Noch kein Konto? Du kannst erst einmal {count, plural, one {# Lektion} other {# Lektionen}} ausprobieren."
-
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "R1OrCJ"
-msgid "Compare Free and Plus: as many lessons and goals as you need and more time with the AI tutor, whatever you want to learn."
-msgstr "Vergleiche Free und Plus: So viele Lektionen und Ziele, wie du brauchst, und mehr Zeit mit dem KI-Tutor – ganz gleich, was du lernen möchtest."
+msgctxt "A0I68d"
+msgid "Compare Free and Plus. Get ready for your exam, new job or move with as many lessons and goals as you need, mock exams and the AI tutor."
+msgstr "Vergleiche Free und Plus. Bereite dich mit so vielen Lektionen und Zielen wie nötig, Probeprüfungen und dem KI-Tutor auf deine Prüfung, deinen neuen Job oder deinen Umzug vor."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "DfjjXa"
@@ -2738,24 +2735,24 @@ msgid "Zoonk Plus: plans and pricing"
 msgstr "Zoonk Plus: Tarife und Preise"
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "hIdQeQ"
-msgid "Zoonk Plus"
-msgstr "Zoonk Plus"
+msgctxt "tvsXXs"
+msgid "Your goal: {goal}"
+msgstr "Dein Ziel: {goal}"
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "H0FbIJ"
-msgid "Learn anything. It’s all included."
-msgstr "Lerne alles, was du willst. Alles ist inklusive."
+msgctxt "-xdmmE"
+msgid "Keep going with Plus."
+msgstr "Lern mit Plus weiter."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "K0_loh"
-msgid "Whatever you want to learn, Plus gives you as many lessons and goals as you need and more time with the AI tutor."
-msgstr "Egal, was du lernen möchtest: Mit Plus bekommst du so viele Lektionen und Ziele, wie du brauchst, und mehr Zeit mit dem KI-Tutor."
+msgctxt "I9zhni"
+msgid "Get ready for your exam, new job or move."
+msgstr "Bereite dich auf deine Prüfung, deinen neuen Job oder deinen Umzug vor."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "iCdyaS"
-msgid "Any subject · Every goal · One price"
-msgstr "Jedes Fach · Jedes Ziel · Ein Preis"
+msgctxt "9NfUma"
+msgid "With Plus, you get as many lessons and goals as you need, mock exams in real conditions and the AI tutor whenever you're stuck."
+msgstr "Mit Plus bekommst du so viele Lektionen und Ziele, wie du brauchst, Probeprüfungen unter realen Bedingungen und kannst den KI-Tutor nutzen, wann immer du nicht weiterkommst."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "J9LvW5"
@@ -2763,89 +2760,9 @@ msgid "Zoonk Plus benefits and pricing"
 msgstr "Vorteile und Preise von Zoonk Plus"
 
 #: src/components/pricing/plus-purchase.tsx
-msgctxt "C3Hmw0"
-msgid "a month of private tutoring"
-msgstr "ein Monat Privatunterricht"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "h9oETs"
-msgid "a textbook you'll open twice"
-msgstr "ein Lehrbuch, das du zweimal aufschlägst"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "oP6NJx"
-msgid "a fancy dinner for two"
-msgstr "ein schickes Abendessen zu zweit"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "MtbyzS"
-msgid "front-row concert tickets"
-msgstr "Konzertkarten für die erste Reihe"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "vxzsn1"
-msgid "a brand-new video game"
-msgstr "ein brandneues Videospiel"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "vsqSNK"
-msgid "sneakers you didn't need"
-msgstr "Sneaker, die du gar nicht gebraucht hast"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "KoMyfG"
-msgid "a speeding ticket"
-msgstr "ein Strafzettel wegen zu schnellen Fahrens"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "aE4BO-"
-msgid "fixing a cracked phone screen"
-msgstr "die Reparatur eines gesprungenen Handydisplays"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "29Y6gz"
-msgid "a weekend getaway"
-msgstr "ein Kurzurlaub übers Wochenende"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "V9bMZU"
-msgid "a cab from the airport"
-msgstr "eine Taxifahrt vom Flughafen"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "FsjuNn"
-msgid "a birthday cake for the whole office"
-msgstr "eine Geburtstagstorte fürs ganze Büro"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "j7T_J2"
-msgid "noise-canceling headphones"
-msgstr "geräuschunterdrückende Kopfhörer"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "P50VNR"
-msgid "a designer candle you don't need"
-msgstr "eine Designerkerze, die du nicht brauchst"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "xveLo5"
-msgid "a pile of forgotten subscriptions"
-msgstr "ein Haufen vergessener Abos"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "G3XUti"
-msgid "a drawer of socks with tiny avocados"
-msgstr "eine Schublade voller Socken mit winzigen Avocados"
-
-#: src/components/pricing/plus-purchase.tsx
 msgctxt "h9kFux"
 msgid "Save {amount} every year"
 msgstr "Spare jedes Jahr {amount}"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "gl_57d"
-msgid "Everything included"
-msgstr "Alles inklusive"
 
 #: src/components/pricing/plus-purchase.tsx
 msgctxt "u2XWYU"
@@ -2863,14 +2780,10 @@ msgid "Yearly"
 msgstr "Jährlich"
 
 #: src/components/pricing/plus-purchase.tsx
-msgctxt "DWdUaF"
-msgid "Investing in your future is cheaper than"
-msgstr "In deine Zukunft zu investieren ist günstiger als"
-
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "NYTy1D"
-msgid "Log in to subscribe"
-msgstr "Zum Abonnieren einloggen"
+#: src/components/public/course-start-failure.tsx
+msgctxt "0I_Rwu"
+msgid "Get Plus"
+msgstr "Hol dir Plus"
 
 #: src/components/pricing/plus-purchase.tsx
 msgctxt "gczcC5"
@@ -2878,14 +2791,59 @@ msgid "Subscribe"
 msgstr "Abonnieren"
 
 #: src/components/pricing/plus-purchase.tsx
-msgctxt "pTtXdP"
-msgid "No per-course fees. Cancel anytime."
-msgstr "Keine Gebühren pro Kurs. Jederzeit kündbar."
+msgctxt "dyhF_4"
+msgid "Cancel anytime."
+msgstr "Jederzeit kündbar."
 
 #: src/components/pricing/plus-purchase.tsx
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "Der Bezahlvorgang konnte nicht gestartet werden. Kontaktiere uns unter hello@zoonk.com"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "uUjwhB"
+msgid "Common questions"
+msgstr "Häufige Fragen"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "zAc0Zf"
+msgid "Is Plus really unlimited?"
+msgstr "Ist Plus wirklich unbegrenzt?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "-QCGXn"
+msgid "Yes. Learn as much as you want. Our limits are only there to stop bots and automated tools, not people learning. <link>Read our fair use policy</link>."
+msgstr "Ja. Lerne so viel, wie du möchtest. Unsere Grenzen sollen nur Bots und automatisierte Tools aufhalten, nicht Menschen, die lernen. <link>Lies unsere Fair-Use-Richtlinie</link>."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "xGQ-qT"
+msgid "Can I try Zoonk before paying?"
+msgstr "Kann ich Zoonk vor dem Bezahlen ausprobieren?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "sBnIpb"
+msgid "Yes. Zoonk has a free plan, so you can try it before you pay. You don't even need an account for {count, plural, one {your first lesson} other {your first # lessons}}."
+msgstr "Ja. Zoonk hat einen kostenlosen Tarif, den du ausprobieren kannst, bevor du zahlst. Für {count, plural, one {deine erste Lektion} other {deine ersten # Lektionen}} brauchst du nicht einmal ein Konto."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "jNjtlE"
+msgid "What happens if I cancel?"
+msgstr "Was passiert, wenn ich kündige?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "z1FMPn"
+msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
+msgstr "Du behältst Plus bis zum Ende des Zeitraums, den du bereits bezahlt hast. Danach nutzt du wieder den kostenlosen Tarif, und deine Ziele und dein Fortschritt bleiben erhalten."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "94whIk"
+msgid "Can I get a refund?"
+msgstr "Kann ich eine Rückerstattung bekommen?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "LHV1sa"
+msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
+msgstr "<link>Kontaktiere uns</link> einfach und erzähl uns, was passiert ist. Wir tun unser Bestes, damit du dein Geld zurückbekommst."
 
 #: src/components/progress/learning-days-card.tsx
 msgctxt "8F6teD"
@@ -2932,11 +2890,6 @@ msgstr "{count, plural, =0 {# Lektionen} one {# Lektion} other {# Lektionen}}"
 msgctxt "-V74AY"
 msgid "Learning time"
 msgstr "Lernzeit"
-
-#: src/components/public/course-start-failure.tsx
-msgctxt "0I_Rwu"
-msgid "Get Plus"
-msgstr "Hol dir Plus"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"

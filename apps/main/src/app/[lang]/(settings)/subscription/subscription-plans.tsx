@@ -1,6 +1,7 @@
 import { PlusPricing, PlusPricingPage } from "@/components/pricing/plus-pricing";
 import { type PlusViewerState } from "@/components/pricing/plus-purchase";
 import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
+import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getLearnerProtections } from "@zoonk/core/minors/protections";
 import { getSession } from "@zoonk/core/users/session";
@@ -12,19 +13,20 @@ import { StripeCheckoutReturn } from "./stripe-checkout-return";
 
 /**
  * Subscribers see their plan: what it includes, when it renews and where to manage it. Everyone
- * else sees the offer, with the action their account allows.
+ * else sees the offer, with the action their account allows, about the goal they're working on.
  */
 export async function SubscriptionPlans({
   searchParams,
 }: {
   searchParams: PageProps<"/[lang]/subscription">["searchParams"];
 }) {
-  const [query, session, subscription, prices, protections] = await Promise.all([
+  const [query, session, subscription, prices, protections, goal] = await Promise.all([
     searchParams,
     getSession(),
     getCurrentPlusSubscription(),
     getPlusPrices(),
     getLearnerProtections(),
+    getCurrentGoal(),
   ]);
 
   const stripeCheckoutCompleted = query.stripe_checkout === "complete";
@@ -52,7 +54,7 @@ export async function SubscriptionPlans({
   });
 
   return (
-    <PlusPricingPage className="sm:max-w-150 lg:max-w-5xl">
+    <PlusPricingPage className="sm:max-w-150 lg:max-w-5xl" goalTitle={goal?.title}>
       <PlusPricing
         monthlyPrice={prices.monthlyPrice}
         viewerState={viewerState}

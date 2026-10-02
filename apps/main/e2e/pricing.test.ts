@@ -1,13 +1,8 @@
-import { getFreePlanLimits, getPlusPlanLimits } from "@zoonk/core/entitlements/plan-limits";
+import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { type Page, expect, test } from "./fixtures";
 
 const PHONE_VIEWPORT = { height: 812, width: 375 };
-
-/** The note under Plus's "Unlimited*" values, with Plus's one hard cap. */
-function getFairUseNote() {
-  return `*Unlimited for personal use, under our fair use policy. With Plus, you can start up to ${getPlusPlanLimits().newGoalsPerDay} new goals a day.`;
-}
 
 /**
  * The public pricing page: the plans in the public frame (no learning tabs or settings), with
@@ -15,7 +10,11 @@ function getFairUseNote() {
  */
 async function expectPublicPricing(page: Page) {
   await expect(page).toHaveURL(/\/pricing$/u);
-  await expect(page.getByRole("heading", { level: 1, name: /learn anything/iu })).toBeVisible();
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Get ready for your exam, new job or move." }),
+  ).toBeVisible();
+
   await expect(page.getByRole("link", { name: "Try free" })).toHaveAttribute("href", "/start");
   await expect(page.getByRole("navigation", { name: "Footer" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Settings" })).toHaveCount(0);
@@ -72,7 +71,7 @@ test.describe("Pricing for visitors", () => {
     await context.close();
   });
 
-  test("compares the plans, lets people with an account log in to subscribe, and links fair use", async ({
+  test("compares the plans, lets visitors sign in to get Plus, and answers common questions", async ({
     page,
   }) => {
     const limits = getFreePlanLimits();
@@ -82,37 +81,35 @@ test.describe("Pricing for visitors", () => {
     await expect(plans).toBeVisible();
     await expectAccessibleScreen(page, "the pricing page");
 
-    await expect(
-      plans
-        .getByRole("row", { name: /active goals/iu })
-        .getByRole("cell")
-        .last(),
-    ).toHaveText("Unlimited*");
-
     await expect(plans.getByRole("row", { name: /new lessons/iu }).getByRole("cell")).toHaveText([
       `${limits.lessonsPerDay} a day, ${limits.lessonsPerMonth} a month`,
-      "Unlimited*",
+      "Unlimited",
+    ]);
+
+    await expect(plans.getByRole("row", { name: /goals at once/iu }).getByRole("cell")).toHaveText([
+      `${limits.activeGoals} goal`,
+      "Unlimited",
+    ]);
+
+    await expect(plans.getByRole("row", { name: /AI tutor/u }).getByRole("cell")).toHaveText([
+      `${limits.tutorMessagesPerDay} messages a day`,
+      "Unlimited",
     ]);
 
     await expect(
-      plans
-        .getByRole("row", { name: /AI tutor/u })
-        .getByRole("cell")
-        .last(),
-    ).toHaveText("Unlimited*");
+      plans.getByRole("row", { name: /speaking practice/iu }).getByRole("cell"),
+    ).toHaveText([`${limits.conversationsPerDay} conversations a day`, "Unlimited"]);
 
-    await expect(page.getByText(getFairUseNote())).toBeVisible();
+    await expect(
+      plans.getByRole("row", { name: /your notes and files/iu }).getByRole("cell"),
+    ).toHaveText([`${limits.uploadsPerDay} uploads a day`, "Unlimited"]);
 
     await expect(plans.getByRole("row", { name: /exam prep/iu }).getByRole("cell")).toHaveText([
-      "Diagnostic, plan and the first week",
-      "Everything, including mock exams",
+      "Limited",
+      "Full prep",
     ]);
 
-    await expect(
-      page.getByText(`No account yet? You can try ${limits.guestLessons} lessons first.`),
-    ).toBeVisible();
-
-    await expect(page.getByRole("link", { name: "Log in to subscribe" })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
       "href",
       "/login?next=%2Fsubscription",
     );
@@ -121,7 +118,25 @@ test.describe("Pricing for visitors", () => {
     await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
 
-    await page.getByText(getFairUseNote()).getByRole("link", { name: "fair use policy" }).click();
+    const questions = page.getByRole("region", { name: "Common questions" });
+
+    await questions.getByText("Can I try Zoonk before paying?").click();
+
+    await expect(
+      questions.getByText(
+        `You don't even need an account for your first ${limits.guestLessons} lessons.`,
+      ),
+    ).toBeVisible();
+
+    await questions.getByText("Can I get a refund?").click();
+
+    await expect(questions.getByRole("link", { name: "contact us" })).toHaveAttribute(
+      "href",
+      "/support",
+    );
+
+    await questions.getByText("Is Plus really unlimited?").click();
+    await questions.getByRole("link", { name: "Read our fair use policy" }).click();
 
     await expect(page).toHaveURL(/\/terms#fair-use$/u);
     await expect(page.getByRole("heading", { level: 2, name: "6. Fair use" })).toBeInViewport();
