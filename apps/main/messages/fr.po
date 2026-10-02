@@ -69,6 +69,7 @@ msgstr "Langue"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/navbar-links.tsx
+#: src/app/[lang]/(settings)/_components/settings-navbar.tsx
 msgctxt "U3l-Q9"
 msgid "Home page"
 msgstr "Page d’accueil"

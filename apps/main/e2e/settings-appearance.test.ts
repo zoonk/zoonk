@@ -59,7 +59,14 @@ test.describe("Appearance", () => {
 
     await expect(page.getByRole("radio", { name: /^Fun/u })).toBeChecked();
     await expect(page.getByRole("button", { name: "Choose your buddy" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Route" })).toBeVisible();
+
+    await expect(
+      page
+        .getByRole("navigation", { name: "Settings" })
+        .getByRole("link", { exact: true, name: "Home page" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { exact: true, name: "Route" })).toHaveCount(0);
 
     await expect
       .poll(() => findProfile(noProgressUser.id))
@@ -74,6 +81,11 @@ test.describe("Appearance", () => {
       status: goal.status,
       updatedAt: goal.updatedAt,
     });
+
+    await page.getByRole("link", { exact: true, name: "Home page" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect(page.getByRole("link", { exact: true, name: "Route" })).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Settings" })).toHaveCount(0);
   });
 
   test("changes and renames the buddy with only earned glasses, and keeps it when back in Focus", async ({

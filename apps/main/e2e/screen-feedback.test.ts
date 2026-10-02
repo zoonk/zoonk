@@ -262,19 +262,20 @@ test.describe("Send feedback from anywhere", () => {
     userWithoutProgress: page,
   }) => {
     const submission = await mockFeedbackSubmission(page);
-    await page.goto("/profile");
+    await page.goto("/courses");
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
 
     await page.getByRole("button", { name: "User menu" }).click();
     await page.getByRole("menuitem", { name: "Send feedback" }).click();
 
     const dialog = page.getByRole("dialog", { name: "Feedback" });
-    await dialog.getByRole("textbox", { name: "Message" }).fill("Love the new settings");
+    await dialog.getByRole("textbox", { name: "Message" }).fill("Love the course catalog");
     await dialog.getByRole("button", { name: "Send message" }).click();
     await expect(dialog.getByText(/message sent successfully/iu)).toBeVisible();
 
     await expect(submission.requestBody).resolves.toMatchObject({
-      context: { platform: "web", screen: "account-menu", url: "/profile" },
-      message: "Love the new settings",
+      context: { platform: "web", screen: "account-menu", url: "/courses" },
+      message: "Love the course catalog",
     });
   });
 

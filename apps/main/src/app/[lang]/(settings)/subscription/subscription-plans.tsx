@@ -52,7 +52,7 @@ export async function SubscriptionPlans({
   });
 
   return (
-    <PlusPricingPage className="mx-auto sm:max-w-150 lg:max-w-5xl">
+    <PlusPricingPage className="sm:max-w-150 lg:max-w-5xl">
       <PlusPricing
         monthlyPrice={prices.monthlyPrice}
         viewerState={viewerState}

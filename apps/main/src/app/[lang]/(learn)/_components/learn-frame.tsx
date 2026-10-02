@@ -39,8 +39,7 @@ export function toStats({ belt, energy }: LearnerNumbers): LearnStatsView {
 
 /**
  * Goal switcher on the left, the tabs or the dock in the center, then search (desktop), Energy and
- * the account on the right. On tablets it keeps the 600px column's edges on every page, settings
- * included.
+ * the account on the right. On tablets it keeps the 600px column's edges on every learning page.
  */
 function LearnTopBar({ numbers, buddy }: { numbers: LearnerNumbers; buddy: LearnBuddy | null }) {
   return (
@@ -69,14 +68,7 @@ function LearnTopBar({ numbers, buddy }: { numbers: LearnerNumbers; buddy: Learn
 }
 
 /** The learning tabs' frame in the learner's mode: the top bar around one centered column. */
-export async function LearnFrame({
-  children,
-  column = true,
-}: {
-  children: React.ReactNode;
-  /** Settings pages set their own width under the top bar, so they skip the column. */
-  column?: boolean;
-}) {
+export async function LearnFrame({ children }: { children: React.ReactNode }) {
   const [mode, belt, energy, buddy] = await Promise.all([
     getExperienceMode(),
     getBeltLevel(),
@@ -89,7 +81,7 @@ export async function LearnFrame({
       <MainLearnProvider>
         <LearnShell>
           <LearnTopBar numbers={{ belt, energy }} buddy={buddy} />
-          {column ? <LearnShellMain>{children}</LearnShellMain> : children}
+          <LearnShellMain>{children}</LearnShellMain>
         </LearnShell>
       </MainLearnProvider>
     </ModeProvider>

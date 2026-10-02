@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Subscribers and everyone else see different pages, so the wait shows neither's headline. */
 function SubscriptionSkeleton() {
   return (
-    <Container className="mx-auto gap-8 py-4 sm:max-w-150 sm:py-8 lg:max-w-5xl lg:gap-10 lg:py-10">
+    <Container className="gap-8 py-4 sm:max-w-150 sm:py-8 lg:max-w-5xl lg:gap-10 lg:py-10">
       <ContainerHeaderSkeleton />
       <PlusPricingSkeleton />
     </Container>

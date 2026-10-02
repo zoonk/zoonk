@@ -2,13 +2,14 @@ import { expect, test } from "./fixtures";
 import { readDeviceMode } from "./learn-personas";
 
 test.describe("Settings Navbar", () => {
-  test("displays all settings navigation pills under the learning top bar", async ({ page }) => {
+  test("settings have their own navigation and a link home", async ({ page }) => {
     await page.goto("/language");
 
-    await expect(page.getByRole("link", { name: "Today" })).toBeVisible();
+    await expect(page.getByRole("link", { exact: true, name: "Today" })).toHaveCount(0);
 
     const settings = page.getByRole("navigation", { name: "Settings" });
 
+    await expect(settings.getByRole("link", { exact: true, name: "Home page" })).toBeVisible();
     await expect(settings.getByRole("link", { name: /subscription/iu })).toBeVisible();
     await expect(settings.getByRole("link", { name: /language/iu })).toBeVisible();
     await expect(settings.getByRole("link", { name: /profile/iu })).toBeVisible();
@@ -18,6 +19,9 @@ test.describe("Settings Navbar", () => {
     // Memory needs an account, and guardian links are only for learners under 18.
     await expect(settings.getByRole("link", { name: /memory/iu })).toHaveCount(0);
     await expect(settings.getByRole("link", { name: /guardian/iu })).toHaveCount(0);
+
+    await settings.getByRole("link", { exact: true, name: "Home page" }).click();
+    await expect(page).toHaveURL(/\/$/u);
   });
 
   test("a direct phone visit shows the current page's pill", async ({ page }) => {

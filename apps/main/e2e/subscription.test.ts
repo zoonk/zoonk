@@ -196,8 +196,14 @@ test.describe("Subscription Page - No Subscription", () => {
 
     await expect(page).toHaveURL(/\/subscription$/u);
     await expect(page.getByRole("heading", { level: 1, name: /learn anything/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Today" })).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "Settings" })).toBeVisible();
+    await expect(page.getByRole("link", { exact: true, name: "Today" })).toHaveCount(0);
+
+    await expect(
+      page
+        .getByRole("navigation", { name: "Settings" })
+        .getByRole("link", { exact: true, name: "Home page" }),
+    ).toBeVisible();
+
     await expect(page.getByRole("link", { name: "Try free" })).toHaveCount(0);
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();

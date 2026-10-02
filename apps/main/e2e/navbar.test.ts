@@ -34,7 +34,7 @@ test.describe("Navbar - Unauthenticated", () => {
 });
 
 test.describe("Navbar - Authenticated", () => {
-  test("the user menu opens My courses, Subscription, Profile and Support", async ({
+  test("the user menu opens My courses and settings, whose navigation opens Profile and Support", async ({
     userWithoutProgress: page,
   }) => {
     await page.goto("/courses");
@@ -45,13 +45,19 @@ test.describe("Navbar - Authenticated", () => {
     await openUserMenuItem(page, /subscription/iu);
     await expect(page).toHaveURL(/\/subscription$/u);
 
-    await openUserMenuItem(page, /profile/iu);
+    const settings = page.getByRole("navigation", { name: "Settings" });
+
+    await settings.getByRole("link", { name: /profile/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: /profile/iu })).toBeVisible();
 
-    await openUserMenuItem(page, /support/iu);
+    await settings.getByRole("link", { name: /support/iu }).click();
 
     await expect(
       page.getByRole("heading", { level: 1, name: /feedback & support/iu }),
     ).toBeVisible();
+
+    await settings.getByRole("link", { exact: true, name: "Home page" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect(page.getByRole("link", { exact: true, name: "Today" })).toBeVisible();
   });
 });
