@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { betterAuth } from "better-auth/minimal";
 import { checkBotId } from "botid/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BETTER_AUTH_BASE_PATH } from "../config";
 import { createEmailOTPPlugin } from "../email-otp-plugin";
 import { NativeAuthResponseError, getAuthError } from "../errors";
@@ -53,8 +53,28 @@ const email = () => `bot-check-${randomUUID()}@example.test`;
 
 describe("bot check on auth requests", () => {
   beforeEach(() => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", "preview");
+    vi.stubEnv("E2E_TESTING", "false");
     vi.mocked(checkBotId).mockReset();
     verdict({ isBot: true });
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("allows local auth without calling BotID when browser protection is disabled", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("VERCEL_ENV", "");
+
+    const [guest, code] = await Promise.all([
+      post("/sign-in/anonymous", {}),
+      post("/email-otp/send-verification-otp", { email: email(), type: "sign-in" }),
+    ]);
+
+    expect([guest.status, code.status]).toStrictEqual([200, 200]);
+    expect(checkBotId).not.toHaveBeenCalled();
   });
 
   it("refuses every request that makes a session or sends a code when BotID sees a bot", async () => {

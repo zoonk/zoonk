@@ -13,31 +13,37 @@ async function CallbackHandler({
   searchParams: PageProps<"/auth/callback">["searchParams"];
 }) {
   const { redirectTo } = await searchParams;
-  const redirectToStr = String(redirectTo);
 
-  const isTrusted = await validateTrustedOriginAction(redirectToStr);
+  if (typeof redirectTo !== "string" || !URL.canParse(redirectTo)) {
+    return redirect("/auth/untrusted-origin");
+  }
+
+  const [session, locale] = await Promise.all([getSession(), getLocale()]);
+
+  if (!session) {
+    return redirect(`/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`);
+  }
+
+  const isTrusted = await validateTrustedOriginAction(redirectTo);
 
   if (!isTrusted) {
     return redirect("/auth/untrusted-origin");
   }
 
-  const [session, locale] = await Promise.all([getSession(), getLocale()]);
-  const needsSetup = !session?.user.username || !session?.user.name;
+  const needsSetup = !session.user.username || !session.user.name;
 
-  if (session && needsSetup) {
+  if (needsSetup) {
     await trackAuthCompleted({ action: "sign-up", locale, userId: session.user.id });
-    redirect(`/auth/setup?redirectTo=${encodeURIComponent(redirectToStr)}`);
+    redirect(`/auth/setup?redirectTo=${encodeURIComponent(redirectTo)}`);
   }
 
-  const result = await createOneTimeTokenAction(redirectToStr);
+  const result = await createOneTimeTokenAction(redirectTo);
 
   if (!result.success) {
     return redirect("/auth/untrusted-origin");
   }
 
-  if (session) {
-    await trackAuthCompleted({ action: "sign-in", locale, userId: session.user.id });
-  }
+  await trackAuthCompleted({ action: "sign-in", locale, userId: session.user.id });
 
   return externalRedirect(result.url);
 }

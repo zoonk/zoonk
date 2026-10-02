@@ -13,6 +13,20 @@ test.describe("Trusted Origin Validation", () => {
     await disconnectDb();
   });
 
+  test("returns an unauthenticated callback to sign-in with its destination preserved", async ({
+    page,
+  }) => {
+    const redirectTo = `${TRUSTED_CROSS_ORIGIN}/auth/callback?state=login-state`;
+    await page.goto(`/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`);
+
+    await page.waitForURL(/\/auth\/login\?/u);
+    expect(new URL(page.url()).searchParams.get("redirectTo")).toBe(redirectTo);
+
+    await expect(
+      page.getByRole("heading", { name: /sign in or create an account/iu }),
+    ).toBeVisible();
+  });
+
   test("shows error page for untrusted external URL", async ({ page }) => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(UNTRUSTED_URL)}`);
 

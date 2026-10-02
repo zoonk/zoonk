@@ -1,6 +1,6 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { captcha } from "better-auth/plugins";
-import { checkBotId } from "botid/server";
+import { getBotIdVerification } from "../request-guards/bot-id";
 
 /**
  * Every auth request that creates a session or emails a sign-in code, without the auth base path.
@@ -32,14 +32,13 @@ async function isIdTokenSignIn(request: Request): Promise<boolean> {
 }
 
 /**
- * Vercel BotID on the auth requests above, through Better Auth's captcha plugin. BotID treats
- * local development as a person; E2E runs a production build outside Vercel, so its auth instance
- * leaves this plugin out. Requests without BotID's browser proof fail with 403, which is how
- * native apps' guest and email-code sign-ins fail closed until they can attest instead.
+ * The shared guard accepts local development and E2E without BotID proof. Deployed requests
+ * without browser proof fail with 403, so native guest and email-code sign-ins fail closed
+ * until they can attest instead.
  */
 export function botCheckPlugin() {
   return captcha({
-    checkBotId,
+    checkBotId: getBotIdVerification,
     endpoints: BOT_CHECKED_AUTH_PATHS,
     provider: "vercel-botid",
     validateRequest: async ({ request, verification }) =>
