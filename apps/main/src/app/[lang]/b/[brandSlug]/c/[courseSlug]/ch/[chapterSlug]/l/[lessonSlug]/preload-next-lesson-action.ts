@@ -1,6 +1,7 @@
 "use server";
 
 import { getApiDeploymentHeaders } from "@zoonk/core/security/api-deployment";
+import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { API_URL } from "@zoonk/utils/url";
 import { headers } from "next/headers";
@@ -48,7 +49,16 @@ async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
  * checks so this cannot be used as a generic generation proxy.
  */
 export async function preloadNextLesson(lessonId: string): Promise<void> {
-  const [reqHeaders, deploymentHeaders] = await Promise.all([headers(), getApiDeploymentHeaders()]);
+  const { data: context, error } = await safeAsync(() =>
+    Promise.all([headers(), getApiDeploymentHeaders()]),
+  );
+
+  if (error) {
+    logError("[preloadNextLesson] Failed to prepare preload:", error);
+    return;
+  }
+
+  const [reqHeaders, deploymentHeaders] = context;
 
   after(() =>
     triggerNextPreload({
